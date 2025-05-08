@@ -8,7 +8,6 @@ use App\Models\Server;
 use App\Services\Servers\ReinstallServerService;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Facades\Filament;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
@@ -30,10 +29,7 @@ class Settings extends ServerFormPage
      */
     public function form(Schema $schema): Schema
     {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        return $schema
+        return parent::form($schema)
             ->columns([
                 'default' => 1,
                 'sm' => 2,
@@ -42,6 +38,7 @@ class Settings extends ServerFormPage
             ])
             ->components([
                 Section::make('Server Information')
+                    ->columnSpanFull()
                     ->columns([
                         'default' => 1,
                         'sm' => 2,
@@ -55,7 +52,7 @@ class Settings extends ServerFormPage
                             ->schema([
                                 TextInput::make('name')
                                     ->label('Server Name')
-                                    ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
+                                    ->disabled(fn (Server $server) => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
                                     ->required()
                                     ->columnSpan([
                                         'default' => 1,
@@ -68,7 +65,7 @@ class Settings extends ServerFormPage
                                 Textarea::make('description')
                                     ->label('Server Description')
                                     ->hidden(!config('panel.editable_server_descriptions'))
-                                    ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
+                                    ->disabled(fn (Server $server) => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
                                     ->columnSpan([
                                         'default' => 1,
                                         'sm' => 2,
@@ -147,6 +144,7 @@ class Settings extends ServerFormPage
                             ]),
                     ]),
                 Section::make('Node Information')
+                    ->columnSpanFull()
                     ->schema([
                         TextInput::make('node.name')
                             ->label('Node Name')
@@ -154,7 +152,7 @@ class Settings extends ServerFormPage
                             ->disabled(),
                         Fieldset::make('SFTP Information')
                             ->columnSpanFull()
-                            ->hidden(fn () => !auth()->user()->can(Permission::ACTION_FILE_SFTP, $server))
+                            ->hidden(fn (Server $server) => !auth()->user()->can(Permission::ACTION_FILE_SFTP, $server))
                             ->label('SFTP Information')
                             ->columns([
                                 'default' => 1,
@@ -197,12 +195,12 @@ class Settings extends ServerFormPage
                     ]),
                 Section::make('Reinstall Server')
                     ->columnSpanFull()
-                    ->hidden(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
+                    ->hidden(fn (Server $server) => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
                     ->collapsible()
                     ->footerActions([
                         Action::make('reinstall')
                             ->color('danger')
-                            ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
+                            ->disabled(fn (Server $server) => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
                             ->label('Reinstall')
                             ->requiresConfirmation()
                             ->modalHeading('Are you sure you want to reinstall the server?')

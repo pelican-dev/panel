@@ -32,10 +32,7 @@ class Startup extends ServerFormPage
      */
     public function form(Schema $schema): Schema
     {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        return $schema
+        return parent::form($schema)
             ->columns([
                 'default' => 1,
                 'sm' => 1,
@@ -71,7 +68,7 @@ class Startup extends ServerFormPage
                     ->label('Docker Image')
                     ->live()
                     ->visible(fn (Server $server) => in_array($server->image, $server->egg->docker_images))
-                    ->disabled(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
+                    ->disabled(fn (Server $server) => !auth()->user()->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
                     ->afterStateUpdated(function ($state, Server $server) {
                         $original = $server->image;
                         $server->forceFill(['image' => $state])->saveOrFail();
@@ -101,12 +98,13 @@ class Startup extends ServerFormPage
                         'lg' => 2,
                     ]),
                 Section::make('Server Variables')
+                    ->columnSpanFull()
                     ->schema([
                         Repeater::make('server_variables')
                             ->label('')
                             ->relationship('serverVariables', fn (Builder $query) => $query->where('egg_variables.user_viewable', true)->orderByPowerJoins('variable.sort'))
                             ->grid()
-                            ->disabled(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
+                            ->disabled(fn (Server $server) => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
                             ->reorderable(false)->addable(false)->deletable(false)
                             ->schema(function () {
                                 $text = TextInput::make('variable_value')

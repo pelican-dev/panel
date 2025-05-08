@@ -8,6 +8,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Schemas\Components\Form;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 
 /**
  * @property Form $form
@@ -28,11 +29,19 @@ abstract class ServerFormPage extends Page
         $this->fillForm();
     }
 
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->statePath('data')
+            ->model($this->getRecord());
+    }
+
     protected function authorizeAccess(): void {}
 
     protected function fillform(): void
     {
         $data = $this->getRecord()->attributesToArray();
+
         $this->form->fill($data);
     }
 
