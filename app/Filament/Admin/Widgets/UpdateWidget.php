@@ -3,7 +3,7 @@
 namespace App\Filament\Admin\Widgets;
 
 use App\Services\Helpers\SoftwareVersionService;
-use Filament\Actions\CreateAction;
+use Filament\Actions\Action;
 use Filament\Widgets\Widget;
 
 class UpdateWidget extends Widget
@@ -27,13 +27,12 @@ class UpdateWidget extends Widget
             'version' => $this->softwareVersionService->currentPanelVersion(),
             'latestVersion' => $this->softwareVersionService->latestPanelVersion(),
             'isLatest' => $this->softwareVersionService->isLatestPanel(),
-            'actions' => [
-                CreateAction::make()
-                    ->label(trans('admin/dashboard.sections.intro-update-available.heading'))
-                    ->icon('tabler-clipboard-text')
-                    ->url('https://pelican.dev/docs/panel/update', true)
-                    ->color('warning'),
-            ],
+            'action' => Action::make('update')
+                ->label(trans('admin/dashboard.sections.intro-update-available.heading'))
+                ->icon('tabler-clipboard-text')
+                ->url('https://pelican.dev/docs/panel/update', true)
+                ->color('warning')
+                ->toHtmlString(),
         ];
     }
 }

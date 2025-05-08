@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 
-use Filament\Actions\CreateAction;
+use Filament\Actions\Action;
 use Filament\Widgets\Widget;
 
 class HelpWidget extends Widget
@@ -16,12 +16,11 @@ class HelpWidget extends Widget
     public function getViewData(): array
     {
         return [
-            'actions' => [
-                CreateAction::make()
-                    ->label(trans('admin/dashboard.sections.intro-help.button_docs'))
-                    ->icon('tabler-speedboat')
-                    ->url('https://pelican.dev/docs', true),
-            ],
+            'action' => Action::make('docs')
+                ->label(trans('admin/dashboard.sections.intro-help.button_docs'))
+                ->icon('tabler-speedboat')
+                ->url('https://pelican.dev/docs', true)
+                ->toHtmlString(),
         ];
     }
 }

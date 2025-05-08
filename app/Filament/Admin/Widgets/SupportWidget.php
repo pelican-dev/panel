@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 
-use Filament\Actions\CreateAction;
+use Filament\Actions\Action;
 use Filament\Widgets\Widget;
 
 class SupportWidget extends Widget
@@ -16,13 +16,12 @@ class SupportWidget extends Widget
     public function getViewData(): array
     {
         return [
-            'actions' => [
-                CreateAction::make()
-                    ->label(trans('admin/dashboard.sections.intro-support.button_donate'))
-                    ->icon('tabler-cash')
-                    ->url('https://pelican.dev/donate', true)
-                    ->color('success'),
-            ],
+            'action' => Action::make('donate')
+                ->label(trans('admin/dashboard.sections.intro-support.button_donate'))
+                ->icon('tabler-cash')
+                ->url('https://pelican.dev/donate', true)
+                ->color('success')
+                ->toHtmlString(),
         ];
     }
 }

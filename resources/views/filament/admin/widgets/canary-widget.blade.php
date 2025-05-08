@@ -6,7 +6,7 @@
         collapsible
         persist-collapsed
         collapsed
-        :header-actions="$actions"
+        :after-header="$action"
     >
         <x-slot name="heading">{{ trans('admin/dashboard.sections.intro-developers.heading') }}</x-slot>
 

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 
-use Filament\Actions\CreateAction;
+use Filament\Actions\Action;
 use Filament\Widgets\Widget;
 
 class CanaryWidget extends Widget
@@ -21,12 +21,11 @@ class CanaryWidget extends Widget
     public function getViewData(): array
     {
         return [
-            'actions' => [
-                CreateAction::make()
-                    ->label(trans('admin/dashboard.sections.intro-developers.button_issues'))
-                    ->icon('tabler-brand-github')
-                    ->url('https://github.com/pelican-dev/panel/issues', true),
-            ],
+            'action' => Action::make('github')
+                ->label(trans('admin/dashboard.sections.intro-developers.button_issues'))
+                ->icon('tabler-brand-github')
+                ->url('https://github.com/pelican-dev/panel/issues', true)
+                ->toHtmlString(),
         ];
     }
 }

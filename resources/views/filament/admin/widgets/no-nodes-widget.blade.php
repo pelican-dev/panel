@@ -5,7 +5,7 @@
         id="intro-first-node"
         collapsible
         persist-collapsed
-        :header-actions="$actions"
+        :after-header="$action"
     >
         <x-slot name="heading">{{ trans('admin/dashboard.sections.intro-first-node.heading') }}</x-slot>
 

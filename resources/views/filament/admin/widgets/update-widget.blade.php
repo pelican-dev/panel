@@ -4,7 +4,7 @@
             icon="tabler-info-circle"
             icon-color="warning"
             id="intro-update-available"
-            :header-actions="$actions"
+            :after-header="$action"
         >
             <x-slot name="heading">{{ trans('admin/dashboard.sections.intro-update-available.heading') }}</x-slot>
 

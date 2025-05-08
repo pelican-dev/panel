@@ -5,7 +5,7 @@
         id="intro-help"
         collapsible
         persist-collapsed
-        :header-actions="$actions"
+        :after-header="$action"
     >
         <x-slot name="heading">{{ trans('admin/dashboard.sections.intro-help.heading') }}</x-slot>
         

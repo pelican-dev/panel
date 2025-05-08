@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Widgets;
 
 use App\Filament\Admin\Resources\NodeResource\Pages\CreateNode;
 use App\Models\Node;
-use Filament\Actions\CreateAction;
+use Filament\Actions\Action;
 use Filament\Widgets\Widget;
 
 class NoNodesWidget extends Widget
@@ -23,12 +23,11 @@ class NoNodesWidget extends Widget
     public function getViewData(): array
     {
         return [
-            'actions' => [
-                CreateAction::make()
-                    ->label(trans('admin/dashboard.sections.intro-first-node.button_label'))
-                    ->icon('tabler-server-2')
-                    ->url(CreateNode::getUrl()),
-            ],
+            'action' => Action::make('create-node')
+                ->label(trans('admin/dashboard.sections.intro-first-node.button_label'))
+                ->icon('tabler-server-2')
+                ->url(CreateNode::getUrl())
+                ->toHtmlString(),
         ];
     }
 }
