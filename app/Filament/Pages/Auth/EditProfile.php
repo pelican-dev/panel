@@ -3,7 +3,7 @@
 namespace App\Filament\Pages\Auth;
 
 use App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid;
-use App\Extensions\OAuth\Providers\OAuthProvider;
+use App\Extensions\OAuth\OAuthProvider;
 use App\Facades\Activity;
 use App\Models\ActivityLog;
 use App\Models\ApiKey;
@@ -52,9 +52,12 @@ class EditProfile extends BaseEditProfile
 {
     private ToggleTwoFactorService $toggleTwoFactorService;
 
-    public function boot(ToggleTwoFactorService $toggleTwoFactorService): void
+    protected OAuthProvider $oauthProvider;
+
+    public function boot(ToggleTwoFactorService $toggleTwoFactorService, OAuthProvider $oauthProvider): void
     {
         $this->toggleTwoFactorService = $toggleTwoFactorService;
+        $this->oauthProvider = $oauthProvider;
     }
 
     public function getMaxWidth(): MaxWidth|string
@@ -64,7 +67,7 @@ class EditProfile extends BaseEditProfile
 
     protected function getForms(): array
     {
-        $oauthProviders = collect(OAuthProvider::get())->filter(fn (OAuthProvider $provider) => $provider->isEnabled())->all();
+        $oauthProviders = $this->oauthProvider->getEnabled();
 
         return [
             'form' => $this->form(
