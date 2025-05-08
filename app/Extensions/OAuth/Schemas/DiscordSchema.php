@@ -17,7 +17,7 @@ final class DiscordSchema extends OAuthSchema
         return 'discord';
     }
 
-    public function getProviderClass(): string
+    public function getSocialiteProvider(): string
     {
         return Provider::class;
     }

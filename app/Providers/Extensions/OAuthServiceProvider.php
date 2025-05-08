@@ -18,14 +18,14 @@ class OAuthServiceProvider extends ServiceProvider
         $this->app->singleton(OAuthProvider::class, function ($app) {
             $provider = new OAuthProvider();
             // Default OAuth providers included with Socialite
-            $provider->register(new CommonSchema('facebook', null, 'tabler-brand-facebook-f', '#1877f2'));
-            $provider->register(new CommonSchema('x', null, 'tabler-brand-x-f', '#1da1f2'));
-            $provider->register(new CommonSchema('linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2'));
-            $provider->register(new CommonSchema('google', null, 'tabler-brand-google-f', '#4285f4'));
+            $provider->register(new CommonSchema('facebook', 'tabler-brand-facebook-f', '#1877f2'));
+            $provider->register(new CommonSchema('x', 'tabler-brand-x-f', '#1da1f2'));
+            $provider->register(new CommonSchema('linkedin', 'tabler-brand-linkedin-f', '#0a66c2'));
+            $provider->register(new CommonSchema('google', 'tabler-brand-google-f', '#4285f4'));
             $provider->register(new GithubSchema());
             $provider->register(new GitlabSchema());
-            $provider->register(new CommonSchema('bitbucket', null, 'tabler-brand-bitbucket-f', '#205081'));
-            $provider->register(new CommonSchema('slack', null, 'tabler-brand-slack', '#6ecadc'));
+            $provider->register(new CommonSchema('bitbucket', 'tabler-brand-bitbucket-f', '#205081'));
+            $provider->register(new CommonSchema('slack', 'tabler-brand-slack', '#6ecadc'));
 
             // Additional OAuth providers from socialiteproviders.com
             $provider->register(new AuthentikSchema());

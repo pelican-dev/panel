@@ -10,7 +10,7 @@ interface OAuthSchemaInterface
     public function getId(): string;
 
     /** @return ?class-string */
-    public function getProviderClass(): ?string;
+    public function getSocialiteProvider(): ?string;
 
     /**
      * @return array<string, string|string[]|bool|null>

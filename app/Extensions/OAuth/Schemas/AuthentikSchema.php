@@ -13,7 +13,7 @@ final class AuthentikSchema extends OAuthSchema
         return 'authentik';
     }
 
-    public function getProviderClass(): string
+    public function getSocialiteProvider(): string
     {
         return Provider::class;
     }

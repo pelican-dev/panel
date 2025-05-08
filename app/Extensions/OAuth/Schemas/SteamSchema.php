@@ -16,7 +16,7 @@ final class SteamSchema extends OAuthSchema
         return 'steam';
     }
 
-    public function getProviderClass(): string
+    public function getSocialiteProvider(): string
     {
         return Provider::class;
     }

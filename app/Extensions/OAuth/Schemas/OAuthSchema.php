@@ -6,37 +6,13 @@ use App\Extensions\OAuth\OAuthSchemaInterface;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
-use SocialiteProviders\Manager\SocialiteWasCalled;
 
 abstract class OAuthSchema implements OAuthSchemaInterface
 {
-    /**
-     * @var array<string, static>
-     */
-    protected static array $providers = [];
-
-    /**
-     * @return self|static[]
-     */
-    public static function get(?string $id = null): array|self
-    {
-        return $id ? static::$providers[$id] : static::$providers;
-    }
-
-    public function __construct()
-    {
-        if ($this->getProviderClass()) {
-            Event::listen(function (SocialiteWasCalled $event) {
-                $event->extendSocialite($this->getId(), $this->getProviderClass());
-            });
-        }
-    }
-
     abstract public function getId(): string;
 
-    public function getProviderClass(): ?string
+    public function getSocialiteProvider(): ?string
     {
         return null;
     }

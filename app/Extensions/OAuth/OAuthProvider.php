@@ -10,10 +10,10 @@ class OAuthProvider
     /** @var OAuthSchemaInterface[] */
     private array $providers = [];
 
-    /** @return OAuthSchemaInterface[] */
-    public function get(): array
+    /** @return OAuthSchemaInterface[] | OAuthSchemaInterface */
+    public function get(?string $id = null): array|OAuthSchemaInterface
     {
-        return $this->providers;
+        return $id ? $this->providers[$id] : $this->providers;
     }
 
     /** @return OAuthSchemaInterface[] */
@@ -32,8 +32,8 @@ class OAuthProvider
 
         config()->set('services.' . $provider->getId(), array_merge($provider->getServiceConfig(), ['redirect' => '/auth/oauth/callback/' . $provider->getId()]));
 
-        if ($provider->getProviderClass()) {
-            Event::listen(fn (SocialiteWasCalled $event) => $event->extendSocialite($provider->getId(), $provider->getProviderClass()));
+        if ($provider->getSocialiteProvider()) {
+            Event::listen(fn (SocialiteWasCalled $event) => $event->extendSocialite($provider->getId(), $provider->getSocialiteProvider()));
         }
 
         $this->providers[$provider->getId()] = $provider;
