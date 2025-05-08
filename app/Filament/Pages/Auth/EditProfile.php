@@ -521,7 +521,7 @@ class EditProfile extends BaseEditProfile
     {
         $moarbetterdata = json_decode($data['customization'], true);
 
-        $data['console_font'] = $moarbetterdata['console_font'] ?? 'ComicMono';
+        $data['console_font'] = $moarbetterdata['console_font'] ?? 'monospace';
         $data['console_font_size'] = $moarbetterdata['console_font_size'] ?? 14;
         $data['console_rows'] = $moarbetterdata['console_rows'] ?? 30;
         $data['console_graph_period'] = $moarbetterdata['console_graph_period'] ?? 30;
