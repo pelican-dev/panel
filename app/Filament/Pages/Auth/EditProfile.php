@@ -39,7 +39,6 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
@@ -390,9 +389,10 @@ class EditProfile extends BaseEditProfile
                                                         }
 
                                                         foreach (Storage::disk('public')->allFiles('storage/fonts') as $file) {
-                                                            if (File::extension($file) === 'ttf') {
-                                                                $name = pathinfo($file, PATHINFO_FILENAME);
-                                                                $fonts[$name] = $name;
+                                                            $fileInfo = pathinfo($file);
+
+                                                            if ($fileInfo['extension'] === 'ttf') {
+                                                                $fonts[$fileInfo['filename']] = $fileInfo['filename'];
                                                             }
                                                         }
 
