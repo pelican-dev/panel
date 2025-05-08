@@ -56,10 +56,11 @@ class DiscordPreview extends Widget
     }
 
     /**
+     * Process payload by replacing variables
      *
-     * @param array|string $payload
-     * @param array $data
-     * @return array|string
+     * @param array<string, mixed>|string $payload
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>|string
      */
     private function processPayload(array|string $payload, array $data): array|string
     {
