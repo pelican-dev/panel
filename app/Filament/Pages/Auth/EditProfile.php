@@ -39,8 +39,8 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Socialite\Facades\Socialite;
@@ -383,15 +383,16 @@ class EditProfile extends BaseEditProfile
                                                             'monospace' => 'monospace', //default
                                                         ];
 
-                                                        if (!File::exists(public_path('storage/fonts'))) {
-                                                            File::makeDirectory(public_path('storage/fonts'));
+                                                        if (!Storage::disk('public')->exists('storage/fonts')) {
+                                                            Storage::disk('public')->makeDirectory('storage/fonts');
                                                             $this->fillForm();
                                                         }
 
-                                                        foreach (File::allFiles(public_path('storage/fonts')) as $file) {
-                                                            if ($file->getExtension() === 'ttf') {
-                                                                $name = pathinfo($file->getFilename(), PATHINFO_FILENAME);
-                                                                $fonts[$name] = $name;
+                                                        foreach (Storage::disk('public')->allFiles('storage/fonts') as $file) {
+                                                            $fileInfo = pathinfo($file);
+
+                                                            if ($fileInfo['extension'] === 'ttf') {
+                                                                $fonts[$fileInfo['filename']] = $fileInfo['filename'];
                                                             }
                                                         }
 
