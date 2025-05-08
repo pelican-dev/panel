@@ -25,6 +25,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -146,18 +147,16 @@ class Settings extends Page implements HasSchemas
                         ->offIcon('tabler-x')
                         ->onColor('success')
                         ->offColor('danger')
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('APP_DEBUG', (bool) $state))
+                        ->stateCast(new BooleanStateCast(false))
                         ->default(env('APP_DEBUG', config('app.debug'))),
                     ToggleButtons::make('FILAMENT_TOP_NAVIGATION')
                         ->label(trans('admin/setting.general.navigation'))
                         ->inline()
                         ->options([
-                            false => trans('admin/setting.general.sidebar'),
-                            true => trans('admin/setting.general.topbar'),
+                            0 => trans('admin/setting.general.sidebar'),
+                            1 => trans('admin/setting.general.topbar'),
                         ])
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_TOP_NAVIGATION', (bool) $state))
+                        ->stateCast(new BooleanStateCast(false, true))
                         ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
                     Select::make('FILAMENT_AVATAR_PROVIDER')
                         ->label(trans('admin/setting.general.avatar_provider'))
@@ -172,19 +171,17 @@ class Settings extends Page implements HasSchemas
                         ->offIcon('tabler-x')
                         ->onColor('success')
                         ->offColor('danger')
-                        ->formatStateUsing(fn ($state) => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_UPLOADABLE_AVATARS', (bool) $state))
+                        ->stateCast(new BooleanStateCast(false))
                         ->default(env('FILAMENT_UPLOADABLE_AVATARS', config('panel.filament.uploadable-avatars'))),
                 ]),
             ToggleButtons::make('PANEL_USE_BINARY_PREFIX')
                 ->label(trans('admin/setting.general.unit_prefix'))
                 ->inline()
                 ->options([
-                    false => trans('admin/setting.general.decimal_prefix'),
-                    true => trans('admin/setting.general.binary_prefix'),
+                    0 => trans('admin/setting.general.decimal_prefix'),
+                    1 => trans('admin/setting.general.binary_prefix'),
                 ])
-                ->formatStateUsing(fn ($state): bool => (bool) $state)
-                ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_USE_BINARY_PREFIX', (bool) $state))
+                ->stateCast(new BooleanStateCast(false, true))
                 ->default(env('PANEL_USE_BINARY_PREFIX', config('panel.use_binary_prefix'))),
             ToggleButtons::make('APP_2FA_REQUIRED')
                 ->label(trans('admin/setting.general.2fa_requirement'))
@@ -518,8 +515,7 @@ class Settings extends Page implements HasSchemas
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('AWS_USE_PATH_STYLE_ENDPOINT', (bool) $state))
+                        ->stateCast(new BooleanStateCast(false))
                         ->default(env('AWS_USE_PATH_STYLE_ENDPOINT', config('backups.disks.s3.use_path_style_endpoint'))),
                 ]),
         ];
@@ -606,8 +602,7 @@ class Settings extends Page implements HasSchemas
                         ->offColor('danger')
                         ->live()
                         ->columnSpanFull()
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_CLIENT_ALLOCATIONS_ENABLED', (bool) $state))
+                        ->stateCast(new BooleanStateCast(false))
                         ->default(env('PANEL_CLIENT_ALLOCATIONS_ENABLED', config('panel.client_features.allocations.enabled'))),
                     TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_START')
                         ->label(trans('admin/setting.misc.auto_allocation.start'))
@@ -640,8 +635,7 @@ class Settings extends Page implements HasSchemas
                         ->offColor('danger')
                         ->live()
                         ->columnSpanFull()
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_INSTALL_NOTIFICATION', (bool) $state))
+                        ->stateCast(new BooleanStateCast(false))
                         ->default(env('PANEL_SEND_INSTALL_NOTIFICATION', config('panel.email.send_install_notification'))),
                     Toggle::make('PANEL_SEND_REINSTALL_NOTIFICATION')
                         ->label(trans('admin/setting.misc.mail_notifications.server_reinstalled'))
@@ -651,8 +645,7 @@ class Settings extends Page implements HasSchemas
                         ->offColor('danger')
                         ->live()
                         ->columnSpanFull()
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REINSTALL_NOTIFICATION', (bool) $state))
+                        ->stateCast(new BooleanStateCast(false))
                         ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
                 ]),
             Section::make(trans('admin/setting.misc.connections.title'))
@@ -700,8 +693,7 @@ class Settings extends Page implements HasSchemas
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('APP_ACTIVITY_HIDE_ADMIN', (bool) $state))
+                        ->stateCast(new BooleanStateCast(false))
                         ->default(env('APP_ACTIVITY_HIDE_ADMIN', config('activity.hide_admin_activity'))),
                 ]),
             Section::make(trans('admin/setting.misc.api.title'))
@@ -739,8 +731,7 @@ class Settings extends Page implements HasSchemas
                         ->offColor('danger')
                         ->live()
                         ->columnSpanFull()
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
+                        ->stateCast(new BooleanStateCast(false))
                         ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
                 ]),
             Section::make(trans('admin/setting.misc.webhook.title'))
