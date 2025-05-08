@@ -125,7 +125,7 @@ class UserResource extends Resource
                     ->hintIconTooltip(fn ($operation) => $operation === 'create' ? trans('admin/user.password_help') : null)
                     ->password(),
                 CheckboxList::make('roles')
-                    ->hidden(fn (User $user) => $user->isRootAdmin())
+                    ->hidden(fn (?User $user) => $user && $user->isRootAdmin())
                     ->relationship('roles', 'name', fn (Builder $query) => $query->whereNot('id', Role::getRootAdmin()->id))
                     ->saveRelationshipsUsing(fn (User $user, array $state) => $user->syncRoles(collect($state)->map(fn ($role) => Role::findById($role))))
                     ->dehydrated()
@@ -133,7 +133,7 @@ class UserResource extends Resource
                     ->columnSpanFull()
                     ->bulkToggleable(false),
                 CheckboxList::make('root_admin_role')
-                    ->visible(fn (User $user) => $user->isRootAdmin())
+                    ->visible(fn (?User $user) => $user && $user->isRootAdmin())
                     ->disabled()
                     ->options([
                         'root_admin' => Role::ROOT_ADMIN,
