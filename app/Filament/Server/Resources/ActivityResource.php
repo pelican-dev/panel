@@ -25,6 +25,8 @@ class ActivityResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-stack';
 
+    protected static bool $isScopedToTenant = false;
+
     public static function getEloquentQuery(): Builder
     {
         /** @var Server $server */
