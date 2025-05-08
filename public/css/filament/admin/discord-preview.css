@@ -1,0 +1,119 @@
+:root {
+    --discord-embed-background-color: #13162a;
+    --discord-tag-color: #5865f2;
+    --discord-timestamp-color: #949ba4;
+    --discord-text-color: #dbdee1;
+    --discord-link-color: #00a8fc;
+    --discord-avatar-margin-right: 8px;
+    --discord-thumbnail-margin-right: 8px;
+    --discord-footer-margin-top: 8px;
+    --discord-spacer-margin-left: 4px;
+    --discord-avatar-length: 40px;
+    --discord-avatar-height: 40px;
+}
+
+.container {
+    background-color: #11131f !important;
+}
+
+.link {
+    color: var(--discord-link-color);
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+img:hover {
+    cursor: pointer !important;
+}
+
+.sender .avatar {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.sender .decoration {
+    width: 57px;
+    min-width: 57px;
+    height: 57px;
+    top: -15%;
+    left: -15%;
+    z-index: 20;
+}
+
+.sender .name {
+    display: inline;
+    vertical-align: baseline;
+    margin: 0px 0.25rem 0px 0px;
+    color: var(--color-white);
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.375rem;
+    overflow-wrap: break-word;
+    cursor: pointer;
+}
+
+.sender .tag {
+    min-height: 1.275em;
+    max-height: 1.275em;
+    margin: 0.075em 0.25rem 0px 0px;
+    padding: 0.071875rem 0.275rem;
+    border-radius: 3px;
+    background: var(--discord-tag-color);
+    font-size: .8rem;
+    font-weight: 500;
+    line-height: 1.3;
+    vertical-align: baseline;
+    text-transform: uppercase;
+}
+
+.sender .timestamp {
+    display: inline-block;
+    height: 1.25rem;
+    cursor: default;
+    color: var(--discord-timestamp-color);
+    margin-left: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.375rem;
+    vertical-align: baseline;
+}
+
+.embed {
+    border-left: 5px solid;
+    background-color: var(--discord-embed-background-color) !important;
+}
+
+.avatar,
+.footer-icon {
+    margin-right: var(--discord-avatar-margin-right);
+}
+
+.thumbnail {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-15%);
+}
+
+.description,
+.field-value {
+    color: var(--discord-text-color);
+}
+
+.footer {
+    margin-top: var(--discord-footer-margin-top);
+    color: var(--discord-text-color);
+}
+
+.spacer {
+    margin-left: var(--discord-spacer-margin-left);
+}
+
+.decoration-overlay {
+    pointer-events: none;
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+}
