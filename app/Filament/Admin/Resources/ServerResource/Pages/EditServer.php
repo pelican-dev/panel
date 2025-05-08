@@ -50,6 +50,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
@@ -208,13 +209,14 @@ class EditServer extends EditRecord
                                                     ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
                                                     ->formatStateUsing(fn (Get $get) => $get('cpu') == 0)
                                                     ->live()
+                                                    ->stateCast(new BooleanStateCast(false, true))
                                                     ->options([
-                                                        true => trans('admin/server.unlimited'),
-                                                        false => trans('admin/server.limited'),
+                                                        1 => trans('admin/server.unlimited'),
+                                                        0 => trans('admin/server.limited'),
                                                     ])
                                                     ->colors([
-                                                        true => 'primary',
-                                                        false => 'warning',
+                                                        1 => 'primary',
+                                                        0 => 'warning',
                                                     ])
                                                     ->columnSpan(2),
 
@@ -238,13 +240,14 @@ class EditServer extends EditRecord
                                                     ->afterStateUpdated(fn (Set $set) => $set('memory', 0))
                                                     ->formatStateUsing(fn (Get $get) => $get('memory') == 0)
                                                     ->live()
+                                                    ->stateCast(new BooleanStateCast(false, true))
                                                     ->options([
-                                                        true => trans('admin/server.unlimited'),
-                                                        false => trans('admin/server.limited'),
+                                                        1 => trans('admin/server.unlimited'),
+                                                        0 => trans('admin/server.limited'),
                                                     ])
                                                     ->colors([
-                                                        true => 'primary',
-                                                        false => 'warning',
+                                                        1 => 'primary',
+                                                        0 => 'warning',
                                                     ])
                                                     ->columnSpan(2),
 
@@ -271,13 +274,14 @@ class EditServer extends EditRecord
                                                     ->live()
                                                     ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
                                                     ->formatStateUsing(fn (Get $get) => $get('disk') == 0)
+                                                    ->stateCast(new BooleanStateCast(false, true))
                                                     ->options([
-                                                        true => trans('admin/server.unlimited'),
-                                                        false => trans('admin/server.limited'),
+                                                        1 => trans('admin/server.unlimited'),
+                                                        0 => trans('admin/server.limited'),
                                                     ])
                                                     ->colors([
-                                                        true => 'primary',
-                                                        false => 'warning',
+                                                        1 => 'primary',
+                                                        0 => 'warning',
                                                     ])
                                                     ->columnSpan(2),
 
@@ -312,17 +316,18 @@ class EditServer extends EditRecord
                                                     ->schema([
                                                         ToggleButtons::make('cpu_pinning')
                                                             ->label(trans('admin/server.cpu_pin'))->inlineLabel()->inline()
-                                                            ->default(false)
+                                                            ->default(0)
                                                             ->afterStateUpdated(fn (Set $set) => $set('threads', []))
                                                             ->formatStateUsing(fn (Get $get) => !empty($get('threads')))
                                                             ->live()
+                                                            ->stateCast(new BooleanStateCast(false, true))
                                                             ->options([
-                                                                false => trans('admin/server.disabled'),
-                                                                true => trans('admin/server.enabled'),
+                                                                0 => trans('admin/server.disabled'),
+                                                                1 => trans('admin/server.enabled'),
                                                             ])
                                                             ->colors([
-                                                                false => 'success',
-                                                                true => 'warning',
+                                                                0 => 'success',
+                                                                1 => 'warning',
                                                             ])
                                                             ->columnSpan(2),
 
@@ -393,15 +398,19 @@ class EditServer extends EditRecord
                                             ->schema([
                                                 ToggleButtons::make('oom_killer')
                                                     ->dehydrated()
-                                                    ->label(trans('admin/server.oom'))->inlineLabel()->inline()
+                                                    ->label(trans('admin/server.oom'))
+                                                    ->formatStateUsing(fn ($state) => $state)
+                                                    ->inlineLabel()
+                                                    ->inline()
                                                     ->columnSpan(2)
+                                                    ->stateCast(new BooleanStateCast(false, true))
                                                     ->options([
-                                                        false => trans('admin/server.disabled'),
-                                                        true => trans('admin/server.enabled'),
+                                                        0 => trans('admin/server.disabled'),
+                                                        1 => trans('admin/server.enabled'),
                                                     ])
                                                     ->colors([
-                                                        false => 'success',
-                                                        true => 'danger',
+                                                        0 => 'success',
+                                                        1 => 'danger',
                                                     ]),
                                             ]),
                                     ]),
@@ -545,24 +554,26 @@ class EditServer extends EditRecord
                                     ),
 
                                 ToggleButtons::make('skip_scripts')
-                                    ->label(trans('admin/server.install_script'))->inline()
+                                    ->label(trans('admin/server.install_script'))
+                                    ->inline()
                                     ->columnSpan([
                                         'default' => 6,
                                         'sm' => 1,
                                         'md' => 1,
                                         'lg' => 2,
                                     ])
+                                    ->stateCast(new BooleanStateCast(false, true))
                                     ->options([
-                                        false => trans('admin/server.yes'),
-                                        true => trans('admin/server.skip'),
+                                        0 => trans('admin/server.yes'),
+                                        1 => trans('admin/server.skip'),
                                     ])
                                     ->colors([
-                                        false => 'primary',
-                                        true => 'danger',
+                                        0 => 'primary',
+                                        1 => 'danger',
                                     ])
                                     ->icons([
-                                        false => 'tabler-code',
-                                        true => 'tabler-code-off',
+                                        0 => 'tabler-code',
+                                        1 => 'tabler-code-off',
                                     ])
                                     ->required(),
                                 Hidden::make('previewing')
