@@ -2,8 +2,6 @@
 
 namespace App\Filament\Server\Resources\FileResource\Pages;
 
-//use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
-use App\Enums\EditorLanguages;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
 use App\Models\File;
@@ -20,8 +18,8 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
@@ -408,6 +406,9 @@ class ListFiles extends ListRecords
             ]);
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function getHeaderActions(): array
     {
         /** @var Server $server */
@@ -429,21 +430,10 @@ class ListFiles extends ListRecords
                 })
                 ->schema([
                     TextInput::make('name')
-                        ->label('File Name')
+                        ->label('Name')
                         ->required(),
-                    Select::make('lang')
-                        ->label('Syntax Highlighting')
-                        ->searchable()
-                        ->native(false)
-                        ->live()
-                        ->options(EditorLanguages::class)
-                        ->selectablePlaceholder(false)
-                        ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
-                        ->default(EditorLanguages::plaintext->value),
-                    //                    MonacoEditor::make('editor')
-                    //                        ->label('')
-                    //                        ->view('filament.plugins.monaco-editor')
-                    //                        ->language(fn (Get $get) => $get('lang') ?? 'plaintext'),
+                    CodeEditor::make('editor')
+                        ->hiddenLabel(),
                 ]),
             Action::make('new_folder')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))

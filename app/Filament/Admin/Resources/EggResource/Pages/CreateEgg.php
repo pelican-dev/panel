@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\EggResource;
 use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Models\EggVariable;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
@@ -16,7 +17,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -44,6 +44,9 @@ class CreateEgg extends CreateRecord
         return [];
     }
 
+    /**
+     * @throws \Exception
+     */
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -248,13 +251,10 @@ class CreateEgg extends CreateRecord
                                 ->default('bash')
                                 ->options(['bash', 'ash', '/bin/bash'])
                                 ->required(),
-                            //                            MonacoEditor::make('script_install')
-                            //                                ->label(trans('admin/egg.script_install'))
-                            //                                ->columnSpanFull()
-                            //                                ->fontSize('16px')
-                            //                                ->language('shell')
-                            //                                ->lazy()
-                            //                                ->view('filament.plugins.monaco-editor'),
+                            CodeEditor::make('script_install')
+                                ->label(trans('admin/egg.script_install'))
+                                ->columnSpanFull()
+                                ->lazy(),
                         ]),
 
                 ])->columnSpanFull()->persistTabInQueryString(),

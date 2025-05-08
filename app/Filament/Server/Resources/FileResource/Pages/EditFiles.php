@@ -3,6 +3,8 @@
 namespace App\Filament\Server\Resources\FileResource\Pages;
 
 use App\Enums\EditorLanguages;
+use App\Exceptions\Http\Server\FileSizeTooLargeException;
+use App\Exceptions\Repository\FileNotEditableException;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
 use App\Livewire\AlertBanner;
@@ -11,18 +13,20 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use Filament\Facades\Filament;
 use Filament\Actions\Action;
+use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\Section;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Panel;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
@@ -48,6 +52,9 @@ class EditFiles extends Page
 
     public ?array $data = [];
 
+    /**
+     * @throws \Throwable
+     */
     public function form(Schema $schema): Schema
     {
         /** @var Server $server */
@@ -116,43 +123,42 @@ class EditFiles extends Page
                             ->selectablePlaceholder(false)
                             ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
                             ->default(fn () => EditorLanguages::fromWithAlias(pathinfo($this->path, PATHINFO_EXTENSION))),
-                        //                         TODO MonacoEditor::make('editor')
-                        //                            ->hiddenLabel()
-                        //                            ->showPlaceholder(false)
-                        //                                        ->danger()
-                        //                                        ->body('<code>' . $this->path . '</code> Max is ' . convert_bytes_to_readable(config('panel.files.max_edit_size')))
-                        //                                        ->title('File too large!')
-                        //                                    AlertBanner::make()
-                        //                                } catch (FileSizeTooLargeException) {
-                        //                                try {
-                        //                            ->default(function () {
-                        //                                    return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
-                        //                                        ->closable()
-                        //                                        ->send();
-                        //
-                        //                                } catch (FileNotFoundException) {
-                        //                                    AlertBanner::make()
-                        //                                    $this->redirect(ListFiles::getUrl());
-                        //                                        ->title('File Not found!')
-                        //                                        ->danger()
-                        //                                        ->body('<code>' . $this->path . '</code>')
-                        //                                        ->send();
-                        //                                        ->closable()
-                        //
-                        //                                    $this->redirect(ListFiles::getUrl());
-                        //                                } catch (FileNotEditableException) {
-                        //                                        ->title('Could not edit directory!')
-                        //                                    AlertBanner::make()
-                        //                                        ->body('<code>' . $this->path . '</code>')
-                        //                                        ->closable()
-                        //                                        ->send();
-                        //                                        ->danger()
-                        //
-                        //                                }
-                        //                                    $this->redirect(ListFiles::getUrl());
-                        //                            })
-                        //                            ->language(fn (Get $get) => $get('lang'))
-                        //                            ->view('filament.plugins.monaco-editor'),
+                        CodeEditor::make('editor')
+                            ->hiddenLabel()
+                            ->default(function () {
+                                try {
+                                    return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
+                                } catch (FileSizeTooLargeException) {
+                                    AlertBanner::make()
+                                        ->title('<code>' . basename($this->path) . '</code> is too large!')
+                                        ->body('Max is ' . convert_bytes_to_readable(config('panel.files.max_edit_size')))
+                                        ->danger()
+                                        ->closable()
+                                        ->send();
+
+                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                } catch (FileNotFoundException) {
+                                    AlertBanner::make()
+                                        ->title('<code>' . basename($this->path) . '</code> not found!')
+                                        ->danger()
+                                        ->closable()
+                                        ->send();
+
+                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                } catch (FileNotEditableException) {
+                                    AlertBanner::make()
+                                        ->title('<code>' . basename($this->path) . '</code> is a directory')
+                                        ->danger()
+                                        ->closable()
+                                        ->send();
+
+                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                } catch (ConnectionException) {
+                                    // Alert banner for this one will be handled by ListFiles
+
+                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                }
+                            }),
                     ]),
             ]);
     }

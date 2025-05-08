@@ -11,6 +11,7 @@ use App\Models\Egg;
 use App\Models\EggVariable;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\CodeEditor;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
@@ -20,7 +21,6 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -33,6 +33,9 @@ class EditEgg extends EditRecord
 {
     protected static string $resource = EggResource::class;
 
+    /**
+     * @throws \Exception
+     */
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -239,13 +242,9 @@ class EditEgg extends EditRecord
                                 ->selectablePlaceholder(false)
                                 ->options(['bash', 'ash', '/bin/bash'])
                                 ->required(),
-                            // TODO                           MonacoEditor::make('script_install')
-                            //                                ->label(trans('admin/egg.script_install'))
-                            //                                ->placeholderText('')
-                            //                                ->columnSpanFull()
-                            //                                ->fontSize('16px')
-                            //                                ->language('shell')
-                            //                                ->view('filament.plugins.monaco-editor'),
+                            CodeEditor::make('script_install')
+                                ->hiddenLabel()
+                                ->columnSpanFull(),
                         ]),
                 ])->columnSpanFull()->persistTabInQueryString(),
             ]);
