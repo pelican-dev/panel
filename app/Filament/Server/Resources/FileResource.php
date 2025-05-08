@@ -18,6 +18,8 @@ class FileResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-files';
 
+    protected static bool $isScopedToTenant = false;
+
     // TODO: find better way handle server conflict state
     public static function canAccess(): bool
     {
