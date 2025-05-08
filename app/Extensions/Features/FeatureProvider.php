@@ -2,50 +2,32 @@
 
 namespace App\Extensions\Features;
 
-use Filament\Actions\Action;
-use Illuminate\Foundation\Application;
+use App\Models\Egg;
+use Illuminate\Database\Eloquent\Model;
 
-abstract class FeatureProvider
+class FeatureProvider
 {
-    /**
-     * @var array<string, static>
-     */
-    protected static array $providers = [];
+    /** @var FeatureSchemaInterface[] */
+    private array $providers = [];
 
-    /**
-     * @param  string[]  $id
-     * @return self|static[]
-     */
-    public static function getProviders(string|array|null $id = null): array|self
+    /** @return FeatureSchemaInterface[] | FeatureSchemaInterface */
+    public function get(?string $id = null): array|FeatureSchemaInterface
     {
-        if (is_array($id)) {
-            return array_intersect_key(static::$providers, array_flip($id));
-        }
-
-        return $id ? static::$providers[$id] : static::$providers;
+        return $id ? $this->providers[$id] : $this->providers;
     }
 
-    protected function __construct(protected Application $app)
+    /** @return FeatureSchemaInterface[] */
+    public function getAvailableFeatures(Egg $egg): array
     {
-        if (array_key_exists($this->getId(), static::$providers)) {
-            if (!$this->app->runningUnitTests()) {
-                logger()->warning("Tried to create duplicate Feature provider with id '{$this->getId()}'");
-            }
+        return collect($this->providers)->intersect($egg->features)->all();
+    }
 
+    public function register(FeatureSchemaInterface $provider): void
+    {
+        if (array_key_exists($provider->getId(), $this->providers)) {
             return;
         }
 
-        static::$providers[$this->getId()] = $this;
+        $this->providers[$provider->getId()] = $provider;
     }
-
-    abstract public function getId(): string;
-
-    /**
-     * A matching subset string (case-insensitive) from the console output
-     *
-     * @return array<string>
-     */
-    abstract public function getListeners(): array;
-
-    abstract public function getAction(): Action;
 }

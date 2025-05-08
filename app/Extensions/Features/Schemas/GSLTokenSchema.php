@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Extensions\Features;
+namespace App\Extensions\Features\Schemas;
 
+use App\Extensions\Features\FeatureSchemaInterface;
 use App\Facades\Activity;
 use App\Models\Permission;
 use App\Models\Server;
@@ -13,16 +14,10 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Validator;
 
-class GSLToken extends FeatureProvider
+class GSLTokenSchema implements FeatureSchemaInterface
 {
-    public function __construct(protected Application $app)
-    {
-        parent::__construct($app);
-    }
-
     /** @return array<string> */
     public function getListeners(): array
     {
@@ -113,10 +108,5 @@ class GSLToken extends FeatureProvider
                         ->send();
                 }
             });
-    }
-
-    public static function register(Application $app): self
-    {
-        return new self($app);
     }
 }

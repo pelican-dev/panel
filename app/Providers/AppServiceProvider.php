@@ -13,11 +13,6 @@ use App\Checks\UsedDiskSpaceCheck;
 use App\Extensions\Avatar\Providers\GravatarProvider;
 use App\Extensions\Avatar\Providers\UiAvatarsProvider;
 use App\Extensions\Captcha\Providers\TurnstileProvider;
-use App\Extensions\Features\GSLToken;
-use App\Extensions\Features\JavaVersion;
-use App\Extensions\Features\MinecraftEula;
-use App\Extensions\Features\PIDLimit;
-use App\Extensions\Features\SteamDiskSpace;
 use App\Models;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
@@ -104,13 +99,6 @@ class AppServiceProvider extends ServiceProvider
         // Default Avatar providers
         GravatarProvider::register();
         UiAvatarsProvider::register();
-
-        // Default Feature providers
-        GSLToken::register($app);
-        JavaVersion::register($app);
-        MinecraftEula::register($app);
-        PIDLimit::register($app);
-        SteamDiskSpace::register($app);
 
         FilamentColor::register([
             'danger' => Color::Red,

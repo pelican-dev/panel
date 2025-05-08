@@ -1,19 +1,14 @@
 <?php
 
-namespace App\Extensions\Features;
+namespace App\Extensions\Features\Schemas;
 
+use App\Extensions\Features\FeatureSchemaInterface;
 use Filament\Actions\Action;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
-class PIDLimit extends FeatureProvider
+class PIDLimitSchema implements FeatureSchemaInterface
 {
-    public function __construct(protected Application $app)
-    {
-        parent::__construct($app);
-    }
-
     /** @return array<string> */
     public function getListeners(): array
     {
@@ -67,10 +62,5 @@ class PIDLimit extends FeatureProvider
             )))
             ->modalCancelActionLabel('Close')
             ->action(fn () => null);
-    }
-
-    public static function register(Application $app): self
-    {
-        return new self($app);
     }
 }

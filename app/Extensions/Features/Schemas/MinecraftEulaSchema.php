@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Extensions\Features;
+namespace App\Extensions\Features\Schemas;
 
+use App\Extensions\Features\FeatureSchemaInterface;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use App\Repositories\Daemon\DaemonPowerRepository;
@@ -9,17 +10,11 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
-class MinecraftEula extends FeatureProvider
+class MinecraftEulaSchema implements FeatureSchemaInterface
 {
-    public function __construct(protected Application $app)
-    {
-        parent::__construct($app);
-    }
-
     /** @return array<string> */
     public function getListeners(): array
     {
@@ -63,10 +58,5 @@ class MinecraftEula extends FeatureProvider
                 }
             }
             );
-    }
-
-    public static function register(Application $app): self
-    {
-        return new self($app);
     }
 }

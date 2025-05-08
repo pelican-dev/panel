@@ -6,22 +6,24 @@ use App\Enums\ConsoleWidgetPosition;
 use App\Enums\ContainerStatus;
 use App\Exceptions\Http\Server\ServerStateConflictException;
 use App\Extensions\Features\FeatureProvider;
+use App\Extensions\Features\FeatureSchemaInterface;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
-// use App\Filament\Server\Widgets\ServerNetworkChart;
 use App\Filament\Server\Widgets\ServerOverview;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
+use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Facades\Filament;
-use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Enums\ActionSize;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Livewire\Attributes\On;
+
+// use App\Filament\Server\Widgets\ServerNetworkChart;
 
 class Console extends Page
 {
@@ -34,6 +36,8 @@ class Console extends Page
     protected static string $view = 'filament.server.pages.console';
 
     public ContainerStatus $status = ContainerStatus::Offline;
+
+    protected FeatureProvider $featureProvider;
 
     public function mount(): void
     {
@@ -51,12 +55,12 @@ class Console extends Page
         }
     }
 
-    public function boot(): void
+    public function boot(FeatureProvider $featureProvider): void
     {
+        $this->featureProvider = $featureProvider;
         /** @var Server $server */
         $server = Filament::getTenant();
-        /** @var FeatureProvider $feature */
-        foreach ($server->egg->features() as $feature) {
+        foreach ($featureProvider->getAvailableFeatures($server->egg) as $feature) {
             $this->cacheAction($feature->getAction());
         }
     }
@@ -67,7 +71,7 @@ class Console extends Page
         $data = json_decode($data);
         $feature = data_get($data, 'key');
 
-        $feature = FeatureProvider::getProviders($feature);
+        $feature = $this->featureProvider->get($feature);
         if ($this->getMountedAction()) {
             return;
         }
