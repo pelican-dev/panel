@@ -4,6 +4,7 @@ namespace App\Filament\Server\Widgets;
 
 use App\Models\Server;
 use Carbon\Carbon;
+use Filament\Facades\Filament;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 
@@ -14,6 +15,14 @@ class ServerNetworkChart extends ChartWidget
     protected static ?string $maxHeight = '200px';
 
     public ?Server $server = null;
+
+    public static function canView(): bool
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        return !$server->isInConflictState() && !$server->retrieveStatus()->isOffline();
+    }
 
     protected function getData(): array
     {
