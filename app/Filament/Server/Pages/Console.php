@@ -125,7 +125,19 @@ class Console extends Page
      */
     public function getVisibleWidgets(): array
     {
-        return $this->filterVisibleWidgets($this->getWidgets());
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        $widgets = collect($this->filterVisibleWidgets($this->getWidgets()));
+        if ($server->isInConflictState() || $server->retrieveStatus()->isOffline()) {
+            $widgets = $widgets->filter(fn ($widget) => !in_array($widget, [
+                ServerCpuChart::class,
+                ServerMemoryChart::class,
+                ServerNetworkChart::class,
+            ]));
+        }
+
+        return $widgets->all();
     }
 
     public function getColumns(): int
