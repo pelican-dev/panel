@@ -403,10 +403,11 @@ class Node extends Model implements Validatable
                 }
             }
 
-            // Only IPV4
-            $ips = $ips->filter(fn (string $ip) => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false);
+            $ips = $ips->filter(fn (string $ip) => is_ip($ip));
 
+            // TODO: remove later
             $ips->push('0.0.0.0');
+            $ips->push('::');
 
             return $ips->unique()->all();
         });
