@@ -851,7 +851,7 @@ class EditServer extends EditRecord
                                                                 } catch (Exception) {
                                                                     Notification::make()
                                                                         ->title(trans('admin/server.notifications.reinstall_failed'))
-                                                                        ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
+                                                                        ->body(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
                                                                         ->danger()
                                                                         ->send();
                                                                 }
@@ -900,7 +900,7 @@ class EditServer extends EditRecord
                                                                 Notification::make()
                                                                     ->warning()
                                                                     ->title(trans('admin/server.notifications.server_suspension'))
-                                                                    ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
+                                                                    ->body(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
                                                                     ->send();
                                                             }
                                                         }),
@@ -922,7 +922,7 @@ class EditServer extends EditRecord
                                                                 Notification::make()
                                                                     ->warning()
                                                                     ->title(trans('admin/server.notifications.server_suspension'))
-                                                                    ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
+                                                                    ->body(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
                                                                     ->send();
                                                             }
                                                         }),
@@ -987,7 +987,7 @@ class EditServer extends EditRecord
                                                             } catch (Exception) {
                                                                 Notification::make()
                                                                     ->title(trans('admin/server.notifications.reinstall_failed'))
-                                                                    ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
+                                                                    ->body(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
                                                                     ->danger()
                                                                     ->send();
                                                             }
