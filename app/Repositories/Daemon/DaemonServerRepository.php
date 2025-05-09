@@ -141,4 +141,12 @@ class DaemonServerRepository extends DaemonRepository
                 'jtis' => [md5($id . $this->server->uuid)],
             ]);
     }
+
+    public function getInstallLogs(): string
+    {
+        return $this->getHttpClient()
+            ->get("/api/servers/{$this->server->uuid}/install-logs")
+            ->throw()
+            ->json('data');
+    }
 }
