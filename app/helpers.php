@@ -18,6 +18,20 @@ if (!function_exists('is_ip')) {
     }
 }
 
+if (!function_exists('is_ipv4')) {
+    function is_ipv4(?string $address): bool
+    {
+        return $address !== null && filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false;
+    }
+}
+
+if (!function_exists('is_ipv6')) {
+    function is_ipv6(?string $address): bool
+    {
+        return $address !== null && filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false;
+    }
+}
+
 if (!function_exists('convert_bytes_to_readable')) {
     function convert_bytes_to_readable(int $bytes, int $decimals = 2, ?int $base = null): string
     {

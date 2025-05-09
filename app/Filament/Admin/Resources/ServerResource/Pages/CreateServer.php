@@ -189,10 +189,7 @@ class CreateServer extends CreateRecord
                                     $set('allocation_additional', null);
                                     $set('allocation_additional.needstobeastringhere.extra_allocations', null);
                                 })
-                                ->getOptionLabelFromRecordUsing(
-                                    fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
-                                        ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
-                                )
+                                ->getOptionLabelFromRecordUsing(fn (Allocation $allocation) => $allocation->address)
                                 ->placeholder(function (Get $get) {
                                     $node = Node::find($get('node_id'));
 
@@ -218,7 +215,7 @@ class CreateServer extends CreateRecord
                                             ->label(trans('admin/server.ip_address'))->inlineLabel()
                                             ->helperText(trans('admin/server.ip_address_helper'))
                                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
-                                            ->ipv4()
+                                            ->ip()
                                             ->live()
                                             ->required(),
                                         TextInput::make('allocation_alias')
@@ -269,10 +266,7 @@ class CreateServer extends CreateRecord
                                         ->columnSpan(2)
                                         ->disabled(fn (Get $get) => $get('../../node_id') === null)
                                         ->searchable(['ip', 'port', 'ip_alias'])
-                                        ->getOptionLabelFromRecordUsing(
-                                            fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
-                                                ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
-                                        )
+                                        ->getOptionLabelFromRecordUsing(fn (Allocation $allocation) => $allocation->address)
                                         ->placeholder(trans('admin/server.select_additional'))
                                         ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                         ->relationship(
