@@ -14,8 +14,11 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\HtmlString;
 
 class GSLToken extends FeatureProvider
 {
@@ -35,7 +38,7 @@ class GSLToken extends FeatureProvider
 
     public function getId(): string
     {
-        return 'gsltoken';
+        return 'gsl_token';
     }
 
     public function getAction(): Action
@@ -44,7 +47,9 @@ class GSLToken extends FeatureProvider
         $server = Filament::getTenant();
 
         /** @var ServerVariable $serverVariable */
-        $serverVariable = $server->serverVariables()->where('env_variable', 'STEAM_ACC')->first();
+        $serverVariable = $server->serverVariables()->whereHas('variable', function (Builder $query) {
+            $query->where('env_variable', 'STEAM_ACC');
+        })->first();
 
         return Action::make($this->getId())
             ->requiresConfirmation()
@@ -54,7 +59,7 @@ class GSLToken extends FeatureProvider
             ->disabledForm(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
             ->form([
                 Placeholder::make('info')
-                    ->label('You can either <x-filament::link href="https://steamcommunity.com/dev/managegameservers" target="_blank">generate a new one</x-filament::link> and enter it below or leave the field blank to remove it completely.'),
+                    ->label(new HtmlString(Blade::render('You can either <x-filament::link href="https://steamcommunity.com/dev/managegameservers" target="_blank">generate a new one</x-filament::link> and enter it below or leave the field blank to remove it completely.'))),
                 TextInput::make('gsltoken')
                     ->label('GSL Token')
                     ->rules([
