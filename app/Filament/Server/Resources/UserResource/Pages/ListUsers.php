@@ -383,7 +383,7 @@ class ListUsers extends ListRecords
                 ])
                 ->modalHeading('Invite User')
                 ->modalSubmitActionLabel('Invite')
-                ->action(function (array $data, SubuserCreationService $service) use ($server) {
+                ->action(function (Action $action, array $data, SubuserCreationService $service) use ($server) {
                     $email = strtolower($data['email']);
 
                     $permissions = collect($data)
@@ -413,7 +413,13 @@ class ListUsers extends ListRecords
                             ->body($exception->getMessage())
                             ->danger()
                             ->send();
+
+                        $action->failure();
+
+                        return;
                     }
+
+                    $action->success();
 
                     return redirect(self::getUrl(tenant: $server));
                 }),
