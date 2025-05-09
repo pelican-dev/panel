@@ -160,7 +160,7 @@ class EditServer extends EditRecord
                                                         return '';
                                                     })
                                                     ->language('shell')
-                                                    ->view('filament.plugins.monaco-editor'),
+                                                    ->view('filament.plugins.monaco-editor-logs'),
                                             ])
                                     ),
 
