@@ -53,6 +53,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
@@ -139,22 +140,29 @@ class EditServer extends EditRecord
                                         'lg' => 1,
                                     ])
                                     ->hintAction(
-                                        Action::make('view_install_logs')
-                                            ->label(trans('admin/server.view_install_logs'))
-                                            ->visible(fn (Server $server) => $server->isFailedInstall())
+                                        Action::make('view_install_log')
+                                            ->label(trans('admin/server.view_install_log'))
+                                            //->visible(fn (Server $server) => $server->isFailedInstall())
+                                            ->modalHeading('')
                                             ->modalSubmitAction(false)
-                                            ->disabledForm() // TODO: monaco editor not disabled
+                                            ->modalFooterActionsAlignment(Alignment::Right)
+                                            ->modalCancelActionLabel(trans('filament::components/modal.actions.close.label'))
                                             ->form([
                                                 MonacoEditor::make('logs')
-                                                    ->label('')
-                                                    ->placeholderText('No logs available')
+                                                    ->hiddenLabel()
+                                                    ->placeholderText(trans('admin/server.no_log'))
                                                     ->formatStateUsing(function (Server $server, DaemonServerRepository $serverRepository) {
                                                         try {
                                                             return $serverRepository->setServer($server)->getInstallLogs();
                                                         } catch (ConnectionException) {
-                                                            // Could not connect to node
+                                                            Notification::make()
+                                                                ->title(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
+                                                                ->body(trans('admin/server.notifications.log_failed'))
+                                                                ->color('warning')
+                                                                ->warning()
+                                                                ->send();
                                                         } catch (Exception) {
-                                                            // No logs available
+                                                            return '';
                                                         }
 
                                                         return '';
