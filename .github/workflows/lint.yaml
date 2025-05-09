@@ -35,7 +35,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.2, 8.3, 8.4]
+        php: [ 8.2, 8.3, 8.4 ]
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
@@ -68,4 +68,4 @@ jobs:
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
       - name: PHPStan
-        run: vendor/bin/phpstan --memory-limit=-1
+        run: vendor/bin/phpstan --memory-limit=-1 --error-format=github
