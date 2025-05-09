@@ -383,12 +383,12 @@ class EditProfile extends BaseEditProfile
                                                             'monospace' => 'monospace', //default
                                                         ];
 
-                                                        if (!Storage::disk('public')->exists('storage/fonts')) {
-                                                            Storage::disk('public')->makeDirectory('storage/fonts');
+                                                        if (!Storage::disk('public')->exists('fonts')) {
+                                                            Storage::disk('public')->makeDirectory('fonts');
                                                             $this->fillForm();
                                                         }
 
-                                                        foreach (Storage::disk('public')->allFiles('storage/fonts') as $file) {
+                                                        foreach (Storage::disk('public')->allFiles('fonts') as $file) {
                                                             $fileInfo = pathinfo($file);
 
                                                             if ($fileInfo['extension'] === 'ttf') {
