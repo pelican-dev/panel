@@ -716,8 +716,8 @@ class EditServer extends EditRecord
                                                     ->requiresConfirmation()
                                                     ->modalIcon('tabler-database-x')
                                                     ->modalHeading(trans('admin/server.delete_db_heading'))
-                                                    ->modalSubmitActionLabel(fn (Get $get) => 'Delete ' . $get('database') . '?')
-                                                    ->modalDescription(fn (Get $get) => trans('admin/server.delete_db') . $get('database') . '?')
+                                                    ->modalSubmitActionLabel(trans('filament-actions::delete.single.label'))
+                                                    ->modalDescription(fn (Get $get) => trans('admin/server.delete_db', ['name' => $get('database')]))
                                                     ->action(function (DatabaseManagementService $databaseManagementService, $record) {
                                                         $databaseManagementService->delete($record);
                                                         $this->fillForm();

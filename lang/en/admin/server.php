@@ -86,7 +86,7 @@ return [
     'allocations' => 'Allocations',
     'databases' => 'Databases',
     'no_databases' => 'No Databases exist for this Server',
-    'delete_db' => 'Are you sure you want to delete',
+    'delete_db' => 'Are you sure you want to delete :name ?',
     'delete_db_heading' => 'Delete Database?',
     'backups' => 'Backups',
     'egg' => 'Egg',
