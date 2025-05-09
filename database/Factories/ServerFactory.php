@@ -39,10 +39,10 @@ class ServerFactory extends Factory
     public function definition(): array
     {
         return [
-            'owner_id' => User::factory(),
-            'node_id' => Node::factory(),
-            'allocation_id' => Allocation::factory(),
-            'egg_id' => Egg::factory(),
+            'owner_id' => User::factory()->make(),
+            'node_id' => Node::factory()->make(),
+            'allocation_id' => Allocation::factory()->make(),
+            'egg_id' => Egg::factory()->make(),
             'uuid' => Uuid::uuid4()->toString(),
             'uuid_short' => Str::lower(Str::random(8)),
             'name' => $this->faker->firstName(),

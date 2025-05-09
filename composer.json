@@ -49,7 +49,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.5",
-        "fakerphp/faker": "^1.23.1",
+        "fakerphp/faker": "^1.24",
         "larastan/larastan": "3.x-dev#5bd1c40edb43a727584081e74e9a1a2a201ea2ee",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.15.3",

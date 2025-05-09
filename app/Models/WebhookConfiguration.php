@@ -2,14 +2,20 @@
 
 namespace App\Models;
 
+use App\Jobs\ProcessWebhook;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use Livewire\Features\SupportEvents\HandlesEvents;
 
 /**
+ * @property string|null $type
+ * @property string|null $payload
  * @property string $endpoint
  * @property string $description
  * @property string[] $events
@@ -19,7 +25,7 @@ use Illuminate\Support\Facades\File;
  */
 class WebhookConfiguration extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HandlesEvents, HasFactory, SoftDeletes;
 
     /** @var string[] */
     protected static array $eventBlacklist = [
@@ -27,15 +33,26 @@ class WebhookConfiguration extends Model
     ];
 
     protected $fillable = [
+        'type',
+        'payload',
         'endpoint',
         'description',
         'events',
     ];
 
+    /**
+     * Default values for specific fields in the database.
+     */
+    protected $attributes = [
+        'type' => 'standalone',
+        'payload' => null,
+    ];
+
     protected function casts(): array
     {
         return [
-            'events' => 'json',
+            'events' => 'array',
+            'payload' => 'array',
         ];
     }
 
@@ -149,5 +166,42 @@ class WebhookConfiguration extends Model
         }
 
         return $events;
+    }
+
+    /**
+     * @param  array<mixed, mixed>  $replacement
+     * @return array<mixed, mixed>|string|null
+     * */
+    public function replaceVars(array $replacement, string $subject): array|string|null
+    {
+        return preg_replace_callback(
+            '/{{(.*?)}}/',
+            function ($matches) use ($replacement) {
+                $trimmed = trim($matches[1]);
+
+                return Arr::get($replacement, $trimmed, $trimmed);
+            },
+            $subject
+        );
+    }
+
+    public static function getTime(): ?string
+    {
+        return 'Today at ' . Carbon::now()->format('h:i A');
+    }
+
+    /** @return array<string, mixed> */
+    public function run(?bool $dry = false): array
+    {
+        $eventName = collect($this->events ?: ['eloquent.created: App\\Models\\Server'])->random();
+        $data = array_merge(Server::factory()->makeOne()->attributesToArray(), [
+            'id' => random_int(1, 100),
+            'event' => $this->transformClassName($eventName),
+        ]);
+        $eventData = [json_encode($data)];
+
+        ProcessWebhook::dispatchIf(!$dry, $this, $eventName, $eventData);
+
+        return $data;
     }
 }
