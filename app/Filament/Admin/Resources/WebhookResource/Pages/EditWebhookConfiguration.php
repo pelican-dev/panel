@@ -110,4 +110,8 @@ class EditWebhookConfiguration extends EditRecord
 
         return $data;
     }
+    protected function afterSave(): void
+    {
+        $this->dispatch('widget-refresh');
+    }
 }

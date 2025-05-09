@@ -9,9 +9,10 @@ class DiscordPreview extends Widget
 {
     protected static string $view = 'filament.admin.widgets.discord-preview';
 
+    //Don't invert it, if used normal one will reload the faker every time you write on form.
     /** @var array<string, string> */
     protected $listeners = [
-        'refresh-widget' => '$refresh',
+        'widget-refresh' => '$refresh',
     ];
 
     protected static bool $isDiscovered = false; // Without this its shown on every Admin Pages
