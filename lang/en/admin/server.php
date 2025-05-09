@@ -64,6 +64,7 @@ return [
     'reinstall_modal_heading' => 'Are you sure you want to reinstall this server?',
     'reinstall_modal_description' => '!! This can result in unrecoverable data loss !!',
     'server_status' => 'Server Status',
+    'view_install_log' => 'View install log',
     'uuid' => 'UUID',
     'node' => 'Node',
     'short_uuid' => 'Short UUID',
@@ -100,6 +101,7 @@ return [
     'create_allocation' => 'Create Allocation',
     'add_allocation' => 'Add Allocation',
     'view' => 'View',
+    'no_log' => 'No Log Available',
     'tabs' => [
         'information' => 'Information',
         'egg_configuration' => 'Egg Configuration',
@@ -129,5 +131,6 @@ return [
         'install_toggle_failed' => 'Could not toggle install status',
         'reinstall_started' => 'Reinstall started',
         'reinstall_failed' => 'Could not start reinstall',
+        'log_failed' => 'Could not connect to Wings to retrieve server install log.',
     ],
 ];

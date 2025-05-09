@@ -231,7 +231,12 @@ class Server extends Model implements Validatable
 
     public function isInstalled(): bool
     {
-        return $this->status !== ServerState::Installing && $this->status !== ServerState::InstallFailed;
+        return $this->status !== ServerState::Installing && !$this->isFailedInstall();
+    }
+
+    public function isFailedInstall(): bool
+    {
+        return $this->status === ServerState::InstallFailed || $this->status === ServerState::ReinstallFailed;
     }
 
     public function isSuspended(): bool

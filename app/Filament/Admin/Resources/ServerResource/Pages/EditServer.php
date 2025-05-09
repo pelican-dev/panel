@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
-use App\Enums\ServerState;
+use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
@@ -51,6 +51,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
@@ -135,7 +136,39 @@ class EditServer extends EditRecord
                                         'sm' => 1,
                                         'md' => 1,
                                         'lg' => 1,
-                                    ]),
+                                    ])
+                                    ->hintAction(
+                                        Action::make('view_install_log')
+                                            ->label(trans('admin/server.view_install_log'))
+                                            //->visible(fn (Server $server) => $server->isFailedInstall())
+                                            ->modalHeading('')
+                                            ->modalSubmitAction(false)
+                                            ->modalFooterActionsAlignment(Alignment::Right)
+                                            ->modalCancelActionLabel(trans('filament::components/modal.actions.close.label'))
+                                            ->form([
+                                                MonacoEditor::make('logs')
+                                                    ->hiddenLabel()
+                                                    ->placeholderText(trans('admin/server.no_log'))
+                                                    ->formatStateUsing(function (Server $server, DaemonServerRepository $serverRepository) {
+                                                        try {
+                                                            return $serverRepository->setServer($server)->getInstallLogs();
+                                                        } catch (ConnectionException) {
+                                                            Notification::make()
+                                                                ->title(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
+                                                                ->body(trans('admin/server.notifications.log_failed'))
+                                                                ->color('warning')
+                                                                ->warning()
+                                                                ->send();
+                                                        } catch (Exception) {
+                                                            return '';
+                                                        }
+
+                                                        return '';
+                                                    })
+                                                    ->language('shell')
+                                                    ->view('filament.plugins.monaco-editor-logs'),
+                                            ])
+                                    ),
 
                                 Textarea::make('description')
                                     ->label(trans('admin/server.description'))
@@ -800,12 +833,12 @@ class EditServer extends EditRecord
                                                     Action::make('toggleInstall')
                                                         ->label(trans('admin/server.toggle_install'))
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
-                                                        ->modal(fn (Server $server) => $server->status === ServerState::InstallFailed)
+                                                        ->modal(fn (Server $server) => $server->isFailedInstall())
                                                         ->modalHeading(trans('admin/server.toggle_install_failed_header'))
                                                         ->modalDescription(trans('admin/server.toggle_install_failed_desc'))
                                                         ->modalSubmitActionLabel(trans('admin/server.reinstall'))
                                                         ->action(function (ToggleInstallService $toggleService, ReinstallServerService $reinstallService, Server $server) {
-                                                            if ($server->status === ServerState::InstallFailed) {
+                                                            if ($server->isFailedInstall()) {
                                                                 try {
                                                                     $reinstallService->handle($server);
 
