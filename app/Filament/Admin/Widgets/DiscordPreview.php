@@ -19,7 +19,7 @@ class DiscordPreview extends Widget
     protected int|string|array $columnSpan = 1;
 
     public ?WebhookConfiguration $record = null;
-    
+
     public function getViewData(): array
     {
         if (!$this->record || !$this->record->payload) {
@@ -31,7 +31,7 @@ class DiscordPreview extends Widget
                 'getTime' => WebhookConfiguration::getTime(),
             ];
         }
-        
+
         $data = $this->record->run(true);
 
         // TODO: Change processPayload to json_encode, as this is a temporal fix
@@ -58,8 +58,8 @@ class DiscordPreview extends Widget
     /**
      * Process payload by replacing variables
      *
-     * @param array<string, mixed>|string $payload
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>|string  $payload
+     * @param  array<string, mixed>  $data
      * @return array<string, mixed>|string
      */
     private function processPayload(array|string $payload, array $data): array|string
@@ -67,7 +67,7 @@ class DiscordPreview extends Widget
         if (!$this->record) {
             return is_array($payload) ? $payload : (string) $payload;
         }
-        
+
         if (is_string($payload)) {
             return $this->record->replaceVars($data, $payload);
         }
@@ -80,13 +80,11 @@ class DiscordPreview extends Widget
 
         return $payload;
     }
-    
 
     /** @return array<string, mixed> */
     private function easterEgg(?string $author): array
     {
         $avatar = $this->record ? data_get($this->record->payload, 'avatar_url') : null;
-
 
         // If this is approved, add the other pelican contributors.
         return match ($author) {
