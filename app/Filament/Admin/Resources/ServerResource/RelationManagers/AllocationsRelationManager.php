@@ -16,6 +16,7 @@ use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\AssociateAction;
 use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DissociateAction;
 use Filament\Tables\Actions\DissociateBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -34,15 +35,18 @@ class AllocationsRelationManager extends RelationManager
     {
         return $table
             ->selectCurrentPageOnly()
-            ->recordTitleAttribute('ip')
-            ->recordTitle(fn (Allocation $allocation) => "$allocation->ip:$allocation->port")
+            ->recordTitleAttribute('address')
+            ->recordTitle(fn (Allocation $allocation) => $allocation->address)
             ->checkIfRecordIsSelectableUsing(fn (Allocation $record) => $record->id !== $this->getOwnerRecord()->allocation_id)
             ->inverseRelationship('server')
             ->heading(trans('admin/server.allocations'))
             ->columns([
-                TextColumn::make('ip')->label(trans('admin/server.ip_address')),
-                TextColumn::make('port')->label(trans('admin/server.port')),
-                TextInputColumn::make('ip_alias')->label(trans('admin/server.alias')),
+                TextColumn::make('ip')
+                    ->label(trans('admin/server.ip_address')),
+                TextColumn::make('port')
+                    ->label(trans('admin/server.port')),
+                TextInputColumn::make('ip_alias')
+                    ->label(trans('admin/server.alias')),
                 IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
                         true => 'tabler-star-filled',
@@ -58,8 +62,11 @@ class AllocationsRelationManager extends RelationManager
             ])
             ->actions([
                 Action::make('make-primary')
+                    ->label(trans('admin/server.make_primary'))
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
-                    ->label(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id ? '' : trans('admin/server.make_primary')),
+                    ->hidden(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id),
+                DissociateAction::make()
+                    ->hidden(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id),
             ])
             ->headerActions([
                 CreateAction::make()->label(trans('admin/server.create_allocation'))
@@ -69,7 +76,7 @@ class AllocationsRelationManager extends RelationManager
                             ->options(collect($this->getOwnerRecord()->node->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                             ->label(trans('admin/server.ip_address'))
                             ->inlineLabel()
-                            ->ipv4()
+                            ->ip()
                             ->live()
                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                             ->required(),
@@ -85,9 +92,7 @@ class AllocationsRelationManager extends RelationManager
                             ->inlineLabel()
                             ->live()
                             ->disabled(fn (Get $get) => empty($get('allocation_ip')))
-                            ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports',
-                                CreateServer::retrieveValidPorts($this->getOwnerRecord()->node, $state, $get('allocation_ip')))
-                            )
+                            ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports', CreateServer::retrieveValidPorts($this->getOwnerRecord()->node, $state, $get('allocation_ip'))))
                             ->splitKeys(['Tab', ' ', ','])
                             ->required(),
                     ])
