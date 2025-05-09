@@ -26,6 +26,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
@@ -173,13 +174,14 @@ class EditNode extends EditRecord
                                 ->default(null)
                                 ->hint(fn (Get $get) => $get('ip'))
                                 ->hintColor('success')
+                                ->stateCast(new BooleanStateCast(false, true))
                                 ->options([
-                                    true => trans('admin/node.valid'),
-                                    false => trans('admin/node.invalid'),
+                                    1 => trans('admin/node.valid'),
+                                    0 => trans('admin/node.invalid'),
                                 ])
                                 ->colors([
-                                    true => 'success',
-                                    false => 'danger',
+                                    1 => 'success',
+                                    0 => 'danger',
                                 ])
                                 ->columnSpan(1),
                             TextInput::make('daemon_listen')
@@ -311,14 +313,16 @@ class EditNode extends EditRecord
                                     'md' => 1,
                                     'lg' => 3,
                                 ])
-                                ->label(trans('admin/node.use_for_deploy'))->inline()
+                                ->label(trans('admin/node.use_for_deploy'))
+                                ->inline()
+                                ->stateCast(new BooleanStateCast(false, true))
                                 ->options([
-                                    true => trans('admin/node.yes'),
-                                    false => trans('admin/node.no'),
+                                    1 => trans('admin/node.yes'),
+                                    0 => trans('admin/node.no'),
                                 ])
                                 ->colors([
-                                    true => 'success',
-                                    false => 'danger',
+                                    1 => 'success',
+                                    0 => 'danger',
                                 ]),
                             ToggleButtons::make('maintenance_mode')
                                 ->columnSpan([
@@ -327,16 +331,18 @@ class EditNode extends EditRecord
                                     'md' => 1,
                                     'lg' => 3,
                                 ])
-                                ->label(trans('admin/node.maintenance_mode'))->inline()
+                                ->label(trans('admin/node.maintenance_mode'))
+                                ->inline()
                                 ->hinticon('tabler-question-mark')
                                 ->hintIconTooltip(trans('admin/node.maintenance_mode_help'))
+                                ->stateCast(new BooleanStateCast(false, true))
                                 ->options([
-                                    true => trans('admin/node.enabled'),
-                                    false => trans('admin/node.disabled'),
+                                    1 => trans('admin/node.enabled'),
+                                    0 => trans('admin/node.disabled'),
                                 ])
                                 ->colors([
-                                    false => 'success',
-                                    true => 'danger',
+                                    1 => 'danger',
+                                    0 => 'success',
                                 ]),
                             Grid::make()
                                 ->columns([
@@ -354,13 +360,14 @@ class EditNode extends EditRecord
                                         ->afterStateUpdated(fn (Set $set) => $set('memory_overallocate', 0))
                                         ->formatStateUsing(fn (Get $get) => $get('memory') == 0)
                                         ->live()
+                                        ->stateCast(new BooleanStateCast(false, true))
                                         ->options([
-                                            true => trans('admin/node.unlimited'),
-                                            false => trans('admin/node.limited'),
+                                            1 => trans('admin/node.unlimited'),
+                                            0 => trans('admin/node.limited'),
                                         ])
                                         ->colors([
-                                            true => 'primary',
-                                            false => 'warning',
+                                            1 => 'primary',
+                                            0 => 'warning',
                                         ])
                                         ->columnSpan([
                                             'default' => 1,
@@ -414,13 +421,14 @@ class EditNode extends EditRecord
                                         ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
                                         ->afterStateUpdated(fn (Set $set) => $set('disk_overallocate', 0))
                                         ->formatStateUsing(fn (Get $get) => $get('disk') == 0)
+                                        ->stateCast(new BooleanStateCast(false, true))
                                         ->options([
-                                            true => trans('admin/node.unlimited'),
-                                            false => trans('admin/node.limited'),
+                                            1 => trans('admin/node.unlimited'),
+                                            0 => trans('admin/node.limited'),
                                         ])
                                         ->colors([
-                                            true => 'primary',
-                                            false => 'warning',
+                                            1 => 'primary',
+                                            0 => 'warning',
                                         ])
                                         ->columnSpan([
                                             'default' => 1,
@@ -469,13 +477,14 @@ class EditNode extends EditRecord
                                         ->afterStateUpdated(fn (Set $set) => $set('cpu', 0))
                                         ->afterStateUpdated(fn (Set $set) => $set('cpu_overallocate', 0))
                                         ->formatStateUsing(fn (Get $get) => $get('cpu') == 0)
+                                        ->stateCast(new BooleanStateCast(false, true))
                                         ->options([
-                                            true => trans('admin/node.unlimited'),
-                                            false => trans('admin/node.limited'),
+                                            1 => trans('admin/node.unlimited'),
+                                            0 => trans('admin/node.limited'),
                                         ])
                                         ->colors([
-                                            true => 'primary',
-                                            false => 'warning',
+                                            1 => 'primary',
+                                            0 => 'warning',
                                         ])
                                         ->columnSpan(2),
                                     TextInput::make('cpu')
@@ -534,13 +543,14 @@ class EditNode extends EditRecord
                                                     ->inline()
                                                     ->default(false)
                                                     ->afterStateUpdated(fn (bool $state, NodeAutoDeployService $service, Node $node, Set $set) => $set('generatedToken', $service->handle(request(), $node, $state)))
+                                                    ->stateCast(new BooleanStateCast(false, true))
                                                     ->options([
-                                                        false => trans('admin/node.standalone'),
-                                                        true => trans('admin/node.docker'),
+                                                        0 => trans('admin/node.standalone'),
+                                                        1 => trans('admin/node.docker'),
                                                     ])
                                                     ->colors([
-                                                        false => 'primary',
-                                                        true => 'success',
+                                                        0 => 'primary',
+                                                        1 => 'success',
                                                     ])
                                                     ->columnSpan(1),
                                                 Textarea::make('generatedToken')
