@@ -22,20 +22,23 @@ class NodeSystemInformation extends Component
         $exception = $systemInformation['exception'] ?? null;
         $version = $systemInformation['version'] ?? null;
 
+        if ($exception) {
+            $this->js('console.error("' . $exception . '");');
+        }
+
         $tooltip = $exception ? 'Error connecting to node!<br>Check browser console for details.' : $version;
 
         $icon = 'tabler-heart' . ($exception ? '-off' : 'beat');
         $color = $exception ? 'danger' : 'success';
 
-        // TODO: add exception to browser console
         return generate_icon_html($icon, attributes: (new ComponentAttributeBag())
             ->merge([
                 'x-tooltip' => '{
-            content: "' . $tooltip . '",
-            theme: $store.theme,
-            allowHTML: true,
-            placement: "bottom",
-        }',
+                    content: "' . $tooltip . '",
+                    theme: $store.theme,
+                    allowHTML: true,
+                    placement: "bottom",
+                }',
             ], escape: false)
             ->color(IconComponent::class, $color), size: IconSize::Large)
             ->toHtml();
