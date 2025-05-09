@@ -34,6 +34,7 @@ use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Http\Client\Factory;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\Str;
@@ -212,7 +213,7 @@ class Settings extends Page implements HasForms
                 ->separator()
                 ->splitKeys(['Tab', ' '])
                 ->placeholder(trans('admin/setting.general.trusted_proxies_help'))
-                ->default(env('TRUSTED_PROXIES', implode(',', config('trustedproxy.proxies'))))
+                ->default(env('TRUSTED_PROXIES', implode(',', Arr::wrap(config('trustedproxy.proxies')))))
                 ->hintActions([
                     FormAction::make('clear')
                         ->label(trans('admin/setting.general.clear'))
