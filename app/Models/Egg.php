@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Str;
 
 /**
@@ -281,6 +282,11 @@ class Egg extends Model implements Validatable
         }
 
         return $this->configFrom->file_denylist;
+    }
+
+    public function mounts(): MorphToMany
+    {
+        return $this->morphToMany(Mount::class, 'mountable');
     }
 
     /**

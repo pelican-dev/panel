@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * @property int $id
@@ -102,24 +102,24 @@ class Mount extends Model implements Validatable
     /**
      * Returns all eggs that have this mount assigned.
      */
-    public function eggs(): BelongsToMany
+    public function eggs(): MorphToMany
     {
-        return $this->belongsToMany(Egg::class);
+        return $this->morphedByMany(Egg::class, 'mountable');
     }
 
     /**
      * Returns all nodes that have this mount assigned.
      */
-    public function nodes(): BelongsToMany
+    public function nodes(): MorphToMany
     {
-        return $this->belongsToMany(Node::class);
+        return $this->morphedByMany(Node::class, 'mountable');
     }
 
     /**
      * Returns all servers that have this mount assigned.
      */
-    public function servers(): BelongsToMany
+    public function servers(): MorphToMany
     {
-        return $this->belongsToMany(Server::class);
+        return $this->morphedByMany(Server::class, 'mountable');
     }
 }
