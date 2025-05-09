@@ -39,8 +39,8 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Socialite\Facades\Socialite;
@@ -366,30 +366,33 @@ class EditProfile extends BaseEditProfile
                                         Section::make(trans('profile.console'))
                                             ->collapsible()
                                             ->icon('tabler-brand-tabler')
+                                            ->columns(4)
                                             ->schema([
-                                                TextInput::make('console_rows')
-                                                    ->label(trans('profile.rows'))
+                                                TextInput::make('console_font_size')
+                                                    ->label(trans('profile.font_size'))
+                                                    ->columnSpan(1)
                                                     ->minValue(1)
                                                     ->numeric()
                                                     ->required()
-                                                    ->columnSpan(1)
-                                                    ->default(30),
+                                                    ->default(14),
                                                 Select::make('console_font')
                                                     ->label(trans('profile.font'))
+                                                    ->required()
                                                     ->options(function () {
                                                         $fonts = [
                                                             'monospace' => 'monospace', //default
                                                         ];
 
-                                                        if (!File::exists(public_path('storage/fonts'))) {
-                                                            File::makeDirectory(public_path('storage/fonts'));
+                                                        if (!Storage::disk('public')->exists('storage/fonts')) {
+                                                            Storage::disk('public')->makeDirectory('storage/fonts');
                                                             $this->fillForm();
                                                         }
 
-                                                        foreach (File::allFiles(public_path('storage/fonts')) as $file) {
-                                                            if ($file->getExtension() === 'ttf') {
-                                                                $name = pathinfo($file->getFilename(), PATHINFO_FILENAME);
-                                                                $fonts[$name] = $name;
+                                                        foreach (Storage::disk('public')->allFiles('storage/fonts') as $file) {
+                                                            $fileInfo = pathinfo($file);
+
+                                                            if ($fileInfo['extension'] === 'ttf') {
+                                                                $fonts[$fileInfo['filename']] = $fileInfo['filename'];
                                                             }
                                                         }
 
@@ -399,7 +402,8 @@ class EditProfile extends BaseEditProfile
                                                     ->default('monospace')
                                                     ->afterStateUpdated(fn ($state, callable $set) => $set('font_preview', $state)),
                                                 Placeholder::make('font_preview')
-                                                    ->label('Preview')
+                                                    ->label(trans('profile.font_preview'))
+                                                    ->columnSpan(2)
                                                     ->content(function (Get $get) {
                                                         $fontName = $get('console_font') ?? 'monospace';
                                                         $fontSize = $get('console_font_size') . 'px';
@@ -421,13 +425,24 @@ class EditProfile extends BaseEditProfile
                                                                     <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
                                                                 HTML);
                                                     }),
-                                                TextInput::make('console_font_size')
-                                                    ->label(trans('profile.font_size'))
-                                                    ->columnSpan(1)
+                                                TextInput::make('console_graph_period')
+                                                    ->label(trans('profile.graph_period'))
+                                                    ->suffix(trans('profile.seconds'))
+                                                    ->hintIcon('tabler-question-mark')
+                                                    ->hintIconTooltip(trans('profile.graph_period_helper'))
+                                                    ->columnSpan(2)
+                                                    ->numeric()
+                                                    ->default(30)
+                                                    ->minValue(10)
+                                                    ->maxValue(120)
+                                                    ->required(),
+                                                TextInput::make('console_rows')
+                                                    ->label(trans('profile.rows'))
                                                     ->minValue(1)
                                                     ->numeric()
                                                     ->required()
-                                                    ->default(14),
+                                                    ->columnSpan(2)
+                                                    ->default(30),
                                             ]),
                                     ]),
                             ]),
@@ -493,6 +508,7 @@ class EditProfile extends BaseEditProfile
             'console_font' => $data['console_font'],
             'console_font_size' => $data['console_font_size'],
             'console_rows' => $data['console_rows'],
+            'console_graph_period' => $data['console_graph_period'],
             'dashboard_layout' => $data['dashboard_layout'],
         ];
 
@@ -506,9 +522,10 @@ class EditProfile extends BaseEditProfile
     {
         $moarbetterdata = json_decode($data['customization'], true);
 
-        $data['console_font'] = $moarbetterdata['console_font'] ?? 'ComicMono';
+        $data['console_font'] = $moarbetterdata['console_font'] ?? 'monospace';
         $data['console_font_size'] = $moarbetterdata['console_font_size'] ?? 14;
         $data['console_rows'] = $moarbetterdata['console_rows'] ?? 30;
+        $data['console_graph_period'] = $moarbetterdata['console_graph_period'] ?? 30;
         $data['dashboard_layout'] = $moarbetterdata['dashboard_layout'] ?? 'grid';
 
         return $data;
