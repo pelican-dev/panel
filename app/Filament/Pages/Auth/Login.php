@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Auth;
 
 use App\Extensions\Captcha\Providers\CaptchaProvider;
 use App\Extensions\OAuth\Providers\OAuthProvider;
+use App\Models\RecoveryToken;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
@@ -57,11 +58,23 @@ class Login extends BaseLogin
             return null;
         }
 
-        $isValidToken = $this->google2FA->verifyKey(
-            $user->totp_secret,
-            $token,
-            Config::integer('panel.auth.2fa.window'),
-        );
+        $isValidToken = false;
+        if (strlen($token) === $this->google2FA->getOneTimePasswordLength()) {
+            $isValidToken = $this->google2FA->verifyKey(
+                $user->totp_secret,
+                $token,
+                Config::integer('panel.auth.2fa.window'),
+            );
+        } else {
+            foreach ($user->recoveryTokens()->get() as $recoveryToken) {
+                /** @var RecoveryToken $recoveryToken */
+                if (password_verify($token, $recoveryToken->token)) {
+                    $isValidToken = true;
+                    $recoveryToken->delete();
+                    break;
+                }
+            }
+        }
 
         if (!$isValidToken) {
             // Buffer to prevent bruteforce
@@ -108,7 +121,9 @@ class Login extends BaseLogin
     {
         return TextInput::make('2fa')
             ->label(trans('auth.two-factor-code'))
-            ->hidden(fn () => !$this->verifyTwoFactor)
+            ->hintIcon('tabler-question-mark')
+            ->hintIconTooltip(trans('auth.two-factor-hint'))
+            ->visible(fn () => $this->verifyTwoFactor)
             ->required()
             ->live();
     }
