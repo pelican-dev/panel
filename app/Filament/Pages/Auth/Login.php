@@ -66,8 +66,7 @@ class Login extends BaseLogin
                 Config::integer('panel.auth.2fa.window'),
             );
         } else {
-            foreach ($user->recoveryTokens()->get() as $recoveryToken) {
-                /** @var RecoveryToken $recoveryToken */
+            foreach ($user->recoveryTokens as $recoveryToken) {
                 if (password_verify($token, $recoveryToken->token)) {
                     $isValidToken = true;
                     $recoveryToken->delete();
