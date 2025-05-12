@@ -25,7 +25,6 @@ class CreateWebhookConfiguration extends CreateRecord
     {
         return [];
     }
-    
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {

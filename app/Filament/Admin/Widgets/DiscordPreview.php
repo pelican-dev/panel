@@ -77,7 +77,7 @@ class DiscordPreview extends Widget
             if (is_array($value) || is_string($value)) {
                 $payload[$key] = $this->processPayload($value, $data);
             } else {
-              $payload[$key] = $value;
+                $payload[$key] = $value;
             }
         }
 
