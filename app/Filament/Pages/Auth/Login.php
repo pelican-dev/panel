@@ -4,7 +4,6 @@ namespace App\Filament\Pages\Auth;
 
 use App\Extensions\Captcha\Providers\CaptchaProvider;
 use App\Extensions\OAuth\Providers\OAuthProvider;
-use App\Models\RecoveryToken;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
