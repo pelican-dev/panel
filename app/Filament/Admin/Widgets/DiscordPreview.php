@@ -9,14 +9,26 @@ class DiscordPreview extends Widget
 {
     protected static string $view = 'filament.admin.widgets.discord-preview';
 
+    /** @var array<string, string> */
     protected $listeners = [
         'refresh-widget' => '$refresh',
     ];
 
-    protected static bool $isDiscovered = false;
+    protected static bool $isDiscovered = false; // Without this its shown on every Admin Pages
+
     protected int|string|array $columnSpan = 1;
+
     public ?WebhookConfiguration $record = null;
 
+    /**
+     * @return array{
+     *     link: callable,
+     *     content: mixed,
+     *     sender: array{name: string, avatar: string},
+     *     embeds: array<int, mixed>,
+     *     getTime: mixed
+     * }
+     */
     public function getViewData(): array
     {
         if (!$this->record || !$this->record->payload) {
@@ -56,6 +68,11 @@ class DiscordPreview extends Widget
         ];
     }
 
+    /**
+     * @param  array<string, mixed>|string  $payload
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>|string
+     */
     private function replaceVarsInPayload(array|string $payload, array $data): array|string
     {
         if (is_string($payload)) {
@@ -69,6 +86,7 @@ class DiscordPreview extends Widget
                         return $matches[0];
                     }
                 }
+
                 return $value;
             }, $payload);
         }
@@ -76,9 +94,14 @@ class DiscordPreview extends Widget
         foreach ($payload as $key => $value) {
             $payload[$key] = $this->replaceVarsInPayload($value, $data);
         }
+
         return $payload;
     }
-        private function getSampleData(): array
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getSampleData(): array
     {
         return [
             'id' => 2,
