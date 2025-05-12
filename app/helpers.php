@@ -90,7 +90,7 @@ if (!function_exists('resolve_path')) {
 if (!function_exists('plugin_path')) {
     function plugin_path(string $plugin, string ...$paths): string
     {
-        return str_replace('//', '', base_path('plugins/') . $plugin . '/' . implode('/', $paths));
+        return join_paths(base_path('plugins'), $plugin, implode('/', $paths));
     }
 }
 
