@@ -41,7 +41,7 @@ class WebhookResource extends Resource
     protected static ?string $recordTitleAttribute = 'description';
 
     protected const TYPES = [
-        'standalone' => 'Standalone',
+        'standalone' => 'Regular',
         'discord' => 'Discord',
     ];
 
@@ -133,10 +133,13 @@ class WebhookResource extends Resource
                         'standalone' => null,
                         'discord' => Color::hex('#5865F2'),
                     ])
-                    ->afterStateHydrated(function () {
+                    ->afterStateHydrated(function (Get $get) {
+                        if ($get('type') !== 'discord') {
+                            return;
+                        }
                         AlertBanner::make()
                             ->title('Help')
-                            ->body('You have to wrap variable name in between {{ }} for example if you want to get the name from the api you can use {{name}}')
+                            ->body('You have to wrap variable name in between {{ }} for example if you want to get the name from the api you can use {{name}}.<br>Remember, the values here will be to show how it will look, on the webhook will be the real ones.')
                             ->icon('tabler-question-mark')
                             ->info()
                             ->send();
@@ -164,16 +167,6 @@ class WebhookResource extends Resource
                         CheckboxList::make('events')
                             ->lazy()
                             ->options(fn () => WebhookConfiguration::filamentCheckboxList())
-                            /* ->afterStateUpdated(function ($state, CheckboxList $component) {
-                                $firstOption = collect($state)->first();
-                                if (!$firstOption) {
-                                    return;
-                                }
-                                $trim = fn ($str) => str($str)->afterLast(': ')->afterLast('\\');
-                                $options = collect($component->getOptions())
-                                    ->filter(fn ($option) => $trim($option) == $trim($firstOption));
-                                $component->options($options);
-                            }) */
                             ->searchable()
                             ->bulkToggleable()
                             ->columns(3)
@@ -225,18 +218,6 @@ class WebhookResource extends Resource
                             'everyone' => '@everyone & @here',
                         ]),
                 ]),
-            /* TODO
-                Section::make('Attachments')
-                    ->collapsible()->collapsed()
-                    ->schema([
-                        FileUpload::make('files')
-                            ->label('Attachments')
-                            ->multiple()
-                            ->maxFiles(10)
-                            ->maxSize((int) round(25 * (config('panel.use_binary_prefix') ? 1.048576 * 1024 : 1000)))
-                            ->directory('discord-attachments'),
-                    ]),
-                */
             Repeater::make('embeds')
                 ->live()
                 ->itemLabel(fn (array $state) => $state['title'])
@@ -299,11 +280,6 @@ class WebhookResource extends Resource
                             TextInput::make('footer.text')
                                 ->live()
                                 ->label('Footer'),
-                            /* TODO
-                            TextInput::make('timestamp')
-                                ->label('Timestamp')
-                                ->hintAction(Action::make('now')->action(fn (Set $set) => $set('timestamp', Carbon::now()->getTimestamp()))),
-                            */
                             Checkbox::make('has_timestamp')
                                 ->live()
                                 ->label('Has Timestamp'),
@@ -341,7 +317,6 @@ class WebhookResource extends Resource
         return [
             'index' => Pages\ListWebhookConfigurations::route('/'),
             'create' => Pages\CreateWebhookConfiguration::route('/create'),
-            'view' => Pages\ViewWebhookConfiguration::route('/{record}'),
             'edit' => Pages\EditWebhookConfiguration::route('/{record}/edit'),
         ];
     }

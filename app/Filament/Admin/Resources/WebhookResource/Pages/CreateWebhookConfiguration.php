@@ -3,36 +3,58 @@
 namespace App\Filament\Admin\Resources\WebhookResource\Pages;
 
 use App\Filament\Admin\Resources\WebhookResource;
-use App\Models\WebhookConfiguration;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Actions\Action;
 
 class CreateWebhookConfiguration extends CreateRecord
 {
     protected static string $resource = WebhookResource::class;
 
-    public function mount(): void
+    protected function getHeaderActions(): array
     {
-        $this->authorizeAccess();
-
-        $webhook = new WebhookConfiguration();
-        $webhook->type = 'standalone';
-        $webhook->description = 'New Webhook ' . now()->format('Y-m-d H:i:s');
-        $webhook->endpoint = 'https://example.com/webhook';
-        $webhook->events = ['server:created']; // To fill one event so it doesn't throw an error, not actually used..
-        $webhook->save();
-
-        // Wip, form for creation wasn't saving but edit was, easier to create a webhook and redirect to edit.
-        $this->redirect(EditWebhookConfiguration::getUrl(['record' => $webhook]));
+        return [
+            Action::make('cancel')
+                ->label('Cancel')
+                ->color('danger')
+                ->url(WebhookResource::getUrl()),
+            $this->getCreateFormAction()->formId('form'),
+        ];
     }
+
+    protected function getFormActions(): array
+    {
+        return [];
+    }
+    
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        return $data;
-    }
+        if ($data['type'] === 'discord') {
+            $embeds = data_get($data, 'embeds', []);
 
-    protected function handleRecordCreation(array $data): Model
-    {
-        return static::getModel()::create($data);
+            foreach ($embeds as &$embed) {
+                $embed['color'] = hexdec(str_replace('#', '', data_get($embed, 'color')));
+                $embed = collect($embed)->filter(fn ($key) => is_array($key) ? array_filter($key, fn ($arr_key) => !empty($arr_key)) : !empty($key))->all();
+            }
+
+            $flags = collect(data_get($data, 'flags'))->reduce(fn ($carry, $bit) => $carry | $bit, 0);
+
+            $tmp = collect([
+                'username' => data_get($data, 'username'),
+                'avatar_url' => data_get($data, 'avatar_url'),
+                'content' => data_get($data, 'content'),
+                'image' => data_get($data, 'image'),
+                'thumbnail' => data_get($data, 'thumbnail'),
+                'embeds' => $embeds,
+                'thread_name' => data_get($data, 'thread_name'),
+                'flags' => $flags,
+                'allowed_mentions' => data_get($data, 'allowed_mentions', []),
+            ])->filter(fn ($key) => !empty($key))->all();
+
+            unset($data['username'], $data['avatar_url'], $data['content'], $data['image'], $data['thumbnail'], $data['embeds'], $data['thread_name'], $data['flags'], $data['allowed_mentions']);
+            $data['payload'] = $tmp;
+        }
+
+        return $data;
     }
 }

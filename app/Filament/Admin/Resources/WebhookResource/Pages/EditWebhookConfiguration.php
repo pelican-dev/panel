@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\WebhookResource\Pages;
 
 use App\Filament\Admin\Resources\WebhookResource;
-use App\Filament\Admin\Widgets\DiscordPreview;
 use App\Models\WebhookConfiguration;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -19,11 +18,7 @@ class EditWebhookConfiguration extends EditRecord
      */
     protected function getHeaderWidgets(): array
     {
-        return [
-            /* DiscordPreview::make([
-                'record' => $this->getRecord(),
-            ]), */
-        ];
+        return [];
     }
 
     protected function getHeaderActions(): array
@@ -110,6 +105,7 @@ class EditWebhookConfiguration extends EditRecord
 
         return $data;
     }
+    
     protected function afterSave(): void
     {
         $this->dispatch('widget-refresh');

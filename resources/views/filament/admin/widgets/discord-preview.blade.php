@@ -11,13 +11,6 @@
                     class="w-full h-full rounded-full object-cover absolute top-0 left-0 z-10 avatar"
                     >
             @endif
-            @if($decoration = data_get($sender, 'decoration'))
-            <img
-                src="{{ $decoration }}"
-                alt="Discord Decoration"
-                class="decoration-overlay absolute decoration"
-                >
-            @endif
         </div>
 
         <div class="flex flex-col flex-grow">

@@ -38,10 +38,12 @@ class ServerFactory extends Factory
      */
     public function definition(): array
     {
+        $allocation = Allocation::factory()->make();
+
         return [
             'owner_id' => User::factory()->make(),
             'node_id' => Node::factory()->make(),
-            'allocation_id' => Allocation::factory()->make(),
+            'allocation_id' => $allocation,
             'egg_id' => Egg::factory()->make(),
             'uuid' => Uuid::uuid4()->toString(),
             'uuid_short' => Str::lower(Str::random(8)),
@@ -63,6 +65,7 @@ class ServerFactory extends Factory
             'backup_limit' => 0,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
+            'allocation' => $allocation->toArray(),
         ];
     }
 }

@@ -27,19 +27,19 @@ class DiscordPreview extends Widget
             return [
                 'link' => fn ($href, $child) => $href ? sprintf('<a href="%s" target="_blank" class="link">%s</a>', $href, $child) : $child,
                 'content' => null,
-                'sender' => $this->easterEgg(null),
+                'sender' => [
+                    'name' => 'Pelican',
+                    'avatar' => 'https://cdn.discordapp.com/avatars/1222179499253170307/d4d6873acc8a0d5fb5eaa5aa81572cf3.png',
+                ],
                 'embeds' => [],
                 'getTime' => WebhookConfiguration::getTime(),
             ];
         }
-
-        $data = $this->record->run(true);
-
         // TODO: Change processPayload to json_encode, as this is a temporal fix
+        $data = $this->record->run(true);
         $payload = $this->processPayload($this->record->payload ?? [], $data);
 
         $embeds = data_get($payload, 'embeds', []);
-
         foreach ($embeds as &$embed) {
             if (data_get($embed, 'has_timestamp')) {
                 unset($embed['has_timestamp']);
@@ -50,7 +50,10 @@ class DiscordPreview extends Widget
         return [
             'link' => fn ($href, $child) => $href ? sprintf('<a href="%s" target="_blank" class="link">%s</a>', $href, $child) : $child,
             'content' => data_get($payload, 'content'),
-            'sender' => $this->easterEgg(data_get($payload, 'username')),
+            'sender' => [
+                'name' => data_get($payload, 'username', 'Pelican'),
+                'avatar' => data_get($payload, 'avatar_url', 'https://cdn.discordapp.com/avatars/1222179499253170307/d4d6873acc8a0d5fb5eaa5aa81572cf3.png'),
+            ],
             'embeds' => $embeds,
             'getTime' => $this->record->getTime(),
         ];
@@ -65,18 +68,17 @@ class DiscordPreview extends Widget
      */
     private function processPayload(array|string $payload, array $data): array|string
     {
-        if (!$this->record) {
-            return is_array($payload) ? $payload : (string) $payload;
-        }
 
         if (is_string($payload)) {
             return $this->record->replaceVars($data, $payload);
         }
 
         foreach ($payload as $key => $value) {
-            $payload[$key] = is_array($value) || is_string($value)
-                ? $this->processPayload($value, $data)
-                : $value;
+            if (is_array($value) || is_string($value)) {
+                $payload[$key] = $this->processPayload($value, $data);
+            } else {
+              $payload[$key] = $value;
+            }
         }
 
         return $payload;
