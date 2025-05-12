@@ -24,7 +24,7 @@ class AllocationFactory extends Factory
         return [
             'ip' => $this->faker->unique()->ipv4(),
             'port' => $this->faker->unique()->numberBetween(1024, 65535),
-            'node_id' => Node::factory()->make(),
+            'node_id' => Node::factory(),
         ];
     }
 
