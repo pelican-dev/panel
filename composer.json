@@ -1,6 +1,7 @@
 {
     "name": "pelican-dev/panel",
     "description": "The free, open-source game management panel. Supporting Minecraft, Spigot, BungeeCord, and SRCDS servers.",
+    "license": "AGPL-3.0-only",
     "require": {
         "php": "^8.2 || ^8.3 || ^8.4",
         "ext-intl": "*",
@@ -50,7 +51,7 @@
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.5",
         "fakerphp/faker": "^1.23.1",
-        "larastan/larastan": "3.x-dev#5bd1c40edb43a727584081e74e9a1a2a201ea2ee",
+        "larastan/larastan": "3.4.0",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.15.3",
         "laravel/sail": "^1.41",
