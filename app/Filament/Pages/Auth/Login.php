@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Events\Auth\ProvidedAuthenticationToken;
 use App\Extensions\Captcha\Providers\CaptchaProvider;
 use App\Extensions\OAuth\Providers\OAuthProvider;
 use App\Models\User;
@@ -64,11 +65,18 @@ class Login extends BaseLogin
                 $token,
                 Config::integer('panel.auth.2fa.window'),
             );
+
+            if ($isValidToken) {
+                event(new ProvidedAuthenticationToken($user));
+            }
         } else {
             foreach ($user->recoveryTokens as $recoveryToken) {
                 if (password_verify($token, $recoveryToken->token)) {
                     $isValidToken = true;
                     $recoveryToken->delete();
+
+                    event(new ProvidedAuthenticationToken($user, true));
+
                     break;
                 }
             }
