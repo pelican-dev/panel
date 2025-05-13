@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Livewire\Features\SupportEvents\HandlesEvents;
+use App\Enums\WebhookType;
 
 /**
  * @property string|null $type
@@ -44,7 +45,7 @@ class WebhookConfiguration extends Model
      * Default values for specific fields in the database.
      */
     protected $attributes = [
-        'type' => 'standalone',
+        'type' => WebhookType::Standalone->value,
         'payload' => null,
     ];
 

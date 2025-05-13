@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\WebhookResource\Pages;
 use App\Filament\Admin\Resources\WebhookResource;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Actions\Action;
+use App\Enums\WebhookType;
 
 class CreateWebhookConfiguration extends CreateRecord
 {
@@ -28,7 +29,7 @@ class CreateWebhookConfiguration extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        if ($data['type'] === 'discord') {
+        if (($data['type'] ?? null) === WebhookType::Discord) {
             $embeds = data_get($data, 'embeds', []);
 
             foreach ($embeds as &$embed) {

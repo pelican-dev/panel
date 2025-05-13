@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Widgets\WidgetConfiguration;
+use App\Enums\WebhookType;
 
 class EditWebhookConfiguration extends EditRecord
 {
@@ -41,7 +42,7 @@ class EditWebhookConfiguration extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        if ($data['type'] === 'discord') {
+        if (($data['type'] ?? null) === WebhookType::Discord->value) {
             $embeds = data_get($data, 'embeds', []);
 
             foreach ($embeds as &$embed) {
@@ -73,7 +74,7 @@ class EditWebhookConfiguration extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        if ($data['type'] === 'discord') {
+        if (($data['type'] ?? null) === WebhookType::Discord->value) {
             $embeds = data_get($data, 'payload.embeds', []);
 
             foreach ($embeds as &$embed) {

@@ -29,6 +29,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Livewire\Features\SupportEvents\HandlesEvents;
+use App\Enums\WebhookType;
 
 class WebhookResource extends Resource
 {
@@ -41,8 +42,8 @@ class WebhookResource extends Resource
     protected static ?string $recordTitleAttribute = 'description';
 
     protected const TYPES = [
-        'standalone' => 'Regular',
-        'discord' => 'Discord',
+        WebhookType::Standalone->value => 'Regular',
+        WebhookType::Discord->value => 'Discord',
     ];
 
     public static function getNavigationLabel(): string
@@ -75,8 +76,8 @@ class WebhookResource extends Resource
         return $table
             ->columns([
                 IconColumn::make('type')
-                    ->icon(fn ($state) => $state === 'standalone' ? 'tabler-world-www' : 'tabler-brand-discord')
-                    ->color(fn ($state) => $state === 'standalone' ? null : Color::hex('#5865F2')),
+                    ->icon(fn ($state) => $state === WebhookType::Standalone->value ? 'tabler-world-www' : 'tabler-brand-discord')
+                    ->color(fn ($state) => $state === WebhookType::Standalone->value ? null : Color::hex('#5865F2')),
                 TextColumn::make('endpoint')
                     ->label(trans('admin/webhook.table.endpoint'))
                     ->wrap()
@@ -134,12 +135,12 @@ class WebhookResource extends Resource
                         'discord' => Color::hex('#5865F2'),
                     ])
                     ->afterStateHydrated(function (Get $get) {
-                        if ($get('type') !== 'discord') {
+                        if ($get('type') !== WebhookType::Discord->value) {
                             return;
                         }
                         AlertBanner::make()
                             ->title('Help')
-                            ->body('You have to wrap variable name in between {{ }} for example if you want to get the name from the api you can use {{name}}.<br>Remember, the values here will be to show how it will look, on the webhook will be the real ones.')
+                            ->body('You have to wrap variable name in between {{ }} for example if you want to get the name from the api you can use {{name}}.<br>Shown variables on the preview aren\'t real, they are just examples.')
                             ->icon('tabler-question-mark')
                             ->info()
                             ->send();
@@ -152,9 +153,9 @@ class WebhookResource extends Resource
                     ->activeUrl()
                     ->required()
                     ->columnSpanFull()
-                    ->afterStateUpdated(fn ($state, Set $set) => $set('type', str($state)->contains('discord.com') ? 'discord' : 'standalone')),
+                    ->afterStateUpdated(fn ($state, Set $set) => $set('type', str($state)->contains('discord.com') ? WebhookType::Discord->value : WebhookType::Standalone->value)),
                 Section::make('Discord')
-                    ->hidden(fn (Get $get) => $get('type') === 'standalone')
+                    ->hidden(fn (Get $get) => $get('type') === WebhookType::Standalone->value)
                     ->dehydratedWhenHidden()
                     ->afterStateUpdated(fn ($livewire) => $livewire->dispatch('refresh-widget'))
                     ->schema(fn () => self::getDiscordFields())
