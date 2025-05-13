@@ -288,6 +288,8 @@ class EditProfile extends BaseEditProfile
                                                         );
 
                                                         Activity::event('user:api-key.create')
+                                                            ->actor($user)
+                                                            ->subject($user)
                                                             ->subject($token->accessToken)
                                                             ->property('identifier', $token->accessToken->identifier)
                                                             ->log();
@@ -339,11 +341,13 @@ class EditProfile extends BaseEditProfile
                                             ->label('')
                                             ->deletable(false)
                                             ->addable(false)
-                                            ->relationship(null, function (Builder $query) {
+                                            ->relationship('activity', function (Builder $query) {
                                                 $query->orderBy('timestamp', 'desc');
                                             })
                                             ->schema([
-                                                Placeholder::make('activity!')->label('')->content(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
+                                                Placeholder::make('log')
+                                                    ->label('')
+                                                    ->content(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
                                             ]),
                                     ]),
 
