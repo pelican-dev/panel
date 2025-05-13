@@ -5,6 +5,7 @@ namespace App\Filament\Pages\Auth;
 use App\Events\Auth\ProvidedAuthenticationToken;
 use App\Extensions\Captcha\Providers\CaptchaProvider;
 use App\Extensions\OAuth\Providers\OAuthProvider;
+use App\Facades\Activity;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
@@ -54,6 +55,11 @@ class Login extends BaseLogin
         // 2FA not shown yet
         if ($token === null) {
             $this->verifyTwoFactor = true;
+
+            Activity::event('auth:checkpoint')
+                ->withRequestMetadata()
+                ->subject($user)
+                ->log();
 
             return null;
         }
