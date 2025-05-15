@@ -117,7 +117,7 @@ class Allocation extends Model
     protected function address(): Attribute
     {
         return Attribute::make(
-            get: fn () => "$this->alias:$this->port",
+            get: fn () => (is_ipv6($this->alias) ? "[$this->alias]" : $this->alias) . ":$this->port",
         );
     }
 

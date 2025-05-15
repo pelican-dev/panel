@@ -46,16 +46,9 @@ class ListFiles extends ListRecords
     protected static string $resource = FileResource::class;
 
     #[Locked]
-    public string $path;
+    public string $path = '/';
 
     private DaemonFileRepository $fileRepository;
-
-    public function mount(?string $path = null): void
-    {
-        parent::mount();
-
-        $this->path = $path ?? '/';
-    }
 
     public function getBreadcrumbs(): array
     {
@@ -515,8 +508,9 @@ class ListFiles extends ListRecords
                 ->form([
                     TextInput::make('searchTerm')
                         ->placeholder('Enter a search term, e.g. *.txt')
+                        ->required()
                         ->regex('/^[^*]*\*?[^*]*$/')
-                        ->minLength(3),
+                        ->minValue(3),
                 ])
                 ->action(fn ($data) => redirect(SearchFiles::getUrl([
                     'searchTerm' => $data['searchTerm'],

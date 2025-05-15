@@ -12,6 +12,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Url;
 
 class SearchFiles extends ListRecords
 {
@@ -22,15 +23,8 @@ class SearchFiles extends ListRecords
     #[Locked]
     public string $searchTerm;
 
-    #[Locked]
-    public string $path;
-
-    public function mount(?string $searchTerm = null, ?string $path = null): void
-    {
-        parent::mount();
-        $this->searchTerm = $searchTerm;
-        $this->path = $path ?? '/';
-    }
+    #[Url]
+    public string $path = '/';
 
     public function getBreadcrumbs(): array
     {

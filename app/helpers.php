@@ -18,6 +18,20 @@ if (!function_exists('is_ip')) {
     }
 }
 
+if (!function_exists('is_ipv4')) {
+    function is_ipv4(?string $address): bool
+    {
+        return $address !== null && filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false;
+    }
+}
+
+if (!function_exists('is_ipv6')) {
+    function is_ipv6(?string $address): bool
+    {
+        return $address !== null && filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false;
+    }
+}
+
 if (!function_exists('convert_bytes_to_readable')) {
     function convert_bytes_to_readable(int $bytes, int $decimals = 2, ?int $base = null): string
     {
@@ -65,19 +79,5 @@ if (!function_exists('resolve_path')) {
         }
 
         return implode('/', $absolutes);
-    }
-}
-
-if (!function_exists('get_fonts')) {
-    /**
-     * @return array<string, string>
-     */
-    function get_fonts(?string $directory = null): array
-    {
-        $directory ??= public_path('fonts');
-
-        return collect(glob($directory . '/*.ttf', GLOB_BRACE) ?: [])
-            ->mapWithKeys(fn ($file) => [$name = pathinfo($file, PATHINFO_FILENAME) => $name])
-            ->all();
     }
 }

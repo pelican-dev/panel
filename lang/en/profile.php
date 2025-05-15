@@ -47,4 +47,8 @@ return [
     'rows' => 'Rows',
     'font_size' => 'Font Size',
     'font' => 'Font',
+    'font_preview' => 'Font Preview',
+    'seconds' => 'Seconds',
+    'graph_period' => 'Graph Period',
+    'graph_period_helper' => 'The amount of data points, seconds, shown on the console graphs.',
 ];

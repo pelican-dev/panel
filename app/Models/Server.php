@@ -12,7 +12,6 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
@@ -232,7 +231,12 @@ class Server extends Model implements Validatable
 
     public function isInstalled(): bool
     {
-        return $this->status !== ServerState::Installing && $this->status !== ServerState::InstallFailed;
+        return $this->status !== ServerState::Installing && !$this->isFailedInstall();
+    }
+
+    public function isFailedInstall(): bool
+    {
+        return $this->status === ServerState::InstallFailed || $this->status === ServerState::ReinstallFailed;
     }
 
     public function isSuspended(): bool
@@ -350,9 +354,9 @@ class Server extends Model implements Validatable
         return $this->hasMany(Backup::class);
     }
 
-    public function mounts(): BelongsToMany
+    public function mounts(): MorphToMany
     {
-        return $this->belongsToMany(Mount::class);
+        return $this->morphToMany(Mount::class, 'mountable');
     }
 
     /**

@@ -10,6 +10,7 @@ use App\Extensions\Features\FeatureSchemaInterface;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
+use App\Filament\Server\Widgets\ServerNetworkChart;
 use App\Filament\Server\Widgets\ServerOverview;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
@@ -116,7 +117,7 @@ class Console extends Page
         $allWidgets = array_merge($allWidgets, [
             ServerCpuChart::class,
             ServerMemoryChart::class,
-            //ServerNetworkChart::class, TODO: convert units.
+            ServerNetworkChart::class,
         ]);
 
         $allWidgets = array_merge($allWidgets, static::$customWidgets[ConsoleWidgetPosition::Bottom->value] ?? []);

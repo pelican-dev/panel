@@ -19,7 +19,7 @@ class MinecraftEulaSchema implements FeatureSchemaInterface
     public function getListeners(): array
     {
         return [
-            'You need to agree to the EULA in order to run the server',
+            'you need to agree to the eula in order to run the server',
         ];
     }
 
@@ -33,30 +33,29 @@ class MinecraftEulaSchema implements FeatureSchemaInterface
         return Action::make($this->getId())
             ->requiresConfirmation()
             ->modalHeading('Minecraft EULA')
-            ->modalDescription(new HtmlString(Blade::render('By pressing "I Accept" below you are indicating your agreement to the <x-filament::link href="https://minecraft.net/eula" target="_blank">Minecraft EULA </x-filament::link>')))
+            ->modalDescription(new HtmlString(Blade::render('By pressing "I Accept" below you are indicating your agreement to the <x-filament::link href="https://minecraft.net/eula" target="_blank">Minecraft EULA </x-filament::link>.')))
             ->modalSubmitActionLabel('I Accept')
             ->action(function (DaemonFileRepository $fileRepository, DaemonPowerRepository $powerRepository) {
                 try {
                     /** @var Server $server */
                     $server = Filament::getTenant();
-                    $content = $fileRepository->setServer($server)->getContent('eula.txt');
-                    $content = preg_replace('/(eula=)false/', '\1true', $content);
-                    $fileRepository->setServer($server)->putContent('eula.txt', $content);
+
+                    $fileRepository->setServer($server)->putContent('eula.txt', 'eula=true');
+
                     $powerRepository->setServer($server)->send('restart');
 
                     Notification::make()
-                        ->title('Docker image updated')
-                        ->body('Restart the server.')
+                        ->title('Minecraft EULA accepted')
+                        ->body('Server will restart now.')
                         ->success()
                         ->send();
-                } catch (Exception $e) {
+                } catch (Exception $exception) {
                     Notification::make()
-                        ->title('Error')
-                        ->body($e->getMessage())
+                        ->title('Could not accept Minecraft EULA')
+                        ->body($exception->getMessage())
                         ->danger()
                         ->send();
                 }
-            }
-            );
+            });
     }
 }

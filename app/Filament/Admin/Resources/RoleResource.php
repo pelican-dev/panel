@@ -10,6 +10,7 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -69,6 +70,11 @@ class RoleResource extends Resource
                     ->badge()
                     ->counts('permissions')
                     ->formatStateUsing(fn (Role $role, $state) => $role->isRootAdmin() ? trans('admin/role.all') : $state),
+                TextColumn::make('nodes.name')
+                    ->icon('tabler-server-2')
+                    ->label(trans('admin/role.nodes'))
+                    ->badge()
+                    ->placeholder(trans('admin/role.all')),
                 TextColumn::make('users_count')
                     ->label(trans('admin/role.users'))
                     ->counts('users')
@@ -125,6 +131,14 @@ class RoleResource extends Resource
                     ->label(trans('admin/role.permissions'))
                     ->content(trans('admin/role.root_admin', ['role' => Role::ROOT_ADMIN]))
                     ->visible(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
+                Select::make('nodes')
+                    ->label(trans('admin/role.nodes'))
+                    ->multiple()
+                    ->relationship('nodes', 'name')
+                    ->searchable(['name', 'fqdn'])
+                    ->preload()
+                    ->hint(trans('admin/role.nodes_hint'))
+                    ->hidden(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
             ]);
     }
 

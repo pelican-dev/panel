@@ -1,10 +1,19 @@
 <x-filament::widget>
     @assets
     @php
-        $userFont = auth()->user()->getCustomization()['console_font'] ?? 'ComicMono';
+        $userFont = auth()->user()->getCustomization()['console_font'] ?? 'monospace';
         $userFontSize = auth()->user()->getCustomization()['console_font_size'] ?? 14;
         $userRows =  auth()->user()->getCustomization()['console_rows'] ?? 30;
     @endphp
+    @if($userFont)
+        <link rel="preload" href="{{ asset("storage/fonts/{$userFont}.ttf") }}" as="font" crossorigin>
+        <style>
+            @font-face {
+                font-family: '{{ $userFont }}';
+                src: url('{{ asset("storage/fonts/{$userFont}.ttf") }}');
+            }
+        </style>
+    @endif
     <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm/lib/xterm.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit/lib/addon-fit.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-web-links/lib/addon-web-links.min.js"></script>
@@ -12,14 +21,6 @@
     <script src="https://cdn.jsdelivr.net/npm/xterm-addon-search-bar/lib/xterm-addon-search-bar.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm/css/xterm.min.css">
     <link rel="stylesheet" href="{{ asset('/css/filament/server/console.css') }}">
-    <link rel="preload" href="{{ asset("storage/fonts/{$userFont}.ttf") }}" as="font" crossorigin>
-
-    <style>
-        @font-face {
-            font-family: '{{ $userFont }}';
-            src: url('{{ asset("storage/fonts/{$userFont}.ttf") }}');
-        }
-    </style>
     @endassets
 
     <div id="terminal" wire:ignore></div>
@@ -71,7 +72,7 @@
 
         let options = {
             fontSize: {{ $userFontSize }},
-            fontFamily: '{{ $userFont }}',
+            fontFamily: '{{ $userFont }}, monospace',
             lineHeight: 1.2,
             disableStdin: true,
             cursorStyle: 'underline',
