@@ -38,7 +38,7 @@ class SubuserCreationService
     public function handle(Server $server, string $email, array $permissions): Subuser
     {
         return $this->connection->transaction(function () use ($server, $email, $permissions) {
-            $user = User::query()->where('email', $email)->first();
+            $user = User::withoutGlobalScopes()->where('email', $email)->first();
             if (!$user) {
                 // Just cap the username generated at 64 characters at most and then append a random string
                 // to the end to make it "unique"...
@@ -50,15 +50,15 @@ class SubuserCreationService
                     'username' => $username,
                     'root_admin' => false,
                 ]);
-            }
+            } else {
+                if ($server->owner_id === $user->id) {
+                    throw new UserIsServerOwnerException(trans('exceptions.subusers.user_is_owner'));
+                }
 
-            if ($server->owner_id === $user->id) {
-                throw new UserIsServerOwnerException(trans('exceptions.subusers.user_is_owner'));
-            }
-
-            $subuserCount = $server->subusers()->where('user_id', $user->id)->count();
-            if ($subuserCount !== 0) {
-                throw new ServerSubuserExistsException(trans('exceptions.subusers.subuser_exists'));
+                $subuserCount = $server->subusers()->where('user_id', $user->id)->count();
+                if ($subuserCount !== 0) {
+                    throw new ServerSubuserExistsException(trans('exceptions.subusers.subuser_exists'));
+                }
             }
 
             $cleanedPermissions = collect($permissions)
@@ -68,9 +68,11 @@ class SubuserCreationService
                 ->values()
                 ->all();
 
-            $subuser = Subuser::query()->create([
+            $subuser = Subuser::withoutGlobalScopes()->updateOrCreate([
                 'user_id' => $user->id,
                 'server_id' => $server->id,
+            ], [
+
                 'permissions' => $cleanedPermissions,
             ]);
 

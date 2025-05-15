@@ -383,6 +383,8 @@ class ListUsers extends ListRecords
                 ])
                 ->modalHeading('Invite User')
                 ->modalSubmitActionLabel('Invite')
+                ->successNotificationTitle(null)
+                ->failureNotificationTitle(null)
                 ->action(function (Action $action, array $data, SubuserCreationService $service) use ($server) {
                     $email = strtolower($data['email']);
 
