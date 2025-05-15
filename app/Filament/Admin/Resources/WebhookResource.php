@@ -122,23 +122,44 @@ class WebhookResource extends Resource
                     ->options(WebhookType::class)
                     ->default('standalone')
                     ->icons([
-                        'standalone' => 'tabler-world-www',
-                        'discord' => 'tabler-brand-discord',
+                        'standalone' => WebhookType::Standalone->icon(),
+                        'discord' => WebhookType::Discord->icon(),
                     ])
                     ->colors([
                         'standalone' => null,
                         'discord' => Color::Hex(WebhookType::Discord->color()),
                     ])
-                    ->afterStateHydrated(function (Get $get) {
-                        if ($get('type') !== WebhookType::Discord->value) {
-                            return;
+                    ->afterStateHydrated(function ($state, Set $set, Get $get) {
+                        if ($state === WebhookType::Discord->value) {
+                            AlertBanner::make()
+                                ->title('Help')
+                                ->body('You have to wrap variable name in between {{ }} for example if you want to get the name from the api you can use {{name}}.<br>Shown variables on the preview aren\'t real, they are just examples.')
+                                ->icon('tabler-question-mark')
+                                ->info()
+                                ->send();
                         }
-                        AlertBanner::make()
-                            ->title('Help')
-                            ->body('You have to wrap variable name in between {{ }} for example if you want to get the name from the api you can use {{name}}.<br>Shown variables on the preview aren\'t real, they are just examples.')
-                            ->icon('tabler-question-mark')
-                            ->info()
-                            ->send();
+                    })
+                    ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                        if ($state === WebhookType::Discord->value) {
+                            $payload = $get('payload');
+                            if (is_array($payload)) {
+                                foreach ($payload as $key => $value) {
+                                    if ($key === 'allowed_mentions' && isset($value['parse'])) {
+                                        $set('allowed_mentions.parse', $value['parse']);
+                                    } elseif ($key === 'embeds') {
+                                        $set('embeds', $value);
+                                    } elseif ($get($key) === null) {
+                                        $set($key, $value);
+                                    }
+                                }
+                            }
+                            AlertBanner::make()
+                                ->title('Help')
+                                ->body('You have to wrap variable name in between {{ }} for example if you want to get the name from the api you can use {{name}}.<br>Shown variables on the preview aren\'t real, they are just examples.')
+                                ->icon('tabler-question-mark')
+                                ->info()
+                                ->send();
+                        }
                     }),
                 TextInput::make('description')
                     ->label(trans('admin/webhook.description'))

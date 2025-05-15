@@ -119,6 +119,7 @@ class DiscordPreview extends Widget
     public function getWebhookSampleData(): array
     {
         return [
+            'event' => 'updated: server',
             'id' => 2,
             'external_id' => 10,
             'uuid' => '651fgbc1-dee6-4250-814e-10slda13f1e',
