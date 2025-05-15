@@ -4,7 +4,7 @@ namespace App\Listeners\Auth;
 
 use App\Facades\Activity;
 use Illuminate\Auth\Events\Failed;
-use App\Events\Auth\DirectLogin;
+use Illuminate\Auth\Events\Login;
 
 class AuthenticationListener
 {
@@ -12,9 +12,10 @@ class AuthenticationListener
      * Handles an authentication event by logging the user and information about
      * the request.
      */
-    public function handle(Failed|DirectLogin $event): void
+    public function handle(Failed|Login $event): void
     {
         $activity = Activity::withRequestMetadata();
+
         if ($event->user) {
             $activity = $activity->subject($event->user);
         }
