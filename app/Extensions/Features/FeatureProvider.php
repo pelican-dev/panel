@@ -2,24 +2,22 @@
 
 namespace App\Extensions\Features;
 
-use App\Models\Egg;
-use Illuminate\Database\Eloquent\Model;
-
 class FeatureProvider
 {
     /** @var FeatureSchemaInterface[] */
     private array $providers = [];
 
-    /** @return FeatureSchemaInterface[] | FeatureSchemaInterface */
-    public function get(?string $id = null): array|FeatureSchemaInterface
+    /**
+     * @param  string[]|string|null  $id
+     * @return FeatureSchemaInterface[] | FeatureSchemaInterface
+     */
+    public function get(array|string|null $id = null): array|FeatureSchemaInterface
     {
-        return $id ? $this->providers[$id] : $this->providers;
-    }
+        if (is_array($id)) {
+            return collect($this->providers)->only($id)->all();
+        }
 
-    /** @return FeatureSchemaInterface[] */
-    public function getAvailableFeatures(Egg $egg): array
-    {
-        return collect($this->providers)->intersect($egg->features)->all();
+        return $id ? $this->providers[$id] : $this->providers;
     }
 
     public function register(FeatureSchemaInterface $provider): void

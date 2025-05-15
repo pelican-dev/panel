@@ -6,6 +6,7 @@ use Filament\Actions\Action;
 
 interface FeatureSchemaInterface
 {
+    /** @return string[] */
     public function getListeners(): array;
 
     public function getId(): string;

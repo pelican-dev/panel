@@ -6,7 +6,6 @@ use App\Enums\ConsoleWidgetPosition;
 use App\Enums\ContainerStatus;
 use App\Exceptions\Http\Server\ServerStateConflictException;
 use App\Extensions\Features\FeatureProvider;
-use App\Extensions\Features\FeatureSchemaInterface;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
@@ -61,7 +60,7 @@ class Console extends Page
         $this->featureProvider = $featureProvider;
         /** @var Server $server */
         $server = Filament::getTenant();
-        foreach ($featureProvider->getAvailableFeatures($server->egg) as $feature) {
+        foreach ($featureProvider->get($server->egg->features) as $feature) {
             $this->cacheAction($feature->getAction());
         }
     }
