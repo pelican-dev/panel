@@ -11,6 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
+use App\Enums\WebhookType;
 
 class ProcessWebhook implements ShouldQueue
 {
@@ -29,7 +30,7 @@ class ProcessWebhook implements ShouldQueue
     {
         $data = $this->data[0];
 
-        if ($this->webhookConfiguration->type === 'discord') {
+        if ($this->webhookConfiguration->type === WebhookType::Discord->value) {
             $data = array_merge(
                 json_decode($data, true),
                 ['event' => $this->webhookConfiguration->transformClassName($this->eventName)]

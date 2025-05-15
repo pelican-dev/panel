@@ -1,9 +1,5 @@
-@php
-    $isAside = $isAside();
-@endphp
-
 <x-filament::section
-    :aside="$isAside"
+    :aside="$isAside()"
     :collapsed="$isCollapsed()"
     :collapsible="$isCollapsible() && (! $isAside)"
     :compact="$isCompact()"
@@ -19,11 +15,7 @@
     :persist-collapsed="$shouldPersistCollapsed()"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
-            ->merge([
-                'id' => $getId(),
-            ], escape: false)
-            ->merge($getExtraAttributes(), escape: false)
-            ->merge($getExtraAlpineAttributes(), escape: false)
+        ->merge(['id' => $getId()], escape: false)
     "
 >
     <x-slot name="heading">

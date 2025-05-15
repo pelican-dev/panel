@@ -7,27 +7,18 @@ use App\Models\WebhookConfiguration;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Widgets\WidgetConfiguration;
 use App\Enums\WebhookType;
 
 class EditWebhookConfiguration extends EditRecord
 {
     protected static string $resource = WebhookResource::class;
 
-    /**
-     * @return array<WidgetConfiguration>
-     */
-    protected function getHeaderWidgets(): array
-    {
-        return [];
-    }
-
     protected function getHeaderActions(): array
     {
         return [
             DeleteAction::make(),
-            Action::make('runNow')
-                ->label('Run now')
+            Action::make('testNow')
+                ->label('Test now')
                 ->color('primary')
                 ->disabled(fn (WebhookConfiguration $webhookConfiguration) => count($webhookConfiguration->events) === 0)
                 ->action(fn (WebhookConfiguration $webhookConfiguration) => $webhookConfiguration->run()),

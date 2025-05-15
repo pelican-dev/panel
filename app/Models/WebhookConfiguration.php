@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Livewire\Features\SupportEvents\HandlesEvents;
@@ -16,7 +15,7 @@ use App\Enums\WebhookType;
 
 /**
  * @property string|null $type
- * @property string|null $payload
+ * @property array<string, mixed> $payload
  * @property string $endpoint
  * @property string $description
  * @property string[] $events
@@ -45,7 +44,7 @@ class WebhookConfiguration extends Model
      * Default values for specific fields in the database.
      */
     protected $attributes = [
-        'type' => WebhookType::Standalone->value,
+        'type' => WebhookType::Standalone,
         'payload' => null,
     ];
 
@@ -186,23 +185,64 @@ class WebhookConfiguration extends Model
         );
     }
 
-    public static function getTime(): ?string
-    {
-        return 'Today at ' . Carbon::now()->format('h:i A');
-    }
-
     /** @return array<string, mixed> */
     public function run(?bool $dry = false): array
     {
         $eventName = collect($this->events ?: ['eloquent.created: App\\Models\\Server'])->random();
-        $data = array_merge(Server::factory()->makeOne()->attributesToArray(), [
-            'id' => random_int(1, 100),
-            'event' => $this->transformClassName($eventName),
-        ]);
+        $data = $this->getWebhookSampleData();
+
         $eventData = [json_encode($data)];
 
         ProcessWebhook::dispatchIf(!$dry, $this, $eventName, $eventData);
 
         return $data;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getWebhookSampleData(): array
+    {
+        return [
+            'id' => 2,
+            'external_id' => 10,
+            'uuid' => '651fgbc1-dee6-4250-814e-10slda13f1e',
+            'uuid_short' => '651fgbc1',
+            'node_id' => 1,
+            'name' => 'Example Server',
+            'description' => 'This is an example server description.',
+            'status' => 'running',
+            'skip_scripts' => false,
+            'owner_id' => 1,
+            'memory' => 512,
+            'swap' => 128,
+            'disk' => 10240,
+            'io' => 500,
+            'cpu' => 500,
+            'threads' => '1, 3, 5',
+            'oom_killer' => false,
+            'allocation_id' => 4,
+            'egg_id' => 2,
+            'startup' => 'This is a example startup command.',
+            'image' => 'Image here',
+            'allocation_limit' => 5,
+            'database_limit' => 1,
+            'backup_limit' => 3,
+            'created_at' => '2025-03-17T15:20:32.000000Z',
+            'updated_at' => '2025-05-12T17:53:12.000000Z',
+            'installed_at' => '2025-04-27T21:06:01.000000Z',
+            'docker_labels' => [],
+            'allocation' => [
+                'id' => 4,
+                'node_id' => 1,
+                'ip' => '192.168.0.3',
+                'ip_alias' => null,
+                'port' => 25567,
+                'server_id' => 2,
+                'notes' => null,
+                'created_at' => '2025-03-17T15:20:09.000000Z',
+                'updated_at' => '2025-03-17T15:20:32.000000Z',
+            ],
+        ];
     }
 }

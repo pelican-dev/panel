@@ -41,11 +41,6 @@ class WebhookResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'description';
 
-    protected const TYPES = [
-        WebhookType::Standalone->value => 'Regular',
-        WebhookType::Discord->value => 'Discord',
-    ];
-
     public static function getNavigationLabel(): string
     {
         return trans('admin/webhook.nav_title');
@@ -76,12 +71,12 @@ class WebhookResource extends Resource
         return $table
             ->columns([
                 IconColumn::make('type')
-                    ->icon(fn ($state) => $state === WebhookType::Standalone->value ? 'tabler-world-www' : 'tabler-brand-discord')
-                    ->color(fn ($state) => $state === WebhookType::Standalone->value ? null : Color::hex('#5865F2')),
+                    ->icon(fn ($state) => WebhookType::from($state)->icon())
+                    ->color(Color::Hex(WebhookType::Discord->color())),
                 TextColumn::make('endpoint')
                     ->label(trans('admin/webhook.table.endpoint'))
                     ->wrap()
-                    ->formatStateUsing(fn ($state) => str($state)->after('//'))
+                    ->formatStateUsing(fn ($state) => str($state)->after('://'))
                     ->limit(60),
                 TextColumn::make('description')
                     ->label(trans('admin/webhook.table.description')),
@@ -112,7 +107,7 @@ class WebhookResource extends Resource
             ->persistFiltersInSession()
             ->filters([
                 SelectFilter::make('type')
-                    ->options(self::TYPES)
+                    ->options(WebhookType::class)
                     ->attribute('type'),
             ]);
     }
@@ -124,7 +119,7 @@ class WebhookResource extends Resource
                 ToggleButtons::make('type')
                     ->live()
                     ->inline()
-                    ->options(self::TYPES)
+                    ->options(WebhookType::class)
                     ->default('standalone')
                     ->icons([
                         'standalone' => 'tabler-world-www',
@@ -132,7 +127,7 @@ class WebhookResource extends Resource
                     ])
                     ->colors([
                         'standalone' => null,
-                        'discord' => Color::hex('#5865F2'),
+                        'discord' => Color::Hex(WebhookType::Discord->color()),
                     ])
                     ->afterStateHydrated(function (Get $get) {
                         if ($get('type') !== WebhookType::Discord->value) {
@@ -159,11 +154,12 @@ class WebhookResource extends Resource
                     ->dehydratedWhenHidden()
                     ->afterStateUpdated(fn ($livewire) => $livewire->dispatch('refresh-widget'))
                     ->schema(fn () => self::getDiscordFields())
-                    ->view('filament.components.section')
+                    ->view('filament.components.webhooksection')
                     ->aside()
                     ->formBefore(),
                 Section::make('Events')
-                    ->collapsible()->collapsed()
+                    ->collapsible()
+                    ->collapsed()
                     ->schema([
                         CheckboxList::make('events')
                             ->lazy()

@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Widgets;
 
 use App\Models\WebhookConfiguration;
 use Filament\Widgets\Widget;
+use Illuminate\Support\Carbon;
 
 class DiscordPreview extends Widget
 {
@@ -20,6 +21,9 @@ class DiscordPreview extends Widget
 
     public ?WebhookConfiguration $record = null;
 
+    /** @var string|array<string, mixed>|null */
+    public string|array|null $payload = null;
+
     /**
      * @return array{
      *     link: callable,
@@ -33,26 +37,31 @@ class DiscordPreview extends Widget
     {
         if (!$this->record || !$this->record->payload) {
             return [
-                'link' => fn ($href, $child) => $href ? sprintf('<a href="%s" target="_blank" class="link">%s</a>', $href, $child) : $child,
+                'link' => fn ($href, $child) => $href ? "<a href=\"$href\" target=\"_blank\" class=\"link\">$child</a>" : $child,
                 'content' => null,
                 'sender' => [
                     'name' => 'Pelican',
-                    'avatar' => 'https://cdn.discordapp.com/avatars/1222179499253170307/d4d6873acc8a0d5fb5eaa5aa81572cf3.png',
+                    'avatar' => 'https://raw.githubusercontent.com/pelican-dev/panel/refs/heads/main/public/pelican.ico',
                 ],
                 'embeds' => [],
-                'getTime' => WebhookConfiguration::getTime(),
+                'getTime' => 'Today at ' . Carbon::now()->format('h:i A'),
             ];
         }
 
-        $data = $this->getSampleData();
+        $data = $this->getWebhookSampleData();
 
-        $payload = $this->replaceVarsInPayload($this->record->payload ?? [], $data);
+        // @phpstan-ignore-next-line
+        if (is_string($this->record->payload)) {
+            $payload = $this->replaceVarsInStringPayload($this->record->payload, $data);
+        } else {
+            $payload = $this->replaceVarsInArrayPayload($this->record->payload, $data);
+        }
 
         $embeds = data_get($payload, 'embeds', []);
         foreach ($embeds as &$embed) {
             if (data_get($embed, 'has_timestamp')) {
                 unset($embed['has_timestamp']);
-                $embed['timestamp'] = $this->record->getTime();
+                $embed['timestamp'] = 'Today at ' . Carbon::now()->format('h:i A');
             }
         }
 
@@ -61,38 +70,44 @@ class DiscordPreview extends Widget
             'content' => data_get($payload, 'content'),
             'sender' => [
                 'name' => data_get($payload, 'username', 'Pelican'),
-                'avatar' => data_get($payload, 'avatar_url', 'https://cdn.discordapp.com/avatars/1222179499253170307/d4d6873acc8a0d5fb5eaa5aa81572cf3.png'),
+                'avatar' => data_get($payload, 'avatar_url', 'https://raw.githubusercontent.com/pelican-dev/panel/refs/heads/main/public/pelican.ico'),
             ],
             'embeds' => $embeds,
-            'getTime' => $this->record->getTime(),
+            'getTime' => 'Today at ' . Carbon::now()->format('h:i A'),
         ];
     }
 
     /**
-     * @param  array<string, mixed>|string  $payload
      * @param  array<string, mixed>  $data
-     * @return array<string, mixed>|string
      */
-    private function replaceVarsInPayload(array|string $payload, array $data): array|string
+    private function replaceVarsInStringPayload(?string $payload, array $data): ?string
     {
-        if (is_string($payload)) {
-            return preg_replace_callback('/{{\s*([\w\.]+)\s*}}/', function ($matches) use ($data) {
-                $keys = explode('.', $matches[1]);
-                $value = $data;
-                foreach ($keys as $key) {
-                    if (is_array($value) && array_key_exists($key, $value)) {
-                        $value = $value[$key];
-                    } else {
-                        return $matches[0];
-                    }
-                }
+        if ($payload === null) {
+            return null;
+        }
 
-                return $value;
-            }, $payload);
+        return preg_replace_callback('/{{\s*([\w\.]+)\s*}}/', fn ($m) => data_get($data, $m[1], $m[0]),
+            $payload
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $payload
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>|null
+     */
+    private function replaceVarsInArrayPayload(?array $payload, array $data): ?array
+    {
+        if ($payload === null) {
+            return null;
         }
 
         foreach ($payload as $key => $value) {
-            $payload[$key] = $this->replaceVarsInPayload($value, $data);
+            if (is_string($value)) {
+                $payload[$key] = $this->replaceVarsInStringPayload($value, $data);
+            } elseif (is_array($value)) {
+                $payload[$key] = $this->replaceVarsInArrayPayload($value, $data);
+            }
         }
 
         return $payload;
@@ -101,7 +116,7 @@ class DiscordPreview extends Widget
     /**
      * @return array<string, mixed>
      */
-    private function getSampleData(): array
+    public function getWebhookSampleData(): array
     {
         return [
             'id' => 2,
