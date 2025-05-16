@@ -20,21 +20,26 @@ class NodeMemoryChart extends ChartWidget
      */
     protected array $memoryHistory = [];
 
+    protected int $totalMemory = 0;
+
     protected function getData(): array
     {
-        $data = $this->node->statistics();
-        $value = $data['memory_used'];
+        $sessionKey = "node_stats.{$this->node->id}";
 
-        $this->memoryHistory = session()->get('memoryHistory', []);
+        $data = $this->node->statistics();
+
+        $this->totalMemory = session("{$sessionKey}.total_memory", $data['memory_total']);
+
+        $this->memoryHistory = session("{$sessionKey}.memory_history", []);
         $this->memoryHistory[] = [
             'memory' => round(config('panel.use_binary_prefix')
-                ? $value / 1024 / 1024 / 1024
-                : $value / 1000 / 1000 / 1000, 2),
+                ? $data['memory_used'] / 1024 / 1024 / 1024
+                : $data['memory_used'] / 1000 / 1000 / 1000, 2),
             'timestamp' => now(auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
         ];
 
         $this->memoryHistory = array_slice($this->memoryHistory, -60);
-        session()->put('memoryHistory', $this->memoryHistory);
+        session()->put("{$sessionKey}.memory_history", $this->memoryHistory);
 
         return [
             'datasets' => [
@@ -78,15 +83,14 @@ class NodeMemoryChart extends ChartWidget
     public function getHeading(): string
     {
         $latestMemoryUsed = array_slice(end($this->memoryHistory), -60);
-        $totalMemory = $this->node->statistics()['memory_total'];
 
         $used = config('panel.use_binary_prefix')
             ? Number::format($latestMemoryUsed['memory'], maxPrecision: 2, locale: auth()->user()->language) .' GiB'
             : Number::format($latestMemoryUsed['memory'], maxPrecision: 2, locale: auth()->user()->language) . ' GB';
 
         $total = config('panel.use_binary_prefix')
-            ? Number::format($totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+            ? Number::format($this->totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($this->totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
 
         return trans('admin/node.memory_chart', ['used' => $used, 'total' => $total]);
     }

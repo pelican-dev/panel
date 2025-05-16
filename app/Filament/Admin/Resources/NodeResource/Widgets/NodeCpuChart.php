@@ -20,19 +20,24 @@ class NodeCpuChart extends ChartWidget
      */
     protected array $cpuHistory = [];
 
+    protected int $threads = 0;
+
     protected function getData(): array
     {
-        $data = $this->node->statistics();
-        $threads = $this->node->systemInformation()['cpu_count'] ?? 0;
+        $sessionKey = "node_stats.{$this->node->id}";
 
-        $this->cpuHistory = session()->get('cpuHistory', []);
+        $data = $this->node->statistics();
+
+        $this->threads = session("{$sessionKey}.threads", $this->node->systemInformation()['cpu_count'] ?? 0);
+
+        $this->cpuHistory = session("{$sessionKey}.cpu_history", []);
         $this->cpuHistory[] = [
-            'cpu' => round($data['cpu_percent'] * $threads, 2),
+            'cpu' => round($data['cpu_percent'] * $this->threads, 2),
             'timestamp' => now(auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
         ];
 
         $this->cpuHistory = array_slice($this->cpuHistory, -60);
-        session()->put('cpuHistory', $this->cpuHistory);
+        session()->put("{$sessionKey}.cpu_history", $this->cpuHistory);
 
         return [
             'datasets' => [
@@ -75,11 +80,10 @@ class NodeCpuChart extends ChartWidget
 
     public function getHeading(): string
     {
-        $threads = $this->node->systemInformation()['cpu_count'] ?? 0;
         $data = array_slice(end($this->cpuHistory), -60);
 
         $cpu = Number::format($data['cpu'], maxPrecision: 2, locale: auth()->user()->language);
-        $max = Number::format($threads * 100, locale: auth()->user()->language);
+        $max = Number::format($this->threads * 100, locale: auth()->user()->language);
 
         return trans('admin/node.cpu_chart', ['cpu' => $cpu, 'max' => $max]);
     }
