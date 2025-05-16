@@ -50,7 +50,6 @@ class DiscordPreview extends Widget
 
         $data = $this->getWebhookSampleData();
 
-        // @phpstan-ignore-next-line
         if (is_string($this->record->payload)) {
             $payload = $this->replaceVarsInStringPayload($this->record->payload, $data);
         } else {

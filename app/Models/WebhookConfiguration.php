@@ -15,7 +15,7 @@ use App\Enums\WebhookType;
 
 /**
  * @property string|null $type
- * @property array<string, mixed> $payload
+ * @property string|array<string, mixed>|null $payload
  * @property string $endpoint
  * @property string $description
  * @property string[] $events
