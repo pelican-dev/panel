@@ -12,6 +12,9 @@ use Illuminate\Http\Client\ConnectionException;
 use Sushi\Sushi;
 
 /**
+ * \App\Models\File.
+ *
+ * @property int $id
  * @property string $name
  * @property Carbon $created_at
  * @property Carbon $modified_at
@@ -27,11 +30,7 @@ class File extends Model
 {
     use Sushi;
 
-    protected $primaryKey = 'name';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
+    protected int $sushiInsertChunkSize = 100;
 
     public const ARCHIVE_MIMES = [
         'application/vnd.rar', // .rar
@@ -151,23 +150,17 @@ class File extends Model
         try {
             $fileRepository = (new DaemonFileRepository())->setServer(self::$server);
 
-            $contents = [];
-
-            try {
-                if (!is_null(self::$searchTerm)) {
-                    $contents = cache()->remember('file_search_' . self::$path . '_' . self::$searchTerm, now()->addMinute(), fn () => $fileRepository->search(self::$searchTerm, self::$path));
-                } else {
-                    $contents = $fileRepository->getDirectory(self::$path ?? '/');
-                }
-            } catch (ConnectionException $exception) {
-                report($exception);
+            if (!is_null(self::$searchTerm)) {
+                $contents = cache()->remember('file_search_' . self::$path . '_' . self::$searchTerm, now()->addMinute(), fn () => $fileRepository->search(self::$searchTerm, self::$path));
+            } else {
+                $contents = $fileRepository->getDirectory(self::$path ?? '/');
             }
 
             if (isset($contents['error'])) {
                 throw new Exception($contents['error']);
             }
 
-            return array_map(function ($file) {
+            $rows = array_map(function ($file) {
                 return [
                     'name' => $file['name'],
                     'created_at' => Carbon::parse($file['created'])->timezone('UTC'),
@@ -181,6 +174,14 @@ class File extends Model
                     'mime_type' => $file['mime'],
                 ];
             }, $contents);
+
+            $rowCount = count($rows);
+            $limit = 999;
+            if ($rowCount > $limit) {
+                $this->sushiInsertChunkSize = min(floor($limit / count($this->getSchema())), $rowCount);
+            }
+
+            return $rows;
         } catch (Exception $exception) {
             report($exception);
 
@@ -189,8 +190,12 @@ class File extends Model
                 $message = $message->after('cURL error 7: ')->before(' after ');
             }
 
+            if ($exception instanceof ConnectionException) {
+                $message = str('Node connection failed');
+            }
+
             AlertBanner::make()
-                ->title('Could not load files')
+                ->title('Could not load files!')
                 ->body($message->toString())
                 ->danger()
                 ->send();

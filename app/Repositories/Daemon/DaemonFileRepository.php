@@ -5,6 +5,7 @@ namespace App\Repositories\Daemon;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Client\Response;
 use App\Exceptions\Http\Server\FileSizeTooLargeException;
+use App\Exceptions\Repository\FileNotEditableException;
 use Illuminate\Http\Client\ConnectionException;
 
 class DaemonFileRepository extends DaemonRepository
@@ -27,6 +28,10 @@ class DaemonFileRepository extends DaemonRepository
         $length = $response->header('Content-Length');
         if ($notLargerThan && $length > $notLargerThan) {
             throw new FileSizeTooLargeException();
+        }
+
+        if ($response->getStatusCode() === 400) {
+            throw new FileNotEditableException();
         }
 
         if ($response->getStatusCode() === 404) {
@@ -133,7 +138,7 @@ class DaemonFileRepository extends DaemonRepository
      *
      * @throws ConnectionException
      */
-    public function compressFiles(?string $root, array $files): array
+    public function compressFiles(?string $root, array $files, ?string $name): array
     {
         return $this->getHttpClient()
             // Wait for up to 15 minutes for the archive to be completed when calling this endpoint
@@ -143,6 +148,7 @@ class DaemonFileRepository extends DaemonRepository
                 [
                     'root' => $root ?? '/',
                     'files' => $files,
+                    'name' => $name ?? '',
                 ]
             )->json();
     }

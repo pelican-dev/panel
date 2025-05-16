@@ -19,6 +19,7 @@ use chillerlan\QRCode\QROptions;
 use DateTimeZone;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
@@ -29,6 +30,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\EditProfile as BaseEditProfile;
@@ -38,6 +40,7 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Socialite\Facades\Socialite;
@@ -125,6 +128,21 @@ class EditProfile extends BaseEditProfile
                                             ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : trans('profile.language_help', ['state' => $state])))
                                             ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
                                             ->native(false),
+                                        FileUpload::make('avatar')
+                                            ->visible(fn () => config('panel.filament.uploadable-avatars'))
+                                            ->avatar()
+                                            ->acceptedFileTypes(['image/png'])
+                                            ->directory('avatars')
+                                            ->getUploadedFileNameForStorageUsing(fn () => $this->getUser()->id . '.png')
+                                            ->hintAction(function (FileUpload $fileUpload) {
+                                                $path = $fileUpload->getDirectory() . '/' . $this->getUser()->id . '.png';
+
+                                                return Action::make('remove_avatar')
+                                                    ->icon('tabler-photo-minus')
+                                                    ->iconButton()
+                                                    ->hidden(fn () => !$fileUpload->getDisk()->exists($path))
+                                                    ->action(fn () => $fileUpload->getDisk()->delete($path));
+                                            }),
                                     ]),
 
                                 Tab::make(trans('profile.tabs.oauth'))
@@ -242,6 +260,7 @@ class EditProfile extends BaseEditProfile
                                                 ->password(),
                                         ];
                                     }),
+
                                 Tab::make(trans('profile.tabs.api_keys'))
                                     ->icon('tabler-key')
                                     ->schema([
@@ -261,7 +280,7 @@ class EditProfile extends BaseEditProfile
                                                 Action::make('Create')
                                                     ->label(trans('filament-actions::create.single.modal.actions.create.label'))
                                                     ->disabled(fn (Get $get) => $get('description') === null)
-                                                    ->successRedirectUrl(self::getUrl(['tab' => '-api-keys-tab']))
+                                                    ->successRedirectUrl(self::getUrl(['tab' => '-api-keys-tab'], panel: 'app'))
                                                     ->action(function (Get $get, Action $action, User $user) {
                                                         $token = $user->createToken(
                                                             $get('description'),
@@ -308,9 +327,11 @@ class EditProfile extends BaseEditProfile
                                             ]),
                                         ]),
                                     ]),
+
                                 Tab::make(trans('profile.tabs.ssh_keys'))
                                     ->icon('tabler-lock-code')
                                     ->hidden(),
+
                                 Tab::make(trans('profile.tabs.activity'))
                                     ->icon('tabler-history')
                                     ->schema([
@@ -323,6 +344,105 @@ class EditProfile extends BaseEditProfile
                                             })
                                             ->schema([
                                                 Placeholder::make('activity!')->label('')->content(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
+                                            ]),
+                                    ]),
+
+                                Tab::make(trans('profile.tabs.customization'))
+                                    ->icon('tabler-adjustments')
+                                    ->schema([
+                                        Section::make(trans('profile.dashboard'))
+                                            ->collapsible()
+                                            ->icon('tabler-dashboard')
+                                            ->schema([
+                                                ToggleButtons::make('dashboard_layout')
+                                                    ->label(trans('profile.dashboard_layout'))
+                                                    ->inline()
+                                                    ->required()
+                                                    ->options([
+                                                        'grid' => trans('profile.grid'),
+                                                        'table' => trans('profile.table'),
+                                                    ]),
+                                            ]),
+                                        Section::make(trans('profile.console'))
+                                            ->collapsible()
+                                            ->icon('tabler-brand-tabler')
+                                            ->columns(4)
+                                            ->schema([
+                                                TextInput::make('console_font_size')
+                                                    ->label(trans('profile.font_size'))
+                                                    ->columnSpan(1)
+                                                    ->minValue(1)
+                                                    ->numeric()
+                                                    ->required()
+                                                    ->default(14),
+                                                Select::make('console_font')
+                                                    ->label(trans('profile.font'))
+                                                    ->required()
+                                                    ->options(function () {
+                                                        $fonts = [
+                                                            'monospace' => 'monospace', //default
+                                                        ];
+
+                                                        if (!Storage::disk('public')->exists('fonts')) {
+                                                            Storage::disk('public')->makeDirectory('fonts');
+                                                            $this->fillForm();
+                                                        }
+
+                                                        foreach (Storage::disk('public')->allFiles('fonts') as $file) {
+                                                            $fileInfo = pathinfo($file);
+
+                                                            if ($fileInfo['extension'] === 'ttf') {
+                                                                $fonts[$fileInfo['filename']] = $fileInfo['filename'];
+                                                            }
+                                                        }
+
+                                                        return $fonts;
+                                                    })
+                                                    ->reactive()
+                                                    ->default('monospace')
+                                                    ->afterStateUpdated(fn ($state, callable $set) => $set('font_preview', $state)),
+                                                Placeholder::make('font_preview')
+                                                    ->label(trans('profile.font_preview'))
+                                                    ->columnSpan(2)
+                                                    ->content(function (Get $get) {
+                                                        $fontName = $get('console_font') ?? 'monospace';
+                                                        $fontSize = $get('console_font_size') . 'px';
+                                                        $fontUrl = asset("storage/fonts/{$fontName}.ttf");
+
+                                                        return new HtmlString(<<<HTML
+                                                                    <style>
+                                                                        @font-face {
+                                                                            font-family: "CustomPreviewFont";
+                                                                            src: url("$fontUrl");
+                                                                        }
+                                                                        .preview-text {
+                                                                            font-family: "CustomPreviewFont";
+                                                                            font-size: $fontSize;
+                                                                            margin-top: 10px;
+                                                                            display: block;
+                                                                        }
+                                                                    </style>
+                                                                    <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
+                                                                HTML);
+                                                    }),
+                                                TextInput::make('console_graph_period')
+                                                    ->label(trans('profile.graph_period'))
+                                                    ->suffix(trans('profile.seconds'))
+                                                    ->hintIcon('tabler-question-mark')
+                                                    ->hintIconTooltip(trans('profile.graph_period_helper'))
+                                                    ->columnSpan(2)
+                                                    ->numeric()
+                                                    ->default(30)
+                                                    ->minValue(10)
+                                                    ->maxValue(120)
+                                                    ->required(),
+                                                TextInput::make('console_rows')
+                                                    ->label(trans('profile.rows'))
+                                                    ->minValue(1)
+                                                    ->numeric()
+                                                    ->required()
+                                                    ->columnSpan(2)
+                                                    ->default(30),
                                             ]),
                                     ]),
                             ]),
@@ -345,7 +465,7 @@ class EditProfile extends BaseEditProfile
             $tokens = $this->toggleTwoFactorService->handle($record, $token, true);
             cache()->put("users.$record->id.2fa.tokens", implode("\n", $tokens), now()->addSeconds(15));
 
-            $this->redirectRoute('filament.admin.auth.profile', ['tab' => '-2fa-tab']);
+            $this->redirect(self::getUrl(['tab' => '-2fa-tab'], panel: 'app'));
         }
 
         if ($token = $data['2fa-disable-code'] ?? null) {
@@ -380,5 +500,34 @@ class EditProfile extends BaseEditProfile
             $this->getSaveFormAction()->formId('form'),
         ];
 
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $moarbetterdata = [
+            'console_font' => $data['console_font'],
+            'console_font_size' => $data['console_font_size'],
+            'console_rows' => $data['console_rows'],
+            'console_graph_period' => $data['console_graph_period'],
+            'dashboard_layout' => $data['dashboard_layout'],
+        ];
+
+        unset($data['console_font'],$data['console_font_size'], $data['console_rows'], $data['dashboard_layout']);
+        $data['customization'] = json_encode($moarbetterdata);
+
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $moarbetterdata = json_decode($data['customization'], true);
+
+        $data['console_font'] = $moarbetterdata['console_font'] ?? 'monospace';
+        $data['console_font_size'] = $moarbetterdata['console_font_size'] ?? 14;
+        $data['console_rows'] = $moarbetterdata['console_rows'] ?? 30;
+        $data['console_graph_period'] = $moarbetterdata['console_graph_period'] ?? 30;
+        $data['dashboard_layout'] = $moarbetterdata['dashboard_layout'] ?? 'grid';
+
+        return $data;
     }
 }

@@ -44,7 +44,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('servers', function (Blueprint $table) {
-            $table->char('daemonSecret', 36)->after('startup')->unique();
+            $table->string('daemonSecret', 36)->after('startup')->unique();
         });
 
         DB::table('daemon_keys')->truncate();

@@ -51,12 +51,7 @@ class AssignmentService
         }
 
         try {
-            // TODO: how should we approach supporting IPv6 with this?
-            // gethostbyname only supports IPv4, but the alternative (dns_get_record) returns
-            // an array of records, which is not ideal for this use case, we need a SINGLE
-            // IP to use, not multiple.
-            $underlying = gethostbyname($data['allocation_ip']);
-            $parsed = Network::parse($underlying);
+            $parsed = Network::parse($data['allocation_ip']);
         } catch (\Exception $exception) {
             throw new DisplayException("Could not parse provided allocation IP address ({$data['allocation_ip']}): {$exception->getMessage()}", $exception);
         }
@@ -70,7 +65,7 @@ class AssignmentService
                     throw new InvalidPortMappingException($port);
                 }
 
-                $insertData = [];
+                $newAllocations = [];
                 if (preg_match(self::PORT_RANGE_REGEX, $port, $matches)) {
                     $block = range($matches[1], $matches[2]);
 
@@ -83,7 +78,7 @@ class AssignmentService
                     }
 
                     foreach ($block as $unit) {
-                        $insertData[] = [
+                        $newAllocations[] = [
                             'node_id' => $node->id,
                             'ip' => $ip->__toString(),
                             'port' => (int) $unit,
@@ -96,7 +91,7 @@ class AssignmentService
                         throw new PortOutOfRangeException();
                     }
 
-                    $insertData[] = [
+                    $newAllocations[] = [
                         'node_id' => $node->id,
                         'ip' => $ip->__toString(),
                         'port' => (int) $port,
@@ -105,8 +100,8 @@ class AssignmentService
                     ];
                 }
 
-                foreach ($insertData as $insert) {
-                    $allocation = Allocation::query()->create($insert);
+                foreach ($newAllocations as $newAllocation) {
+                    $allocation = Allocation::query()->create($newAllocation);
                     $ids[] = $allocation->id;
                 }
             }

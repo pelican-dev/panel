@@ -2,18 +2,21 @@
 
 namespace App\Filament\Server\Pages;
 
+use App\Enums\ConsoleWidgetPosition;
 use App\Enums\ContainerStatus;
 use App\Exceptions\Http\Server\ServerStateConflictException;
+use App\Extensions\Features\FeatureProvider;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
-// use App\Filament\Server\Widgets\ServerNetworkChart;
+use App\Filament\Server\Widgets\ServerNetworkChart;
 use App\Filament\Server\Widgets\ServerOverview;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
-use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Facades\Filament;
+use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Enums\ActionSize;
 use Filament\Widgets\Widget;
@@ -22,6 +25,8 @@ use Livewire\Attributes\On;
 
 class Console extends Page
 {
+    use InteractsWithActions;
+
     protected static ?string $navigationIcon = 'tabler-brand-tabler';
 
     protected static ?int $navigationSort = 1;
@@ -38,12 +43,36 @@ class Console extends Page
         try {
             $server->validateCurrentState();
         } catch (ServerStateConflictException $exception) {
-            AlertBanner::make()
-                ->warning()
+            AlertBanner::make('server_conflict')
                 ->title('Warning')
                 ->body($exception->getMessage())
+                ->warning()
                 ->send();
         }
+    }
+
+    public function boot(): void
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+        /** @var FeatureProvider $feature */
+        foreach ($server->egg->features() as $feature) {
+            $this->cacheAction($feature->getAction());
+        }
+    }
+
+    #[On('mount-feature')]
+    public function mountFeature(string $data): void
+    {
+        $data = json_decode($data);
+        $feature = data_get($data, 'key');
+
+        $feature = FeatureProvider::getProviders($feature);
+        if ($this->getMountedAction()) {
+            return;
+        }
+        $this->mountAction($feature->getId());
+        sleep(2); // TODO find a better way
     }
 
     public function getWidgetData(): array
@@ -54,18 +83,41 @@ class Console extends Page
         ];
     }
 
+    /** @var array<string, array<class-string<Widget>>> */
+    protected static array $customWidgets = [];
+
+    /** @param class-string<Widget>[] $customWidgets */
+    public static function registerCustomWidgets(ConsoleWidgetPosition $position, array $customWidgets): void
+    {
+        static::$customWidgets[$position->value] = array_unique(array_merge(static::$customWidgets[$position->value] ?? [], $customWidgets));
+    }
+
     /**
      * @return class-string<Widget>[]
      */
     public function getWidgets(): array
     {
-        return [
-            ServerOverview::class,
-            ServerConsole::class,
+        $allWidgets = [];
+
+        $allWidgets = array_merge($allWidgets, static::$customWidgets[ConsoleWidgetPosition::Top->value] ?? []);
+
+        $allWidgets[] = ServerOverview::class;
+
+        $allWidgets = array_merge($allWidgets, static::$customWidgets[ConsoleWidgetPosition::AboveConsole->value] ?? []);
+
+        $allWidgets[] = ServerConsole::class;
+
+        $allWidgets = array_merge($allWidgets, static::$customWidgets[ConsoleWidgetPosition::BelowConsole->value] ?? []);
+
+        $allWidgets = array_merge($allWidgets, [
             ServerCpuChart::class,
             ServerMemoryChart::class,
-            //ServerNetworkChart::class, TODO: convert units.
-        ];
+            ServerNetworkChart::class,
+        ]);
+
+        $allWidgets = array_merge($allWidgets, static::$customWidgets[ConsoleWidgetPosition::Bottom->value] ?? []);
+
+        return array_unique($allWidgets);
     }
 
     /**
@@ -102,32 +154,33 @@ class Console extends Page
             Action::make('start')
                 ->color('primary')
                 ->size(ActionSize::ExtraLarge)
-                ->action(fn () => $this->dispatch('setServerState', state: 'start', uuid: $server->uuid))
+                ->dispatch('setServerState', ['state' => 'start', 'uuid' => $server->uuid])
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
-                ->disabled(fn () => $server->isInConflictState() || !$this->status->isStartable()),
+                ->disabled(fn () => $server->isInConflictState() || !$this->status->isStartable())
+                ->icon('tabler-player-play-filled'),
             Action::make('restart')
                 ->color('gray')
                 ->size(ActionSize::ExtraLarge)
-                ->action(fn () => $this->dispatch('setServerState', state: 'restart', uuid: $server->uuid))
+                ->dispatch('setServerState', ['state' => 'restart', 'uuid' => $server->uuid])
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
-                ->disabled(fn () => $server->isInConflictState() || !$this->status->isRestartable()),
+                ->disabled(fn () => $server->isInConflictState() || !$this->status->isRestartable())
+                ->icon('tabler-reload'),
             Action::make('stop')
                 ->color('danger')
                 ->size(ActionSize::ExtraLarge)
-                ->action(fn () => $this->dispatch('setServerState', state: 'stop', uuid: $server->uuid))
+                ->dispatch('setServerState', ['state' => 'stop', 'uuid' => $server->uuid])
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->hidden(fn () => $this->status->isStartingOrStopping() || $this->status->isKillable())
-                ->disabled(fn () => $server->isInConflictState() || !$this->status->isStoppable()),
+                ->disabled(fn () => $server->isInConflictState() || !$this->status->isStoppable())
+                ->icon('tabler-player-stop-filled'),
             Action::make('kill')
                 ->color('danger')
-                ->requiresConfirmation()
-                ->modalHeading('Do you wish to kill this server?')
-                ->modalDescription('This can result in data corruption and/or data loss!')
-                ->modalSubmitActionLabel('Kill Server')
+                ->tooltip('This can result in data corruption and/or data loss!')
                 ->size(ActionSize::ExtraLarge)
-                ->action(fn () => $this->dispatch('setServerState', state: 'kill', uuid: $server->uuid))
+                ->dispatch('setServerState', ['state' => 'kill', 'uuid' => $server->uuid])
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
-                ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable()),
+                ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable())
+                ->icon('tabler-alert-square'),
         ];
     }
 }

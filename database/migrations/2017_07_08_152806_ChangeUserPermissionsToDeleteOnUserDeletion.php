@@ -11,12 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('permissions', function (Blueprint $table) {
-            $table->dropForeign(['subuser_id']);
-
-            $table->foreign('subuser_id')->references('id')->on('subusers')->onDelete('cascade');
-        });
-
         Schema::table('subusers', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
             $table->dropForeign(['server_id']);
@@ -37,12 +31,6 @@ return new class extends Migration
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('server_id')->references('id')->on('servers');
-        });
-
-        Schema::table('permissions', function (Blueprint $table) {
-            $table->dropForeign(['subuser_id']);
-
-            $table->foreign('subuser_id')->references('id')->on('subusers');
         });
     }
 };

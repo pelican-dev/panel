@@ -31,10 +31,21 @@ return new class extends Migration
         if (Schema::getConnection()->getDriverName() === 'sqlite') {
             Schema::table('api_keys', function (Blueprint $table) {
                 $table->dropColumn('public');
-                $table->char('secret', 32)->change();
+                $table->string('secret', 32)->change();
                 $table->renameColumn('secret', 'token');
                 $table->string('token', 32)->unique()->change();
             });
+        } elseif (Schema::getConnection()->getDriverName() === 'pgsql') {
+            // Rename column 'secret' to 'token'
+            DB::statement('ALTER TABLE api_keys RENAME COLUMN secret TO token');
+
+            // Change data type of 'token' to CHAR(32) and set NOT NULL constraint
+            DB::statement('ALTER TABLE api_keys ALTER COLUMN token TYPE CHAR(32)');
+            DB::statement('ALTER TABLE api_keys ALTER COLUMN token SET NOT NULL');
+
+            // Add unique constraint on 'token'
+            DB::statement('ALTER TABLE api_keys ADD CONSTRAINT api_keys_token_unique UNIQUE (token)');
+
         } else {
             DB::statement('ALTER TABLE `api_keys` CHANGE `secret` `token` CHAR(32) NOT NULL, ADD UNIQUE INDEX `api_keys_token_unique` (`token`(32))');
         }
@@ -49,7 +60,7 @@ return new class extends Migration
         DB::statement('ALTER TABLE `api_keys` CHANGE `token` `secret` TEXT, DROP INDEX `api_keys_token_unique`');
 
         Schema::table('api_keys', function (Blueprint $table) {
-            $table->char('public', 16)->after('user_id');
+            $table->string('public', 16)->after('user_id');
         });
 
         DB::transaction(function () {

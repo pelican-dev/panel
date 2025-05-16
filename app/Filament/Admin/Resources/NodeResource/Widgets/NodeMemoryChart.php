@@ -27,9 +27,9 @@ class NodeMemoryChart extends ChartWidget
 
         $this->memoryHistory = session()->get('memoryHistory', []);
         $this->memoryHistory[] = [
-            'memory' => Number::format(config('panel.use_binary_prefix')
+            'memory' => round(config('panel.use_binary_prefix')
                 ? $value / 1024 / 1024 / 1024
-                : $value / 1000 / 1000 / 1000, maxPrecision: 2),
+                : $value / 1000 / 1000 / 1000, 2),
             'timestamp' => now(auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
         ];
 

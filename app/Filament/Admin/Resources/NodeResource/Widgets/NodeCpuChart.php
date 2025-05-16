@@ -27,7 +27,7 @@ class NodeCpuChart extends ChartWidget
 
         $this->cpuHistory = session()->get('cpuHistory', []);
         $this->cpuHistory[] = [
-            'cpu' => Number::format($data['cpu_percent'] * $threads, maxPrecision: 2),
+            'cpu' => round($data['cpu_percent'] * $threads, 2),
             'timestamp' => now(auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
         ];
 

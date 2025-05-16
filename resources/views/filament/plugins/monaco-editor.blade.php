@@ -119,8 +119,8 @@
                         },
                         wordWrap: 'on',
                         WrappingIndent: 'same',
-
                     });
+                    $el.style.zIndex = '1';
                     monacoEditor(document.getElementById(monacoId).editor);
                     document.getElementById(monacoId).addEventListener('monaco-editor-focused', (event) => {
                         document.getElementById(monacoId).editor.focus();

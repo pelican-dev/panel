@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id
@@ -35,8 +34,6 @@ class Database extends Model implements Validatable
      * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'server_database';
-
-    public const DEFAULT_CONNECTION_NAME = 'dynamic';
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -104,7 +101,7 @@ class Database extends Model implements Validatable
      */
     private function run(string $statement): bool
     {
-        return DB::connection(self::DEFAULT_CONNECTION_NAME)->statement($statement);
+        return $this->host->buildConnection()->statement($statement);
     }
 
     /**

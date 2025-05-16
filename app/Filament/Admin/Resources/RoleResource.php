@@ -2,8 +2,6 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Enums\RolePermissionModels;
-use App\Enums\RolePermissionPrefixes;
 use App\Filament\Admin\Resources\RoleResource\Pages;
 use App\Models\Role;
 use Filament\Forms\Components\Actions\Action;
@@ -12,6 +10,7 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -50,7 +49,7 @@ class RoleResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return trans('admin/dashboard.user');
+        return config('panel.filament.top-navigation', false) ? trans('admin/dashboard.advanced') : trans('admin/dashboard.user');
     }
 
     public static function getNavigationBadge(): ?string
@@ -71,6 +70,11 @@ class RoleResource extends Resource
                     ->badge()
                     ->counts('permissions')
                     ->formatStateUsing(fn (Role $role, $state) => $role->isRootAdmin() ? trans('admin/role.all') : $state),
+                TextColumn::make('nodes.name')
+                    ->icon('tabler-server-2')
+                    ->label(trans('admin/role.nodes'))
+                    ->badge()
+                    ->placeholder(trans('admin/role.all')),
                 TextColumn::make('users_count')
                     ->label(trans('admin/role.users'))
                     ->counts('users')
@@ -95,32 +99,16 @@ class RoleResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $permissions = [];
+        $permissionSections = [];
 
-        foreach (RolePermissionModels::cases() as $model) {
+        foreach (Role::getPermissionList() as $model => $permissions) {
             $options = [];
 
-            foreach (RolePermissionPrefixes::cases() as $prefix) {
-                $options[$prefix->value . ' ' . strtolower($model->value)] = Str::headline($prefix->value);
+            foreach ($permissions as $permission) {
+                $options[$permission . ' ' . strtolower($model)] = Str::headline($permission);
             }
 
-            if (array_key_exists($model->value, Role::MODEL_SPECIFIC_PERMISSIONS)) {
-                foreach (Role::MODEL_SPECIFIC_PERMISSIONS[$model->value] as $permission) {
-                    $options[$permission . ' ' . strtolower($model->value)] = Str::headline($permission);
-                }
-            }
-
-            $permissions[] = self::makeSection($model->value, $options);
-        }
-
-        foreach (Role::SPECIAL_PERMISSIONS as $model => $prefixes) {
-            $options = [];
-
-            foreach ($prefixes as $prefix) {
-                $options[$prefix . ' ' . strtolower($model)] = Str::headline($prefix);
-            }
-
-            $permissions[] = self::makeSection($model, $options);
+            $permissionSections[] = self::makeSection($model, $options);
         }
 
         return $form
@@ -137,12 +125,20 @@ class RoleResource extends Resource
                     ->hidden(),
                 Fieldset::make(trans('admin/role.permissions'))
                     ->columns(3)
-                    ->schema($permissions)
+                    ->schema($permissionSections)
                     ->hidden(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
                 Placeholder::make('permissions')
                     ->label(trans('admin/role.permissions'))
                     ->content(trans('admin/role.root_admin', ['role' => Role::ROOT_ADMIN]))
                     ->visible(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
+                Select::make('nodes')
+                    ->label(trans('admin/role.nodes'))
+                    ->multiple()
+                    ->relationship('nodes', 'name')
+                    ->searchable(['name', 'fqdn'])
+                    ->preload()
+                    ->hint(trans('admin/role.nodes_hint'))
+                    ->hidden(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
             ]);
     }
 

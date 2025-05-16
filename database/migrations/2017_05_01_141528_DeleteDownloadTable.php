@@ -21,8 +21,8 @@ return new class extends Migration
     {
         Schema::create('downloads', function (Blueprint $table) {
             $table->increments('id');
-            $table->char('token', 36)->unique();
-            $table->char('server', 36);
+            $table->string('token', 36)->unique();
+            $table->string('server', 36);
             $table->text('path');
             $table->timestamps();
         });

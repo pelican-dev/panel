@@ -47,14 +47,6 @@ class EnvironmentService
             $variables->put($key, object_get($server, $object));
         }
 
-        // Process variables set in the configuration file.
-        foreach (config('panel.environment_variables', []) as $key => $object) {
-            $variables->put(
-                $key,
-                is_callable($object) ? call_user_func($object, $server) : object_get($server, $object)
-            );
-        }
-
         // Process dynamically included environment variables.
         foreach ($this->additional as $key => $closure) {
             $variables->put($key, call_user_func($closure, $server));

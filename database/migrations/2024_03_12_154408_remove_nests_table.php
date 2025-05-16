@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('eggs', function (Blueprint $table) {
-            $table->text('tags');
+            $table->text('tags')->nullable();
         });
 
         DB::table('eggs')->update(['tags' => '[]']);
@@ -58,7 +58,7 @@ return new class extends Migration
 
         Schema::create('nests', function (Blueprint $table) {
             $table->increments('id');
-            $table->char('uuid', 36)->unique();
+            $table->string('uuid', 36)->unique();
             $table->string('author');
             $table->string('name');
             $table->text('description')->nullable();

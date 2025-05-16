@@ -39,7 +39,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
 
         $response->assertOk();
         $response->assertJsonPath('object', EggVariable::RESOURCE_NAME);
-        $this->assertJsonTransformedWith($response->json('attributes'), $server->variables[0]);
+        $this->assertJsonTransformedWith($response->json('attributes'), $server->variables->firstWhere('env_variable', 'BUNGEE_VERSION'));
         $response->assertJsonPath('meta.startup_command', 'java bungeecord.jar --version 123');
         $response->assertJsonPath('meta.raw_startup_command', $server->startup);
     }
@@ -90,7 +90,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
         [$user, $server] = $this->generateTestAccount();
 
         $egg = $this->cloneEggAndVariables($server->egg);
-        $egg->variables()->first()->update(['user_viewable' => false]);
+        $egg->variables()->firstWhere('env_variable', 'BUNGEE_VERSION')->update(['user_viewable' => false]);
 
         $server->fill([
             'egg_id' => $egg->id,
@@ -119,7 +119,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
         [$user, $server] = $this->generateTestAccount();
 
         $egg = $this->cloneEggAndVariables($server->egg);
-        $egg->variables()->first()->update(['rules' => ['nullable', 'string']]);
+        $egg->variables()->firstWhere('env_variable', 'BUNGEE_VERSION')->update(['rules' => ['nullable', 'string']]);
 
         $server->fill(['egg_id' => $egg->id])->save();
         $server->refresh();

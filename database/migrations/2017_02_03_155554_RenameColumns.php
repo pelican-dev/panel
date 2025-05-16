@@ -15,7 +15,7 @@ return new class extends Migration
             $table->dropForeign(['node']);
             $table->dropForeign(['assigned_to']);
 
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            if (!in_array(Schema::getConnection()->getDriverName(), ['sqlite', 'pgsql'])) {
                 $table->dropIndex('allocations_node_foreign');
                 $table->dropIndex('allocations_assigned_to_foreign');
             }
@@ -36,7 +36,7 @@ return new class extends Migration
             $table->dropForeign(['node_id']);
             $table->dropForeign(['server_id']);
 
-            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            if (!in_array(Schema::getConnection()->getDriverName(), ['sqlite', 'pgsql'])) {
                 $table->dropIndex('allocations_node_id_foreign');
                 $table->dropIndex('allocations_server_id_foreign');
             }

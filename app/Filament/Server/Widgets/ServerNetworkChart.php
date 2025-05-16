@@ -4,61 +4,72 @@ namespace App\Filament\Server\Widgets;
 
 use App\Models\Server;
 use Carbon\Carbon;
+use Filament\Facades\Filament;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 
 class ServerNetworkChart extends ChartWidget
 {
-    protected static ?string $heading = 'Network';
-
     protected static ?string $pollingInterval = '1s';
 
-    protected static ?string $maxHeight = '300px';
+    protected static ?string $maxHeight = '200px';
 
     public ?Server $server = null;
 
+    public static function canView(): bool
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        return !$server->isInConflictState() && !$server->retrieveStatus()->isOffline();
+    }
+
     protected function getData(): array
     {
-        $data = cache()->get("servers.{$this->server->id}.network");
+        $previous = null;
 
-        $rx = collect($data)
-            ->slice(-10)
-            ->map(fn ($value, $key) => [
-                'rx' => $value->rx_bytes,
-                'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
-            ])
-            ->all();
+        $period = auth()->user()->getCustomization()['console_graph_period'] ?? 30;
+        $net = collect(cache()->get("servers.{$this->server->id}.network"))
+            ->slice(-$period)
+            ->map(function ($current, $timestamp) use (&$previous) {
+                $net = null;
 
-        $tx = collect($data)
-            ->slice(-10)
-            ->map(fn ($value, $key) => [
-                'tx' => $value->rx_bytes,
-                'timestamp' => Carbon::createFromTimestamp($key, (auth()->user()->timezone ?? 'UTC'))->format('H:i:s'),
-            ])
+                if ($previous !== null) {
+                    $net = [
+                        'rx' => max(0, $current->rx_bytes - $previous->rx_bytes),
+                        'tx' => max(0, $current->tx_bytes - $previous->tx_bytes),
+                        'timestamp' => Carbon::createFromTimestamp($timestamp, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
+                    ];
+                }
+
+                $previous = $current;
+
+                return $net;
+            })
             ->all();
 
         return [
             'datasets' => [
                 [
                     'label' => 'Inbound',
-                    'data' => array_column($rx, 'rx'),
+                    'data' => array_column($net, 'rx'),
                     'backgroundColor' => [
-                        'rgba(96, 165, 250, 0.3)',
+                        'rgba(100, 255, 105, 0.5)',
                     ],
                     'tension' => '0.3',
                     'fill' => true,
                 ],
                 [
                     'label' => 'Outbound',
-                    'data' => array_column($tx, 'tx'),
+                    'data' => array_column($net, 'tx'),
                     'backgroundColor' => [
-                        'rgba(165, 96, 250, 0.3)',
+                        'rgba(96, 165, 250, 0.3)',
                     ],
                     'tension' => '0.3',
                     'fill' => true,
                 ],
             ],
-            'labels' => array_column($rx, 'timestamp'),
+            'labels' => array_column($net, 'timestamp'),
         ];
     }
 
@@ -69,25 +80,38 @@ class ServerNetworkChart extends ChartWidget
 
     protected function getOptions(): RawJs
     {
+        // TODO: use "panel.use_binary_prefix" config value
         return RawJs::make(<<<'JS'
         {
             scales: {
                 x: {
-                    grid: {
-                        display: false,
-                    },
-                    ticks: {
-                        display: true,
-                    },
-                    display: false, //debug
+                    display: false,
                 },
                 y: {
+                    min: 0,
                     ticks: {
                         display: true,
+                        callback(value) {
+                            const bytes = typeof value === 'string' ? parseInt(value, 10) : value;
+
+                            if (bytes < 1) return '0 Bytes';
+
+                            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+                            const number = Number((bytes / Math.pow(1024, i)).toFixed(2));
+
+                            return `${number} ${['Bytes', 'KiB', 'MiB', 'GiB', 'TiB'][i]}`;
+                        },
                     },
                 },
             }
         }
     JS);
+    }
+
+    public function getHeading(): string
+    {
+        $lastData = collect(cache()->get("servers.{$this->server->id}.network"))->last();
+
+        return 'Network - ↓' . convert_bytes_to_readable($lastData->rx_bytes ?? 0) . ' - ↑' . convert_bytes_to_readable($lastData->tx_bytes ?? 0);
     }
 }

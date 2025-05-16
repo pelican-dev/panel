@@ -1,7 +1,6 @@
 /.phpunit.cache
 /node_modules
 /public/build
-/public/hot
 /public/storage
 /storage/*.key
 /storage/pail
@@ -24,8 +23,7 @@ yarn-error.log
 /.vscode
 
 public/assets/manifest.json
-/database/*.sqlite
-/database/*.sqlite-journal
+/database/*.sqlite*
 filament-monaco-editor/
 _ide_helper*
 /.phpstorm.meta.php

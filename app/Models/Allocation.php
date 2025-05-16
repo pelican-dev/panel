@@ -72,6 +72,20 @@ class Allocation extends Model
         static::deleting(function (self $allocation) {
             throw_if($allocation->server_id, new ServerUsingAllocationException(trans('exceptions.allocations.server_using')));
         });
+
+        static::updating(function ($allocation) {
+            $originalServerId = $allocation->getOriginal('server_id');
+            if (!$originalServerId) {
+                return;
+            }
+            $server = Server::find($originalServerId);
+            if (!$server) {
+                return;
+            }
+            if ($allocation->isDirty('server_id') && is_null($allocation->server_id) && $allocation->id === $server->allocation_id) {
+                return false;
+            }
+        });
     }
 
     protected function casts(): array
@@ -103,7 +117,7 @@ class Allocation extends Model
     protected function address(): Attribute
     {
         return Attribute::make(
-            get: fn () => "$this->alias:$this->port",
+            get: fn () => (is_ipv6($this->alias) ? "[$this->alias]" : $this->alias) . ":$this->port",
         );
     }
 

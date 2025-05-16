@@ -5,11 +5,13 @@ namespace App\Models;
 use App\Contracts\Validatable;
 use App\Exceptions\Service\Egg\HasChildrenException;
 use App\Exceptions\Service\HasActiveServersException;
+use App\Extensions\Features\FeatureProvider;
 use App\Traits\HasValidation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Str;
 
 /**
@@ -69,19 +71,6 @@ class Egg extends Model implements Validatable
      * Defines the current egg export version.
      */
     public const EXPORT_VERSION = 'PLCN_v1';
-
-    /**
-     * Different features that can be enabled on any given egg. These are used internally
-     * to determine which types of frontend functionality should be shown to the user. Eggs
-     * will automatically inherit features from a parent egg if they are already configured
-     * to copy configuration values from said egg.
-     *
-     * To skip copying the features, an empty array value should be passed in ("[]") rather
-     * than leaving it null.
-     */
-    public const FEATURE_EULA_POPUP = 'eula';
-
-    public const FEATURE_FASTDL = 'fastdl';
 
     /**
      * Fields that are not mass assignable.
@@ -170,6 +159,12 @@ class Egg extends Model implements Validatable
 
             throw_if($egg->children()->count(), new HasChildrenException(trans('exceptions.egg.has_children')));
         });
+    }
+
+    /** @return array<FeatureProvider> */
+    public function features(): array
+    {
+        return FeatureProvider::getProviders($this->features);
     }
 
     /**
@@ -287,6 +282,11 @@ class Egg extends Model implements Validatable
         }
 
         return $this->configFrom->file_denylist;
+    }
+
+    public function mounts(): MorphToMany
+    {
+        return $this->morphToMany(Mount::class, 'mountable');
     }
 
     /**

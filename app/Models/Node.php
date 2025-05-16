@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -49,6 +50,8 @@ use Symfony\Component\Yaml\Yaml;
  * @property int|null $servers_count
  * @property \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations
  * @property int|null $allocations_count
+ * @property \App\Models\Role[]|\Illuminate\Database\Eloquent\Collection $roles
+ * @property int|null $roles_count
  */
 class Node extends Model implements Validatable
 {
@@ -89,7 +92,7 @@ class Node extends Model implements Validatable
         'name' => ['required', 'string', 'min:1', 'max:100'],
         'description' => ['string', 'nullable'],
         'public' => ['boolean'],
-        'fqdn' => ['required', 'string'],
+        'fqdn' => ['required', 'string', 'notIn:0.0.0.0,127.0.0.1,localhost'],
         'scheme' => ['required', 'string', 'in:http,https'],
         'behind_proxy' => ['boolean'],
         'memory' => ['required', 'numeric', 'min:0'],
@@ -214,7 +217,7 @@ class Node extends Model implements Validatable
                 ],
             ],
             'allowed_mounts' => $this->mounts->pluck('source')->toArray(),
-            'remote' => route('filament.app.resources...index'),
+            'remote' => config('app.url'),
         ];
     }
 
@@ -239,9 +242,9 @@ class Node extends Model implements Validatable
         return $this->maintenance_mode;
     }
 
-    public function mounts(): HasManyThrough
+    public function mounts(): MorphToMany
     {
-        return $this->hasManyThrough(Mount::class, MountNode::class, 'node_id', 'id', 'id', 'mount_id');
+        return $this->morphToMany(Mount::class, 'mountable');
     }
 
     /**
@@ -266,6 +269,11 @@ class Node extends Model implements Validatable
     public function databaseHosts(): BelongsToMany
     {
         return $this->belongsToMany(DatabaseHost::class);
+    }
+
+    public function roles(): HasManyThrough
+    {
+        return $this->hasManyThrough(Role::class, NodeRole::class, 'node_id', 'id', 'id', 'role_id');
     }
 
     /**
@@ -365,16 +373,20 @@ class Node extends Model implements Validatable
         ];
 
         try {
-            $this->systemInformation();
 
-            return Http::daemon($this)
+            $data = Http::daemon($this)
                 ->connectTimeout(1)
                 ->timeout(1)
                 ->get('/api/system/utilization')
-                ->json() ?? $default;
+                ->json();
+
+            if ($data['memory_total']) {
+                return $data;
+            }
         } catch (Exception) {
-            return $default;
         }
+
+        return $default;
     }
 
     /** @return string[] */
@@ -392,10 +404,11 @@ class Node extends Model implements Validatable
                 }
             }
 
-            // Only IPV4
-            $ips = $ips->filter(fn (string $ip) => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false);
+            $ips = $ips->filter(fn (string $ip) => is_ip($ip));
 
+            // TODO: remove later
             $ips->push('0.0.0.0');
+            $ips->push('::');
 
             return $ips->unique()->all();
         });
