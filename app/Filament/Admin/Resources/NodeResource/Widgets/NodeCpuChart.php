@@ -23,7 +23,7 @@ class NodeCpuChart extends ChartWidget
     protected function getData(): array
     {
         $data = $this->node->statistics();
-        $threads = $this->node->systemInformation()['cpu_count'];
+        $threads = $this->node->systemInformation()['cpu_count'] ?? 0;
 
         $this->cpuHistory = session()->get('cpuHistory', []);
         $this->cpuHistory[] = [
@@ -75,7 +75,7 @@ class NodeCpuChart extends ChartWidget
 
     public function getHeading(): string
     {
-        $threads = $this->node->systemInformation()['cpu_count'];
+        $threads = $this->node->systemInformation()['cpu_count'] ?? 0;
         $data = array_slice(end($this->cpuHistory), -60);
 
         $cpu = Number::format($data['cpu'], maxPrecision: 2, locale: auth()->user()->language);
