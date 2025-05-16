@@ -9,7 +9,7 @@ use Illuminate\Support\Number;
 
 class NodeMemoryChart extends ChartWidget
 {
-    protected static ?string $pollingInterval = '1s';
+    protected static ?string $pollingInterval = '5s';
 
     protected static ?string $maxHeight = '300px';
 
