@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'heading' => 'Willkommen bei Pelican!',
+    'heading' => 'Willkommen bei Germando!',
     'version' => 'Version: :version',
     'advanced' => 'Erweitert',
     'server' => 'Server',
@@ -24,13 +24,13 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Keine Nodes erkannt',
-            'content' => 'Es scheint, dass Sie noch keine Nodes eingerichtet haben, aber keine Sorge - klicken Sie einfach auf die Aktionsschaltfläche, um Ihren ersten Node zu erstellen!',
+            'content' => 'Es scheint, dass Sie noch keine Nodes eingerichtet haben, aber keine Sorge - klicken Sie einfach auf die Aktion-Button, um Ihren ersten Node zu erstellen!',
             'extra_note' => 'Wenn Sie auf Probleme stoßen, melden Sie diese bitte auf GitHub.',
-            'button_label' => 'Ersten Node in Pelican erstellen',
+            'button_label' => 'Ersten Node in Germando erstellen',
         ],
         'intro-support' => [
-            'heading' => 'Pelican unterstützen',
-            'content' => 'Vielen Dank, dass Sie Pelican verwenden. Dies wäre nur durch Ihre Unterstützung, die unserer Mitwirkenden und aller anderen Unterstützer möglich gewesen!',
+            'heading' => 'Germando unterstützen',
+            'content' => 'Vielen Dank, dass Sie Germando verwenden. Dies wäre nur durch Ihre Unterstützung, die unserer Mitwirkenden und aller anderen Unterstützer möglich gewesen!',
             'extra_note' => 'Wir schätzen jede Unterstützung von jedem.',
             'button_translate' => 'Beim Übersetzen helfen',
             'button_donate' => 'Direkt spenden',

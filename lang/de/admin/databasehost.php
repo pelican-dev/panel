@@ -26,7 +26,7 @@ return [
     'max_database' => 'Max. Datenbanken',
     'max_databases_help' => 'Die maximale Anzahl der Datenbanken, die auf diesem Host erstellt werden können. Wenn das Limit erreicht ist, können keine neuen Datenbanken auf diesem Host erstellt werden. Leer bedeutet unbegrenzt.',
     'display_name' => 'Anzeigename',
-    'display_name_help' => 'Die IP-Adresse oder der Domain-Name, die dem Endbenutzer angezeigt werden soll.',
+    'display_name_help' => 'Die IP-Adresse oder der Domain-Name, die dem Endnutzer angezeigt werden soll.',
     'username' => 'Benutzername',
     'username_help' => 'Der Benutzername eines Kontos, das über ausreichende Berechtigungen verfügt, um neue Benutzer und Datenbanken im System zu erstellen.',
     'password' => 'Passwort',

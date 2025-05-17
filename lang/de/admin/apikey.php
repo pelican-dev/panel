@@ -3,7 +3,7 @@
 return [
     'title' => 'Anwendungs-API-Schlüssel',
     'empty_table' => 'Keine API-Schlüssel vorhanden',
-    'whitelist' => 'Whitelist IPv4-Adressen',
+    'whitelist' => 'Whitelisted IPv4-Adressen',
     'whitelist_help' => 'API-Schlüssel können auf bestimmte IPv4-Adressen beschränkt werden. Geben Sie jede Adresse in einer neuen Zeile ein.',
     'whitelist_placeholder' => 'Beispiel: 127.0.0.1 oder 192.168.1.1',
     'description' => 'Beschreibung',

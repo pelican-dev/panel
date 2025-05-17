@@ -38,7 +38,7 @@ return [
         ],
         'panelversion' => [
             'label' => 'Panel-Version',
-            'ok' => 'Panel ist auf dem neuesten Stand',
+            'ok' => 'Panel ist auf dem neuesten Stand. Sie benutzen Germando',
             'failed' => 'Installierte Version ist :currentVersion, aber die neueste ist :latestVersion',
             'up_to_date' => 'Auf dem neuesten Stand',
             'outdated' => 'Veraltet',
