@@ -11,7 +11,6 @@ Mit Container-Isolierung (Docker), Live-Ressourcenüberwachung und umfangreichen
 
 ## Unterstützte Spiele und Serer Games and Servers
 
-Pelican supports a wide variety of games by utilizing Docker containers to isolate each instance.
-This gives you the power to run game servers without bloating machines with a host of additional dependencies.
+Germando unterstützt eine Vielzahl an Spielen und sonstiger Software, die in Form von "Eggs" vom Pelican-/Pterodactylpanel zur verfügung gestellt werden.
 
 Made with love in germany<3
