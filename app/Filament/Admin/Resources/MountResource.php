@@ -176,8 +176,10 @@ class MountResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        return $query->whereHas('nodes', function (Builder $query) {
-            $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'));
-        })->orDoesntHave('nodes');
+        return $query->where(function (Builder $query) {
+            return $query->whereHas('nodes', function (Builder $query) {
+                $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'));
+            })->orDoesntHave('nodes');
+        });
     }
 }
