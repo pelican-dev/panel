@@ -30,7 +30,7 @@ class ProcessWebhook implements ShouldQueue
     {
         $data = $this->data[0];
 
-        if ($this->webhookConfiguration->type === WebhookType::Discord) {
+        if ($this->webhookConfiguration->type === WebhookType::Discord->value) {
             $data = array_merge(
                 json_decode($data, true),
                 ['event' => $this->webhookConfiguration->transformClassName($this->eventName)]
