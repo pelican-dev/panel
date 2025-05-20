@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Admin\Resources\UserResource\RelationManagers;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
@@ -22,6 +23,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
 {
+    use CanCustomizeRelations;
+
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'tabler-users';
@@ -146,7 +149,7 @@ class UserResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
+    public static function getDefaultRelations(): array
     {
         return [
             RelationManagers\ServersRelationManager::class,

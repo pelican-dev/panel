@@ -4,7 +4,6 @@ namespace App\Filament\Admin\Resources\EggResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Admin\Resources\EggResource;
-use App\Filament\Admin\Resources\EggResource\RelationManagers\ServersRelationManager;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
 use App\Filament\Components\Forms\Fields\CopyFrom;
@@ -272,12 +271,5 @@ class EditEgg extends EditRecord
     protected function getFormActions(): array
     {
         return [];
-    }
-
-    public function getRelationManagers(): array
-    {
-        return [
-            ServersRelationManager::class,
-        ];
     }
 }

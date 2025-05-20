@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\ApiKeyResource\Pages;
 use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\ApiKey;
+use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -20,6 +21,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ApiKeyResource extends Resource
 {
+    use CanCustomizeRelations;
+
     protected static ?string $model = ApiKey::class;
 
     protected static ?string $navigationIcon = 'tabler-key';

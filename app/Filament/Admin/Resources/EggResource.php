@@ -3,11 +3,15 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\EggResource\Pages;
+use App\Filament\Admin\Resources\EggResource\RelationManagers;
 use App\Models\Egg;
+use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Resources\Resource;
 
 class EggResource extends Resource
 {
+    use CanCustomizeRelations;
+
     protected static ?string $model = Egg::class;
 
     protected static ?string $navigationIcon = 'tabler-eggs';
@@ -42,6 +46,13 @@ class EggResource extends Resource
     public static function getGloballySearchableAttributes(): array
     {
         return ['name', 'tags', 'uuid', 'id'];
+    }
+
+    public static function getDefaultRelations(): array
+    {
+        return [
+            RelationManagers\ServersRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

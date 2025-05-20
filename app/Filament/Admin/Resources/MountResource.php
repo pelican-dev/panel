@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\MountResource\Pages;
 use App\Models\Mount;
+use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -22,6 +23,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MountResource extends Resource
 {
+    use CanCustomizeRelations;
+
     protected static ?string $model = Mount::class;
 
     protected static ?string $navigationIcon = 'tabler-layers-linked';

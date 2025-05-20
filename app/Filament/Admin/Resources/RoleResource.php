@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\RoleResource\Pages;
 use App\Models\Role;
+use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
@@ -26,6 +27,8 @@ use Spatie\Permission\Contracts\Permission;
 
 class RoleResource extends Resource
 {
+    use CanCustomizeRelations;
+
     protected static ?string $model = Role::class;
 
     protected static ?string $navigationIcon = 'tabler-users-group';

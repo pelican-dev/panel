@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\WebhookResource\Pages;
 use App\Models\WebhookConfiguration;
+use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -18,6 +19,8 @@ use Filament\Tables\Table;
 
 class WebhookResource extends Resource
 {
+    use CanCustomizeRelations;
+
     protected static ?string $model = WebhookConfiguration::class;
 
     protected static ?string $navigationIcon = 'tabler-webhook';

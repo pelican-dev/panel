@@ -3,7 +3,9 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\DatabaseHostResource\Pages;
+use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers;
 use App\Models\DatabaseHost;
+use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -20,6 +22,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class DatabaseHostResource extends Resource
 {
+    use CanCustomizeRelations;
+
     protected static ?string $model = DatabaseHost::class;
 
     protected static ?string $navigationIcon = 'tabler-database';
@@ -148,6 +152,13 @@ class DatabaseHostResource extends Resource
                             ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'))),
                     ]),
             ]);
+    }
+
+    public static function getDefaultRelations(): array
+    {
+        return [
+            RelationManagers\DatabasesRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

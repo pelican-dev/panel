@@ -5,11 +5,14 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\NodeResource\Pages;
 use App\Filament\Admin\Resources\NodeResource\RelationManagers;
 use App\Models\Node;
+use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 
 class NodeResource extends Resource
 {
+    use CanCustomizeRelations;
+
     protected static ?string $model = Node::class;
 
     protected static ?string $navigationIcon = 'tabler-server-2';
@@ -41,7 +44,7 @@ class NodeResource extends Resource
         return (string) static::getEloquentQuery()->count() ?: null;
     }
 
-    public static function getRelations(): array
+    public static function getDefaultRelations(): array
     {
         return [
             RelationManagers\AllocationsRelationManager::class,

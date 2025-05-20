@@ -3,8 +3,10 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\ServerResource\Pages;
+use App\Filament\Admin\Resources\ServerResource\RelationManagers;
 use App\Models\Mount;
 use App\Models\Server;
+use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
@@ -12,6 +14,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ServerResource extends Resource
 {
+    use CanCustomizeRelations;
+
     protected static ?string $model = Server::class;
 
     protected static ?string $navigationIcon = 'tabler-brand-docker';
@@ -64,6 +68,13 @@ class ServerResource extends Resource
             ->helperText(fn () => $allowedMounts->isEmpty() ? trans('admin/server.no_mounts') : null)
             ->bulkToggleable()
             ->columnSpanFull();
+    }
+
+    public static function getDefaultRelations(): array
+    {
+        return [
+            RelationManagers\AllocationsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
