@@ -71,7 +71,7 @@ class WebhookResource extends Resource
         return $table
             ->columns([
                 IconColumn::make('type')
-                    ->icon(fn ($state) => WebhookType::from($state)->icon())
+                    ->icon(fn ($state) => $state->icon())
                     ->color(Color::Hex(WebhookType::Discord->color())),
                 TextColumn::make('endpoint')
                     ->label(trans('admin/webhook.table.endpoint'))

@@ -19,6 +19,7 @@ use App\Enums\WebhookType;
  * @property string $endpoint
  * @property string $description
  * @property string[] $events
+ * @property WebhookType|string|null $type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -53,6 +54,7 @@ class WebhookConfiguration extends Model
         return [
             'events' => 'array',
             'payload' => 'array',
+            'type' => WebhookType::class,
         ];
     }
 
