@@ -156,28 +156,32 @@ class PluginService
         return $data['status'] ?? PluginStatus::Errored;
     }
 
-    private function setStatus(string|Plugin $plugin, PluginStatus $status, ?string $message = null): void
+    /** @param array<string, mixed> $data */
+    private function setData(string|Plugin $plugin, array $data): void
     {
         $plugin = $plugin instanceof Plugin ? $plugin->id : $plugin;
         $path = plugin_path($plugin, 'plugin.json');
 
-        $data = File::json($path, JSON_THROW_ON_ERROR);
-        $data['status'] = $status;
-        $data['status_message'] = $message;
+        $data = array_merge(File::json($path, JSON_THROW_ON_ERROR), $data);
 
         File::put($path, json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
+    private function setStatus(string|Plugin $plugin, PluginStatus $status, ?string $message = null): void
+    {
+        $this->setData($plugin, [
+            'status' => $status,
+            'status_message' => $message,
+        ]);
+    }
+
     /** @param array<int, string> $order */
-    public function updateLoadOrder(array $order)
+    public function updateLoadOrder(array $order): void
     {
         foreach ($order as $i => $plugin) {
-            $path = plugin_path($plugin, 'plugin.json');
-
-            $data = File::json($path, JSON_THROW_ON_ERROR);
-            $data['load_order'] = $i;
-
-            File::put($path, json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            $this->setData($plugin, [
+                'load_order' => $i,
+            ]);
         }
     }
 }
