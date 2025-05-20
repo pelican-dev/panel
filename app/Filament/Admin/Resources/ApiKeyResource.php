@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\ApiKeyResource\Pages;
 use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\ApiKey;
+use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TagsInput;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ApiKeyResource extends Resource
 {
+    use CanCustomizePages;
     use CanCustomizeRelations;
 
     protected static ?string $model = ApiKey::class;
@@ -145,7 +147,7 @@ class ApiKeyResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListApiKeys::route('/'),

@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\MountResource\Pages;
 use App\Models\Mount;
+use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MountResource extends Resource
 {
+    use CanCustomizePages;
     use CanCustomizeRelations;
 
     protected static ?string $model = Mount::class;
@@ -165,7 +167,7 @@ class MountResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListMounts::route('/'),

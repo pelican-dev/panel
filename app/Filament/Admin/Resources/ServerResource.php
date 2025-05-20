@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\ServerResource\Pages;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers;
 use App\Models\Mount;
 use App\Models\Server;
+use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Get;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ServerResource extends Resource
 {
+    use CanCustomizePages;
     use CanCustomizeRelations;
 
     protected static ?string $model = Server::class;
@@ -77,7 +79,7 @@ class ServerResource extends Resource
         ];
     }
 
-    public static function getPages(): array
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListServers::route('/'),

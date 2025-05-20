@@ -5,12 +5,14 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\NodeResource\Pages;
 use App\Filament\Admin\Resources\NodeResource\RelationManagers;
 use App\Models\Node;
+use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 
 class NodeResource extends Resource
 {
+    use CanCustomizePages;
     use CanCustomizeRelations;
 
     protected static ?string $model = Node::class;
@@ -52,7 +54,7 @@ class NodeResource extends Resource
         ];
     }
 
-    public static function getPages(): array
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListNodes::route('/'),

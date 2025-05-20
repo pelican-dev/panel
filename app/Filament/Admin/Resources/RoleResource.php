@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\RoleResource\Pages;
 use App\Models\Role;
+use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
@@ -27,6 +28,7 @@ use Spatie\Permission\Contracts\Permission;
 
 class RoleResource extends Resource
 {
+    use CanCustomizePages;
     use CanCustomizeRelations;
 
     protected static ?string $model = Role::class;
@@ -201,7 +203,7 @@ class RoleResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListRoles::route('/'),

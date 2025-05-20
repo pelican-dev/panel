@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\WebhookResource\Pages;
 use App\Models\WebhookConfiguration;
+use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
@@ -19,6 +20,7 @@ use Filament\Tables\Table;
 
 class WebhookResource extends Resource
 {
+    use CanCustomizePages;
     use CanCustomizeRelations;
 
     protected static ?string $model = WebhookConfiguration::class;
@@ -101,7 +103,7 @@ class WebhookResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListWebhookConfigurations::route('/'),

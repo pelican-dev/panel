@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers;
 use App\Models\DatabaseHost;
+use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class DatabaseHostResource extends Resource
 {
+    use CanCustomizePages;
     use CanCustomizeRelations;
 
     protected static ?string $model = DatabaseHost::class;
@@ -161,7 +163,7 @@ class DatabaseHostResource extends Resource
         ];
     }
 
-    public static function getPages(): array
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListDatabaseHosts::route('/'),

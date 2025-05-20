@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Admin\Resources\UserResource\RelationManagers;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
 {
+    use CanCustomizePages;
     use CanCustomizeRelations;
 
     protected static ?string $model = User::class;
@@ -156,7 +158,7 @@ class UserResource extends Resource
         ];
     }
 
-    public static function getPages(): array
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListUsers::route('/'),
