@@ -6,12 +6,17 @@ use App\Filament\Server\Resources\FileResource\Pages;
 use App\Models\File;
 use App\Models\Permission;
 use App\Models\Server;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 
 class FileResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+
     protected static ?string $model = File::class;
 
     protected static ?int $navigationSort = 2;
@@ -51,7 +56,7 @@ class FileResource extends Resource
         return auth()->user()->can(Permission::ACTION_FILE_DELETE, Filament::getTenant());
     }
 
-    public static function getPages(): array
+    public static function getDefaultPages(): array
     {
         return [
             'edit' => Pages\EditFiles::route('/edit/{path}'),

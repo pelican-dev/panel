@@ -8,6 +8,8 @@ use App\Models\Server;
 use App\Models\User;
 use App\Services\Subusers\SubuserDeletionService;
 use App\Services\Subusers\SubuserUpdateService;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -29,6 +31,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+
     protected static ?string $model = User::class;
 
     protected static ?int $navigationSort = 5;
@@ -225,7 +230,7 @@ class UserResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListUsers::route('/'),

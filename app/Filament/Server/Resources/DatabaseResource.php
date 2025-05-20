@@ -6,12 +6,17 @@ use App\Filament\Server\Resources\DatabaseResource\Pages;
 use App\Models\Database;
 use App\Models\Permission;
 use App\Models\Server;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 
 class DatabaseResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+
     protected static ?string $model = Database::class;
 
     protected static ?int $navigationSort = 6;
@@ -85,7 +90,7 @@ class DatabaseResource extends Resource
         return auth()->user()->can(Permission::ACTION_DATABASE_DELETE, Filament::getTenant());
     }
 
-    public static function getPages(): array
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListDatabases::route('/'),

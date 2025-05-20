@@ -8,6 +8,8 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Server;
 use App\Models\User;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,6 +17,9 @@ use Illuminate\Database\Query\JoinClause;
 
 class ActivityResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+
     protected static ?string $model = ActivityLog::class;
 
     protected static ?string $modelLabel = 'Activity';
@@ -56,7 +61,7 @@ class ActivityResource extends Resource
         return auth()->user()->can(Permission::ACTION_ACTIVITY_READ, Filament::getTenant());
     }
 
-    public static function getPages(): array
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListActivities::route('/'),

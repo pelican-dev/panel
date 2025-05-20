@@ -8,6 +8,8 @@ use App\Helpers\Utilities;
 use App\Models\Permission;
 use App\Models\Schedule;
 use App\Models\Server;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
 use Carbon\Carbon;
 use Exception;
 use Filament\Facades\Filament;
@@ -27,6 +29,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ScheduleResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+
     protected static ?string $model = Schedule::class;
 
     protected static ?int $navigationSort = 4;
@@ -303,14 +308,14 @@ class ScheduleResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
+    public static function getDefaultRelations(): array
     {
         return [
             TasksRelationManager::class,
         ];
     }
 
-    public static function getPages(): array
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListSchedules::route('/'),

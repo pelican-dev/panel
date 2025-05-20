@@ -6,12 +6,17 @@ use App\Filament\Server\Resources\AllocationResource\Pages;
 use App\Models\Allocation;
 use App\Models\Permission;
 use App\Models\Server;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 
 class AllocationResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+
     protected static ?string $model = Allocation::class;
 
     protected static ?string $modelLabel = 'Network';
@@ -55,7 +60,7 @@ class AllocationResource extends Resource
         return auth()->user()->can(Permission::ACTION_ALLOCATION_DELETE, Filament::getTenant());
     }
 
-    public static function getPages(): array
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListAllocations::route('/'),
