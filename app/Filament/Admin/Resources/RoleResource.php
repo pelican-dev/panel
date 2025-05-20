@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\RoleResource\Pages;
 use App\Models\Role;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
@@ -30,6 +31,7 @@ class RoleResource extends Resource
 {
     use CanCustomizePages;
     use CanCustomizeRelations;
+    use CanModifyTable;
 
     protected static ?string $model = Role::class;
 
@@ -62,7 +64,7 @@ class RoleResource extends Resource
         return static::getModel()::count() ?: null;
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([
