@@ -7,7 +7,7 @@ use App\Filament\Server\Resources\ScheduleResource\RelationManagers\TasksRelatio
 use App\Helpers\Utilities;
 use App\Models\Permission;
 use App\Models\Schedule;
-use App\Models\Server;
+use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use Carbon\Carbon;
@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ScheduleResource extends Resource
 {
+    use BlockAccessInConflict;
     use CanCustomizePages;
     use CanCustomizeRelations;
 
@@ -37,19 +38,6 @@ class ScheduleResource extends Resource
     protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationIcon = 'tabler-clock';
-
-    // TODO: find better way handle server conflict state
-    public static function canAccess(): bool
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        if ($server->isInConflictState()) {
-            return false;
-        }
-
-        return parent::canAccess();
-    }
 
     public static function canViewAny(): bool
     {

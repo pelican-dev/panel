@@ -5,7 +5,7 @@ namespace App\Filament\Server\Resources;
 use App\Filament\Server\Resources\AllocationResource\Pages;
 use App\Models\Allocation;
 use App\Models\Permission;
-use App\Models\Server;
+use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Facades\Filament;
@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AllocationResource extends Resource
 {
+    use BlockAccessInConflict;
     use CanCustomizePages;
     use CanCustomizeRelations;
 
@@ -26,19 +27,6 @@ class AllocationResource extends Resource
     protected static ?int $navigationSort = 7;
 
     protected static ?string $navigationIcon = 'tabler-network';
-
-    // TODO: find better way handle server conflict state
-    public static function canAccess(): bool
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        if ($server->isInConflictState()) {
-            return false;
-        }
-
-        return parent::canAccess();
-    }
 
     public static function canViewAny(): bool
     {

@@ -6,6 +6,7 @@ use App\Filament\Server\Resources\DatabaseResource\Pages;
 use App\Models\Database;
 use App\Models\Permission;
 use App\Models\Server;
+use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Facades\Filament;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DatabaseResource extends Resource
 {
+    use BlockAccessInConflict;
     use CanCustomizePages;
     use CanCustomizeRelations;
 
@@ -50,19 +52,6 @@ class DatabaseResource extends Resource
         return $count >= $limit
             ? 'danger'
             : ($count >= $limit * self::WARNING_THRESHOLD ? 'warning' : 'success');
-    }
-
-    // TODO: find better way handle server conflict state
-    public static function canAccess(): bool
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        if ($server->isInConflictState()) {
-            return false;
-        }
-
-        return parent::canAccess();
     }
 
     public static function canViewAny(): bool
