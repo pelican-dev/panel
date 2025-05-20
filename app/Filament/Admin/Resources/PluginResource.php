@@ -29,6 +29,8 @@ class PluginResource extends Resource
     {
         return $table
             ->openRecordUrlInNewTab()
+            ->reorderable('load_order', fn () => auth()->user()->can('update plugin'))
+            ->defaultSort('load_order')
             ->columns([
                 TextColumn::make('name')
                     ->description(fn (Plugin $plugin) => (strlen($plugin->description) > 80) ? substr($plugin->description, 0, 80).'...' : $plugin->description)

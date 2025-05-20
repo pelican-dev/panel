@@ -23,6 +23,7 @@ use Sushi\Sushi;
  * @property string|null $panels
  * @property string|null $panel_version
  * @property string $category
+ * @property int $load_order
  */
 class Plugin extends Model implements HasPluginSettings
 {
@@ -53,6 +54,7 @@ class Plugin extends Model implements HasPluginSettings
             'panels' => 'string',
             'panel_version' => 'string',
             'category' => 'string',
+            'load_order' => 'integer',
         ];
     }
 
@@ -70,7 +72,8 @@ class Plugin extends Model implements HasPluginSettings
      *     status_message: string,
      *     panels: string,
      *     panel_version: string,
-     *     category: string
+     *     category: string,
+     *     load_order: int
      * }>
      */
     public function getRows(): array

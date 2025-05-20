@@ -28,7 +28,7 @@ class PluginService
         /** @var ClassLoader $classLoader */
         $classLoader = $this->fileSystem->getRequire(base_path('vendor/autoload.php'));
 
-        $plugins = Plugin::all();
+        $plugins = Plugin::query()->orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
             if ($plugin->isDisabled() || !$plugin->isInstalled()) {
                 continue;
@@ -104,7 +104,7 @@ class PluginService
             return;
         }
 
-        $plugins = Plugin::all();
+        $plugins = Plugin::query()->orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
             if (!$plugin->shouldLoad($panel->getId())) {
                 continue;
@@ -166,5 +166,18 @@ class PluginService
         $data['status_message'] = $message;
 
         $this->fileSystem->put($path, json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    }
+
+    /** @param array<int, string> $order */
+    public function updateLoadOrder(array $order)
+    {
+        foreach ($order as $i => $plugin) {
+            $path = plugin_path($plugin, 'plugin.json');
+
+            $data = $this->fileSystem->json($path, JSON_THROW_ON_ERROR);
+            $data['load_order'] = $i;
+
+            $this->fileSystem->put($path, json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        }
     }
 }
