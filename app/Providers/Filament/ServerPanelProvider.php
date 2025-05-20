@@ -2,12 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Facades\Plugins;
 use App\Filament\Admin\Resources\Servers\Pages\EditServer;
 use App\Filament\App\Resources\Servers\Pages\ListServers;
 use App\Http\Middleware\Activity\ServerSubject;
 use App\Models\Server;
-use App\Services\Helpers\PluginService;
-use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
@@ -46,7 +45,7 @@ class ServerPanelProvider extends PanelProvider
                 ServerSubject::class,
             ]);
 
-        app(PluginService::class)->loadPanelPlugins(app(), $panel); // @phpstan-ignore-line
+        Plugins::loadPanelPlugins($panel);
 
         return $panel;
     }

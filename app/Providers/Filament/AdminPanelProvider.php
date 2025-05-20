@@ -3,7 +3,7 @@
 namespace App\Providers\Filament;
 
 use AchyutN\FilamentLogViewer\FilamentLogViewer;
-use App\Services\Helpers\PluginService;
+use App\Facades\Plugins;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
@@ -42,7 +42,7 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationIcon('tabler-file-info'),
             ]);
 
-        app(PluginService::class)->loadPanelPlugins(app(), $panel); // @phpstan-ignore-line
+        Plugins::loadPanelPlugins($panel);
 
         return $panel;
     }

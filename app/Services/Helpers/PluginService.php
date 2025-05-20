@@ -9,24 +9,24 @@ use Exception;
 use Filament\Panel;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 
 class PluginService
 {
-    public function __construct(private Filesystem $fileSystem) {}
+    public function __construct(private Application $app) {}
 
-    public function loadPlugins(Application $app): void
+    public function loadPlugins(): void
     {
         // Don't load any plugins during tests
-        if ($app->runningUnitTests()) {
+        if ($this->app->runningUnitTests()) {
             return;
         }
 
         /** @var ClassLoader $classLoader */
-        $classLoader = $this->fileSystem->getRequire(base_path('vendor/autoload.php'));
+        $classLoader = File::getRequire(base_path('vendor/autoload.php'));
 
         $plugins = Plugin::query()->orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
@@ -52,7 +52,7 @@ class PluginService
                         throw new Exception('Provider class "' . $provider . '" not found');
                     }
 
-                    $app->register($provider);
+                    $this->app->register($provider);
                 }
 
                 // Resolve artisan commands
@@ -69,7 +69,7 @@ class PluginService
                 // Load migrations
                 $migrations = plugin_path($plugin->id, 'database', 'migrations');
                 if (file_exists($migrations)) {
-                    $app->afterResolving('migrator', function ($migrator) use ($migrations) {
+                    $this->app->afterResolving('migrator', function ($migrator) use ($migrations) {
                         $migrator->path($migrations);
                     });
                 }
@@ -77,7 +77,7 @@ class PluginService
                 // Load translations
                 $translations = plugin_path($plugin->id, 'lang');
                 if (file_exists($translations)) {
-                    $app->afterResolving('translator', function ($translator) use ($plugin, $translations) {
+                    $this->app->afterResolving('translator', function ($translator) use ($plugin, $translations) {
                         $translator->addNamespace($plugin->id, $translations);
                     });
                 }
@@ -85,7 +85,7 @@ class PluginService
                 // Load views
                 $views = plugin_path($plugin->id, 'resources', 'views');
                 if (file_exists($views)) {
-                    $app->afterResolving('view', function ($view) use ($plugin, $views) {
+                    $this->app->afterResolving('view', function ($view) use ($plugin, $views) {
                         $view->addNamespace($plugin->id, $views);
                     });
                 }
@@ -97,10 +97,10 @@ class PluginService
         }
     }
 
-    public function loadPanelPlugins(Application $app, Panel $panel): void
+    public function loadPanelPlugins(Panel $panel): void
     {
         // Don't load any plugins during tests
-        if ($app->runningUnitTests()) {
+        if ($this->app->runningUnitTests()) {
             return;
         }
 
@@ -151,7 +151,7 @@ class PluginService
     public function getStatus(string|Plugin $plugin): PluginStatus
     {
         $plugin = $plugin instanceof Plugin ? $plugin->id : $plugin;
-        $data = $this->fileSystem->json(plugin_path($plugin, 'plugin.json'), JSON_THROW_ON_ERROR);
+        $data = File::json(plugin_path($plugin, 'plugin.json'), JSON_THROW_ON_ERROR);
 
         return $data['status'] ?? PluginStatus::Errored;
     }
@@ -161,11 +161,11 @@ class PluginService
         $plugin = $plugin instanceof Plugin ? $plugin->id : $plugin;
         $path = plugin_path($plugin, 'plugin.json');
 
-        $data = $this->fileSystem->json($path, JSON_THROW_ON_ERROR);
+        $data = File::json($path, JSON_THROW_ON_ERROR);
         $data['status'] = $status;
         $data['status_message'] = $message;
 
-        $this->fileSystem->put($path, json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        File::put($path, json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
     /** @param array<int, string> $order */
@@ -174,10 +174,10 @@ class PluginService
         foreach ($order as $i => $plugin) {
             $path = plugin_path($plugin, 'plugin.json');
 
-            $data = $this->fileSystem->json($path, JSON_THROW_ON_ERROR);
+            $data = File::json($path, JSON_THROW_ON_ERROR);
             $data['load_order'] = $i;
 
-            $this->fileSystem->put($path, json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            File::put($path, json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         }
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Plugin;
 
+use App\Facades\Plugins;
 use App\Models\Plugin;
-use App\Services\Helpers\PluginService;
 use Illuminate\Console\Command;
 
 class InstallPluginCommand extends Command
@@ -11,11 +11,6 @@ class InstallPluginCommand extends Command
     protected $signature = 'p:plugin:install {id}';
 
     protected $description = 'Installs a plugin';
-
-    public function __construct(private PluginService $service)
-    {
-        parent::__construct();
-    }
 
     public function handle(): void
     {
@@ -34,7 +29,7 @@ class InstallPluginCommand extends Command
             return;
         }
 
-        $this->service->installPlugin($plugin);
+        Plugins::installPlugin($plugin);
 
         $this->info('Plugin installed and enabled.');
     }

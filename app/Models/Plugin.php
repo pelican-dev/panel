@@ -6,7 +6,7 @@ use App\Contracts\Plugins\HasPluginSettings;
 use App\Enums\PluginStatus;
 use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\File;
 use Sushi\Sushi;
 
 /**
@@ -78,20 +78,18 @@ class Plugin extends Model implements HasPluginSettings
      */
     public function getRows(): array
     {
-        $fileSystem = app(Filesystem::class); // @phpstan-ignore-line
-
         $plugins = [];
 
-        $directories = $fileSystem->directories(base_path('plugins/'));
+        $directories = File::directories(base_path('plugins/'));
         foreach ($directories as $directory) {
-            $plugin = $fileSystem->basename($directory);
+            $plugin = File::basename($directory);
 
             $path = plugin_path($plugin, 'plugin.json');
             if (!file_exists($path)) {
                 continue;
             }
 
-            $plugins[] = $fileSystem->json($path, JSON_THROW_ON_ERROR);
+            $plugins[] = File::json($path, JSON_THROW_ON_ERROR);
         }
 
         return $plugins;

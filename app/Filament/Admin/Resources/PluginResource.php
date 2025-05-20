@@ -3,9 +3,9 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Enums\PluginStatus;
+use App\Facades\Plugins;
 use App\Filament\Admin\Resources\PluginResource\Pages\ListPlugins;
 use App\Models\Plugin;
-use App\Services\Helpers\PluginService;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
@@ -69,8 +69,8 @@ class PluginResource extends Resource
                     ->icon('tabler-terminal')
                     ->color('success')
                     ->hidden(fn (Plugin $plugin) => $plugin->isInstalled())
-                    ->action(function (Plugin $plugin, PluginService $service) {
-                        $service->installPlugin($plugin);
+                    ->action(function (Plugin $plugin) {
+                        Plugins::installPlugin($plugin);
 
                         redirect(ListPlugins::getUrl());
 
@@ -84,8 +84,8 @@ class PluginResource extends Resource
                     ->icon('tabler-check')
                     ->color('success')
                     ->hidden(fn (Plugin $plugin) => !$plugin->isInstalled() || !$plugin->isDisabled())
-                    ->action(function (Plugin $plugin, PluginService $service) {
-                        $service->enablePlugin($plugin);
+                    ->action(function (Plugin $plugin) {
+                        Plugins::enablePlugin($plugin);
 
                         redirect(ListPlugins::getUrl());
 
@@ -99,8 +99,8 @@ class PluginResource extends Resource
                     ->icon('tabler-x')
                     ->color('danger')
                     ->hidden(fn (Plugin $plugin) => !$plugin->isInstalled() || $plugin->isDisabled())
-                    ->action(function (Plugin $plugin, PluginService $service) {
-                        $service->disablePlugin($plugin);
+                    ->action(function (Plugin $plugin) {
+                        Plugins::disablePlugin($plugin);
 
                         redirect(ListPlugins::getUrl());
 
