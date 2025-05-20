@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
@@ -27,6 +28,7 @@ class UserResource extends Resource
 {
     use CanCustomizePages;
     use CanCustomizeRelations;
+    use CanModifyForm;
     use CanModifyTable;
 
     protected static ?string $model = User::class;
@@ -106,7 +108,7 @@ class UserResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         return $form
             ->columns(['default' => 1, 'lg' => 3])

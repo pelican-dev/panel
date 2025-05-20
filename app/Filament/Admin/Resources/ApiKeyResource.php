@@ -8,6 +8,7 @@ use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\ApiKey;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TagsInput;
@@ -25,6 +26,7 @@ class ApiKeyResource extends Resource
 {
     use CanCustomizePages;
     use CanCustomizeRelations;
+    use CanModifyForm;
     use CanModifyTable;
 
     protected static ?string $model = ApiKey::class;
@@ -99,7 +101,7 @@ class ApiKeyResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         return $form
             ->schema([

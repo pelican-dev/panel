@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\WebhookResource\Pages;
 use App\Models\WebhookConfiguration;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
@@ -23,6 +24,7 @@ class WebhookResource extends Resource
 {
     use CanCustomizePages;
     use CanCustomizeRelations;
+    use CanModifyForm;
     use CanModifyTable;
 
     protected static ?string $model = WebhookConfiguration::class;
@@ -82,7 +84,7 @@ class WebhookResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         return $form
             ->schema([

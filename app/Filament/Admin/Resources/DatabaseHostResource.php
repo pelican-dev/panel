@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers;
 use App\Models\DatabaseHost;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -26,6 +27,7 @@ class DatabaseHostResource extends Resource
 {
     use CanCustomizePages;
     use CanCustomizeRelations;
+    use CanModifyForm;
     use CanModifyTable;
 
     protected static ?string $model = DatabaseHost::class;
@@ -97,7 +99,7 @@ class DatabaseHostResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         return $form
             ->schema([
