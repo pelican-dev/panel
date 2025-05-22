@@ -7,6 +7,8 @@ use App\Filament\Admin\Resources\NodeResource\RelationManagers;
 use App\Models\Node;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use Filament\Resources\Pages\PageRegistration;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -46,6 +48,7 @@ class NodeResource extends Resource
         return (string) static::getEloquentQuery()->count() ?: null;
     }
 
+    /** @return class-string<RelationManager>[] */
     public static function getDefaultRelations(): array
     {
         return [
@@ -54,6 +57,7 @@ class NodeResource extends Resource
         ];
     }
 
+    /** @return array<string, PageRegistration> */
     public static function getDefaultPages(): array
     {
         return [

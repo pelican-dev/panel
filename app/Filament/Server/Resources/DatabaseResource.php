@@ -18,6 +18,7 @@ use App\Traits\Filament\HasLimitBadge;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
@@ -140,6 +141,7 @@ class DatabaseResource extends Resource
         return auth()->user()->can(Permission::ACTION_DATABASE_DELETE, Filament::getTenant());
     }
 
+    /** @return array<string, PageRegistration> */
     public static function getDefaultPages(): array
     {
         return [

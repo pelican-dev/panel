@@ -2,6 +2,7 @@
 
 namespace App\Traits\Filament;
 
+use App\Models\Server;
 use Filament\Facades\Filament;
 
 trait BlockAccessInConflict

@@ -24,6 +24,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
@@ -223,6 +224,7 @@ class UserResource extends Resource
             ]);
     }
 
+    /** @return array<string, PageRegistration> */
     public static function getDefaultPages(): array
     {
         return [

@@ -10,6 +10,8 @@ use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Get;
+use Filament\Resources\Pages\PageRegistration;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -72,6 +74,7 @@ class ServerResource extends Resource
             ->columnSpanFull();
     }
 
+    /** @return class-string<RelationManager>[] */
     public static function getDefaultRelations(): array
     {
         return [
@@ -79,6 +82,7 @@ class ServerResource extends Resource
         ];
     }
 
+    /** @return array<string, PageRegistration> */
     public static function getDefaultPages(): array
     {
         return [

@@ -6,11 +6,13 @@ use App\Facades\Activity;
 use App\Filament\Server\Resources\AllocationResource\Pages;
 use App\Models\Allocation;
 use App\Models\Permission;
+use App\Models\Server;
 use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyTable;
 use Filament\Facades\Filament;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Columns\IconColumn;
@@ -111,6 +113,7 @@ class AllocationResource extends Resource
         return auth()->user()->can(Permission::ACTION_ALLOCATION_DELETE, Filament::getTenant());
     }
 
+    /** @return array<string, PageRegistration> */
     public static function getDefaultPages(): array
     {
         return [

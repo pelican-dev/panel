@@ -27,6 +27,8 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\PageRegistration;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\DeleteAction;
@@ -346,6 +348,7 @@ class ScheduleResource extends Resource
             ]);
     }
 
+    /** @return class-string<RelationManager>[] */
     public static function getDefaultRelations(): array
     {
         return [
@@ -353,6 +356,7 @@ class ScheduleResource extends Resource
         ];
     }
 
+    /** @return array<string, PageRegistration> */
     public static function getDefaultPages(): array
     {
         return [

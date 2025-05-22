@@ -14,6 +14,8 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Resources\Pages\PageRegistration;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
@@ -155,6 +157,7 @@ class UserResource extends Resource
             ]);
     }
 
+    /** @return class-string<RelationManager>[] */
     public static function getDefaultRelations(): array
     {
         return [
@@ -162,6 +165,7 @@ class UserResource extends Resource
         ];
     }
 
+    /** @return array<string, PageRegistration> */
     public static function getDefaultPages(): array
     {
         return [

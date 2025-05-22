@@ -15,17 +15,13 @@ trait CanCustomizePages
         static::$customPages = array_merge(static::$customPages, $customPages);
     }
 
-    /**
-     * @return array<string, PageRegistration>
-     */
+    /** @return array<string, PageRegistration> */
     public static function getDefaultPages(): array
     {
         return [];
     }
 
-    /**
-     * @return array<string, PageRegistration>
-     */
+    /** @return array<string, PageRegistration> */
     public static function getPages(): array
     {
         return array_unique(array_merge(static::getDefaultPages(), static::$customPages), SORT_REGULAR);

@@ -9,6 +9,7 @@ use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Facades\Filament;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 
@@ -44,6 +45,7 @@ class FileResource extends Resource
         return auth()->user()->can(Permission::ACTION_FILE_DELETE, Filament::getTenant());
     }
 
+    /** @return array<string, PageRegistration> */
     public static function getDefaultPages(): array
     {
         return [

@@ -7,6 +7,8 @@ use App\Filament\Admin\Resources\EggResource\RelationManagers;
 use App\Models\Egg;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use Filament\Resources\Pages\PageRegistration;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 
 class EggResource extends Resource
@@ -50,6 +52,7 @@ class EggResource extends Resource
         return ['name', 'tags', 'uuid', 'id'];
     }
 
+    /** @return class-string<RelationManager>[] */
     public static function getDefaultRelations(): array
     {
         return [
@@ -57,6 +60,7 @@ class EggResource extends Resource
         ];
     }
 
+    /** @return array<string, PageRegistration> */
     public static function getDefaultPages(): array
     {
         return [
