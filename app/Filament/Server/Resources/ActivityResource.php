@@ -12,6 +12,7 @@ use App\Models\Server;
 use App\Models\User;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
@@ -32,6 +33,7 @@ class ActivityResource extends Resource
 {
     use CanCustomizePages;
     use CanCustomizeRelations;
+    use CanModifyTable;
 
     protected static ?string $model = ActivityLog::class;
 
@@ -43,7 +45,7 @@ class ActivityResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-stack';
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         /** @var Server $server */
         $server = Filament::getTenant();

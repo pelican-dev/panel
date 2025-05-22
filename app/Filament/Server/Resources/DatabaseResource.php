@@ -12,6 +12,8 @@ use App\Services\Databases\DatabaseManagementService;
 use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -28,6 +30,8 @@ class DatabaseResource extends Resource
     use BlockAccessInConflict;
     use CanCustomizePages;
     use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
 
     protected static ?string $model = Database::class;
 
@@ -62,7 +66,7 @@ class DatabaseResource extends Resource
         return $count >= $limit ? 'danger' : ($count >= $limit * self::WARNING_THRESHOLD ? 'warning' : 'success');
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         /** @var Server $server */
         $server = Filament::getTenant();
@@ -99,7 +103,7 @@ class DatabaseResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([

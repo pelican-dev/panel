@@ -17,6 +17,8 @@ use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Placeholder;
@@ -40,6 +42,8 @@ class BackupResource extends Resource
     use BlockAccessInConflict;
     use CanCustomizePages;
     use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
 
     protected static ?string $model = Backup::class;
 
@@ -76,7 +80,7 @@ class BackupResource extends Resource
         return $count >= $limit ? 'danger' : ($count >= $limit * self::WARNING_THRESHOLD ? 'warning' : 'success');
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         return $form
             ->schema([
@@ -92,7 +96,7 @@ class BackupResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         /** @var Server $server */
         $server = Filament::getTenant();

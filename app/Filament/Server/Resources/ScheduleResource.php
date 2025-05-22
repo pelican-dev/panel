@@ -12,6 +12,8 @@ use App\Models\Schedule;
 use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
 use Carbon\Carbon;
 use Exception;
 use Filament\Facades\Filament;
@@ -40,6 +42,8 @@ class ScheduleResource extends Resource
     use BlockAccessInConflict;
     use CanCustomizePages;
     use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
 
     protected static ?string $model = Schedule::class;
 
@@ -67,7 +71,7 @@ class ScheduleResource extends Resource
         return auth()->user()->can(Permission::ACTION_SCHEDULE_DELETE, Filament::getTenant());
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         return $form
             ->columns([
@@ -304,7 +308,7 @@ class ScheduleResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([

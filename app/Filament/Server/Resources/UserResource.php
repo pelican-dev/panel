@@ -11,6 +11,7 @@ use App\Services\Subusers\SubuserUpdateService;
 use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -35,6 +36,7 @@ class UserResource extends Resource
     use BlockAccessInConflict;
     use CanCustomizePages;
     use CanCustomizeRelations;
+    use CanModifyTable;
 
     protected static ?string $model = User::class;
 
@@ -72,7 +74,7 @@ class UserResource extends Resource
         return auth()->user()->can(Permission::ACTION_USER_DELETE, Filament::getTenant());
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         /** @var Server $server */
         $server = Filament::getTenant();

@@ -9,6 +9,7 @@ use App\Models\Permission;
 use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\DetachAction;
@@ -23,6 +24,7 @@ class AllocationResource extends Resource
     use BlockAccessInConflict;
     use CanCustomizePages;
     use CanCustomizeRelations;
+    use CanModifyTable;
 
     protected static ?string $model = Allocation::class;
 
@@ -34,7 +36,7 @@ class AllocationResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-network';
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         /** @var Server $server */
         $server = Filament::getTenant();
