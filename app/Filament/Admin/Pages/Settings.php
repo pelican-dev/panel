@@ -54,6 +54,8 @@ class Settings extends Page implements HasForms
 
     protected OAuthProvider $oauthProvider;
 
+    protected AvatarProvider $avatarProvider;
+
     /** @var array<mixed>|null */
     public ?array $data = [];
 
@@ -62,9 +64,10 @@ class Settings extends Page implements HasForms
         $this->form->fill();
     }
 
-    public function boot(OAuthProvider $oauthProvider): void
+    public function boot(OAuthProvider $oauthProvider, AvatarProvider $avatarProvider): void
     {
         $this->oauthProvider = $oauthProvider;
+        $this->avatarProvider = $avatarProvider;
     }
 
     public static function canAccess(): bool
@@ -174,7 +177,7 @@ class Settings extends Page implements HasForms
                     Select::make('FILAMENT_AVATAR_PROVIDER')
                         ->label(trans('admin/setting.general.avatar_provider'))
                         ->native(false)
-                        ->options(collect(AvatarProvider::getAll())->mapWithKeys(fn ($provider) => [$provider->getId() => $provider->getName()]))
+                        ->options(collect($this->avatarProvider->get())->mapWithKeys(fn ($provider) => [$provider->getId() => $provider->getName()]))
                         ->selectablePlaceholder(false)
                         ->default(env('FILAMENT_AVATAR_PROVIDER', config('panel.filament.avatar-provider'))),
                     Toggle::make('FILAMENT_UPLOADABLE_AVATARS')
