@@ -14,6 +14,7 @@ use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
+use App\Traits\Filament\HasLimitBadge;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -32,6 +33,7 @@ class DatabaseResource extends Resource
     use CanCustomizeRelations;
     use CanModifyForm;
     use CanModifyTable;
+    use HasLimitBadge;
 
     protected static ?string $model = Database::class;
 
@@ -39,31 +41,20 @@ class DatabaseResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-database';
 
-    public const WARNING_THRESHOLD = 0.7;
-
-    public static function getNavigationBadge(): string
+    protected static function getBadgeCount(): int
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        $limit = $server->database_limit;
-
-        return $server->databases->count() . ($limit === 0 ? '' : ' / ' . $limit);
+        return $server->databases->count();
     }
 
-    public static function getNavigationBadgeColor(): ?string
+    protected static function getBadgeLimit(): int
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        $limit = $server->database_limit;
-        $count = $server->databases->count();
-
-        if ($limit === 0) {
-            return null;
-        }
-
-        return $count >= $limit ? 'danger' : ($count >= $limit * self::WARNING_THRESHOLD ? 'warning' : 'success');
+        return $server->database_limit;
     }
 
     public static function defaultForm(Form $form): Form

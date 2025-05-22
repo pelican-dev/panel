@@ -12,6 +12,7 @@ use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyTable;
+use App\Traits\Filament\HasLimitBadge;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -37,6 +38,7 @@ class UserResource extends Resource
     use CanCustomizePages;
     use CanCustomizeRelations;
     use CanModifyTable;
+    use HasLimitBadge;
 
     protected static ?string $model = User::class;
 
@@ -46,12 +48,12 @@ class UserResource extends Resource
 
     protected static ?string $tenantOwnershipRelationshipName = 'subServers';
 
-    public static function getNavigationBadge(): string
+    protected static function getBadgeCount(): int
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        return (string) $server->subusers->count();
+        return $server->subusers->count();
     }
 
     public static function canViewAny(): bool
