@@ -2,8 +2,10 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Events\Auth\ProvidedAuthenticationToken;
 use App\Extensions\Captcha\Providers\CaptchaProvider;
 use App\Extensions\OAuth\OAuthProvider;
+use App\Facades\Activity;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
@@ -57,6 +59,11 @@ class Login extends BaseLogin
         if ($token === null) {
             $this->verifyTwoFactor = true;
 
+            Activity::event('auth:checkpoint')
+                ->withRequestMetadata()
+                ->subject($user)
+                ->log();
+
             return null;
         }
 
@@ -67,11 +74,18 @@ class Login extends BaseLogin
                 $token,
                 Config::integer('panel.auth.2fa.window'),
             );
+
+            if ($isValidToken) {
+                event(new ProvidedAuthenticationToken($user));
+            }
         } else {
             foreach ($user->recoveryTokens as $recoveryToken) {
                 if (password_verify($token, $recoveryToken->token)) {
                     $isValidToken = true;
                     $recoveryToken->delete();
+
+                    event(new ProvidedAuthenticationToken($user, true));
+
                     break;
                 }
             }

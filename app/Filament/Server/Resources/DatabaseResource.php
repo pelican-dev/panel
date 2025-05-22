@@ -2,13 +2,23 @@
 
 namespace App\Filament\Server\Resources;
 
+use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
+use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\DatabaseResource\Pages;
 use App\Models\Database;
 use App\Models\Permission;
 use App\Models\Server;
+use App\Services\Databases\DatabaseManagementService;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class DatabaseResource extends Resource
 {
@@ -42,9 +52,65 @@ class DatabaseResource extends Resource
             return null;
         }
 
-        return $count >= $limit
-            ? 'danger'
-            : ($count >= $limit * self::WARNING_THRESHOLD ? 'warning' : 'success');
+        return $count >= $limit ? 'danger' : ($count >= $limit * self::WARNING_THRESHOLD ? 'warning' : 'success');
+    }
+
+    public static function form(Form $form): Form
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        return $form
+            ->schema([
+                TextInput::make('host')
+                    ->formatStateUsing(fn (Database $database) => $database->address())
+                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
+                TextInput::make('database')
+                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
+                TextInput::make('username')
+                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
+                TextInput::make('password')
+                    ->password()->revealable()
+                    ->hidden(fn () => !auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
+                    ->hintAction(
+                        RotateDatabasePasswordAction::make()
+                            ->authorize(fn () => auth()->user()->can(Permission::ACTION_DATABASE_UPDATE, $server))
+                    )
+                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                    ->formatStateUsing(fn (Database $database) => $database->password),
+                TextInput::make('remote')
+                    ->label('Connections From'),
+                TextInput::make('max_connections')
+                    ->formatStateUsing(fn (Database $database) => $database->max_connections === 0 ? $database->max_connections : 'Unlimited'),
+                TextInput::make('jdbc')
+                    ->label('JDBC Connection String')
+                    ->password()->revealable()
+                    ->hidden(!auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
+                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                    ->columnSpanFull()
+                    ->formatStateUsing(fn (Database $database) => $database->jdbc),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('host')
+                    ->state(fn (Database $database) => $database->address())
+                    ->badge(),
+                TextColumn::make('database'),
+                TextColumn::make('username'),
+                TextColumn::make('remote'),
+                DateTimeColumn::make('created_at')
+                    ->sortable(),
+            ])
+            ->actions([
+                ViewAction::make()
+                    ->modalHeading(fn (Database $database) => 'Viewing ' . $database->database),
+                DeleteAction::make()
+                    ->using(fn (Database $database, DatabaseManagementService $service) => $service->delete($database)),
+            ]);
     }
 
     // TODO: find better way handle server conflict state

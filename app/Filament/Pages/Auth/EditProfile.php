@@ -291,6 +291,8 @@ class EditProfile extends BaseEditProfile
                                                         );
 
                                                         Activity::event('user:api-key.create')
+                                                            ->actor($user)
+                                                            ->subject($user)
                                                             ->subject($token->accessToken)
                                                             ->property('identifier', $token->accessToken->identifier)
                                                             ->log();

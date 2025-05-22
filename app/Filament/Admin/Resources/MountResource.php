@@ -76,7 +76,7 @@ class MountResource extends Resource
                     ->badge()
                     ->icon(fn ($state) => $state ? 'tabler-writing-off' : 'tabler-writing')
                     ->color(fn ($state) => $state ? 'success' : 'warning')
-                    ->formatStateUsing(fn ($state) => $state ? trans('admin/mount.toggles.read_only') : trans('admin/mount.toggles.writeable')),
+                    ->formatStateUsing(fn ($state) => $state ? trans('admin/mount.toggles.read_only') : trans('admin/mount.toggles.writable')),
             ])
             ->actions([
                 ViewAction::make()
@@ -176,8 +176,10 @@ class MountResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        return $query->whereHas('nodes', function (Builder $query) {
-            $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'));
-        })->orDoesntHave('nodes');
+        return $query->where(function (Builder $query) {
+            return $query->whereHas('nodes', function (Builder $query) {
+                $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'));
+            })->orDoesntHave('nodes');
+        });
     }
 }
