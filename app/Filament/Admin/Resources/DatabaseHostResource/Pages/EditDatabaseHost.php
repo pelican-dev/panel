@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Admin\Resources\DatabaseHostResource;
-use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers\DatabasesRelationManager;
 use App\Models\DatabaseHost;
 use App\Services\Databases\Hosts\HostUpdateService;
 use Filament\Actions\DeleteAction;
@@ -36,17 +35,6 @@ class EditDatabaseHost extends EditRecord
 
     protected function getFormActions(): array
     {
-        return [];
-    }
-
-    public function getRelationManagers(): array
-    {
-        if (DatabasesRelationManager::canViewForRecord($this->getRecord(), static::class)) {
-            return [
-                DatabasesRelationManager::class,
-            ];
-        }
-
         return [];
     }
 

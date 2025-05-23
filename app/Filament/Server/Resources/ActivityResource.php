@@ -10,12 +10,16 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Server;
 use App\Models\User;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -28,6 +32,10 @@ use Illuminate\Support\HtmlString;
 
 class ActivityResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyTable;
+
     protected static ?string $model = ActivityLog::class;
 
     protected static ?string $modelLabel = 'Activity';
@@ -38,7 +46,7 @@ class ActivityResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-stack';
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         /** @var Server $server */
         $server = Filament::getTenant();
@@ -122,11 +130,6 @@ class ActivityResource extends Resource
             ]);
     }
 
-    public static function canViewAny(): bool
-    {
-        return auth()->user()->can(Permission::ACTION_ACTIVITY_READ, Filament::getTenant());
-    }
-
     public static function getEloquentQuery(): Builder
     {
         /** @var Server $server */
@@ -153,7 +156,13 @@ class ActivityResource extends Resource
             });
     }
 
-    public static function getPages(): array
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->can(Permission::ACTION_ACTIVITY_READ, Filament::getTenant());
+    }
+
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListActivities::route('/'),

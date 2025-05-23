@@ -3,11 +3,19 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\EggResource\Pages;
+use App\Filament\Admin\Resources\EggResource\RelationManagers;
 use App\Models\Egg;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use Filament\Resources\Pages\PageRegistration;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 
 class EggResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+
     protected static ?string $model = Egg::class;
 
     protected static ?string $navigationIcon = 'tabler-eggs';
@@ -44,7 +52,16 @@ class EggResource extends Resource
         return ['name', 'tags', 'uuid', 'id'];
     }
 
-    public static function getPages(): array
+    /** @return class-string<RelationManager>[] */
+    public static function getDefaultRelations(): array
+    {
+        return [
+            RelationManagers\ServersRelationManager::class,
+        ];
+    }
+
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListEggs::route('/'),
