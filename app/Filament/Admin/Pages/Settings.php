@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Pages;
 
 use App\Extensions\Avatar\AvatarProvider;
 use App\Extensions\Captcha\Providers\CaptchaProvider;
-use App\Extensions\OAuth\Providers\OAuthProvider;
+use App\Extensions\OAuth\OAuthProvider;
 use App\Models\Backup;
 use App\Notifications\MailTested;
 use App\Traits\EnvironmentWriterTrait;
@@ -52,12 +52,22 @@ class Settings extends Page implements HasForms
 
     protected static string $view = 'filament.pages.settings';
 
+    protected OAuthProvider $oauthProvider;
+
+    protected AvatarProvider $avatarProvider;
+
     /** @var array<mixed>|null */
     public ?array $data = [];
 
     public function mount(): void
     {
         $this->form->fill();
+    }
+
+    public function boot(OAuthProvider $oauthProvider, AvatarProvider $avatarProvider): void
+    {
+        $this->oauthProvider = $oauthProvider;
+        $this->avatarProvider = $avatarProvider;
     }
 
     public static function canAccess(): bool
@@ -167,7 +177,7 @@ class Settings extends Page implements HasForms
                     Select::make('FILAMENT_AVATAR_PROVIDER')
                         ->label(trans('admin/setting.general.avatar_provider'))
                         ->native(false)
-                        ->options(collect(AvatarProvider::getAll())->mapWithKeys(fn ($provider) => [$provider->getId() => $provider->getName()]))
+                        ->options(collect($this->avatarProvider->get())->mapWithKeys(fn ($provider) => [$provider->getId() => $provider->getName()]))
                         ->selectablePlaceholder(false)
                         ->default(env('FILAMENT_AVATAR_PROVIDER', config('panel.filament.avatar-provider'))),
                     Toggle::make('FILAMENT_UPLOADABLE_AVATARS')
@@ -527,7 +537,7 @@ class Settings extends Page implements HasForms
     {
         $formFields = [];
 
-        $oauthProviders = OAuthProvider::get();
+        $oauthProviders = $this->oauthProvider->get();
         foreach ($oauthProviders as $oauthProvider) {
             $id = Str::upper($oauthProvider->getId());
             $name = Str::title($oauthProvider->getId());
