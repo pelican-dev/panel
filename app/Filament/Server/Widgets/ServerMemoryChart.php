@@ -39,7 +39,7 @@ class ServerMemoryChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'data' => array_column($memUsed, 'memory'),
+                    'data' => array_column($memUsed, trans('strings.server.widgets.tablecolumn.memory')),
                     'backgroundColor' => [
                         'rgba(96, 165, 250, 0.3)',
                     ],
@@ -47,7 +47,7 @@ class ServerMemoryChart extends ChartWidget
                     'fill' => true,
                 ],
             ],
-            'labels' => array_column($memUsed, 'timestamp'),
+            'labels' => array_column($memUsed, trans('strings.server.widgets.tablecolumn.timestamp')),
             'locale' => auth()->user()->language ?? 'en',
         ];
     }
@@ -80,6 +80,6 @@ class ServerMemoryChart extends ChartWidget
 
     public function getHeading(): string
     {
-        return 'Memory';
+        return trans('strings.server.widgets.headings.Memory');
     }
 }

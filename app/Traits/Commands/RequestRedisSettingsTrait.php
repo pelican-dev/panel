@@ -11,7 +11,7 @@ trait RequestRedisSettingsTrait
     {
         $this->output->note(trans('commands.appsettings.redis.note'));
         $this->variables['REDIS_HOST'] = $this->option('redis-host') ?? $this->ask(
-            'Redis Host',
+            trans('strings.appsettings.redis.title_field'),
             config('database.redis.default.host')
         );
 
@@ -30,13 +30,13 @@ trait RequestRedisSettingsTrait
         if ($askForRedisUser) {
             $this->output->comment(trans('commands.appsettings.redis.comment'));
             $this->variables['REDIS_USERNAME'] = $this->option('redis-user') ?? $this->output->askHidden(
-                'Redis User'
+                trans('strings.appsettings.redis.user_field')
             );
         }
         if ($askForRedisPassword) {
             $this->output->comment(trans('commands.appsettings.redis.comment'));
             $this->variables['REDIS_PASSWORD'] = $this->option('redis-pass') ?? $this->output->askHidden(
-                'Redis Password'
+                trans('strings.appsettings.redis.password_field')
             );
         }
 
@@ -48,7 +48,7 @@ trait RequestRedisSettingsTrait
         }
 
         $this->variables['REDIS_PORT'] = $this->option('redis-port') ?? $this->ask(
-            'Redis Port',
+            trans('strings.appsettings.redis.port_field'),
             config('database.redis.default.port')
         );
     }

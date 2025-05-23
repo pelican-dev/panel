@@ -68,7 +68,7 @@ enum ContainerStatus: string implements HasColor, HasIcon, HasLabel
 
     public function getLabel(): string
     {
-        return str($this->value)->title();
+        return trans('strings.containerstatus.'.str($this->value));
     }
 
     public function isOffline(): bool

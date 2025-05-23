@@ -39,7 +39,7 @@ class Settings extends ServerFormPage
                 'lg' => 6,
             ])
             ->schema([
-                Section::make('Server Information')
+                Section::make(trans('strings.console.settings.basic.heading'))
                     ->columns([
                         'default' => 1,
                         'sm' => 2,
@@ -48,10 +48,10 @@ class Settings extends ServerFormPage
                     ])
                     ->schema([
                         Fieldset::make('Server')
-                            ->label('Information')
+                            ->label(trans('strings.console.settings.basic.title'))
                             ->schema([
                                 TextInput::make('name')
-                                    ->label('Server Name')
+                                    ->label(trans('strings.console.settings.basic.server_name'))
                                     ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
                                     ->required()
                                     ->columnSpan([
@@ -63,7 +63,7 @@ class Settings extends ServerFormPage
                                     ->live(onBlur: true)
                                     ->afterStateUpdated(fn ($state, Server $server) => $this->updateName($state, $server)),
                                 Textarea::make('description')
-                                    ->label('Server Description')
+                                    ->label(trans('strings.console.settings.basic.server_descriptions'))
                                     ->hidden(!config('panel.editable_server_descriptions'))
                                     ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
                                     ->columnSpan([
@@ -76,7 +76,7 @@ class Settings extends ServerFormPage
                                     ->live(onBlur: true)
                                     ->afterStateUpdated(fn ($state, Server $server) => $this->updateDescription($state ?? '', $server)),
                                 TextInput::make('uuid')
-                                    ->label('Server UUID')
+                                    ->label(trans('strings.console.settings.basic.server_uuid'))
                                     ->columnSpan([
                                         'default' => 1,
                                         'sm' => 1,
@@ -85,12 +85,12 @@ class Settings extends ServerFormPage
                                     ])
                                     ->disabled(),
                                 TextInput::make('id')
-                                    ->label('Server ID')
+                                    ->label(trans('strings.console.settings.basic.server_id'))
                                     ->disabled()
                                     ->columnSpan(1),
                             ]),
                         Fieldset::make('Limits')
-                            ->label('Limits')
+                            ->label(trans('strings.console.settings.basic.limits.title'))
                             ->columns([
                                 'default' => 1,
                                 'sm' => 1,
@@ -100,57 +100,57 @@ class Settings extends ServerFormPage
                             ->schema([
                                 TextInput::make('cpu')
                                     ->label('')
-                                    ->prefix('CPU')
+                                    ->prefix(trans('strings.console.settings.basic.limits.cpu_prefix'))
                                     ->prefixIcon('tabler-cpu')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'Unlimited' : Number::format($server->cpu, locale: auth()->user()->language) . '%'),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('strings.console.settings.tag_unlimited') : Number::format($server->cpu, locale: auth()->user()->language) . '%'),
                                 TextInput::make('memory')
                                     ->label('')
-                                    ->prefix('Memory')
+                                    ->prefix(trans('strings.console.settings.basic.limits.memory_prefix'))
                                     ->prefixIcon('tabler-device-desktop-analytics')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'Unlimited' : convert_bytes_to_readable($server->memory * 2 ** 20)),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('strings.console.settings.tag_unlimited') : convert_bytes_to_readable($server->memory * 2 ** 20)),
                                 TextInput::make('disk')
                                     ->label('')
-                                    ->prefix('Disk Space')
+                                    ->prefix(trans('strings.console.settings.basic.limits.disk_prefix'))
                                     ->prefixIcon('tabler-device-sd-card')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'Unlimited' : convert_bytes_to_readable($server->disk * 2 ** 20)),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('strings.console.settings.tag_unlimited') : convert_bytes_to_readable($server->disk * 2 ** 20)),
                                 TextInput::make('backup_limit')
                                     ->label('')
-                                    ->prefix('Backups')
+                                    ->prefix(trans('strings.console.settings.basic.limits.backups_prefix'))
                                     ->prefixIcon('tabler-file-zip')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Backups' : $server->backups->count() . ' of ' . $state),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('strings.console.settings.tag_nobackups') : $server->backups->count() . ' of ' . $state),
                                 TextInput::make('database_limit')
                                     ->label('')
-                                    ->prefix('Databases')
+                                    ->prefix(trans('strings.console.settings.basic.limits.databases_prefix'))
                                     ->prefixIcon('tabler-database')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Databases' : $server->databases->count() . ' of ' . $state),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('strings.console.settings.tag_nodatabases') : $server->databases->count() . ' of ' . $state),
                                 TextInput::make('allocation_limit')
                                     ->label('')
-                                    ->prefix('Allocations')
+                                    ->prefix(trans('strings.console.settings.basic.limits.disk_prefix'))
                                     ->prefixIcon('tabler-network')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Additional Allocations' : $server->allocations->count() . ' of ' . $state),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('strings.console.settings.tag_noadditionalallocations') : $server->allocations->count() . ' of ' . $state),
                             ]),
                     ]),
-                Section::make('Node Information')
+                Section::make(trans('strings.console.settings.node.heading'))
                     ->schema([
                         TextInput::make('node.name')
-                            ->label('Node Name')
+                            ->label(trans('strings.console.settings.node.node_name'))
                             ->formatStateUsing(fn (Server $server) => $server->node->name)
                             ->disabled(),
                         Fieldset::make('SFTP Information')
                             ->hidden(fn () => !auth()->user()->can(Permission::ACTION_FILE_SFTP, $server))
-                            ->label('SFTP Information')
+                            ->label(trans('strings.console.settings.node.sftp_header'))
                             ->columns([
                                 'default' => 1,
                                 'sm' => 1,
@@ -159,13 +159,13 @@ class Settings extends ServerFormPage
                             ])
                             ->schema([
                                 TextInput::make('connection')
-                                    ->label('Connection')
+                                    ->label(trans('strings.console.settings.node.sftp_connection'))
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->hintAction(
                                         Action::make('connect_sftp')
-                                            ->label('Connect to SFTP')
+                                            ->label(trans('strings.console.settings.node.sftp_calltoaction'))
                                             ->color('success')
                                             ->icon('tabler-plug')
                                             ->url(function (Server $server) {
@@ -180,7 +180,7 @@ class Settings extends ServerFormPage
                                         return 'sftp://' . auth()->user()->username . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
                                     }),
                                 TextInput::make('username')
-                                    ->label('Username')
+                                    ->label(trans('strings.console.settings.node.sftp_username'))
                                     ->columnSpan(1)
                                     ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->disabled()
@@ -190,14 +190,14 @@ class Settings extends ServerFormPage
                                     ->content('Your SFTP password is the same as the password you use to access this panel.'),
                             ]),
                     ]),
-                Section::make('Reinstall Server')
+                Section::make(trans('strings.console.settings.reinstall.heading'))
                     ->hidden(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
                     ->collapsible()
                     ->footerActions([
                         Action::make('reinstall')
                             ->color('danger')
                             ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
-                            ->label('Reinstall')
+                            ->label(trans('strings.console.settings.reinstall_btn'))
                             ->requiresConfirmation()
                             ->modalHeading('Are you sure you want to reinstall the server?')
                             ->modalDescription('Some files may be deleted or modified during this process, please back up your data before continuing.')

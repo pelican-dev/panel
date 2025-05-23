@@ -39,7 +39,7 @@ class ServerCpuChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'data' => array_column($cpu, 'cpu'),
+                    'data' => array_column($cpu, trans('strings.server.widgets.tablecolumn.cpu')),
                     'backgroundColor' => [
                         'rgba(96, 165, 250, 0.3)',
                     ],
@@ -47,7 +47,7 @@ class ServerCpuChart extends ChartWidget
                     'fill' => true,
                 ],
             ],
-            'labels' => array_column($cpu, 'timestamp'),
+            'labels' => array_column($cpu, trans('strings.server.widgets.tablecolumn.timestamp')),
             'locale' => auth()->user()->language ?? 'en',
         ];
     }
@@ -80,6 +80,6 @@ class ServerCpuChart extends ChartWidget
 
     public function getHeading(): string
     {
-        return 'CPU';
+        return trans('strings.server.widgets.headings.CPU');
     }
 }

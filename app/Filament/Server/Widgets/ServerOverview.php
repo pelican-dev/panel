@@ -18,18 +18,18 @@ class ServerOverview extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            SmallStatBlock::make('Name', $this->server->name)
+            SmallStatBlock::make(trans('strings.console.overview.name'), $this->server->name)
                 ->extraAttributes([
                     'class' => 'overflow-x-auto',
                 ]),
-            SmallStatBlock::make('Status', $this->status()),
-            SmallStatBlock::make('Address', $this->server->allocation->address)
+            SmallStatBlock::make(trans('strings.console.overview.status'), $this->status()),
+            SmallStatBlock::make(trans('strings.console.overview.address'), $this->server->allocation->address)
                 ->extraAttributes([
                     'class' => 'overflow-x-auto',
                 ]),
-            SmallStatBlock::make('CPU', $this->cpuUsage()),
-            SmallStatBlock::make('Memory', $this->memoryUsage()),
-            SmallStatBlock::make('Disk', $this->diskUsage()),
+            SmallStatBlock::make(trans('strings.console.overview.cpu'), $this->cpuUsage()),
+            SmallStatBlock::make(trans('strings.console.overview.memory'), $this->memoryUsage()),
+            SmallStatBlock::make(trans('strings.console.overview.disk'), $this->diskUsage()),
         ];
     }
 
@@ -83,7 +83,7 @@ class ServerOverview extends StatsOverviewWidget
         $disk = collect(cache()->get("servers.{$this->server->id}.disk_bytes"))->last(default: 0);
 
         if ($disk === 0) {
-            return 'Unavailable';
+            return trans('strings.console.overview.diskusage.unavailable');
         }
 
         $totalBytes = $this->server->disk * (config('panel.use_binary_prefix') ? 1024 * 1024 : 1000 * 1000);
