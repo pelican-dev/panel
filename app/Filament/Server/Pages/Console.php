@@ -152,7 +152,6 @@ class Console extends Page
 
         return [
             Action::make('start')
-                ->lable(trans('strings.console.actions.start'))
                 ->color('primary')
                 ->size(ActionSize::ExtraLarge)
                 ->dispatch('setServerState', ['state' => 'start', 'uuid' => $server->uuid])
@@ -160,7 +159,6 @@ class Console extends Page
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isStartable())
                 ->icon('tabler-player-play-filled'),
             Action::make('restart')
-                ->lable(trans('strings.console.actions.restart'))
                 ->color('gray')
                 ->size(ActionSize::ExtraLarge)
                 ->dispatch('setServerState', ['state' => 'restart', 'uuid' => $server->uuid])
@@ -168,7 +166,6 @@ class Console extends Page
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isRestartable())
                 ->icon('tabler-reload'),
             Action::make('stop')
-                ->lable(trans('strings.console.actions.stop'))
                 ->color('danger')
                 ->size(ActionSize::ExtraLarge)
                 ->dispatch('setServerState', ['state' => 'stop', 'uuid' => $server->uuid])
@@ -177,7 +174,6 @@ class Console extends Page
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isStoppable())
                 ->icon('tabler-player-stop-filled'),
             Action::make('kill')
-                ->lable(trans('strings.console.actions.kill'))
                 ->color('danger')
                 ->tooltip('This can result in data corruption and/or data loss!')
                 ->size(ActionSize::ExtraLarge)

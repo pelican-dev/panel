@@ -20,8 +20,12 @@ return [
             'diskusage' => [
                 'unavailable' => 'Unavailable',
             ],
+            'time_suffix' => [
+                'seconds' => 'Seconds',
+            ],
         ],
         'actions' => [
+            'nature' => 'Power Action',
             'start' => 'Start',
             'restart' => 'Restart',
             'stop' => 'Stop',
@@ -92,6 +96,28 @@ return [
                 'cpu' => 'cpu',
                 'timestamp' => 'timestamp',
             ],
+        ],
+        'tasks' => [
+            'limit_reached' => 'Task Limit Reached',
+            'new_task' => 'Create Task',
+        ],
+        'allocations' => [
+            'limit_reached' => 'Allocation limit reached',
+            'new_allocation' => 'Add Allocation',
+        ],
+        'backups'  => [
+            'limit_reached' => 'Backup limit reached',
+            'new_backup' => 'Create Backup',
+            'backup_created' => 'Backup Created',
+            'backup_failed' => 'Backup failed',
+        ],
+        'databases'  => [
+            'limit_reached' => 'Database limit reached',
+            'new_database' => 'Create Database',
+            'db_host' => 'Database Host',
+            'db_host_select' => 'Select Database Host',
+            'db_name' => 'Database Name',
+            'db_from' => 'Connections From',
         ],
     ],
 ];

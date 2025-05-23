@@ -23,7 +23,7 @@ class ListAllocations extends ListRecords
         return [
             Action::make('addAllocation')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_ALLOCATION_CREATE, $server))
-                ->label(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'Allocation limit reached' : 'Add Allocation')
+                ->label(fn () => $server->allocations()->count() >= $server->allocation_limit ? trans('strings.server.allocations.limit_reached') : trans('strings.server.allocations.new_allocation'))
                 ->hidden(fn () => !config('panel.client_features.allocations.enabled'))
                 ->disabled(fn () => $server->allocations()->count() >= $server->allocation_limit)
                 ->color(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'danger' : 'primary')

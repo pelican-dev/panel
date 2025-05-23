@@ -54,13 +54,13 @@ class TasksRelationManager extends RelationManager
                 ->label(fn (Get $get) => $this->getActionOptions(false)[$get('action')] ?? 'Payload'),
             Select::make('payload')
                 ->visible(fn (Get $get) => $get('action') === Task::ACTION_POWER)
-                ->label('Power Action')
+                ->label(trans('strings.console.actions.nature'))
                 ->required()
                 ->options([
-                    'start' => 'Start',
-                    'restart' => 'Restart',
-                    'stop' => 'Stop',
-                    'kill' => 'Kill',
+                    'start' => trans('strings.console.actions.start'),
+                    'restart' => trans('strings.console.actions.restart'),
+                    'stop' => trans('strings.console.actions.stop'),
+                    'kill' => trans('strings.console.actions.kill'),
                 ])
                 ->selectablePlaceholder(false)
                 ->default('restart'),
@@ -70,7 +70,7 @@ class TasksRelationManager extends RelationManager
                 ->numeric()
                 ->minValue(0)
                 ->maxValue(900)
-                ->suffix('Seconds'),
+                ->suffix(trans('strings.console.time_suffix.seconds')),
             Toggle::make('continue_on_failure'),
         ];
     }
@@ -93,7 +93,7 @@ class TasksRelationManager extends RelationManager
                     ->badge(),
                 TextColumn::make('time_offset')
                     ->hidden(fn () => config('queue.default') === 'sync')
-                    ->suffix(' Seconds'),
+                    ->suffix(' '.trans('strings.console.time_suffix.seconds')),
                 IconColumn::make('continue_on_failure')
                     ->boolean(),
             ])
@@ -130,7 +130,7 @@ class TasksRelationManager extends RelationManager
             ->headerActions([
                 CreateAction::make()
                     ->createAnother(false)
-                    ->label(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10) ? 'Task Limit Reached' : 'Create Task')
+                    ->label(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10) ? trans('strings.server.tasks.limit_reached') : trans('strings.server.tasks.new_task'))
                     ->disabled(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10))
                     ->form($this->getTaskForm($schedule))
                     ->action(function ($data) use ($schedule) {
