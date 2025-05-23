@@ -56,7 +56,7 @@ return [
             'reinstall' => [
                 'heading' => 'Reinstall Server',
                 'reinstall_btn' => 'Reinstall',
-            ]
+            ],
             'tag_unlimited' => 'Unlimited',
             'tag_nobackups' => 'No Backups',
             'tag_nodatabases' => 'No Databases',
