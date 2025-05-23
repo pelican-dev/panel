@@ -44,34 +44,54 @@ class ListServers extends ListRecords
 
         $menuOptions = function (Server $server) {
             $status = $server->retrieveStatus();
+            $user = auth()->user();
 
-            return [
-                Action::make('start')
-                    ->color('primary')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
-                    ->visible(fn () => $status->isStartable())
-                    ->dispatch('powerAction', ['server' => $server, 'action' => 'start'])
-                    ->icon('tabler-player-play-filled'),
-                Action::make('restart')
-                    ->color('gray')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
-                    ->visible(fn () => $status->isRestartable())
-                    ->dispatch('powerAction', ['server' => $server, 'action' => 'restart'])
-                    ->icon('tabler-refresh'),
-                Action::make('stop')
-                    ->color('danger')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
-                    ->visible(fn () => $status->isStoppable())
-                    ->dispatch('powerAction', ['server' => $server, 'action' => 'stop'])
-                    ->icon('tabler-player-stop-filled'),
-                Action::make('kill')
-                    ->color('danger')
-                    ->tooltip('This can result in data corruption and/or data loss!')
-                    ->dispatch('powerAction', ['server' => $server, 'action' => 'kill'])
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
-                    ->visible(fn () => $status->isKillable())
-                    ->icon('tabler-alert-square'),
+            $actions = [
+                'start' => [
+                    'permission' => Permission::ACTION_CONTROL_START,
+                    'check' => $status->isStartable(),
+                    'color' => 'primary',
+                    'icon' => 'tabler-player-play-filled',
+                ],
+                'restart' => [
+                    'permission' => Permission::ACTION_CONTROL_RESTART,
+                    'check' => $status->isRestartable(),
+                    'color' => 'gray',
+                    'icon' => 'tabler-refresh',
+                ],
+                'stop' => [
+                    'permission' => Permission::ACTION_CONTROL_STOP,
+                    'check' => $status->isStoppable(),
+                    'color' => 'danger',
+                    'icon' => 'tabler-player-stop-filled',
+                ],
+                'kill' => [
+                    'permission' => Permission::ACTION_CONTROL_STOP,
+                    'check' => $status->isKillable(),
+                    'color' => 'danger',
+                    'icon' => 'tabler-alert-square',
+                    'tooltip' => 'This can result in data corruption and/or data loss!',
+                ],
             ];
+
+            $options = [];
+
+            foreach ($actions as $name => $details) {
+                if ($user->can($details['permission'], $server) && $details['check']) {
+                    $action = Action::make($name)
+                        ->color($details['color'])
+                        ->dispatch('powerAction', ['server' => $server, 'action' => $name])
+                        ->icon($details['icon']);
+
+                    if (isset($details['tooltip'])) {
+                        $action->tooltip($details['tooltip']);
+                    }
+
+                    $options[] = $action;
+                }
+            }
+
+            return $options;
         };
 
         $viewOne = [
