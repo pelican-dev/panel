@@ -410,8 +410,8 @@ class EditProfile extends BaseEditProfile
                                                         $fontName = $get('console_font') ?? 'monospace';
                                                         $fontSize = $get('console_font_size') . 'px';
                                                         $fontUrl = asset("storage/fonts/{$fontName}.ttf");
-
-                                                        return new HtmlString(<<<HTML
+                                                        if ($fontName !== 'monospace') {
+                                                            return new HtmlString(<<<HTML
                                                                     <style>
                                                                         @font-face {
                                                                             font-family: "CustomPreviewFont";
@@ -426,6 +426,18 @@ class EditProfile extends BaseEditProfile
                                                                     </style>
                                                                     <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
                                                                 HTML);
+                                                        } else {
+                                                            return new HtmlString(<<<HTML
+                                                                    <style>
+                                                                        .preview-text {
+                                                                            font-family: monospace;
+                                                                            font-size: $fontSize;
+                                                                        }
+                                                                    </style>
+                                                                    <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
+                                                                    </span>
+                                                                HTML);
+                                                        }
                                                     }),
                                                 TextInput::make('console_graph_period')
                                                     ->label(trans('profile.graph_period'))
