@@ -427,6 +427,7 @@ class EditProfile extends BaseEditProfile
                                                                 $style
                                                             CSS;
                                                         }
+
                                                         // Don't remove the {} on style or coloring will be gone on VSC.
                                                         return new HtmlString(<<<HTML
                                                             <style>
