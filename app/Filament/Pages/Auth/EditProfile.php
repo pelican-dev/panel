@@ -409,35 +409,31 @@ class EditProfile extends BaseEditProfile
                                                     ->content(function (Get $get) {
                                                         $fontName = $get('console_font') ?? 'monospace';
                                                         $fontSize = $get('console_font_size') . 'px';
-                                                        $fontUrl = asset("storage/fonts/{$fontName}.ttf");
+                                                        $style = <<<CSS
+                                                            .preview-text {
+                                                                font-family: $fontName;
+                                                                font-size: $fontSize;
+                                                                margin-top: 10px;
+                                                                display: block;
+                                                            }
+                                                        CSS;
                                                         if ($fontName !== 'monospace') {
-                                                            return new HtmlString(<<<HTML
-                                                                    <style>
-                                                                        @font-face {
-                                                                            font-family: "CustomPreviewFont";
-                                                                            src: url("$fontUrl");
-                                                                        }
-                                                                        .preview-text {
-                                                                            font-family: "CustomPreviewFont";
-                                                                            font-size: $fontSize;
-                                                                            margin-top: 10px;
-                                                                            display: block;
-                                                                        }
-                                                                    </style>
-                                                                    <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
-                                                                HTML);
-                                                        } else {
-                                                            return new HtmlString(<<<HTML
-                                                                    <style>
-                                                                        .preview-text {
-                                                                            font-family: monospace;
-                                                                            font-size: $fontSize;
-                                                                        }
-                                                                    </style>
-                                                                    <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
-                                                                    </span>
-                                                                HTML);
+                                                            $fontUrl = asset("storage/fonts/$fontName.ttf");
+                                                            $style = <<<CSS
+                                                                @font-face {
+                                                                    font-family: $fontName;
+                                                                    src: url("$fontUrl");
+                                                                }
+                                                                $style
+                                                            CSS;
                                                         }
+                                                        // Don't remove the {} on style or coloring will be gone on VSC.
+                                                        return new HtmlString(<<<HTML
+                                                            <style>
+                                                            $style{} 
+                                                            </style>
+                                                            <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
+                                                        HTML);
                                                     }),
                                                 TextInput::make('console_graph_period')
                                                     ->label(trans('profile.graph_period'))
