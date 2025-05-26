@@ -54,13 +54,13 @@ class TasksRelationManager extends RelationManager
                 ->label(fn (Get $get) => $this->getActionOptions(false)[$get('action')] ?? 'Payload'),
             Select::make('payload')
                 ->visible(fn (Get $get) => $get('action') === Task::ACTION_POWER)
-                ->label(trans('strings.console.actions.nature'))
+                ->label(trans('server/task.console.nature'))
                 ->required()
                 ->options([
-                    'start' => trans('strings.console.actions.start'),
-                    'restart' => trans('strings.console.actions.restart'),
-                    'stop' => trans('strings.console.actions.stop'),
-                    'kill' => trans('strings.console.actions.kill'),
+                    'start' => trans('server/task.console.start'),
+                    'restart' => trans('server/task.console.restart'),
+                    'stop' => trans('server/task.console.stop'),
+                    'kill' => trans('server/task.console.kill'),
                 ])
                 ->selectablePlaceholder(false)
                 ->default('restart'),
@@ -70,7 +70,7 @@ class TasksRelationManager extends RelationManager
                 ->numeric()
                 ->minValue(0)
                 ->maxValue(900)
-                ->suffix(trans('strings.console.time_suffix.seconds')),
+                ->suffix(trans('server/task.console.time_suffix.seconds')),
             Toggle::make('continue_on_failure'),
         ];
     }
@@ -93,7 +93,7 @@ class TasksRelationManager extends RelationManager
                     ->badge(),
                 TextColumn::make('time_offset')
                     ->hidden(fn () => config('queue.default') === 'sync')
-                    ->suffix(' '.trans('strings.console.time_suffix.seconds')),
+                    ->suffix(' '. trans('server/task.console.time_suffix')),
                 IconColumn::make('continue_on_failure')
                     ->boolean(),
             ])
@@ -130,7 +130,7 @@ class TasksRelationManager extends RelationManager
             ->headerActions([
                 CreateAction::make()
                     ->createAnother(false)
-                    ->label(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10) ? trans('strings.server.tasks.limit_reached') : trans('strings.server.tasks.new_task'))
+                    ->label(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10) ? trans('server/task.console.limit_reached') : trans('server/task.console.new_task'))
                     ->disabled(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10))
                     ->form($this->getTaskForm($schedule))
                     ->action(function ($data) use ($schedule) {

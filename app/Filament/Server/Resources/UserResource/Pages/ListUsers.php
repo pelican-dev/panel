@@ -63,7 +63,7 @@ class ListUsers extends ListRecords
 
         return [
             Actions\CreateAction::make('invite')
-                ->label('Invite User')
+                ->label(trans('server/allocation.modal.invite_action_title'))
                 ->createAnother(false)
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_CREATE, $server))
                 ->form([
@@ -88,7 +88,7 @@ class ListUsers extends ListRecords
                                 ->required(),
                             assignAll::make([
                                 Action::make('assignAll')
-                                    ->label('Assign All')
+                                    ->label(trans('server/allocation.modal.assignall'))
                                     ->action(function (Set $set, Get $get) use ($permissionsArray) {
                                         $permissions = $permissionsArray;
                                         foreach ($permissions as $key => $value) {
@@ -108,8 +108,8 @@ class ListUsers extends ListRecords
                                 ->schema($tabs),
                         ]),
                 ])
-                ->modalHeading('Invite User')
-                ->modalSubmitActionLabel('Invite')
+                ->modalHeading(trans('server/allocation.modal.heading'))
+                ->modalSubmitActionLabel(trans('server/allocation.modal.actionlabel'))
                 ->action(function (array $data, SubuserCreationService $service) use ($server) {
                     $email = strtolower($data['email']);
 
@@ -131,12 +131,12 @@ class ListUsers extends ListRecords
                             ]);
 
                         Notification::make()
-                            ->title('User Invited!')
+                            ->title(trans('server/allocation.modal.userinvited'))
                             ->success()
                             ->send();
                     } catch (Exception $exception) {
                         Notification::make()
-                            ->title('Failed')
+                            ->title(trans('server/allocation.modal.failed_title'))
                             ->body($exception->getMessage())
                             ->danger()
                             ->send();

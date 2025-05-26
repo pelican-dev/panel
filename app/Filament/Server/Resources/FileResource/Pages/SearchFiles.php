@@ -32,7 +32,9 @@ class SearchFiles extends ListRecords
 
         return [
             $resource::getUrl() => $resource::getBreadcrumb(),
-            self::getUrl(['searchTerm' => $this->searchTerm]) => 'Search "' . $this->searchTerm . '"',
+            self::getUrl(['searchTerm' => $this->searchTerm]) => trans('server/file.search.searchterm', [
+                'term' => $this->searchTerm,
+            ]),
         ];
     }
 

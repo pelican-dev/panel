@@ -25,7 +25,7 @@ class ListBackups extends ListRecords
         return [
             CreateAction::make()
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_CREATE, $server))
-                ->label(fn () => $server->backups()->count() >= $server->backup_limit ? trans('strings.server.backups.limit_reached') : trans('strings.server.backups.new_allocation'))
+                ->label(fn () => $server->backups()->count() >= $server->backup_limit ? trans('server/backup.limit_reached') : trans('server/backup.new_backup'))
                 ->disabled(fn () => $server->backups()->count() >= $server->backup_limit)
                 ->color(fn () => $server->backups()->count() >= $server->backup_limit ? 'danger' : 'primary')
                 ->createAnother(false)
@@ -45,14 +45,14 @@ class ListBackups extends ListRecords
                             ->log();
 
                         return Notification::make()
-                            ->title(trans('strings.server.backups.backup_created'))
+                            ->title(trans('server/backup.backup_created'))
                             ->body($backup->name . ' created.')
                             ->success()
                             ->send();
                     } catch (HttpException $e) {
                         return Notification::make()
                             ->danger()
-                            ->title(trans('strings.server.backups.backup_failed'))
+                            ->title(trans('server/backup.backup_failed'))
                             ->body($e->getMessage() . ' Try again' . ($e->getHeaders()['Retry-After'] ? ' in ' . $e->getHeaders()['Retry-After'] . ' seconds.' : ''))
                             ->send();
                     }

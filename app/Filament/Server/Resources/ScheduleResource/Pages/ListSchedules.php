@@ -14,7 +14,7 @@ class ListSchedules extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('New Schedule'),
+                ->label(trans('server/schedule.new_schedule')),
         ];
     }
 

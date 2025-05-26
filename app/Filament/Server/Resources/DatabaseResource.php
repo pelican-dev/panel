@@ -79,11 +79,11 @@ class DatabaseResource extends Resource
                     ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                     ->formatStateUsing(fn (Database $database) => $database->password),
                 TextInput::make('remote')
-                    ->label('Connections From'),
+                    ->label(trans('server/database.list.connection_from')),
                 TextInput::make('max_connections')
-                    ->formatStateUsing(fn (Database $database) => $database->max_connections === 0 ? $database->max_connections : 'Unlimited'),
+                    ->formatStateUsing(fn (Database $database) => $database->max_connections === 0 ? $database->max_connections : trans('server/database.list.no_limit')),
                 TextInput::make('jdbc')
-                    ->label('JDBC Connection String')
+                    ->label(trans('server/database.list.jdbc_title'))
                     ->password()->revealable()
                     ->hidden(!auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
                     ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
@@ -107,7 +107,9 @@ class DatabaseResource extends Resource
             ])
             ->actions([
                 ViewAction::make()
-                    ->modalHeading(fn (Database $database) => 'Viewing ' . $database->database),
+                    ->modalHeading(fn (Database $database) => trans('server/database.list.viewing_action', [
+                        'database' => $database->database,
+                    ])),
                 DeleteAction::make()
                     ->using(fn (Database $database, DatabaseManagementService $service) => $service->delete($database)),
             ]);

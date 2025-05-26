@@ -36,7 +36,7 @@ class AllocationResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('ip')
-                    ->label('Address')
+                    ->label(trans('server/allocation.address'))
                     ->formatStateUsing(fn (Allocation $allocation) => $allocation->alias),
                 TextColumn::make('alias')
                     ->hidden(),
@@ -44,8 +44,8 @@ class AllocationResource extends Resource
                 TextInputColumn::make('notes')
                     ->visibleFrom('sm')
                     ->disabled(fn () => !auth()->user()->can(Permission::ACTION_ALLOCATION_UPDATE, $server))
-                    ->label('Notes')
-                    ->placeholder('No Notes'),
+                    ->label(trans('server/allocation.notes'))
+                    ->placeholder(trans('server/allocation.no_notes')),
                 IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
                         true => 'tabler-star-filled',
@@ -61,12 +61,12 @@ class AllocationResource extends Resource
                         }
                     })
                     ->default(fn (Allocation $allocation) => $allocation->id === $server->allocation_id)
-                    ->label('Primary'),
+                    ->label(trans('server/allocation.primary')),
             ])
             ->actions([
                 DetachAction::make()
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_ALLOCATION_DELETE, $server))
-                    ->label('Delete')
+                    ->label(trans('server/allocation.delete'))
                     ->icon('tabler-trash')
                     ->hidden(fn (Allocation $allocation) => $allocation->id === $server->allocation_id)
                     ->action(function (Allocation $allocation) {

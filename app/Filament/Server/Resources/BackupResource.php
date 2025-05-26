@@ -74,14 +74,14 @@ class BackupResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')
-                    ->label('Name')
+                    ->label(trans('server/backup.list.name'))
                     ->columnSpanFull(),
                 TextArea::make('ignored')
                     ->columnSpanFull()
-                    ->label('Ignored Files & Directories'),
+                    ->label(trans('server/backup.list.ignore')),
                 Toggle::make('is_locked')
-                    ->label('Lock?')
-                    ->helperText('Prevents this backup from being deleted until explicitly unlocked.'),
+                    ->label(trans('server/backup.list.lock'))
+                    ->helperText(trans('server/backup.list.lock_help')),
             ]);
     }
 
@@ -95,17 +95,17 @@ class BackupResource extends Resource
                 TextColumn::make('name')
                     ->searchable(),
                 BytesColumn::make('bytes')
-                    ->label('Size'),
+                    ->label(trans('server/backup.list.size')),
                 DateTimeColumn::make('created_at')
-                    ->label('Created')
+                    ->label(trans('server/backup.list.created'))
                     ->since()
                     ->sortable(),
                 TextColumn::make('status')
-                    ->label('Status')
+                    ->label(trans('server/backup.list.status'))
                     ->badge(),
                 IconColumn::make('is_locked')
                     ->visibleFrom('md')
-                    ->label('Lock Status')
+                    ->label(trans('server/backup.list.lock_status'))
                     ->trueIcon('tabler-lock')
                     ->falseIcon('tabler-lock-open'),
             ])
@@ -114,7 +114,7 @@ class BackupResource extends Resource
                     Action::make('lock')
                         ->icon(fn (Backup $backup) => !$backup->is_locked ? 'tabler-lock' : 'tabler-lock-open')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DELETE, $server))
-                        ->label(fn (Backup $backup) => !$backup->is_locked ? 'Lock' : 'Unlock')
+                        ->label(fn (Backup $backup) => !$backup->is_locked ? trans('server/backup.list.lockable.lock') : trans('server/backup.list.lockable.unlock'))
                         ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->toggleLock($request, $server, $backup))
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     Action::make('download')
@@ -129,24 +129,24 @@ class BackupResource extends Resource
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_RESTORE, $server))
                         ->form([
                             Placeholder::make('')
-                                ->helperText('Your server will be stopped. You will not be able to control the power state, access the file manager, or create additional backups until this process is completed.'),
+                                ->helperText(trans('server/backup.list.restore_help')),
                             Checkbox::make('truncate')
-                                ->label('Delete all files before restoring backup?'),
+                                ->label(trans('server/backup.list.restore_confirm')),
                         ])
                         ->action(function (Backup $backup, $data, DaemonBackupRepository $daemonRepository, DownloadLinkService $downloadLinkService) use ($server) {
                             if (!is_null($server->status)) {
                                 return Notification::make()
                                     ->danger()
-                                    ->title('Backup Restore Failed')
-                                    ->body('This server is not currently in a state that allows for a backup to be restored.')
+                                    ->title(trans('server/backup.list.restore_failed.cannot_restore'))
+                                    ->body(trans('server/backup.list.restore_failed.cannot_restore_desc'))
                                     ->send();
                             }
 
                             if (!$backup->is_successful && is_null($backup->completed_at)) { //TODO Change to Notifications
                                 return Notification::make()
                                     ->danger()
-                                    ->title('Backup Restore Failed')
-                                    ->body('This backup cannot be restored at this time: not completed or failed.')
+                                    ->title(trans('server/backup.list.restore_failed.restore_incomplete'))
+                                    ->body(trans('server/backup.list.restore_failed.restore_incomplete_desc'))
                                     ->send();
                             }
 
@@ -169,14 +169,16 @@ class BackupResource extends Resource
                             });
 
                             return Notification::make()
-                                ->title('Restoring Backup')
+                                ->title(trans('server/backup.list.restoring'))
                                 ->send();
                         })
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     DeleteAction::make('delete')
                         ->disabled(fn (Backup $backup) => $backup->is_locked)
-                        ->modalDescription(fn (Backup $backup) => 'Do you wish to delete, ' . $backup->name . '?')
-                        ->modalSubmitActionLabel('Delete Backup')
+                        ->modalDescription(fn (Backup $backup) => trans('server/backup.list.delete', [
+                            'backup' => $backup->name,
+                        ]))
+                        ->modalSubmitActionLabel(trans('server/backup.list.delete'))
                         ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->delete($request, $server, $backup))
                         ->visible(fn (Backup $backup) => $backup->status !== BackupStatus::InProgress),
                 ]),

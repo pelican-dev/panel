@@ -24,7 +24,7 @@ class ListDatabases extends ListRecords
 
         return [
             CreateAction::make('new')
-                ->label(fn () => $server->databases()->count() >= $server->database_limit ? trans('strings.server.databases.limit_reached') : trans('strings.server.databases.new_database'))
+                ->label(fn () => $server->databases()->count() >= $server->database_limit ? trans('server/database.limit_reached') : trans('server/database.new_database'))
                 ->disabled(fn () => $server->databases()->count() >= $server->database_limit)
                 ->color(fn () => $server->databases()->count() >= $server->database_limit ? 'danger' : 'primary')
                 ->createAnother(false)
@@ -33,20 +33,20 @@ class ListDatabases extends ListRecords
                         ->columns(2)
                         ->schema([
                             Select::make('database_host_id')
-                                ->label(trans('strings.server.databases.db_host'))
+                                ->label(trans('server/database.db_host'))
                                 ->columnSpan(2)
                                 ->required()
-                                ->placeholder(trans('strings.server.database.db_host_select'))
+                                ->placeholder(trans('server/database.db_host_select'))
                                 ->options(fn () => $server->node->databaseHosts->mapWithKeys(fn (DatabaseHost $databaseHost) => [$databaseHost->id => $databaseHost->name])),
                             TextInput::make('database')
                                 ->columnSpan(1)
-                                ->label(trans('strings.server.database.db_name'))
+                                ->label(trans('server/database.db_name'))
                                 ->prefix('s'. $server->id . '_')
                                 ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('Leaving this blank will auto generate a random name'),
+                                ->hintIconTooltip(trans('server/database.db_name_hint')),
                             TextInput::make('remote')
                                 ->columnSpan(1)
-                                ->label(trans('strings.server.databases.db_from'))
+                                ->label(trans('server/database.db_from'))
                                 ->default('%'),
                         ]),
                 ])

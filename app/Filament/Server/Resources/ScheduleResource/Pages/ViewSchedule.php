@@ -21,7 +21,7 @@ class ViewSchedule extends ViewRecord
         return [
             Action::make('runNow')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_SCHEDULE_UPDATE, Filament::getTenant()))
-                ->label(fn (Schedule $schedule) => $schedule->tasks->count() === 0 ? 'No tasks' : ($schedule->is_processing ? 'Processing' : 'Run now'))
+                ->label(fn (Schedule $schedule) => $schedule->tasks->count() === 0 ? trans('server/schedule.view.no_tasks') : ($schedule->is_processing ? trans('server/schedule.view.processing') : trans('server/schedule.view.run_now')))
                 ->color(fn (Schedule $schedule) => $schedule->tasks->count() === 0 || $schedule->is_processing ? 'warning' : 'primary')
                 ->disabled(fn (Schedule $schedule) => $schedule->tasks->count() === 0 || $schedule->is_processing)
                 ->action(function (ProcessScheduleService $service, Schedule $schedule) {
