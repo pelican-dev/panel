@@ -60,8 +60,13 @@ class EditWebhookConfiguration extends EditRecord
             $data['payload'] = $tmp;
         }
 
-        if (($data['type'] ?? null) === WebhookType::Regular->value) {
-            $data['headers'] = $data['headers'] ?? [];
+        if (($data['type'] ?? null) === WebhookType::Regular->value && isset($data['headers']) && is_array($data['headers'])) {
+            $newHeaders = [];
+            foreach ($data['headers'] as $key => $value) {
+                $newKey = str_replace(' ', '-', $key);
+                $newHeaders[$newKey] = $value;
+            }
+            $data['headers'] = $newHeaders;
         }
 
         return $data;

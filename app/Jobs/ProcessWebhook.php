@@ -28,17 +28,16 @@ class ProcessWebhook implements ShouldQueue
 
     public function handle(): void
     {
-        $webhookConfiguration = $this->webhookConfiguration;
         $data = $this->data[0];
 
-        if ($webhookConfiguration->type === WebhookType::Discord) {
+        if ($this->webhookConfiguration->type === WebhookType::Discord) {
             $data = array_merge(
                 json_decode($data, true),
-                ['event' => $webhookConfiguration->transformClassName($this->eventName)]
+                ['event' => $this->webhookConfiguration->transformClassName($this->eventName)]
             );
 
-            $payload = json_encode($webhookConfiguration->payload);
-            $tmp = $webhookConfiguration->replaceVars($data, $payload);
+            $payload = json_encode($this->webhookConfiguration->payload);
+            $tmp = $this->webhookConfiguration->replaceVars($data, $payload);
             $data = json_decode($tmp, true);
 
             $embeds = data_get($data, 'embeds');
@@ -53,39 +52,28 @@ class ProcessWebhook implements ShouldQueue
             }
         }
 
-        if (isset($data['headers'])) {
-            unset($data['headers']);
-        }
-
         try {
-            $headers = [
-                'X-Webhook-Event' => $this->eventName,
-            ];
+            $request = Http::withHeader('X-Webhook-Event', $this->eventName);
 
-            if (
-                $webhookConfiguration->type === WebhookType::Regular
-                && !empty($webhookConfiguration->headers)
-            ) {
-                foreach ($webhookConfiguration->headers as $key => $value) {
-                    $headers[$key] = $value;
+            if ($this->webhookConfiguration->type === WebhookType::Regular && is_array($this->webhookConfiguration->headers)) {
+                foreach ($data['headers'] as $key => $value) {
+
+                    $request = $request->withHeader($key, $value);
                 }
             }
 
-            Http::withHeaders($headers)
-                ->post($webhookConfiguration->endpoint, $data)
-                ->throw();
-
+            $request->post($this->webhookConfiguration->endpoint, $data)->throw();
             $successful = now();
         } catch (Exception $exception) {
             report($exception->getMessage());
             $successful = null;
         }
 
-        $webhookConfiguration->webhooks()->create([
+        $this->webhookConfiguration->webhooks()->create([
             'payload' => $data,
             'successful_at' => $successful,
             'event' => $this->eventName,
-            'endpoint' => $webhookConfiguration->endpoint,
+            'endpoint' => $this->webhookConfiguration->endpoint,
         ]);
     }
 }

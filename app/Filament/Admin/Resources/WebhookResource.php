@@ -207,7 +207,6 @@ class WebhookResource extends Resource
         return [
             KeyValue::make('headers')
                 ->label('Headers')
-                ->rules('regex:/^\S+$/')
                 ->visible(fn (Get $get) => $get('type') === WebhookType::Regular->value),
         ];
     }
