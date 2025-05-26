@@ -37,7 +37,7 @@ class CreateWebhookConfiguration extends CreateRecord
                 $embed = collect($embed)->filter(fn ($key) => is_array($key) ? array_filter($key, fn ($arr_key) => !empty($arr_key)) : !empty($key))->all();
             }
 
-            $flags = collect(data_get($data, 'flags'))->reduce(fn ($carry, $bit) => $carry | $bit, 0);
+            $flags = collect($data['flags'] ?? [])->reduce(fn ($carry, $bit) => $carry | $bit, 0);
 
             $tmp = collect([
                 'username' => data_get($data, 'username'),

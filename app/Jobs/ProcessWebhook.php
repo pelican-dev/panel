@@ -21,14 +21,14 @@ class ProcessWebhook implements ShouldQueue
      * @param  array<mixed>  $data
      */
     public function __construct(
-        private int $webhookConfigurationId,
+        private WebhookConfiguration $webhookConfiguration,
         private string $eventName,
         private array $data
     ) {}
 
     public function handle(): void
     {
-        $webhookConfiguration = WebhookConfiguration::findOrFail($this->webhookConfigurationId);
+        $webhookConfiguration = $this->webhookConfiguration;
         $data = $this->data[0];
 
         if ($webhookConfiguration->type === WebhookType::Discord) {
@@ -66,8 +66,7 @@ class ProcessWebhook implements ShouldQueue
                 $webhookConfiguration->type === WebhookType::Regular
                 && !empty($webhookConfiguration->headers)
             ) {
-                $decodedHeaders = json_decode($webhookConfiguration->headers, true) ?? [];
-                foreach ($decodedHeaders as $key => $value) {
+                foreach ($webhookConfiguration->headers as $key => $value) {
                     $headers[$key] = $value;
                 }
             }

@@ -23,6 +23,7 @@ use App\Enums\WebhookType;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property array<string, string>|null $headers
  */
 class WebhookConfiguration extends Model
 {
@@ -197,7 +198,7 @@ class WebhookConfiguration extends Model
 
         $eventData = [json_encode($data)];
 
-        ProcessWebhook::dispatchIf(!$dry, $this->id, $eventName, $eventData);
+        ProcessWebhook::dispatchIf(!$dry, $this, $eventName, $eventData);
 
         return $data;
     }
