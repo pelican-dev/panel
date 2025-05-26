@@ -123,7 +123,7 @@ class WebhookResource extends Resource
                     ->options(WebhookType::class)
                     ->default('standalone')
                     ->icons([
-                        'standalone' => WebhookType::Standalone->icon(),
+                        'standalone' => WebhookType::Regular->icon(),
                         'discord' => WebhookType::Discord->icon(),
                     ])
                     ->colors([
@@ -170,9 +170,9 @@ class WebhookResource extends Resource
                     ->activeUrl()
                     ->required()
                     ->columnSpanFull()
-                    ->afterStateUpdated(fn ($state, Set $set) => $set('type', str($state)->contains('discord.com') ? WebhookType::Discord->value : WebhookType::Standalone->value)),
+                    ->afterStateUpdated(fn ($state, Set $set) => $set('type', str($state)->contains('discord.com') ? WebhookType::Discord->value : WebhookType::Regular->value)),
                 Section::make('Discord')
-                    ->hidden(fn (Get $get) => $get('type') === WebhookType::Standalone->value)
+                    ->hidden(fn (Get $get) => $get('type') === WebhookType::Regular->value)
                     ->dehydratedWhenHidden()
                     ->afterStateUpdated(fn ($livewire) => $livewire->dispatch('refresh-widget'))
                     ->schema(fn () => self::getDiscordFields())
@@ -208,7 +208,7 @@ class WebhookResource extends Resource
             KeyValue::make('headers')
                 ->label('Headers')
                 ->rules('regex:/^\S+$/')
-                ->visible(fn (Get $get) => $get('type') === WebhookType::Standalone->value),
+                ->visible(fn (Get $get) => $get('type') === WebhookType::Regular->value),
         ];
     }
 

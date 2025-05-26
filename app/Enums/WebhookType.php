@@ -4,13 +4,13 @@ namespace App\Enums;
 
 enum WebhookType: string
 {
-    case Standalone = 'standalone';
+    case Regular = 'standalone';
     case Discord = 'discord';
 
     public function icon(): string
     {
         return match ($this) {
-            self::Standalone => 'tabler-world-www',
+            self::Regular => 'tabler-world-www',
             self::Discord => 'tabler-brand-discord',
         };
     }
@@ -18,7 +18,7 @@ enum WebhookType: string
     public function color(): string
     {
         return match ($this) {
-            self::Standalone => null,
+            self::Regular => null,
             self::Discord => '#5865F2',
         };
     }

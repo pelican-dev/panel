@@ -60,7 +60,7 @@ class EditWebhookConfiguration extends EditRecord
             $data['payload'] = $tmp;
         }
 
-        if (($data['type'] ?? null) === WebhookType::Standalone->value) {
+        if (($data['type'] ?? null) === WebhookType::Regular->value) {
             $data['headers'] = $data['headers'] ?? [];
         }
 
@@ -99,7 +99,7 @@ class EditWebhookConfiguration extends EditRecord
             $data = array_merge($data, $tmp);
         }
 
-        if (($data['type'] ?? null) === WebhookType::Standalone->value) {
+        if (($data['type'] ?? null) === WebhookType::Regular->value) {
             $data['headers'] = $data['headers'] ?? [];
         }
 

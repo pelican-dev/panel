@@ -46,7 +46,7 @@ class WebhookConfiguration extends Model
      * Default values for specific fields in the database.
      */
     protected $attributes = [
-        'type' => WebhookType::Standalone,
+        'type' => WebhookType::Regular,
         'payload' => null,
     ];
 
