@@ -7,7 +7,8 @@ use App\Filament\Server\Resources\ScheduleResource;
 use App\Models\Permission;
 use App\Models\Schedule;
 use App\Services\Schedules\ProcessScheduleService;
-use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -18,7 +19,7 @@ class ViewSchedule extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('runNow')
+            Action::make('runNow')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_SCHEDULE_UPDATE, Filament::getTenant()))
                 ->label(fn (Schedule $schedule) => $schedule->tasks->count() === 0 ? 'No tasks' : ($schedule->is_processing ? 'Processing' : 'Run now'))
                 ->color(fn (Schedule $schedule) => $schedule->tasks->count() === 0 || $schedule->is_processing ? 'warning' : 'primary')
@@ -33,7 +34,7 @@ class ViewSchedule extends ViewRecord
 
                     $this->fillForm();
                 }),
-            Actions\EditAction::make(),
+            EditAction::make(),
         ];
     }
 
