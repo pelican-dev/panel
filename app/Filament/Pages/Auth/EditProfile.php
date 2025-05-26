@@ -424,11 +424,10 @@ class EditProfile extends BaseEditProfile
                                                                     font-family: $fontName;
                                                                     src: url("$fontUrl");
                                                                 }
-                                                                $style
+                                                                {$style}
                                                             CSS;
                                                         }
 
-                                                        // Don't remove the {} on style or coloring will be gone on VSC.
                                                         return new HtmlString(<<<HTML
                                                             <style>
                                                             $style{} 
