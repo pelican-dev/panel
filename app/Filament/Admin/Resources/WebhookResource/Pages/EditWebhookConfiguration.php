@@ -60,6 +60,10 @@ class EditWebhookConfiguration extends EditRecord
             $data['payload'] = $tmp;
         }
 
+        if (($data['type'] ?? null) === WebhookType::Standalone->value) {
+            $data['headers'] = $data['headers'] ?? [];
+        }
+
         return $data;
     }
 
@@ -93,6 +97,10 @@ class EditWebhookConfiguration extends EditRecord
 
             unset($data['payload'], $data['created_at'], $data['updated_at'], $data['deleted_at']);
             $data = array_merge($data, $tmp);
+        }
+
+        if (($data['type'] ?? null) === WebhookType::Standalone->value) {
+            $data['headers'] = $data['headers'] ?? [];
         }
 
         return $data;

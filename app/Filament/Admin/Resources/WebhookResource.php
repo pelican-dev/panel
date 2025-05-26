@@ -9,6 +9,7 @@ use App\Models\WebhookConfiguration;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
@@ -178,6 +179,11 @@ class WebhookResource extends Resource
                     ->view('filament.components.webhooksection')
                     ->aside()
                     ->formBefore(),
+                Section::make('Standalone')
+                    ->hidden(fn (Get $get) => $get('type') === WebhookType::Discord->value)
+                    ->dehydratedWhenHidden()
+                    ->schema(fn () => self::getStandaloneFields())
+                    ->formBefore(),
                 Section::make('Events')
                     ->collapsible()
                     ->collapsed()
@@ -193,6 +199,17 @@ class WebhookResource extends Resource
                             ->required(),
                     ]),
             ]);
+    }
+
+    /** @return array<array-key, mixed> */
+    private static function getStandaloneFields(): array
+    {
+        return [
+            KeyValue::make('headers')
+                ->label('Headers')
+                ->rules('regex:/^\S+$/')
+                ->visible(fn (Get $get) => $get('type') === WebhookType::Standalone->value),
+        ];
     }
 
     /** @return array<array-key, mixed> */

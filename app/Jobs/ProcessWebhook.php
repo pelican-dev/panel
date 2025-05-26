@@ -21,23 +21,24 @@ class ProcessWebhook implements ShouldQueue
      * @param  array<mixed>  $data
      */
     public function __construct(
-        private WebhookConfiguration $webhookConfiguration,
+        private int $webhookConfigurationId,
         private string $eventName,
         private array $data
     ) {}
 
     public function handle(): void
     {
+        $webhookConfiguration = WebhookConfiguration::findOrFail($this->webhookConfigurationId);
         $data = $this->data[0];
 
-        if ($this->webhookConfiguration->type === WebhookType::Discord) {
+        if ($webhookConfiguration->type === WebhookType::Discord) {
             $data = array_merge(
                 json_decode($data, true),
-                ['event' => $this->webhookConfiguration->transformClassName($this->eventName)]
+                ['event' => $webhookConfiguration->transformClassName($this->eventName)]
             );
 
-            $payload = json_encode($this->webhookConfiguration->payload);
-            $tmp = $this->webhookConfiguration->replaceVars($data, $payload);
+            $payload = json_encode($webhookConfiguration->payload);
+            $tmp = $webhookConfiguration->replaceVars($data, $payload);
             $data = json_decode($tmp, true);
 
             $embeds = data_get($data, 'embeds');
@@ -52,21 +53,40 @@ class ProcessWebhook implements ShouldQueue
             }
         }
 
+        if (isset($data['headers'])) {
+            unset($data['headers']);
+        }
+
         try {
-            Http::withHeader('X-Webhook-Event', $this->eventName)
-                ->post($this->webhookConfiguration->endpoint, $data)
+            $headers = [
+                'X-Webhook-Event' => $this->eventName,
+            ];
+
+            if (
+                $webhookConfiguration->type === WebhookType::Standalone
+                && !empty($webhookConfiguration->headers)
+            ) {
+                $decodedHeaders = json_decode($webhookConfiguration->headers, true) ?? [];
+                foreach ($decodedHeaders as $key => $value) {
+                    $headers[$key] = $value;
+                }
+            }
+
+            Http::withHeaders($headers)
+                ->post($webhookConfiguration->endpoint, $data)
                 ->throw();
+
             $successful = now();
         } catch (Exception $exception) {
             report($exception->getMessage());
             $successful = null;
         }
 
-        $this->webhookConfiguration->webhooks()->create([
+        $webhookConfiguration->webhooks()->create([
             'payload' => $data,
             'successful_at' => $successful,
             'event' => $this->eventName,
-            'endpoint' => $this->webhookConfiguration->endpoint,
+            'endpoint' => $webhookConfiguration->endpoint,
         ]);
     }
 }

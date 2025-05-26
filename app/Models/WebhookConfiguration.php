@@ -39,6 +39,7 @@ class WebhookConfiguration extends Model
         'endpoint',
         'description',
         'events',
+        'headers',
     ];
 
     /**
@@ -55,6 +56,7 @@ class WebhookConfiguration extends Model
             'events' => 'array',
             'payload' => 'array',
             'type' => WebhookType::class,
+            'headers' => 'array',
         ];
     }
 
@@ -195,7 +197,7 @@ class WebhookConfiguration extends Model
 
         $eventData = [json_encode($data)];
 
-        ProcessWebhook::dispatchIf(!$dry, $this, $eventName, $eventData);
+        ProcessWebhook::dispatchIf(!$dry, $this->id, $eventName, $eventData);
 
         return $data;
     }
