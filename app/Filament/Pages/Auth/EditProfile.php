@@ -424,13 +424,13 @@ class EditProfile extends BaseEditProfile
                                                                     font-family: $fontName;
                                                                     src: url("$fontUrl");
                                                                 }
-                                                                {$style}
+                                                                $style
                                                             CSS;
                                                         }
 
                                                         return new HtmlString(<<<HTML
                                                             <style>
-                                                            $style{} 
+                                                            {$style}  
                                                             </style>
                                                             <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
                                                         HTML);
