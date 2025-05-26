@@ -63,7 +63,7 @@ class ProcessWebhook implements ShouldQueue
             ];
 
             if (
-                $webhookConfiguration->type === WebhookType::Standalone
+                $webhookConfiguration->type === WebhookType::Regular
                 && !empty($webhookConfiguration->headers)
             ) {
                 $decodedHeaders = json_decode($webhookConfiguration->headers, true) ?? [];
