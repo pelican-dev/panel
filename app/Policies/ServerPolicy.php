@@ -21,11 +21,6 @@ class ServerPolicy
             return null;
         }
 
-        // Make sure user can target node of the server
-        if (!$user->canTarget($server->node)) {
-            return false;
-        }
-
         // Owner has full server permissions
         if ($server->owner_id === $user->id) {
             return true;
@@ -35,6 +30,11 @@ class ServerPolicy
         // If the user is a subuser check their permissions
         if ($subuser && in_array($ability, $subuser->permissions)) {
             return true;
+        }
+
+        // Make sure user can target node of the server
+        if (!$user->canTarget($server->node)) {
+            return false;
         }
 
         // Return null to let default policies take over
