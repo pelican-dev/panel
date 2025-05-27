@@ -175,7 +175,7 @@ class WebhookConfiguration extends Model
 
     /**
      * @param  array<mixed, mixed>  $replacement
-     * @return array<mixed, mixed>|string|null
+     * @return string
      * */
     public function replaceVars(array $replacement, string $subject): string
     {
