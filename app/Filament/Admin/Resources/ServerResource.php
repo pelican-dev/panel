@@ -96,8 +96,6 @@ class ServerResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        return $query->whereHas('node', function (Builder $query) {
-            $query->whereIn('id', auth()->user()->accessibleNodes()->pluck('id'));
-        });
+        return $query->whereIn('node_id', auth()->user()->accessibleNodes()->pluck('id'));
     }
 }

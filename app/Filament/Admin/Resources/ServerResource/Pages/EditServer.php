@@ -685,7 +685,7 @@ class EditServer extends EditRecord
                                 ServerResource::getMountCheckboxList($get),
                             ]),
                         Tab::make(trans('admin/server.databases'))
-                            ->hidden(fn () => !auth()->user()->can('viewList database'))
+                            ->hidden(fn () => !auth()->user()->can('viewAny', Database::class))
                             ->icon('tabler-database')
                             ->columns(4)
                             ->schema([
@@ -709,7 +709,7 @@ class EditServer extends EditRecord
                                             ->hintAction(
                                                 Action::make('Delete')
                                                     ->label(trans('filament-actions::delete.single.modal.actions.delete.label'))
-                                                    ->authorize(fn (Database $database) => auth()->user()->can('delete database', $database))
+                                                    ->authorize(fn (Database $database) => auth()->user()->can('delete', $database))
                                                     ->color('danger')
                                                     ->icon('tabler-trash')
                                                     ->requiresConfirmation()
@@ -762,7 +762,7 @@ class EditServer extends EditRecord
                                     ->columnSpan(4),
                                 FormActions::make([
                                     Action::make('createDatabase')
-                                        ->authorize(fn () => auth()->user()->can('create database'))
+                                        ->authorize(fn () => auth()->user()->can('create', Database::class))
                                         ->disabled(fn () => DatabaseHost::query()->count() < 1)
                                         ->label(fn () => DatabaseHost::query()->count() < 1 ? trans('admin/server.no_db_hosts') : trans('admin/server.create_database'))
                                         ->color(fn () => DatabaseHost::query()->count() < 1 ? 'danger' : 'primary')
@@ -1064,7 +1064,7 @@ class EditServer extends EditRecord
                     }
                 })
                 ->hidden(fn () => $canForceDelete)
-                ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
+                ->authorize(fn (Server $server) => auth()->user()->can('delete', $server)),
             Actions\Action::make('ForceDelete')
                 ->color('danger')
                 ->label(trans('filament-actions::force-delete.single.label'))
@@ -1081,7 +1081,7 @@ class EditServer extends EditRecord
                     }
                 })
                 ->visible(fn () => $canForceDelete)
-                ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
+                ->authorize(fn (Server $server) => auth()->user()->can('delete', $server)),
             Actions\Action::make('console')
                 ->label(trans('admin/server.console'))
                 ->icon('tabler-terminal')

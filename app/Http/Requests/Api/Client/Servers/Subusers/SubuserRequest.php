@@ -58,7 +58,7 @@ abstract class SubuserRequest extends ClientApiRequest
         $server = $this->route()->parameter('server');
 
         // If we are an admin or the server owner, no need to perform these checks.
-        if ($user->can('update server', $server) || $user->id === $server->owner_id) {
+        if ($user->can('update', $server) || $user->id === $server->owner_id) {
             return;
         }
 

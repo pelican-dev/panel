@@ -97,7 +97,7 @@ class AllocationsRelationManager extends RelationManager
             ])
             ->groupedBulkActions([
                 DeleteBulkAction::make()
-                    ->authorize(fn () => auth()->user()->can('update node')),
+                    ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),
             ]);
     }
 }
