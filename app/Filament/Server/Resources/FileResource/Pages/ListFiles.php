@@ -317,6 +317,7 @@ class ListFiles extends ListRecords
                     ->modalDescription(fn (File $file) => $file->name)
                     ->modalHeading('Delete file?')
                     ->action(function (File $file) {
+                        $this->deselectAllTableRecords();
                         $this->getDaemonFileRepository()->deleteFiles($this->path, [$file->name]);
 
                         Activity::event('server:file.delete')
