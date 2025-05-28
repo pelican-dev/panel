@@ -7,7 +7,6 @@ use App\Console\Commands\Maintenance\CleanServiceBackupFilesCommand;
 use App\Console\Commands\Maintenance\PruneImagesCommand;
 use App\Console\Commands\Maintenance\PruneOrphanedBackupsCommand;
 use App\Console\Commands\Schedule\ProcessRunnableCommand;
-use App\Jobs\NodeStatistics;
 use App\Models\ActivityLog;
 use App\Models\Webhook;
 use Illuminate\Console\Scheduling\Schedule;
@@ -43,8 +42,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(CleanServiceBackupFilesCommand::class)->daily();
         $schedule->command(PruneImagesCommand::class)->daily();
         $schedule->command(CheckEggUpdatesCommand::class)->hourly();
-
-        $schedule->job(new NodeStatistics())->everyFiveSeconds()->withoutOverlapping();
 
         if (config('backups.prune_age')) {
             // Every 30 minutes, run the backup pruning command so that any abandoned backups can be deleted.
