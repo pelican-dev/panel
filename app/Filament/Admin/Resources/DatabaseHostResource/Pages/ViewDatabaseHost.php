@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Admin\Resources\DatabaseHostResource;
-use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers\DatabasesRelationManager;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -16,16 +15,5 @@ class ViewDatabaseHost extends ViewRecord
         return [
             EditAction::make(),
         ];
-    }
-
-    public function getRelationManagers(): array
-    {
-        if (DatabasesRelationManager::canViewForRecord($this->getRecord(), static::class)) {
-            return [
-                DatabasesRelationManager::class,
-            ];
-        }
-
-        return [];
     }
 }

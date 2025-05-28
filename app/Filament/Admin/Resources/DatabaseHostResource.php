@@ -3,12 +3,19 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\DatabaseHostResource\Pages;
+use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers;
 use App\Models\DatabaseHost;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
+use Filament\Resources\Pages\PageRegistration;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -20,6 +27,11 @@ use Illuminate\Database\Eloquent\Builder;
 
 class DatabaseHostResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
+
     protected static ?string $model = DatabaseHost::class;
 
     protected static ?string $navigationIcon = 'tabler-database';
@@ -51,7 +63,7 @@ class DatabaseHostResource extends Resource
         return trans('admin/dashboard.advanced');
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([
@@ -89,7 +101,7 @@ class DatabaseHostResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         return $form
             ->schema([
@@ -150,7 +162,16 @@ class DatabaseHostResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
+    /** @return class-string<RelationManager>[] */
+    public static function getDefaultRelations(): array
+    {
+        return [
+            RelationManagers\DatabasesRelationManager::class,
+        ];
+    }
+
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListDatabaseHosts::route('/'),

@@ -9,7 +9,11 @@ use App\Filament\Server\Resources\ScheduleResource\RelationManagers\TasksRelatio
 use App\Helpers\Utilities;
 use App\Models\Permission;
 use App\Models\Schedule;
-use App\Models\Server;
+use App\Traits\Filament\BlockAccessInConflict;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
 use Carbon\Carbon;
 use Exception;
 use Filament\Facades\Filament;
@@ -23,6 +27,8 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\PageRegistration;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\DeleteAction;
@@ -35,24 +41,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class ScheduleResource extends Resource
 {
+    use BlockAccessInConflict;
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
+
     protected static ?string $model = Schedule::class;
 
     protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationIcon = 'tabler-clock';
-
-    // TODO: find better way handle server conflict state
-    public static function canAccess(): bool
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        if ($server->isInConflictState()) {
-            return false;
-        }
-
-        return parent::canAccess();
-    }
 
     public static function canViewAny(): bool
     {
@@ -74,7 +73,7 @@ class ScheduleResource extends Resource
         return auth()->user()->can(Permission::ACTION_SCHEDULE_DELETE, Filament::getTenant());
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         return $form
             ->columns([
@@ -311,7 +310,7 @@ class ScheduleResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([
@@ -349,14 +348,16 @@ class ScheduleResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
+    /** @return class-string<RelationManager>[] */
+    public static function getDefaultRelations(): array
     {
         return [
             TasksRelationManager::class,
         ];
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListSchedules::route('/'),

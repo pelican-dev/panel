@@ -5,11 +5,18 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\NodeResource\Pages;
 use App\Filament\Admin\Resources\NodeResource\RelationManagers;
 use App\Models\Node;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use Filament\Resources\Pages\PageRegistration;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 
 class NodeResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+
     protected static ?string $model = Node::class;
 
     protected static ?string $navigationIcon = 'tabler-server-2';
@@ -41,7 +48,8 @@ class NodeResource extends Resource
         return (string) static::getEloquentQuery()->count() ?: null;
     }
 
-    public static function getRelations(): array
+    /** @return class-string<RelationManager>[] */
+    public static function getDefaultRelations(): array
     {
         return [
             RelationManagers\AllocationsRelationManager::class,
@@ -49,7 +57,8 @@ class NodeResource extends Resource
         ];
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListNodes::route('/'),

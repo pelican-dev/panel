@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Resources\ServerResource\Pages;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
-use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
 use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Pages\Console;
@@ -1134,13 +1133,6 @@ class EditServer extends EditRecord
     protected function getSavedNotification(): ?Notification
     {
         return null;
-    }
-
-    public function getRelationManagers(): array
-    {
-        return [
-            AllocationsRelationManager::class,
-        ];
     }
 
     private function shouldHideComponent(ServerVariable $serverVariable, Forms\Components\Component $component): bool
