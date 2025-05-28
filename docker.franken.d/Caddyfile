@@ -1,0 +1,46 @@
+{
+    # Global options
+    admin off
+    email {$ADMIN_EMAIL:pelican@example.com}
+    frankenphp
+}
+
+# Common configuration for both HTTP and HTTPS
+(common_config) {
+    # Set the webroot to the public directory
+    root * {$PELICAN_APP:}/public
+
+    # Enable compression
+    encode gzip zstd
+
+    # Execute PHP files and serve assets
+    php_server
+    file_server
+
+    # Route all requests to index.php
+    @notFile {
+        not file
+    }
+    rewrite @notFile /index.php?{query}
+
+    # Handle errors
+    handle_errors {
+        respond "{http.error.status_code} {http.error.status_text}"
+    }
+
+    # Log requests
+    log {
+        output stdout
+        format json
+    }
+}
+
+# HTTPS configuration (port 443)
+{$APP_URL:localhost}:443 {
+    import common_config
+}
+
+# HTTP configuration (port 80)
+http://{$APP_URL:localhost}:80 {
+    import common_config
+}
