@@ -1,28 +1,22 @@
 <?php
 
-namespace App\Extensions\OAuth\Providers;
+namespace App\Extensions\OAuth\Schemas;
 
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use SocialiteProviders\Steam\Provider;
 
-final class SteamProvider extends OAuthProvider
+final class SteamSchema extends OAuthSchema
 {
-    public function __construct(protected Application $app)
-    {
-        parent::__construct($app);
-    }
-
     public function getId(): string
     {
         return 'steam';
     }
 
-    public function getProviderClass(): string
+    public function getSocialiteProvider(): string
     {
         return Provider::class;
     }
@@ -72,10 +66,5 @@ final class SteamProvider extends OAuthProvider
     public function getHexColor(): string
     {
         return '#00adee';
-    }
-
-    public static function register(Application $app): self
-    {
-        return new self($app);
     }
 }

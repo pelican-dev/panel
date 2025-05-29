@@ -3,40 +3,45 @@
 namespace App\Extensions\Avatar;
 
 use App\Models\User;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
-abstract class AvatarProvider
+class AvatarProvider
 {
-    /**
-     * @var array<string, static>
-     */
-    protected static array $providers = [];
-
-    public static function getProvider(string $id): ?self
-    {
-        return Arr::get(static::$providers, $id);
-    }
+    /** @var AvatarSchemaInterface[] */
+    private array $providers = [];
 
     /**
-     * @return array<string, static>
+     * @return AvatarSchemaInterface[] | AvatarSchemaInterface | null
      */
-    public static function getAll(): array
+    public function get(?string $id = null): array|AvatarSchemaInterface|null
     {
-        return static::$providers;
+        return $id ? array_get($this->providers, $id) : $this->providers;
     }
 
-    public function __construct()
+    public function getActiveSchema(): ?AvatarSchemaInterface
     {
-        static::$providers[$this->getId()] = $this;
+        return $this->get(config('panel.filament.avatar-provider'));
     }
 
-    abstract public function getId(): string;
-
-    abstract public function get(User $user): ?string;
-
-    public function getName(): string
+    public function getAvatarUrl(User $user): ?string
     {
-        return Str::title($this->getId());
+        if (config('panel.filament.uploadable-avatars')) {
+            $path = "avatars/$user->id.png";
+
+            if (Storage::disk('public')->exists($path)) {
+                return Storage::url($path);
+            }
+        }
+
+        return $this->getActiveSchema()?->get($user);
+    }
+
+    public function register(AvatarSchemaInterface $provider): void
+    {
+        if (array_key_exists($provider->getId(), $this->providers)) {
+            return;
+        }
+
+        $this->providers[$provider->getId()] = $provider;
     }
 }

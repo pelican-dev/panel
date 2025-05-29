@@ -1,29 +1,23 @@
 <?php
 
-namespace App\Extensions\OAuth\Providers;
+namespace App\Extensions\OAuth\Schemas;
 
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use SocialiteProviders\Discord\Provider;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
-final class DiscordProvider extends OAuthProvider
+final class DiscordSchema extends OAuthSchema
 {
-    public function __construct(protected Application $app)
-    {
-        parent::__construct($app);
-    }
-
     public function getId(): string
     {
         return 'discord';
     }
 
-    public function getProviderClass(): string
+    public function getSocialiteProvider(): string
     {
         return Provider::class;
     }
@@ -55,10 +49,5 @@ final class DiscordProvider extends OAuthProvider
     public function getHexColor(): string
     {
         return '#5865F2';
-    }
-
-    public static function register(Application $app): self
-    {
-        return new self($app);
     }
 }
