@@ -68,13 +68,13 @@ class ListServers extends ListRecords
                     ->searchable(),
                 SelectColumn::make('allocation_id')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->hidden(!auth()->user()->can('update server'))
+                    ->hidden(!auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
                     ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
                     ->selectablePlaceholder(false)
                     ->sortable(),
                 TextColumn::make('allocation_id_readonly')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->hidden(auth()->user()->can('update server'))
+                    ->hidden(auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
                     ->state(fn (Server $server) => $server->allocation->address),
                 TextColumn::make('image')->hidden(),
                 TextColumn::make('backups_count')

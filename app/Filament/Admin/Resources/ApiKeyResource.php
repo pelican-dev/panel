@@ -79,7 +79,7 @@ class ApiKeyResource extends Resource
                 TextColumn::make('user.username')
                     ->label(trans('admin/apikey.table.created_by'))
                     ->icon('tabler-user')
-                    ->url(fn (ApiKey $apiKey) => auth()->user()->can('update user', $apiKey->user) ? EditUser::getUrl(['record' => $apiKey->user]) : null),
+                    ->url(fn (ApiKey $apiKey) => auth()->user()->can('update', $apiKey->user) ? EditUser::getUrl(['record' => $apiKey->user]) : null),
             ])
             ->actions([
                 DeleteAction::make(),
