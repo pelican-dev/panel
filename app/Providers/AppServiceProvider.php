@@ -10,7 +10,6 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
-use App\Extensions\Captcha\Providers\TurnstileProvider;
 use App\Models;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
@@ -91,9 +90,6 @@ class AppServiceProvider extends ServiceProvider
         $bearerTokens = fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer'));
         Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
-
-        // Default Captcha provider
-        TurnstileProvider::register($app);
 
         FilamentColor::register([
             'danger' => Color::Red,

@@ -3,7 +3,7 @@
 namespace App\Filament\Pages\Auth;
 
 use App\Events\Auth\ProvidedAuthenticationToken;
-use App\Extensions\Captcha\Providers\CaptchaProvider;
+use App\Extensions\Captcha\CaptchaProvider;
 use App\Extensions\OAuth\OAuthProvider;
 use App\Facades\Activity;
 use App\Models\User;
@@ -29,10 +29,13 @@ class Login extends BaseLogin
 
     protected OAuthProvider $oauthProvider;
 
-    public function boot(Google2FA $google2FA, OAuthProvider $oauthProvider): void
+    protected CaptchaProvider $captchaProvider;
+
+    public function boot(Google2FA $google2FA, OAuthProvider $oauthProvider, CaptchaProvider $captchaProvider): void
     {
         $this->google2FA = $google2FA;
         $this->oauthProvider = $oauthProvider;
+        $this->captchaProvider = $captchaProvider;
     }
 
     public function authenticate(): ?LoginResponse
@@ -145,13 +148,7 @@ class Login extends BaseLogin
 
     private function getCaptchaComponent(): ?Component
     {
-        $captchaProvider = collect(CaptchaProvider::get())->filter(fn (CaptchaProvider $provider) => $provider->isEnabled())->first();
-
-        if (!$captchaProvider) {
-            return null;
-        }
-
-        return $captchaProvider->getComponent();
+        return $this->captchaProvider->getActiveSchema()?->getFormComponent();
     }
 
     protected function throwFailureValidationException(): never

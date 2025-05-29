@@ -3,7 +3,7 @@
 namespace App\Filament\Admin\Pages;
 
 use App\Extensions\Avatar\AvatarProvider;
-use App\Extensions\Captcha\Providers\CaptchaProvider;
+use App\Extensions\Captcha\CaptchaProvider;
 use App\Extensions\OAuth\OAuthProvider;
 use App\Models\Backup;
 use App\Notifications\MailTested;
@@ -56,6 +56,8 @@ class Settings extends Page implements HasForms
 
     protected AvatarProvider $avatarProvider;
 
+    protected CaptchaProvider $captchaProvider;
+
     /** @var array<mixed>|null */
     public ?array $data = [];
 
@@ -64,10 +66,11 @@ class Settings extends Page implements HasForms
         $this->form->fill();
     }
 
-    public function boot(OAuthProvider $oauthProvider, AvatarProvider $avatarProvider): void
+    public function boot(OAuthProvider $oauthProvider, AvatarProvider $avatarProvider, CaptchaProvider $captchaProvider): void
     {
         $this->oauthProvider = $oauthProvider;
         $this->avatarProvider = $avatarProvider;
+        $this->captchaProvider = $captchaProvider;
     }
 
     public static function canAccess(): bool
@@ -268,15 +271,14 @@ class Settings extends Page implements HasForms
     {
         $formFields = [];
 
-        $captchaProviders = CaptchaProvider::get();
-        foreach ($captchaProviders as $captchaProvider) {
-            $id = Str::upper($captchaProvider->getId());
-            $name = Str::title($captchaProvider->getId());
+        $captchaSchemas = $this->captchaProvider->get();
+        foreach ($captchaSchemas as $captchaSchema) {
+            $id = Str::upper($captchaSchema->getId());
 
-            $formFields[] = Section::make($name)
+            $formFields[] = Section::make($captchaSchema->getName())
                 ->columns(5)
-                ->icon($captchaProvider->getIcon() ?? 'tabler-shield')
-                ->collapsed(fn () => !env("CAPTCHA_{$id}_ENABLED", false))
+                ->icon($captchaSchema->getIcon() ?? 'tabler-shield')
+                ->collapsed(fn () => !$captchaSchema->isEnabled())
                 ->collapsible()
                 ->schema([
                     Hidden::make("CAPTCHA_{$id}_ENABLED")
@@ -287,21 +289,14 @@ class Settings extends Page implements HasForms
                             ->visible(fn (Get $get) => $get("CAPTCHA_{$id}_ENABLED"))
                             ->label(trans('admin/setting.captcha.disable'))
                             ->color('danger')
-                            ->action(function (Set $set) use ($id) {
-                                $set("CAPTCHA_{$id}_ENABLED", false);
-                            }),
+                            ->action(fn (Set $set) => $set("CAPTCHA_{$id}_ENABLED", false)),
                         FormAction::make("enable_captcha_$id")
                             ->visible(fn (Get $get) => !$get("CAPTCHA_{$id}_ENABLED"))
                             ->label(trans('admin/setting.captcha.enable'))
                             ->color('success')
-                            ->action(function (Set $set) use ($id, $captchaProviders) {
-                                foreach ($captchaProviders as $captchaProvider) {
-                                    $loopId = Str::upper($captchaProvider->getId());
-                                    $set("CAPTCHA_{$loopId}_ENABLED", $loopId === $id);
-                                }
-                            }),
+                            ->action(fn (Set $set) => $set("CAPTCHA_{$id}_ENABLED", true)),
                     ])->columnSpan(1),
-                    Group::make($captchaProvider->getSettingsForm())
+                    Group::make($captchaSchema->getSettingsForm())
                         ->visible(fn (Get $get) => $get("CAPTCHA_{$id}_ENABLED"))
                         ->columns(4)
                         ->columnSpan(4),
