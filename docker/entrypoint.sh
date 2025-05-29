@@ -23,6 +23,7 @@ else
   echo -e "APP_INSTALLED=false" >> /pelican-data/.env
 fi
 
+sed -i "s/upload_max_filesize = 2M/upload_max_filesize = ${UPLOAD_LIMIT}M/" /usr/local/etc/php/php.ini-production
 mkdir -p /pelican-data/database /pelican-data/storage/avatars /pelican-data/storage/fonts /var/www/html/storage/logs/supervisord 2>/dev/null
 
 if ! grep -q "APP_KEY=" .env || grep -q "APP_KEY=$" .env; then

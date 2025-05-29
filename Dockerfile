@@ -93,10 +93,11 @@ COPY docker/Caddyfile /etc/caddy/Caddyfile
 # Add Laravel scheduler to crontab
 COPY docker/crontab /etc/supercronic/crontab
 
-COPY docker/entrypoint.sh ./docker/entrypoint.sh
+COPY docker/entrypoint.sh /entrypoint.sh
+COPY docker/healthcheck.sh /healthcheck.sh
 
 HEALTHCHECK --interval=5m --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost/up || exit 1
+  CMD bash /healthcheck.sh
 
 EXPOSE 80 443
 
@@ -104,5 +105,5 @@ VOLUME /pelican-data
 
 USER www-data
 
-ENTRYPOINT [ "/bin/ash", "docker/entrypoint.sh" ]
+ENTRYPOINT [ "/bin/ash", "/entrypoint.sh" ]
 CMD [ "supervisord", "-n", "-c", "/etc/supervisord.conf" ]
