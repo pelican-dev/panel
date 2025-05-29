@@ -265,8 +265,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function accessibleServers(): Builder
     {
-        if ($this->canned('viewList server')) {
-            return Server::query();
+        if ($this->canned('viewAny', Server::class)) {
+            return Server::select('servers.*')
+                ->leftJoin('subusers', 'subusers.server_id', '=', 'servers.id')
+                ->where(function (Builder $builder) {
+                    $builder->where('servers.owner_id', $this->id)->orWhere('subusers.user_id', $this->id)->orWhereIn('servers.node_id', $this->accessibleNodes()->pluck('id'));
+                })
+                ->distinct('servers.id');
         }
 
         return $this->directAccessibleServers();
@@ -278,8 +283,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function directAccessibleServers(): Builder
     {
-        return Server::query()
-            ->select('servers.*')
+        return Server::select('servers.*')
             ->leftJoin('subusers', 'subusers.server_id', '=', 'servers.id')
             ->where(function (Builder $builder) {
                 $builder->where('servers.owner_id', $this->id)->orWhere('subusers.user_id', $this->id);
@@ -314,12 +318,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
-        if ($this->canned('update server', $server) || $server->owner_id === $this->id) {
+        if ($this->canned('update', $server) || $server->owner_id === $this->id) {
             return true;
         }
 
         // If the user only has "view" permissions allow viewing the console
-        if ($permission === Permission::ACTION_WEBSOCKET_CONNECT && $this->canned('view server', $server)) {
+        if ($permission === Permission::ACTION_WEBSOCKET_CONNECT && $this->canned('view', $server)) {
             return true;
         }
 
@@ -434,7 +438,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function canAccessTenant(Model $tenant): bool
     {
         if ($tenant instanceof Server) {
-            if ($this->canned('view server', $tenant) || $tenant->owner_id === $this->id) {
+            if ($this->canned('view', $tenant) || $tenant->owner_id === $this->id) {
                 return true;
             }
 

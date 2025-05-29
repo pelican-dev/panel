@@ -2,43 +2,27 @@
 
 namespace App\Filament\Server\Components;
 
+use Closure;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 
 class SmallStatBlock extends Stat
 {
-    protected string|Htmlable $label;
+    use EvaluatesClosures;
 
-    protected $value;
+    protected bool|Closure $copyOnClick = false;
 
-    public function label(string|Htmlable $label): static
+    public function copyOnClick(bool|Closure $copyOnClick = true): static
     {
-        $this->label = $label;
+        $this->copyOnClick = $copyOnClick;
 
         return $this;
     }
 
-    public function value($value): static
+    public function shouldCopyOnClick(): bool
     {
-        $this->value = $value;
-
-        return $this;
-    }
-
-    public function getLabel(): string|Htmlable
-    {
-        return $this->label;
-    }
-
-    public function getValue()
-    {
-        return value($this->value);
-    }
-
-    public function toHtml(): string
-    {
-        return $this->render()->render();
+        return $this->evaluate($this->copyOnClick);
     }
 
     public function render(): View
