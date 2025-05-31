@@ -4,6 +4,12 @@ namespace App\Enums;
 
 enum WebhookType: string
 {
+    case Regular = 'standalone';
+    case Discord = 'discord';
+
+    /**
+     * @return array<string, string>
+     */
     public static function translation(): array
     {
         return [
@@ -11,8 +17,6 @@ enum WebhookType: string
             self::Discord->value => 'Discord',
         ];
     }
-    case Regular = 'standalone';
-    case Discord = 'discord';
 
     public function icon(): string
     {
@@ -22,7 +26,7 @@ enum WebhookType: string
         };
     }
 
-    public function color(): string
+    public function color(): ?string
     {
         return match ($this) {
             self::Regular => null,
