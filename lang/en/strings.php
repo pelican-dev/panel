@@ -48,8 +48,15 @@ return [
                 'sftp_password' => 'Password',
             ],
             'reinstall' => [
-                'heading' => 'Reinstall Server',
-                'reinstall_btn' => 'Reinstall',
+                'header' => 'Reinstall Server',
+                'button' => 'Reinstall',
+                'action_heading' => 'Are you sure you want to reinstall the server?',
+                'action_desc' => 'Some files may be deleted or modified during this process, please back up your data before continuing.',
+                'action_confirm' => 'Yes, Reinstall',
+                'started' => 'Server Reinstall started',
+                'action_detail_line1' => 'Reinstalling your server will stop it, and then re-run the installation script that initially set it up.',
+                'action_detail_line2' => 'Some files may be deleted or modified during this process, please back up your data before continuing.',
+                'failed' => 'Server Reinstall failed',
             ],
             'tag_unlimited' => 'Unlimited',
             'tag_nobackups' => 'No Backups',
@@ -73,6 +80,13 @@ return [
         'InProgress' => 'In Progress',
         'Successful' => 'Successful',
         'Failed' => 'Failed',        
+    ],
+    'consolestatus' => [
+        'start' => 'Start',
+        'restart' => 'Restart',
+        'stop' => 'Stop',
+        'kill' =>'Kill',
+        'kill_help' => 'This can result in data corruption and/or data loss!',
     ],
     'server' => [
         'widgets' => [
