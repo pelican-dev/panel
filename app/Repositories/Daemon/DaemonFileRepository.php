@@ -5,6 +5,7 @@ namespace App\Repositories\Daemon;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Client\Response;
 use App\Exceptions\Http\Server\FileSizeTooLargeException;
+use App\Exceptions\Repository\FileExistsException;
 use App\Exceptions\Repository\FileNotEditableException;
 use Illuminate\Http\Client\ConnectionException;
 
@@ -46,13 +47,20 @@ class DaemonFileRepository extends DaemonRepository
      * a file.
      *
      * @throws ConnectionException
+     * @throws FileExistsException
      */
     public function putContent(string $path, string $content): Response
     {
-        return $this->getHttpClient()
+        $response = $this->getHttpClient()
             ->withQueryParameters(['file' => $path])
             ->withBody($content)
             ->post("/api/servers/{$this->server->uuid}/files/write");
+
+        if ($response->getStatusCode() === 400) {
+            throw new FileExistsException();
+        }
+
+        return $response;
     }
 
     /**
@@ -73,15 +81,22 @@ class DaemonFileRepository extends DaemonRepository
      * Creates a new directory for the server in the given $path.
      *
      * @throws ConnectionException
+     * @throws FileExistsException
      */
     public function createDirectory(string $name, string $path): Response
     {
-        return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/files/create-directory",
+        $response = $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/files/create-directory",
             [
                 'name' => $name,
                 'path' => $path,
             ]
         );
+
+        if ($response->getStatusCode() === 400) {
+            throw new FileExistsException();
+        }
+
+        return $response;
     }
 
     /**
