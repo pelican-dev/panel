@@ -4,6 +4,13 @@ namespace App\Enums;
 
 enum WebhookType: string
 {
+    public static function translation(): array
+    {
+        return [
+            self::Regular->value => trans('admin/webhook.regular'),
+            self::Discord->value => 'Discord',
+        ];
+    }
     case Regular = 'standalone';
     case Discord = 'discord';
 

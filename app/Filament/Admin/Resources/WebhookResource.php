@@ -120,7 +120,7 @@ class WebhookResource extends Resource
                 ToggleButtons::make('type')
                     ->live()
                     ->inline()
-                    ->options(WebhookType::class)
+                    ->options(WebhookType::translation())
                     ->default('standalone')
                     ->icons([
                         'standalone' => WebhookType::Regular->icon(),
@@ -133,8 +133,8 @@ class WebhookResource extends Resource
                     ->afterStateHydrated(function ($state, Set $set, Get $get) {
                         if ($state === WebhookType::Discord->value) {
                             AlertBanner::make()
-                                ->title('Help')
-                                ->body('You have to wrap variable name in between {{ }} for example if you want to get the name from the api you can use {{name}}.<br>Shown variables on the preview aren\'t real, they are just examples.')
+                                ->title(trans('admin/webhook.help'))
+                                ->body(trans('admin/webhook.help_text'))
                                 ->icon('tabler-question-mark')
                                 ->info()
                                 ->send();
@@ -155,8 +155,8 @@ class WebhookResource extends Resource
                                 }
                             }
                             AlertBanner::make()
-                                ->title('Help')
-                                ->body('You have to wrap variable name in between {{ }} for example if you want to get the name from the api you can use {{name}}.<br>Shown variables on the preview aren\'t real, they are just examples.')
+                                ->title(trans('admin/webhook.help'))
+                                ->body(trans('admin/webhook.help_text'))
                                 ->icon('tabler-question-mark')
                                 ->info()
                                 ->send();
@@ -171,7 +171,7 @@ class WebhookResource extends Resource
                     ->required()
                     ->columnSpanFull()
                     ->afterStateUpdated(fn ($state, Set $set) => $set('type', str($state)->contains('discord.com') ? WebhookType::Discord->value : WebhookType::Regular->value)),
-                Section::make('Discord')
+                Section::make(trans('admin/webhook.events'))
                     ->hidden(fn (Get $get) => $get('type') === WebhookType::Regular->value)
                     ->dehydratedWhenHidden()
                     ->afterStateUpdated(fn ($livewire) => $livewire->dispatch('refresh-widget'))
@@ -179,12 +179,12 @@ class WebhookResource extends Resource
                     ->view('filament.components.webhooksection')
                     ->aside()
                     ->formBefore(),
-                Section::make('Standalone')
+                Section::make(trans('admin/webhook.regular'))
                     ->hidden(fn (Get $get) => $get('type') === WebhookType::Discord->value)
                     ->dehydratedWhenHidden()
                     ->schema(fn () => self::getStandaloneFields())
                     ->formBefore(),
-                Section::make('Events')
+                Section::make(trans('admin/webhook.events'))
                     ->collapsible()
                     ->collapsed()
                     ->schema([
@@ -206,7 +206,7 @@ class WebhookResource extends Resource
     {
         return [
             KeyValue::make('headers')
-                ->label('Headers')
+                ->label(trans('admin/webhook.headers'))
                 ->visible(fn (Get $get) => $get('type') === WebhookType::Regular->value),
         ];
     }
@@ -215,131 +215,132 @@ class WebhookResource extends Resource
     private static function getDiscordFields(): array
     {
         return [
-            Section::make('Profile')
+            Section::make(trans('admin/webhook.discordmessage.profile'))
                 ->collapsible()
                 ->schema([
                     TextInput::make('username')
                         ->live()
-                        ->label('Username'),
+                        ->label(trans('admin/webhook.discordmessage.username')),
                     TextInput::make('avatar_url')
                         ->live(debounce: 500)
-                        ->label('Avatar Url'),
+                        ->label(trans('admin/webhook.discordmessage.avatar_url')),
                 ]),
-            Section::make('Message')
+            Section::make(trans('admin/webhook.discordmessage.message'))
                 ->collapsible()
                 ->schema([
                     TextInput::make('content')
-                        ->label('Message')
+                        ->label(trans('admin/webhook.discordmessage.message'))
                         ->live()
                         ->required(fn (Get $get) => !filled($get('embeds'))),
                     TextInput::make('thread_name')
-                        ->label('Forum Thread Name'),
+                        ->label(trans('admin/webhook.discordmessage.forum_thread')),
                     CheckboxList::make('flags')
                         ->label('Flags')
                         ->options([
-                            (1 << 2) => 'Suppress Embeds',
-                            (1 << 12) => 'Suppress Notifications',
+                            (1 << 2) => trans('admin/webhook.discordmessage.supress_embeds'),
+                            (1 << 12) => trans('admin/webhook.discordmessage.supress_notifications'),
                         ])
                         ->descriptions([
-                            (1 << 2) => 'Do not include any embeds when serializing this message',
-                            (1 << 12) => 'This message will not trigger push and desktop notifications',
+                            (1 << 2) => trans('admin/webhook.discordmessage.supress_embeds_text'),
+                            (1 << 12) => trans('admin/webhook.discordmessage.supress_notifications_text'),
                         ]),
                     CheckboxList::make('allowed_mentions.parse')
-                        ->label('Allowed Mentions')
+                        ->label(trans('admin/webhook.discordembedtable.allowed_mentions'))
                         ->options([
-                            'roles' => 'Roles',
-                            'users' => 'Users',
-                            'everyone' => '@everyone & @here',
+                            'roles' => trans('admin/webhook.discordembedtable.roles'),
+                            'users' => trans('admin/webhook.discordembedtable.users'),
+                            'everyone' => trans('admin/webhook.discordembedtable.everyone'),
                         ]),
                 ]),
             Repeater::make('embeds')
                 ->live()
                 ->itemLabel(fn (array $state) => $state['title'])
-                ->addActionLabel('Add embed')
+                ->addActionLabel(trans('admin/webhook.discordembedtable.add_embed'))
                 ->required(fn (Get $get) => !filled($get('content')))
                 ->reorderable()
                 ->collapsible()
                 ->maxItems(10)
                 ->schema([
-                    Section::make('Author')
+                    Section::make(trans('admin/webhook.discordembedtable.author'))
                         ->collapsible()
                         ->collapsed()
                         ->schema([
                             TextInput::make('author.name')
                                 ->live()
-                                ->label('Author')
+                                ->label(trans('admin/webhook.discordembedtable.author'))
                                 ->required(fn (Get $get) => filled($get('author.url')) || filled($get('author.icon_url'))),
                             TextInput::make('author.url')
                                 ->live(debounce: 500)
-                                ->label('Author URL'),
+                                ->label(trans('admin/webhook.discordembedtable.author_url')),
                             TextInput::make('author.icon_url')
                                 ->live(debounce: 500)
-                                ->label('Author Icon URL'),
+                                ->label(trans('admin/webhook.discordembedtable.author_icon_url')),
                         ]),
-                    Section::make('Body')
+                    Section::make(trans('admin/webhook.discordembedtable.body'))
                         ->collapsible()
                         ->collapsed()
                         ->schema([
                             TextInput::make('title')
                                 ->live()
-                                ->label('Title')
+                                ->label(trans('admin/webhook.discordembedtable.title'))
                                 ->required(fn (Get $get) => $get('description') === null),
                             Textarea::make('description')
                                 ->live()
-                                ->label('Description')
+                                ->label(trans('admin/webhook.discordembedtable.body'))
                                 ->required(fn (Get $get) => $get('title') === null),
                             ColorPicker::make('color')
                                 ->live()
-                                ->label('Embed Color')
+                                ->label(trans('admin/webhook.discordembedtable.color'))
                                 ->hex(),
                             TextInput::make('url')
                                 ->live(debounce: 500)
-                                ->label('URL'),
+                                ->label(trans('admin/webhook.discordembedtable.url')),
                         ]),
-                    Section::make('Images')
+                    Section::make(trans('admin/webhook.discordembedtable.images'))
                         ->collapsible()
                         ->collapsed()
                         ->schema([
                             TextInput::make('image.url')
                                 ->live(debounce: 500)
-                                ->label('Image URL'),
+                                ->label(trans('admin/webhook.discordembedtable.image_url')),
                             TextInput::make('thumbnail.url')
                                 ->live(debounce: 500)
-                                ->label('Thumbnail URL'),
+                                ->label(trans('admin/webhook.discordembedtable.image_thumbnail')),
                         ]),
-                    Section::make('Footer')
+                    Section::make(trans('admin/webhook.discordembedtable.footer'))
                         ->collapsible()
                         ->collapsed()
                         ->schema([
                             TextInput::make('footer.text')
                                 ->live()
-                                ->label('Footer'),
+                                ->label(trans('admin/webhook.discordembedtable.footer')),
                             Checkbox::make('has_timestamp')
                                 ->live()
-                                ->label('Has Timestamp'),
+                                ->label(trans('admin/webhook.discordembedtable.has_timestamp')),
                             TextInput::make('footer.icon_url')
                                 ->live(debounce: 500)
-                                ->label('Footer Icon URL'),
+                                ->label(trans('admin/webhook.discordembedtable.footer_icon_url')),
                         ]),
-                    Section::make('Fields')
+                    Section::make(trans('admin/webhook.discordembedtable.fields'))
                         ->collapsible()->collapsed()
                         ->schema([
                             Repeater::make('fields')
                                 ->reorderable()
+                                ->addActionLabel(trans('admin/webhook.discordembedtable.add_field'))
                                 ->collapsible()
                                 ->schema([
                                     TextInput::make('name')
                                         ->live()
-                                        ->label('Field Name')
+                                        ->label(trans('admin/webhook.discordembedtable.field_name'))
                                         ->required(),
                                     Textarea::make('value')
                                         ->live()
-                                        ->label('Field Value')
+                                        ->label(trans('admin/webhook.discordembedtable.field_value'))
                                         ->rows(4)
                                         ->required(),
                                     Checkbox::make('inline')
                                         ->live()
-                                        ->label('Inline Field'),
+                                        ->label(trans('admin/webhook.discordembedtable.inline_field')),
                                 ]),
                         ]),
                 ]),
