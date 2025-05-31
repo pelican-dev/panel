@@ -362,7 +362,7 @@ class ListFiles extends ListRecords
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
                     ->form([
                         TextInput::make('name')
-                            ->label(trans('server/file.list.bulkarchive'))
+                            ->label(trans('server/file.list.bulkarchive.label'))
                             ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
                             ->suffix('.tar.gz'),
                     ])
@@ -378,7 +378,7 @@ class ListFiles extends ListRecords
                             ->log();
 
                         Notification::make()
-                            ->title(trans('server/file.list.bulkarchive'))
+                            ->title(trans('server/file.list.bulkarchive.archive_created'))
                             ->body($archive['name'])
                             ->success()
                             ->send();
@@ -397,7 +397,7 @@ class ListFiles extends ListRecords
                             ->log();
 
                         Notification::make()
-                            ->title(trans('server/file.list.bulkdelete', [
+                            ->title(trans('server/file.list.bulkdelete.notice', [
                                 'count' => count($files)
                             ]))
                             ->success()
@@ -414,7 +414,7 @@ class ListFiles extends ListRecords
         return [
             HeaderAction::make('new_file')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
-                ->label(trans('server/file.list.creatfile.new_file'))
+                ->label(trans('server/file.list.createfile.new_file'))
                 ->color('gray')
                 ->keyBindings('')
                 ->modalSubmitActionLabel(trans('server/file.list.createfile.title'))

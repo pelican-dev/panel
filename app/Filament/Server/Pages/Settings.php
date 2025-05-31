@@ -190,18 +190,18 @@ class Settings extends ServerFormPage
                                     ->content('Your SFTP password is the same as the password you use to access this panel.'),
                             ]),
                     ]),
-                Section::make(trans('strings.console.settings.reinstall.heading'))
+                Section::make(trans('strings.console.settings.reinstall.header'))
                     ->hidden(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
                     ->collapsible()
                     ->footerActions([
                         Action::make('reinstall')
                             ->color('danger')
                             ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
-                            ->label(trans('strings.console.settings.reinstall_btn'))
+                            ->label(trans('strings.console.settings.reinstall.button'))
                             ->requiresConfirmation()
-                            ->modalHeading('Are you sure you want to reinstall the server?')
-                            ->modalDescription('Some files may be deleted or modified during this process, please back up your data before continuing.')
-                            ->modalSubmitActionLabel('Yes, Reinstall')
+                            ->modalHeading(trans('strings.console.settings.reinstall.action_heading'))
+                            ->modalDescription(trans('strings.console.settings.reinstall.action_desc'))
+                            ->modalSubmitActionLabel(trans('strings.console.settings.reinstall.action_confirm'))
                             ->action(function (Server $server, ReinstallServerService $reinstallService) {
                                 abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server), 403);
 
@@ -212,7 +212,7 @@ class Settings extends ServerFormPage
 
                                     Notification::make()
                                         ->danger()
-                                        ->title('Server Reinstall failed')
+                                        ->title(trans('strings.console.settings.reinstall.failed'))
                                         ->body($exception->getMessage())
                                         ->send();
 
@@ -224,7 +224,7 @@ class Settings extends ServerFormPage
 
                                 Notification::make()
                                     ->success()
-                                    ->title('Server Reinstall started')
+                                    ->title(trans('strings.console.settings.reinstall.started'))
                                     ->send();
 
                                 redirect(Console::getUrl());
@@ -233,9 +233,9 @@ class Settings extends ServerFormPage
                     ->footerActionsAlignment(Alignment::Right)
                     ->schema([
                         Placeholder::make('')
-                            ->label('Reinstalling your server will stop it, and then re-run the installation script that initially set it up.'),
+                            ->label(trans('strings.console.settings.reinstall.action_detail_line1')),
                         Placeholder::make('')
-                            ->label('Some files may be deleted or modified during this process, please back up your data before continuing.'),
+                            ->label(trans('strings.console.settings.reinstall.action_detail_line2')),
                     ]),
             ]);
     }
