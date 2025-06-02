@@ -4,5 +4,5 @@
 @endphp
 
 <div class="w-full">
-    @livewire('server-entry', ['server' => $server, 'lazy' => true])
+    @livewire('server-entry', ['server' => $server, 'lazy' => true], key($server->id))
 </div>
