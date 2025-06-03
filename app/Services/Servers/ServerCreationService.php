@@ -165,7 +165,7 @@ class ServerCreationService
             'cpu' => Arr::get($data, 'cpu'),
             'threads' => Arr::get($data, 'threads'),
             'oom_killer' => Arr::get($data, 'oom_killer') ?? false,
-            'allocation_id' => Arr::get($data, 'allocation_id'),
+            'allocation_id' => Arr::get($data, 'allocation_id') ?? null, 
             'egg_id' => Arr::get($data, 'egg_id'),
             'startup' => Arr::get($data, 'startup'),
             'image' => Arr::get($data, 'image'),
