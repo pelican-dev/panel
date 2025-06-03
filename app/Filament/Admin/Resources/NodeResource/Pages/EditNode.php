@@ -640,7 +640,7 @@ class EditNode extends EditRecord
         ];
     }
 
-    protected function mutateFormDataBeforeSafe(array $data): array
+    protected function mutateFormDataBeforeSave(array $data): array
     {
         if (!$data['behind_proxy']) {
             $data['daemon_listen'] = $data['daemon_connect'];
