@@ -640,6 +640,15 @@ class EditNode extends EditRecord
         ];
     }
 
+    protected function mutateFormDataBeforeSafe(array $data): array
+    {
+        if (!$data['behind_proxy']) {
+            $data['daemon_listen'] = $data['daemon_connect'];
+        }
+
+        return $data;
+    }
+
     protected function afterSave(): void
     {
         $this->fillForm();
