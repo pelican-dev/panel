@@ -38,6 +38,7 @@ class NodeFactory extends Factory
             'daemon_token_id' => Str::random(Node::DAEMON_TOKEN_ID_LENGTH),
             'daemon_token' => Str::random(Node::DAEMON_TOKEN_LENGTH),
             'daemon_listen' => 8080,
+            'daemon_connect' => 8080,
             'daemon_sftp' => 2022,
             'daemon_base' => '/var/lib/panel/volumes',
             'maintenance_mode' => false,
