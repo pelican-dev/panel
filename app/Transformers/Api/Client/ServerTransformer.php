@@ -16,7 +16,7 @@ use League\Fractal\Resource\NullResource;
 
 class ServerTransformer extends BaseClientTransformer
 {
-    protected array $defaultIncludes = ['allocations', 'variables'];
+    protected array $defaultIncludes = ['variables'];
 
     protected array $availableIncludes = ['egg', 'subusers'];
 
@@ -33,6 +33,9 @@ class ServerTransformer extends BaseClientTransformer
         /** @var \App\Services\Servers\StartupCommandService $service */
         $service = Container::getInstance()->make(StartupCommandService::class);
 
+        if ($server->allocation){
+            $this->defaultIncludes = ['allocations', 'variables'];
+        }
         $user = $this->request->user();
 
         $data = [
