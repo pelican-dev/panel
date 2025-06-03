@@ -33,7 +33,7 @@ class ServerTransformer extends BaseClientTransformer
         /** @var \App\Services\Servers\StartupCommandService $service */
         $service = Container::getInstance()->make(StartupCommandService::class);
 
-        if ($server->allocation){
+        if ($server->allocation) {
             $this->defaultIncludes = ['allocations', 'variables'];
         }
         $user = $this->request->user();

@@ -65,8 +65,7 @@ class AllocationsRelationManager extends RelationManager
                     ->label(trans('admin/server.make_primary'))
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
                     ->hidden(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id),
-                DissociateAction::make()
-                    ->hidden(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id),
+                DissociateAction::make(),
             ])
             ->headerActions([
                 CreateAction::make()->label(trans('admin/server.create_allocation'))
@@ -103,23 +102,15 @@ class AllocationsRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
                     ->recordSelectSearchColumns(['ip', 'port'])
-                    ->label(trans('admin/server.add_allocation')),
+                    ->label(trans('admin/server.add_allocation'))
+                    ->after(function (array $data) {
+                        if (!$this->getOwnerRecord()->allocation) {
+                            $this->getOwnerRecord()->update(['allocation_id' => collect($data['recordId'])->first()]);
+                        }
+                    }),
             ])
             ->groupedBulkActions([
-                DissociateBulkAction::make()
-                    ->before(function (DissociateBulkAction $action, Collection $records) {
-                        $records = $records->filter(function ($allocation) {
-                            /** @var Allocation $allocation */
-                            return $allocation->id !== $this->getOwnerRecord()->allocation_id;
-                        });
-
-                        if ($records->isEmpty()) {
-                            $action->failureNotificationTitle(trans('admin/server.notifications.dissociate_primary'))->failure();
-                            throw new Halt();
-                        }
-
-                        return $records;
-                    }),
+                DissociateBulkAction::make(),
             ]);
     }
 }

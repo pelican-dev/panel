@@ -220,13 +220,14 @@ class Server extends Model implements Validatable
     /**
      * Returns the format for server allocations when communicating with the Daemon.
      *
-     * @return array<int>
+     * @return int[]|string[][]
      */
     public function getAllocationMappings(): array
     {
         if (!$this->allocation) {
-            return ["" => []];
+            return ['' => []];
         }
+
         return $this->allocations->where('node_id', $this->node_id)->groupBy('ip')->map(function ($item) {
             return $item->pluck('port');
         })->toArray();

@@ -188,7 +188,7 @@ class CreateServer extends CreateRecord
                                     $set('allocation_additional', null);
                                     $set('allocation_additional.needstobeastringhere.extra_allocations', null);
                                 })
-                                ->getOptionLabelFromRecordUsing(fn (?Allocation $allocation) => $allocation?->address ?? '')
+                                ->getOptionLabelFromRecordUsing(fn (Allocation $allocation) => $allocation->address ?? '')
                                 ->placeholder(function (Get $get) {
                                     $node = Node::find($get('node_id'));
 

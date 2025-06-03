@@ -14,8 +14,8 @@ class StartupCommandService
         $find = ['{{SERVER_MEMORY}}', '{{SERVER_IP}}', '{{SERVER_PORT}}'];
         $replace = [
             (string) $server->memory,
-            $server->allocation->ip ?? '127.0.0.1', 
-            (string) ($server->allocation->port ?? '0'), 
+            $server->allocation->ip ?? '127.0.0.1',
+            (string) ($server->allocation->port ?? '0'),
         ];
 
         foreach ($server->variables as $variable) {

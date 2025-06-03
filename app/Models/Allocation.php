@@ -83,7 +83,7 @@ class Allocation extends Model
                 return;
             }
             if ($allocation->isDirty('server_id') && is_null($allocation->server_id) && $allocation->id === $server->allocation_id) {
-                return false;
+                $server->update(['allocation_id' => $server->allocations[0]->id]);
             }
         });
     }

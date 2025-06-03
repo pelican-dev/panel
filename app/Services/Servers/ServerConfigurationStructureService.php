@@ -94,7 +94,7 @@ class ServerConfigurationStructureService
                 'force_outgoing_ip' => $server->egg->force_outgoing_ip,
                 'default' => [
                     'ip' => $server->allocation->ip ?? '127.0.0.1',
-                    'port' => $server->allocation->port ?? 0,       
+                    'port' => $server->allocation->port ?? 0,
                 ],
                 'mappings' => $server->getAllocationMappings(),
             ],
