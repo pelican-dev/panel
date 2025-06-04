@@ -12,7 +12,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\AssociateAction;
 use Filament\Tables\Actions\CreateAction;
@@ -22,7 +21,6 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @method Server getOwnerRecord()
@@ -65,35 +63,43 @@ class AllocationsRelationManager extends RelationManager
                     ->label(trans('admin/server.make_primary'))
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
                     ->hidden(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id),
-                DissociateAction::make(),
+                DissociateAction::make()
+                    ->hidden(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id &&
+                         $this->getOwnerRecord()->allocations()->count() > 1)
+                    ->after(function (Allocation $record) {
+                        $server = $this->getOwnerRecord();
+                        if ($record->id === $server->allocation_id) {
+                            $server->update(['allocation_id' => null]);
+                        }
+                    }),
             ])
             ->headerActions([
                 CreateAction::make()->label(trans('admin/server.create_allocation'))
                     ->createAnother(false)
                     ->form(fn () => [
-                        Select::make('allocation_ip')
-                            ->options(collect($this->getOwnerRecord()->node->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
-                            ->label(trans('admin/server.ip_address'))
-                            ->inlineLabel()
-                            ->ip()
-                            ->live()
-                            ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
-                            ->required(),
-                        TextInput::make('allocation_alias')
-                            ->label(trans('admin/server.alias'))
-                            ->inlineLabel()
-                            ->default(null)
-                            ->helperText(trans('admin/server.alias_helper'))
-                            ->required(false),
-                        TagsInput::make('allocation_ports')
-                            ->placeholder('27015, 27017-27019')
-                            ->label(trans('admin/server.ports'))
-                            ->inlineLabel()
-                            ->live()
-                            ->disabled(fn (Get $get) => empty($get('allocation_ip')))
-                            ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports', CreateServer::retrieveValidPorts($this->getOwnerRecord()->node, $state, $get('allocation_ip'))))
-                            ->splitKeys(['Tab', ' ', ','])
-                            ->required(),
+                       Select::make('allocation_ip')
+                           ->options(collect($this->getOwnerRecord()->node->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                           ->label(trans('admin/server.ip_address'))
+                           ->inlineLabel()
+                           ->ip()
+                           ->live()
+                           ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
+                           ->required(),
+                       TextInput::make('allocation_alias')
+                           ->label(trans('admin/server.alias'))
+                           ->inlineLabel()
+                           ->default(null)
+                           ->helperText(trans('admin/server.alias_helper'))
+                           ->required(false),
+                       TagsInput::make('allocation_ports')
+                           ->placeholder('27015, 27017-27019')
+                           ->label(trans('admin/server.ports'))
+                           ->inlineLabel()
+                           ->live()
+                           ->disabled(fn (Get $get) => empty($get('allocation_ip')))
+                           ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports', CreateServer::retrieveValidPorts($this->getOwnerRecord()->node, $state, $get('allocation_ip'))))
+                           ->splitKeys(['Tab', ' ', ','])
+                           ->required(),
                     ])
                     ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
                 AssociateAction::make()
