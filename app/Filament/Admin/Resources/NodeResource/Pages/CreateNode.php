@@ -418,4 +418,13 @@ class CreateNode extends CreateRecord
     {
         return [];
     }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        if (!$data['behind_proxy']) {
+            $data['daemon_listen'] = $data['daemon_connect'];
+        }
+
+        return $data;
+    }
 }
