@@ -5,7 +5,6 @@ namespace App\Livewire;
 use Closure;
 use Filament\Notifications\Concerns;
 use Filament\Support\Components\ViewComponent;
-use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
 
@@ -16,33 +15,24 @@ final class AlertBanner extends ViewComponent implements Arrayable
     use Concerns\HasId;
     use Concerns\HasStatus;
     use Concerns\HasTitle;
-    use EvaluatesClosures;
 
     protected bool|Closure $closable = false;
 
     protected string $view = 'livewire.alerts.alert-banner';
 
-    protected string $viewIdentifier = 'notification';
+    protected string $viewIdentifier = 'alert-banner';
 
     public function __construct(string $id)
     {
         $this->id($id);
     }
 
-    public static function make(?string $id = null): static
+    public static function make(?string $id = null): AlertBanner
     {
         $static = new self($id ?? Str::orderedUuid());
         $static->configure();
 
         return $static;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getViewData(): array
-    {
-        return $this->viewData;
     }
 
     /**
