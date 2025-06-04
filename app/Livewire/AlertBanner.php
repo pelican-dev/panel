@@ -4,11 +4,12 @@ namespace App\Livewire;
 
 use Closure;
 use Filament\Notifications\Concerns;
+use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\EvaluatesClosures;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
-use Livewire\Wireable;
 
-final class AlertBanner implements Wireable
+final class AlertBanner extends ViewComponent implements Arrayable
 {
     use Concerns\HasBody;
     use Concerns\HasIcon;
@@ -19,18 +20,35 @@ final class AlertBanner implements Wireable
 
     protected bool|Closure $closable = false;
 
-    public static function make(?string $id = null): AlertBanner
+    protected string $view = 'livewire.alerts.alert-banner';
+
+    protected string $viewIdentifier = 'notification';
+
+    public function __construct(string $id)
     {
-        $static = new self();
-        $static->id($id ?? Str::orderedUuid());
+        $this->id($id);
+    }
+
+    public static function make(?string $id = null): static
+    {
+        $static = new self($id ?? Str::orderedUuid());
+        $static->configure();
 
         return $static;
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function getViewData(): array
+    {
+        return $this->viewData;
+    }
+
+    /**
      * @return array{id: string, title: ?string, body: ?string, status: ?string, icon: ?string, closeable: bool}
      */
-    public function toLivewire(): array
+    public function toArray(): array
     {
         return [
             'id' => $this->getId(),
@@ -42,15 +60,18 @@ final class AlertBanner implements Wireable
         ];
     }
 
-    public static function fromLivewire(mixed $value): AlertBanner
+    /**
+     * @param  array{id: string, title: ?string, body: ?string, status: ?string, icon: ?string, closeable: bool}  $data
+     */
+    public static function fromArray(array $data): AlertBanner
     {
-        $static = AlertBanner::make($value['id']);
+        $static = AlertBanner::make($data['id']);
 
-        $static->title($value['title']);
-        $static->body($value['body']);
-        $static->status($value['status']);
-        $static->icon($value['icon']);
-        $static->closable($value['closeable']);
+        $static->title($data['title']);
+        $static->body($data['body']);
+        $static->status($data['status']);
+        $static->icon($data['icon']);
+        $static->closable($data['closeable']);
 
         return $static;
     }
@@ -69,7 +90,7 @@ final class AlertBanner implements Wireable
 
     public function send(): AlertBanner
     {
-        session()->push('alert-banners', $this->toLivewire());
+        session()->push('alert-banners', $this->toArray());
 
         return $this;
     }
