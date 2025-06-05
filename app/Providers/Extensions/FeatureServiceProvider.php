@@ -2,7 +2,7 @@
 
 namespace App\Providers\Extensions;
 
-use App\Extensions\Features\FeatureProvider;
+use App\Extensions\Features\FeatureService;
 use App\Extensions\Features\Schemas\GSLTokenSchema;
 use App\Extensions\Features\Schemas\JavaVersionSchema;
 use App\Extensions\Features\Schemas\MinecraftEulaSchema;
@@ -14,8 +14,8 @@ class FeatureServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(FeatureProvider::class, function ($app) {
-            $provider = new FeatureProvider();
+        $this->app->singleton(FeatureService::class, function ($app) {
+            $provider = new FeatureService();
 
             $provider->register(new GSLTokenSchema());
             $provider->register(new JavaVersionSchema());

@@ -2,7 +2,7 @@
 
 namespace App\Services\Servers;
 
-use App\Extensions\Features\FeatureProvider;
+use App\Extensions\Features\FeatureService;
 use App\Extensions\Features\FeatureSchemaInterface;
 use App\Models\Egg;
 use App\Models\Mount;
@@ -10,7 +10,7 @@ use App\Models\Server;
 
 class ServerConfigurationStructureService
 {
-    public function __construct(private EnvironmentService $environment, private FeatureProvider $provider) {}
+    public function __construct(private EnvironmentService $environment, private FeatureService $featureService) {}
 
     /**
      * Return a configuration array for a specific server when passed a server model.
@@ -104,7 +104,7 @@ class ServerConfigurationStructureService
             'egg' => [
                 'id' => $server->egg->uuid,
                 'file_denylist' => $server->egg->inherit_file_denylist,
-                'features' => collect($this->provider->get($server->egg->features))->mapWithKeys(fn (FeatureSchemaInterface $feature) => [
+                'features' => collect($this->featureService->get($server->egg->features))->mapWithKeys(fn (FeatureSchemaInterface $feature) => [
                     $feature->getId() => $feature->getListeners(),
                 ])->all(),
             ],

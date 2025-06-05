@@ -2,7 +2,7 @@
 
 namespace App\Providers\Extensions;
 
-use App\Extensions\OAuth\OAuthProvider;
+use App\Extensions\OAuth\OAuthService;
 use App\Extensions\OAuth\Schemas\AuthentikSchema;
 use App\Extensions\OAuth\Schemas\CommonSchema;
 use App\Extensions\OAuth\Schemas\DiscordSchema;
@@ -15,24 +15,24 @@ class OAuthServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(OAuthProvider::class, function ($app) {
-            $provider = new OAuthProvider();
+        $this->app->singleton(OAuthService::class, function ($app) {
+            $service = new OAuthService();
             // Default OAuth providers included with Socialite
-            $provider->register(new CommonSchema('facebook', 'tabler-brand-facebook-f', '#1877f2'));
-            $provider->register(new CommonSchema('x', 'tabler-brand-x-f', '#1da1f2'));
-            $provider->register(new CommonSchema('linkedin', 'tabler-brand-linkedin-f', '#0a66c2'));
-            $provider->register(new CommonSchema('google', 'tabler-brand-google-f', '#4285f4'));
-            $provider->register(new GithubSchema());
-            $provider->register(new GitlabSchema());
-            $provider->register(new CommonSchema('bitbucket', 'tabler-brand-bitbucket-f', '#205081'));
-            $provider->register(new CommonSchema('slack', 'tabler-brand-slack', '#6ecadc'));
+            $service->register(new CommonSchema('facebook', 'tabler-brand-facebook-f', '#1877f2'));
+            $service->register(new CommonSchema('x', 'tabler-brand-x-f', '#1da1f2'));
+            $service->register(new CommonSchema('linkedin', 'tabler-brand-linkedin-f', '#0a66c2'));
+            $service->register(new CommonSchema('google', 'tabler-brand-google-f', '#4285f4'));
+            $service->register(new GithubSchema());
+            $service->register(new GitlabSchema());
+            $service->register(new CommonSchema('bitbucket', 'tabler-brand-bitbucket-f', '#205081'));
+            $service->register(new CommonSchema('slack', 'tabler-brand-slack', '#6ecadc'));
 
             // Additional OAuth providers from socialiteproviders.com
-            $provider->register(new AuthentikSchema());
-            $provider->register(new DiscordSchema());
-            $provider->register(new SteamSchema());
+            $service->register(new AuthentikSchema());
+            $service->register(new DiscordSchema());
+            $service->register(new SteamSchema());
 
-            return $provider;
+            return $service;
         });
     }
 }

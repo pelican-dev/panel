@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Exceptions\DisplayException;
-use App\Extensions\Avatar\AvatarProvider;
+use App\Extensions\Avatar\AvatarService;
 use App\Rules\Username;
 use App\Traits\HasValidation;
 use DateTimeZone;
@@ -396,8 +396,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return App::call(function (AvatarProvider $provider) {
-            return $provider->getAvatarUrl($this);
+        return App::call(function (AvatarService $service) {
+            return $service->getAvatarUrl($this);
         });
     }
 

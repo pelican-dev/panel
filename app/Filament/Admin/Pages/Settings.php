@@ -2,9 +2,9 @@
 
 namespace App\Filament\Admin\Pages;
 
-use App\Extensions\Avatar\AvatarProvider;
-use App\Extensions\Captcha\CaptchaProvider;
-use App\Extensions\OAuth\OAuthProvider;
+use App\Extensions\Avatar\AvatarService;
+use App\Extensions\Captcha\CaptchaService;
+use App\Extensions\OAuth\OAuthService;
 use App\Models\Backup;
 use App\Notifications\MailTested;
 use App\Traits\EnvironmentWriterTrait;
@@ -52,11 +52,11 @@ class Settings extends Page implements HasForms
 
     protected static string $view = 'filament.pages.settings';
 
-    protected OAuthProvider $oauthProvider;
+    protected OAuthService $oauthService;
 
-    protected AvatarProvider $avatarProvider;
+    protected AvatarService $avatarService;
 
-    protected CaptchaProvider $captchaProvider;
+    protected CaptchaService $captchaService;
 
     /** @var array<mixed>|null */
     public ?array $data = [];
@@ -66,11 +66,11 @@ class Settings extends Page implements HasForms
         $this->form->fill();
     }
 
-    public function boot(OAuthProvider $oauthProvider, AvatarProvider $avatarProvider, CaptchaProvider $captchaProvider): void
+    public function boot(OAuthService $oauthService, AvatarService $avatarService, CaptchaService $captchaService): void
     {
-        $this->oauthProvider = $oauthProvider;
-        $this->avatarProvider = $avatarProvider;
-        $this->captchaProvider = $captchaProvider;
+        $this->oauthService = $oauthService;
+        $this->avatarService = $avatarService;
+        $this->captchaService = $captchaService;
     }
 
     public static function canAccess(): bool
@@ -180,7 +180,7 @@ class Settings extends Page implements HasForms
                     Select::make('FILAMENT_AVATAR_PROVIDER')
                         ->label(trans('admin/setting.general.avatar_provider'))
                         ->native(false)
-                        ->options(collect($this->avatarProvider->get())->mapWithKeys(fn ($provider) => [$provider->getId() => $provider->getName()]))
+                        ->options(collect($this->avatarService->get())->mapWithKeys(fn ($schema) => [$schema->getId() => $schema->getName()]))
                         ->selectablePlaceholder(false)
                         ->default(env('FILAMENT_AVATAR_PROVIDER', config('panel.filament.avatar-provider'))),
                     Toggle::make('FILAMENT_UPLOADABLE_AVATARS')
@@ -271,14 +271,14 @@ class Settings extends Page implements HasForms
     {
         $formFields = [];
 
-        $captchaSchemas = $this->captchaProvider->get();
-        foreach ($captchaSchemas as $captchaSchema) {
-            $id = Str::upper($captchaSchema->getId());
+        $captchaSchemas = $this->captchaService->get();
+        foreach ($captchaSchemas as $schema) {
+            $id = Str::upper($schema->getId());
 
-            $formFields[] = Section::make($captchaSchema->getName())
+            $formFields[] = Section::make($schema->getName())
                 ->columns(5)
-                ->icon($captchaSchema->getIcon() ?? 'tabler-shield')
-                ->collapsed(fn () => !$captchaSchema->isEnabled())
+                ->icon($schema->getIcon() ?? 'tabler-shield')
+                ->collapsed(fn () => !$schema->isEnabled())
                 ->collapsible()
                 ->schema([
                     Hidden::make("CAPTCHA_{$id}_ENABLED")
@@ -296,7 +296,7 @@ class Settings extends Page implements HasForms
                             ->color('success')
                             ->action(fn (Set $set) => $set("CAPTCHA_{$id}_ENABLED", true)),
                     ])->columnSpan(1),
-                    Group::make($captchaSchema->getSettingsForm())
+                    Group::make($schema->getSettingsForm())
                         ->visible(fn (Get $get) => $get("CAPTCHA_{$id}_ENABLED"))
                         ->columns(4)
                         ->columnSpan(4),
@@ -532,14 +532,14 @@ class Settings extends Page implements HasForms
     {
         $formFields = [];
 
-        $oauthProviders = $this->oauthProvider->get();
-        foreach ($oauthProviders as $oauthProvider) {
-            $id = Str::upper($oauthProvider->getId());
-            $name = Str::title($oauthProvider->getId());
+        $oauthSchemas = $this->oauthService->get();
+        foreach ($oauthSchemas as $schema) {
+            $id = Str::upper($schema->getId());
+            $name = Str::title($schema->getId());
 
             $formFields[] = Section::make($name)
                 ->columns(5)
-                ->icon($oauthProvider->getIcon() ?? 'tabler-brand-oauth')
+                ->icon($schema->getIcon() ?? 'tabler-brand-oauth')
                 ->collapsed(fn () => !env("OAUTH_{$id}_ENABLED", false))
                 ->collapsible()
                 ->schema([
@@ -558,7 +558,7 @@ class Settings extends Page implements HasForms
                             ->visible(fn (Get $get) => !$get("OAUTH_{$id}_ENABLED"))
                             ->label(trans('admin/setting.oauth.enable'))
                             ->color('success')
-                            ->steps($oauthProvider->getSetupSteps())
+                            ->steps($schema->getSetupSteps())
                             ->modalHeading(trans('admin/setting.oauth.enable') . ' ' . $name)
                             ->modalSubmitActionLabel(trans('admin/setting.oauth.enable'))
                             ->modalCancelAction(false)
@@ -572,7 +572,7 @@ class Settings extends Page implements HasForms
                                 }
                             }),
                     ])->columnSpan(1),
-                    Group::make($oauthProvider->getSettingsForm())
+                    Group::make($schema->getSettingsForm())
                         ->visible(fn (Get $get) => $get("OAUTH_{$id}_ENABLED"))
                         ->columns(4)
                         ->columnSpan(4),

@@ -3,8 +3,8 @@
 namespace App\Filament\Pages\Auth;
 
 use App\Events\Auth\ProvidedAuthenticationToken;
-use App\Extensions\Captcha\CaptchaProvider;
-use App\Extensions\OAuth\OAuthProvider;
+use App\Extensions\Captcha\CaptchaService;
+use App\Extensions\OAuth\OAuthService;
 use App\Facades\Activity;
 use App\Models\User;
 use Filament\Facades\Filament;
@@ -27,15 +27,15 @@ class Login extends BaseLogin
 
     public bool $verifyTwoFactor = false;
 
-    protected OAuthProvider $oauthProvider;
+    protected OAuthService $oauthService;
 
-    protected CaptchaProvider $captchaProvider;
+    protected CaptchaService $captchaService;
 
-    public function boot(Google2FA $google2FA, OAuthProvider $oauthProvider, CaptchaProvider $captchaProvider): void
+    public function boot(Google2FA $google2FA, OAuthService $oauthService, CaptchaService $captchaService): void
     {
         $this->google2FA = $google2FA;
-        $this->oauthProvider = $oauthProvider;
-        $this->captchaProvider = $captchaProvider;
+        $this->oauthService = $oauthService;
+        $this->captchaService = $captchaService;
     }
 
     public function authenticate(): ?LoginResponse
@@ -122,8 +122,8 @@ class Login extends BaseLogin
             $this->getTwoFactorAuthenticationComponent(),
         ];
 
-        if ($captchaProvider = $this->getCaptchaComponent()) {
-            $schema = array_merge($schema, [$captchaProvider]);
+        if ($captchaComponent = $this->getCaptchaComponent()) {
+            $schema = array_merge($schema, [$captchaComponent]);
         }
 
         return [
@@ -148,7 +148,7 @@ class Login extends BaseLogin
 
     private function getCaptchaComponent(): ?Component
     {
-        return $this->captchaProvider->getActiveSchema()?->getFormComponent();
+        return $this->captchaService->getActiveSchema()?->getFormComponent();
     }
 
     protected function throwFailureValidationException(): never
@@ -174,16 +174,16 @@ class Login extends BaseLogin
     {
         $actions = [];
 
-        $oauthProviders = $this->oauthProvider->getEnabled();
+        $oauthSchemas = $this->oauthService->getEnabled();
 
-        foreach ($oauthProviders as $oauthProvider) {
+        foreach ($oauthSchemas as $schema) {
 
-            $id = $oauthProvider->getId();
+            $id = $schema->getId();
 
             $actions[] = Action::make("oauth_$id")
-                ->label($oauthProvider->getName())
-                ->icon($oauthProvider->getIcon())
-                ->color(Color::hex($oauthProvider->getHexColor()))
+                ->label($schema->getName())
+                ->icon($schema->getIcon())
+                ->color(Color::hex($schema->getHexColor()))
                 ->url(route('auth.oauth.redirect', ['driver' => $id], false));
         }
 

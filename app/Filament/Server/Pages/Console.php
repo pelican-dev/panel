@@ -5,7 +5,7 @@ namespace App\Filament\Server\Pages;
 use App\Enums\ConsoleWidgetPosition;
 use App\Enums\ContainerStatus;
 use App\Exceptions\Http\Server\ServerStateConflictException;
-use App\Extensions\Features\FeatureProvider;
+use App\Extensions\Features\FeatureService;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
@@ -37,7 +37,7 @@ class Console extends Page
 
     public ContainerStatus $status = ContainerStatus::Offline;
 
-    protected FeatureProvider $featureProvider;
+    protected FeatureService $featureService;
 
     public function mount(): void
     {
@@ -55,12 +55,12 @@ class Console extends Page
         }
     }
 
-    public function boot(FeatureProvider $featureProvider): void
+    public function boot(FeatureService $featureService): void
     {
-        $this->featureProvider = $featureProvider;
+        $this->featureService = $featureService;
         /** @var Server $server */
         $server = Filament::getTenant();
-        foreach ($featureProvider->get($server->egg->features) as $feature) {
+        foreach ($featureService->get($server->egg->features) as $feature) {
             $this->cacheAction($feature->getAction());
         }
     }
@@ -71,7 +71,7 @@ class Console extends Page
         $data = json_decode($data);
         $feature = data_get($data, 'key');
 
-        $feature = $this->featureProvider->get($feature);
+        $feature = $this->featureService->get($feature);
         if ($this->getMountedAction()) {
             return;
         }

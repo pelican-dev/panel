@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Extensions\OAuth\OAuthProvider;
+use App\Extensions\OAuth\OAuthService;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -19,7 +19,7 @@ class OAuthController extends Controller
     public function __construct(
         private readonly AuthManager $auth,
         private readonly UserUpdateService $updateService,
-        private readonly OAuthProvider $oauthProvider
+        private readonly OAuthService $oauthService
     ) {}
 
     /**
@@ -28,7 +28,7 @@ class OAuthController extends Controller
     public function redirect(string $driver): RedirectResponse
     {
         // Driver is disabled - redirect to normal login
-        if (!$this->oauthProvider->get($driver)->isEnabled()) {
+        if (!$this->oauthService->get($driver)->isEnabled()) {
             return redirect()->route('auth.login');
         }
 
@@ -41,7 +41,7 @@ class OAuthController extends Controller
     public function callback(Request $request, string $driver): RedirectResponse
     {
         // Driver is disabled - redirect to normal login
-        if (!$this->oauthProvider->get($driver)->isEnabled()) {
+        if (!$this->oauthService->get($driver)->isEnabled()) {
             return redirect()->route('auth.login');
         }
 

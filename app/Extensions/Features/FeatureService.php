@@ -2,10 +2,10 @@
 
 namespace App\Extensions\Features;
 
-class FeatureProvider
+class FeatureService
 {
     /** @var FeatureSchemaInterface[] */
-    private array $providers = [];
+    private array $schemas = [];
 
     /**
      * @param  string[]|string|null  $id
@@ -14,18 +14,18 @@ class FeatureProvider
     public function get(array|string|null $id = null): array|FeatureSchemaInterface
     {
         if (is_array($id)) {
-            return collect($this->providers)->only($id)->all();
+            return collect($this->schemas)->only($id)->all();
         }
 
-        return $id ? $this->providers[$id] : $this->providers;
+        return $id ? $this->schemas[$id] : $this->schemas;
     }
 
-    public function register(FeatureSchemaInterface $provider): void
+    public function register(FeatureSchemaInterface $schema): void
     {
-        if (array_key_exists($provider->getId(), $this->providers)) {
+        if (array_key_exists($schema->getId(), $this->schemas)) {
             return;
         }
 
-        $this->providers[$provider->getId()] = $provider;
+        $this->schemas[$schema->getId()] = $schema;
     }
 }

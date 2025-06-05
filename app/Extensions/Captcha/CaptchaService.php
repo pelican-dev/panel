@@ -6,7 +6,7 @@ use App\Extensions\Captcha\Schemas\CaptchaSchemaInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-class CaptchaProvider
+class CaptchaService
 {
     /** @var array<string, CaptchaSchemaInterface> */
     private array $schemas = [];

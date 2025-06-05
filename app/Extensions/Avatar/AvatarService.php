@@ -5,17 +5,17 @@ namespace App\Extensions\Avatar;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
-class AvatarProvider
+class AvatarService
 {
     /** @var AvatarSchemaInterface[] */
-    private array $providers = [];
+    private array $schemas = [];
 
     /**
      * @return AvatarSchemaInterface[] | AvatarSchemaInterface | null
      */
     public function get(?string $id = null): array|AvatarSchemaInterface|null
     {
-        return $id ? array_get($this->providers, $id) : $this->providers;
+        return $id ? array_get($this->schemas, $id) : $this->schemas;
     }
 
     public function getActiveSchema(): ?AvatarSchemaInterface
@@ -36,12 +36,12 @@ class AvatarProvider
         return $this->getActiveSchema()?->get($user);
     }
 
-    public function register(AvatarSchemaInterface $provider): void
+    public function register(AvatarSchemaInterface $schema): void
     {
-        if (array_key_exists($provider->getId(), $this->providers)) {
+        if (array_key_exists($schema->getId(), $this->schemas)) {
             return;
         }
 
-        $this->providers[$provider->getId()] = $provider;
+        $this->schemas[$schema->getId()] = $schema;
     }
 }
