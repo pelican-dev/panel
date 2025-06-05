@@ -8,6 +8,7 @@ use App\Repositories\Daemon\DaemonConfigurationRepository;
 use App\Services\Helpers\SoftwareVersionService;
 use App\Services\Nodes\NodeAutoDeployService;
 use App\Services\Nodes\NodeUpdateService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
 use Exception;
 use Filament\Actions;
 use Filament\Forms;
@@ -34,6 +35,8 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditNode extends EditRecord
 {
+    use CanCustomizeHeaderActions;
+
     protected static string $resource = NodeResource::class;
 
     private DaemonConfigurationRepository $daemonConfigurationRepository;
@@ -617,7 +620,8 @@ class EditNode extends EditRecord
         return [];
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Actions\Action|Actions\ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make()

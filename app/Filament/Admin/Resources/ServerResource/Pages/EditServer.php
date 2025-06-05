@@ -25,6 +25,7 @@ use App\Services\Servers\ServerDeletionService;
 use App\Services\Servers\SuspensionService;
 use App\Services\Servers\ToggleInstallService;
 use App\Services\Servers\TransferServerService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
 use Closure;
 use Exception;
 use Filament\Actions;
@@ -61,6 +62,8 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditServer extends EditRecord
 {
+    use CanCustomizeHeaderActions;
+
     protected static string $resource = ServerResource::class;
 
     private DaemonServerRepository $daemonServerRepository;
@@ -1032,7 +1035,8 @@ class EditServer extends EditRecord
         ];
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Actions\Action|Actions\ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */
         $server = $this->getRecord();

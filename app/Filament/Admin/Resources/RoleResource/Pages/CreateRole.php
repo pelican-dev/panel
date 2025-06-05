@@ -4,6 +4,9 @@ namespace App\Filament\Admin\Resources\RoleResource\Pages;
 
 use App\Filament\Admin\Resources\RoleResource;
 use App\Models\Role;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -14,13 +17,16 @@ use Spatie\Permission\Models\Permission;
  */
 class CreateRole extends CreateRecord
 {
+    use CanCustomizeHeaderActions;
+
     public Collection $permissions;
 
     protected static string $resource = RoleResource::class;
 
     protected static bool $canCreateAnother = false;
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             $this->getCreateFormAction()->formId('form'),

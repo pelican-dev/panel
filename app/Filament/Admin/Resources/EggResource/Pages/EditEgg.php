@@ -9,6 +9,9 @@ use App\Filament\Components\Actions\ImportEggAction;
 use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Models\Egg;
 use App\Models\EggVariable;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
@@ -30,6 +33,8 @@ use Illuminate\Validation\Rules\Unique;
 
 class EditEgg extends EditRecord
 {
+    use CanCustomizeHeaderActions;
+
     protected static string $resource = EggResource::class;
 
     public function form(Form $form): Form
@@ -250,7 +255,8 @@ class EditEgg extends EditRecord
             ]);
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             DeleteAction::make()

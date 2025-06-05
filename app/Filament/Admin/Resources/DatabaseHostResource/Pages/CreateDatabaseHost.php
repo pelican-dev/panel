@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Admin\Resources\DatabaseHostResource;
 use App\Services\Databases\Hosts\HostCreationService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
@@ -26,6 +27,7 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class CreateDatabaseHost extends CreateRecord
 {
+    use CanCustomizeHeaderActions;
     use HasWizard;
 
     protected static string $resource = DatabaseHostResource::class;

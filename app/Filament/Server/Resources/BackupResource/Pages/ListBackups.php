@@ -7,6 +7,9 @@ use App\Filament\Server\Resources\BackupResource;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Backups\InitiateBackupService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
@@ -15,9 +18,12 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ListBackups extends ListRecords
 {
+    use CanCustomizeHeaderActions;
+
     protected static string $resource = BackupResource::class;
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */
         $server = Filament::getTenant();

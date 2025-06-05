@@ -9,6 +9,7 @@ use App\Filament\Server\Pages\Console;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonPowerRepository;
+use App\Traits\Filament\CanCustomizeHeaderActions;
 use AymanAlhattami\FilamentContextMenu\Columns\ContextMenuTextColumn;
 use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
@@ -25,6 +26,8 @@ use Livewire\Attributes\On;
 
 class ListServers extends ListRecords
 {
+    use CanCustomizeHeaderActions;
+
     protected static string $resource = ServerResource::class;
 
     public const DANGER_THRESHOLD = 0.9;

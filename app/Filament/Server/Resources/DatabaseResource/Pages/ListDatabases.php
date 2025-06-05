@@ -6,6 +6,9 @@ use App\Filament\Server\Resources\DatabaseResource;
 use App\Models\DatabaseHost;
 use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Grid;
@@ -15,9 +18,12 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListDatabases extends ListRecords
 {
+    use CanCustomizeHeaderActions;
+
     protected static string $resource = DatabaseResource::class;
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */
         $server = Filament::getTenant();

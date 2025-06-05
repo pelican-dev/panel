@@ -4,16 +4,22 @@ namespace App\Filament\Admin\Resources\ApiKeyResource\Pages;
 
 use App\Filament\Admin\Resources\ApiKeyResource;
 use App\Models\ApiKey;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 
 class CreateApiKey extends CreateRecord
 {
+    use CanCustomizeHeaderActions;
+
     protected static string $resource = ApiKeyResource::class;
 
     protected static bool $canCreateAnother = false;
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             $this->getCreateFormAction()->formId('form'),

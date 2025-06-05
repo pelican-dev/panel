@@ -5,6 +5,9 @@ namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 use App\Filament\Admin\Resources\DatabaseHostResource;
 use App\Models\DatabaseHost;
 use App\Services\Databases\Hosts\HostUpdateService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
@@ -14,6 +17,8 @@ use PDOException;
 
 class EditDatabaseHost extends EditRecord
 {
+    use CanCustomizeHeaderActions;
+
     protected static string $resource = DatabaseHostResource::class;
 
     private HostUpdateService $hostUpdateService;
@@ -23,7 +28,8 @@ class EditDatabaseHost extends EditRecord
         $this->hostUpdateService = $hostUpdateService;
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             DeleteAction::make()
