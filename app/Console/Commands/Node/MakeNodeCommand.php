@@ -24,6 +24,7 @@ class MakeNodeCommand extends Command
                             {--overallocateCpu= : Enter the amount of cpu to overallocate (% or -1 to overallocate the maximum).}
                             {--uploadSize= : Enter the maximum upload filesize.}
                             {--daemonListeningPort= : Enter the daemon listening port.}
+                            {--daemonConnectingPort= : Enter the daemon connecting port.}
                             {--daemonSFTPPort= : Enter the daemon SFTP listening port.}
                             {--daemonSFTPAlias= : Enter the daemon SFTP alias.}
                             {--daemonBase= : Enter the base folder.}';
@@ -57,6 +58,7 @@ class MakeNodeCommand extends Command
         $data['cpu_overallocate'] = $this->option('overallocateCpu') ?? $this->ask(trans('commands.make_node.cpu_overallocate'), '-1');
         $data['upload_size'] = $this->option('uploadSize') ?? $this->ask(trans('commands.make_node.upload_size'), '256');
         $data['daemon_listen'] = $this->option('daemonListeningPort') ?? $this->ask(trans('commands.make_node.daemonListen'), '8080');
+        $data['daemon_connect'] = $this->option('daemonConnectingPort') ?? $this->ask(trans('commands.make_node.daemonConnect'), '8080');
         $data['daemon_sftp'] = $this->option('daemonSFTPPort') ?? $this->ask(trans('commands.make_node.daemonSFTP'), '2022');
         $data['daemon_sftp_alias'] = $this->option('daemonSFTPAlias') ?? $this->ask(trans('commands.make_node.daemonSFTPAlias'), '');
         $data['daemon_base'] = $this->option('daemonBase') ?? $this->ask(trans('commands.make_node.daemonBase'), '/var/lib/pelican/volumes');
