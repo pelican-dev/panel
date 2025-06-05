@@ -5,6 +5,7 @@ namespace App\Filament\Server\Pages;
 use App\Models\Server;
 use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Facades\Filament;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
@@ -18,6 +19,7 @@ abstract class ServerFormPage extends Page
 {
     use BlockAccessInConflict;
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
     use InteractsWithFormActions;
     use InteractsWithForms;
 

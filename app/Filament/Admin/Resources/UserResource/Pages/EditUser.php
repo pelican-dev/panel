@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\UserResource;
 use App\Models\User;
 use App\Services\Users\UserUpdateService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 class EditUser extends EditRecord
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = UserResource::class;
 

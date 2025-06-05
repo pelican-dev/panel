@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\MountResource\Pages;
 
 use App\Filament\Admin\Resources\MountResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\CreateRecord;
@@ -13,6 +14,7 @@ use Illuminate\Support\Str;
 class CreateMount extends CreateRecord
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = MountResource::class;
 

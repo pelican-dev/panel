@@ -7,6 +7,7 @@ use App\Filament\Components\Tables\Columns\NodeHealthColumn;
 use App\Filament\Components\Tables\Filters\TagsFilter;
 use App\Models\Node;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\CreateAction;
@@ -18,6 +19,7 @@ use Filament\Tables\Table;
 class ListNodes extends ListRecords
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = NodeResource::class;
 

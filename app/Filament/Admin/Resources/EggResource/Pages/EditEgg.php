@@ -10,6 +10,7 @@ use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Models\Egg;
 use App\Models\EggVariable;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
@@ -34,6 +35,7 @@ use Illuminate\Validation\Rules\Unique;
 class EditEgg extends EditRecord
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = EggResource::class;
 

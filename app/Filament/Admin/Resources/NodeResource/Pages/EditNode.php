@@ -9,6 +9,7 @@ use App\Services\Helpers\SoftwareVersionService;
 use App\Services\Nodes\NodeAutoDeployService;
 use App\Services\Nodes\NodeUpdateService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions;
 use Filament\Forms;
@@ -36,6 +37,7 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 class EditNode extends EditRecord
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = NodeResource::class;
 

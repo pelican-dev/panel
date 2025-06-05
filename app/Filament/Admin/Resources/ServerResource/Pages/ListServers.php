@@ -6,6 +6,7 @@ use App\Filament\Server\Pages\Console;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Models\Server;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\Action;
@@ -19,6 +20,7 @@ use Filament\Tables\Table;
 class ListServers extends ListRecords
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = ServerResource::class;
 

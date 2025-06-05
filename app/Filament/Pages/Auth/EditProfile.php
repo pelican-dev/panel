@@ -13,6 +13,7 @@ use App\Services\Users\ToggleTwoFactorService;
 use App\Services\Users\TwoFactorSetupService;
 use App\Services\Users\UserUpdateService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
@@ -54,6 +55,7 @@ use Laravel\Socialite\Facades\Socialite;
 class EditProfile extends BaseEditProfile
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     private ToggleTwoFactorService $toggleTwoFactorService;
 

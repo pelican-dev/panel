@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\WebhookResource\Pages;
 
 use App\Filament\Admin\Resources\WebhookResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
@@ -12,6 +13,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditWebhookConfiguration extends EditRecord
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = WebhookResource::class;
 

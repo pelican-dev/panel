@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\NodeResource\Pages;
 use App\Filament\Admin\Resources\NodeResource;
 use App\Models\Node;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
@@ -23,6 +24,7 @@ use Illuminate\Support\HtmlString;
 class CreateNode extends CreateRecord
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = NodeResource::class;
 

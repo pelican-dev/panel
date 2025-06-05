@@ -9,6 +9,7 @@ use App\Models\Backup;
 use App\Notifications\MailTested;
 use App\Traits\EnvironmentWriterTrait;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -49,6 +50,7 @@ class Settings extends Page implements HasForms
     use CanCustomizeHeaderActions, InteractsWithHeaderActions {
         CanCustomizeHeaderActions::getHeaderActions insteadof InteractsWithHeaderActions;
     }
+    use CanCustomizeHeaderWidgets;
     use EnvironmentWriterTrait;
     use InteractsWithForms;
 

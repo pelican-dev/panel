@@ -26,6 +26,7 @@ use App\Services\Servers\SuspensionService;
 use App\Services\Servers\ToggleInstallService;
 use App\Services\Servers\TransferServerService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Closure;
 use Exception;
 use Filament\Actions;
@@ -63,6 +64,7 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 class EditServer extends EditRecord
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = ServerResource::class;
 

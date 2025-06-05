@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\ApiKeyResource\Pages;
 use App\Filament\Admin\Resources\ApiKeyResource;
 use App\Models\ApiKey;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\CreateRecord;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class CreateApiKey extends CreateRecord
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = ApiKeyResource::class;
 

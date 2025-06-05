@@ -11,6 +11,7 @@ use App\Filament\Components\Tables\Actions\UpdateEggBulkAction;
 use App\Filament\Components\Tables\Filters\TagsFilter;
 use App\Models\Egg;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction as CreateHeaderAction;
@@ -27,6 +28,7 @@ use Illuminate\Support\Str;
 class ListEggs extends ListRecords
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = EggResource::class;
 

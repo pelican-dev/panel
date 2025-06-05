@@ -7,6 +7,7 @@ use App\Models\DatabaseHost;
 use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
@@ -19,6 +20,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListDatabases extends ListRecords
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = DatabaseResource::class;
 

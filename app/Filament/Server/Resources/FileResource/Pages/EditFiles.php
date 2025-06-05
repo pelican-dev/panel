@@ -13,6 +13,7 @@ use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
@@ -39,6 +40,7 @@ use Livewire\Attributes\Locked;
 class EditFiles extends Page
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
     use InteractsWithFormActions;
     use InteractsWithForms;
 

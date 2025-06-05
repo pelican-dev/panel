@@ -6,12 +6,14 @@ use App\Facades\Activity;
 use App\Filament\Server\Resources\ScheduleResource;
 use App\Models\Schedule;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditSchedule extends EditRecord
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = ScheduleResource::class;
 

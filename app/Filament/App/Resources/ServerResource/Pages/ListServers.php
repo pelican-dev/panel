@@ -10,6 +10,7 @@ use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonPowerRepository;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use AymanAlhattami\FilamentContextMenu\Columns\ContextMenuTextColumn;
 use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
@@ -27,6 +28,7 @@ use Livewire\Attributes\On;
 class ListServers extends ListRecords
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = ServerResource::class;
 

@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\DatabaseHostResource;
 use App\Models\DatabaseHost;
 use App\Services\Databases\Hosts\HostUpdateService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
@@ -18,6 +19,7 @@ use PDOException;
 class EditDatabaseHost extends EditRecord
 {
     use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
 
     protected static string $resource = DatabaseHostResource::class;
 
