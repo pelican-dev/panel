@@ -12,6 +12,7 @@ use App\Repositories\Daemon\DaemonPowerRepository;
 use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\Column;
@@ -131,6 +132,7 @@ class ListServers extends ListRecords
             ->columns($usingGrid ? $this->gridColumns() : $this->tableColumns())
             ->recordUrl(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
             ->actions($usingGrid ? $actions : [ActionGroup::make($actions)])
+            ->actionsAlignment(Alignment::Center->value)
             ->contentGrid($usingGrid ? ['default' => 1, 'md' => 2] : null)
             ->emptyStateIcon('tabler-brand-docker')
             ->emptyStateDescription('')
