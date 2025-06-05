@@ -39,7 +39,7 @@ class ListAllocations extends ListRecords
 
                     Activity::event('server:allocation.create')
                         ->subject($allocation)
-                        ->property('allocation', $allocation->toString())
+                        ->property('allocation', $allocation->address)
                         ->log();
                 }),
         ];

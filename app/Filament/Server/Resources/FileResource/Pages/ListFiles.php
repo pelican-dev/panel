@@ -320,9 +320,9 @@ class ListFiles extends ListRecords
                     ->label('')
                     ->icon('tabler-trash')
                     ->requiresConfirmation()
-                    ->modalDescription(fn (File $file) => $file->name)
-                    ->modalHeading('Delete file?')
+                    ->modalHeading(fn (File $file) => trans('filament-actions::delete.single.modal.heading', ['label' => $file->name . ' ' . ($file->is_directory ? 'folder' : 'file')]))
                     ->action(function (File $file) {
+                        $this->deselectAllTableRecords();
                         $this->getDaemonFileRepository()->deleteFiles($this->path, [$file->name]);
 
                         Activity::event('server:file.delete')
