@@ -14,6 +14,7 @@ use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -37,6 +38,7 @@ class ListServers extends ListRecords
         $this->daemonPowerRepository = new DaemonPowerRepository();
     }
 
+    /** @return Stack[] */
     protected function gridColumns(): array
     {
         return [
@@ -47,6 +49,7 @@ class ListServers extends ListRecords
         ];
     }
 
+    /** @return Column[] */
     protected function tableColumns(): array
     {
         return [
