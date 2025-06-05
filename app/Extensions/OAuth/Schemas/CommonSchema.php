@@ -6,13 +6,25 @@ final class CommonSchema extends OAuthSchema
 {
     public function __construct(
         private readonly string $id,
-        private readonly ?string $icon,
-        private readonly ?string $hexColor
+        private readonly ?string $name = null,
+        private readonly ?string $configName = null,
+        private readonly ?string $icon = null,
+        private readonly ?string $hexColor = null
     ) {}
 
     public function getId(): string
     {
         return $this->id;
+    }
+
+    public function getName(): string
+    {
+        return $this->name ?? parent::getName();
+    }
+
+    public function getConfigKey(): string
+    {
+        return $this->configName ?? parent::getConfigKey();
     }
 
     public function getIcon(): ?string

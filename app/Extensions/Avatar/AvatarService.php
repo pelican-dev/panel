@@ -44,4 +44,10 @@ class AvatarService
 
         $this->schemas[$schema->getId()] = $schema;
     }
+
+    /** @return array<string, string> */
+    public function getMapping(): array
+    {
+        return collect($this->schemas)->mapWithKeys(fn ($schema) => [$schema->getId() => $schema->getName()])->all();
+    }
 }

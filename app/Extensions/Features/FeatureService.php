@@ -2,6 +2,8 @@
 
 namespace App\Extensions\Features;
 
+use App\Models\Server;
+
 class FeatureService
 {
     /** @var FeatureSchemaInterface[] */
@@ -27,5 +29,13 @@ class FeatureService
         }
 
         $this->schemas[$schema->getId()] = $schema;
+    }
+
+    /** @return array<string, array<string>> */
+    public function getMappings(Server $server): array
+    {
+        return collect($this->get($server->egg->features))->mapWithKeys(fn (FeatureSchemaInterface $schema) => [
+            $schema->getId() => $schema->getListeners(),
+        ])->all();
     }
 }

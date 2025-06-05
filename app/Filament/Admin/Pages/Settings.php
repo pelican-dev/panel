@@ -180,7 +180,7 @@ class Settings extends Page implements HasForms
                     Select::make('FILAMENT_AVATAR_PROVIDER')
                         ->label(trans('admin/setting.general.avatar_provider'))
                         ->native(false)
-                        ->options(collect($this->avatarService->get())->mapWithKeys(fn ($schema) => [$schema->getId() => $schema->getName()]))
+                        ->options($this->avatarService->getMapping())
                         ->selectablePlaceholder(false)
                         ->default(env('FILAMENT_AVATAR_PROVIDER', config('panel.filament.avatar-provider'))),
                     Toggle::make('FILAMENT_UPLOADABLE_AVATARS')
@@ -535,36 +535,34 @@ class Settings extends Page implements HasForms
         $oauthSchemas = $this->oauthService->get();
         foreach ($oauthSchemas as $schema) {
             $id = Str::upper($schema->getId());
-            $name = Str::title($schema->getId());
+            $key = $schema->getConfigKey();
 
-            $formFields[] = Section::make($name)
+            $formFields[] = Section::make($schema->getName())
                 ->columns(5)
                 ->icon($schema->getIcon() ?? 'tabler-brand-oauth')
-                ->collapsed(fn () => !env("OAUTH_{$id}_ENABLED", false))
+                ->collapsed(fn () => !env($key, false))
                 ->collapsible()
                 ->schema([
-                    Hidden::make("OAUTH_{$id}_ENABLED")
+                    Hidden::make($key)
                         ->live()
-                        ->default(env("OAUTH_{$id}_ENABLED")),
+                        ->default(env($key)),
                     Actions::make([
                         FormAction::make("disable_oauth_$id")
-                            ->visible(fn (Get $get) => $get("OAUTH_{$id}_ENABLED"))
+                            ->visible(fn (Get $get) => $get($key))
                             ->label(trans('admin/setting.oauth.disable'))
                             ->color('danger')
-                            ->action(function (Set $set) use ($id) {
-                                $set("OAUTH_{$id}_ENABLED", false);
-                            }),
+                            ->action(fn (Set $set) => $set($key, false)),
                         FormAction::make("enable_oauth_$id")
-                            ->visible(fn (Get $get) => !$get("OAUTH_{$id}_ENABLED"))
+                            ->visible(fn (Get $get) => !$get($key))
                             ->label(trans('admin/setting.oauth.enable'))
                             ->color('success')
                             ->steps($schema->getSetupSteps())
-                            ->modalHeading(trans('admin/setting.oauth.enable') . ' ' . $name)
+                            ->modalHeading(trans('admin/setting.oauth.enable') . ' ' . $schema->getName())
                             ->modalSubmitActionLabel(trans('admin/setting.oauth.enable'))
                             ->modalCancelAction(false)
-                            ->action(function ($data, Set $set) use ($id) {
+                            ->action(function ($data, Set $set) use ($key) {
                                 $data = array_merge([
-                                    "OAUTH_{$id}_ENABLED" => 'true',
+                                    $key => 'true',
                                 ], $data);
 
                                 foreach ($data as $key => $value) {
@@ -573,7 +571,7 @@ class Settings extends Page implements HasForms
                             }),
                     ])->columnSpan(1),
                     Group::make($schema->getSettingsForm())
-                        ->visible(fn (Get $get) => $get("OAUTH_{$id}_ENABLED"))
+                        ->visible(fn (Get $get) => $get($key))
                         ->columns(4)
                         ->columnSpan(4),
                 ]);

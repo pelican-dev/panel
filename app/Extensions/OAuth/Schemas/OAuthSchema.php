@@ -76,6 +76,13 @@ abstract class OAuthSchema implements OAuthSchemaInterface
         return Str::title($this->getId());
     }
 
+    public function getConfigKey(): string
+    {
+        $id = Str::upper($this->getId());
+
+        return "OAUTH_{$id}_ENABLED";
+    }
+
     public function getIcon(): ?string
     {
         return null;

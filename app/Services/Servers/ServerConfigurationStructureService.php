@@ -3,7 +3,6 @@
 namespace App\Services\Servers;
 
 use App\Extensions\Features\FeatureService;
-use App\Extensions\Features\FeatureSchemaInterface;
 use App\Models\Egg;
 use App\Models\Mount;
 use App\Models\Server;
@@ -61,7 +60,7 @@ class ServerConfigurationStructureService
      *         default: array{ip: string, port: int},
      *         mappings: array<int>,
      *     },
-     *     egg: array{id: string, file_denylist: string[]},
+     *     egg: array{id: string, file_denylist: string[], features: string[][]},
      *     labels?: string[],
      *     mounts: array{source: string, target: string, read_only: bool},
      * }
@@ -104,9 +103,7 @@ class ServerConfigurationStructureService
             'egg' => [
                 'id' => $server->egg->uuid,
                 'file_denylist' => $server->egg->inherit_file_denylist,
-                'features' => collect($this->featureService->get($server->egg->features))->mapWithKeys(fn (FeatureSchemaInterface $feature) => [
-                    $feature->getId() => $feature->getListeners(),
-                ])->all(),
+                'features' => $this->featureService->getMappings($server),
             ],
         ];
 

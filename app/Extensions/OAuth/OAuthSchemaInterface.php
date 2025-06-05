@@ -9,6 +9,10 @@ interface OAuthSchemaInterface
 {
     public function getId(): string;
 
+    public function getName(): string;
+
+    public function getConfigKey(): string;
+
     /** @return ?class-string */
     public function getSocialiteProvider(): ?string;
 
@@ -22,8 +26,6 @@ interface OAuthSchemaInterface
 
     /** @return Step[] */
     public function getSetupSteps(): array;
-
-    public function getName(): string;
 
     public function getIcon(): ?string;
 
