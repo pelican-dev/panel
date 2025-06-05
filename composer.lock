@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9a250ae6162d7d877649172284b56c13",
+    "content-hash": "086665b3405eed83d222e748acb997b5",
     "packages": [
         {
             "name": "abdelhamiderrahmouni/filament-monaco-editor",
@@ -1114,82 +1114,6 @@
                 "source": "https://github.com/aws/aws-sdk-php/tree/3.343.23"
             },
             "time": "2025-06-02T18:04:47+00:00"
-        },
-        {
-            "name": "aymanalhattami/filament-context-menu",
-            "version": "1.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/aymanalhattami/filament-context-menu.git",
-                "reference": "5118d36303e86891d3037e6e26882d548b880b9c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/aymanalhattami/filament-context-menu/zipball/5118d36303e86891d3037e6e26882d548b880b9c",
-                "reference": "5118d36303e86891d3037e6e26882d548b880b9c",
-                "shasum": ""
-            },
-            "require": {
-                "filament/filament": "^3.0",
-                "php": "^8.2",
-                "spatie/laravel-package-tools": "^1.15.0"
-            },
-            "require-dev": {
-                "larastan/larastan": "^2.0",
-                "laravel/pint": "^1.0",
-                "nunomaduro/collision": "^8.0",
-                "orchestra/testbench": "^9.0",
-                "pestphp/pest": "^3.0",
-                "pestphp/pest-plugin-arch": "^3.0",
-                "pestphp/pest-plugin-laravel": "^3.0",
-                "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan-deprecation-rules": "^1.0",
-                "phpstan/phpstan-phpunit": "^1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "Skeleton": "AymanAlhattami\\FilamentContextMenu\\Facades\\FilamentContextMenu"
-                    },
-                    "providers": [
-                        "AymanAlhattami\\FilamentContextMenu\\FilamentContextMenuServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AymanAlhattami\\FilamentContextMenu\\": "src/",
-                    "AymanAlhattami\\FilamentContextMenu\\Database\\Factories\\": "database/factories/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ayman Alhattami",
-                    "email": "ayman.m.alhattami@gmail.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "context menu (right click menu) for filament",
-            "homepage": "https://github.com/aymanalhattami/filament-context-menu",
-            "keywords": [
-                "ayman alhattami",
-                "context menu",
-                "filament",
-                "filament admin panel",
-                "filament context menu",
-                "filament_context_menu",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/aymanalhattami/filament-context-menu/issues",
-                "source": "https://github.com/aymanalhattami/filament-context-menu"
-            },
-            "time": "2024-09-22T10:47:31+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -15980,7 +15904,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -15991,7 +15915,7 @@
         "ext-pdo": "*",
         "ext-zip": "*"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "platform-overrides": {
         "php": "8.2"
     },
