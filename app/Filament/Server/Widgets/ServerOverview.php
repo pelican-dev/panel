@@ -23,7 +23,7 @@ class ServerOverview extends StatsOverviewWidget
             SmallStatBlock::make('Name', $this->server->name)
                 ->copyOnClick(fn () => request()->isSecure()),
             SmallStatBlock::make('Status', $this->status()),
-            SmallStatBlock::make('Address', $this->server?->allocation->address ?? '127.0.0.1:0')
+            SmallStatBlock::make('Address', $this->server?->allocation->address ?? 'None')
                 ->copyOnClick(fn () => request()->isSecure()),
             SmallStatBlock::make('CPU', $this->cpuUsage()),
             SmallStatBlock::make('Memory', $this->memoryUsage()),

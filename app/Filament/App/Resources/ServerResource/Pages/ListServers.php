@@ -100,7 +100,7 @@ class ListServers extends ListRecords
                 ->badge()
                 ->copyable(request()->isSecure())
                 ->contextMenuActions($menuOptions)
-                ->state(fn (Server $server) => $server->allocation ? "{$server->allocation->address}" : '127.0.0.1:0')
+                ->state(fn (Server $server) => $server->allocation->address ?? 'None')
                 ->enableContextMenu(fn (Server $server) => !$server->isInConflictState()),
         ];
 

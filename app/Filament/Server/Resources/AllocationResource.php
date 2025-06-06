@@ -55,11 +55,7 @@ class AllocationResource extends Resource
                         true => 'warning',
                         default => 'gray',
                     })
-                    ->action(function (Allocation $allocation) use ($server) {
-                        if (auth()->user()->can(PERMISSION::ACTION_ALLOCATION_UPDATE, $server)) {
-                            return $server->update(['allocation_id' => $allocation->id]);
-                        }
-                    })
+                    ->action(fn (Allocation $allocation) => auth()->user()->can(PERMISSION::ACTION_ALLOCATION_UPDATE, $server) && $server->update(['allocation_id' => $allocation->id]))
                     ->default(fn (Allocation $allocation) => $allocation->id === $server->allocation_id)
                     ->label('Primary'),
             ])
@@ -68,12 +64,7 @@ class AllocationResource extends Resource
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_ALLOCATION_DELETE, $server))
                     ->label('Delete')
                     ->icon('tabler-trash')
-                    ->hidden(fn (Allocation $allocation) => $allocation->id === $server->allocation_id && $server->allocations()->count() > 1)
-                    ->action(function (Allocation $allocation) use ($server) {
-                        if ($allocation->id === $server->allocation_id) {
-                            $server->update(['allocation_id' => null]);
-                        }
-
+                    ->action(function (Allocation $allocation) {
                         Allocation::query()->where('id', $allocation->id)->update([
                             'notes' => null,
                             'server_id' => null,

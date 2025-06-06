@@ -40,7 +40,7 @@
             <div class="hidden sm:block">
                 <p class="text-sm dark:text-gray-400">Network</p>
                 <hr class="p-0.5">
-                <p class="text-md font-semibold">{{ $server->allocation?->address ?? '127.0.0.1:0' }} </p>
+                <p class="text-md font-semibold">{{ $server->allocation?->address ?? 'None' }} </p>
             </div>
         </div>
     </div>

@@ -81,8 +81,7 @@ class AllocationsRelationManager extends RelationManager
                             ->label(trans('admin/node.table.alias'))
                             ->inlineLabel()
                             ->default(null)
-                            ->helperText(trans('admin/node.alias_help'))
-                            ->required(false),
+                            ->helperText(trans('admin/node.alias_help')),
                         TagsInput::make('allocation_ports')
                             ->placeholder('27015, 27017-27019')
                             ->label(trans('admin/node.ports'))

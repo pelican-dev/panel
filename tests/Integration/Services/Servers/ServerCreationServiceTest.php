@@ -41,14 +41,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
         $this->swap(DaemonServerRepository::class, $this->daemonServerRepository);
     }
 
-    /**
-     * Test that a server can be created when a deployment object is provided to the service.
-     *
-     * This doesn't really do anything super complicated, we'll rely on other more specific
-     * tests to cover that the logic being used does indeed find suitable nodes and ports. For
-     * this test we just care that it is recognized and passed off to those functions.
-     */
-    public function test_server_is_created_with_deployment_object(): void
+    private function setUpTest(?bool $withAllocation = false)
     {
         /** @var \App\Models\User $user */
         $user = User::factory()->create();
@@ -56,14 +49,18 @@ class ServerCreationServiceTest extends IntegrationTestCase
         /** @var \App\Models\Node $node */
         $node = Node::factory()->create();
 
-        /** @var \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations */
-        $allocations = Allocation::factory()->times(5)->create([
-            'node_id' => $node->id,
-        ]);
+        $deployment = (new DeploymentObject())->setDedicated(true);
 
-        $deployment = (new DeploymentObject())->setDedicated(true)->setPorts([
-            $allocations[0]->port,
-        ]);
+        if ($withAllocation) {
+            /** @var \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations */
+            $allocations = Allocation::factory()->times(5)->create([
+                'node_id' => $node->id,
+            ]);
+
+            $deployment->setPorts([
+                $allocations[0]->port,
+            ]);
+        }
 
         $egg = $this->cloneEggAndVariables($this->bungeecord);
         // We want to make sure that the validator service runs as an admin, and not as a regular
@@ -84,15 +81,19 @@ class ServerCreationServiceTest extends IntegrationTestCase
             'startup' => 'java server2.jar',
             'image' => 'java:8',
             'egg_id' => $egg->id,
-            'allocation_additional' => [
-                $allocations[4]->id,
-            ],
+            'allocation_additional' => [],
             'environment' => [
                 'BUNGEE_VERSION' => '123',
                 'SERVER_JARFILE' => 'server2.jar',
             ],
             'start_on_completion' => true,
         ];
+
+        if ($withAllocation) {
+            $data['allocation_additional'] = [
+                $allocations[4]->id,
+            ];
+        }
 
         $this->daemonServerRepository->expects('setServer->create')->with(true)->andReturnUndefined();
 
@@ -121,24 +122,54 @@ class ServerCreationServiceTest extends IntegrationTestCase
         $this->assertSame('123', $response->variables()->firstWhere('env_variable', 'BUNGEE_VERSION')->server_value);
         $this->assertSame('server2.jar', $response->variables()->firstWhere('env_variable', 'SERVER_JARFILE')->server_value);
 
+        $check = ['environment', 'start_on_completion'];
+        if ($withAllocation) {
+            $check[] = 'allocation_additional';
+        }
+
         foreach ($data as $key => $value) {
-            if (in_array($key, ['allocation_additional', 'environment', 'start_on_completion'])) {
+            if (in_array($key, $check)) {
                 continue;
             }
 
             $this->assertSame($value, $response->{$key}, "Failed asserting equality of '$key' in server response. Got: [{$response->{$key}}] Expected: [$value]");
         }
 
-        $this->assertCount(2, $response->allocations);
-        $this->assertSame($response->allocation_id, $response->allocations[0]->id);
-        $this->assertSame($allocations[0]->id, $response->allocations[0]->id);
-        $this->assertSame($allocations[4]->id, $response->allocations[1]->id);
-
         $this->assertFalse($response->isSuspended());
         $this->assertFalse($response->oom_killer);
         $this->assertSame(0, $response->database_limit);
         $this->assertSame(0, $response->allocation_limit);
         $this->assertSame(0, $response->backup_limit);
+
+        return [$response, $allocations];
+    }
+
+    /**
+     * Test that a server can be created when a deployment object is provided to the service.
+     *
+     * This doesn't really do anything super complicated, we'll rely on other more specific
+     * tests to cover that the logic being used does indeed find suitable nodes and ports. For
+     * this test we just care that it is recognized and passed off to those functions.
+     */
+    public function test_server_is_created_with_deployment_object(): void
+    {
+        [$response, $allocations] = $this->setUpTest(true);
+        $this->assertCount(2, $response->allocations);
+        $this->assertSame($response->allocation_id, $response->allocations[0]->id);
+        $this->assertSame($allocations[0]->id, $response->allocations[0]->id);
+        $this->assertSame($allocations[4]->id, $response->allocations[1]->id);
+    }
+
+    /**
+     * Test that a server without allocation can be created when a deployment object is
+     * provided to the service.
+     */
+    public function test_server_without_allocation_is_created_with_deployment_object(): void
+    {
+        [$response] = $this->setUpTest();
+
+        $this->assertCount(0, $response->allocations);
+        $this->assertNull($response->allocation_id);
     }
 
     /**

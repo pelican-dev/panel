@@ -93,6 +93,8 @@ class BuildModificationService
             return;
         }
 
+        $freshlyAllocated = null;
+
         // Handle the addition of allocations to this server. Only assign allocations that are not currently
         // assigned to a different server, and only allocations on the same node as the server.
         if (!empty($data['add_allocations'])) {
@@ -111,13 +113,8 @@ class BuildModificationService
         if (!empty($data['remove_allocations'])) {
             foreach ($data['remove_allocations'] as $allocation) {
                 // If we are attempting to remove the default allocation for the server, see if we can reassign
-                // to the first provided value in add_allocations. If there is no new first allocation then we
-                // will throw an exception back.
-                if ($allocation === ($data['allocation_id'] ?? $server->allocation_id)) {
-                    if (empty($freshlyAllocated)) {
-                        throw new DisplayException('You are attempting to delete the default allocation for this server but there is no fallback allocation to use.');
-                    }
-
+                // to the first provided value in add_allocations.
+                if ($allocation === ($data['allocation_id'] ?? $server->allocation_id) && $freshlyAllocated) {
                     // Update the default allocation to be the first allocation that we are creating.
                     $data['allocation_id'] = $freshlyAllocated;
                 }

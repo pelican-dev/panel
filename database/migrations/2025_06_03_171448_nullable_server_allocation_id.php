@@ -13,7 +13,14 @@ return new class extends Migration
     {
         Schema::table('servers', function (Blueprint $table) {
             $table->dropForeign(['allocation_id']);
-            $table->integer('allocation_id')->nullable()->change();
+            $table->dropUnique(['allocation_id']);
+            $table->unsignedInteger('allocation_id')->nullable()->change();
+            $table->foreign('allocation_id')->references('id')->on('allocations')->nullOnDelete();
+        });
+
+        Schema::table('server_transfers', function (Blueprint $table) {
+            $table->unsignedInteger('old_allocation')->nullable()->change();
+            $table->unsignedInteger('new_allocation')->nullable()->change();
         });
     }
 
@@ -22,9 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('servers', function (Blueprint $table) {
-            $table->integer('allocation_id')->change();
-            $table->foreign('allocation_id')->references('id')->on('allocations');
-        });
+        // Not needed
     }
 };

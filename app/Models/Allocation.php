@@ -73,7 +73,7 @@ class Allocation extends Model
             throw_if($allocation->server_id, new ServerUsingAllocationException(trans('exceptions.allocations.server_using')));
         });
 
-        static::updating(function ($allocation) {
+        static::updating(function (self $allocation) {
             $originalServerId = $allocation->getOriginal('server_id');
             if (!$originalServerId) {
                 return;
@@ -82,7 +82,7 @@ class Allocation extends Model
             if (!$server) {
                 return;
             }
-            if ($allocation->isDirty('server_id') && is_null($allocation->server_id) && $allocation->id === $server->allocation_id) {
+            if ($allocation->isDirty('server_id') && !$allocation->server_id && $allocation->id === $server->allocation_id) {
                 $server->update(['allocation_id' => $server->allocations[0]->id]);
             }
         });
