@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\Egg\CheckEggUpdatesCommand;
+use App\Console\Commands\Egg\UpdateEggIndexCommand;
 use App\Console\Commands\Maintenance\CleanServiceBackupFilesCommand;
 use App\Console\Commands\Maintenance\PruneImagesCommand;
 use App\Console\Commands\Maintenance\PruneOrphanedBackupsCommand;
@@ -41,7 +42,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(CleanServiceBackupFilesCommand::class)->daily();
         $schedule->command(PruneImagesCommand::class)->daily();
-        $schedule->command(CheckEggUpdatesCommand::class)->hourly();
+
+        $schedule->command(CheckEggUpdatesCommand::class)->daily();
+        $schedule->command(UpdateEggIndexCommand::class)->daily();
 
         if (config('backups.prune_age')) {
             // Every 30 minutes, run the backup pruning command so that any abandoned backups can be deleted.
