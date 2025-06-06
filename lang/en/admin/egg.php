@@ -18,6 +18,7 @@ return [
         'add_url' => 'New URL',
         'import_failed' => 'Import Failed',
         'import_success' => 'Import Success',
+        'github' => 'Add from Github',
     ],
     'in_use' => 'In Use',
     'servers' => 'Servers',
