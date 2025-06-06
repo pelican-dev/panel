@@ -72,7 +72,7 @@ class AllocationResource extends Resource
 
                         Activity::event('server:allocation.delete')
                             ->subject($allocation)
-                            ->property('allocation', $allocation->toString())
+                            ->property('allocation', $allocation->address)
                             ->log();
                     }),
             ]);

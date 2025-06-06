@@ -121,11 +121,6 @@ class Allocation extends Model
         );
     }
 
-    public function toString(): string
-    {
-        return $this->address;
-    }
-
     /**
      * Gets information for the server associated with this allocation.
      */
