@@ -2,10 +2,8 @@
 
 namespace App\Tests\Integration\Services\Backups;
 
-use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use App\Models\Backup;
-use GuzzleHttp\Exception\ClientException;
 use App\Extensions\Backups\BackupManager;
 use App\Extensions\Filesystem\S3Filesystem;
 use App\Services\Backups\DeleteBackupService;
@@ -13,6 +11,8 @@ use App\Tests\Integration\IntegrationTestCase;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Exceptions\Service\Backup\BackupLockedException;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response as ClientResponse;
 
 class DeleteBackupServiceTest extends IntegrationTestCase
 {
@@ -54,7 +54,7 @@ class DeleteBackupServiceTest extends IntegrationTestCase
         $backup = Backup::factory()->create(['server_id' => $server->id]);
 
         $mock = $this->mock(DaemonBackupRepository::class);
-        $mock->expects('setServer->delete')->with($backup)->andThrow(new ConnectionException(previous: new ClientException('', new Request('DELETE', '/'), new Response(404))));
+        $mock->expects('setServer->delete')->with($backup)->andThrow(new RequestException(new ClientResponse(404)));
 
         $this->app->make(DeleteBackupService::class)->handle($backup);
 
@@ -69,7 +69,7 @@ class DeleteBackupServiceTest extends IntegrationTestCase
         $backup = Backup::factory()->create(['server_id' => $server->id]);
 
         $mock = $this->mock(DaemonBackupRepository::class);
-        $mock->expects('setServer->delete')->with($backup)->andThrow(new ConnectionException(previous: new ClientException('', new Request('DELETE', '/'), new Response(500))));
+        $mock->expects('setServer->delete')->with($backup)->andThrow(new ConnectionException());
 
         $this->expectException(ConnectionException::class);
 
