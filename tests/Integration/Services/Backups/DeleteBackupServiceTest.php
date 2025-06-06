@@ -11,8 +11,6 @@ use App\Tests\Integration\IntegrationTestCase;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Exceptions\Service\Backup\BackupLockedException;
 use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\RequestException;
-use Illuminate\Http\Client\Response as ClientResponse;
 
 class DeleteBackupServiceTest extends IntegrationTestCase
 {
@@ -54,7 +52,7 @@ class DeleteBackupServiceTest extends IntegrationTestCase
         $backup = Backup::factory()->create(['server_id' => $server->id]);
 
         $mock = $this->mock(DaemonBackupRepository::class);
-        $mock->expects('setServer->delete')->with($backup)->andThrow(new RequestException(new ClientResponse(404)));
+        $mock->expects('setServer->delete')->with($backup)->andThrow(new ConnectionException(code: 404));
 
         $this->app->make(DeleteBackupService::class)->handle($backup);
 
@@ -69,7 +67,7 @@ class DeleteBackupServiceTest extends IntegrationTestCase
         $backup = Backup::factory()->create(['server_id' => $server->id]);
 
         $mock = $this->mock(DaemonBackupRepository::class);
-        $mock->expects('setServer->delete')->with($backup)->andThrow(new ConnectionException());
+        $mock->expects('setServer->delete')->with($backup)->andThrow(new ConnectionException(code: 500));
 
         $this->expectException(ConnectionException::class);
 
