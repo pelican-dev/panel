@@ -16,6 +16,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class DatabaseHostResource extends Resource
 {
@@ -27,7 +28,7 @@ class DatabaseHostResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count() ?: null;
+        return (string) static::getEloquentQuery()->count() ?: null;
     }
 
     public static function getNavigationLabel(): string
@@ -144,7 +145,7 @@ class DatabaseHostResource extends Resource
                             ->preload()
                             ->helperText(trans('admin/databasehost.linked_nodes_help'))
                             ->label(trans('admin/databasehost.linked_nodes'))
-                            ->relationship('nodes', 'name'),
+                            ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'))),
                     ]),
             ]);
     }
@@ -157,5 +158,16 @@ class DatabaseHostResource extends Resource
             'view' => Pages\ViewDatabaseHost::route('/{record}'),
             'edit' => Pages\EditDatabaseHost::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        return $query->where(function (Builder $query) {
+            return $query->whereHas('nodes', function (Builder $query) {
+                $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'));
+            })->orDoesntHave('nodes');
+        });
     }
 }

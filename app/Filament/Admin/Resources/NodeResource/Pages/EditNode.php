@@ -14,6 +14,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Actions as FormActions;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
@@ -180,10 +181,10 @@ class EditNode extends EditRecord
                                     false => 'danger',
                                 ])
                                 ->columnSpan(1),
-                            TextInput::make('daemon_listen')
+                            TextInput::make('daemon_connect')
                                 ->columnSpan(1)
-                                ->label(trans('admin/node.port'))
-                                ->helperText(trans('admin/node.port_help'))
+                                ->label(fn (Get $get) => $get('connection') === 'https_proxy' ? trans('admin/node.connect_port') : trans('admin/node.port'))
+                                ->helperText(fn (Get $get) => $get('connection') === 'https_proxy' ? trans('admin/node.connect_port_help') : trans('admin/node.port_help'))
                                 ->minValue(1)
                                 ->maxValue(65535)
                                 ->default(8080)
@@ -199,7 +200,9 @@ class EditNode extends EditRecord
                                 ])
                                 ->required()
                                 ->maxLength(100),
-                            ToggleButtons::make('scheme')
+                            Hidden::make('scheme'),
+                            Hidden::make('behind_proxy'),
+                            ToggleButtons::make('connection')
                                 ->label(trans('admin/node.ssl'))
                                 ->columnSpan(1)
                                 ->inline()
@@ -214,20 +217,43 @@ class EditNode extends EditRecord
 
                                     return '';
                                 })
-                                ->disableOptionWhen(fn (string $value): bool => $value === 'http' && request()->isSecure())
+                                ->disableOptionWhen(fn (string $value) => $value === 'http' && request()->isSecure())
                                 ->options([
                                     'http' => 'HTTP',
                                     'https' => 'HTTPS (SSL)',
+                                    'https_proxy' => 'HTTPS with (reverse) proxy',
                                 ])
                                 ->colors([
                                     'http' => 'warning',
                                     'https' => 'success',
+                                    'https_proxy' => 'success',
                                 ])
                                 ->icons([
                                     'http' => 'tabler-lock-open-off',
                                     'https' => 'tabler-lock',
+                                    'https_proxy' => 'tabler-shield-lock',
                                 ])
-                                ->default(fn () => request()->isSecure() ? 'https' : 'http'), ]),
+                                ->formatStateUsing(fn (Get $get) => $get('scheme') === 'http' ? 'http' : ($get('behind_proxy') ? 'https_proxy' : 'https'))
+                                ->live()
+                                ->dehydrated(false)
+                                ->afterStateUpdated(function ($state, Set $set) {
+                                    $set('scheme', $state === 'http' ? 'http' : 'https');
+                                    $set('behind_proxy', $state === 'https_proxy');
+
+                                    $set('daemon_connect', $state === 'https_proxy' ? 443 : 8080);
+                                    $set('daemon_listen', 8080);
+                                }),
+                            TextInput::make('daemon_listen')
+                                ->columnSpan(1)
+                                ->label(trans('admin/node.listen_port'))
+                                ->helperText(trans('admin/node.listen_port_help'))
+                                ->minValue(1)
+                                ->maxValue(65535)
+                                ->default(8080)
+                                ->required()
+                                ->integer()
+                                ->visible(fn (Get $get) => $get('connection') === 'https_proxy'),
+                        ]),
                     Tab::make('adv')
                         ->label(trans('admin/node.tabs.advanced_settings'))
                         ->columns([
@@ -612,6 +638,15 @@ class EditNode extends EditRecord
                 ->label(fn (Node $node) => $node->servers()->count() > 0 ? trans('admin/node.node_has_servers') : trans('filament-actions::delete.single.label')),
             $this->getSaveFormAction()->formId('form'),
         ];
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (!$data['behind_proxy']) {
+            $data['daemon_listen'] = $data['daemon_connect'];
+        }
+
+        return $data;
     }
 
     protected function afterSave(): void

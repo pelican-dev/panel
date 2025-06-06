@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\NodeResource\Pages;
 use App\Filament\Admin\Resources\NodeResource\RelationManagers;
 use App\Models\Node;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
 
 class NodeResource extends Resource
 {
@@ -37,7 +38,7 @@ class NodeResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count() ?: null;
+        return (string) static::getEloquentQuery()->count() ?: null;
     }
 
     public static function getRelations(): array
@@ -55,5 +56,12 @@ class NodeResource extends Resource
             'create' => Pages\CreateNode::route('/create'),
             'edit' => Pages\EditNode::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        return $query->whereIn('id', auth()->user()->accessibleNodes()->pluck('id'));
     }
 }

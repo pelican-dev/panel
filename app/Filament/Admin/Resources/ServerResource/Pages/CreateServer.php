@@ -15,7 +15,6 @@ use Closure;
 use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -109,14 +108,20 @@ class CreateServer extends CreateRecord
                                 ->disabledOn('edit')
                                 ->prefixIcon('tabler-server-2')
                                 ->selectablePlaceholder(false)
-                                ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
+                                ->default(function () {
+                                    /** @var ?Node $latestNode */
+                                    $latestNode = auth()->user()->accessibleNodes()->latest()->first();
+                                    $this->node = $latestNode;
+
+                                    return $this->node?->id;
+                                })
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 2,
                                     'md' => 2,
                                 ])
                                 ->live()
-                                ->relationship('node', 'name')
+                                ->relationship('node', 'name', fn (Builder $query) => $query->whereIn('id', auth()->user()->accessibleNodes()->pluck('id')))
                                 ->searchable()
                                 ->preload()
                                 ->afterStateUpdated(function (Set $set, $state) {
@@ -139,6 +144,7 @@ class CreateServer extends CreateRecord
                                 ->relationship('user', 'username')
                                 ->searchable(['username', 'email'])
                                 ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->username ($user->email)")
+                                ->createOptionAction(fn (Action $action) => $action->authorize(fn () => auth()->user()->can('create', User::class)))
                                 ->createOptionForm([
                                     TextInput::make('username')
                                         ->label(trans('admin/user.username'))
@@ -183,10 +189,7 @@ class CreateServer extends CreateRecord
                                     $set('allocation_additional', null);
                                     $set('allocation_additional.needstobeastringhere.extra_allocations', null);
                                 })
-                                ->getOptionLabelFromRecordUsing(
-                                    fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
-                                        ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
-                                )
+                                ->getOptionLabelFromRecordUsing(fn (Allocation $allocation) => $allocation->address)
                                 ->placeholder(function (Get $get) {
                                     $node = Node::find($get('node_id'));
 
@@ -203,6 +206,7 @@ class CreateServer extends CreateRecord
                                         ->where('node_id', $get('node_id'))
                                         ->whereNull('server_id'),
                                 )
+                                ->createOptionAction(fn (Action $action) => $action->authorize(fn (Get $get) => auth()->user()->can('create', Node::find($get('node_id')))))
                                 ->createOptionForm(function (Get $get) {
                                     $getPage = $get;
 
@@ -212,7 +216,7 @@ class CreateServer extends CreateRecord
                                             ->label(trans('admin/server.ip_address'))->inlineLabel()
                                             ->helperText(trans('admin/server.ip_address_helper'))
                                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
-                                            ->ipv4()
+                                            ->ip()
                                             ->live()
                                             ->required(),
                                         TextInput::make('allocation_alias')
@@ -263,10 +267,7 @@ class CreateServer extends CreateRecord
                                         ->columnSpan(2)
                                         ->disabled(fn (Get $get) => $get('../../node_id') === null)
                                         ->searchable(['ip', 'port', 'ip_alias'])
-                                        ->getOptionLabelFromRecordUsing(
-                                            fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
-                                                ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
-                                        )
+                                        ->getOptionLabelFromRecordUsing(fn (Allocation $allocation) => $allocation->address)
                                         ->placeholder(trans('admin/server.select_additional'))
                                         ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                         ->relationship(
@@ -744,7 +745,7 @@ class CreateServer extends CreateRecord
                                     'lg' => 4,
                                 ])
                                 ->columnSpan(6)
-                                ->schema([
+                                ->schema(fn (Get $get) => [
                                     Select::make('select_image')
                                         ->label(trans('admin/server.image_name'))
                                         ->live()
@@ -798,14 +799,7 @@ class CreateServer extends CreateRecord
                                         ->valueLabel(trans('admin/server.description'))
                                         ->columnSpanFull(),
 
-                                    CheckboxList::make('mounts')
-                                        ->label('Mounts')
-                                        ->live()
-                                        ->relationship('mounts')
-                                        ->options(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]) ?? [])
-                                        ->descriptions(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]) ?? [])
-                                        ->helperText(fn () => $this->node?->mounts->isNotEmpty() ? '' : 'No Mounts exist for this Node')
-                                        ->columnSpanFull(),
+                                    ServerResource::getMountCheckboxList($get),
                                 ]),
                         ]),
                 ])

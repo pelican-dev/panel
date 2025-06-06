@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
-use App\Enums\ServerState;
+use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
@@ -13,7 +13,6 @@ use App\Models\Allocation;
 use App\Models\Database;
 use App\Models\DatabaseHost;
 use App\Models\Egg;
-use App\Models\Mount;
 use App\Models\Node;
 use App\Models\Server;
 use App\Models\ServerVariable;
@@ -33,7 +32,6 @@ use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Actions as FormActions;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -53,6 +51,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
@@ -137,7 +136,39 @@ class EditServer extends EditRecord
                                         'sm' => 1,
                                         'md' => 1,
                                         'lg' => 1,
-                                    ]),
+                                    ])
+                                    ->hintAction(
+                                        Action::make('view_install_log')
+                                            ->label(trans('admin/server.view_install_log'))
+                                            //->visible(fn (Server $server) => $server->isFailedInstall())
+                                            ->modalHeading('')
+                                            ->modalSubmitAction(false)
+                                            ->modalFooterActionsAlignment(Alignment::Right)
+                                            ->modalCancelActionLabel(trans('filament::components/modal.actions.close.label'))
+                                            ->form([
+                                                MonacoEditor::make('logs')
+                                                    ->hiddenLabel()
+                                                    ->placeholderText(trans('admin/server.no_log'))
+                                                    ->formatStateUsing(function (Server $server, DaemonServerRepository $serverRepository) {
+                                                        try {
+                                                            return $serverRepository->setServer($server)->getInstallLogs();
+                                                        } catch (ConnectionException) {
+                                                            Notification::make()
+                                                                ->title(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
+                                                                ->body(trans('admin/server.notifications.log_failed'))
+                                                                ->color('warning')
+                                                                ->warning()
+                                                                ->send();
+                                                        } catch (Exception) {
+                                                            return '';
+                                                        }
+
+                                                        return '';
+                                                    })
+                                                    ->language('shell')
+                                                    ->view('filament.plugins.monaco-editor-logs'),
+                                            ])
+                                    ),
 
                                 Textarea::make('description')
                                     ->label(trans('admin/server.description'))
@@ -177,7 +208,7 @@ class EditServer extends EditRecord
                                     ->maxLength(255),
                                 Select::make('node_id')
                                     ->label(trans('admin/server.node'))
-                                    ->relationship('node', 'name')
+                                    ->relationship('node', 'name', fn (Builder $query) => $query->whereIn('id', auth()->user()->accessibleNodes()->pluck('id')))
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -651,17 +682,11 @@ class EditServer extends EditRecord
                             ]),
                         Tab::make(trans('admin/server.mounts'))
                             ->icon('tabler-layers-linked')
-                            ->schema([
-                                CheckboxList::make('mounts')
-                                    ->label('')
-                                    ->relationship('mounts')
-                                    ->options(fn (Server $server) => $server->node->mounts->filter(fn (Mount $mount) => $mount->eggs->contains($server->egg))->mapWithKeys(fn (Mount $mount) => [$mount->id => $mount->name]))
-                                    ->descriptions(fn (Server $server) => $server->node->mounts->mapWithKeys(fn (Mount $mount) => [$mount->id => "$mount->source -> $mount->target"]))
-                                    ->helperText(fn (Server $server) => $server->node->mounts->isNotEmpty() ? '' : trans('admin/server.no_mounts'))
-                                    ->columnSpanFull(),
+                            ->schema(fn (Get $get) => [
+                                ServerResource::getMountCheckboxList($get),
                             ]),
                         Tab::make(trans('admin/server.databases'))
-                            ->hidden(fn () => !auth()->user()->can('viewList database'))
+                            ->hidden(fn () => !auth()->user()->can('viewAny', Database::class))
                             ->icon('tabler-database')
                             ->columns(4)
                             ->schema([
@@ -685,14 +710,14 @@ class EditServer extends EditRecord
                                             ->hintAction(
                                                 Action::make('Delete')
                                                     ->label(trans('filament-actions::delete.single.modal.actions.delete.label'))
-                                                    ->authorize(fn (Database $database) => auth()->user()->can('delete database', $database))
+                                                    ->authorize(fn (Database $database) => auth()->user()->can('delete', $database))
                                                     ->color('danger')
                                                     ->icon('tabler-trash')
                                                     ->requiresConfirmation()
                                                     ->modalIcon('tabler-database-x')
                                                     ->modalHeading(trans('admin/server.delete_db_heading'))
-                                                    ->modalSubmitActionLabel(fn (Get $get) => 'Delete ' . $get('database') . '?')
-                                                    ->modalDescription(fn (Get $get) => trans('admin/server.delete_db') . $get('database') . '?')
+                                                    ->modalSubmitActionLabel(trans('filament-actions::delete.single.label'))
+                                                    ->modalDescription(fn (Get $get) => trans('admin/server.delete_db', ['name' => $get('database')]))
                                                     ->action(function (DatabaseManagementService $databaseManagementService, $record) {
                                                         $databaseManagementService->delete($record);
                                                         $this->fillForm();
@@ -738,7 +763,7 @@ class EditServer extends EditRecord
                                     ->columnSpan(4),
                                 FormActions::make([
                                     Action::make('createDatabase')
-                                        ->authorize(fn () => auth()->user()->can('create database'))
+                                        ->authorize(fn () => auth()->user()->can('create', Database::class))
                                         ->disabled(fn () => DatabaseHost::query()->count() < 1)
                                         ->label(fn () => DatabaseHost::query()->count() < 1 ? trans('admin/server.no_db_hosts') : trans('admin/server.create_database'))
                                         ->color(fn () => DatabaseHost::query()->count() < 1 ? 'danger' : 'primary')
@@ -808,12 +833,12 @@ class EditServer extends EditRecord
                                                     Action::make('toggleInstall')
                                                         ->label(trans('admin/server.toggle_install'))
                                                         ->disabled(fn (Server $server) => $server->isSuspended())
-                                                        ->modal(fn (Server $server) => $server->status === ServerState::InstallFailed)
+                                                        ->modal(fn (Server $server) => $server->isFailedInstall())
                                                         ->modalHeading(trans('admin/server.toggle_install_failed_header'))
                                                         ->modalDescription(trans('admin/server.toggle_install_failed_desc'))
                                                         ->modalSubmitActionLabel(trans('admin/server.reinstall'))
                                                         ->action(function (ToggleInstallService $toggleService, ReinstallServerService $reinstallService, Server $server) {
-                                                            if ($server->status === ServerState::InstallFailed) {
+                                                            if ($server->isFailedInstall()) {
                                                                 try {
                                                                     $reinstallService->handle($server);
 
@@ -826,7 +851,7 @@ class EditServer extends EditRecord
                                                                 } catch (Exception) {
                                                                     Notification::make()
                                                                         ->title(trans('admin/server.notifications.reinstall_failed'))
-                                                                        ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
+                                                                        ->body(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
                                                                         ->danger()
                                                                         ->send();
                                                                 }
@@ -875,7 +900,7 @@ class EditServer extends EditRecord
                                                                 Notification::make()
                                                                     ->warning()
                                                                     ->title(trans('admin/server.notifications.server_suspension'))
-                                                                    ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
+                                                                    ->body(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
                                                                     ->send();
                                                             }
                                                         }),
@@ -897,7 +922,7 @@ class EditServer extends EditRecord
                                                                 Notification::make()
                                                                     ->warning()
                                                                     ->title(trans('admin/server.notifications.server_suspension'))
-                                                                    ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
+                                                                    ->body(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
                                                                     ->send();
                                                             }
                                                         }),
@@ -962,7 +987,7 @@ class EditServer extends EditRecord
                                                             } catch (Exception) {
                                                                 Notification::make()
                                                                     ->title(trans('admin/server.notifications.reinstall_failed'))
-                                                                    ->body(trans('admin/server.error_connecting', ['node' => $server->node->name]))
+                                                                    ->body(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
                                                                     ->danger()
                                                                     ->send();
                                                             }
@@ -1040,7 +1065,7 @@ class EditServer extends EditRecord
                     }
                 })
                 ->hidden(fn () => $canForceDelete)
-                ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
+                ->authorize(fn (Server $server) => auth()->user()->can('delete', $server)),
             Actions\Action::make('ForceDelete')
                 ->color('danger')
                 ->label(trans('filament-actions::force-delete.single.label'))
@@ -1057,7 +1082,7 @@ class EditServer extends EditRecord
                     }
                 })
                 ->visible(fn () => $canForceDelete)
-                ->authorize(fn (Server $server) => auth()->user()->can('delete server', $server)),
+                ->authorize(fn (Server $server) => auth()->user()->can('delete', $server)),
             Actions\Action::make('console')
                 ->label(trans('admin/server.console'))
                 ->icon('tabler-terminal')
@@ -1078,7 +1103,7 @@ class EditServer extends EditRecord
             $data['description'] = '';
         }
 
-        unset($data['docker'], $data['status']);
+        unset($data['docker'], $data['status'], $data['allocation_id']);
 
         return $data;
     }

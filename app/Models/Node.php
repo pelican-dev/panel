@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -37,6 +38,7 @@ use Symfony\Component\Yaml\Yaml;
  * @property string $daemon_token_id
  * @property string $daemon_token
  * @property int $daemon_listen
+ * @property int $daemon_connect
  * @property int $daemon_sftp
  * @property string|null $daemon_sftp_alias
  * @property string $daemon_base
@@ -49,6 +51,8 @@ use Symfony\Component\Yaml\Yaml;
  * @property int|null $servers_count
  * @property \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations
  * @property int|null $allocations_count
+ * @property \App\Models\Role[]|\Illuminate\Database\Eloquent\Collection $roles
+ * @property int|null $roles_count
  */
 class Node extends Model implements Validatable
 {
@@ -80,7 +84,7 @@ class Node extends Model implements Validatable
         'memory', 'memory_overallocate', 'disk',
         'disk_overallocate', 'cpu', 'cpu_overallocate',
         'upload_size', 'daemon_base',
-        'daemon_sftp', 'daemon_sftp_alias', 'daemon_listen',
+        'daemon_sftp', 'daemon_sftp_alias', 'daemon_listen', 'daemon_connect',
         'description', 'maintenance_mode', 'tags',
     ];
 
@@ -102,6 +106,7 @@ class Node extends Model implements Validatable
         'daemon_sftp' => ['required', 'numeric', 'between:1,65535'],
         'daemon_sftp_alias' => ['nullable', 'string'],
         'daemon_listen' => ['required', 'numeric', 'between:1,65535'],
+        'daemon_connect' => ['required', 'numeric', 'between:1,65535'],
         'maintenance_mode' => ['boolean'],
         'upload_size' => ['int', 'between:1,1024'],
         'tags' => ['array'],
@@ -122,6 +127,7 @@ class Node extends Model implements Validatable
         'daemon_base' => '/var/lib/pelican/volumes',
         'daemon_sftp' => 2022,
         'daemon_listen' => 8080,
+        'daemon_connect' => 8080,
         'maintenance_mode' => false,
         'tags' => '[]',
     ];
@@ -133,6 +139,7 @@ class Node extends Model implements Validatable
             'disk' => 'integer',
             'cpu' => 'integer',
             'daemon_listen' => 'integer',
+            'daemon_connect' => 'integer',
             'daemon_sftp' => 'integer',
             'daemon_token' => 'encrypted',
             'behind_proxy' => 'boolean',
@@ -168,7 +175,7 @@ class Node extends Model implements Validatable
      */
     public function getConnectionAddress(): string
     {
-        return "$this->scheme://$this->fqdn:$this->daemon_listen";
+        return "$this->scheme://$this->fqdn:$this->daemon_connect";
     }
 
     /**
@@ -214,7 +221,7 @@ class Node extends Model implements Validatable
                 ],
             ],
             'allowed_mounts' => $this->mounts->pluck('source')->toArray(),
-            'remote' => route('filament.app.resources...index'),
+            'remote' => config('app.url'),
         ];
     }
 
@@ -239,9 +246,9 @@ class Node extends Model implements Validatable
         return $this->maintenance_mode;
     }
 
-    public function mounts(): HasManyThrough
+    public function mounts(): MorphToMany
     {
-        return $this->hasManyThrough(Mount::class, MountNode::class, 'node_id', 'id', 'id', 'mount_id');
+        return $this->morphToMany(Mount::class, 'mountable');
     }
 
     /**
@@ -266,6 +273,11 @@ class Node extends Model implements Validatable
     public function databaseHosts(): BelongsToMany
     {
         return $this->belongsToMany(DatabaseHost::class);
+    }
+
+    public function roles(): HasManyThrough
+    {
+        return $this->hasManyThrough(Role::class, NodeRole::class, 'node_id', 'id', 'id', 'role_id');
     }
 
     /**
@@ -396,10 +408,11 @@ class Node extends Model implements Validatable
                 }
             }
 
-            // Only IPV4
-            $ips = $ips->filter(fn (string $ip) => filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false);
+            $ips = $ips->filter(fn (string $ip) => is_ip($ip));
 
+            // TODO: remove later
             $ips->push('0.0.0.0');
+            $ips->push('::');
 
             return $ips->unique()->all();
         });

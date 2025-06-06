@@ -36,6 +36,7 @@ return [
         'cpu_overallocate' => 'Enter the amount of cpu to over allocate by, -1 will disable checking and 0 will prevent creating new server',
         'upload_size' => "'Enter the maximum filesize upload",
         'daemonListen' => 'Enter the daemon listening port',
+        'daemonConnect' => 'Enter the daemon connecting port (can be same as listen port)',
         'daemonSFTP' => 'Enter the daemon SFTP listening port',
         'daemonSFTPAlias' => 'Enter the daemon SFTP alias (can be empty)',
         'daemonBase' => 'Enter the base folder',

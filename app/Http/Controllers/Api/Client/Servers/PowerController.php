@@ -9,6 +9,7 @@ use App\Repositories\Daemon\DaemonPowerRepository;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\SendPowerRequest;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Http\Client\ConnectionException;
 
 #[Group('Server', weight: 2)]
 class PowerController extends ClientApiController
@@ -25,6 +26,8 @@ class PowerController extends ClientApiController
      * Send power action
      *
      * Send a power action to a server.
+     *
+     * @throws ConnectionException
      */
     public function index(SendPowerRequest $request, Server $server): Response
     {

@@ -13,6 +13,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
@@ -33,6 +34,7 @@ use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Http\Client\Factory;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\Str;
@@ -136,8 +138,7 @@ class Settings extends Page implements HasForms
                         ->placeholder('/pelican.ico'),
                 ]),
             Group::make()
-                ->columnSpan(2)
-                ->columns(4)
+                ->columns(2)
                 ->schema([
                     Toggle::make('APP_DEBUG')
                         ->label(trans('admin/setting.general.debug_mode'))
@@ -159,6 +160,10 @@ class Settings extends Page implements HasForms
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_TOP_NAVIGATION', (bool) $state))
                         ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
+                ]),
+            Group::make()
+                ->columns(2)
+                ->schema([
                     Select::make('FILAMENT_AVATAR_PROVIDER')
                         ->label(trans('admin/setting.general.avatar_provider'))
                         ->native(false)
@@ -197,12 +202,18 @@ class Settings extends Page implements HasForms
                 ->formatStateUsing(fn ($state): int => (int) $state)
                 ->afterStateUpdated(fn ($state, Set $set) => $set('APP_2FA_REQUIRED', (int) $state))
                 ->default(env('APP_2FA_REQUIRED', config('panel.auth.2fa_required'))),
+            Select::make('FILAMENT_WIDTH')
+                ->label(trans('admin/setting.general.display_width'))
+                ->native(false)
+                ->options(MaxWidth::class)
+                ->selectablePlaceholder(false)
+                ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
             TagsInput::make('TRUSTED_PROXIES')
                 ->label(trans('admin/setting.general.trusted_proxies'))
                 ->separator()
                 ->splitKeys(['Tab', ' '])
                 ->placeholder(trans('admin/setting.general.trusted_proxies_help'))
-                ->default(env('TRUSTED_PROXIES', implode(',', config('trustedproxy.proxies'))))
+                ->default(env('TRUSTED_PROXIES', implode(',', Arr::wrap(config('trustedproxy.proxies')))))
                 ->hintActions([
                     FormAction::make('clear')
                         ->label(trans('admin/setting.general.clear'))
@@ -237,12 +248,6 @@ class Settings extends Page implements HasForms
                             $set('TRUSTED_PROXIES', $ips->values()->all());
                         }),
                 ]),
-            Select::make('FILAMENT_WIDTH')
-                ->label(trans('admin/setting.general.display_width'))
-                ->native(false)
-                ->options(MaxWidth::class)
-                ->selectablePlaceholder(false)
-                ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
         ];
     }
 
@@ -625,7 +630,6 @@ class Settings extends Page implements HasForms
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->columnSpanFull()
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_INSTALL_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_INSTALL_NOTIFICATION', config('panel.email.send_install_notification'))),
@@ -636,7 +640,6 @@ class Settings extends Page implements HasForms
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->columnSpanFull()
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REINSTALL_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
@@ -724,10 +727,17 @@ class Settings extends Page implements HasForms
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->columnSpanFull()
+                        ->columnSpan(1)
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
                         ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
+                    FileUpload::make('ConsoleFonts')
+                        ->hint(trans('admin/setting.misc.server.console_font_hint'))
+                        ->label(trans('admin/setting.misc.server.console_font_upload'))
+                        ->directory('fonts')
+                        ->columnSpan(1)
+                        ->maxFiles(1)
+                        ->preserveFilenames(),
                 ]),
             Section::make(trans('admin/setting.misc.webhook.title'))
                 ->description(trans('admin/setting.misc.webhook.helper'))
@@ -756,6 +766,7 @@ class Settings extends Page implements HasForms
     {
         try {
             $data = $this->form->getState();
+            unset($data['ConsoleFonts']);
 
             // Convert bools to a string, so they are correctly written to the .env file
             $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);

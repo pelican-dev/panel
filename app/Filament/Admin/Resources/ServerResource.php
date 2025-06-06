@@ -3,8 +3,12 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\ServerResource\Pages;
+use App\Models\Mount;
 use App\Models\Server;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
 
 class ServerResource extends Resource
 {
@@ -36,7 +40,30 @@ class ServerResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count() ?: null;
+        return (string) static::getEloquentQuery()->count() ?: null;
+    }
+
+    public static function getMountCheckboxList(Get $get): CheckboxList
+    {
+        $allowedMounts = Mount::all();
+        $node = $get('node_id');
+        $egg = $get('egg_id');
+
+        if ($node && $egg) {
+            $allowedMounts = $allowedMounts->filter(fn (Mount $mount) => ($mount->nodes->isEmpty() || $mount->nodes->contains($node)) &&
+                ($mount->eggs->isEmpty() || $mount->eggs->contains($egg))
+            );
+        }
+
+        return CheckboxList::make('mounts')
+            ->label('')
+            ->relationship('mounts')
+            ->live()
+            ->options(fn () => $allowedMounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]))
+            ->descriptions(fn () => $allowedMounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]))
+            ->helperText(fn () => $allowedMounts->isEmpty() ? trans('admin/server.no_mounts') : null)
+            ->bulkToggleable()
+            ->columnSpanFull();
     }
 
     public static function getPages(): array
@@ -46,5 +73,12 @@ class ServerResource extends Resource
             'create' => Pages\CreateServer::route('/create'),
             'edit' => Pages\EditServer::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        return $query->whereIn('node_id', auth()->user()->accessibleNodes()->pluck('id'));
     }
 }

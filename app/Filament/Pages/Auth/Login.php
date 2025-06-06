@@ -2,8 +2,10 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Events\Auth\ProvidedAuthenticationToken;
 use App\Extensions\Captcha\Providers\CaptchaProvider;
 use App\Extensions\OAuth\Providers\OAuthProvider;
+use App\Facades\Activity;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
@@ -54,14 +56,37 @@ class Login extends BaseLogin
         if ($token === null) {
             $this->verifyTwoFactor = true;
 
+            Activity::event('auth:checkpoint')
+                ->withRequestMetadata()
+                ->subject($user)
+                ->log();
+
             return null;
         }
 
-        $isValidToken = $this->google2FA->verifyKey(
-            $user->totp_secret,
-            $token,
-            Config::integer('panel.auth.2fa.window'),
-        );
+        $isValidToken = false;
+        if (strlen($token) === $this->google2FA->getOneTimePasswordLength()) {
+            $isValidToken = $this->google2FA->verifyKey(
+                $user->totp_secret,
+                $token,
+                Config::integer('panel.auth.2fa.window'),
+            );
+
+            if ($isValidToken) {
+                event(new ProvidedAuthenticationToken($user));
+            }
+        } else {
+            foreach ($user->recoveryTokens as $recoveryToken) {
+                if (password_verify($token, $recoveryToken->token)) {
+                    $isValidToken = true;
+                    $recoveryToken->delete();
+
+                    event(new ProvidedAuthenticationToken($user, true));
+
+                    break;
+                }
+            }
+        }
 
         if (!$isValidToken) {
             // Buffer to prevent bruteforce
@@ -108,7 +133,9 @@ class Login extends BaseLogin
     {
         return TextInput::make('2fa')
             ->label(trans('auth.two-factor-code'))
-            ->hidden(fn () => !$this->verifyTwoFactor)
+            ->hintIcon('tabler-question-mark')
+            ->hintIconTooltip(trans('auth.two-factor-hint'))
+            ->visible(fn () => $this->verifyTwoFactor)
             ->required()
             ->live();
     }

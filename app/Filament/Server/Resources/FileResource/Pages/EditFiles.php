@@ -26,6 +26,8 @@ use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
@@ -128,31 +130,33 @@ class EditFiles extends Page
                                     return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
                                 } catch (FileSizeTooLargeException) {
                                     AlertBanner::make()
-                                        ->title('File too large!')
-                                        ->body('<code>' . $this->path . '</code> Max is ' . convert_bytes_to_readable(config('panel.files.max_edit_size')))
+                                        ->title('<code>' . basename($this->path) . '</code> is too large!')
+                                        ->body('Max is ' . convert_bytes_to_readable(config('panel.files.max_edit_size')))
                                         ->danger()
                                         ->closable()
                                         ->send();
 
-                                    $this->redirect(ListFiles::getUrl());
+                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 } catch (FileNotFoundException) {
                                     AlertBanner::make()
-                                        ->title('File Not found!')
-                                        ->body('<code>' . $this->path . '</code>')
+                                        ->title('<code>' . basename($this->path) . '</code> not found!')
                                         ->danger()
                                         ->closable()
                                         ->send();
 
-                                    $this->redirect(ListFiles::getUrl());
+                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 } catch (FileNotEditableException) {
                                     AlertBanner::make()
-                                        ->title('Could not edit directory!')
-                                        ->body('<code>' . $this->path . '</code>')
+                                        ->title('<code>' . basename($this->path) . '</code> is a directory')
                                         ->danger()
                                         ->closable()
                                         ->send();
 
-                                    $this->redirect(ListFiles::getUrl());
+                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                } catch (ConnectionException) {
+                                    // Alert banner for this one will be handled by ListFiles
+
+                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 }
                             })
                             ->language(fn (Get $get) => $get('lang'))
@@ -176,6 +180,15 @@ class EditFiles extends Page
                 ->info()
                 ->closable()
                 ->send();
+
+            try {
+                $this->getDaemonFileRepository()->getDirectory('/');
+            } catch (ConnectionException) {
+                AlertBanner::make('node_connection_error')
+                    ->title('Could not connect to the node!')
+                    ->danger()
+                    ->send();
+            }
         }
     }
 
@@ -228,6 +241,14 @@ class EditFiles extends Page
         $this->fileRepository ??= (new DaemonFileRepository())->setServer($server);
 
         return $this->fileRepository;
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
+    {
+        return parent::getUrl($parameters, $isAbsolute, $panel, $tenant) . '/';
     }
 
     public static function route(string $path): PageRegistration

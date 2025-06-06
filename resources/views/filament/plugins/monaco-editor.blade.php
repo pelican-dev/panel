@@ -176,5 +176,5 @@
                      x-text="monacoPlaceholderText"></div>
             </div>
         </div>
-
+    </div>
 </x-dynamic-component>

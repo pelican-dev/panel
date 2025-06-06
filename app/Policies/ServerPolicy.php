@@ -32,6 +32,11 @@ class ServerPolicy
             return true;
         }
 
+        // Make sure user can target node of the server
+        if (!$user->canTarget($server->node)) {
+            return false;
+        }
+
         // Return null to let default policies take over
         return null;
     }

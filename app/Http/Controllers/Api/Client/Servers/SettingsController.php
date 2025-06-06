@@ -42,6 +42,7 @@ class SettingsController extends ClientApiController
             Activity::event('server:settings.rename')
                 ->property(['old' => $server->getOriginal('name'), 'new' => $name])
                 ->log();
+            $server->name = $name;
         }
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);

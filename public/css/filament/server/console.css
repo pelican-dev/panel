@@ -48,15 +48,3 @@
 ::-webkit-scrollbar-corner {
     background: transparent;
 }
-
-@font-face {
-    font-family: Comic Mono;
-    font-weight: normal;
-    src: url('/fonts/ComicMono.ttf');
-}
-  
-@font-face {
-    font-family: Comic Mono;
-    font-weight: bold;
-    src: url('/fonts/ComicMono-bold.ttf');
-}
