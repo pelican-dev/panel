@@ -88,7 +88,7 @@ enum ContainerStatus: string implements HasColor, HasIcon, HasLabel
 
     public function isStartable(): bool
     {
-        return !in_array($this, [ContainerStatus::Running, ContainerStatus::Starting, ContainerStatus::Stopping, ContainerStatus::Restarting]);
+        return !in_array($this, [ContainerStatus::Running, ContainerStatus::Starting, ContainerStatus::Stopping, ContainerStatus::Restarting, ContainerStatus::Missing]);
     }
 
     public function isRestartable(): bool
@@ -97,18 +97,16 @@ enum ContainerStatus: string implements HasColor, HasIcon, HasLabel
             return true;
         }
 
-        return !in_array($this, [ContainerStatus::Offline]);
+        return !in_array($this, [ContainerStatus::Offline, ContainerStatus::Missing]);
     }
 
     public function isStoppable(): bool
     {
-        return !in_array($this, [ContainerStatus::Starting, ContainerStatus::Stopping, ContainerStatus::Restarting, ContainerStatus::Exited, ContainerStatus::Offline]);
+        return !in_array($this, [ContainerStatus::Starting, ContainerStatus::Stopping, ContainerStatus::Restarting, ContainerStatus::Exited, ContainerStatus::Offline, ContainerStatus::Missing]);
     }
 
     public function isKillable(): bool
     {
-        // [ContainerStatus::Restarting, ContainerStatus::Removing, ContainerStatus::Dead, ContainerStatus::Created]
-
-        return !in_array($this, [ContainerStatus::Offline, ContainerStatus::Running, ContainerStatus::Exited]);
+        return !in_array($this, [ContainerStatus::Offline, ContainerStatus::Running, ContainerStatus::Exited, ContainerStatus::Missing]);
     }
 }

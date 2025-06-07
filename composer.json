@@ -11,7 +11,6 @@
         "ext-zip": "*",
         "abdelhamiderrahmouni/filament-monaco-editor": "^0.2.5",
         "aws/aws-sdk-php": "^3.343",
-        "aymanalhattami/filament-context-menu": "^1.0",
         "calebporzio/sushi": "^2.5",
         "chillerlan/php-qrcode": "^5.0.2",
         "dedoc/scramble": "^0.12.10",
