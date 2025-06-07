@@ -12,7 +12,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\AssociateAction;
 use Filament\Tables\Actions\CreateAction;
@@ -22,7 +21,6 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @method Server getOwnerRecord()
@@ -37,7 +35,6 @@ class AllocationsRelationManager extends RelationManager
             ->selectCurrentPageOnly()
             ->recordTitleAttribute('address')
             ->recordTitle(fn (Allocation $allocation) => $allocation->address)
-            ->checkIfRecordIsSelectableUsing(fn (Allocation $record) => $record->id !== $this->getOwnerRecord()->allocation_id)
             ->inverseRelationship('server')
             ->heading(trans('admin/server.allocations'))
             ->columns([
@@ -66,7 +63,7 @@ class AllocationsRelationManager extends RelationManager
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
                     ->hidden(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id),
                 DissociateAction::make()
-                    ->hidden(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id),
+                    ->after(fn () => $this->getOwnerRecord()->update(['allocation_id' => null])),
             ])
             ->headerActions([
                 CreateAction::make()->label(trans('admin/server.create_allocation'))
@@ -84,8 +81,7 @@ class AllocationsRelationManager extends RelationManager
                             ->label(trans('admin/server.alias'))
                             ->inlineLabel()
                             ->default(null)
-                            ->helperText(trans('admin/server.alias_helper'))
-                            ->required(false),
+                            ->helperText(trans('admin/server.alias_helper')),
                         TagsInput::make('allocation_ports')
                             ->placeholder('27015, 27017-27019')
                             ->label(trans('admin/server.ports'))
@@ -103,23 +99,11 @@ class AllocationsRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
                     ->recordSelectSearchColumns(['ip', 'port'])
-                    ->label(trans('admin/server.add_allocation')),
+                    ->label(trans('admin/server.add_allocation'))
+                    ->after(fn (array $data) => !$this->getOwnerRecord()->allocation_id && $this->getOwnerRecord()->update(['allocation_id' => $data['recordId'][0]])),
             ])
             ->groupedBulkActions([
-                DissociateBulkAction::make()
-                    ->before(function (DissociateBulkAction $action, Collection $records) {
-                        $records = $records->filter(function ($allocation) {
-                            /** @var Allocation $allocation */
-                            return $allocation->id !== $this->getOwnerRecord()->allocation_id;
-                        });
-
-                        if ($records->isEmpty()) {
-                            $action->failureNotificationTitle(trans('admin/server.notifications.dissociate_primary'))->failure();
-                            throw new Halt();
-                        }
-
-                        return $records;
-                    }),
+                DissociateBulkAction::make(),
             ]);
     }
 }

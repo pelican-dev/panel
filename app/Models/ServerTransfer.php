@@ -13,8 +13,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $server_id
  * @property int $old_node
  * @property int $new_node
- * @property int $old_allocation
- * @property int $new_allocation
+ * @property int|null $old_allocation
+ * @property int|null $new_allocation
  * @property array<int>|null $old_additional_allocations array of allocation.id's
  * @property array<int>|null $new_additional_allocations array of allocation.id's
  * @property bool|null $successful
@@ -45,8 +45,8 @@ class ServerTransfer extends Model implements Validatable
         'server_id' => ['required', 'numeric', 'exists:servers,id'],
         'old_node' => ['required', 'numeric'],
         'new_node' => ['required', 'numeric'],
-        'old_allocation' => ['required', 'numeric'],
-        'new_allocation' => ['required', 'numeric'],
+        'old_allocation' => ['nullable', 'numeric'],
+        'new_allocation' => ['nullable', 'numeric'],
         'old_additional_allocations' => ['nullable', 'array'],
         'old_additional_allocations.*' => ['numeric'],
         'new_additional_allocations' => ['nullable', 'array'],

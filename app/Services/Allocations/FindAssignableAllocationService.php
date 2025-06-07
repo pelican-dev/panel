@@ -37,13 +37,14 @@ class FindAssignableAllocationService
         // server.
         /** @var \App\Models\Allocation|null $allocation */
         $allocation = $server->node->allocations()
-            ->where('ip', $server->allocation->ip)
+            ->when($server->allocation, function ($query) use ($server) {
+                $query->where('ip', $server->allocation->ip);
+            })
             ->whereNull('server_id')
             ->inRandomOrder()
             ->first();
 
         $allocation = $allocation ?? $this->createNewAllocation($server);
-
         $allocation->update(['server_id' => $server->id]);
 
         return $allocation->refresh();
