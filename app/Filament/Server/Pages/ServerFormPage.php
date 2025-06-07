@@ -3,6 +3,9 @@
 namespace App\Filament\Server\Pages;
 
 use App\Models\Server;
+use App\Traits\Filament\BlockAccessInConflict;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Facades\Filament;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
@@ -14,6 +17,9 @@ use Filament\Pages\Page;
  */
 abstract class ServerFormPage extends Page
 {
+    use BlockAccessInConflict;
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
     use InteractsWithFormActions;
     use InteractsWithForms;
 
@@ -63,18 +69,5 @@ abstract class ServerFormPage extends Page
         $server = Filament::getTenant();
 
         return $server;
-    }
-
-    // TODO: find better way handle server conflict state
-    public static function canAccess(): bool
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        if ($server->isInConflictState()) {
-            return false;
-        }
-
-        return parent::canAccess();
     }
 }

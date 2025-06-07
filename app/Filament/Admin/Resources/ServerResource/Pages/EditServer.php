@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Resources\ServerResource\Pages;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
-use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
 use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Pages\Console;
@@ -26,6 +25,8 @@ use App\Services\Servers\ServerDeletionService;
 use App\Services\Servers\SuspensionService;
 use App\Services\Servers\ToggleInstallService;
 use App\Services\Servers\TransferServerService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Closure;
 use Exception;
 use Filament\Actions;
@@ -62,6 +63,9 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditServer extends EditRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = ServerResource::class;
 
     private DaemonServerRepository $daemonServerRepository;
@@ -1033,7 +1037,8 @@ class EditServer extends EditRecord
         ];
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Actions\Action|Actions\ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */
         $server = $this->getRecord();
@@ -1134,13 +1139,6 @@ class EditServer extends EditRecord
     protected function getSavedNotification(): ?Notification
     {
         return null;
-    }
-
-    public function getRelationManagers(): array
-    {
-        return [
-            AllocationsRelationManager::class,
-        ];
     }
 
     private function shouldHideComponent(ServerVariable $serverVariable, Forms\Components\Component $component): bool

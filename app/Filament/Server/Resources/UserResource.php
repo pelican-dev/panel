@@ -8,6 +8,11 @@ use App\Models\Server;
 use App\Models\User;
 use App\Services\Subusers\SubuserDeletionService;
 use App\Services\Subusers\SubuserUpdateService;
+use App\Traits\Filament\BlockAccessInConflict;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyTable;
+use App\Traits\Filament\HasLimitBadge;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
@@ -19,6 +24,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
@@ -29,6 +35,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserResource extends Resource
 {
+    use BlockAccessInConflict;
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyTable;
+    use HasLimitBadge;
+
     protected static ?string $model = User::class;
 
     protected static ?int $navigationSort = 5;
@@ -37,25 +49,12 @@ class UserResource extends Resource
 
     protected static ?string $tenantOwnershipRelationshipName = 'subServers';
 
-    public static function getNavigationBadge(): string
+    protected static function getBadgeCount(): int
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        return (string) $server->subusers->count();
-    }
-
-    // TODO: find better way handle server conflict state
-    public static function canAccess(): bool
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        if ($server->isInConflictState()) {
-            return false;
-        }
-
-        return parent::canAccess();
+        return $server->subusers->count();
     }
 
     public static function canViewAny(): bool
@@ -78,7 +77,7 @@ class UserResource extends Resource
         return auth()->user()->can(Permission::ACTION_USER_DELETE, Filament::getTenant());
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         /** @var Server $server */
         $server = Filament::getTenant();
@@ -225,7 +224,8 @@ class UserResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListUsers::route('/'),
