@@ -24,6 +24,7 @@ class DispatchWebhooks
         foreach ($matchingHooks as $webhookConfig) {
             if (in_array($eventName, $webhookConfig->events)) {
                 ProcessWebhook::dispatch($webhookConfig, $eventName, $data);
+
             }
         }
     }
