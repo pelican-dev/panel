@@ -220,7 +220,7 @@ class Server extends Model implements Validatable
     /**
      * Returns the format for server allocations when communicating with the Daemon.
      *
-     * @return int[]|string[][]
+     * @return array<string, array<int>>
      */
     public function getAllocationMappings(): array
     {
@@ -276,6 +276,8 @@ class Server extends Model implements Validatable
 
     /**
      * Gets all allocations associated with this server.
+     *
+     * @return HasMany<Allocation, $this>
      */
     public function allocations(): HasMany
     {

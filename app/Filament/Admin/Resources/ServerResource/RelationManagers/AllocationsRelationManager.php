@@ -12,7 +12,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\AssociateAction;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DissociateAction;
@@ -53,17 +52,14 @@ class AllocationsRelationManager extends RelationManager
                         true => 'warning',
                         default => 'gray',
                     })
+                    ->tooltip(fn (Allocation $allocation) => trans('admin/server.' . ($allocation->id === $this->getOwnerRecord()->allocation_id ? 'already' : 'make') . '_primary'))
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
                     ->default(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
                     ->label(trans('admin/server.primary')),
             ])
             ->actions([
-                Action::make('make-primary')
-                    ->label(trans('admin/server.make_primary'))
-                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
-                    ->hidden(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id),
                 DissociateAction::make()
-                    ->after(fn () => $this->getOwnerRecord()->update(['allocation_id' => null])),
+                    ->after(fn () => $this->getOwnerRecord()->allocation_id && $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id])),
             ])
             ->headerActions([
                 CreateAction::make()->label(trans('admin/server.create_allocation'))
@@ -103,7 +99,8 @@ class AllocationsRelationManager extends RelationManager
                     ->after(fn (array $data) => !$this->getOwnerRecord()->allocation_id && $this->getOwnerRecord()->update(['allocation_id' => $data['recordId'][0]])),
             ])
             ->groupedBulkActions([
-                DissociateBulkAction::make(),
+                DissociateBulkAction::make()
+                    ->after(fn () => $this->getOwnerRecord()->allocation_id && $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id])),
             ]);
     }
 }

@@ -56,7 +56,7 @@ class ServerConfigurationStructureService
      *     allocations: array{
      *         force_outgoing_ip: bool,
      *         default: array{ip: string, port: int},
-     *         mappings: array<int>,
+     *         mappings: array<string, array<int>>,
      *     },
      *     egg: array{id: string, file_denylist: string[]},
      *     labels?: string[],

@@ -825,7 +825,6 @@ class CreateServer extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-
         if ($allocation_additional = array_get($data, 'allocation_additional')) {
             $data['allocation_additional'] = collect($allocation_additional)->filter()->all();
         }

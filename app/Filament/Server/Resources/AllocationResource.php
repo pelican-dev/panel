@@ -55,6 +55,7 @@ class AllocationResource extends Resource
                         true => 'warning',
                         default => 'gray',
                     })
+                    ->tooltip(fn (Allocation $allocation) => ($allocation->id === $server->allocation_id ? 'Already' : 'Make') . ' Primary')
                     ->action(fn (Allocation $allocation) => auth()->user()->can(PERMISSION::ACTION_ALLOCATION_UPDATE, $server) && $server->update(['allocation_id' => $allocation->id]))
                     ->default(fn (Allocation $allocation) => $allocation->id === $server->allocation_id)
                     ->label('Primary'),
@@ -74,7 +75,8 @@ class AllocationResource extends Resource
                             ->subject($allocation)
                             ->property('allocation', $allocation->address)
                             ->log();
-                    }),
+                    })
+                    ->after(fn (Allocation $allocation) => $allocation->id === $server->allocation_id && $server->update(['allocation_id' => $server->allocations()->first()?->id])),
             ]);
     }
 

@@ -62,7 +62,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
         // Only one allocation should exist for this server now.
         $this->assertCount(1, $response->allocations);
         $this->assertSame($allocations[1]->id, $response->allocation_id);
-        $this->assertNull($response->allocation->notes);
+        $this->assertSame('Random notes', $response->allocation->notes);
 
         // These two allocations should not have been touched.
         $this->assertDatabaseHas('allocations', ['id' => $allocations[2]->id, 'server_id' => $server2->id]);
@@ -75,24 +75,36 @@ class BuildModificationServiceTest extends IntegrationTestCase
     }
 
     /**
-     * Test that an exception is thrown if removing the default allocation without also assigning
-     * new allocations to the server.
+     * Test that the primary allocation can be removed.
      */
-    public function test_exception_is_thrown_if_removing_the_default_allocation(): void
+    public function test_primary_allocation_can_be_removed(): void
     {
         $server = $this->createServerModel();
-        /** @var \App\Models\Allocation[] $allocations */
-        $allocations = Allocation::factory()->times(4)->create(['node_id' => $server->node_id]);
+        $server2 = $this->createServerModel();
 
-        $allocations[0]->update(['server_id' => $server->id]);
+        $server->allocation->update(['notes' => 'Random Notes']);
+        $server2->allocation->update(['notes' => 'Random Notes']);
 
-        $this->expectException(DisplayException::class);
-        $this->expectExceptionMessage('You are attempting to delete the default allocation for this server but there is no fallback allocation to use.');
+        $initialAllocationId = $server->allocation->id;
 
-        $this->getService()->handle($server, [
-            'add_allocations' => [],
-            'remove_allocations' => [$server->allocation_id, $allocations[0]->id],
+        $this->daemonServerRepository->expects('setServer->sync')->andReturnUndefined();
+
+        $response = $this->getService()->handle($server, [
+            // Remove the default server allocation, ensuring that the new allocation passed through
+            // in the data becomes the default allocation.
+            'remove_allocations' => [$server->allocation->id, $server2->allocation->id],
         ]);
+
+        // No allocation should exist for this server now.
+        $this->assertEmpty($response->allocations);
+        $this->assertNull($response->allocation_id);
+
+        // This allocation should not have been touched.
+        $this->assertDatabaseHas('allocations', ['id' => $server2->allocation->id, 'server_id' => $server2->id, 'notes' => 'Random Notes']);
+
+        // This allocation should have been removed from the server, and have had its
+        // notes properly reset.
+        $this->assertDatabaseHas('allocations', ['id' => $initialAllocationId, 'server_id' => null, 'notes' => null]);
     }
 
     /**

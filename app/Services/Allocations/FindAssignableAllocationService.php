@@ -45,6 +45,7 @@ class FindAssignableAllocationService
             ->first();
 
         $allocation = $allocation ?? $this->createNewAllocation($server);
+
         $allocation->update(['server_id' => $server->id]);
 
         return $allocation->refresh();

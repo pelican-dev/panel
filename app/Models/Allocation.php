@@ -72,20 +72,6 @@ class Allocation extends Model
         static::deleting(function (self $allocation) {
             throw_if($allocation->server_id, new ServerUsingAllocationException(trans('exceptions.allocations.server_using')));
         });
-
-        static::updating(function (self $allocation) {
-            $originalServerId = $allocation->getOriginal('server_id');
-            if (!$originalServerId) {
-                return;
-            }
-            $server = Server::find($originalServerId);
-            if (!$server) {
-                return;
-            }
-            if ($allocation->isDirty('server_id') && !$allocation->server_id && $allocation->id === $server->allocation_id) {
-                $server->update(['allocation_id' => $server->allocations[0]->id]);
-            }
-        });
     }
 
     protected function casts(): array
