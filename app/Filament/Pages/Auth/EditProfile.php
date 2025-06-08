@@ -32,6 +32,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\EditProfile as BaseEditProfile;
 use Filament\Support\Colors\Color;
@@ -402,7 +403,7 @@ class EditProfile extends BaseEditProfile
                                                     })
                                                     ->reactive()
                                                     ->default('monospace')
-                                                    ->afterStateUpdated(fn ($state, callable $set) => $set('font_preview', $state)),
+                                                    ->afterStateUpdated(fn ($state, Set $set) => $set('font_preview', $state)),
                                                 Placeholder::make('font_preview')
                                                     ->label(trans('profile.font_preview'))
                                                     ->columnSpan(2)
