@@ -3,6 +3,7 @@
 namespace App\Services\Servers;
 
 use App\Enums\ServerState;
+use App\Exceptions\Service\Deployment\NoViableNodeException;
 use Illuminate\Http\Client\ConnectionException;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
@@ -122,8 +123,8 @@ class ServerCreationService
      *
      * @param  array{memory?: ?int, disk?: ?int, cpu?: ?int, tags?: ?string[]}  $data
      *
-     * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
+     * @throws \App\Exceptions\Service\Deployment\NoViableNodeException
      */
     private function configureDeployment(array $data, DeploymentObject $deployment): ?Allocation
     {
@@ -134,12 +135,18 @@ class ServerCreationService
             Arr::get($data, 'tags', []),
         );
 
+        $availableNodes = $nodes->pluck('id');
+
+        if ($availableNodes->isEmpty()) {
+            throw new NoViableNodeException(trans('exceptions.deployment.no_viable_nodes'));
+        }
+
         if (!$deployment->getPorts()) {
             return null;
         }
 
         return $this->allocationSelectionService->setDedicated($deployment->isDedicated())
-            ->setNodes($nodes->pluck('id')->toArray())
+            ->setNodes($availableNodes->toArray())
             ->setPorts($deployment->getPorts())
             ->handle();
     }
