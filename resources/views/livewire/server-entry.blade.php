@@ -1,4 +1,4 @@
-<div class="relative">
+<div wire:poll.15s class="relative">
     <div
         class="absolute left-0 top-1 bottom-0 w-1 rounded-lg"
         style="background-color: {{ $server->condition->getColor(true) }};">
