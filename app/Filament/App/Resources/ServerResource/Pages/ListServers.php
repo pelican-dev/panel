@@ -97,7 +97,7 @@ class ListServers extends ListRecords
 
         $usingGrid = (auth()->user()->getCustomization()['dashboard_layout'] ?? 'grid') === 'grid';
 
-        $actions = [
+        $actions = ActionGroup::make([
             Action::make('start')
                 ->color('primary')
                 ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
@@ -123,15 +123,15 @@ class ListServers extends ListRecords
                 ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isKillable())
                 ->icon('tabler-alert-square'),
-        ];
+        ]);
 
         return $table
             ->paginated(false)
             ->query(fn () => $baseQuery)
             ->poll('15s')
             ->columns($usingGrid ? $this->gridColumns() : $this->tableColumns())
-            ->recordUrl(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
-            ->actions($usingGrid ? $actions : [ActionGroup::make($actions)])
+            ->recordUrl(!$usingGrid ? (fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)) : null)
+            ->actions(!$usingGrid ? $actions : [])
             ->actionsAlignment(Alignment::Center->value)
             ->contentGrid($usingGrid ? ['default' => 1, 'md' => 2] : null)
             ->emptyStateIcon('tabler-brand-docker')
