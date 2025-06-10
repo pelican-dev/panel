@@ -183,21 +183,21 @@ class ListServers extends ListRecords
 
         switch ($resource) {
             case 'cpu':
-                $current = $server->resources()['cpu_absolute'] ?? 0;
+                $current = $server->retrieveResources()['cpu_absolute'] ?? 0;
                 $limit = $server->cpu;
                 if ($server->cpu === 0) {
                     return null;
                 }
                 break;
             case 'memory':
-                $current = $server->resources()['memory_bytes'] ?? 0;
+                $current = $server->retrieveResources()['memory_bytes'] ?? 0;
                 $limit = $server->memory * 2 ** 20;
                 if ($server->memory === 0) {
                     return null;
                 }
                 break;
             case 'disk':
-                $current = $server->resources()['disk_bytes'] ?? 0;
+                $current = $server->retrieveResources()['disk_bytes'] ?? 0;
                 $limit = $server->disk * 2 ** 20;
                 if ($server->disk === 0) {
                     return null;
