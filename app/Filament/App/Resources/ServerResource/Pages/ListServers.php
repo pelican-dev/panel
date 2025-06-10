@@ -230,6 +230,8 @@ class ListServers extends ListRecords
                 ->success()
                 ->send();
 
+            cache()->forget("servers.$server->uuid.status");
+
             $this->redirect(self::getUrl(['activeTab' => $this->activeTab]));
         } catch (ConnectionException) {
             Notification::make()
