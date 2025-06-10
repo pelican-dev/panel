@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Client\Servers;
 
 use App\Facades\Activity;
 use App\Http\Controllers\Api\Client\ClientApiController;
+use App\Http\Requests\Api\Client\Servers\Settings\DescriptionServerRequest;
 use App\Http\Requests\Api\Client\Servers\Settings\ReinstallServerRequest;
 use App\Http\Requests\Api\Client\Servers\Settings\RenameServerRequest;
 use App\Http\Requests\Api\Client\Servers\Settings\SetDockerImageRequest;
@@ -34,23 +35,35 @@ class SettingsController extends ClientApiController
     public function rename(RenameServerRequest $request, Server $server): JsonResponse
     {
         $name = $request->input('name');
-        $description = $request->has('description') ? (string) $request->input('description') : $server->description;
 
-        if ($server->name !== $name) {
+        $server->update(['name' => $name]);
+
+        if ($server->wasChanged('name')) {
             Activity::event('server:settings.rename')
-                ->property(['old' => $server->name, 'new' => $name])
+                ->property(['old' => $server->getOriginal('name'), 'new' => $name])
                 ->log();
-            $server->name = $name;
         }
 
-        if ($server->description !== $description && config('panel.editable_server_descriptions')) {
+        return new JsonResponse([], Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Update server description
+     */
+    public function description(DescriptionServerRequest $request, Server $server): JsonResponse
+    {
+        if (!config('panel.editable_server_descriptions')) {
+            return new JsonResponse([], Response::HTTP_FORBIDDEN);
+        }
+
+        $description = $request->input('description');
+        $server->update(['description' => $description ?? '']);
+
+        if ($server->wasChanged('description')) {
             Activity::event('server:settings.description')
-                ->property(['old' => $server->description, 'new' => $description])
+                ->property(['old' => $server->getOriginal('description'), 'new' => $description])
                 ->log();
-            $server->description = $description;
         }
-
-        $server->save();
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
@@ -80,7 +93,7 @@ class SettingsController extends ClientApiController
      */
     public function dockerImage(SetDockerImageRequest $request, Server $server): JsonResponse
     {
-        if (!in_array($server->image, array_values($server->egg->docker_images))) {
+        if (!in_array($server->image, $server->egg->docker_images)) {
             throw new BadRequestHttpException('This server\'s Docker image has been manually set by an administrator and cannot be updated.');
         }
 
