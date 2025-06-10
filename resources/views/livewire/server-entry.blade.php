@@ -48,7 +48,7 @@
     </a>
 
     <x-filament-tables::actions
-        :actions="$this->getActions()"
+        :actions="\App\Filament\App\Resources\ServerResource\Pages\ListServers::getPowerActions()"
         :alignment="\Filament\Support\Enums\Alignment::Center"
         :record="$server"
     />
