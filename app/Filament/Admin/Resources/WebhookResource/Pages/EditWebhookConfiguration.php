@@ -18,7 +18,7 @@ class EditWebhookConfiguration extends EditRecord
         return [
             DeleteAction::make(),
             Action::make('testNow')
-                ->label('Test now')
+                ->label(trans('admin/webhook.test_now'))
                 ->color('primary')
                 ->disabled(fn (WebhookConfiguration $webhookConfiguration) => count($webhookConfiguration->events) === 0)
                 ->action(fn (WebhookConfiguration $webhookConfiguration) => $webhookConfiguration->run()),

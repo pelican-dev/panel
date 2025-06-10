@@ -14,7 +14,6 @@ use Livewire\Features\SupportEvents\HandlesEvents;
 use App\Enums\WebhookType;
 
 /**
- * @property string|null $type
  * @property string|array<string, mixed>|null $payload
  * @property string $endpoint
  * @property string $description

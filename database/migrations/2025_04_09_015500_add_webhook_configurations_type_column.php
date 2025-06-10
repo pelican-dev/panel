@@ -19,7 +19,7 @@ return new class extends Migration
         });
 
         foreach (WebhookConfiguration::all() as $webhookConfig) {
-            $type = str($webhookConfig->endpoint)->contains('discord.com') ? 'discord' : 'standalone';
+            $type = str($webhookConfig->endpoint)->contains('discord.com') ? 'discord' : 'regular';
 
             DB::table('webhook_configurations')
                 ->where('id', $webhookConfig->id)

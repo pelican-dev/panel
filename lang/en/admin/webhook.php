@@ -9,6 +9,7 @@ return [
     'events' => 'Events',
     'no_webhooks' => 'No Webhooks',
     'help' => 'Help',
+    'test_now' => 'Test Now',
     'help_text' => 'You have to wrap variable name in between {{ }} for example if you want to get the name from the api you can use {{name}}.',
     'table' => [
         'description' => 'Description',

@@ -18,7 +18,6 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
-use Filament\Support\Colors\Color;
 use Filament\Forms\Set;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -72,8 +71,7 @@ class WebhookResource extends Resource
         return $table
             ->columns([
                 IconColumn::make('type')
-                    ->icon(fn ($state) => $state->icon())
-                    ->color(Color::Hex(WebhookType::Discord->color())),
+                    ->options(WebhookType::columnoptions()),
                 TextColumn::make('endpoint')
                     ->label(trans('admin/webhook.table.endpoint'))
                     ->wrap()
@@ -120,29 +118,17 @@ class WebhookResource extends Resource
                 ToggleButtons::make('type')
                     ->live()
                     ->inline()
-                    ->options(WebhookType::translation())
-                    ->default('standalone')
-                    ->icons([
-                        'standalone' => WebhookType::Regular->icon(),
-                        'discord' => WebhookType::Discord->icon(),
-                    ])
-                    ->colors([
-                        'standalone' => null,
-                        'discord' => Color::Hex(WebhookType::Discord->color()),
-                    ])
+                    ->options(WebhookType::class)
+                    ->default(WebhookType::Regular->value)
                     ->afterStateHydrated(function ($state, Set $set, Get $get) {
                         if ($state === WebhookType::Discord->value) {
-                            AlertBanner::make()
-                                ->title(trans('admin/webhook.help'))
-                                ->body(trans('admin/webhook.help_text'))
-                                ->icon('tabler-question-mark')
-                                ->info()
-                                ->send();
+                            self::Banner();
                         }
                     })
                     ->afterStateUpdated(function ($state, Set $set, Get $get) {
                         if ($state === WebhookType::Discord->value) {
                             $payload = $get('payload');
+                            self::Banner();
                             if (is_array($payload)) {
                                 foreach ($payload as $key => $value) {
                                     if ($key === 'allowed_mentions' && isset($value['parse'])) {
@@ -154,12 +140,7 @@ class WebhookResource extends Resource
                                     }
                                 }
                             }
-                            AlertBanner::make()
-                                ->title(trans('admin/webhook.help'))
-                                ->body(trans('admin/webhook.help_text'))
-                                ->icon('tabler-question-mark')
-                                ->info()
-                                ->send();
+
                         }
                     }),
                 TextInput::make('description')
@@ -345,6 +326,17 @@ class WebhookResource extends Resource
                         ]),
                 ]),
         ];
+    }
+
+    public static function Banner(): void
+    {
+        AlertBanner::make()
+            ->id('DiscordWebhookAlert')
+            ->title(trans('admin/webhook.help'))
+            ->body(trans('admin/webhook.help_text'))
+            ->icon('tabler-question-mark')
+            ->info()
+            ->send();
     }
 
     public static function getPages(): array
