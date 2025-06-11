@@ -70,8 +70,9 @@ class ServersRelationManager extends RelationManager
                     ->sortable(),
                 SelectColumn::make('allocation.id')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->options(fn (Server $server) => [$server->allocation->id => $server->allocation->address])
-                    ->selectablePlaceholder(false)
+                    ->disabled()
+                    ->options(fn (Server $server) => $server->allocations->take(1)->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
+                    ->placeholder('None')
                     ->sortable(),
                 TextColumn::make('image')->hidden(),
                 TextColumn::make('databases_count')

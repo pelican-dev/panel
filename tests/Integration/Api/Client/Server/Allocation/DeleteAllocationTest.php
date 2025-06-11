@@ -34,6 +34,23 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
     }
 
     /**
+     * Test that an allocation is deleted if it is currently marked as the primary allocation
+     * for the server.
+     */
+    public function test_primary_allocation_can_be_deleted_from_server(): void
+    {
+        /** @var \App\Models\Server $server */
+        [$user, $server] = $this->generateTestAccount();
+        $server->update(['allocation_limit' => 2]);
+
+        $allocation = $server->allocation;
+
+        $this->actingAs($user)->deleteJson($this->link($allocation))->assertStatus(Response::HTTP_NO_CONTENT);
+
+        $this->assertDatabaseHas('allocations', ['id' => $allocation->id, 'server_id' => null, 'notes' => null]);
+    }
+
+    /**
      * Test that an error is returned if the user does not have permissiont to delete an allocation.
      */
     public function test_error_is_returned_if_user_does_not_have_permission(): void
@@ -51,22 +68,6 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
         $this->actingAs($user)->deleteJson($this->link($allocation))->assertForbidden();
 
         $this->assertDatabaseHas('allocations', ['id' => $allocation->id, 'server_id' => $server->id]);
-    }
-
-    /**
-     * Test that an allocation is not deleted if it is currently marked as the primary allocation
-     * for the server.
-     */
-    public function test_error_is_returned_if_allocation_is_primary(): void
-    {
-        /** @var \App\Models\Server $server */
-        [$user, $server] = $this->generateTestAccount();
-        $server->update(['allocation_limit' => 2]);
-
-        $this->actingAs($user)->deleteJson($this->link($server->allocation))
-            ->assertStatus(Response::HTTP_BAD_REQUEST)
-            ->assertJsonPath('errors.0.code', 'DisplayException')
-            ->assertJsonPath('errors.0.detail', 'You cannot delete the primary allocation for this server.');
     }
 
     public function test_allocation_cannot_be_deleted_if_server_limit_is_not_defined(): void

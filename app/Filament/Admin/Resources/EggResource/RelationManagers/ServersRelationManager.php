@@ -38,8 +38,9 @@ class ServersRelationManager extends RelationManager
                     ->label(trans('admin/server.docker_image')),
                 SelectColumn::make('allocation.id')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->options(fn (Server $server) => [$server->allocation->id => $server->allocation->address])
-                    ->selectablePlaceholder(false)
+                    ->disabled()
+                    ->options(fn (Server $server) => $server->allocations->take(1)->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
+                    ->placeholder('None')
                     ->sortable(),
             ]);
     }

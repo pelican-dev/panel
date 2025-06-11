@@ -80,12 +80,10 @@ class BuildModificationService
      * @param array{
      *     add_allocations?: array<int>,
      *     remove_allocations?: array<int>,
-     *     allocation_id?: int,
+     *     allocation_id: ?int,
      *     oom_killer?: bool,
      *     oom_disabled?: bool,
      * } $data
-     *
-     * @throws \App\Exceptions\DisplayException
      */
     private function processAllocations(Server $server, array &$data): void
     {
@@ -101,35 +99,26 @@ class BuildModificationService
                 ->whereIn('id', $data['add_allocations'])
                 ->whereNull('server_id');
 
-            // Keep track of all the allocations we're just now adding so that we can use the first
-            // one to reset the default allocation to.
-            $freshlyAllocated = $query->first()?->id;
-
-            $query->update(['server_id' => $server->id, 'notes' => null]);
+            $query->update(['server_id' => $server->id]);
         }
 
         if (!empty($data['remove_allocations'])) {
-            foreach ($data['remove_allocations'] as $allocation) {
-                // If we are attempting to remove the default allocation for the server, see if we can reassign
-                // to the first provided value in add_allocations. If there is no new first allocation then we
-                // will throw an exception back.
-                if ($allocation === ($data['allocation_id'] ?? $server->allocation_id)) {
-                    if (empty($freshlyAllocated)) {
-                        throw new DisplayException('You are attempting to delete the default allocation for this server but there is no fallback allocation to use.');
-                    }
+            $allocations = Allocation::query()
+                ->where('server_id', $server->id)
+                // Only use the allocations that we didn't also attempt to add to the server...
+                ->whereIn('id', array_diff($data['remove_allocations'], $data['add_allocations'] ?? []));
 
-                    // Update the default allocation to be the first allocation that we are creating.
-                    $data['allocation_id'] = $freshlyAllocated;
-                }
+            // If we are attempting to remove the default allocation for the server, see if we can reassign
+            // to the first provided value in add_allocations.
+            if ((clone $allocations)->where('id', $server->allocation_id)->exists()) {
+                $nonPrimaryAllocations = $server->allocations->whereNotIn('id', $data['remove_allocations']);
+                $data['allocation_id'] = $nonPrimaryAllocations->first()->id ?? ($data['add_allocations'][0] ?? null);
             }
 
             // Remove any of the allocations we got that are currently assigned to this server on
             // this node. Also set the notes to null, otherwise when re-allocated to a new server those
             // notes will be carried over.
-            Allocation::query()->where('node_id', $server->node_id)
-                ->where('server_id', $server->id)
-                // Only remove the allocations that we didn't also attempt to add to the server...
-                ->whereIn('id', array_diff($data['remove_allocations'], $data['add_allocations'] ?? []))
+            $allocations
                 ->update([
                     'notes' => null,
                     'server_id' => null,
