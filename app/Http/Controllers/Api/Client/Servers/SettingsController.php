@@ -34,13 +34,14 @@ class SettingsController extends ClientApiController
      */
     public function rename(RenameServerRequest $request, Server $server): JsonResponse
     {
+        $originalName = $server->name;
         $name = $request->input('name');
 
         $server->update(['name' => $name]);
 
         if ($server->wasChanged('name')) {
             Activity::event('server:settings.rename')
-                ->property(['old' => $server->getOriginal('name'), 'new' => $name])
+                ->property(['old' => $originalName, 'new' => $name])
                 ->log();
         }
 
@@ -56,12 +57,13 @@ class SettingsController extends ClientApiController
             return new JsonResponse([], Response::HTTP_FORBIDDEN);
         }
 
+        $originalDescription = $server->description;
         $description = $request->input('description');
         $server->update(['description' => $description ?? '']);
 
         if ($server->wasChanged('description')) {
             Activity::event('server:settings.description')
-                ->property(['old' => $server->getOriginal('description'), 'new' => $description])
+                ->property(['old' => $originalDescription, 'new' => $description])
                 ->log();
         }
 
