@@ -333,26 +333,6 @@ class Node extends Model implements Validatable
         });
     }
 
-    /**
-     * @return array<array-key, mixed>
-     */
-    public function serverStatuses(): array
-    {
-        $statuses = [];
-        try {
-            $statuses = Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/servers')->json() ?? [];
-        } catch (Exception $exception) {
-            report($exception);
-        }
-
-        foreach ($statuses as $status) {
-            $uuid = fluent($status)->get('configuration.uuid');
-            cache()->remember("servers.$uuid.container.status", now()->addMinute(), fn () => fluent($status)->get('state'));
-        }
-
-        return $statuses;
-    }
-
     /** @return array{
      *     memory_total: int, memory_used: int,
      *     swap_total: int, swap_used: int,

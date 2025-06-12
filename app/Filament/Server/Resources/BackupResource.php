@@ -14,6 +14,7 @@ use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Services\Backups\DownloadLinkService;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
+use App\Services\Backups\DeleteBackupService;
 use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
@@ -37,6 +38,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 
 class BackupResource extends Resource
@@ -145,7 +147,7 @@ class BackupResource extends Resource
                                     ->send();
                             }
 
-                            if (!$backup->is_successful && is_null($backup->completed_at)) { //TODO Change to Notifications
+                            if (!$backup->is_successful && is_null($backup->completed_at)) {
                                 return Notification::make()
                                     ->danger()
                                     ->title('Backup Restore Failed')
@@ -178,9 +180,26 @@ class BackupResource extends Resource
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     DeleteAction::make('delete')
                         ->disabled(fn (Backup $backup) => $backup->is_locked)
-                        ->modalDescription(fn (Backup $backup) => 'Do you wish to delete, ' . $backup->name . '?')
+                        ->modalDescription(fn (Backup $backup) => 'Do you wish to delete ' . $backup->name . '?')
                         ->modalSubmitActionLabel('Delete Backup')
-                        ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->delete($request, $server, $backup))
+                        ->action(function (Backup $backup, DeleteBackupService $deleteBackupService) {
+                            try {
+                                $deleteBackupService->handle($backup);
+                            } catch (ConnectionException) {
+                                Notification::make()
+                                    ->title('Could not delete backup')
+                                    ->body('Connection to node failed')
+                                    ->danger()
+                                    ->send();
+
+                                return;
+                            }
+
+                            Activity::event('server:backup.delete')
+                                ->subject($backup)
+                                ->property(['name' => $backup->name, 'failed' => !$backup->is_successful])
+                                ->log();
+                        })
                         ->visible(fn (Backup $backup) => $backup->status !== BackupStatus::InProgress),
                 ]),
             ]);

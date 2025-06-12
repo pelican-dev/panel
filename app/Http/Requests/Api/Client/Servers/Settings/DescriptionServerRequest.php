@@ -2,12 +2,11 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Settings;
 
-use App\Models\Server;
-use App\Models\Permission;
 use App\Contracts\Http\ClientPermissionsRequest;
 use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Models\Permission;
 
-class RenameServerRequest extends ClientApiRequest implements ClientPermissionsRequest
+class DescriptionServerRequest extends ClientApiRequest implements ClientPermissionsRequest
 {
     /**
      * Returns the permissions string indicating which permission should be used to
@@ -16,7 +15,7 @@ class RenameServerRequest extends ClientApiRequest implements ClientPermissionsR
      */
     public function permission(): string
     {
-        return Permission::ACTION_SETTINGS_RENAME;
+        return Permission::ACTION_SETTINGS_DESCRIPTION;
     }
 
     /**
@@ -25,7 +24,7 @@ class RenameServerRequest extends ClientApiRequest implements ClientPermissionsR
     public function rules(): array
     {
         return [
-            'name' => Server::getRules()['name'],
+            'description' => 'string|nullable',
         ];
     }
 }
