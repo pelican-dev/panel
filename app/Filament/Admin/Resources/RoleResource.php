@@ -147,14 +147,16 @@ class RoleResource extends Resource
      */
     private static function makeSection(string $model, array $options): Section
     {
+        $model = ucwords($model);
+
         $icon = null;
 
-        if (class_exists('\App\Filament\Admin\Resources\\' . ucwords($model) . 'Resource')) {
-            $icon = ('\App\Filament\Admin\Resources\\' . ucwords($model) . 'Resource')::getNavigationIcon();
-        } elseif (class_exists('\App\Filament\Admin\Pages\\' . ucwords($model))) {
-            $icon = ('\App\Filament\Admin\Pages\\' . ucwords($model))::getNavigationIcon();
-        } elseif (class_exists('\App\Filament\Server\Resources\\' . ucwords($model) . 'Resource')) {
-            $icon = ('\App\Filament\Server\Resources\\' . ucwords($model) . 'Resource')::getNavigationIcon();
+        if (class_exists('\App\Filament\Admin\Resources\\' . $model . 'Resource')) {
+            $icon = ('\App\Filament\Admin\Resources\\' . $model . 'Resource')::getNavigationIcon();
+        } elseif (class_exists('\App\Filament\Admin\Pages\\' . $model)) {
+            $icon = ('\App\Filament\Admin\Pages\\' . $model)::getNavigationIcon();
+        } elseif (class_exists('\App\Filament\Server\Resources\\' . $model . 'Resource')) {
+            $icon = ('\App\Filament\Server\Resources\\' . $model . 'Resource')::getNavigationIcon();
         }
 
         return Section::make(Str::headline($model))
