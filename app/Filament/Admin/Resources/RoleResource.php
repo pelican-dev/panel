@@ -147,6 +147,8 @@ class RoleResource extends Resource
      */
     private static function makeSection(string $model, array $options): Section
     {
+        $model = ucwords($model);
+
         $icon = null;
 
         if (class_exists('\App\Filament\Admin\Resources\\' . $model . 'Resource')) {
