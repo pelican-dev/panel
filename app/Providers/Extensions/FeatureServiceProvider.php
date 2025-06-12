@@ -17,6 +17,7 @@ class FeatureServiceProvider extends ServiceProvider
         $this->app->singleton(FeatureService::class, function ($app) {
             $provider = new FeatureService();
 
+            // Default Feature providers
             $provider->register(new GSLTokenSchema());
             $provider->register(new JavaVersionSchema());
             $provider->register(new MinecraftEulaSchema());

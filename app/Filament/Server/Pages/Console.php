@@ -23,8 +23,6 @@ use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Livewire\Attributes\On;
 
-// use App\Filament\Server\Widgets\ServerNetworkChart;
-
 class Console extends Page
 {
     use InteractsWithActions;
@@ -69,11 +67,10 @@ class Console extends Page
     public function mountFeature(string $data): void
     {
         $data = json_decode($data);
-        //$feature = data_get($data, 'key');
+        $feature = data_get($data, 'key');
 
-        $feature = 'test';
         $feature = $this->featureService->get($feature);
-        if (/*!$feature || */ $this->getMountedAction()) {
+        if (!$feature || $this->getMountedAction()) {
             return;
         }
         $this->mountAction($feature->getId());

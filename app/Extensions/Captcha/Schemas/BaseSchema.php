@@ -6,7 +6,7 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Str;
 
-abstract class CommonSchema
+abstract class BaseSchema
 {
     abstract public function getId(): string;
 

@@ -17,6 +17,7 @@ class OAuthServiceProvider extends ServiceProvider
     {
         $this->app->singleton(OAuthService::class, function ($app) {
             $service = new OAuthService();
+
             // Default OAuth providers included with Socialite
             $service->register(new CommonSchema('facebook', icon: 'tabler-brand-facebook-f', hexColor: '#1877f2'));
             $service->register(new CommonSchema('x', icon: 'tabler-brand-x-f', hexColor: '#1da1f2'));

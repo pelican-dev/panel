@@ -3,7 +3,7 @@
 namespace App\Extensions\Captcha\Schemas\Turnstile;
 
 use App\Extensions\Captcha\Schemas\CaptchaSchemaInterface;
-use App\Extensions\Captcha\Schemas\CommonSchema;
+use App\Extensions\Captcha\Schemas\BaseSchema;
 use Exception;
 use Filament\Forms\Components\Component as BaseComponent;
 use Filament\Forms\Components\Placeholder;
@@ -11,7 +11,7 @@ use Filament\Forms\Components\Toggle;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\HtmlString;
 
-class TurnstileSchema extends CommonSchema implements CaptchaSchemaInterface
+class TurnstileSchema extends BaseSchema implements CaptchaSchemaInterface
 {
     public function getId(): string
     {
