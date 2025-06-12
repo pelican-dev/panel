@@ -5,7 +5,7 @@ namespace App\Filament\Server\Pages;
 use App\Enums\ConsoleWidgetPosition;
 use App\Enums\ContainerStatus;
 use App\Exceptions\Http\Server\ServerStateConflictException;
-use App\Extensions\Features\FeatureProvider;
+use App\Extensions\Features\FeatureService;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
@@ -14,9 +14,9 @@ use App\Filament\Server\Widgets\ServerOverview;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
+use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Facades\Filament;
-use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Enums\ActionSize;
 use Filament\Widgets\Widget;
@@ -35,6 +35,8 @@ class Console extends Page
 
     public ContainerStatus $status = ContainerStatus::Offline;
 
+    protected FeatureService $featureService;
+
     public function mount(): void
     {
         /** @var Server $server */
@@ -51,12 +53,12 @@ class Console extends Page
         }
     }
 
-    public function boot(): void
+    public function boot(FeatureService $featureService): void
     {
+        $this->featureService = $featureService;
         /** @var Server $server */
         $server = Filament::getTenant();
-        /** @var FeatureProvider $feature */
-        foreach ($server->egg->features() as $feature) {
+        foreach ($featureService->get($server->egg->features) as $feature) {
             $this->cacheAction($feature->getAction());
         }
     }
@@ -67,8 +69,8 @@ class Console extends Page
         $data = json_decode($data);
         $feature = data_get($data, 'key');
 
-        $feature = FeatureProvider::getProviders($feature);
-        if ($this->getMountedAction()) {
+        $feature = $this->featureService->get($feature);
+        if (!$feature || $this->getMountedAction()) {
             return;
         }
         $this->mountAction($feature->getId());
