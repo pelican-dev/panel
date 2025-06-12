@@ -70,8 +70,7 @@ class WebhookResource extends Resource
     {
         return $table
             ->columns([
-                IconColumn::make('type')
-                    ->options(WebhookType::columnoptions()),
+                IconColumn::make('type'),
                 TextColumn::make('endpoint')
                     ->label(trans('admin/webhook.table.endpoint'))
                     ->wrap()
@@ -120,15 +119,15 @@ class WebhookResource extends Resource
                     ->inline()
                     ->options(WebhookType::class)
                     ->default(WebhookType::Regular->value)
-                    ->afterStateHydrated(function ($state, Set $set, Get $get) {
+                    ->afterStateHydrated(function ($state) {
                         if ($state === WebhookType::Discord->value) {
-                            self::Banner();
+                            self::sendHelpBanner();
                         }
                     })
                     ->afterStateUpdated(function ($state, Set $set, Get $get) {
                         if ($state === WebhookType::Discord->value) {
                             $payload = $get('payload');
-                            self::Banner();
+                            self::sendHelpBanner();
                             if (is_array($payload)) {
                                 foreach ($payload as $key => $value) {
                                     if ($key === 'allowed_mentions' && isset($value['parse'])) {
@@ -163,7 +162,7 @@ class WebhookResource extends Resource
                 Section::make(trans('admin/webhook.regular'))
                     ->hidden(fn (Get $get) => $get('type') === WebhookType::Discord->value)
                     ->dehydratedWhenHidden()
-                    ->schema(fn () => self::getStandaloneFields())
+                    ->schema(fn () => self::getRegularFields())
                     ->formBefore(),
                 Section::make(trans('admin/webhook.events'))
                     ->collapsible()
@@ -183,7 +182,7 @@ class WebhookResource extends Resource
     }
 
     /** @return array<array-key, mixed> */
-    private static function getStandaloneFields(): array
+    private static function getRegularFields(): array
     {
         return [
             KeyValue::make('headers')
@@ -328,10 +327,9 @@ class WebhookResource extends Resource
         ];
     }
 
-    public static function Banner(): void
+    public static function sendHelpBanner(): void
     {
-        AlertBanner::make()
-            ->id('DiscordWebhookAlert')
+        AlertBanner::make('discord_webhook_help')
             ->title(trans('admin/webhook.help'))
             ->body(trans('admin/webhook.help_text'))
             ->icon('tabler-question-mark')

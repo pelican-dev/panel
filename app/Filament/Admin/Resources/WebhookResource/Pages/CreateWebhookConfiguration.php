@@ -4,7 +4,6 @@ namespace App\Filament\Admin\Resources\WebhookResource\Pages;
 
 use App\Filament\Admin\Resources\WebhookResource;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Actions\Action;
 use App\Enums\WebhookType;
 
 class CreateWebhookConfiguration extends CreateRecord
@@ -14,10 +13,7 @@ class CreateWebhookConfiguration extends CreateRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('cancel')
-                ->label('Cancel')
-                ->color('danger')
-                ->url(WebhookResource::getUrl()),
+            $this->getCancelFormAction()->formId('form'),
             $this->getCreateFormAction()->formId('form'),
         ];
     }
