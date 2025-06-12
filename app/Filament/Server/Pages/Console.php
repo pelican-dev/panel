@@ -14,9 +14,11 @@ use App\Filament\Server\Widgets\ServerOverview;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
+use App\Traits\Filament\CanCustomizeHeaderActions;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Facades\Filament;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Pages\Page;
 use Filament\Support\Enums\ActionSize;
 use Filament\Widgets\Widget;
@@ -25,6 +27,7 @@ use Livewire\Attributes\On;
 
 class Console extends Page
 {
+    use CanCustomizeHeaderActions;
     use InteractsWithActions;
 
     protected static ?string $navigationIcon = 'tabler-brand-tabler';
@@ -145,7 +148,8 @@ class Console extends Page
         $this->cacheHeaderActions();
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */
         $server = Filament::getTenant();

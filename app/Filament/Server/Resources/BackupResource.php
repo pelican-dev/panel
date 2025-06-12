@@ -15,6 +15,12 @@ use App\Services\Backups\DownloadLinkService;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Services\Backups\DeleteBackupService;
+use App\Traits\Filament\BlockAccessInConflict;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
+use App\Traits\Filament\HasLimitBadge;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Placeholder;
@@ -23,6 +29,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -36,6 +43,13 @@ use Illuminate\Http\Request;
 
 class BackupResource extends Resource
 {
+    use BlockAccessInConflict;
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
+    use HasLimitBadge;
+
     protected static ?string $model = Backup::class;
 
     protected static ?int $navigationSort = 3;
@@ -44,34 +58,23 @@ class BackupResource extends Resource
 
     protected static bool $canCreateAnother = false;
 
-    public const WARNING_THRESHOLD = 0.7;
-
-    public static function getNavigationBadge(): string
+    protected static function getBadgeCount(): int
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        $limit = $server->backup_limit;
-
-        return $server->backups->count() . ($limit === 0 ? '' : ' / ' . $limit);
+        return $server->backups->count();
     }
 
-    public static function getNavigationBadgeColor(): ?string
+    protected static function getBadgeLimit(): int
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        $limit = $server->backup_limit;
-        $count = $server->backups->count();
-
-        if ($limit === 0) {
-            return null;
-        }
-
-        return $count >= $limit ? 'danger' : ($count >= $limit * self::WARNING_THRESHOLD ? 'warning' : 'success');
+        return $server->backup_limit;
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         return $form
             ->schema([
@@ -87,7 +90,7 @@ class BackupResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         /** @var Server $server */
         $server = Filament::getTenant();
@@ -202,19 +205,6 @@ class BackupResource extends Resource
             ]);
     }
 
-    // TODO: find better way handle server conflict state
-    public static function canAccess(): bool
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        if ($server->isInConflictState()) {
-            return false;
-        }
-
-        return parent::canAccess();
-    }
-
     public static function canViewAny(): bool
     {
         return auth()->user()->can(Permission::ACTION_BACKUP_READ, Filament::getTenant());
@@ -230,7 +220,8 @@ class BackupResource extends Resource
         return auth()->user()->can(Permission::ACTION_BACKUP_DELETE, Filament::getTenant());
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListBackups::route('/'),
