@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Rules;
+namespace App\Extensions\Captcha\Schemas\Turnstile;
 
-use App\Extensions\Captcha\Providers\CaptchaProvider;
+use App\Extensions\Captcha\CaptchaService;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Support\Facades\App;
 
-class ValidTurnstileCaptcha implements ValidationRule
+class Rule implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $response = CaptchaProvider::get('turnstile')->validateResponse($value);
+        $response = App::call(fn (CaptchaService $service) => $service->getActiveSchema()->validateResponse($value));
 
         if (!$response['success']) {
             $fail($response['message'] ?? 'Unknown error occurred, please try again');
