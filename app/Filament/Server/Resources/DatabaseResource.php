@@ -9,9 +9,16 @@ use App\Models\Database;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
+use App\Traits\Filament\BlockAccessInConflict;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
+use App\Traits\Filament\HasLimitBadge;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\ViewAction;
@@ -22,40 +29,36 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class DatabaseResource extends Resource
 {
+    use BlockAccessInConflict;
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
+    use HasLimitBadge;
+
     protected static ?string $model = Database::class;
 
     protected static ?int $navigationSort = 6;
 
     protected static ?string $navigationIcon = 'tabler-database';
 
-    public const WARNING_THRESHOLD = 0.7;
-
-    public static function getNavigationBadge(): string
+    protected static function getBadgeCount(): int
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        $limit = $server->database_limit;
-
-        return $server->databases->count() . ($limit === 0 ? '' : ' / ' . $limit);
+        return $server->databases->count();
     }
 
-    public static function getNavigationBadgeColor(): ?string
+    protected static function getBadgeLimit(): int
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        $limit = $server->database_limit;
-        $count = $server->databases->count();
-
-        if ($limit === 0) {
-            return null;
-        }
-
-        return $count >= $limit ? 'danger' : ($count >= $limit * self::WARNING_THRESHOLD ? 'warning' : 'success');
+        return $server->database_limit;
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         /** @var Server $server */
         $server = Filament::getTenant();
@@ -92,7 +95,7 @@ class DatabaseResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([
@@ -111,19 +114,6 @@ class DatabaseResource extends Resource
                 DeleteAction::make()
                     ->using(fn (Database $database, DatabaseManagementService $service) => $service->delete($database)),
             ]);
-    }
-
-    // TODO: find better way handle server conflict state
-    public static function canAccess(): bool
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        if ($server->isInConflictState()) {
-            return false;
-        }
-
-        return parent::canAccess();
     }
 
     public static function canViewAny(): bool
@@ -151,7 +141,8 @@ class DatabaseResource extends Resource
         return auth()->user()->can(Permission::ACTION_DATABASE_DELETE, Filament::getTenant());
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListDatabases::route('/'),

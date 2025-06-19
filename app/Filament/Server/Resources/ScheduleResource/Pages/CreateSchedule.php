@@ -6,11 +6,16 @@ use App\Facades\Activity;
 use App\Filament\Server\Resources\ScheduleResource;
 use App\Models\Schedule;
 use App\Models\Server;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateSchedule extends CreateRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = ScheduleResource::class;
 
     protected static bool $canCreateAnother = false;

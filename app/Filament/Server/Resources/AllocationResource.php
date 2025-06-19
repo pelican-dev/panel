@@ -7,7 +7,12 @@ use App\Filament\Server\Resources\AllocationResource\Pages;
 use App\Models\Allocation;
 use App\Models\Permission;
 use App\Models\Server;
+use App\Traits\Filament\BlockAccessInConflict;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Facades\Filament;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Columns\IconColumn;
@@ -18,6 +23,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class AllocationResource extends Resource
 {
+    use BlockAccessInConflict;
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyTable;
+
     protected static ?string $model = Allocation::class;
 
     protected static ?string $modelLabel = 'Network';
@@ -28,7 +38,7 @@ class AllocationResource extends Resource
 
     protected static ?string $navigationIcon = 'tabler-network';
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         /** @var Server $server */
         $server = Filament::getTenant();
@@ -83,19 +93,6 @@ class AllocationResource extends Resource
             ]);
     }
 
-    // TODO: find better way handle server conflict state
-    public static function canAccess(): bool
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        if ($server->isInConflictState()) {
-            return false;
-        }
-
-        return parent::canAccess();
-    }
-
     public static function canViewAny(): bool
     {
         return auth()->user()->can(Permission::ACTION_ALLOCATION_READ, Filament::getTenant());
@@ -116,7 +113,8 @@ class AllocationResource extends Resource
         return auth()->user()->can(Permission::ACTION_ALLOCATION_DELETE, Filament::getTenant());
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListAllocations::route('/'),

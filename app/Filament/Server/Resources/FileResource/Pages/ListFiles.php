@@ -12,7 +12,10 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action as HeaderAction;
+use Filament\Actions\ActionGroup as HeaderActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
@@ -43,6 +46,9 @@ use Livewire\Attributes\Locked;
 
 class ListFiles extends ListRecords
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = FileResource::class;
 
     #[Locked]
@@ -399,7 +405,8 @@ class ListFiles extends ListRecords
             ]);
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<HeaderAction|HeaderActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */
         $server = Filament::getTenant();
