@@ -3,15 +3,13 @@
 namespace App\Filament\Admin\Widgets;
 
 use App\Services\Helpers\SoftwareVersionService;
-use Filament\Actions\CreateAction;
-use Filament\Widgets\Widget;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Form;
 
-class UpdateWidget extends Widget
+class UpdateWidget extends FormWidget
 {
-    protected static string $view = 'filament.admin.widgets.update-widget';
-
-    protected static bool $isLazy = false;
-
     protected static ?int $sort = 0;
 
     private SoftwareVersionService $softwareVersionService;
@@ -21,19 +19,34 @@ class UpdateWidget extends Widget
         $this->softwareVersionService = $softwareVersionService;
     }
 
-    public function getViewData(): array
+    public function form(Form $form): Form
     {
-        return [
-            'version' => $this->softwareVersionService->currentPanelVersion(),
-            'latestVersion' => $this->softwareVersionService->latestPanelVersion(),
-            'isLatest' => $this->softwareVersionService->isLatestPanel(),
-            'actions' => [
-                CreateAction::make()
-                    ->label(trans('admin/dashboard.sections.intro-update-available.heading'))
-                    ->icon('tabler-clipboard-text')
-                    ->url('https://pelican.dev/docs/panel/update', true)
-                    ->color('warning'),
-            ],
-        ];
+        $isLatest = $this->softwareVersionService->isLatestPanel();
+
+        return $form
+            ->schema([
+                $isLatest
+                ? Section::make(trans('admin/dashboard.sections.intro-no-update.heading'))
+                    ->icon('tabler-checkbox')
+                    ->iconColor('success')
+                    ->schema([
+                        Placeholder::make('')
+                            ->content(trans('admin/dashboard.sections.intro-no-update.content', ['version' => $this->softwareVersionService->currentPanelVersion()])),
+                    ])
+                : Section::make(trans('admin/dashboard.sections.intro-update-available.heading'))
+                    ->icon('tabler-info-circle')
+                    ->iconColor('warning')
+                    ->schema([
+                        Placeholder::make('')
+                            ->content(trans('admin/dashboard.sections.intro-update-available.content', ['latestVersion' => $this->softwareVersionService->latestPanelVersion()])),
+                    ])
+                    ->headerActions([
+                        Action::make('update')
+                            ->label(trans('admin/dashboard.sections.intro-update-available.heading'))
+                            ->icon('tabler-clipboard-text')
+                            ->url('https://pelican.dev/docs/panel/update', true)
+                            ->color('warning'),
+                    ]),
+            ]);
     }
 }

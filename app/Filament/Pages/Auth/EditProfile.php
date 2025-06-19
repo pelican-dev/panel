@@ -12,11 +12,15 @@ use App\Services\Helpers\LanguageService;
 use App\Services\Users\ToggleTwoFactorService;
 use App\Services\Users\TwoFactorSetupService;
 use App\Services\Users\UserUpdateService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 use DateTimeZone;
+use Filament\Actions\Action as HeaderAction;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -51,6 +55,9 @@ use Laravel\Socialite\Facades\Socialite;
  */
 class EditProfile extends BaseEditProfile
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     private ToggleTwoFactorService $toggleTwoFactorService;
 
     protected OAuthService $oauthService;
@@ -508,7 +515,8 @@ class EditProfile extends BaseEditProfile
         return [];
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<HeaderAction|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             $this->getSaveFormAction()->formId('form'),

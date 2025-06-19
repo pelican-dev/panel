@@ -41,7 +41,7 @@ it('server description can be changed', function () {
     expect()->toLogActivities(1)
         ->and($logged->properties['old'])->toBe($originalDescription)
         ->and($logged->properties['new'])->toBe($newDescription)
-        ->and($server->description)->not()->toBe($originalDescription);
+        ->and($server->description)->toBe($newDescription);
 });
 
 it('server description cannot be changed', function () {
@@ -53,7 +53,7 @@ it('server description cannot be changed', function () {
         ->post("/api/client/servers/$server->uuid/settings/description", [
             'description' => 'Test Description',
         ])
-        ->assertStatus(Response::HTTP_NO_CONTENT);
+        ->assertStatus(Response::HTTP_FORBIDDEN);
 
     $server = $server->refresh();
     expect()->toLogActivities(0)
