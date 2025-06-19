@@ -8,12 +8,16 @@ use Closure;
 use Exception;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ImportEggAction extends Action
@@ -97,6 +101,21 @@ class ImportEggAction extends Action
                     Tab::make(trans('admin/egg.import.url'))
                         ->icon('tabler-world-upload')
                         ->schema([
+                            Select::make('github')
+                                ->label(trans('admin/egg.import.github'))
+                                ->options(cache('eggs.index'))
+                                ->selectablePlaceholder(false)
+                                ->searchable()
+                                ->preload()
+                                ->live()
+                                ->afterStateUpdated(function ($state, Set $set, Get $get) use ($isMultiple) {
+                                    if ($state) {
+                                        $urls = $isMultiple ? $get('urls') : [];
+                                        $urls[Str::uuid()->toString()] = ['url' => $state];
+                                        $set('urls', $urls);
+                                        $set('github', null);
+                                    }
+                                }),
                             Repeater::make('urls')
                                 ->itemLabel(fn (array $state) => str($state['url'])->afterLast('/egg-')->before('.json')->headline())
                                 ->hint(trans('admin/egg.import.url_help'))
