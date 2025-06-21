@@ -128,7 +128,7 @@ class ServerCreationService
             Arr::get($data, 'memory', 0),
             Arr::get($data, 'disk', 0),
             Arr::get($data, 'cpu', 0),
-            Arr::get($data, 'tags', []),
+            $deployment->getTags(),
         );
 
         return $this->allocationSelectionService->setDedicated($deployment->isDedicated())
