@@ -19,6 +19,7 @@ return [
         'import_failed' => 'Import Failed',
         'import_success' => 'Import Success',
         'github' => 'Add from Github',
+        'refresh' => 'Refresh',
     ],
     'in_use' => 'In Use',
     'servers' => 'Servers',

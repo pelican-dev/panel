@@ -2,6 +2,7 @@
 
 namespace App\Filament\Components\Actions;
 
+use App\Console\Commands\Egg\UpdateEggIndexCommand;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Closure;
@@ -17,6 +18,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -108,6 +110,11 @@ class ImportEggAction extends Action
                                 ->searchable()
                                 ->preload()
                                 ->live()
+                                ->hintIcon('tabler-refresh')
+                                ->hintIconTooltip(trans('admin/egg.import.refresh'))
+                                ->hintAction(function () {
+                                    Artisan::call(UpdateEggIndexCommand::class);
+                                })
                                 ->afterStateUpdated(function ($state, Set $set, Get $get) use ($isMultiple) {
                                     if ($state) {
                                         $urls = $isMultiple ? $get('urls') : [];
@@ -117,6 +124,7 @@ class ImportEggAction extends Action
                                     }
                                 }),
                             Repeater::make('urls')
+                                ->label('')
                                 ->itemLabel(fn (array $state) => str($state['url'])->afterLast('/egg-')->before('.json')->headline())
                                 ->hint(trans('admin/egg.import.url_help'))
                                 ->addActionLabel(trans('admin/egg.import.add_url'))
