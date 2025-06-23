@@ -3,22 +3,35 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\DatabaseHostResource\Pages;
+use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers;
 use App\Models\DatabaseHost;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
+use Exception;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\PageRegistration;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class DatabaseHostResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
+
     protected static ?string $model = DatabaseHost::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-database';
@@ -27,7 +40,7 @@ class DatabaseHostResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count() ?: null;
+        return (string) static::getEloquentQuery()->count() ?: null;
     }
 
     public static function getNavigationLabel(): string
@@ -50,7 +63,10 @@ class DatabaseHostResource extends Resource
         return trans('admin/dashboard.advanced');
     }
 
-    public static function table(Table $table): Table
+    /**
+     * @throws Exception
+     */
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([
@@ -88,9 +104,12 @@ class DatabaseHostResource extends Resource
             ]);
     }
 
-    public static function form(Schema $schema): Schema
+    /**
+     * @throws Exception
+     */
+    public static function form(Schema $form): Schema
     {
-        return $schema
+        return $form
             ->components([
                 Section::make()
                     ->columnSpanFull()
@@ -145,12 +164,21 @@ class DatabaseHostResource extends Resource
                             ->preload()
                             ->helperText(trans('admin/databasehost.linked_nodes_help'))
                             ->label(trans('admin/databasehost.linked_nodes'))
-                            ->relationship('nodes', 'name'),
+                            ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'))),
                     ]),
             ]);
     }
 
-    public static function getPages(): array
+    /** @return class-string<RelationManager>[] */
+    public static function getDefaultRelations(): array
+    {
+        return [
+            RelationManagers\DatabasesRelationManager::class,
+        ];
+    }
+
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListDatabaseHosts::route('/'),
@@ -158,5 +186,16 @@ class DatabaseHostResource extends Resource
             'view' => Pages\ViewDatabaseHost::route('/{record}'),
             'edit' => Pages\EditDatabaseHost::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        return $query->where(function (Builder $query) {
+            return $query->whereHas('nodes', function (Builder $query) {
+                $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'));
+            })->orDoesntHave('nodes');
+        });
     }
 }

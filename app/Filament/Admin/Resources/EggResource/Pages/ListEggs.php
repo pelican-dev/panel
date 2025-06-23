@@ -10,7 +10,10 @@ use App\Filament\Components\Tables\Actions\UpdateEggAction;
 use App\Filament\Components\Tables\Actions\UpdateEggBulkAction;
 use App\Filament\Components\Tables\Filters\TagsFilter;
 use App\Models\Egg;
-use Filament\Actions\CreateAction;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction as CreateHeaderAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -23,6 +26,9 @@ use Illuminate\Support\Str;
 
 class ListEggs extends ListRecords
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = EggResource::class;
 
     public function table(Table $table): Table
@@ -95,7 +101,8 @@ class ListEggs extends ListRecords
             ]);
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             ImportEggHeaderAction::make()

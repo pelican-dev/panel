@@ -8,13 +8,16 @@ use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Repositories\Daemon\DaemonPowerRepository;
 use Closure;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\HtmlString;
 
 class GSLToken extends FeatureProvider
 {
@@ -27,14 +30,14 @@ class GSLToken extends FeatureProvider
     public function getListeners(): array
     {
         return [
-            'gsl token expired',
-            'account not found',
+            '(gsl token expired)',
+            '(account not found)',
         ];
     }
 
     public function getId(): string
     {
-        return 'gsltoken';
+        return 'gsl_token';
     }
 
     /**
@@ -46,18 +49,19 @@ class GSLToken extends FeatureProvider
         $server = Filament::getTenant();
 
         /** @var ServerVariable $serverVariable */
-        $serverVariable = $server->serverVariables()->where('env_variable', 'STEAM_ACC')->first();
+        $serverVariable = $server->serverVariables()->whereHas('variable', function (Builder $query) {
+            $query->where('env_variable', 'STEAM_ACC');
+        })->first();
 
         return Action::make($this->getId())
             ->requiresConfirmation()
             ->modalHeading('Invalid GSL token')
             ->modalDescription('It seems like your Gameserver Login Token (GSL token) is invalid or has expired.')
             ->modalSubmitActionLabel('Update GSL Token')
-            ->disabledSchema(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
-            ->schema([
-                TextEntry::make('java')
-                    ->label('You can either <x-filament::link href="https://steamcommunity.com/dev/managegameservers" target="_blank">generate a new one</x-filament::link> and enter it below or leave the field blank to remove it
-                        completely.'),
+            ->disabledForm(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
+            ->form([
+                Placeholder::make('info')
+                    ->label(new HtmlString(Blade::render('You can either <x-filament::link href="https://steamcommunity.com/dev/managegameservers" target="_blank">generate a new one</x-filament::link> and enter it below or leave the field blank to remove it completely.'))),
                 TextInput::make('gsltoken')
                     ->label('GSL Token')
                     ->rules([
@@ -105,13 +109,13 @@ class GSLToken extends FeatureProvider
 
                     Notification::make()
                         ->title('GSL Token updated')
-                        ->body('Restart the server to use the new token.')
+                        ->body('Server will restart now.')
                         ->success()
                         ->send();
-                } catch (\Exception $e) {
+                } catch (Exception $exception) {
                     Notification::make()
-                        ->title('Error')
-                        ->body($e->getMessage())
+                        ->title('Could not update GSL Token')
+                        ->body($exception->getMessage())
                         ->danger()
                         ->send();
                 }

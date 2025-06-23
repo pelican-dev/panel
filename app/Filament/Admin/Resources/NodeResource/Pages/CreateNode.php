@@ -4,9 +4,11 @@ namespace App\Filament\Admin\Resources\NodeResource\Pages;
 
 use App\Filament\Admin\Resources\NodeResource;
 use App\Models\Node;
-use Filament\Actions\Action;
-use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\Grid;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
@@ -21,6 +23,9 @@ use Filament\Schemas\Schema;
 
 class CreateNode extends CreateRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = NodeResource::class;
 
     protected static bool $canCreateAnother = false;
@@ -124,15 +129,10 @@ class CreateNode extends CreateRecord
                                     'lg' => 1,
                                 ]),
 
-                            TextInput::make('daemon_listen')
-                                ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 1,
-                                    'md' => 1,
-                                    'lg' => 1,
-                                ])
-                                ->label(trans('admin/node.port'))
-                                ->helperText(trans('admin/node.port_help'))
+                            TextInput::make('daemon_connect')
+                                ->columnSpan(1)
+                                ->label(fn (Get $get) => $get('connection') === 'https_proxy' ? trans('admin/node.connect_port') : trans('admin/node.port'))
+                                ->helperText(fn (Get $get) => $get('connection') === 'https_proxy' ? trans('admin/node.connect_port_help') : trans('admin/node.port_help'))
                                 ->minValue(1)
                                 ->maxValue(65535)
                                 ->default(8080)
@@ -150,14 +150,15 @@ class CreateNode extends CreateRecord
                                 ->required()
                                 ->maxLength(100),
 
-                            ToggleButtons::make('scheme')
+                            Hidden::make('scheme')
+                                ->default(fn () => request()->isSecure() ? 'https' : 'http'),
+
+                            Hidden::make('behind_proxy')
+                                ->default(false),
+
+                            ToggleButtons::make('connection')
                                 ->label(trans('admin/node.ssl'))
-                                ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 1,
-                                    'md' => 1,
-                                    'lg' => 1,
-                                ])
+                                ->columnSpan(1)
                                 ->inline()
                                 ->helperText(function (Get $get) {
                                     if (request()->isSecure()) {
@@ -170,20 +171,43 @@ class CreateNode extends CreateRecord
 
                                     return '';
                                 })
-                                ->disableOptionWhen(fn (string $value): bool => $value === 'http' && request()->isSecure())
+                                ->disableOptionWhen(fn (string $value) => $value === 'http' && request()->isSecure())
                                 ->options([
                                     'http' => 'HTTP',
                                     'https' => 'HTTPS (SSL)',
+                                    'https_proxy' => 'HTTPS with (reverse) proxy',
                                 ])
                                 ->colors([
                                     'http' => 'warning',
                                     'https' => 'success',
+                                    'https_proxy' => 'success',
                                 ])
                                 ->icons([
                                     'http' => 'tabler-lock-open-off',
                                     'https' => 'tabler-lock',
+                                    'https_proxy' => 'tabler-shield-lock',
                                 ])
-                                ->default(fn () => request()->isSecure() ? 'https' : 'http'),
+                                ->default(fn () => request()->isSecure() ? 'https' : 'http')
+                                ->live()
+                                ->dehydrated(false)
+                                ->afterStateUpdated(function ($state, Set $set) {
+                                    $set('scheme', $state === 'http' ? 'http' : 'https');
+                                    $set('behind_proxy', $state === 'https_proxy');
+
+                                    $set('daemon_connect', $state === 'https_proxy' ? 443 : 8080);
+                                    $set('daemon_listen', 8080);
+                                }),
+
+                            TextInput::make('daemon_listen')
+                                ->columnSpan(1)
+                                ->label(trans('admin/node.listen_port'))
+                                ->helperText(trans('admin/node.listen_port_help'))
+                                ->minValue(1)
+                                ->maxValue(65535)
+                                ->default(8080)
+                                ->required()
+                                ->integer()
+                                ->visible(fn (Get $get) => $get('connection') === 'https_proxy'),
                         ]),
                     Step::make('advanced')
                         ->label(trans('admin/node.tabs.advanced_settings'))
@@ -398,5 +422,14 @@ class CreateNode extends CreateRecord
     protected function getFormActions(): array
     {
         return [];
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        if (!$data['behind_proxy']) {
+            $data['daemon_listen'] = $data['daemon_connect'];
+        }
+
+        return $data;
     }
 }

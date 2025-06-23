@@ -68,11 +68,11 @@ class DatabasesRelationManager extends RelationManager
                     ->label(trans('admin/databasehost.table.created_at')),
             ])
             ->actions([
-                \Filament\Actions\DeleteAction::make()
-                    ->authorize(fn (Database $database) => auth()->user()->can('delete database', $database)),
-                \Filament\Actions\ViewAction::make()
+                DeleteAction::make()
+                    ->authorize(fn (Database $database) => auth()->user()->can('delete', $database)),
+                ViewAction::make()
                     ->color('primary')
-                    ->hidden(fn () => !auth()->user()->can('viewList database')),
+                    ->hidden(fn () => !auth()->user()->can('viewAny', Database::class)),
             ]);
     }
 }

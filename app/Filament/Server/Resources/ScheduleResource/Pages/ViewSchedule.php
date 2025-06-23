@@ -7,6 +7,8 @@ use App\Filament\Server\Resources\ScheduleResource;
 use App\Models\Permission;
 use App\Models\Schedule;
 use App\Services\Schedules\ProcessScheduleService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
@@ -14,9 +16,13 @@ use Filament\Resources\Pages\ViewRecord;
 
 class ViewSchedule extends ViewRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = ScheduleResource::class;
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             Action::make('runNow')

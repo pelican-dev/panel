@@ -5,6 +5,10 @@ namespace App\Filament\Admin\Resources\EggResource\Pages;
 use App\Filament\Admin\Resources\EggResource;
 use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Models\EggVariable;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\Hidden;
@@ -28,11 +32,15 @@ use Filament\Schemas\Schema;
 
 class CreateEgg extends CreateRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = EggResource::class;
 
     protected static bool $canCreateAnother = false;
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             $this->getCreateFormAction()->formId('form'),

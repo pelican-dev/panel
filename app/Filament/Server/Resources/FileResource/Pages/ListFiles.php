@@ -40,19 +40,15 @@ use Livewire\Attributes\Locked;
 
 class ListFiles extends ListRecords
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = FileResource::class;
 
     #[Locked]
-    public string $path;
+    public string $path = '/';
 
     private DaemonFileRepository $fileRepository;
-
-    public function mount(?string $path = null): void
-    {
-        parent::mount();
-
-        $this->path = $path ?? '/';
-    }
 
     public function getBreadcrumbs(): array
     {
@@ -321,9 +317,9 @@ class ListFiles extends ListRecords
                     ->label('')
                     ->icon('tabler-trash')
                     ->requiresConfirmation()
-                    ->modalDescription(fn (File $file) => $file->name)
-                    ->modalHeading('Delete file?')
+                    ->modalHeading(fn (File $file) => trans('filament-actions::delete.single.modal.heading', ['label' => $file->name . ' ' . ($file->is_directory ? 'folder' : 'file')]))
                     ->action(function (File $file) {
+                        $this->deselectAllTableRecords();
                         $this->getDaemonFileRepository()->deleteFiles($this->path, [$file->name]);
 
                         Activity::event('server:file.delete')
@@ -406,10 +402,8 @@ class ListFiles extends ListRecords
             ]);
     }
 
-    /**
-     * @throws \Exception
-     */
-    protected function getHeaderActions(): array
+    /** @return array<HeaderAction|HeaderActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */
         $server = Filament::getTenant();
@@ -507,8 +501,9 @@ class ListFiles extends ListRecords
                 ->schema([
                     TextInput::make('searchTerm')
                         ->placeholder('Enter a search term, e.g. *.txt')
+                        ->required()
                         ->regex('/^[^*]*\*?[^*]*$/')
-                        ->minLength(3),
+                        ->minValue(3),
                 ])
                 ->action(fn ($data) => redirect(SearchFiles::getUrl([
                     'searchTerm' => $data['searchTerm'],

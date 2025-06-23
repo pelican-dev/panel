@@ -6,6 +6,9 @@ use App\Filament\Admin\Resources\NodeResource;
 use App\Filament\Components\Tables\Columns\NodeHealthColumn;
 use App\Filament\Components\Tables\Filters\TagsFilter;
 use App\Models\Node;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
@@ -15,6 +18,9 @@ use Filament\Tables\Table;
 
 class ListNodes extends ListRecords
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = NodeResource::class;
 
     public function table(Table $table): Table
@@ -72,7 +78,8 @@ class ListNodes extends ListRecords
             ]);
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Actions\Action|Actions\ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             CreateAction::make()

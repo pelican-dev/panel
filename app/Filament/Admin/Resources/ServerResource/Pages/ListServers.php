@@ -5,6 +5,8 @@ namespace App\Filament\Admin\Resources\ServerResource\Pages;
 use App\Filament\Server\Pages\Console;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Models\Server;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Actions\Action;
@@ -17,6 +19,9 @@ use Filament\Tables\Table;
 
 class ListServers extends ListRecords
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = ServerResource::class;
 
     public function table(Table $table): Table
@@ -68,13 +73,13 @@ class ListServers extends ListRecords
                     ->searchable(),
                 SelectColumn::make('allocation_id')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->hidden(!auth()->user()->can('update server'))
+                    ->hidden(!auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
                     ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
                     ->selectablePlaceholder(false)
                     ->sortable(),
                 TextColumn::make('allocation_id_readonly')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->hidden(auth()->user()->can('update server'))
+                    ->hidden(auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
                     ->state(fn (Server $server) => $server->allocation->address),
                 TextColumn::make('image')->hidden(),
                 TextColumn::make('backups_count')
@@ -101,7 +106,8 @@ class ListServers extends ListRecords
             ]);
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Actions\Action|Actions\ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             Actions\CreateAction::make()

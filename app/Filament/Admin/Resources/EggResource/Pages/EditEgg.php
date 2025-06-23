@@ -3,12 +3,15 @@
 namespace App\Filament\Admin\Resources\EggResource\Pages;
 
 use App\Filament\Admin\Resources\EggResource;
-use App\Filament\Admin\Resources\EggResource\RelationManagers\ServersRelationManager;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
 use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Models\Egg;
 use App\Models\EggVariable;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CodeEditor;
@@ -31,6 +34,9 @@ use Filament\Schemas\Schema;
 
 class EditEgg extends EditRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = EggResource::class;
 
     /**
@@ -250,7 +256,8 @@ class EditEgg extends EditRecord
             ]);
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             DeleteAction::make()
@@ -271,12 +278,5 @@ class EditEgg extends EditRecord
     protected function getFormActions(): array
     {
         return [];
-    }
-
-    public function getRelationManagers(): array
-    {
-        return [
-            ServersRelationManager::class,
-        ];
     }
 }

@@ -6,9 +6,14 @@ use App\Filament\Admin\Resources\WebhookResource\Pages;
 use App\Models\WebhookConfiguration;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Form;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -19,6 +24,11 @@ use Filament\Schemas\Schema;
 
 class WebhookResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
+
     protected static ?string $model = WebhookConfiguration::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-webhook';
@@ -50,7 +60,7 @@ class WebhookResource extends Resource
         return trans('admin/dashboard.advanced');
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([
@@ -76,9 +86,9 @@ class WebhookResource extends Resource
             ]);
     }
 
-    public static function form(Schema $schema): Schema
+    public static function form(Schema $form): Schema
     {
-        return $schema
+        return $form
             ->schema([
                 TextInput::make('endpoint')
                     ->label(trans('admin/webhook.endpoint'))
@@ -99,7 +109,8 @@ class WebhookResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListWebhookConfigurations::route('/'),

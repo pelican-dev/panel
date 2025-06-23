@@ -12,7 +12,6 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
@@ -232,7 +231,12 @@ class Server extends Model implements Validatable
 
     public function isInstalled(): bool
     {
-        return $this->status !== ServerState::Installing && $this->status !== ServerState::InstallFailed;
+        return $this->status !== ServerState::Installing && !$this->isFailedInstall();
+    }
+
+    public function isFailedInstall(): bool
+    {
+        return $this->status === ServerState::InstallFailed || $this->status === ServerState::ReinstallFailed;
     }
 
     public function isSuspended(): bool
@@ -350,9 +354,9 @@ class Server extends Model implements Validatable
         return $this->hasMany(Backup::class);
     }
 
-    public function mounts(): BelongsToMany
+    public function mounts(): MorphToMany
     {
-        return $this->belongsToMany(Mount::class);
+        return $this->morphToMany(Mount::class, 'mountable');
     }
 
     /**
@@ -431,25 +435,24 @@ class Server extends Model implements Validatable
 
     public function retrieveStatus(): ContainerStatus
     {
-        $status = cache()->get("servers.$this->uuid.container.status");
+        return cache()->remember("servers.$this->uuid.status", now()->addSeconds(15), function () {
+            // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+            $details = app(DaemonServerRepository::class)->setServer($this)->getDetails();
 
-        if ($status === null) {
-            $this->node->serverStatuses();
-
-            $status = cache()->get("servers.$this->uuid.container.status");
-        }
-
-        return ContainerStatus::tryFrom($status) ?? ContainerStatus::Missing;
+            return ContainerStatus::tryFrom(Arr::get($details, 'state')) ?? ContainerStatus::Missing;
+        });
     }
 
     /**
      * @return array<mixed>
      */
-    public function resources(): array
+    public function retrieveResources(): array
     {
-        return cache()->remember("resources:$this->uuid", now()->addSeconds(15), function () {
+        return cache()->remember("servers.$this->uuid.resources", now()->addSeconds(15), function () {
             // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
-            return Arr::get(app(DaemonServerRepository::class)->setServer($this)->getDetails(), 'utilization', []);
+            $details = app(DaemonServerRepository::class)->setServer($this)->getDetails();
+
+            return Arr::get($details, 'utilization', []);
         });
     }
 
@@ -457,7 +460,7 @@ class Server extends Model implements Validatable
     {
         $resourceAmount = $this->{$resourceKey} ?? 0;
         if (!$limit) {
-            $resourceAmount = $this->resources()[$resourceKey] ?? 0;
+            $resourceAmount = $this->retrieveResources()[$resourceKey] ?? 0;
         }
 
         if ($type === ServerResourceType::Time) {
@@ -490,7 +493,7 @@ class Server extends Model implements Validatable
     public function condition(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->isSuspended() ? ServerState::Suspended : $this->status ?? $this->retrieveStatus(),
+            get: fn () => $this->status ?? $this->retrieveStatus(),
         );
     }
 }

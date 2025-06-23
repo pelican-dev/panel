@@ -6,6 +6,7 @@ use App\Facades\Activity;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonPowerRepository;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Placeholder;
@@ -25,10 +26,11 @@ class JavaVersion extends FeatureProvider
     {
         return [
             'java.lang.UnsupportedClassVersionError',
-            'minecraft 1.17 requires running the server with java 16 or above',
-            'minecraft 1.18 requires running the server with java 17 or above',
             'unsupported major.minor version',
             'has been compiled by a more recent version of the java runtime',
+            'minecraft 1.17 requires running the server with java 16 or above',
+            'minecraft 1.18 requires running the server with java 17 or above',
+            'minecraft 1.19 requires running the server with java 17 or above',
         ];
     }
 
@@ -73,17 +75,18 @@ class JavaVersion extends FeatureProvider
                             ->property(['old' => $original, 'new' => $new])
                             ->log();
                     }
+
                     $powerRepository->setServer($server)->send('restart');
 
                     Notification::make()
                         ->title('Docker image updated')
-                        ->body('Restart the server to use the new image.')
+                        ->body('Server will restart now.')
                         ->success()
                         ->send();
-                } catch (\Exception $e) {
+                } catch (Exception $exception) {
                     Notification::make()
-                        ->title('Error')
-                        ->body($e->getMessage())
+                        ->title('Could not update docker image')
+                        ->body($exception->getMessage())
                         ->danger()
                         ->send();
                 }

@@ -6,11 +6,17 @@ use App\Filament\Admin\Resources\ApiKeyResource\Pages;
 use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\ApiKey;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
+use Exception;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Form;
@@ -20,6 +26,11 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ApiKeyResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
+
     protected static ?string $model = ApiKey::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-key';
@@ -56,7 +67,10 @@ class ApiKeyResource extends Resource
         return trans('admin/dashboard.advanced');
     }
 
-    public static function table(Table $table): Table
+    /**
+     * @throws Exception
+     */
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([
@@ -79,7 +93,7 @@ class ApiKeyResource extends Resource
                 TextColumn::make('user.username')
                     ->label(trans('admin/apikey.table.created_by'))
                     ->icon('tabler-user')
-                    ->url(fn (ApiKey $apiKey) => auth()->user()->can('update user', $apiKey->user) ? EditUser::getUrl(['record' => $apiKey->user]) : null),
+                    ->url(fn (ApiKey $apiKey) => auth()->user()->can('update', $apiKey->user) ? EditUser::getUrl(['record' => $apiKey->user]) : null),
             ])
             ->actions([
                 DeleteAction::make(),
@@ -92,9 +106,12 @@ class ApiKeyResource extends Resource
             ]);
     }
 
-    public static function form(Form|\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
+    /**
+     * @throws Exception
+     */
+    public static function form(Form|\Filament\Schemas\Schema $form): \Filament\Schemas\Schema
     {
-        return $schema
+        return $form
             ->schema([
                 Fieldset::make('Permissions')
                     ->columns([
@@ -142,7 +159,8 @@ class ApiKeyResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListApiKeys::route('/'),

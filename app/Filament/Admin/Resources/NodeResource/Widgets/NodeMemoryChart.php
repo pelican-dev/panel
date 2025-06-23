@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\NodeResource\Widgets;
 
 use App\Models\Node;
-use Carbon\Carbon;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Number;
@@ -16,19 +15,36 @@ class NodeMemoryChart extends ChartWidget
 
     public Node $node;
 
+    /**
+     * @var array<int, array{memory: string, timestamp: string}>
+     */
+    protected array $memoryHistory = [];
+
+    protected int $totalMemory = 0;
+
     protected function getData(): array
     {
-        $memUsed = collect(cache()->get("nodes.{$this->node->id}.memory_used"))->slice(-10)
-            ->map(fn ($value, $key) => [
-                'memory' => round(config('panel.use_binary_prefix') ? $value / 1024 / 1024 / 1024 : $value / 1000 / 1000 / 1000, 2),
-                'timestamp' => Carbon::createFromTimestamp($key, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
-            ])
-            ->all();
+        $sessionKey = "node_stats.{$this->node->id}";
+
+        $data = $this->node->statistics();
+
+        $this->totalMemory = session("{$sessionKey}.total_memory", $data['memory_total']);
+
+        $this->memoryHistory = session("{$sessionKey}.memory_history", []);
+        $this->memoryHistory[] = [
+            'memory' => round(config('panel.use_binary_prefix')
+                ? $data['memory_used'] / 1024 / 1024 / 1024
+                : $data['memory_used'] / 1000 / 1000 / 1000, 2),
+            'timestamp' => now(auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
+        ];
+
+        $this->memoryHistory = array_slice($this->memoryHistory, -60);
+        session()->put("{$sessionKey}.memory_history", $this->memoryHistory);
 
         return [
             'datasets' => [
                 [
-                    'data' => array_column($memUsed, 'memory'),
+                    'data' => array_column($this->memoryHistory, 'memory'),
                     'backgroundColor' => [
                         'rgba(96, 165, 250, 0.3)',
                     ],
@@ -36,7 +52,7 @@ class NodeMemoryChart extends ChartWidget
                     'fill' => true,
                 ],
             ],
-            'labels' => array_column($memUsed, 'timestamp'),
+            'labels' => array_column($this->memoryHistory, 'timestamp'),
             'locale' => auth()->user()->language ?? 'en',
         ];
     }
@@ -66,16 +82,15 @@ class NodeMemoryChart extends ChartWidget
 
     public function getHeading(): string
     {
-        $latestMemoryUsed = collect(cache()->get("nodes.{$this->node->id}.memory_used"))->last();
-        $totalMemory = collect(cache()->get("nodes.{$this->node->id}.memory_total"))->last();
+        $latestMemoryUsed = array_slice(end($this->memoryHistory), -60);
 
         $used = config('panel.use_binary_prefix')
-            ? Number::format($latestMemoryUsed / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($latestMemoryUsed / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+            ? Number::format($latestMemoryUsed['memory'], maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($latestMemoryUsed['memory'], maxPrecision: 2, locale: auth()->user()->language) . ' GB';
 
         $total = config('panel.use_binary_prefix')
-            ? Number::format($totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+            ? Number::format($this->totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
+            : Number::format($this->totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
 
         return trans('admin/node.memory_chart', ['used' => $used, 'total' => $total]);
     }

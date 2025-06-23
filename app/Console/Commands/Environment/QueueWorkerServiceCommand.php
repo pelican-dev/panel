@@ -18,6 +18,17 @@ class QueueWorkerServiceCommand extends Command
 
     public function handle(): void
     {
+        if (@file_exists('/.dockerenv')) {
+            $result = Process::run('supervisorctl restart queue-worker');
+            if ($result->failed()) {
+                $this->error('Error restarting service: ' . $result->errorOutput());
+
+                return;
+            }
+            $this->line('Queue worker service file updated successfully.');
+
+            return;
+        }
         $serviceName = $this->option('service-name') ?? $this->ask('Queue worker service name', 'pelican-queue');
         $path = '/etc/systemd/system/' . $serviceName  . '.service';
 

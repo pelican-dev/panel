@@ -3,14 +3,13 @@
 namespace App\Filament\Admin\Widgets;
 
 use Filament\Actions\Action;
-use Filament\Widgets\Widget;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Form;
 
-class CanaryWidget extends Widget
+class CanaryWidget extends FormWidget
 {
-    protected string $view = 'filament.admin.widgets.canary-widget';
-
-    protected static bool $isLazy = false;
-
     protected static ?int $sort = 1;
 
     public static function canView(): bool
@@ -18,14 +17,28 @@ class CanaryWidget extends Widget
         return config('app.version') === 'canary';
     }
 
-    public function getViewData(): array
+    public function form(Form $form): Form
     {
-        return [
-            'action' => Action::make('github')
-                ->label(trans('admin/dashboard.sections.intro-developers.button_issues'))
-                ->icon('tabler-brand-github')
-                ->url('https://github.com/pelican-dev/panel/issues', true)
-                ->toHtmlString(),
-        ];
+        return $form
+            ->schema([
+                Section::make(trans('admin/dashboard.sections.intro-developers.heading'))
+                    ->icon('tabler-code')
+                    ->iconColor('primary')
+                    ->collapsible()
+                    ->collapsed()
+                    ->persistCollapsed()
+                    ->schema([
+                        Placeholder::make('')
+                            ->content(trans('admin/dashboard.sections.intro-developers.content')),
+                        Placeholder::make('')
+                            ->content(trans('admin/dashboard.sections.intro-developers.extra_note')),
+                    ])
+                    ->headerActions([
+                        Action::make('issues')
+                            ->label(trans('admin/dashboard.sections.intro-developers.button_issues'))
+                            ->icon('tabler-brand-github')
+                            ->url('https://github.com/pelican-dev/panel/issues', true),
+                    ]),
+            ]);
     }
 }

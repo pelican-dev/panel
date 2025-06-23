@@ -25,7 +25,7 @@ class RotateDatabasePasswordAction extends Action
 
         $this->icon('tabler-refresh');
 
-        $this->authorize(fn (Database $database) => auth()->user()->can('update database', $database));
+        $this->authorize(fn (Database $database) => auth()->user()->can('update', $database));
 
         $this->modalHeading(trans('admin/databasehost.rotate_password'));
 

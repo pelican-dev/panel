@@ -6,10 +6,15 @@ use App\Facades\Activity;
 use App\Filament\Server\Resources\ScheduleResource;
 use App\Models\Schedule;
 use Filament\Actions\DeleteAction;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use App\Traits\Filament\CanCustomizeHeaderActions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditSchedule extends EditRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = ScheduleResource::class;
 
     protected function afterSave(): void
@@ -35,7 +40,8 @@ class EditSchedule extends EditRecord
         return $data;
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Actions\Action|Actions\ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             DeleteAction::make()

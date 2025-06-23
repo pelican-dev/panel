@@ -4,6 +4,7 @@ namespace App\Filament\Server\Widgets;
 
 use App\Models\Server;
 use Carbon\Carbon;
+use Filament\Facades\Filament;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Number;
@@ -16,10 +17,19 @@ class ServerCpuChart extends ChartWidget
 
     public ?Server $server = null;
 
+    public static function canView(): bool
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        return !$server->isInConflictState() && !$server->retrieveStatus()->isOffline();
+    }
+
     protected function getData(): array
     {
+        $period = auth()->user()->getCustomization()['console_graph_period'] ?? 30;
         $cpu = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))
-            ->slice(-10)
+            ->slice(-$period)
             ->map(fn ($value, $key) => [
                 'cpu' => Number::format($value, maxPrecision: 2),
                 'timestamp' => Carbon::createFromTimestamp($key, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),

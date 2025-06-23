@@ -2,59 +2,29 @@
 
 namespace App\Filament\Server\Components;
 
-use BackedEnum;
 use Closure;
-use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Concerns\CanOpenUrl;
-use Filament\Schemas\Components\Concerns\HasDescription;
-use Illuminate\Contracts\Support\Htmlable;
+use Filament\Support\Concerns\EvaluatesClosures;
+use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Contracts\View\View;
 
 class SmallStatBlock extends Component
 {
-    use CanOpenUrl;
-    use HasDescription;
+    use EvaluatesClosures;
 
-    protected string $view = 'filament.components.server-small-data-block';
+    protected bool|Closure $copyOnClick = false;
 
-    protected string|BackedEnum|null $icon = null;
+    public function copyOnClick(bool|Closure $copyOnClick = true): static
+    {
+        $this->copyOnClick = $copyOnClick;
 
     protected string $value;
 
-    final public function __construct(string $label, string $value)
+    public function shouldCopyOnClick(): bool
     {
-        $this->label($label);
-        $this->value($value);
+        return $this->evaluate($this->copyOnClick);
     }
 
-    /**
-     * @return SmallStatBlock
-     */
-    public static function make(string $label, string $value): static
-    {
-        return app(static::class, ['label' => $label, 'value' => $value]);
-    }
-
-    public function icon(string|BackedEnum|null $icon): static
-    {
-        $this->icon = $icon;
-
-        return $this;
-    }
-
-    /**
-     * @return SmallStatBlock
-     */
-    private function value(string $value): static
-    {
-        $this->value = $value;
-
-        return $this;
-    }
-
-    /**
-     * @return scalar | Htmlable | Closure
-     */
-    public function getValue(): mixed
+    public function render(): View
     {
         return value($this->value);
     }

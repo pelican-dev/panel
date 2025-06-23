@@ -19,7 +19,7 @@ class DaemonServerRepository extends DaemonRepository
     public function getDetails(): array
     {
         try {
-            return $this->getHttpClient()->get("/api/servers/{$this->server->uuid}")->throw()->json();
+            return $this->getHttpClient()->connectTimeout(1)->timeout(1)->get("/api/servers/{$this->server->uuid}")->throw()->json();
         } catch (RequestException $exception) {
             $cfId = $exception->response->header('Cf-Ray');
             $cfCache = $exception->response->header('Cf-Cache-Status');
@@ -140,5 +140,13 @@ class DaemonServerRepository extends DaemonRepository
             ->post("/api/servers/{$this->server->uuid}/ws/deny", [
                 'jtis' => [md5($id . $this->server->uuid)],
             ]);
+    }
+
+    public function getInstallLogs(): string
+    {
+        return $this->getHttpClient()
+            ->get("/api/servers/{$this->server->uuid}/install-logs")
+            ->throw()
+            ->json('data');
     }
 }

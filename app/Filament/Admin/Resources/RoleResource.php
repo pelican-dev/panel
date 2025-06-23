@@ -10,10 +10,16 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Fieldset;
@@ -26,6 +32,11 @@ use Spatie\Permission\Contracts\Permission;
 
 class RoleResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
+
     protected static ?string $model = Role::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-users-group';
@@ -57,7 +68,7 @@ class RoleResource extends Resource
         return static::getModel()::count() ?: null;
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([
@@ -69,6 +80,11 @@ class RoleResource extends Resource
                     ->badge()
                     ->counts('permissions')
                     ->formatStateUsing(fn (Role $role, $state) => $role->isRootAdmin() ? trans('admin/role.all') : $state),
+                TextColumn::make('nodes.name')
+                    ->icon('tabler-server-2')
+                    ->label(trans('admin/role.nodes'))
+                    ->badge()
+                    ->placeholder(trans('admin/role.all')),
                 TextColumn::make('users_count')
                     ->label(trans('admin/role.users'))
                     ->counts('users')
@@ -94,7 +110,7 @@ class RoleResource extends Resource
     /**
      * @throws Exception
      */
-    public static function form(Schema $schema): Schema
+    public static function form(Schema $form): Schema
     {
         $permissionSections = [];
 
@@ -108,7 +124,7 @@ class RoleResource extends Resource
             $permissionSections[] = self::makeSection($model, $options);
         }
 
-        return $schema
+        return $form
             ->columns(1)
             ->components([
                 TextInput::make('name')
@@ -128,6 +144,14 @@ class RoleResource extends Resource
                     ->label(trans('admin/role.permissions'))
                     ->state(trans('admin/role.root_admin', ['role' => Role::ROOT_ADMIN]))
                     ->visible(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
+                Select::make('nodes')
+                    ->label(trans('admin/role.nodes'))
+                    ->multiple()
+                    ->relationship('nodes', 'name')
+                    ->searchable(['name', 'fqdn'])
+                    ->preload()
+                    ->hint(trans('admin/role.nodes_hint'))
+                    ->hidden(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
             ]);
     }
 
@@ -138,6 +162,8 @@ class RoleResource extends Resource
      */
     private static function makeSection(string $model, array $options): Section
     {
+        $model = ucwords($model);
+
         $icon = null;
 
         if (class_exists('\App\Filament\Admin\Resources\\' . $model . 'Resource')) {
@@ -189,7 +215,8 @@ class RoleResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListRoles::route('/'),

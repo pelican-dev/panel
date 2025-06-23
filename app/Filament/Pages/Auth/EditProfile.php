@@ -12,6 +12,8 @@ use App\Services\Helpers\LanguageService;
 use App\Services\Users\ToggleTwoFactorService;
 use App\Services\Users\TwoFactorSetupService;
 use App\Services\Users\UserUpdateService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
@@ -41,6 +43,7 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Socialite\Facades\Socialite;
@@ -50,6 +53,9 @@ use Laravel\Socialite\Facades\Socialite;
  */
 class EditProfile extends \Filament\Auth\Pages\EditProfile
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     private ToggleTwoFactorService $toggleTwoFactorService;
 
     public function boot(ToggleTwoFactorService $toggleTwoFactorService): void
@@ -288,10 +294,12 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
                                                     $get('allowed_ips'),
                                                 );
 
-                                                Activity::event('user:api-key.create')
-                                                    ->subject($token->accessToken)
-                                                    ->property('identifier', $token->accessToken->identifier)
-                                                    ->log();
+                                                        Activity::event('user:api-key.create')
+                                                            ->actor($user)
+                                                            ->subject($user)
+                                                            ->subject($token->accessToken)
+                                                            ->property('identifier', $token->accessToken->identifier)
+                                                            ->log();
 
                                                 Notification::make()
                                                     ->title(trans('profile.key_created'))
@@ -362,6 +370,95 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
                                             ->options([
                                                 'grid' => trans('profile.grid'),
                                                 'table' => trans('profile.table'),
+                                            ]),
+                                        Section::make(trans('profile.console'))
+                                            ->collapsible()
+                                            ->icon('tabler-brand-tabler')
+                                            ->columns(4)
+                                            ->schema([
+                                                TextInput::make('console_font_size')
+                                                    ->label(trans('profile.font_size'))
+                                                    ->columnSpan(1)
+                                                    ->minValue(1)
+                                                    ->numeric()
+                                                    ->required()
+                                                    ->default(14),
+                                                Select::make('console_font')
+                                                    ->label(trans('profile.font'))
+                                                    ->required()
+                                                    ->options(function () {
+                                                        $fonts = [
+                                                            'monospace' => 'monospace', //default
+                                                        ];
+
+                                                        if (!Storage::disk('public')->exists('fonts')) {
+                                                            Storage::disk('public')->makeDirectory('fonts');
+                                                            $this->fillForm();
+                                                        }
+
+                                                        foreach (Storage::disk('public')->allFiles('fonts') as $file) {
+                                                            $fileInfo = pathinfo($file);
+
+                                                            if ($fileInfo['extension'] === 'ttf') {
+                                                                $fonts[$fileInfo['filename']] = $fileInfo['filename'];
+                                                            }
+                                                        }
+
+                                                        return $fonts;
+                                                    })
+                                                    ->reactive()
+                                                    ->default('monospace')
+                                                    ->afterStateUpdated(fn ($state, Set $set) => $set('font_preview', $state)),
+                                                Placeholder::make('font_preview')
+                                                    ->label(trans('profile.font_preview'))
+                                                    ->columnSpan(2)
+                                                    ->content(function (Get $get) {
+                                                        $fontName = $get('console_font') ?? 'monospace';
+                                                        $fontSize = $get('console_font_size') . 'px';
+                                                        $style = <<<CSS
+                                                            .preview-text {
+                                                                font-family: $fontName;
+                                                                font-size: $fontSize;
+                                                                margin-top: 10px;
+                                                                display: block;
+                                                            }
+                                                        CSS;
+                                                        if ($fontName !== 'monospace') {
+                                                            $fontUrl = asset("storage/fonts/$fontName.ttf");
+                                                            $style = <<<CSS
+                                                                @font-face {
+                                                                    font-family: $fontName;
+                                                                    src: url("$fontUrl");
+                                                                }
+                                                                $style
+                                                            CSS;
+                                                        }
+
+                                                        return new HtmlString(<<<HTML
+                                                            <style>
+                                                            {$style}  
+                                                            </style>
+                                                            <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
+                                                        HTML);
+                                                    }),
+                                                TextInput::make('console_graph_period')
+                                                    ->label(trans('profile.graph_period'))
+                                                    ->suffix(trans('profile.seconds'))
+                                                    ->hintIcon('tabler-question-mark')
+                                                    ->hintIconTooltip(trans('profile.graph_period_helper'))
+                                                    ->columnSpan(2)
+                                                    ->numeric()
+                                                    ->default(30)
+                                                    ->minValue(10)
+                                                    ->maxValue(120)
+                                                    ->required(),
+                                                TextInput::make('console_rows')
+                                                    ->label(trans('profile.rows'))
+                                                    ->minValue(1)
+                                                    ->numeric()
+                                                    ->required()
+                                                    ->columnSpan(2)
+                                                    ->default(30),
                                             ]),
                                     ]),
                                 Section::make(trans('profile.console'))
@@ -435,7 +532,8 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
         return [];
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<HeaderAction|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             $this->getSaveFormAction()->formId('form'),
@@ -446,12 +544,14 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $moarbetterdata = [
+            'console_font' => $data['console_font'],
             'console_font_size' => $data['console_font_size'],
             'console_rows' => $data['console_rows'],
+            'console_graph_period' => $data['console_graph_period'],
             'dashboard_layout' => $data['dashboard_layout'],
         ];
 
-        unset($data['dashboard_layout'], $data['console_font_size'], $data['console_rows']);
+        unset($data['console_font'],$data['console_font_size'], $data['console_rows'], $data['dashboard_layout']);
         $data['customization'] = json_encode($moarbetterdata);
 
         return $data;
@@ -461,8 +561,10 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
     {
         $moarbetterdata = json_decode($data['customization'], true);
 
+        $data['console_font'] = $moarbetterdata['console_font'] ?? 'monospace';
         $data['console_font_size'] = $moarbetterdata['console_font_size'] ?? 14;
         $data['console_rows'] = $moarbetterdata['console_rows'] ?? 30;
+        $data['console_graph_period'] = $moarbetterdata['console_graph_period'] ?? 30;
         $data['dashboard_layout'] = $moarbetterdata['dashboard_layout'] ?? 'grid';
 
         return $data;

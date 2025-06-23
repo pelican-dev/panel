@@ -3,19 +3,24 @@
 namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Admin\Resources\DatabaseHostResource;
-use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers\DatabasesRelationManager;
 use App\Models\DatabaseHost;
 use App\Services\Databases\Hosts\HostUpdateService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use PDOException;
-use Throwable;
 
 class EditDatabaseHost extends EditRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = DatabaseHostResource::class;
 
     private HostUpdateService $hostUpdateService;
@@ -25,7 +30,8 @@ class EditDatabaseHost extends EditRecord
         $this->hostUpdateService = $hostUpdateService;
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             DeleteAction::make()
@@ -40,21 +46,6 @@ class EditDatabaseHost extends EditRecord
         return [];
     }
 
-    public function getRelationManagers(): array
-    {
-        if (DatabasesRelationManager::canViewForRecord($this->getRecord(), static::class)) {
-            return [
-                DatabasesRelationManager::class,
-            ];
-        }
-
-        return [];
-    }
-
-    /**
-     * @throws Halt
-     * @throws Throwable
-     */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         if (!$record instanceof DatabaseHost) {

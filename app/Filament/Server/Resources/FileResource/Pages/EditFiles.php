@@ -11,6 +11,8 @@ use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Facades\Filament;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CodeEditor;
@@ -26,6 +28,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
@@ -36,6 +39,8 @@ use Livewire\Attributes\Locked;
  */
 class EditFiles extends Page
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
     use InteractsWithFormActions;
     use InteractsWithForms;
 
@@ -178,6 +183,15 @@ class EditFiles extends Page
                 ->info()
                 ->closable()
                 ->send();
+
+            try {
+                $this->getDaemonFileRepository()->getDirectory('/');
+            } catch (ConnectionException) {
+                AlertBanner::make('node_connection_error')
+                    ->title('Could not connect to the node!')
+                    ->danger()
+                    ->send();
+            }
         }
     }
 
@@ -230,6 +244,14 @@ class EditFiles extends Page
         $this->fileRepository ??= (new DaemonFileRepository())->setServer($server);
 
         return $this->fileRepository;
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
+    {
+        return parent::getUrl($parameters, $isAbsolute, $panel, $tenant) . '/';
     }
 
     public static function route(string $path): PageRegistration
