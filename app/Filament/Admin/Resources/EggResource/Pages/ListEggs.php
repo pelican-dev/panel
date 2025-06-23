@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\EggResource\Pages;
 
+use Exception;
 use App\Filament\Admin\Resources\EggResource;
 use App\Filament\Components\Actions\ImportEggAction as ImportEggHeaderAction;
 use App\Filament\Components\Tables\Actions\ExportEggAction;
@@ -33,7 +34,7 @@ class ListEggs extends ListRecords
     protected static string $resource = EggResource::class;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function table(Table $table): Table
     {

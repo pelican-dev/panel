@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\User;
 
+use App\Exceptions\Model\DataValidationException;
 use App\Models\User;
 use Illuminate\Console\Command;
 
@@ -14,7 +15,7 @@ class DisableTwoFactorCommand extends Command
     /**
      * Handle command execution process.
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function handle(): void
     {

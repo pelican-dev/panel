@@ -2,6 +2,7 @@
 
 namespace App\Extensions\Captcha\Providers;
 
+use Filament\Schemas\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Str;
@@ -38,7 +39,7 @@ abstract class CaptchaProvider
 
     abstract public function getId(): string;
 
-    abstract public function getComponent(): \Filament\Schemas\Components\Component;
+    abstract public function getComponent(): Component;
 
     /**
      * @return array<string, string|string[]|bool|null>
@@ -54,7 +55,7 @@ abstract class CaptchaProvider
     }
 
     /**
-     * @return \Filament\Schemas\Components\Component[]
+     * @return Component[]
      */
     public function getSettingsForm(): array
     {

@@ -2,6 +2,10 @@
 
 namespace App\Services\Users;
 
+use Throwable;
+use PragmaRX\Google2FA\Exceptions\IncompatibleWithGoogleAuthenticatorException;
+use PragmaRX\Google2FA\Exceptions\InvalidCharactersException;
+use PragmaRX\Google2FA\Exceptions\SecretKeyTooShortException;
 use App\Models\User;
 use PragmaRX\Google2FA\Google2FA;
 use Illuminate\Database\ConnectionInterface;
@@ -22,11 +26,11 @@ class ToggleTwoFactorService
      *
      * @return string[]
      *
-     * @throws \Throwable
-     * @throws \PragmaRX\Google2FA\Exceptions\IncompatibleWithGoogleAuthenticatorException
-     * @throws \PragmaRX\Google2FA\Exceptions\InvalidCharactersException
-     * @throws \PragmaRX\Google2FA\Exceptions\SecretKeyTooShortException
-     * @throws \App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid
+     * @throws Throwable
+     * @throws IncompatibleWithGoogleAuthenticatorException
+     * @throws InvalidCharactersException
+     * @throws SecretKeyTooShortException
+     * @throws TwoFactorAuthenticationTokenInvalid
      */
     public function handle(User $user, string $token, ?bool $toggleState = null): array
     {

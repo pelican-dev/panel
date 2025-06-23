@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Installer\Steps;
 
+use Filament\Schemas\Components\Wizard\Step;
 use App\Livewire\Installer\PanelInstaller;
 use Exception;
 use Filament\Forms\Components\TextInput;
@@ -21,9 +22,9 @@ class DatabaseStep
         'pgsql' => 'PostgreSQL',
     ];
 
-    public static function make(PanelInstaller $installer): \Filament\Schemas\Components\Wizard\Step
+    public static function make(PanelInstaller $installer): Step
     {
-        return \Filament\Schemas\Components\Wizard\Step::make('database')
+        return Step::make('database')
             ->label('Database')
             ->columns()
             ->schema([

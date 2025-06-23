@@ -28,7 +28,7 @@ class UpdateWidget extends FormWidget
         $isLatest = $this->softwareVersionService->isLatestPanel();
 
         return $schema
-            ->schema([
+            ->components([
                 $isLatest
                 ? Section::make(trans('admin/dashboard.sections.intro-no-update.heading'))
                     ->icon('tabler-checkbox')

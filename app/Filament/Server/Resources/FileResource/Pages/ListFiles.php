@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\FileResource\Pages;
 
+use Exception;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
 use App\Models\File;
@@ -70,7 +71,7 @@ class ListFiles extends ListRecords
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function table(Table $table): Table
     {
@@ -405,7 +406,7 @@ class ListFiles extends ListRecords
     }
 
     /** @return array<HeaderAction|HeaderActionGroup>
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getDefaultHeaderActions(): array
     {

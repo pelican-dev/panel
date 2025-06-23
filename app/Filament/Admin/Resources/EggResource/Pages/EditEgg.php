@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\EggResource\Pages;
 
+use Exception;
 use App\Filament\Admin\Resources\EggResource;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
@@ -40,12 +41,12 @@ class EditEgg extends EditRecord
     protected static string $resource = EggResource::class;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Tabs::make()->tabs([
                     Tab::make(trans('admin/egg.tabs.configuration'))
                         ->columns(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 4])

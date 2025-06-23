@@ -2,6 +2,7 @@
 
 namespace App\Services\Nodes;
 
+use Throwable;
 use Illuminate\Support\Str;
 use App\Models\Node;
 use Illuminate\Database\ConnectionInterface;
@@ -24,7 +25,7 @@ class NodeUpdateService
      *
      * @param  array<string, mixed>  $data
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(Node $node, array $data, bool $resetToken = false): Node
     {
@@ -36,7 +37,7 @@ class NodeUpdateService
         }
 
         [$updated, $exception] = $this->connection->transaction(function () use ($data, $node) {
-            /** @var \App\Models\Node $updated */
+            /** @var Node $updated */
             $updated = $node->replicate();
             $updated->exists = true;
             $updated->forceFill($data)->save();

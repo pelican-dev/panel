@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use Exception;
 use App\Models\WebhookConfiguration;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -30,7 +31,7 @@ class ProcessWebhook implements ShouldQueue
                 ->post($this->webhookConfiguration->endpoint, $this->data)
                 ->throw();
             $successful = now();
-        } catch (\Exception) {
+        } catch (Exception) {
             $successful = null;
         }
 

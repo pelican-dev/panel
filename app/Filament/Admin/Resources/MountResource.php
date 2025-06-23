@@ -2,6 +2,11 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\MountResource\Pages\ListMounts;
+use App\Filament\Admin\Resources\MountResource\Pages\CreateMount;
+use App\Filament\Admin\Resources\MountResource\Pages\ViewMount;
+use App\Filament\Admin\Resources\MountResource\Pages\EditMount;
+use Exception;
 use App\Filament\Admin\Resources\MountResource\Pages;
 use App\Models\Mount;
 use App\Traits\Filament\CanCustomizePages;
@@ -34,7 +39,7 @@ class MountResource extends Resource
 
     protected static ?string $model = Mount::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-layers-linked';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-layers-linked';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -64,7 +69,7 @@ class MountResource extends Resource
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function defaultTable(Table $table): Table
     {
@@ -108,12 +113,12 @@ class MountResource extends Resource
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public static function form(Schema $form): Schema
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make()->schema([
                     TextInput::make('name')
                         ->label(trans('admin/mount.name'))
@@ -182,10 +187,10 @@ class MountResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'index' => Pages\ListMounts::route('/'),
-            'create' => Pages\CreateMount::route('/create'),
-            'view' => Pages\ViewMount::route('/{record}'),
-            'edit' => Pages\EditMount::route('/{record}/edit'),
+            'index' => ListMounts::route('/'),
+            'create' => CreateMount::route('/create'),
+            'view' => ViewMount::route('/{record}'),
+            'edit' => EditMount::route('/{record}/edit'),
         ];
     }
 

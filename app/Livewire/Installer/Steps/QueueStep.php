@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Installer\Steps;
 
+use Filament\Schemas\Components\Wizard\Step;
 use App\Livewire\Installer\PanelInstaller;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -18,9 +19,9 @@ class QueueStep
         'sync' => 'Sync',
     ];
 
-    public static function make(PanelInstaller $installer): \Filament\Schemas\Components\Wizard\Step
+    public static function make(PanelInstaller $installer): Step
     {
-        return \Filament\Schemas\Components\Wizard\Step::make('queue')
+        return Step::make('queue')
             ->label('Queue')
             ->columns()
             ->schema([

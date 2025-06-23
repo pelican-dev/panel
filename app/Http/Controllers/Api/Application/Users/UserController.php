@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\Application\Users;
 
+use App\Exceptions\Model\DataValidationException;
+use Exception;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -78,7 +80,7 @@ class UserController extends ApplicationApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function update(UpdateUserRequest $request, User $user): array
     {
@@ -143,8 +145,8 @@ class UserController extends ApplicationApiController
      * Store a new user on the system. Returns the created user and an HTTP/201
      * header on successful creation.
      *
-     * @throws \Exception
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws Exception
+     * @throws DataValidationException
      */
     public function store(StoreUserRequest $request): JsonResponse
     {

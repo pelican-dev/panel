@@ -2,6 +2,11 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\UserResource\RelationManagers\ServersRelationManager;
+use App\Filament\Admin\Resources\UserResource\Pages\ListUsers;
+use App\Filament\Admin\Resources\UserResource\Pages\CreateUser;
+use App\Filament\Admin\Resources\UserResource\Pages\ViewUser;
+use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Admin\Resources\UserResource\RelationManagers;
 use App\Models\Role;
@@ -33,7 +38,7 @@ class UserResource extends Resource
 
     protected static ?string $model = User::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-users';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-users';
 
     protected static ?string $recordTitleAttribute = 'username';
 
@@ -161,7 +166,7 @@ class UserResource extends Resource
     public static function getDefaultRelations(): array
     {
         return [
-            RelationManagers\ServersRelationManager::class,
+            ServersRelationManager::class,
         ];
     }
 
@@ -169,10 +174,10 @@ class UserResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'view' => Pages\ViewUser::route('/{record}'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => ListUsers::route('/'),
+            'create' => CreateUser::route('/create'),
+            'view' => ViewUser::route('/{record}'),
+            'edit' => EditUser::route('/{record}/edit'),
         ];
     }
 }

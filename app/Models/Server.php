@@ -2,6 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Notifications\DatabaseNotificationCollection;
+use Illuminate\Notifications\DatabaseNotification;
+use Database\Factories\ServerFactory;
+use Illuminate\Database\Eloquent\Builder;
 use App\Contracts\Validatable;
 use App\Enums\ContainerStatus;
 use App\Enums\ServerResourceType;
@@ -53,76 +59,76 @@ use App\Services\Subusers\SubuserDeletionService;
  * @property int|null $allocation_limit
  * @property int|null $database_limit
  * @property int|null $backup_limit
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $installed_at
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityLog[] $activity
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $installed_at
+ * @property Collection|ActivityLog[] $activity
  * @property int|null $activity_count
- * @property \App\Models\Allocation|null $allocation
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Allocation[] $allocations
+ * @property Allocation|null $allocation
+ * @property Collection|Allocation[] $allocations
  * @property int|null $allocations_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Backup[] $backups
+ * @property Collection|Backup[] $backups
  * @property int|null $backups_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Database[] $databases
+ * @property Collection|Database[] $databases
  * @property int|null $databases_count
- * @property \App\Models\Egg|null $egg
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Mount[] $mounts
+ * @property Egg|null $egg
+ * @property Collection|Mount[] $mounts
  * @property int|null $mounts_count
- * @property \App\Models\Node $node
- * @property \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property Node $node
+ * @property DatabaseNotificationCollection|DatabaseNotification[] $notifications
  * @property int|null $notifications_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Schedule[] $schedules
+ * @property Collection|Schedule[] $schedules
  * @property int|null $schedules_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Subuser[] $subusers
+ * @property Collection|Subuser[] $subusers
  * @property int|null $subusers_count
- * @property \App\Models\ServerTransfer|null $transfer
- * @property \App\Models\User $user
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\EggVariable[] $variables
+ * @property ServerTransfer|null $transfer
+ * @property User $user
+ * @property Collection|EggVariable[] $variables
  * @property int|null $variables_count
  *
- * @method static \Database\Factories\ServerFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|Server newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Server newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Server query()
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereAllocationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereAllocationLimit($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereBackupLimit($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereCpu($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereDatabaseLimit($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereDisk($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereEggId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereExternalId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereImage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereIo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereMemory($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereNodeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereOomKiller($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereOwnerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereSkipScripts($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereStartup($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereSwap($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereThreads($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereuuid_short($value)
+ * @method static ServerFactory factory(...$parameters)
+ * @method static Builder|Server newModelQuery()
+ * @method static Builder|Server newQuery()
+ * @method static Builder|Server query()
+ * @method static Builder|Server whereAllocationId($value)
+ * @method static Builder|Server whereAllocationLimit($value)
+ * @method static Builder|Server whereBackupLimit($value)
+ * @method static Builder|Server whereCpu($value)
+ * @method static Builder|Server whereCreatedAt($value)
+ * @method static Builder|Server whereDatabaseLimit($value)
+ * @method static Builder|Server whereDescription($value)
+ * @method static Builder|Server whereDisk($value)
+ * @method static Builder|Server whereEggId($value)
+ * @method static Builder|Server whereExternalId($value)
+ * @method static Builder|Server whereId($value)
+ * @method static Builder|Server whereImage($value)
+ * @method static Builder|Server whereIo($value)
+ * @method static Builder|Server whereMemory($value)
+ * @method static Builder|Server whereName($value)
+ * @method static Builder|Server whereNodeId($value)
+ * @method static Builder|Server whereOomKiller($value)
+ * @method static Builder|Server whereOwnerId($value)
+ * @method static Builder|Server whereSkipScripts($value)
+ * @method static Builder|Server whereStartup($value)
+ * @method static Builder|Server whereStatus($value)
+ * @method static Builder|Server whereSwap($value)
+ * @method static Builder|Server whereThreads($value)
+ * @method static Builder|Server whereUpdatedAt($value)
+ * @method static Builder|Server whereUuid($value)
+ * @method static Builder|Server whereuuid_short($value)
  *
  * @property string[]|null $docker_labels
  * @property string|null $ports
  * @property-read ContainerStatus|ServerState $condition
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\EggVariable> $eggVariables
+ * @property-read Collection<int, EggVariable> $eggVariables
  * @property-read int|null $egg_variables_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ServerVariable> $serverVariables
+ * @property-read Collection<int, ServerVariable> $serverVariables
  * @property-read int|null $server_variables_count
  *
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereDockerLabels($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereInstalledAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server wherePorts($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuidShort($value)
+ * @method static Builder|Server whereDockerLabels($value)
+ * @method static Builder|Server whereInstalledAt($value)
+ * @method static Builder|Server wherePorts($value)
+ * @method static Builder|Server whereUuidShort($value)
  */
 class Server extends Model implements Validatable
 {

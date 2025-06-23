@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources;
 
+use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 use App\Filament\App\Resources\ServerResource\Pages;
 use App\Models\Server;
 use Filament\Resources\Resource;
@@ -22,7 +23,7 @@ class ServerResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListServers::route('/'),
+            'index' => ListServers::route('/'),
         ];
     }
 }

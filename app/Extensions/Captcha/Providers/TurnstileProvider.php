@@ -2,6 +2,7 @@
 
 namespace App\Extensions\Captcha\Providers;
 
+use Filament\Schemas\Components\Component;
 use App\Filament\Components\Forms\Fields\TurnstileCaptcha;
 use Exception;
 use Filament\Infolists\Components\TextEntry;
@@ -17,7 +18,7 @@ class TurnstileProvider extends CaptchaProvider
         return 'turnstile';
     }
 
-    public function getComponent(): \Filament\Schemas\Components\Component
+    public function getComponent(): Component
     {
         return TurnstileCaptcha::make('turnstile');
     }
@@ -33,7 +34,7 @@ class TurnstileProvider extends CaptchaProvider
     }
 
     /**
-     * @return \Filament\Schemas\Components\Component[]
+     * @return Component[]
      */
     public function getSettingsForm(): array
     {

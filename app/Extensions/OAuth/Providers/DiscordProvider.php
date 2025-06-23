@@ -2,6 +2,7 @@
 
 namespace App\Extensions\OAuth\Providers;
 
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Foundation\Application;
@@ -30,7 +31,7 @@ final class DiscordProvider extends OAuthProvider
     public function getSetupSteps(): array
     {
         return array_merge([
-            \Filament\Schemas\Components\Wizard\Step::make('Register new Discord OAuth App')
+            Step::make('Register new Discord OAuth App')
                 ->schema([
                     TextEntry::make('INeedAName')
                         ->hiddenLabel()

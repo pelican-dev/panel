@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use Illuminate\Validation\ValidationException;
+use App\Exceptions\Model\DataValidationException;
 use App\Models\Server;
 use App\Facades\Activity;
 use App\Models\ServerVariable;
@@ -55,8 +57,8 @@ class StartupController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \Illuminate\Validation\ValidationException
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws ValidationException
+     * @throws DataValidationException
      */
     public function update(UpdateStartupVariableRequest $request, Server $server): array
     {

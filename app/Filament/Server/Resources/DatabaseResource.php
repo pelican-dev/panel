@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources;
 
+use App\Filament\Server\Resources\DatabaseResource\Pages\ListDatabases;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\DatabaseResource\Pages;
@@ -40,7 +41,7 @@ class DatabaseResource extends Resource
 
     protected static ?int $navigationSort = 6;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-database';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-database';
 
     protected static function getBadgeCount(): int
     {
@@ -67,7 +68,7 @@ class DatabaseResource extends Resource
         $server = Filament::getTenant();
 
         return $schema
-            ->schema([
+            ->components([
                 TextInput::make('host')
                     ->formatStateUsing(fn (Database $database) => $database->address()),
                 // TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
@@ -151,7 +152,7 @@ class DatabaseResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'index' => Pages\ListDatabases::route('/'),
+            'index' => ListDatabases::route('/'),
         ];
     }
 }

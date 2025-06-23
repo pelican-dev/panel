@@ -2,6 +2,8 @@
 
 namespace App\Filament\Server\Resources;
 
+use App\Filament\Server\Resources\ActivityResource\Pages\ListActivities;
+use Exception;
 use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\ActivityResource\Pages;
@@ -44,12 +46,12 @@ class ActivityResource extends Resource
 
     protected static ?int $navigationSort = 8;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-stack';
 
     protected static bool $isScopedToTenant = false;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function defaultTable(Table $table): Table
     {
@@ -170,7 +172,7 @@ class ActivityResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'index' => Pages\ListActivities::route('/'),
+            'index' => ListActivities::route('/'),
         ];
     }
 }

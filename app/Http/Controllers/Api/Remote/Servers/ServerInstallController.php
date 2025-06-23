@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
+use App\Exceptions\Model\DataValidationException;
 use App\Enums\ServerState;
 use Illuminate\Http\Response;
 use App\Models\Server;
@@ -29,7 +30,7 @@ class ServerInstallController extends Controller
     /**
      * Updates the installation state of a server.
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function store(InstallationDataRequest $request, Server $server): JsonResponse
     {

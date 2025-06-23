@@ -2,6 +2,11 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\RoleResource\Pages\ListRoles;
+use App\Filament\Admin\Resources\RoleResource\Pages\CreateRole;
+use App\Filament\Admin\Resources\RoleResource\Pages\ViewRole;
+use App\Filament\Admin\Resources\RoleResource\Pages\EditRole;
+use BackedEnum;
 use App\Filament\Admin\Resources\RoleResource\Pages;
 use App\Models\Role;
 use Exception;
@@ -39,7 +44,7 @@ class RoleResource extends Resource
 
     protected static ?string $model = Role::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-users-group';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-users-group';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -159,7 +164,7 @@ class RoleResource extends Resource
     }
 
     /**
-     * @param  string[]|int[]|Permission[]|\BackedEnum[]  $options
+     * @param string[]|int[]|Permission[]|BackedEnum[] $options
      *
      * @throws Exception
      */
@@ -222,10 +227,10 @@ class RoleResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'index' => Pages\ListRoles::route('/'),
-            'create' => Pages\CreateRole::route('/create'),
-            'view' => Pages\ViewRole::route('/{record}'),
-            'edit' => Pages\EditRole::route('/{record}/edit'),
+            'index' => ListRoles::route('/'),
+            'create' => CreateRole::route('/create'),
+            'view' => ViewRole::route('/{record}'),
+            'edit' => EditRole::route('/{record}/edit'),
         ];
     }
 }

@@ -2,6 +2,10 @@
 
 namespace App\Filament\Server\Resources;
 
+use App\Filament\Server\Resources\ScheduleResource\Pages\ListSchedules;
+use App\Filament\Server\Resources\ScheduleResource\Pages\CreateSchedule;
+use App\Filament\Server\Resources\ScheduleResource\Pages\ViewSchedule;
+use App\Filament\Server\Resources\ScheduleResource\Pages\EditSchedule;
 use App\Facades\Activity;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\ScheduleResource\Pages;
@@ -53,7 +57,7 @@ class ScheduleResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-clock';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-clock';
 
     public static function canViewAny(): bool
     {
@@ -85,7 +89,7 @@ class ScheduleResource extends Resource
                 'default' => 4,
                 'lg' => 5,
             ])
-            ->schema([
+            ->components([
                 TextInput::make('name')
                     ->columnSpan([
                         'default' => 4,
@@ -370,10 +374,10 @@ class ScheduleResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'index' => Pages\ListSchedules::route('/'),
-            'create' => Pages\CreateSchedule::route('/create'),
-            'view' => Pages\ViewSchedule::route('/{record}'),
-            'edit' => Pages\EditSchedule::route('/{record}/edit'),
+            'index' => ListSchedules::route('/'),
+            'create' => CreateSchedule::route('/create'),
+            'view' => ViewSchedule::route('/{record}'),
+            'edit' => EditSchedule::route('/{record}/edit'),
         ];
     }
 

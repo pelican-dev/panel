@@ -18,7 +18,7 @@ class SupportWidget extends FormWidget
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Section::make(trans('admin/dashboard.sections.intro-support.heading'))
                     ->icon('tabler-heart-filled')
                     ->iconColor('danger')

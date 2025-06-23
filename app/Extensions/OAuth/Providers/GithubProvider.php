@@ -2,6 +2,7 @@
 
 namespace App\Extensions\OAuth\Providers;
 
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Foundation\Application;
@@ -24,7 +25,7 @@ final class GithubProvider extends OAuthProvider
     public function getSetupSteps(): array
     {
         return array_merge([
-            \Filament\Schemas\Components\Wizard\Step::make('Register new Github OAuth App')
+            Step::make('Register new Github OAuth App')
                 ->schema([
                     TextEntry::make('INeedAName2')
                         ->hiddenLabel()
@@ -39,7 +40,7 @@ final class GithubProvider extends OAuthProvider
                         ->hiddenLabel()
                         ->state(new HtmlString('<p>When you filled all fields click on <b>Register application</b>.</p>')),
                 ]),
-            \Filament\Schemas\Components\Wizard\Step::make('Create Client Secret')
+            Step::make('Create Client Secret')
                 ->schema([
                     TextEntry::make('INeedAName3')
                         ->hiddenLabel()

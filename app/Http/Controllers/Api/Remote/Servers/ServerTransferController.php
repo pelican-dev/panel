@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
+use Throwable;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use Illuminate\Http\Response;
@@ -26,7 +27,7 @@ class ServerTransferController extends Controller
     /**
      * The daemon notifies us about a transfer failure.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function failure(Server $server): JsonResponse
     {
@@ -41,7 +42,7 @@ class ServerTransferController extends Controller
     /**
      * The daemon notifies us about a transfer success.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function success(Server $server): JsonResponse
     {
@@ -50,7 +51,7 @@ class ServerTransferController extends Controller
             throw new ConflictHttpException('Server is not being transferred.');
         }
 
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = $this->connection->transaction(function () use ($server, $transfer) {
             $allocations = array_merge([$transfer->old_allocation], $transfer->old_additional_allocations);
 
@@ -86,7 +87,7 @@ class ServerTransferController extends Controller
      * Release all the reserved allocations for this transfer and mark it as failed in
      * the database.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function processFailedTransfer(ServerTransfer $transfer): JsonResponse
     {

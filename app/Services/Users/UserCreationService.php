@@ -2,6 +2,8 @@
 
 namespace App\Services\Users;
 
+use Exception;
+use App\Exceptions\Model\DataValidationException;
 use App\Models\Role;
 use Ramsey\Uuid\Uuid;
 use App\Models\User;
@@ -23,8 +25,8 @@ class UserCreationService
      *
      * @param  array<array-key, mixed>  $data
      *
-     * @throws \Exception
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws Exception
+     * @throws DataValidationException
      */
     public function handle(array $data): User
     {

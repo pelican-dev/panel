@@ -2,6 +2,11 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers\DatabasesRelationManager;
+use App\Filament\Admin\Resources\DatabaseHostResource\Pages\ListDatabaseHosts;
+use App\Filament\Admin\Resources\DatabaseHostResource\Pages\CreateDatabaseHost;
+use App\Filament\Admin\Resources\DatabaseHostResource\Pages\ViewDatabaseHost;
+use App\Filament\Admin\Resources\DatabaseHostResource\Pages\EditDatabaseHost;
 use App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers;
 use App\Models\DatabaseHost;
@@ -34,7 +39,7 @@ class DatabaseHostResource extends Resource
 
     protected static ?string $model = DatabaseHost::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-database';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-database';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -107,9 +112,9 @@ class DatabaseHostResource extends Resource
     /**
      * @throws Exception
      */
-    public static function form(Schema $form): Schema
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->components([
                 Section::make()
                     ->columnSpanFull()
@@ -173,7 +178,7 @@ class DatabaseHostResource extends Resource
     public static function getDefaultRelations(): array
     {
         return [
-            RelationManagers\DatabasesRelationManager::class,
+            DatabasesRelationManager::class,
         ];
     }
 
@@ -181,10 +186,10 @@ class DatabaseHostResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'index' => Pages\ListDatabaseHosts::route('/'),
-            'create' => Pages\CreateDatabaseHost::route('/create'),
-            'view' => Pages\ViewDatabaseHost::route('/{record}'),
-            'edit' => Pages\EditDatabaseHost::route('/{record}/edit'),
+            'index' => ListDatabaseHosts::route('/'),
+            'create' => CreateDatabaseHost::route('/create'),
+            'view' => ViewDatabaseHost::route('/{record}'),
+            'edit' => EditDatabaseHost::route('/{record}/edit'),
         ];
     }
 

@@ -18,7 +18,7 @@ class HelpWidget extends FormWidget
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Section::make(trans('admin/dashboard.sections.intro-help.heading'))
                     ->icon('tabler-question-mark')
                     ->iconColor('info')

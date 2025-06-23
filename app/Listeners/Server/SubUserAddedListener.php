@@ -2,6 +2,7 @@
 
 namespace App\Listeners\Server;
 
+use Filament\Actions\Action;
 use App\Events\Server\SubUserAdded;
 use App\Filament\Server\Pages\Console;
 use App\Notifications\AddedToServer;
@@ -18,7 +19,7 @@ class SubUserAddedListener
             ->title('Added to Server')
             ->body('You have been added as a subuser to ' . $event->subuser->server->name . '.')
             ->actions([
-                \Filament\Actions\Action::make('view')
+                Action::make('view')
                     ->button()
                     ->label('Open Server')
                     ->markAsRead()

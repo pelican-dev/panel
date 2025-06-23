@@ -2,6 +2,18 @@
 
 namespace App\Providers;
 
+use App\Models\Allocation;
+use App\Models\ApiKey;
+use App\Models\Backup;
+use App\Models\Database;
+use App\Models\Egg;
+use App\Models\EggVariable;
+use App\Models\Schedule;
+use App\Models\Server;
+use App\Models\UserSSHKey;
+use App\Models\Task;
+use App\Models\User;
+use App\Models\Node;
 use App\Checks\CacheCheck;
 use App\Checks\DatabaseCheck;
 use App\Checks\DebugModeCheck;
@@ -71,23 +83,23 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Relation::enforceMorphMap([
-            'allocation' => Models\Allocation::class,
-            'api_key' => Models\ApiKey::class,
-            'backup' => Models\Backup::class,
-            'database' => Models\Database::class,
-            'egg' => Models\Egg::class,
-            'egg_variable' => Models\EggVariable::class,
-            'schedule' => Models\Schedule::class,
-            'server' => Models\Server::class,
-            'ssh_key' => Models\UserSSHKey::class,
-            'task' => Models\Task::class,
-            'user' => Models\User::class,
-            'node' => Models\Node::class,
+            'allocation' => Allocation::class,
+            'api_key' => ApiKey::class,
+            'backup' => Backup::class,
+            'database' => Database::class,
+            'egg' => Egg::class,
+            'egg_variable' => EggVariable::class,
+            'schedule' => Schedule::class,
+            'server' => Server::class,
+            'ssh_key' => UserSSHKey::class,
+            'task' => Task::class,
+            'user' => User::class,
+            'node' => Node::class,
         ]);
 
         Http::macro(
             'daemon',
-            fn (Models\Node $node, array $headers = []) => Http::acceptJson()
+            fn (Node $node, array $headers = []) => Http::acceptJson()
                 ->asJson()
                 ->withToken($node->daemon_token)
                 ->withHeaders($headers)
@@ -97,7 +109,7 @@ class AppServiceProvider extends ServiceProvider
                 ->baseUrl($node->getConnectionAddress())
         );
 
-        Sanctum::usePersonalAccessTokenModel(Models\ApiKey::class);
+        Sanctum::usePersonalAccessTokenModel(ApiKey::class);
 
         Gate::define('viewApiDocs', fn () => true);
 
@@ -193,7 +205,7 @@ class AppServiceProvider extends ServiceProvider
             ]);
         }
 
-        Gate::before(function (Models\User $user, $ability) {
+        Gate::before(function (User $user, $ability) {
             return $user->isRootAdmin() ? true : null;
         });
 

@@ -2,6 +2,10 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\WebhookResource\Pages\ListWebhookConfigurations;
+use App\Filament\Admin\Resources\WebhookResource\Pages\CreateWebhookConfiguration;
+use App\Filament\Admin\Resources\WebhookResource\Pages\ViewWebhookConfiguration;
+use App\Filament\Admin\Resources\WebhookResource\Pages\EditWebhookConfiguration;
 use App\Filament\Admin\Resources\WebhookResource\Pages;
 use App\Models\WebhookConfiguration;
 use Filament\Actions\CreateAction;
@@ -30,7 +34,7 @@ class WebhookResource extends Resource
 
     protected static ?string $model = WebhookConfiguration::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-webhook';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-webhook';
 
     protected static ?string $recordTitleAttribute = 'description';
 
@@ -85,10 +89,10 @@ class WebhookResource extends Resource
             ]);
     }
 
-    public static function form(Schema $form): Schema
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('endpoint')
                     ->label(trans('admin/webhook.endpoint'))
                     ->activeUrl()
@@ -112,10 +116,10 @@ class WebhookResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'index' => Pages\ListWebhookConfigurations::route('/'),
-            'create' => Pages\CreateWebhookConfiguration::route('/create'),
-            'view' => Pages\ViewWebhookConfiguration::route('/{record}'),
-            'edit' => Pages\EditWebhookConfiguration::route('/{record}/edit'),
+            'index' => ListWebhookConfigurations::route('/'),
+            'create' => CreateWebhookConfiguration::route('/create'),
+            'view' => ViewWebhookConfiguration::route('/{record}'),
+            'edit' => EditWebhookConfiguration::route('/{record}/edit'),
         ];
     }
 }

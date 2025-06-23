@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 
+use Exception;
 use App\Filament\Admin\Resources\NodeResource\Pages\CreateNode;
 use App\Models\Node;
 use Filament\Actions\Action;
@@ -19,12 +20,12 @@ class NoNodesWidget extends FormWidget
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Section::make(trans('admin/dashboard.sections.intro-first-node.heading'))
                     ->icon('tabler-server-2')
                     ->iconColor('primary')

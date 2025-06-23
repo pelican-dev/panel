@@ -2,6 +2,11 @@
 
 namespace App\Livewire;
 
+use Filament\Notifications\Concerns\HasBody;
+use Filament\Notifications\Concerns\HasIcon;
+use Filament\Notifications\Concerns\HasId;
+use Filament\Notifications\Concerns\HasStatus;
+use Filament\Notifications\Concerns\HasTitle;
 use Closure;
 use Filament\Notifications\Concerns;
 use Filament\Support\Concerns\EvaluatesClosures;
@@ -10,11 +15,11 @@ use Livewire\Wireable;
 
 final class AlertBanner implements Wireable
 {
-    use Concerns\HasBody;
-    use Concerns\HasIcon;
-    use Concerns\HasId;
-    use Concerns\HasStatus;
-    use Concerns\HasTitle;
+    use HasBody;
+    use HasIcon;
+    use HasId;
+    use HasStatus;
+    use HasTitle;
     use EvaluatesClosures;
 
     protected bool|Closure $closable = false;

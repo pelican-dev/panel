@@ -37,7 +37,7 @@ class CreateNode extends CreateRecord
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Wizard::make([
                     Step::make('basic')
                         ->label(trans('admin/node.tabs.basic_settings'))

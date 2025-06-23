@@ -2,6 +2,7 @@
 
 namespace App\Listeners\Server;
 
+use Filament\Actions\Action;
 use App\Events\Server\Installed;
 use App\Filament\Server\Pages\Console;
 use App\Notifications\ServerInstalled;
@@ -18,7 +19,7 @@ class ServerInstalledListener
             ->title('Server ' . ($event->initialInstall ? 'Installation' : 'Reinstallation') . ' ' . ($event->successful ? 'completed' : 'failed'))
             ->body('Server Name: ' . $event->server->name)
             ->actions([
-                \Filament\Actions\Action::make('view')
+                Action::make('view')
                     ->button()
                     ->label('Open Server')
                     ->markAsRead()

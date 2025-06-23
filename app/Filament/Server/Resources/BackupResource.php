@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources;
 
+use App\Filament\Server\Resources\BackupResource\Pages\ListBackups;
 use App\Enums\BackupStatus;
 use App\Enums\ServerState;
 use App\Facades\Activity;
@@ -55,7 +56,7 @@ class BackupResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-file-zip';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-file-zip';
 
     protected static bool $canCreateAnother = false;
 
@@ -137,7 +138,7 @@ class BackupResource extends Resource
                         ->color('success')
                         ->icon('tabler-folder-up')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_RESTORE, $server))
-                        ->form([
+                        ->schema([
                             TextEntry::make('INeedAName')
                                 ->hiddenLabel()
                                 ->helperText('Your server will be stopped. You will not be able to control the power state, access the file manager, or create additional backups until this process is completed.'),
@@ -230,7 +231,7 @@ class BackupResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'index' => Pages\ListBackups::route('/'),
+            'index' => ListBackups::route('/'),
         ];
     }
 }

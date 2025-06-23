@@ -2,6 +2,9 @@
 
 namespace App\Services\Users;
 
+use Exception;
+use RuntimeException;
+use App\Exceptions\Model\DataValidationException;
 use App\Models\User;
 
 class TwoFactorSetupService
@@ -15,7 +18,7 @@ class TwoFactorSetupService
      *
      * @return array{image_url_data: string, secret: string}
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function handle(User $user): array
     {
@@ -24,8 +27,8 @@ class TwoFactorSetupService
             for ($i = 0; $i < config('panel.auth.2fa.bytes', 16); $i++) {
                 $secret .= substr(self::VALID_BASE32_CHARACTERS, random_int(0, 31), 1);
             }
-        } catch (\Exception $exception) {
-            throw new \RuntimeException($exception->getMessage(), 0, $exception);
+        } catch (Exception $exception) {
+            throw new RuntimeException($exception->getMessage(), 0, $exception);
         }
 
         $user->totp_secret = $secret;

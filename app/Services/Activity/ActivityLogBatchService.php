@@ -2,6 +2,7 @@
 
 namespace App\Services\Activity;
 
+use Closure;
 use Ramsey\Uuid\Uuid;
 
 class ActivityLogBatchService
@@ -49,7 +50,7 @@ class ActivityLogBatchService
      * Executes the logic provided within the callback in the scope of an activity
      * log batch transaction.
      */
-    public function transaction(\Closure $callback): mixed
+    public function transaction(Closure $callback): mixed
     {
         $this->start();
         $result = $callback($this->uuid());

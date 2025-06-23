@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use LogicException;
+use Illuminate\Support\Collection;
 use App\Traits\HasValidation;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
@@ -28,12 +30,12 @@ use Illuminate\Support\Str;
  * @property string|null $actor_type
  * @property int|null $actor_id
  * @property int|null $api_key_id
- * @property \Illuminate\Support\Collection|null $properties
+ * @property Collection|null $properties
  * @property \Carbon\Carbon $timestamp
  * @property Model|\Eloquent $actor
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityLogSubject[] $subjects
+ * @property \Illuminate\Database\Eloquent\Collection|ActivityLogSubject[] $subjects
  * @property int|null $subjects_count
- * @property \App\Models\ApiKey|null $apiKey
+ * @property ApiKey|null $apiKey
  *
  * @method static Builder|ActivityLog forActor(Model $actor)
  * @method static Builder|ActivityLog forEvent(string $action)
@@ -124,7 +126,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
     public function prunable(): Builder
     {
         if (is_null(config('activity.prune_days'))) {
-            throw new \LogicException('Cannot prune activity logs: no "prune_days" configuration value is set.');
+            throw new LogicException('Cannot prune activity logs: no "prune_days" configuration value is set.');
         }
 
         return static::where('timestamp', '<=', Carbon::now()->subDays(config('activity.prune_days')));

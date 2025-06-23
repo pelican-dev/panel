@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Installer\Steps;
 
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Utilities\Get;
@@ -15,9 +16,9 @@ class SessionStep
         'redis' => 'Redis',
     ];
 
-    public static function make(): \Filament\Schemas\Components\Wizard\Step
+    public static function make(): Step
     {
-        return \Filament\Schemas\Components\Wizard\Step::make('session')
+        return Step::make('session')
             ->label('Session')
             ->schema([
                 ToggleButtons::make('env_session.SESSION_DRIVER')

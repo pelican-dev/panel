@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 
+use Exception;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
@@ -17,12 +18,12 @@ class CanaryWidget extends FormWidget
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Section::make(trans('admin/dashboard.sections.intro-developers.heading'))
                     ->icon('tabler-code')
                     ->iconColor('primary')

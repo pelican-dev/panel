@@ -2,6 +2,11 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
+use App\Filament\Admin\Resources\ServerResource\Pages\ListServers;
+use App\Filament\Admin\Resources\ServerResource\Pages\CreateServer;
+use App\Filament\Admin\Resources\ServerResource\Pages\EditServer;
+use Exception;
 use App\Filament\Admin\Resources\ServerResource\Pages;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers;
 use App\Models\Mount;
@@ -22,7 +27,7 @@ class ServerResource extends Resource
 
     protected static ?string $model = Server::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-brand-docker';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-brand-docker';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -52,7 +57,7 @@ class ServerResource extends Resource
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getMountCheckboxList(Get $get): CheckboxList
     {
@@ -81,7 +86,7 @@ class ServerResource extends Resource
     public static function getDefaultRelations(): array
     {
         return [
-            RelationManagers\AllocationsRelationManager::class,
+            AllocationsRelationManager::class,
         ];
     }
 
@@ -89,9 +94,9 @@ class ServerResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'index' => Pages\ListServers::route('/'),
-            'create' => Pages\CreateServer::route('/create'),
-            'edit' => Pages\EditServer::route('/{record}/edit'),
+            'index' => ListServers::route('/'),
+            'create' => CreateServer::route('/create'),
+            'edit' => EditServer::route('/{record}/edit'),
         ];
     }
 

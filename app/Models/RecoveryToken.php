@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\CarbonImmutable;
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
 use Illuminate\Database\Eloquent\Model;
@@ -11,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $user_id
  * @property string $token
- * @property \Carbon\CarbonImmutable $created_at
- * @property \App\Models\User $user
+ * @property CarbonImmutable $created_at
+ * @property User $user
  */
 class RecoveryToken extends Model implements Validatable
 {

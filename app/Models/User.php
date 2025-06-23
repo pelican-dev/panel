@@ -2,6 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Carbon;
+use Illuminate\Notifications\DatabaseNotificationCollection;
+use Illuminate\Notifications\DatabaseNotification;
+use Database\Factories\UserFactory;
+use BackedEnum;
 use App\Contracts\Validatable;
 use App\Exceptions\DisplayException;
 use App\Extensions\Avatar\AvatarProvider;
@@ -50,28 +55,28 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $timezone
  * @property bool $use_totp
  * @property string|null $totp_secret
- * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
+ * @property Carbon|null $totp_authenticated_at
  * @property string[]|null $oauth
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ApiKey[] $apiKeys
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property \Illuminate\Database\Eloquent\Collection|ApiKey[] $apiKeys
  * @property int|null $api_keys_count
  * @property string $name
- * @property \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property DatabaseNotificationCollection|DatabaseNotification[] $notifications
  * @property int|null $notifications_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\RecoveryToken[] $recoveryTokens
+ * @property \Illuminate\Database\Eloquent\Collection|RecoveryToken[] $recoveryTokens
  * @property int|null $recovery_tokens_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Server[] $servers
+ * @property \Illuminate\Database\Eloquent\Collection|Server[] $servers
  * @property int|null $servers_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\UserSSHKey[] $sshKeys
+ * @property \Illuminate\Database\Eloquent\Collection|UserSSHKey[] $sshKeys
  * @property int|null $ssh_keys_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ApiKey[] $tokens
+ * @property \Illuminate\Database\Eloquent\Collection|ApiKey[] $tokens
  * @property int|null $tokens_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Role[] $roles
+ * @property \Illuminate\Database\Eloquent\Collection|Role[] $roles
  * @property int|null $roles_count
  * @property string|null $customization
  *
- * @method static \Database\Factories\UserFactory factory(...$parameters)
+ * @method static UserFactory factory(...$parameters)
  * @method static Builder|User newModelQuery()
  * @method static Builder|User newQuery()
  * @method static Builder|User query()
@@ -342,7 +347,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * this checks if the ability is one of our permissions and then checks if the user can do it or not
      * Otherwise it calls the Authorizable trait's parent method
      *
-     * @param  iterable<string|\BackedEnum>|\BackedEnum|string  $abilities
+     * @param iterable<string|BackedEnum>|BackedEnum|string $abilities
      * @param  array<mixed>|mixed  $arguments
      */
     public function can($abilities, mixed $arguments = []): bool

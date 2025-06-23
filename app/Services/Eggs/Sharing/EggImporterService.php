@@ -2,6 +2,8 @@
 
 namespace App\Services\Eggs\Sharing;
 
+use JsonException;
+use Throwable;
 use App\Exceptions\Service\InvalidFileUploadException;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
@@ -30,7 +32,7 @@ class EggImporterService
     /**
      * Take an uploaded JSON file and parse it into a new egg.
      *
-     * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
+     * @throws InvalidFileUploadException|Throwable
      */
     public function fromFile(UploadedFile $file, ?Egg $egg = null): Egg
     {
@@ -76,7 +78,7 @@ class EggImporterService
     /**
      * Take an url and parse it into a new egg or update an existing one.
      *
-     * @throws \App\Exceptions\Service\InvalidFileUploadException|\Throwable
+     * @throws InvalidFileUploadException|Throwable
      */
     public function fromUrl(string $url, ?Egg $egg = null): Egg
     {
@@ -98,7 +100,7 @@ class EggImporterService
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\Service\InvalidFileUploadException
+     * @throws InvalidFileUploadException
      */
     protected function parseFile(UploadedFile $file): array
     {
@@ -108,7 +110,7 @@ class EggImporterService
 
         try {
             $parsed = json_decode($file->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $exception) {
+        } catch (JsonException $exception) {
             throw new InvalidFileUploadException('Could not read JSON file: ' . $exception->getMessage());
         }
 

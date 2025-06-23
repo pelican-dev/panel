@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Pages;
 
+use Exception;
 use App\Facades\Activity;
 use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 use App\Models\Permission;
@@ -23,12 +24,12 @@ use Illuminate\Support\Facades\Validator;
 
 class Startup extends ServerFormPage
 {
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-player-play';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-player-play';
 
     protected static ?int $navigationSort = 9;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function form(Schema $schema): Schema
     {
@@ -175,7 +176,7 @@ class Startup extends ServerFormPage
             return $containsRuleIn;
         }
 
-        throw new \Exception('Component type not supported: ' . $component::class);
+        throw new Exception('Component type not supported: ' . $component::class);
     }
 
     /**
@@ -235,7 +236,7 @@ class Startup extends ServerFormPage
                 ->title('Updated: ' . $serverVariable->variable->name)
                 ->body(fn () => $original . ' -> ' . $state)
                 ->send();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Notification::make()
                 ->danger()
                 ->title('Failed: ' . $serverVariable->variable->name)

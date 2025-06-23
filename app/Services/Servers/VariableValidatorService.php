@@ -20,7 +20,7 @@ class VariableValidatorService
      *
      * @param  array<array-key, ?string>  $fields
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function handle(int $egg, array $fields = []): Collection
     {
@@ -31,7 +31,7 @@ class VariableValidatorService
             $query = $query->where('user_editable', true)->where('user_viewable', true);
         }
 
-        /** @var \App\Models\EggVariable[] $variables */
+        /** @var EggVariable[] $variables */
         $variables = $query->get();
 
         $data = $rules = $customAttributes = [];

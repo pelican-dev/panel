@@ -70,7 +70,7 @@ class CreateServer extends CreateRecord
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Wizard::make([
                     Step::make('Information')
                         ->label(trans('admin/server.tabs.information'))

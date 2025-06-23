@@ -110,7 +110,7 @@ class ListServers extends ListRecords
     protected function getDefaultHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->hidden(fn () => Server::count() <= 0),
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Allocations;
 
+use Exception;
 use App\Models\Allocation;
 use IPTools\Network;
 use App\Models\Node;
@@ -35,11 +36,11 @@ class AssignmentService
      * @param  array{allocation_ip: string, allocation_ports: array<int|string>}  $data
      * @return array<int>
      *
-     * @throws \App\Exceptions\DisplayException
-     * @throws \App\Exceptions\Service\Allocation\CidrOutOfRangeException
-     * @throws \App\Exceptions\Service\Allocation\InvalidPortMappingException
-     * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
-     * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
+     * @throws DisplayException
+     * @throws CidrOutOfRangeException
+     * @throws InvalidPortMappingException
+     * @throws PortOutOfRangeException
+     * @throws TooManyPortsInRangeException
      */
     public function handle(Node $node, array $data, ?Server $server = null): array
     {
@@ -52,7 +53,7 @@ class AssignmentService
 
         try {
             $parsed = Network::parse($data['allocation_ip']);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             throw new DisplayException("Could not parse provided allocation IP address ({$data['allocation_ip']}): {$exception->getMessage()}", $exception);
         }
 

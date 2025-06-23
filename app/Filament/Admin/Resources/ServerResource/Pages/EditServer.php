@@ -163,7 +163,7 @@ class EditServer extends EditRecord
                                             ->modalSubmitAction(false)
                                             ->modalFooterActionsAlignment(Alignment::Right)
                                             ->modalCancelActionLabel(trans('filament::components/modal.actions.close.label'))
-                                            ->form([
+                                            ->schema([
                                                 MonacoEditor::make('logs')
                                                     ->hiddenLabel()
                                                     ->placeholderText(trans('admin/server.no_log'))

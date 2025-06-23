@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources;
 
+use App\Filament\Server\Resources\UserResource\Pages\ListUsers;
 use App\Filament\Server\Resources\UserResource\Pages;
 use App\Models\Permission;
 use App\Models\Server;
@@ -45,7 +46,7 @@ class UserResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-users';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-users';
 
     protected static ?string $tenantOwnershipRelationshipName = 'subServers';
 
@@ -228,7 +229,7 @@ class UserResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
+            'index' => ListUsers::route('/'),
         ];
     }
 }

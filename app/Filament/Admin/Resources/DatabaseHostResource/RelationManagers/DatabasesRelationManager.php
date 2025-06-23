@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers;
 
+use Filament\Schemas\Schema;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\Database;
@@ -15,7 +16,7 @@ class DatabasesRelationManager extends RelationManager
 {
     protected static string $relationship = 'databases';
 
-    public function form(Form|\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
+    public function form(Form|Schema $schema): Schema
     {
         return $schema
             ->schema([

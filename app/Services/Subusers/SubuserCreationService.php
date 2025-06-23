@@ -2,6 +2,8 @@
 
 namespace App\Services\Subusers;
 
+use App\Exceptions\Model\DataValidationException;
+use Throwable;
 use App\Events\Server\SubUserAdded;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -30,10 +32,10 @@ class SubuserCreationService
      *
      * @param  string[]  $permissions
      *
-     * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Service\Subuser\ServerSubuserExistsException
-     * @throws \App\Exceptions\Service\Subuser\UserIsServerOwnerException
-     * @throws \Throwable
+     * @throws DataValidationException
+     * @throws ServerSubuserExistsException
+     * @throws UserIsServerOwnerException
+     * @throws Throwable
      */
     public function handle(Server $server, string $email, array $permissions): Subuser
     {

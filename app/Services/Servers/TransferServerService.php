@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use Throwable;
 use App\Models\Allocation;
 use App\Models\Node;
 use App\Models\Server;
@@ -39,7 +40,7 @@ class TransferServerService
      *
      * @param  int[]  $additional_allocations
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(Server $server, int $node_id, int $allocation_id, array $additional_allocations): bool
     {

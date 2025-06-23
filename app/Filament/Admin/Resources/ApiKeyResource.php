@@ -2,6 +2,9 @@
 
 namespace App\Filament\Admin\Resources;
 
+use Filament\Schemas\Schema;
+use App\Filament\Admin\Resources\ApiKeyResource\Pages\ListApiKeys;
+use App\Filament\Admin\Resources\ApiKeyResource\Pages\CreateApiKey;
 use App\Filament\Admin\Resources\ApiKeyResource\Pages;
 use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
@@ -33,7 +36,7 @@ class ApiKeyResource extends Resource
 
     protected static ?string $model = ApiKey::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-key';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-key';
 
     public static function getNavigationLabel(): string
     {
@@ -109,7 +112,7 @@ class ApiKeyResource extends Resource
     /**
      * @throws Exception
      */
-    public static function form(Form|\Filament\Schemas\Schema $form): \Filament\Schemas\Schema
+    public static function form(Form|Schema $form): Schema
     {
         return $form
             ->schema([
@@ -163,8 +166,8 @@ class ApiKeyResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'index' => Pages\ListApiKeys::route('/'),
-            'create' => Pages\CreateApiKey::route('/create'),
+            'index' => ListApiKeys::route('/'),
+            'create' => CreateApiKey::route('/create'),
         ];
     }
 }

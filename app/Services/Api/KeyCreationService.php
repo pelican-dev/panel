@@ -2,6 +2,7 @@
 
 namespace App\Services\Api;
 
+use App\Exceptions\Model\DataValidationException;
 use App\Models\ApiKey;
 
 class KeyCreationService
@@ -26,7 +27,7 @@ class KeyCreationService
      *
      * @param  array<mixed>  $data
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function handle(array $data): ApiKey
     {

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\FileResource\Pages;
 
+use Throwable;
 use App\Enums\EditorLanguages;
 use App\Exceptions\Http\Server\FileSizeTooLargeException;
 use App\Exceptions\Repository\FileNotEditableException;
@@ -58,7 +59,7 @@ class EditFiles extends Page
     public ?array $data = [];
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function form(Schema $schema): Schema
     {
@@ -70,7 +71,7 @@ class EditFiles extends Page
             ->log();
 
         return $schema
-            ->schema([
+            ->components([
                 Section::make('Editing: ' . $this->path)
                     ->footerActions([
                         Action::make('save_and_close')

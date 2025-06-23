@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\Application\Mounts;
 
+use App\Exceptions\Model\DataValidationException;
+use Throwable;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -56,7 +58,7 @@ class MountController extends ApplicationApiController
      * Create a new mount on the Panel. Returns the created mount and an HTTP/201
      * status response on success.
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function store(StoreMountRequest $request): JsonResponse
     {
@@ -83,7 +85,7 @@ class MountController extends ApplicationApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function update(UpdateMountRequest $request, Mount $mount): array
     {
@@ -100,7 +102,7 @@ class MountController extends ApplicationApiController
      * Deletes a given mount from the Panel as long as there are no servers
      * currently attached to it.
      *
-     * @throws \App\Exceptions\Service\HasActiveServersException
+     * @throws HasActiveServersException
      */
     public function delete(DeleteMountRequest $request, Mount $mount): JsonResponse
     {

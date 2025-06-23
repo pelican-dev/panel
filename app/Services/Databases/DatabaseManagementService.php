@@ -2,6 +2,9 @@
 
 namespace App\Services\Databases;
 
+use InvalidArgumentException;
+use Throwable;
+use Exception;
 use App\Facades\Activity;
 use App\Models\Server;
 use App\Models\Database;
@@ -60,9 +63,9 @@ class DatabaseManagementService
      *
      * @param  array{database?: string, database_host_id: int}  $data
      *
-     * @throws \Throwable
-     * @throws \App\Exceptions\Service\Database\TooManyDatabasesException
-     * @throws \App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException
+     * @throws Throwable
+     * @throws TooManyDatabasesException
+     * @throws DatabaseClientFeatureNotEnabledException
      */
     public function create(Server $server, array $data): Database
     {
@@ -80,7 +83,7 @@ class DatabaseManagementService
 
         // Protect against developer mistakes...
         if (empty($data['database']) || !preg_match(self::MATCH_NAME_REGEX, $data['database'])) {
-            throw new \InvalidArgumentException('The database name passed to DatabaseManagementService::handle MUST be prefixed with "s{server_id}_".');
+            throw new InvalidArgumentException('The database name passed to DatabaseManagementService::handle MUST be prefixed with "s{server_id}_".');
         }
 
         $data = array_merge($data, [
@@ -114,7 +117,7 @@ class DatabaseManagementService
     /**
      * Delete a database from the given host server.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(Database $database): ?bool
     {
@@ -139,8 +142,8 @@ class DatabaseManagementService
      *
      * @param  array{server_id: int, database: string}  $data
      *
-     * @throws \App\Exceptions\Repository\DuplicateDatabaseNameException
-     * @throws \Throwable
+     * @throws DuplicateDatabaseNameException
+     * @throws Throwable
      */
     protected function createModel(array $data): Database
     {

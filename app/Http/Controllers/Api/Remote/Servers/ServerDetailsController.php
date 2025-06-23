@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
+use App\Models\Node;
+use Throwable;
+use App\Models\ActivityLog;
 use App\Enums\ServerState;
 use App\Models\Backup;
 use Illuminate\Http\Request;
@@ -42,7 +45,7 @@ class ServerDetailsController extends Controller
      */
     public function list(Request $request): ServerConfigurationCollection
     {
-        /** @var \App\Models\Node $node */
+        /** @var Node $node */
         $node = $request->attributes->get('node');
 
         // Avoid run-away N+1 SQL queries by preloading the relationships that are used
@@ -62,7 +65,7 @@ class ServerDetailsController extends Controller
      * do not get incorrectly stuck in installing/restoring from backup states since
      * a daemon reboot would completely stop those processes.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function resetState(Request $request): JsonResponse
     {
@@ -85,9 +88,9 @@ class ServerDetailsController extends Controller
             ->get();
 
         $this->connection->transaction(function () use ($node, $servers) {
-            /** @var \App\Models\Server $server */
+            /** @var Server $server */
             foreach ($servers as $server) {
-                /** @var \App\Models\ActivityLog|null $activity */
+                /** @var ActivityLog|null $activity */
                 $activity = $server->activity->first();
                 if (!$activity) {
                     continue;

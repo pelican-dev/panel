@@ -2,6 +2,10 @@
 
 namespace App\Filament\Server\Resources;
 
+use App\Filament\Server\Resources\FileResource\Pages\EditFiles;
+use App\Filament\Server\Resources\FileResource\Pages\SearchFiles;
+use App\Filament\Server\Resources\FileResource\Pages\DownloadFiles;
+use App\Filament\Server\Resources\FileResource\Pages\ListFiles;
 use App\Filament\Server\Resources\FileResource\Pages;
 use App\Models\File;
 use App\Models\Permission;
@@ -23,7 +27,7 @@ class FileResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-files';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-files';
 
     protected static bool $isScopedToTenant = false;
 
@@ -51,10 +55,10 @@ class FileResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'edit' => Pages\EditFiles::route('/edit/{path}'),
-            'search' => Pages\SearchFiles::route('/search/{searchTerm}'), // TODO: find better way?
-            'download' => Pages\DownloadFiles::route('/download/{path}'),
-            'index' => Pages\ListFiles::route('/{path?}'),
+            'edit' => EditFiles::route('/edit/{path}'),
+            'search' => SearchFiles::route('/search/{searchTerm}'), // TODO: find better way?
+            'download' => DownloadFiles::route('/download/{path}'),
+            'index' => ListFiles::route('/{path?}'),
         ];
     }
 }

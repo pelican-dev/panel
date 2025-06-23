@@ -2,6 +2,8 @@
 
 namespace App\Services\Servers;
 
+use Throwable;
+use App\Exceptions\DisplayException;
 use Exception;
 use Illuminate\Http\Response;
 use App\Models\Server;
@@ -36,8 +38,8 @@ class ServerDeletionService
     /**
      * Delete a server from the panel and remove any associated databases from hosts.
      *
-     * @throws \Throwable
-     * @throws \App\Exceptions\DisplayException
+     * @throws Throwable
+     * @throws DisplayException
      */
     public function handle(Server $server): void
     {

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\NodeResource\Pages;
 
+use Throwable;
 use App\Filament\Admin\Resources\NodeResource;
 use App\Models\Node;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
@@ -51,7 +52,7 @@ class EditNode extends EditRecord
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function form(Schema $schema): Schema
     {

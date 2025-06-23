@@ -2,6 +2,10 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\EggResource\RelationManagers\ServersRelationManager;
+use App\Filament\Admin\Resources\EggResource\Pages\ListEggs;
+use App\Filament\Admin\Resources\EggResource\Pages\CreateEgg;
+use App\Filament\Admin\Resources\EggResource\Pages\EditEgg;
 use App\Filament\Admin\Resources\EggResource\Pages;
 use App\Filament\Admin\Resources\EggResource\RelationManagers;
 use App\Models\Egg;
@@ -18,7 +22,7 @@ class EggResource extends Resource
 
     protected static ?string $model = Egg::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-eggs';
+    protected static string | \BackedEnum | null $navigationIcon = 'tabler-eggs';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -56,7 +60,7 @@ class EggResource extends Resource
     public static function getDefaultRelations(): array
     {
         return [
-            RelationManagers\ServersRelationManager::class,
+            ServersRelationManager::class,
         ];
     }
 
@@ -64,9 +68,9 @@ class EggResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'index' => Pages\ListEggs::route('/'),
-            'create' => Pages\CreateEgg::route('/create'),
-            'edit' => Pages\EditEgg::route('/{record}/edit'),
+            'index' => ListEggs::route('/'),
+            'create' => CreateEgg::route('/create'),
+            'edit' => EditEgg::route('/{record}/edit'),
         ];
     }
 }
