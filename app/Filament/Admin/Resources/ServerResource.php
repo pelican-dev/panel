@@ -9,10 +9,10 @@ use App\Models\Server;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Get;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Builder;
 
 class ServerResource extends Resource
@@ -51,6 +51,9 @@ class ServerResource extends Resource
         return (string) static::getEloquentQuery()->count() ?: null;
     }
 
+    /**
+     * @throws \Exception
+     */
     public static function getMountCheckboxList(Get $get): CheckboxList
     {
         $allowedMounts = Mount::all();

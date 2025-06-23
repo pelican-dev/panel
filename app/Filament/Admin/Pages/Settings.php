@@ -13,10 +13,7 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -82,6 +79,9 @@ class Settings extends Page implements HasSchemas
         return trans('admin/setting.title');
     }
 
+    /**
+     * @throws Exception
+     */
     protected function getFormSchema(): array
     {
         return [
@@ -210,7 +210,7 @@ class Settings extends Page implements HasSchemas
             Select::make('FILAMENT_WIDTH')
                 ->label(trans('admin/setting.general.display_width'))
                 ->native(false)
-                ->options(MaxWidth::class)
+                //TODO->options(MaxWidth::class)
                 ->selectablePlaceholder(false)
                 ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
             TagsInput::make('TRUSTED_PROXIES')

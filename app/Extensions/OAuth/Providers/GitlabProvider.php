@@ -47,6 +47,7 @@ final class GitlabProvider extends OAuthProvider
             \Filament\Schemas\Components\Wizard\Step::make('Register new Gitlab OAuth App')
                 ->schema([
                     TextEntry::make('INeedAName')
+                        ->hiddenLabel()
                         ->state(new HtmlString(Blade::render('Check out the <x-filament::link href="https://docs.gitlab.com/integration/oauth_provider/" target="_blank">Gitlab docs</x-filament::link> on how to create the oauth app.'))),
                     TextInput::make('_noenv_callback')
                         ->label('Redirect URI')

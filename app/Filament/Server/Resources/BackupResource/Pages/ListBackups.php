@@ -16,7 +16,6 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Filament\Schemas\Schema;
 
 class ListBackups extends ListRecords
 {

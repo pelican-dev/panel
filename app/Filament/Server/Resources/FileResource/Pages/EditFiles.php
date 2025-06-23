@@ -246,10 +246,7 @@ class EditFiles extends Page
         return $this->fileRepository;
     }
 
-    /**
-     * @param  array<string, mixed>  $parameters
-     */
-    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
+    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
     {
         return parent::getUrl($parameters, $isAbsolute, $panel, $tenant) . '/';
     }

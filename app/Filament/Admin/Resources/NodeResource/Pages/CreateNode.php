@@ -6,12 +6,13 @@ use App\Filament\Admin\Resources\NodeResource;
 use App\Models\Node;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Grid;
+use Exception;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Components\Utilities\Get;
@@ -30,6 +31,9 @@ class CreateNode extends CreateRecord
 
     protected static bool $canCreateAnother = false;
 
+    /**
+     * @throws Exception
+     */
     public function form(Schema $schema): Schema
     {
         return $schema

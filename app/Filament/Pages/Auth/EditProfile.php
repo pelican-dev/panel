@@ -294,12 +294,12 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
                                                     $get('allowed_ips'),
                                                 );
 
-                                                        Activity::event('user:api-key.create')
-                                                            ->actor($user)
-                                                            ->subject($user)
-                                                            ->subject($token->accessToken)
-                                                            ->property('identifier', $token->accessToken->identifier)
-                                                            ->log();
+                                                Activity::event('user:api-key.create')
+                                                    ->actor($user)
+                                                    ->subject($user)
+                                                    ->subject($token->accessToken)
+                                                    ->property('identifier', $token->accessToken->identifier)
+                                                    ->log();
 
                                                 Notification::make()
                                                     ->title(trans('profile.key_created'))

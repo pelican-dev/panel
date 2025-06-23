@@ -14,6 +14,7 @@ use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\CreateAction as CreateHeaderAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -31,6 +32,9 @@ class ListEggs extends ListRecords
 
     protected static string $resource = EggResource::class;
 
+    /**
+     * @throws \Exception
+     */
     public function table(Table $table): Table
     {
         return $table
@@ -52,7 +56,7 @@ class ListEggs extends ListRecords
                     ->icon('tabler-server')
                     ->label(trans('admin/egg.servers')),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->iconButton()
                     ->tooltip(trans('filament-actions::edit.single.label')),

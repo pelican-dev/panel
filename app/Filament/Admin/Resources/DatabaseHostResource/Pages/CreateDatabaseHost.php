@@ -6,12 +6,13 @@ use App\Filament\Admin\Resources\DatabaseHostResource;
 use App\Services\Databases\Hosts\HostCreationService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Filament\Forms\Components\Fieldset;
+use Exception;
 use Filament\Forms\Components\Hidden;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
@@ -53,6 +54,7 @@ class CreateDatabaseHost extends CreateRecord
                 ->columns()
                 ->schema([
                     TextEntry::make('INeedAName')
+                        ->hiddenLabel()
                         ->state(trans('admin/databasehost.setup.note')),
                     Toggle::make('different_server')
                         ->label(new HtmlString(trans('admin/databasehost.setup.different_server')))
@@ -87,6 +89,7 @@ class CreateDatabaseHost extends CreateRecord
                     Fieldset::make(trans('admin/databasehost.setup.database_user'))
                         ->schema([
                             TextEntry::make('INeedAName')
+                                ->hiddenLabel()
                                 ->state(new HtmlString(trans('admin/databasehost.setup.cli_login')))
                                 ->columnSpanFull(),
                             TextInput::make('create_user')
@@ -104,12 +107,14 @@ class CreateDatabaseHost extends CreateRecord
                                 // TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                 ->columnSpanFull(),
                             TextEntry::make('INeedAName')
+                                ->hiddenLabel()
                                 ->state(new HtmlString(trans('admin/databasehost.setup.cli_exit')))
                                 ->columnSpanFull(),
                         ]),
                     Fieldset::make(trans('admin/databasehost.setup.external_access'))
                         ->schema([
                             TextEntry::make('INeedAName2')
+                                ->hiddenLabel()
                                 ->state(new HtmlString(trans('admin/databasehost.setup.allow_external_access')))
                                 ->columnSpanFull(),
                         ]),

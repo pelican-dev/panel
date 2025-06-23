@@ -11,12 +11,15 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonPowerRepository;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Notifications\Notification;
-use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\TextSize;
-use Filament\Tables\Columns\ColumnGroup;
+use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -43,7 +46,9 @@ class ListServers extends ListRecords
         $this->daemonPowerRepository = new DaemonPowerRepository();
     }
 
-    /** @return Stack[] */
+    /** @return Stack[]
+     * @throws Exception
+     */
     protected function gridColumns(): array
     {
         return [
@@ -54,7 +59,9 @@ class ListServers extends ListRecords
         ];
     }
 
-    /** @return Column[] */
+    /** @return Column[]
+     * @throws Exception
+     */
     protected function tableColumns(): array
     {
         return [
@@ -105,6 +112,9 @@ class ListServers extends ListRecords
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     public function table(Table $table): Table
     {
         $baseQuery = auth()->user()->accessibleServers();
@@ -117,8 +127,8 @@ class ListServers extends ListRecords
             ->poll('15s')
             ->columns($usingGrid ? $this->gridColumns() : $this->tableColumns())
             ->recordUrl(!$usingGrid ? (fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)) : null)
-            ->actions(!$usingGrid ? ActionGroup::make(static::getPowerActions()) : [])
-            ->actionsAlignment(Alignment::Center->value)
+            ->recordActions(!$usingGrid ? ActionGroup::make(static::getPowerActions()) : [])
+            ->recordActionsAlignment(Alignment::Center->value)
             ->contentGrid($usingGrid ? ['default' => 1, 'md' => 2] : null)
             ->emptyStateIcon('tabler-brand-docker')
             ->emptyStateDescription('')

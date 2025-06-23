@@ -3,8 +3,8 @@
 namespace App\Filament\Server\Components;
 
 use Closure;
+use Filament\Schemas\Components\Component;
 use Filament\Support\Concerns\EvaluatesClosures;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Contracts\View\View;
 
 class SmallStatBlock extends Component
@@ -16,6 +16,7 @@ class SmallStatBlock extends Component
     public function copyOnClick(bool|Closure $copyOnClick = true): static
     {
         $this->copyOnClick = $copyOnClick;
+    }
 
     protected string $value;
 

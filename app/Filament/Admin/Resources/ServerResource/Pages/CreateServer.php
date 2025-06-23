@@ -43,6 +43,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
 use LogicException;
 use Filament\Schemas\Schema;
+use Random\RandomException;
 
 class CreateServer extends CreateRecord
 {
@@ -62,6 +63,10 @@ class CreateServer extends CreateRecord
         $this->serverCreationService = $serverCreationService;
     }
 
+    /**
+     * @throws RandomException
+     * @throws Exception
+     */
     public function form(Schema $schema): Schema
     {
         return $schema

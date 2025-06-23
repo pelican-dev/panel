@@ -10,6 +10,8 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkAction;
@@ -402,7 +404,9 @@ class ListFiles extends ListRecords
             ]);
     }
 
-    /** @return array<HeaderAction|HeaderActionGroup> */
+    /** @return array<HeaderAction|HeaderActionGroup>
+     * @throws \Exception
+     */
     protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */
