@@ -127,7 +127,7 @@ class UserResource extends Resource
                 TextColumn::make('permissions')
                     ->state(fn (User $user) => count($server->subusers->where('user_id', $user->id)->first()->permissions)),
             ])
-            ->actions([
+            ->recordActions([
                 DeleteAction::make()
                     ->label('Remove User')
                     ->hidden(fn (User $user) => auth()->user()->id === $user->id)

@@ -109,7 +109,7 @@ class ListFiles extends ListRecords
 
                 return $file->canEdit() ? EditFiles::getUrl(['path' => join_paths($this->path, $file->name)]) : null;
             })
-            ->actions([
+            ->recordActions([
                 Action::make('view')
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
                     ->label('Open')

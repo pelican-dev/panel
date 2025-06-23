@@ -89,7 +89,7 @@ class ListServers extends ListRecords
                     ->numeric()
                     ->sortable(),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('View')
                     ->label(trans('admin/server.view'))
                     ->icon('tabler-terminal')

@@ -15,17 +15,17 @@ use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use App\Traits\Filament\HasLimitBadge;
+use Exception;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class DatabaseResource extends Resource
 {
@@ -58,20 +58,23 @@ class DatabaseResource extends Resource
         return $server->database_limit;
     }
 
-    public static function defaultForm(Form $form): Form
+    /**
+     * @throws Exception
+     */
+    public static function defaultForm(Schema $schema): Schema
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        return $form
+        return $schema
             ->schema([
                 TextInput::make('host')
-                    ->formatStateUsing(fn (Database $database) => $database->address())
-                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
-                TextInput::make('database')
-                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
-                TextInput::make('username')
-                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
+                    ->formatStateUsing(fn (Database $database) => $database->address()),
+                // TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
+                TextInput::make('database'),
+                //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
+                TextInput::make('username'),
+                //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
                 TextInput::make('password')
                     ->password()->revealable()
                     ->hidden(fn () => !auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
@@ -79,7 +82,7 @@ class DatabaseResource extends Resource
                         RotateDatabasePasswordAction::make()
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_DATABASE_UPDATE, $server))
                     )
-                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                    //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                     ->formatStateUsing(fn (Database $database) => $database->password),
                 TextInput::make('remote')
                     ->label('Connections From'),
@@ -89,12 +92,15 @@ class DatabaseResource extends Resource
                     ->label('JDBC Connection String')
                     ->password()->revealable()
                     ->hidden(!auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
-                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                    //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                     ->columnSpanFull()
                     ->formatStateUsing(fn (Database $database) => $database->jdbc),
             ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public static function defaultTable(Table $table): Table
     {
         return $table
@@ -108,7 +114,7 @@ class DatabaseResource extends Resource
                 DateTimeColumn::make('created_at')
                     ->sortable(),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->modalHeading(fn (Database $database) => 'Viewing ' . $database->database),
                 DeleteAction::make()

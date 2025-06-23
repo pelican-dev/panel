@@ -68,6 +68,9 @@ class RoleResource extends Resource
         return static::getModel()::count() ?: null;
     }
 
+    /**
+     * @throws Exception
+     */
     public static function defaultTable(Table $table): Table
     {
         return $table
@@ -90,7 +93,7 @@ class RoleResource extends Resource
                     ->counts('users')
                     ->icon('tabler-users'),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->hidden(fn ($record) => static::canEdit($record)),
                 EditAction::make(),
@@ -110,7 +113,7 @@ class RoleResource extends Resource
     /**
      * @throws Exception
      */
-    public static function form(Schema $form): Schema
+    public static function form(Schema $schema): Schema
     {
         $permissionSections = [];
 

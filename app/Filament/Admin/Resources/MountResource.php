@@ -91,7 +91,7 @@ class MountResource extends Resource
                     ->color(fn ($state) => $state ? 'success' : 'warning')
                     ->formatStateUsing(fn ($state) => $state ? trans('admin/mount.toggles.read_only') : trans('admin/mount.toggles.writable')),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->hidden(fn ($record) => static::canEdit($record)),
                 EditAction::make(),

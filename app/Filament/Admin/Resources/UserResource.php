@@ -99,7 +99,7 @@ class UserResource extends Resource
                     ->counts('subusers')
                     ->icon('tabler-users'),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->hidden(fn ($record) => static::canEdit($record)),
                 EditAction::make(),
@@ -110,9 +110,9 @@ class UserResource extends Resource
             ]);
     }
 
-    public static function form(Schema $form): Schema
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(['default' => 1, 'lg' => 3])
             ->components([
                 TextInput::make('username')

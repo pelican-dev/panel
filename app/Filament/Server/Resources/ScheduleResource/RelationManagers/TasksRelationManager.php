@@ -5,6 +5,7 @@ namespace App\Filament\Server\Resources\ScheduleResource\RelationManagers;
 use App\Facades\Activity;
 use App\Models\Schedule;
 use App\Models\Task;
+use Exception;
 use Filament\Forms\Components\Field;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
@@ -38,6 +39,8 @@ class TasksRelationManager extends RelationManager
 
     /**
      * @return array<Field>
+     *
+     * @throws Exception
      */
     private function getTaskForm(Schedule $schedule): array
     {
@@ -75,6 +78,9 @@ class TasksRelationManager extends RelationManager
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     public function table(Table $table): Table
     {
         /** @var Schedule $schedule */
@@ -97,7 +103,7 @@ class TasksRelationManager extends RelationManager
                 IconColumn::make('continue_on_failure')
                     ->boolean(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->schema($this->getTaskForm($schedule))
                     ->mutateDataUsing(function ($data) {

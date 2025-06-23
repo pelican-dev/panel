@@ -68,7 +68,7 @@ class WebhookResource extends Resource
                 TextColumn::make('endpoint')
                     ->label(trans('admin/webhook.table.endpoint')),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->hidden(fn ($record) => static::canEdit($record)),
                 EditAction::make(),

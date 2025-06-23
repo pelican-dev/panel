@@ -63,7 +63,7 @@ class ListNodes extends ListRecords
                     ->sortable()
                     ->icon('tabler-brand-docker'),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
             ])
             ->emptyStateIcon('tabler-server-2')

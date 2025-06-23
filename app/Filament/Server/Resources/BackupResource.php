@@ -21,25 +21,26 @@ use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use App\Traits\Filament\HasLimitBadge;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
+use Throwable;
 
 class BackupResource extends Resource
 {
@@ -74,7 +75,7 @@ class BackupResource extends Resource
         return $server->backup_limit;
     }
 
-    public static function defaultForm(Form $form): Form
+    public static function defaultForm(Schema $schema): Schema
     {
         return $form
             ->schema([
@@ -90,6 +91,10 @@ class BackupResource extends Resource
             ]);
     }
 
+    /**
+     * @throws Throwable
+     * @throws ConnectionException
+     */
     public static function defaultTable(Table $table): Table
     {
         /** @var Server $server */
@@ -114,7 +119,7 @@ class BackupResource extends Resource
                     ->trueIcon('tabler-lock')
                     ->falseIcon('tabler-lock-open'),
             ])
-            ->actions([
+            ->recordActions([
                 ActionGroup::make([
                     Action::make('lock')
                         ->icon(fn (Backup $backup) => !$backup->is_locked ? 'tabler-lock' : 'tabler-lock-open')
@@ -133,7 +138,8 @@ class BackupResource extends Resource
                         ->icon('tabler-folder-up')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_RESTORE, $server))
                         ->form([
-                            Placeholder::make('')
+                            TextEntry::make('INeedAName')
+                                ->hiddenLabel()
                                 ->helperText('Your server will be stopped. You will not be able to control the power state, access the file manager, or create additional backups until this process is completed.'),
                             Checkbox::make('truncate')
                                 ->label('Delete all files before restoring backup?'),

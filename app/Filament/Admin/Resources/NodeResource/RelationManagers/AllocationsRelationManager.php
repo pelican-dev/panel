@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\ServerResource\Pages\CreateServer;
 use App\Models\Allocation;
 use App\Models\Node;
 use App\Services\Allocations\AssignmentService;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -33,6 +34,9 @@ class AllocationsRelationManager extends RelationManager
         return trans('admin/server.allocations');
     }
 
+    /**
+     * @throws Exception
+     */
     public function table(Table $table): Table
     {
         return $table

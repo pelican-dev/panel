@@ -17,6 +17,9 @@ use App\Traits\Filament\CanModifyTable;
 use Carbon\Carbon;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -31,14 +34,12 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Operation;
 use Filament\Support\Exceptions\Halt;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Schemas\Schema;
+use Throwable;
 
 class ScheduleResource extends Resource
 {
@@ -316,6 +317,9 @@ class ScheduleResource extends Resource
             ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public static function defaultTable(Table $table): Table
     {
         return $table
@@ -341,7 +345,7 @@ class ScheduleResource extends Resource
                     ->sortable()
                     ->state(fn (Schedule $schedule) => $schedule->is_active ? $schedule->next_run_at : null),
             ])
-            ->actions([
+            ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make()

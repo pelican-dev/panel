@@ -34,6 +34,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Support\Enums\Width;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
@@ -210,7 +211,7 @@ class Settings extends Page implements HasSchemas
             Select::make('FILAMENT_WIDTH')
                 ->label(trans('admin/setting.general.display_width'))
                 ->native(false)
-                //TODO->options(MaxWidth::class)
+                ->options(Width::class)
                 ->selectablePlaceholder(false)
                 ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
             TagsInput::make('TRUSTED_PROXIES')

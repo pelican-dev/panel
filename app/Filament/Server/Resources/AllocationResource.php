@@ -11,10 +11,11 @@ use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyTable;
+use Exception;
+use Filament\Actions\DetachAction;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -38,6 +39,9 @@ class AllocationResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-network';
 
+    /**
+     * @throws Exception
+     */
     public static function defaultTable(Table $table): Table
     {
         /** @var Server $server */
@@ -73,7 +77,7 @@ class AllocationResource extends Resource
                     ->default(fn (Allocation $allocation) => $allocation->id === $server->allocation_id)
                     ->label('Primary'),
             ])
-            ->actions([
+            ->recordActions([
                 DetachAction::make()
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_ALLOCATION_DELETE, $server))
                     ->label('Delete')

@@ -36,6 +36,7 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
@@ -409,10 +410,10 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
                                                     ->reactive()
                                                     ->default('monospace')
                                                     ->afterStateUpdated(fn ($state, Set $set) => $set('font_preview', $state)),
-                                                Placeholder::make('font_preview')
+                                                TextEntry::make('font_preview')
                                                     ->label(trans('profile.font_preview'))
                                                     ->columnSpan(2)
-                                                    ->content(function (Get $get) {
+                                                    ->state(function (Get $get) {
                                                         $fontName = $get('console_font') ?? 'monospace';
                                                         $fontSize = $get('console_font_size') . 'px';
                                                         $style = <<<CSS
@@ -436,7 +437,7 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
 
                                                         return new HtmlString(<<<HTML
                                                             <style>
-                                                            {$style}  
+                                                            {$style}
                                                             </style>
                                                             <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
                                                         HTML);

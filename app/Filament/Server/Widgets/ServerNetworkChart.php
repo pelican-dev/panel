@@ -11,6 +11,7 @@ use Filament\Widgets\ChartWidget;
 class ServerNetworkChart extends ChartWidget
 {
     protected ?string $pollingInterval = '1s';
+
     protected ?string $maxHeight = '200px';
 
     public ?Server $server = null;

@@ -13,15 +13,15 @@ use App\Models\User;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyTable;
+use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -48,6 +48,9 @@ class ActivityResource extends Resource
 
     protected static bool $isScopedToTenant = false;
 
+    /**
+     * @throws \Exception
+     */
     public static function defaultTable(Table $table): Table
     {
         /** @var Server $server */
@@ -86,12 +89,12 @@ class ActivityResource extends Resource
                     ->grow(false),
             ])
             ->defaultSort('timestamp', 'desc')
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     //->visible(fn (ActivityLog $activityLog) => $activityLog->hasAdditionalMetadata())
-                    ->form([
-                        Placeholder::make('event')
-                            ->content(fn (ActivityLog $activityLog) => new HtmlString($activityLog->getLabel())),
+                    ->schema([
+                        TextEntry::make('event')
+                            ->state(fn (ActivityLog $activityLog) => new HtmlString($activityLog->getLabel())),
                         TextInput::make('user')
                             ->formatStateUsing(function (ActivityLog $activityLog) use ($server) {
                                 if (!$activityLog->actor instanceof User) {

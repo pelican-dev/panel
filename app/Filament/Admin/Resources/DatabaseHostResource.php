@@ -88,7 +88,7 @@ class DatabaseHostResource extends Resource
                     ->placeholder(trans('admin/databasehost.no_nodes')),
             ])
             ->checkIfRecordIsSelectableUsing(fn (DatabaseHost $databaseHost) => !$databaseHost->databases_count)
-            ->actions([
+            ->recordActions([
                 ViewAction::make()
                     ->hidden(fn ($record) => static::canEdit($record)),
                 EditAction::make(),

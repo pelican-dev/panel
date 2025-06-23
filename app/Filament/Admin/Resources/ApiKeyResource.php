@@ -95,7 +95,7 @@ class ApiKeyResource extends Resource
                     ->icon('tabler-user')
                     ->url(fn (ApiKey $apiKey) => auth()->user()->can('update', $apiKey->user) ? EditUser::getUrl(['record' => $apiKey->user]) : null),
             ])
-            ->actions([
+            ->recordActions([
                 DeleteAction::make(),
             ])
             ->emptyStateIcon('tabler-key')

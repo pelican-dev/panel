@@ -67,7 +67,7 @@ class DatabasesRelationManager extends RelationManager
                 DateTimeColumn::make('created_at')
                     ->label(trans('admin/databasehost.table.created_at')),
             ])
-            ->actions([
+            ->recordActions([
                 DeleteAction::make()
                     ->authorize(fn (Database $database) => auth()->user()->can('delete', $database)),
                 ViewAction::make()
