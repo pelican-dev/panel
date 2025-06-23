@@ -1,1 +1,1 @@
-function i(){return{isSticky:!1,init:function(){this.evaluatePageScrollPosition()},evaluatePageScrollPosition:function(){this.isSticky=document.body.scrollHeight>=window.scrollY+window.innerHeight*2}}}export{i as default};
+var o=()=>({isSticky:!1,init(){this.evaluatePageScrollPosition()},evaluatePageScrollPosition(){let i=this.$el.getBoundingClientRect(),t=i.top>window.innerHeight,e=i.top<window.innerHeight&&i.bottom>window.innerHeight;this.isSticky=t||e}});export{o as default};
