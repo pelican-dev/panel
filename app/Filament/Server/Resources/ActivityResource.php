@@ -6,7 +6,6 @@ use App\Filament\Server\Resources\ActivityResource\Pages\ListActivities;
 use Exception;
 use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
-use App\Filament\Server\Resources\ActivityResource\Pages;
 use App\Models\ActivityLog;
 use App\Models\Permission;
 use App\Models\Role;
@@ -46,7 +45,7 @@ class ActivityResource extends Resource
 
     protected static ?int $navigationSort = 8;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-stack';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-stack';
 
     protected static bool $isScopedToTenant = false;
 

@@ -5,7 +5,6 @@ namespace App\Filament\Server\Resources;
 use App\Filament\Server\Resources\DatabaseResource\Pages\ListDatabases;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
-use App\Filament\Server\Resources\DatabaseResource\Pages;
 use App\Models\Database;
 use App\Models\Permission;
 use App\Models\Server;
@@ -41,7 +40,7 @@ class DatabaseResource extends Resource
 
     protected static ?int $navigationSort = 6;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-database';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-database';
 
     protected static function getBadgeCount(): int
     {

@@ -7,7 +7,6 @@ use App\Filament\Admin\Resources\RoleResource\Pages\CreateRole;
 use App\Filament\Admin\Resources\RoleResource\Pages\ViewRole;
 use App\Filament\Admin\Resources\RoleResource\Pages\EditRole;
 use BackedEnum;
-use App\Filament\Admin\Resources\RoleResource\Pages;
 use App\Models\Role;
 use Exception;
 use Filament\Actions\Action;
@@ -44,7 +43,7 @@ class RoleResource extends Resource
 
     protected static ?string $model = Role::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-users-group';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-users-group';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -118,7 +117,7 @@ class RoleResource extends Resource
     /**
      * @throws Exception
      */
-    public static function form(Schema $schema): Schema
+    public static function defaultForm(Schema $schema): Schema
     {
         $permissionSections = [];
 
@@ -164,7 +163,7 @@ class RoleResource extends Resource
     }
 
     /**
-     * @param string[]|int[]|Permission[]|BackedEnum[] $options
+     * @param  string[]|int[]|Permission[]|BackedEnum[]  $options
      *
      * @throws Exception
      */

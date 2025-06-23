@@ -7,8 +7,6 @@ use App\Filament\Admin\Resources\DatabaseHostResource\Pages\ListDatabaseHosts;
 use App\Filament\Admin\Resources\DatabaseHostResource\Pages\CreateDatabaseHost;
 use App\Filament\Admin\Resources\DatabaseHostResource\Pages\ViewDatabaseHost;
 use App\Filament\Admin\Resources\DatabaseHostResource\Pages\EditDatabaseHost;
-use App\Filament\Admin\Resources\DatabaseHostResource\Pages;
-use App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers;
 use App\Models\DatabaseHost;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
@@ -25,6 +23,7 @@ use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -39,7 +38,7 @@ class DatabaseHostResource extends Resource
 
     protected static ?string $model = DatabaseHost::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-database';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-database';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -112,7 +111,7 @@ class DatabaseHostResource extends Resource
     /**
      * @throws Exception
      */
-    public static function form(Schema $schema): Schema
+    public static function defaultForm(Schema $schema): Schema
     {
         return $schema
             ->components([

@@ -10,6 +10,7 @@ use App\Notifications\MailTested;
 use App\Traits\EnvironmentWriterTrait;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -54,7 +55,7 @@ class Settings extends Page implements HasSchemas
     use EnvironmentWriterTrait;
     use InteractsWithForms;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-settings';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-settings';
 
     protected string $view = 'filament.pages.settings';
 

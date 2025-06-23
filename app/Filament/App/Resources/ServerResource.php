@@ -3,7 +3,6 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\ServerResource\Pages\ListServers;
-use App\Filament\App\Resources\ServerResource\Pages;
 use App\Models\Server;
 use Filament\Resources\Resource;
 

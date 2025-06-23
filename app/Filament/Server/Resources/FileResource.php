@@ -6,7 +6,6 @@ use App\Filament\Server\Resources\FileResource\Pages\EditFiles;
 use App\Filament\Server\Resources\FileResource\Pages\SearchFiles;
 use App\Filament\Server\Resources\FileResource\Pages\DownloadFiles;
 use App\Filament\Server\Resources\FileResource\Pages\ListFiles;
-use App\Filament\Server\Resources\FileResource\Pages;
 use App\Models\File;
 use App\Models\Permission;
 use App\Traits\Filament\BlockAccessInConflict;
@@ -27,7 +26,7 @@ class FileResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-files';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-files';
 
     protected static bool $isScopedToTenant = false;
 

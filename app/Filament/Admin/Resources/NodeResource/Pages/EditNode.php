@@ -2,6 +2,10 @@
 
 namespace App\Filament\Admin\Resources\NodeResource\Pages;
 
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Grid;
 use Throwable;
 use App\Filament\Admin\Resources\NodeResource;
 use App\Models\Node;
@@ -12,7 +16,6 @@ use App\Services\Nodes\NodeUpdateService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
-use Filament\Actions;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -20,7 +23,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -592,7 +594,7 @@ class EditNode extends EditRecord
                                                     //TODO ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                                     ->formatStateUsing(fn (NodeAutoDeployService $service, Node $node, Set $set, Get $get) => $set('generatedToken', $service->handle(request(), $node, $get('docker')))),
                                             ])
-                                            ->mountUsing(function (Form|Schema $schema) {
+                                            ->mountUsing(function (Schema $schema) {
                                                 $schema->fill();
                                             }),
                                     ])->fullWidth(),
@@ -650,7 +652,7 @@ class EditNode extends EditRecord
         return [];
     }
 
-    /** @return array<Actions\Action|Actions\ActionGroup> */
+    /** @return array<Action|Actions> */
     protected function getDefaultHeaderActions(): array
     {
         return [

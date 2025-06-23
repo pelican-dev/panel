@@ -7,7 +7,6 @@ use App\Filament\Admin\Resources\MountResource\Pages\CreateMount;
 use App\Filament\Admin\Resources\MountResource\Pages\ViewMount;
 use App\Filament\Admin\Resources\MountResource\Pages\EditMount;
 use Exception;
-use App\Filament\Admin\Resources\MountResource\Pages;
 use App\Models\Mount;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
@@ -39,7 +38,7 @@ class MountResource extends Resource
 
     protected static ?string $model = Mount::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-layers-linked';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-layers-linked';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -115,7 +114,7 @@ class MountResource extends Resource
     /**
      * @throws Exception
      */
-    public static function form(Schema $schema): Schema
+    public static function defaultForm(Schema $schema): Schema
     {
         return $schema
             ->components([

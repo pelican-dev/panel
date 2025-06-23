@@ -6,7 +6,6 @@ use App\Filament\Server\Resources\BackupResource\Pages\ListBackups;
 use App\Enums\BackupStatus;
 use App\Enums\ServerState;
 use App\Facades\Activity;
-use App\Filament\Server\Resources\BackupResource\Pages;
 use App\Http\Controllers\Api\Client\Servers\BackupController;
 use App\Models\Backup;
 use App\Models\Permission;
@@ -56,7 +55,7 @@ class BackupResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-file-zip';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-file-zip';
 
     protected static bool $canCreateAnother = false;
 
@@ -78,7 +77,7 @@ class BackupResource extends Resource
 
     public static function defaultForm(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 TextInput::make('name')
                     ->label('Name')

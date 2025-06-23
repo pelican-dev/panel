@@ -12,6 +12,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Application;
@@ -60,7 +61,7 @@ class GSLToken extends FeatureProvider
             ->modalSubmitActionLabel('Update GSL Token')
             ->disabledSchema(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
             ->schema([
-                Placeholder::make('info')
+                TextEntry::make('info')
                     ->label(new HtmlString(Blade::render('You can either <x-filament::link href="https://steamcommunity.com/dev/managegameservers" target="_blank">generate a new one</x-filament::link> and enter it below or leave the field blank to remove it completely.'))),
                 TextInput::make('gsltoken')
                     ->label('GSL Token')

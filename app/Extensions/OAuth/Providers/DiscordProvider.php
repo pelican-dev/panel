@@ -9,7 +9,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use SocialiteProviders\Discord\Provider;
-use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 final class DiscordProvider extends OAuthProvider
 {
@@ -43,7 +42,7 @@ final class DiscordProvider extends OAuthProvider
                         ->label('Redirect URL')
                         ->dehydrated()
                         ->disabled()
-                        ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                        //TODO ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                         ->formatStateUsing(fn () => url('/auth/oauth/callback/discord')),
                 ]),
         ], parent::getSetupSteps());

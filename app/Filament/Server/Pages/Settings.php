@@ -20,7 +20,7 @@ use Illuminate\Support\Number;
 
 class Settings extends ServerFormPage
 {
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-settings';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-settings';
 
     protected static ?int $navigationSort = 10;
 

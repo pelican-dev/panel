@@ -8,7 +8,6 @@ use App\Filament\Server\Resources\ScheduleResource\Pages\ViewSchedule;
 use App\Filament\Server\Resources\ScheduleResource\Pages\EditSchedule;
 use App\Facades\Activity;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
-use App\Filament\Server\Resources\ScheduleResource\Pages;
 use App\Filament\Server\Resources\ScheduleResource\RelationManagers\TasksRelationManager;
 use App\Helpers\Utilities;
 use App\Models\Permission;
@@ -57,7 +56,7 @@ class ScheduleResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-clock';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-clock';
 
     public static function canViewAny(): bool
     {
@@ -82,7 +81,7 @@ class ScheduleResource extends Resource
     /**
      * @throws Exception
      */
-    public static function form(Schema $schema): Schema
+    public static function defaultForm(Schema $schema): Schema
     {
         return $schema
             ->columns([

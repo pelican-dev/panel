@@ -347,7 +347,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * this checks if the ability is one of our permissions and then checks if the user can do it or not
      * Otherwise it calls the Authorizable trait's parent method
      *
-     * @param iterable<string|BackedEnum>|BackedEnum|string $abilities
+     * @param  iterable<string|BackedEnum>|BackedEnum|string  $abilities
      * @param  array<mixed>|mixed  $arguments
      */
     public function can($abilities, mixed $arguments = []): bool

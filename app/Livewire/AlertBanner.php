@@ -8,19 +8,18 @@ use Filament\Notifications\Concerns\HasId;
 use Filament\Notifications\Concerns\HasStatus;
 use Filament\Notifications\Concerns\HasTitle;
 use Closure;
-use Filament\Notifications\Concerns;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Support\Str;
 use Livewire\Wireable;
 
 final class AlertBanner implements Wireable
 {
+    use EvaluatesClosures;
     use HasBody;
     use HasIcon;
     use HasId;
     use HasStatus;
     use HasTitle;
-    use EvaluatesClosures;
 
     protected bool|Closure $closable = false;
 

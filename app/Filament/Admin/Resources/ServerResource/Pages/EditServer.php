@@ -2,9 +2,9 @@
 
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
-use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
+use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
 use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Pages\Console;
@@ -30,6 +30,7 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Forms\Components\CodeEditor;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Fieldset;
@@ -164,9 +165,8 @@ class EditServer extends EditRecord
                                             ->modalFooterActionsAlignment(Alignment::Right)
                                             ->modalCancelActionLabel(trans('filament::components/modal.actions.close.label'))
                                             ->schema([
-                                                MonacoEditor::make('logs')
+                                                CodeEditor::make('logs')
                                                     ->hiddenLabel()
-                                                    ->placeholderText(trans('admin/server.no_log'))
                                                     ->formatStateUsing(function (Server $server, DaemonServerRepository $serverRepository) {
                                                         try {
                                                             return $serverRepository->setServer($server)->getInstallLogs();

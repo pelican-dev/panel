@@ -6,8 +6,6 @@ use App\Filament\Admin\Resources\EggResource\RelationManagers\ServersRelationMan
 use App\Filament\Admin\Resources\EggResource\Pages\ListEggs;
 use App\Filament\Admin\Resources\EggResource\Pages\CreateEgg;
 use App\Filament\Admin\Resources\EggResource\Pages\EditEgg;
-use App\Filament\Admin\Resources\EggResource\Pages;
-use App\Filament\Admin\Resources\EggResource\RelationManagers;
 use App\Models\Egg;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
@@ -22,7 +20,7 @@ class EggResource extends Resource
 
     protected static ?string $model = Egg::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-eggs';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-eggs';
 
     protected static ?string $recordTitleAttribute = 'name';
 

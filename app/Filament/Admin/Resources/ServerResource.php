@@ -7,8 +7,6 @@ use App\Filament\Admin\Resources\ServerResource\Pages\ListServers;
 use App\Filament\Admin\Resources\ServerResource\Pages\CreateServer;
 use App\Filament\Admin\Resources\ServerResource\Pages\EditServer;
 use Exception;
-use App\Filament\Admin\Resources\ServerResource\Pages;
-use App\Filament\Admin\Resources\ServerResource\RelationManagers;
 use App\Models\Mount;
 use App\Models\Server;
 use App\Traits\Filament\CanCustomizePages;
@@ -27,7 +25,7 @@ class ServerResource extends Resource
 
     protected static ?string $model = Server::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-brand-docker';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-brand-docker';
 
     protected static ?string $recordTitleAttribute = 'name';
 

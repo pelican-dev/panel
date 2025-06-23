@@ -97,7 +97,7 @@ class Backup extends Model implements Validatable
     }
 
     /**
-     * @param Builder $query
+     * @param  Builder  $query
      * @return BackupQueryBuilder<Model>
      */
     public function newEloquentBuilder($query): BackupQueryBuilder

@@ -15,12 +15,12 @@ trait CanModifyForm
         static::$customFormModifications[] = $closure;
     }
 
-    public static function defaultForm(Schema $schema): Schema
+    public static function form(Schema $schema): Schema
     {
         return $schema;
     }
 
-    public static function form(Schema $schema): Schema
+    public static function defaultForm(Schema $schema): Schema
     {
         $schema = static::defaultForm($schema);
 

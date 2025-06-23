@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Resources;
 use Filament\Schemas\Schema;
 use App\Filament\Admin\Resources\ApiKeyResource\Pages\ListApiKeys;
 use App\Filament\Admin\Resources\ApiKeyResource\Pages\CreateApiKey;
-use App\Filament\Admin\Resources\ApiKeyResource\Pages;
 use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\ApiKey;
@@ -22,7 +21,6 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Form;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,7 +34,7 @@ class ApiKeyResource extends Resource
 
     protected static ?string $model = ApiKey::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-key';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-key';
 
     public static function getNavigationLabel(): string
     {
@@ -112,16 +110,12 @@ class ApiKeyResource extends Resource
     /**
      * @throws Exception
      */
-    public static function form(Form|Schema $form): Schema
+    public static function defaultForm(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 Fieldset::make('Permissions')
-                    ->columns([
-                        'default' => 1,
-                        'sm' => 1,
-                        'md' => 2,
-                    ])
+                    ->columnSpanFull()
                     ->schema(
                         collect(ApiKey::getPermissionList())->map(fn ($resource) => ToggleButtons::make('permissions_' . $resource)
                             ->label(str($resource)->replace('_', ' ')->title())->inline()

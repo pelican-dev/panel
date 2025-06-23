@@ -7,8 +7,6 @@ use App\Filament\Admin\Resources\NodeResource\RelationManagers\NodesRelationMana
 use App\Filament\Admin\Resources\NodeResource\Pages\ListNodes;
 use App\Filament\Admin\Resources\NodeResource\Pages\CreateNode;
 use App\Filament\Admin\Resources\NodeResource\Pages\EditNode;
-use App\Filament\Admin\Resources\NodeResource\Pages;
-use App\Filament\Admin\Resources\NodeResource\RelationManagers;
 use App\Models\Node;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
@@ -24,7 +22,7 @@ class NodeResource extends Resource
 
     protected static ?string $model = Node::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-server-2';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-server-2';
 
     protected static ?string $recordTitleAttribute = 'name';
 

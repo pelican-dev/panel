@@ -15,7 +15,7 @@ trait ValidatesValidationRules
     /**
      * Validate that the rules being provided are valid and can be resolved.
      *
-     * @param string[]|string|ValidationRule[] $rules
+     * @param  string[]|string|ValidationRule[]  $rules
      *
      * @throws BadValidationRuleException
      */

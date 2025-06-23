@@ -4,7 +4,6 @@ namespace App\Filament\Server\Resources;
 
 use App\Filament\Server\Resources\AllocationResource\Pages\ListAllocations;
 use App\Facades\Activity;
-use App\Filament\Server\Resources\AllocationResource\Pages;
 use App\Models\Allocation;
 use App\Models\Permission;
 use App\Models\Server;
@@ -38,7 +37,7 @@ class AllocationResource extends Resource
 
     protected static ?int $navigationSort = 7;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-network';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-network';
 
     /**
      * @throws Exception

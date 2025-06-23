@@ -6,7 +6,6 @@ use App\Filament\Admin\Resources\WebhookResource\Pages\ListWebhookConfigurations
 use App\Filament\Admin\Resources\WebhookResource\Pages\CreateWebhookConfiguration;
 use App\Filament\Admin\Resources\WebhookResource\Pages\ViewWebhookConfiguration;
 use App\Filament\Admin\Resources\WebhookResource\Pages\EditWebhookConfiguration;
-use App\Filament\Admin\Resources\WebhookResource\Pages;
 use App\Models\WebhookConfiguration;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
@@ -34,7 +33,7 @@ class WebhookResource extends Resource
 
     protected static ?string $model = WebhookConfiguration::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'tabler-webhook';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-webhook';
 
     protected static ?string $recordTitleAttribute = 'description';
 
@@ -89,7 +88,7 @@ class WebhookResource extends Resource
             ]);
     }
 
-    public static function form(Schema $schema): Schema
+    public static function defaultForm(Schema $schema): Schema
     {
         return $schema
             ->components([

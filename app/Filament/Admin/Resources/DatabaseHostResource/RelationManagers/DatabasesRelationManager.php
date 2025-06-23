@@ -2,12 +2,14 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHostResource\RelationManagers;
 
+use Exception;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Schemas\Schema;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\Database;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -16,7 +18,10 @@ class DatabasesRelationManager extends RelationManager
 {
     protected static string $relationship = 'databases';
 
-    public function form(Form|Schema $schema): Schema
+    /**
+     * @throws Exception
+     */
+    public function form(Schema $schema): Schema
     {
         return $schema
             ->schema([

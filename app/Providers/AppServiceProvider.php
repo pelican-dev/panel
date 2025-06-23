@@ -25,7 +25,6 @@ use App\Checks\UsedDiskSpaceCheck;
 use App\Extensions\Avatar\Providers\GravatarProvider;
 use App\Extensions\Avatar\Providers\UiAvatarsProvider;
 use App\Extensions\OAuth\Providers\GitlabProvider;
-use App\Models;
 use App\Extensions\Captcha\Providers\TurnstileProvider;
 use App\Extensions\Features\GSLToken;
 use App\Extensions\Features\JavaVersion;
