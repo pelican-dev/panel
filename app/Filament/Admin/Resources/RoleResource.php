@@ -131,7 +131,7 @@ class RoleResource extends Resource
             $permissionSections[] = self::makeSection($model, $options);
         }
 
-        return $form
+        return $schema
             ->columns(1)
             ->components([
                 TextInput::make('name')

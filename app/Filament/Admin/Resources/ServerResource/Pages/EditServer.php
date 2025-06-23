@@ -30,6 +30,7 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\CodeEditor;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
@@ -77,6 +78,7 @@ class EditServer extends EditRecord
 
     /**
      * @throws RandomException
+     * @throws Exception
      */
     public function form(Schema $schema): Schema
     {
@@ -182,9 +184,7 @@ class EditServer extends EditRecord
                                                         }
 
                                                         return '';
-                                                    })
-                                                    ->language('shell')
-                                                    ->view('filament.plugins.monaco-editor-logs'),
+                                                    }),
                                             ])
                                     ),
 
@@ -1063,7 +1063,7 @@ class EditServer extends EditRecord
         ];
     }
 
-    /** @return array<Actions\Action|Actions\ActionGroup> */
+    /** @return array<Action|ActionGroup> */
     protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */

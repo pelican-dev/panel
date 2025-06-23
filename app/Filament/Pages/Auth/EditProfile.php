@@ -21,6 +21,7 @@ use chillerlan\QRCode\QROptions;
 use DateTimeZone;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Components\Grid;
 use Filament\Infolists\Components\TextEntry;
@@ -533,7 +534,7 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
         return [];
     }
 
-    /** @return array<HeaderAction|ActionGroup> */
+    /** @return array<Action|ActionGroup> */
     protected function getDefaultHeaderActions(): array
     {
         return [

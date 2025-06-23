@@ -5,6 +5,8 @@ namespace App\Filament\Server\Resources\ScheduleResource\Pages;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\ScheduleResource;
 use App\Models\Schedule;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -40,7 +42,7 @@ class EditSchedule extends EditRecord
         return $data;
     }
 
-    /** @return array<Actions\Action|Actions\ActionGroup> */
+    /** @return array<Action|ActionGroup> */
     protected function getDefaultHeaderActions(): array
     {
         return [

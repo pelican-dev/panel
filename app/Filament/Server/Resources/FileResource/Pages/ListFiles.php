@@ -405,7 +405,7 @@ class ListFiles extends ListRecords
             ]);
     }
 
-    /** @return array<HeaderAction|HeaderActionGroup>
+    /** @return array<Action|ActionGroup>
      * @throws Exception
      */
     protected function getDefaultHeaderActions(): array

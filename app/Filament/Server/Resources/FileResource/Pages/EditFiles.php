@@ -36,7 +36,7 @@ use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
 
 /**
- * @property Form $form
+ * @property Schema $schema
  */
 class EditFiles extends Page
 {
