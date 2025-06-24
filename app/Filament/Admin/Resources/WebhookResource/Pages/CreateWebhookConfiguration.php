@@ -25,7 +25,7 @@ class CreateWebhookConfiguration extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        if (($data['type'] ?? null) === WebhookType::Discord) {
+        if (($data['type'] ?? null) === WebhookType::Discord->value) {
             $embeds = data_get($data, 'embeds', []);
 
             foreach ($embeds as &$embed) {

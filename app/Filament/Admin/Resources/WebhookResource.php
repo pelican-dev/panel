@@ -151,7 +151,7 @@ class WebhookResource extends Resource
                     ->required()
                     ->columnSpanFull()
                     ->afterStateUpdated(fn ($state, Set $set) => $set('type', str($state)->contains('discord.com') ? WebhookType::Discord->value : WebhookType::Regular->value)),
-                Section::make(trans('admin/webhook.events'))
+                Section::make(trans('admin/webhook.discord'))
                     ->hidden(fn (Get $get) => $get('type') === WebhookType::Regular->value)
                     ->dehydratedWhenHidden()
                     ->afterStateUpdated(fn ($livewire) => $livewire->dispatch('refresh-widget'))

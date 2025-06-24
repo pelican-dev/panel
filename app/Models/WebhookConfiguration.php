@@ -188,17 +188,12 @@ class WebhookConfiguration extends Model
         );
     }
 
-    /** @return array<string, mixed> */
-    public function run(?bool $dry = false): array
+    public function run(): void
     {
-        $eventName = collect($this->events ?: ['eloquent.created: App\\Models\\Server'])->random();
-        $data = $this->getWebhookSampleData();
+        $eventName = collect($this->events ?: ['eloquent.created: App\\Models\\Server'])->first();
+        $eventData = $this->getWebhookSampleData();
 
-        $eventData = [json_encode($data)];
-
-        ProcessWebhook::dispatchIf(!$dry, $this, $eventName, $eventData);
-
-        return $data;
+        ProcessWebhook::dispatch($this, $eventName, [$eventData]);
     }
 
     /**
