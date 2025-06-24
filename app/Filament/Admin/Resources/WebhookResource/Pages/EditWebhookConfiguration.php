@@ -28,7 +28,8 @@ class EditWebhookConfiguration extends EditRecord
                 ->label(trans('admin/webhook.test_now'))
                 ->color('primary')
                 ->disabled(fn (WebhookConfiguration $webhookConfiguration) => count($webhookConfiguration->events) === 0)
-                ->action(fn (WebhookConfiguration $webhookConfiguration) => $webhookConfiguration->run()),
+                ->action(fn (WebhookConfiguration $webhookConfiguration) => $webhookConfiguration->run())
+                ->tooltip(trans('admin/webhook.test_now_help')),
             $this->getSaveFormAction()->formId('form'),
         ];
     }

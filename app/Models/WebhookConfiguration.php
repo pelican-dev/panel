@@ -64,7 +64,7 @@ class WebhookConfiguration extends Model
     {
         self::saved(static function (self $webhookConfiguration): void {
             $changedEvents = collect([
-                ...((array) $webhookConfiguration->events),
+                ...($webhookConfiguration->events),
                 ...$webhookConfiguration->getOriginal('events', '[]'),
             ])->unique();
 
@@ -72,7 +72,7 @@ class WebhookConfiguration extends Model
         });
 
         self::deleted(static function (self $webhookConfiguration): void {
-            self::updateCache(collect((array) $webhookConfiguration->events));
+            self::updateCache(collect($webhookConfiguration->events));
         });
     }
 
@@ -161,9 +161,7 @@ class WebhookConfiguration extends Model
         foreach (File::allFiles($directory) as $file) {
             $namespace = str($file->getPath())
                 ->after(base_path())
-                ->replace(DIRECTORY_SEPARATOR, '\\')
-                ->replace('\\app\\', 'App\\')
-                ->toString();
+                ->replace([DIRECTORY_SEPARATOR, '\\app\\'], ['\\', 'App\\']);
 
             $events[] = $namespace . '\\' . str($file->getFilename())
                 ->replace([DIRECTORY_SEPARATOR, '.php'], ['\\', '']);
@@ -188,10 +186,11 @@ class WebhookConfiguration extends Model
         );
     }
 
-    public function run(): void
+    /** @param array<mixed, mixed> $eventData */
+    public function run(?string $eventName = null, ?array $eventData = null): void
     {
-        $eventName = collect($this->events ?: ['eloquent.created: App\\Models\\Server'])->first();
-        $eventData = $this->getWebhookSampleData();
+        $eventName ??= 'eloquent.created: '.Server::class;
+        $eventData ??= $this->getWebhookSampleData();
 
         ProcessWebhook::dispatch($this, $eventName, [$eventData]);
     }
@@ -202,45 +201,34 @@ class WebhookConfiguration extends Model
     public function getWebhookSampleData(): array
     {
         return [
-            'id' => 2,
+            'status' => 'installing',
+            'oom_killer' => false,
+            'installed_at' => null,
             'external_id' => 10,
             'uuid' => '651fgbc1-dee6-4250-814e-10slda13f1e',
             'uuid_short' => '651fgbc1',
             'node_id' => 1,
-            'name' => 'Example Server',
+            'name' => 'Eagle',
             'description' => 'This is an example server description.',
-            'status' => 'running',
             'skip_scripts' => false,
             'owner_id' => 1,
-            'memory' => 512,
+            'memory' => 2048,
             'swap' => 128,
             'disk' => 10240,
             'io' => 500,
-            'cpu' => 500,
-            'threads' => '1, 3, 5',
-            'oom_killer' => false,
+            'cpu' => 100,
+            'threads' => '1,3,5',
             'allocation_id' => 4,
             'egg_id' => 2,
-            'startup' => 'This is a example startup command.',
-            'image' => 'Image here',
-            'allocation_limit' => 5,
+            'startup' => 'java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}',
+            'image' => 'ghcr.io/parkervcp/yolks:java_21',
             'database_limit' => 1,
+            'allocation_limit' => 5,
             'backup_limit' => 3,
+            'docker_labels' => [],
             'created_at' => '2025-03-17T15:20:32.000000Z',
             'updated_at' => '2025-05-12T17:53:12.000000Z',
-            'installed_at' => '2025-04-27T21:06:01.000000Z',
-            'docker_labels' => [],
-            'allocation' => [
-                'id' => 4,
-                'node_id' => 1,
-                'ip' => '192.168.0.3',
-                'ip_alias' => null,
-                'port' => 25567,
-                'server_id' => 2,
-                'notes' => null,
-                'created_at' => '2025-03-17T15:20:09.000000Z',
-                'updated_at' => '2025-03-17T15:20:32.000000Z',
-            ],
+            'id' => 2,
         ];
     }
 }

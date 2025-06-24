@@ -9,8 +9,9 @@ return [
     'events' => 'Events',
     'no_webhooks' => 'No Webhooks',
     'help' => 'Help',
-    'test_now' => 'Test Now',
     'help_text' => 'You have to wrap variable name in between {{ }} for example if you want to get the name from the api you can use {{name}}.',
+    'test_now' => 'Test Now',
+    'test_now_help' => 'This will fire a `created: Server` event',
     'table' => [
         'description' => 'Description',
         'endpoint' => 'Endpoint',
@@ -19,7 +20,7 @@ return [
     'events' => 'Events',
     'regular' => 'Regular',
     'discord' => 'Discord',
-    'discordmessage' => [
+    'discord_message' => [
         'profile' => 'Profile',
         'message' => 'Message',
         'username' => 'Username',
@@ -30,7 +31,7 @@ return [
         'supress_notifications' => 'Suppress Notifications',
         'supress_notifications_text' => 'This message will not trigger push and desktop notifications',
     ],
-    'discordembedtable' => [
+    'discord_embed' => [
         'add_embed' => 'Add Embed',
         'flags' => 'Flags',
         'thumbnail' => 'Thumbnail URL',
