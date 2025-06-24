@@ -118,16 +118,14 @@ class EditFiles extends Page
                             ->icon('tabler-x')
                             ->url(fn () => ListFiles::getUrl(['path' => dirname($this->path)])),
                     ])
-                    ->footerActionsAlignment(Alignment::End)
+                    ->footerActionsAlignment(Alignment::End) //TODO MISSING PADDING
                     ->schema([
-                        Select::make('lang')
+                        Select::make('lang') //TODO BROKEN
                             ->label('Syntax Highlighting')
                             ->searchable()
-                            ->native(false)
                             ->live()
                             ->options(EditorLanguages::class)
                             ->selectablePlaceholder(false)
-                            ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
                             ->default(fn () => EditorLanguages::fromWithAlias(pathinfo($this->path, PATHINFO_EXTENSION))),
                         CodeEditor::make('editor')
                             ->hiddenLabel()
@@ -165,7 +163,8 @@ class EditFiles extends Page
                                     $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 }
                             }),
-                    ]),
+                    ])
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -208,7 +207,7 @@ class EditFiles extends Page
     {
         return [
             'form' => $this->form(static::getResource()::form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->statePath($this->getFormStatePath())
                     ->columns($this->hasInlineLabels() ? 1 : 2)
                     ->inlineLabel($this->hasInlineLabels()),
