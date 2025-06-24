@@ -6,6 +6,14 @@ use App\Filament\Admin\Resources\WebhookResource\Pages;
 use App\Filament\Admin\Resources\WebhookResource\Pages\EditWebhookConfiguration;
 use App\Livewire\AlertBanner;
 use App\Models\WebhookConfiguration;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ReplicateAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\ColorPicker;
@@ -16,14 +24,11 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Forms\Set;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ReplicateAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -33,6 +38,10 @@ use App\Enums\WebhookType;
 
 class WebhookResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
     use HandlesEvents;
 
     protected static ?string $model = WebhookConfiguration::class;
@@ -66,7 +75,7 @@ class WebhookResource extends Resource
         return trans('admin/dashboard.advanced');
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([
@@ -78,6 +87,8 @@ class WebhookResource extends Resource
                     ->limit(60),
                 TextColumn::make('description')
                     ->label(trans('admin/webhook.table.description')),
+                TextColumn::make('endpoint')
+                    ->label(trans('admin/webhook.table.endpoint')),
             ])
             ->actions([
                 ViewAction::make()
@@ -110,7 +121,7 @@ class WebhookResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         return $form
             ->schema([
@@ -337,11 +348,13 @@ class WebhookResource extends Resource
             ->send();
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListWebhookConfigurations::route('/'),
             'create' => Pages\CreateWebhookConfiguration::route('/create'),
+            'view' => Pages\ViewWebhookConfiguration::route('/{record}'),
             'edit' => Pages\EditWebhookConfiguration::route('/{record}/edit'),
         ];
     }

@@ -3,17 +3,24 @@
 namespace App\Filament\Admin\Resources\WebhookResource\Pages;
 
 use App\Filament\Admin\Resources\WebhookResource;
-use App\Models\WebhookConfiguration;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use App\Models\WebhookConfiguration;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use App\Enums\WebhookType;
 
 class EditWebhookConfiguration extends EditRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = WebhookResource::class;
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             DeleteAction::make(),

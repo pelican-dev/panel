@@ -14,6 +14,13 @@ use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Services\Backups\DownloadLinkService;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
+use App\Services\Backups\DeleteBackupService;
+use App\Traits\Filament\BlockAccessInConflict;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
+use App\Traits\Filament\HasLimitBadge;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Placeholder;
@@ -22,6 +29,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -30,10 +38,18 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 
 class BackupResource extends Resource
 {
+    use BlockAccessInConflict;
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
+    use HasLimitBadge;
+
     protected static ?string $model = Backup::class;
 
     protected static ?int $navigationSort = 3;
@@ -42,34 +58,23 @@ class BackupResource extends Resource
 
     protected static bool $canCreateAnother = false;
 
-    public const WARNING_THRESHOLD = 0.7;
-
-    public static function getNavigationBadge(): string
+    protected static function getBadgeCount(): int
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        $limit = $server->backup_limit;
-
-        return $server->backups->count() . ($limit === 0 ? '' : ' / ' . $limit);
+        return $server->backups->count();
     }
 
-    public static function getNavigationBadgeColor(): ?string
+    protected static function getBadgeLimit(): int
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        $limit = $server->backup_limit;
-        $count = $server->backups->count();
-
-        if ($limit === 0) {
-            return null;
-        }
-
-        return $count >= $limit ? 'danger' : ($count >= $limit * self::WARNING_THRESHOLD ? 'warning' : 'success');
+        return $server->backup_limit;
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         return $form
             ->schema([
@@ -85,7 +90,7 @@ class BackupResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         /** @var Server $server */
         $server = Filament::getTenant();
@@ -142,7 +147,7 @@ class BackupResource extends Resource
                                     ->send();
                             }
 
-                            if (!$backup->is_successful && is_null($backup->completed_at)) { //TODO Change to Notifications
+                            if (!$backup->is_successful && is_null($backup->completed_at)) {
                                 return Notification::make()
                                     ->danger()
                                     ->title('Backup Restore Failed')
@@ -175,25 +180,29 @@ class BackupResource extends Resource
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     DeleteAction::make('delete')
                         ->disabled(fn (Backup $backup) => $backup->is_locked)
-                        ->modalDescription(fn (Backup $backup) => 'Do you wish to delete, ' . $backup->name . '?')
+                        ->modalDescription(fn (Backup $backup) => 'Do you wish to delete ' . $backup->name . '?')
                         ->modalSubmitActionLabel('Delete Backup')
-                        ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->delete($request, $server, $backup))
+                        ->action(function (Backup $backup, DeleteBackupService $deleteBackupService) {
+                            try {
+                                $deleteBackupService->handle($backup);
+                            } catch (ConnectionException) {
+                                Notification::make()
+                                    ->title('Could not delete backup')
+                                    ->body('Connection to node failed')
+                                    ->danger()
+                                    ->send();
+
+                                return;
+                            }
+
+                            Activity::event('server:backup.delete')
+                                ->subject($backup)
+                                ->property(['name' => $backup->name, 'failed' => !$backup->is_successful])
+                                ->log();
+                        })
                         ->visible(fn (Backup $backup) => $backup->status !== BackupStatus::InProgress),
                 ]),
             ]);
-    }
-
-    // TODO: find better way handle server conflict state
-    public static function canAccess(): bool
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        if ($server->isInConflictState()) {
-            return false;
-        }
-
-        return parent::canAccess();
     }
 
     public static function canViewAny(): bool
@@ -211,7 +220,8 @@ class BackupResource extends Resource
         return auth()->user()->can(Permission::ACTION_BACKUP_DELETE, Filament::getTenant());
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListBackups::route('/'),

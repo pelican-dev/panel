@@ -27,8 +27,16 @@ enum ServerState: string implements HasColor, HasIcon, HasLabel
         };
     }
 
-    public function getColor(): string
+    public function getColor(bool $hex = false): string
     {
+        if ($hex) {
+            return match ($this) {
+                self::Normal, self::Installing, self::RestoringBackup => '#2563EB',
+                self::Suspended => '#D97706',
+                self::InstallFailed, self::ReinstallFailed => '#EF4444',
+            };
+        }
+
         return match ($this) {
             self::Normal => 'primary',
             self::Installing => 'primary',

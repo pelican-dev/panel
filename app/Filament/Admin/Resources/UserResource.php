@@ -6,10 +6,16 @@ use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Admin\Resources\UserResource\RelationManagers;
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Resources\Pages\PageRegistration;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
@@ -22,6 +28,11 @@ use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
+
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'tabler-users';
@@ -53,7 +64,7 @@ class UserResource extends Resource
         return static::getModel()::count() ?: null;
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([
@@ -99,7 +110,7 @@ class UserResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         return $form
             ->columns(['default' => 1, 'lg' => 3])
@@ -146,14 +157,16 @@ class UserResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
+    /** @return class-string<RelationManager>[] */
+    public static function getDefaultRelations(): array
     {
         return [
             RelationManagers\ServersRelationManager::class,
         ];
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListUsers::route('/'),

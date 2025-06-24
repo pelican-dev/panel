@@ -11,6 +11,8 @@ use App\Services\Allocations\AssignmentService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerCreationService;
 use App\Services\Users\UserCreationService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Closure;
 use Exception;
 use Filament\Forms;
@@ -45,6 +47,9 @@ use LogicException;
 
 class CreateServer extends CreateRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = ServerResource::class;
 
     protected static bool $canCreateAnother = false;
