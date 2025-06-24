@@ -17,8 +17,6 @@ class Health extends Page
 
     protected string $view = 'filament.pages.health';
 
-    protected array $extraAttributes = [];
-
     /** @var array<string, string> */
     protected $listeners = [
         'refresh-component' => '$refresh',

@@ -21,7 +21,7 @@ enum BackupStatus: string implements HasColor, HasIcon, HasLabel
         };
     }
 
-    public function getColor(): ?string
+    public function getColor(): string
     {
         return match ($this) {
             self::InProgress => 'primary',

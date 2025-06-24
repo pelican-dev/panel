@@ -59,6 +59,7 @@ class Settings extends Page implements HasSchemas
 
     protected string $view = 'filament.pages.settings';
 
+    /** @var array<string, mixed>|null */
     public ?array $data = [];
 
     public function mount(): void
@@ -82,6 +83,7 @@ class Settings extends Page implements HasSchemas
     }
 
     /**
+     * @return array<Component>
      * @throws Exception
      */
     protected function getFormSchema(): array

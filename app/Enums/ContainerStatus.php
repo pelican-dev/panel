@@ -40,7 +40,7 @@ enum ContainerStatus: string implements HasColor, HasIcon, HasLabel
         };
     }
 
-    public function getColor(bool $hex = false): ?string
+    public function getColor(bool $hex = false): string
     {
         if ($hex) {
             return match ($this) {

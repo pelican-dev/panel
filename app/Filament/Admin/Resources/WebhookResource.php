@@ -54,7 +54,7 @@ class WebhookResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count() ?: null;
+        return ($count = static::getModel()::count()) > 0 ? (string) $count : null;
     }
 
     public static function getNavigationGroup(): ?string
