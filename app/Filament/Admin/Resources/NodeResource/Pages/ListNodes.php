@@ -8,7 +8,8 @@ use App\Filament\Components\Tables\Filters\TagsFilter;
 use App\Models\Node;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
@@ -78,7 +79,7 @@ class ListNodes extends ListRecords
             ]);
     }
 
-    /** @return array<Actions\Action|Actions\ActionGroup> */
+    /** @return array<Action|ActionGroup> */
     protected function getDefaultHeaderActions(): array
     {
         return [

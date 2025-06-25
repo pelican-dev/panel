@@ -7,9 +7,9 @@ use App\Filament\Admin\Resources\ServerResource;
 use App\Models\Server;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\SelectColumn;
@@ -106,7 +106,7 @@ class ListServers extends ListRecords
             ]);
     }
 
-    /** @return array<Actions\Action|Actions\ActionGroup> */
+    /** @return array<Action|ActionGroup> */
     protected function getDefaultHeaderActions(): array
     {
         return [

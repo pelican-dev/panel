@@ -9,7 +9,6 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
 
 class ListUsers extends ListRecords
 {
@@ -18,7 +17,7 @@ class ListUsers extends ListRecords
 
     protected static string $resource = UserResource::class;
 
-    /** @return array<Action|ActionGroup|CreateAction|DeleteAction> */
+    /** @return array<Action|ActionGroup> */
     protected function getDefaultHeaderActions(): array
     {
         return [

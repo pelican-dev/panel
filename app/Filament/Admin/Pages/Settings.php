@@ -27,7 +27,6 @@ use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
@@ -42,9 +41,10 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\Str;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 class Settings extends Page implements HasSchemas
 {
@@ -84,6 +84,7 @@ class Settings extends Page implements HasSchemas
 
     /**
      * @return array<Component>
+     *
      * @throws Exception
      */
     protected function getFormSchema(): array

@@ -17,7 +17,6 @@ use Filament\Actions\ActionGroup;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Layout\Stack;
@@ -66,7 +65,8 @@ class ListServers extends ListRecords
     {
         return [
             TextColumn::make('condition')
-                ->label('')
+                ->label('Status')
+                ->alignCenter()
                 ->default('unknown')
                 ->wrap()
                 ->size(TextSize::Medium)
@@ -75,9 +75,9 @@ class ListServers extends ListRecords
                 ->icon(fn (Server $server) => $server->condition->getIcon())
                 ->color(fn (Server $server) => $server->condition->getColor()),
             TextColumn::make('name')
+                ->label('Server')
                 ->description(fn (Server $server) => $server->description)
                 ->grow()
-                ->label('')
                 ->size(TextSize::Medium)
                 ->searchable(),
             TextColumn::make('allocation.address')
@@ -87,7 +87,6 @@ class ListServers extends ListRecords
                 ->copyable(request()->isSecure()),
             TextColumn::make('cpuUsage')
                 ->label('Resources')
-                ->label('')
                 ->size(TextSize::Medium)
                 ->icon('tabler-cpu')
                 ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('cpu', limit: true, type: ServerResourceType::Percentage, precision: 0))
@@ -97,7 +96,6 @@ class ListServers extends ListRecords
                 ->label('')
                 ->icon('tabler-device-desktop-analytics')
                 ->size(TextSize::Medium)
-                ->icon('tabler-memory')
                 ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('memory', limit: true))
                 ->state(fn (Server $server) => $server->formatResource('memory_bytes'))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'memory')),
@@ -105,7 +103,6 @@ class ListServers extends ListRecords
                 ->label('')
                 ->icon('tabler-device-sd-card')
                 ->size(TextSize::Medium)
-                ->icon('tabler-device-floppy')
                 ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('disk', limit: true))
                 ->state(fn (Server $server) => $server->formatResource('disk_bytes'))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'disk')),
@@ -126,10 +123,9 @@ class ListServers extends ListRecords
             ->query(fn () => $baseQuery)
             ->poll('15s')
             ->columns($usingGrid ? $this->gridColumns() : $this->tableColumns())
-            ->recordUrl(!$usingGrid ? (fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)) : null)
-            ->recordActions(!$usingGrid ? ActionGroup::make(static::getPowerActions()) : [])
-            ->recordActionsAlignment(Alignment::Center->value)
             ->contentGrid($usingGrid ? ['default' => 1, 'md' => 2] : null)
+            ->recordActions($usingGrid ? [] : ActionGroup::make(static::getPowerActions())->icon('tabler-power')->tooltip('Power Actions'))
+            ->recordUrl(fn (Server $server) => $usingGrid ? null : Console::getUrl(panel: 'server', tenant: $server))
             ->emptyStateIcon('tabler-brand-docker')
             ->emptyStateDescription('')
             ->emptyStateHeading(fn () => $this->activeTab === 'my' ? 'You don\'t own any servers!' : 'You don\'t have access to any servers!')
@@ -238,34 +234,34 @@ class ListServers extends ListRecords
     }
 
     /** @return Action[] */
-    public static function getPowerActions(Server $server): array
+    public static function getPowerActions(?Server $server = null): array
     {
         return [
             Action::make('start')
                 ->color('primary')
                 ->icon('tabler-player-play-filled')
-                ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
-                ->visible(fn () => !$server->isInConflictState() & $server->retrieveStatus()->isStartable())
-                ->dispatch('powerAction', fn () => ['server' => $server, 'action' => 'start']),
+                ->authorize(fn (?Server $record) => auth()->user()->can(Permission::ACTION_CONTROL_START, $record ?? $server))
+                ->visible(fn (?Server $record) => !($record ?? $server)->isInConflictState() & ($record ?? $server)->retrieveStatus()->isStartable())
+                ->dispatch('powerAction', fn (?Server $record) => ['server' => $record ?? $server, 'action' => 'start']),
             Action::make('restart')
                 ->color('gray')
                 ->icon('tabler-reload')
-                ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
-                ->visible(fn () => !$server->isInConflictState() & $server->retrieveStatus()->isRestartable())
-                ->dispatch('powerAction', fn () => ['server' => $server, 'action' => 'restart']),
+                ->authorize(fn (?Server $record) => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $record ?? $server))
+                ->visible(fn (?Server $record) => !($record ?? $server)->isInConflictState() & ($record ?? $server)->retrieveStatus()->isRestartable())
+                ->dispatch('powerAction', fn (?Server $record) => ['server' => $record ?? $server, 'action' => 'restart']),
             Action::make('stop')
                 ->color('danger')
                 ->icon('tabler-player-stop-filled')
-                ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
-                ->visible(fn () => !$server->isInConflictState() & $server->retrieveStatus()->isStoppable())
-                ->dispatch('powerAction', fn () => ['server' => $server, 'action' => 'stop']),
+                ->authorize(fn (?Server $record) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $record ?? $server))
+                ->visible(fn (?Server $record) => !($record ?? $server)->isInConflictState() & ($record ?? $server)->retrieveStatus()->isStoppable())
+                ->dispatch('powerAction', fn (?Server $record) => ['server' => $record ?? $server, 'action' => 'stop']),
             Action::make('kill')
                 ->color('danger')
                 ->icon('tabler-alert-square')
                 ->tooltip('This can result in data corruption and/or data loss!')
-                ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
-                ->visible(fn () => !$server->isInConflictState() & $server->retrieveStatus()->isKillable())
-                ->dispatch('powerAction', fn () => ['server' => $server, 'action' => 'kill']),
+                ->authorize(fn (?Server $record) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $record ?? $server))
+                ->visible(fn (?Server $record) => !($record ?? $server)->isInConflictState() & ($record ?? $server)->retrieveStatus()->isKillable())
+                ->dispatch('powerAction', fn (?Server $record) => ['server' => $record ?? $server, 'action' => 'kill']),
         ];
     }
 }

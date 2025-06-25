@@ -17,10 +17,11 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Schemas\Components\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Facades\Artisan;
@@ -28,7 +29,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
 /**
- * @property Form $form
+ * @property Schema $schema
  */
 class PanelInstaller extends SimplePage implements HasSchemas
 {
@@ -36,6 +37,7 @@ class PanelInstaller extends SimplePage implements HasSchemas
     use EnvironmentWriterTrait;
     use InteractsWithForms;
 
+    /** @var array<string, mixed> */
     public array $data = [];
 
     protected string $view = 'filament.pages.installer';
@@ -54,9 +56,10 @@ class PanelInstaller extends SimplePage implements HasSchemas
     {
         abort_if(self::isInstalled(), 404);
 
-        $this->form->fill();
+        $this->schema->fill();
     }
 
+    /** @return Component[] */
     protected function getFormSchema(): array
     {
         return [

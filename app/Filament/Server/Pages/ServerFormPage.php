@@ -8,13 +8,12 @@ use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Facades\Filament;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Schemas\Components\Form;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 abstract class ServerFormPage extends Page
 {
@@ -26,6 +25,7 @@ abstract class ServerFormPage extends Page
 
     protected string $view = 'filament.server.pages.server-form-page';
 
+    /** @var array<string, mixed>|null */
     public ?array $data = [];
 
     public function mount(): void
@@ -58,4 +58,6 @@ abstract class ServerFormPage extends Page
 
         return $server;
     }
+
+    public function save(): void {}
 }

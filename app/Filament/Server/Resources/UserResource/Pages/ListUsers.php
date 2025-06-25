@@ -11,8 +11,9 @@ use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions\CreateAction;
-use Filament\Facades\Filament;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
@@ -32,7 +33,7 @@ class ListUsers extends ListRecords
 
     protected static string $resource = UserResource::class;
 
-    /** @return array<Actions\Action|Actions\ActionGroup> */
+    /** @return array<Action|ActionGroup> */
     protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */

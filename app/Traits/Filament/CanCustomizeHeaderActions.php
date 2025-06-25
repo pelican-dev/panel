@@ -25,7 +25,7 @@ trait CanCustomizeHeaderActions
         return [];
     }
 
-    /** @return array<Action|ActionGroup|CreateAction|DeleteAction>
+    /** @return array<Action|ActionGroup>
      * @throws Exception
      */
     protected function getHeaderActions(): array

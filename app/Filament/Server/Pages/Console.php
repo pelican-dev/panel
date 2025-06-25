@@ -20,6 +20,7 @@ use Filament\Facades\Filament;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Concerns\HasHeaderActions;
 use Filament\Support\Enums\Size;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
@@ -27,7 +28,9 @@ use Livewire\Attributes\On;
 
 class Console extends Page
 {
-    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderActions, HasHeaderActions {
+        CanCustomizeHeaderActions::getHeaderActions insteadof HasHeaderActions;
+    }
     use InteractsWithActions;
 
     protected static ?int $navigationSort = 1;
@@ -141,9 +144,7 @@ class Console extends Page
             $this->status = ContainerStatus::from($state);
         }
 
-        $this->cachedHeaderActions = [];
-
-        $this->cacheHeaderActions();
+        $this->headerActions($this->getHeaderActions());
     }
 
     /** @return array<Action|ActionGroup> */

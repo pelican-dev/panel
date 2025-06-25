@@ -82,15 +82,15 @@ class ListEggs extends ListRecords
             ])
             ->groupedBulkActions([
                 DeleteBulkAction::make()
-                    ->before(fn (DeleteBulkAction $action, Collection $records) => $action->records($records->filter(function ($egg) {
+                    ->before(fn (Collection &$records) => $records = $records->filter(function ($egg) {
                         /** @var Egg $egg */
                         return $egg->servers_count <= 0;
-                    }))),
+                    })),
                 UpdateEggBulkAction::make()
-                    ->before(fn (UpdateEggBulkAction $action, Collection $records) => $action->records($records->filter(function ($egg) {
+                    ->before(fn (Collection &$records) => $records = $records->filter(function ($egg) {
                         /** @var Egg $egg */
                         return cache()->get("eggs.$egg->uuid.update", false);
-                    }))),
+                    })),
             ])
             ->emptyStateIcon('tabler-eggs')
             ->emptyStateDescription('')

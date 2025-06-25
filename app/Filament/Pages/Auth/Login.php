@@ -7,7 +7,7 @@ use App\Extensions\Captcha\Providers\CaptchaProvider;
 use App\Extensions\OAuth\Providers\OAuthProvider;
 use App\Facades\Activity;
 use App\Models\User;
-use Filament\Auth\Http\Responses\LoginResponse;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Filament\Facades\Filament;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;

@@ -24,7 +24,6 @@ use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Panel;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
-use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
@@ -36,7 +35,7 @@ use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
 
 /**
- * @property Schema $schema
+ * @property Schema $form
  */
 class EditFiles extends Page
 {
@@ -56,6 +55,7 @@ class EditFiles extends Page
 
     private DaemonFileRepository $fileRepository;
 
+    /** @var array<string, mixed>|null */
     public ?array $data = [];
 
     /**
@@ -201,7 +201,7 @@ class EditFiles extends Page
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<string, Schema>
      */
     protected function getForms(): array
     {
