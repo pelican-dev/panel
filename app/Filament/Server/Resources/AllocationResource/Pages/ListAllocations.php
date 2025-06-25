@@ -37,6 +37,10 @@ class ListAllocations extends ListRecords
                 ->action(function (FindAssignableAllocationService $service) use ($server) {
                     $allocation = $service->handle($server);
 
+                    if (!$server->allocation_id) {
+                        $server->update(['allocation_id' => $allocation->id]);
+                    }
+
                     Activity::event('server:allocation.create')
                         ->subject($allocation)
                         ->property('allocation', $allocation->address)

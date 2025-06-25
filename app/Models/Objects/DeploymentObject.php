@@ -2,8 +2,12 @@
 
 namespace App\Models\Objects;
 
+use App\Models\Node;
+
 class DeploymentObject
 {
+    private ?Node $node = null;
+
     private bool $dedicated = false;
 
     /** @var string[] */
@@ -11,6 +15,18 @@ class DeploymentObject
 
     /** @var array<int|string> */
     private array $ports = [];
+
+    public function getNode(): ?Node
+    {
+        return $this->node;
+    }
+
+    public function setNode(Node $node): self
+    {
+        $this->node = $node;
+
+        return $this;
+    }
 
     public function isDedicated(): bool
     {
