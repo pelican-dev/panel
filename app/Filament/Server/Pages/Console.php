@@ -35,6 +35,8 @@ class Console extends Page
 
     protected static ?int $navigationSort = 1;
 
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-brand-tabler';
+
     protected string $view = 'filament.server.pages.console';
 
     public ContainerStatus $status = ContainerStatus::Offline;
