@@ -123,6 +123,7 @@ class CreateServer extends CreateRecord
                                 ->live()
                                 ->relationship('node', 'name', fn (Builder $query) => $query->whereIn('id', auth()->user()->accessibleNodes()->pluck('id')))
                                 ->searchable()
+                                ->required()
                                 ->preload()
                                 ->afterStateUpdated(function (Set $set, $state) {
                                     $set('allocation_id', null);

@@ -58,6 +58,9 @@ class AllocationsRelationManager extends RelationManager
                 TextInputColumn::make('ip_alias')
                     ->searchable()
                     ->label(trans('admin/node.table.alias')),
+                TextInputColumn::make('notes')
+                    ->label(trans('admin/node.table.allocation_notes'))
+                    ->placeholder(trans('admin/node.table.no_notes')),
                 SelectColumn::make('ip')
                     ->options(fn (Allocation $allocation) => collect($this->getOwnerRecord()->ipAddresses())->merge([$allocation->ip])->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                     ->selectablePlaceholder(false)

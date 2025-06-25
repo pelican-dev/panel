@@ -43,6 +43,9 @@ class AllocationsRelationManager extends RelationManager
                     ->label(trans('admin/server.port')),
                 TextInputColumn::make('ip_alias')
                     ->label(trans('admin/server.alias')),
+                TextInputColumn::make('notes')
+                    ->label(trans('admin/server.notes'))
+                    ->placeholder(trans('admin/server.no_notes')),
                 IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
                         true => 'tabler-star-filled',
@@ -59,7 +62,10 @@ class AllocationsRelationManager extends RelationManager
             ])
             ->actions([
                 DissociateAction::make()
-                    ->after(fn () => $this->getOwnerRecord()->allocation_id && $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id])),
+                    ->after(function (Allocation $allocation) {
+                        $allocation->update(['notes' => null]);
+                        $this->getOwnerRecord()->allocation_id && $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id]);
+                    }),
             ])
             ->headerActions([
                 CreateAction::make()->label(trans('admin/server.create_allocation'))
@@ -100,7 +106,10 @@ class AllocationsRelationManager extends RelationManager
             ])
             ->groupedBulkActions([
                 DissociateBulkAction::make()
-                    ->after(fn () => $this->getOwnerRecord()->allocation_id && $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id])),
+                    ->after(function () {
+                        Allocation::whereNull('server_id')->update(['notes' => null]);
+                        $this->getOwnerRecord()->allocation_id && $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id]);
+                    }),
             ]);
     }
 }
