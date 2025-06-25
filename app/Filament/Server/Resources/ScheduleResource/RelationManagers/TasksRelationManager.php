@@ -81,7 +81,8 @@ class TasksRelationManager extends RelationManager
         $schedule = $this->getOwnerRecord();
 
         return $table
-            ->reorderable('sequence_id', true)
+            ->reorderable('sequence_id')
+            ->defaultSort('sequence_id')
             ->columns([
                 TextColumn::make('action')
                     ->state(fn (Task $task) => $this->getActionOptions()[$task->action] ?? $task->action),
