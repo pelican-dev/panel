@@ -5,7 +5,7 @@
             style="background-color: {{ $server->condition->getColor(true) }};">
         </div>
 
-        <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
+        <div class="flex-1 dark:bg-gray-850 dark:text-white rounded-t-lg overflow-hidden p-2">
             <div class="flex items-center mb-5 gap-2">
                 <x-filament::icon-button
                     :icon="$server->condition->getIcon()"
@@ -47,9 +47,11 @@
         </div>
     </a>
 
-    <x-filament-tables::actions
-        :actions="\App\Filament\App\Resources\ServerResource\Pages\ListServers::getPowerActions()"
-        :alignment="\Filament\Support\Enums\Alignment::Center"
-        :record="$server"
-    />
+    <div class="flex-1 dark:bg-gray-850 dark:text-white rounded-b-lg overflow-hidden p-1">
+        <x-filament-tables::actions
+            :actions="\App\Filament\App\Resources\ServerResource\Pages\ListServers::getPowerActions()"
+            :alignment="\Filament\Support\Enums\Alignment::Center"
+            :record="$server"
+        />
+    </div>
 </div>
