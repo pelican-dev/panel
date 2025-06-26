@@ -23,6 +23,7 @@ use Filament\Actions\ReplicateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
 class ListEggs extends ListRecords
@@ -105,7 +106,9 @@ class ListEggs extends ListRecords
             ]);
     }
 
-    /** @return array<Action|ActionGroup> */
+    /** @return array<Action|ActionGroup>
+     * @throws Exception
+     */
     protected function getDefaultHeaderActions(): array
     {
         return [
