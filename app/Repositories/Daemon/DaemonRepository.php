@@ -57,6 +57,9 @@ abstract class DaemonRepository
         if (is_bool($condition)) {
             return $condition;
         }
+        if ($condition->clientError()) {
+            return false;
+        }
 
         $header = $condition->header('User-Agent');
         if (

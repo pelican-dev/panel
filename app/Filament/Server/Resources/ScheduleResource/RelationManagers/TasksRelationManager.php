@@ -14,6 +14,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Actions\EditAction;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Tables\Table;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Actions\CreateAction;
@@ -48,10 +49,11 @@ class TasksRelationManager extends RelationManager
             Select::make('action')
                 ->required()
                 ->live()
-                ->disableOptionWhen(fn (string $value): bool => $value === Task::ACTION_BACKUP && $schedule->server->backup_limit === 0)
+                ->disableOptionWhen(fn (string $value) => $value === Task::ACTION_BACKUP && $schedule->server->backup_limit === 0)
                 ->options($this->getActionOptions())
                 ->selectablePlaceholder(false)
-                ->default(Task::ACTION_POWER),
+                ->default(Task::ACTION_POWER)
+                ->afterStateUpdated(fn ($state, Set $set) => $set('payload', $state === Task::ACTION_POWER ? 'restart' : null)),
             Textarea::make('payload')
                 ->hidden(fn (Get $get) => $get('action') === Task::ACTION_POWER)
                 ->label(fn (Get $get) => $this->getActionOptions(false)[$get('action')] ?? 'Payload'),
@@ -87,7 +89,8 @@ class TasksRelationManager extends RelationManager
         $schedule = $this->getOwnerRecord();
 
         return $table
-            ->reorderable('sequence_id', true)
+            ->reorderable('sequence_id')
+            ->defaultSort('sequence_id')
             ->columns([
                 TextColumn::make('action')
                     ->state(fn (Task $task) => $this->getActionOptions()[$task->action] ?? $task->action),
