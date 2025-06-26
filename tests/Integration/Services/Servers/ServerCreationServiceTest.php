@@ -129,16 +129,102 @@ class ServerCreationServiceTest extends IntegrationTestCase
             $this->assertSame($value, $response->{$key}, "Failed asserting equality of '$key' in server response. Got: [{$response->{$key}}] Expected: [$value]");
         }
 
+        $this->assertFalse($response->isSuspended());
+        $this->assertFalse($response->oom_killer);
+        $this->assertSame(0, $response->database_limit);
+        $this->assertSame(0, $response->allocation_limit);
+        $this->assertSame(0, $response->backup_limit);
+
         $this->assertCount(2, $response->allocations);
         $this->assertSame($response->allocation_id, $response->allocations[0]->id);
         $this->assertSame($allocations[0]->id, $response->allocations[0]->id);
         $this->assertSame($allocations[4]->id, $response->allocations[1]->id);
+    }
+
+    /**
+     * Test that a server without allocation can be created when a deployment object is
+     * provided to the service.
+     */
+    public function test_server_without_allocation_is_created_with_deployment_object(): void
+    {
+        /** @var \App\Models\User $user */
+        $user = User::factory()->create();
+
+        /** @var \App\Models\Node $node */
+        $node = Node::factory()->create();
+
+        $deployment = (new DeploymentObject())->setNode($node);
+
+        $egg = $this->cloneEggAndVariables($this->bungeecord);
+        // We want to make sure that the validator service runs as an admin, and not as a regular
+        // user when saving variables.
+        $egg->variables()->first()->update([
+            'user_editable' => false,
+        ]);
+
+        $data = [
+            'name' => $this->faker->name(),
+            'description' => $this->faker->sentence(),
+            'owner_id' => $user->id,
+            'memory' => 256,
+            'swap' => 128,
+            'disk' => 100,
+            'io' => 500,
+            'cpu' => 0,
+            'startup' => 'java server2.jar',
+            'image' => 'java:8',
+            'egg_id' => $egg->id,
+            'allocation_additional' => [],
+            'environment' => [
+                'BUNGEE_VERSION' => '123',
+                'SERVER_JARFILE' => 'server2.jar',
+            ],
+            'start_on_completion' => true,
+        ];
+
+        $this->daemonServerRepository->expects('setServer->create')->with(true)->andReturnUndefined();
+
+        try {
+            $this->getService()->handle(array_merge($data, [
+                'environment' => [
+                    'BUNGEE_VERSION' => '',
+                    'SERVER_JARFILE' => 'server2.jar',
+                ],
+            ]), $deployment);
+
+            $this->fail('This execution pathway should not be reached.');
+        } catch (ValidationException $exception) {
+            $this->assertCount(1, $exception->errors());
+            $this->assertArrayHasKey('environment.BUNGEE_VERSION', $exception->errors());
+            $this->assertSame('The Bungeecord Version variable field is required.', $exception->errors()['environment.BUNGEE_VERSION'][0]);
+        }
+
+        $response = $this->getService()->handle($data, $deployment);
+
+        $this->assertInstanceOf(Server::class, $response);
+        $this->assertNotNull($response->uuid);
+        $this->assertSame($response->uuid_short, substr($response->uuid, 0, 8));
+        $this->assertSame($egg->id, $response->egg_id);
+        $this->assertCount(2, $response->variables);
+        $this->assertSame('123', $response->variables()->firstWhere('env_variable', 'BUNGEE_VERSION')->server_value);
+        $this->assertSame('server2.jar', $response->variables()->firstWhere('env_variable', 'SERVER_JARFILE')->server_value);
+
+        foreach ($data as $key => $value) {
+            if (in_array($key, ['allocation_additional', 'environment', 'start_on_completion'])) {
+                continue;
+            }
+
+            $this->assertSame($value, $response->{$key}, "Failed asserting equality of '$key' in server response. Got: [{$response->{$key}}] Expected: [$value]");
+        }
 
         $this->assertFalse($response->isSuspended());
         $this->assertFalse($response->oom_killer);
         $this->assertSame(0, $response->database_limit);
         $this->assertSame(0, $response->allocation_limit);
         $this->assertSame(0, $response->backup_limit);
+
+        $this->assertEmpty($response->allocations);
+        $this->assertNull($response->allocation_id);
     }
 
     /**

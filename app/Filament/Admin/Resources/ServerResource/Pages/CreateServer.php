@@ -128,12 +128,12 @@ class CreateServer extends CreateRecord
                                 ->live()
                                 ->relationship('node', 'name', fn (Builder $query) => $query->whereIn('id', auth()->user()->accessibleNodes()->pluck('id')))
                                 ->searchable()
+                                ->required()
                                 ->preload()
                                 ->afterStateUpdated(function (Set $set, $state) {
                                     $set('allocation_id', null);
                                     $this->node = Node::find($state);
-                                })
-                                ->required(),
+                                }),
 
                             Select::make('owner_id')
                                 ->preload()
@@ -194,7 +194,7 @@ class CreateServer extends CreateRecord
                                     $set('allocation_additional', null);
                                     $set('allocation_additional.needstobeastringhere.extra_allocations', null);
                                 })
-                                ->getOptionLabelFromRecordUsing(fn (Allocation $allocation) => $allocation->address)
+                                ->getOptionLabelFromRecordUsing(fn (Allocation $allocation) => $allocation->address ?? '')
                                 ->placeholder(function (Get $get) {
                                     $node = Node::find($get('node_id'));
 
@@ -248,9 +248,7 @@ class CreateServer extends CreateRecord
                                     return collect(
                                         $assignmentService->handle(Node::find($get('node_id')), $data)
                                     )->first();
-                                })
-                                ->required(),
-
+                                }),
                             Repeater::make('allocation_additional')
                                 ->label(trans('admin/server.additional_allocations'))
                                 ->columnSpan([
@@ -270,7 +268,7 @@ class CreateServer extends CreateRecord
                                         ->prefixIcon('tabler-network')
                                         ->label('Additional Allocations')
                                         ->columnSpan(2)
-                                        ->disabled(fn (Get $get) => $get('../../node_id') === null)
+                                        ->disabled(fn (Get $get) => $get('../../allocation_id') === null || $get('../../node_id') === null)
                                         ->searchable(['ip', 'port', 'ip_alias'])
                                         ->getOptionLabelFromRecordUsing(fn (Allocation $allocation) => $allocation->address)
                                         ->placeholder(trans('admin/server.select_additional'))
@@ -833,7 +831,9 @@ class CreateServer extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $data['allocation_additional'] = collect($data['allocation_additional'])->filter()->all();
+        if ($allocation_additional = array_get($data, 'allocation_additional')) {
+            $data['allocation_additional'] = collect($allocation_additional)->filter()->all();
+        }
 
         try {
             return $this->serverCreationService->handle($data);

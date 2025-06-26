@@ -23,7 +23,7 @@ class ServerOverview extends StatsOverviewWidget
             SmallStatBlock::make('Name', $this->server->name)
                 ->copyOnClick(fn () => request()->isSecure()),
             SmallStatBlock::make('Status', $this->status()),
-            SmallStatBlock::make('Address', $this->server->allocation->address)
+            SmallStatBlock::make('Address', $this->server?->allocation->address ?? 'None')
                 ->copyOnClick(fn () => request()->isSecure()),
             SmallStatBlock::make('CPU', $this->cpuUsage()),
             SmallStatBlock::make('Memory', $this->memoryUsage()),
@@ -68,7 +68,7 @@ class ServerOverview extends StatsOverviewWidget
         }
 
         $latestMemoryUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->last(default: 0);
-        $totalMemory = collect(cache()->get("servers.{$this->server->id}.memory_limit_bytes"))->last(default: 0);
+        $totalMemory = $this->server->memory * 2 ** 20;
 
         $used = convert_bytes_to_readable($latestMemoryUsed);
         $total = convert_bytes_to_readable($totalMemory);

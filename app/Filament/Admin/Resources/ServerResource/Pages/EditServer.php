@@ -1020,17 +1020,20 @@ class EditServer extends EditRecord
                 ->options(fn (Server $server) => Node::whereNot('id', $server->node->id)->pluck('name', 'id')->all()),
             Select::make('allocation_id')
                 ->label(trans('admin/server.primary_allocation'))
-                ->required()
+                ->disabled(fn (Get $get, Server $server) => !$get('node_id') || !$server->allocation_id)
+                ->required(fn (Server $server) => $server->allocation_id)
                 ->prefixIcon('tabler-network')
-                ->disabled(fn (Get $get) => !$get('node_id'))
                 ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
                 ->searchable(['ip', 'port', 'ip_alias'])
                 ->placeholder(trans('admin/server.select_allocation')),
             Select::make('allocation_additional')
                 ->label(trans('admin/server.additional_allocations'))
+                ->disabled(fn (Get $get, Server $server) => !$get('node_id') || $server->allocations->count() <= 1)
                 ->multiple()
+                ->minItems(fn (Select $select) => $select->getMaxItems())
+                ->maxItems(fn (Select $select, Server $server) => $select->isDisabled() ? null : $server->allocations->count() - 1)
                 ->prefixIcon('tabler-network')
-                ->disabled(fn (Get $get) => !$get('node_id'))
+                ->required(fn (Server $server) => $server->allocations->count() > 1)
                 ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->when($get('allocation_id'), fn ($query) => $query->whereNot('id', $get('allocation_id')))->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
                 ->searchable(['ip', 'port', 'ip_alias'])
                 ->placeholder(trans('admin/server.select_additional')),
