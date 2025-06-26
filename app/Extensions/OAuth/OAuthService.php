@@ -10,10 +10,15 @@ class OAuthService
     /** @var OAuthSchemaInterface[] */
     private array $schemas = [];
 
-    /** @return OAuthSchemaInterface[] | OAuthSchemaInterface */
-    public function get(?string $id = null): array|OAuthSchemaInterface
+    /** @return OAuthSchemaInterface[] */
+    public function getAll(): array
     {
-        return $id ? $this->schemas[$id] : $this->schemas;
+        return $this->schemas;
+    }
+
+    public function get(string $id): ?OAuthSchemaInterface
+    {
+        return array_get($this->schemas, $id);
     }
 
     /** @return OAuthSchemaInterface[] */

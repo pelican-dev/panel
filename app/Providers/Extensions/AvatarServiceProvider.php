@@ -12,7 +12,7 @@ class AvatarServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(AvatarService::class, function ($app) {
-            $service = new AvatarService();
+            $service = new AvatarService(config('panel.filament.uploadable-avatars', false), config('panel.filament.avatar-provider', 'gravatar'));
 
             // Default Avatar providers
             $service->register(new GravatarSchema());

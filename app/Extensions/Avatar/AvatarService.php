@@ -10,22 +10,24 @@ class AvatarService
     /** @var AvatarSchemaInterface[] */
     private array $schemas = [];
 
-    /**
-     * @return AvatarSchemaInterface[] | AvatarSchemaInterface | null
-     */
-    public function get(?string $id = null): array|AvatarSchemaInterface|null
+    public function __construct(
+        private readonly bool $allowUploadedAvatars,
+        private readonly string $activeSchema,
+    ) {}
+
+    public function get(string $id): ?AvatarSchemaInterface
     {
-        return $id ? array_get($this->schemas, $id) : $this->schemas;
+        return array_get($this->schemas, $id);
     }
 
     public function getActiveSchema(): ?AvatarSchemaInterface
     {
-        return $this->get(config('panel.filament.avatar-provider'));
+        return $this->get($this->activeSchema);
     }
 
     public function getAvatarUrl(User $user): ?string
     {
-        if (config('panel.filament.uploadable-avatars')) {
+        if ($this->allowUploadedAvatars) {
             $path = "avatars/$user->id.png";
 
             if (Storage::disk('public')->exists($path)) {

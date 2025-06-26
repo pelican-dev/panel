@@ -17,9 +17,6 @@ abstract class OAuthSchema implements OAuthSchemaInterface
         return null;
     }
 
-    /**
-     * @return array<string, string|string[]|bool|null>
-     */
     public function getServiceConfig(): array
     {
         $id = Str::upper($this->getId());

@@ -396,9 +396,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return App::call(function (AvatarService $service) {
-            return $service->getAvatarUrl($this);
-        });
+        return App::call(fn (AvatarService $service) => $service->getAvatarUrl($this));
     }
 
     public function canTarget(Model $model): bool

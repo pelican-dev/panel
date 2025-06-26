@@ -61,7 +61,7 @@ class Console extends Page
         $this->featureService = $featureService;
         /** @var Server $server */
         $server = Filament::getTenant();
-        foreach ($featureService->get($server->egg->features) as $feature) {
+        foreach ($featureService->getActiveSchemas($server->egg->features) as $feature) {
             $this->cacheAction($feature->getAction());
         }
     }

@@ -12,11 +12,16 @@ class CaptchaService
     private array $schemas = [];
 
     /**
-     * @return array<string, CaptchaSchemaInterface> | CaptchaSchemaInterface
+     * @return CaptchaSchemaInterface[]
      */
-    public function get(?string $id = null): array|CaptchaSchemaInterface
+    public function getAll(): array
     {
-        return $id ? $this->schemas[$id] : $this->schemas;
+        return $this->schemas;
+    }
+
+    public function get(string $id): ?CaptchaSchemaInterface
+    {
+        return array_get($this->schemas, $id);
     }
 
     public function register(CaptchaSchemaInterface $schema): void

@@ -41,7 +41,7 @@ class OAuthController extends Controller
     public function callback(Request $request, string $driver): RedirectResponse
     {
         // Driver is disabled - redirect to normal login
-        if (!$this->oauthService->get($driver)->isEnabled()) {
+        if (!$this->oauthService->get($driver)?->isEnabled()) {
             return redirect()->route('auth.login');
         }
 

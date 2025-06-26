@@ -9,7 +9,7 @@ final class CommonSchema extends OAuthSchema
         private readonly ?string $name = null,
         private readonly ?string $configName = null,
         private readonly ?string $icon = null,
-        private readonly ?string $hexColor = null
+        private readonly ?string $hexColor = null,
     ) {}
 
     public function getId(): string

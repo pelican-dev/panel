@@ -103,7 +103,7 @@ class ServerConfigurationStructureService
             'egg' => [
                 'id' => $server->egg->uuid,
                 'file_denylist' => $server->egg->inherit_file_denylist,
-                'features' => $this->featureService->getMappings($server),
+                'features' => $this->featureService->getMappings($server->egg->features),
             ],
         ];
 

@@ -277,7 +277,7 @@ class Settings extends Page implements HasForms
     {
         $formFields = [];
 
-        $captchaSchemas = $this->captchaService->get();
+        $captchaSchemas = $this->captchaService->getAll();
         foreach ($captchaSchemas as $schema) {
             $id = Str::upper($schema->getId());
 
@@ -538,7 +538,7 @@ class Settings extends Page implements HasForms
     {
         $formFields = [];
 
-        $oauthSchemas = $this->oauthService->get();
+        $oauthSchemas = $this->oauthService->getAll();
         foreach ($oauthSchemas as $schema) {
             $id = Str::upper($schema->getId());
             $key = $schema->getConfigKey();

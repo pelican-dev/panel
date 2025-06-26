@@ -2,24 +2,31 @@
 
 namespace App\Extensions\Features;
 
-use App\Models\Server;
-
 class FeatureService
 {
     /** @var FeatureSchemaInterface[] */
     private array $schemas = [];
 
     /**
-     * @param  string[]|string|null  $id
-     * @return FeatureSchemaInterface[] | FeatureSchemaInterface
+     * @return FeatureSchemaInterface[]
      */
-    public function get(array|string|null $id = null): array|FeatureSchemaInterface
+    public function getAll(): array
     {
-        if (is_array($id)) {
-            return collect($this->schemas)->only($id)->all();
-        }
+        return $this->schemas;
+    }
 
-        return $id ? $this->schemas[$id] : $this->schemas;
+    public function get(string $id): ?FeatureSchemaInterface
+    {
+        return array_get($this->schemas, $id);
+    }
+
+    /**
+     * @param  string[]  $features
+     * @return FeatureSchemaInterface[]
+     */
+    public function getActiveSchemas(array $features): array
+    {
+        return collect($this->schemas)->only($features)->all();
     }
 
     public function register(FeatureSchemaInterface $schema): void
@@ -31,11 +38,15 @@ class FeatureService
         $this->schemas[$schema->getId()] = $schema;
     }
 
-    /** @return array<string, array<string>> */
-    public function getMappings(Server $server): array
+    /**
+     * @param  string[]  $features
+     * @return array<string, array<string>>
+     */
+    public function getMappings(array $features): array
     {
-        return collect($this->get($server->egg->features))->mapWithKeys(fn (FeatureSchemaInterface $schema) => [
-            $schema->getId() => $schema->getListeners(),
-        ])->all();
+        return collect($this->getActiveSchemas($features))
+            ->mapWithKeys(fn (FeatureSchemaInterface $schema) => [
+                $schema->getId() => $schema->getListeners(),
+            ])->all();
     }
 }
