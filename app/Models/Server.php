@@ -52,7 +52,7 @@ use App\Services\Subusers\SubuserDeletionService;
  * @property int $cpu
  * @property string|null $threads
  * @property bool $oom_killer
- * @property int $allocation_id
+ * @property int|null $allocation_id
  * @property int $egg_id
  * @property string $startup
  * @property string $image
@@ -177,7 +177,7 @@ class Server extends Model implements Validatable
         'threads' => ['nullable', 'regex:/^[0-9-,]+$/'],
         'oom_killer' => ['sometimes', 'boolean'],
         'disk' => ['required', 'numeric', 'min:0'],
-        'allocation_id' => ['required', 'bail', 'unique:servers', 'exists:allocations,id'],
+        'allocation_id' => ['sometimes', 'nullable', 'unique:servers', 'exists:allocations,id'],
         'egg_id' => ['required', 'exists:eggs,id'],
         'startup' => ['required', 'string'],
         'skip_scripts' => ['sometimes', 'boolean'],
@@ -226,10 +226,14 @@ class Server extends Model implements Validatable
     /**
      * Returns the format for server allocations when communicating with the Daemon.
      *
-     * @return array<int>
+     * @return array<string, array<int>>
      */
     public function getAllocationMappings(): array
     {
+        if (!$this->allocation) {
+            return ['' => []];
+        }
+
         return $this->allocations->where('node_id', $this->node_id)->groupBy('ip')->map(function ($item) {
             return $item->pluck('port');
         })->toArray();
@@ -278,6 +282,8 @@ class Server extends Model implements Validatable
 
     /**
      * Gets all allocations associated with this server.
+     *
+     * @return HasMany<Allocation, $this>
      */
     public function allocations(): HasMany
     {

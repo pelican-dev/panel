@@ -73,14 +73,17 @@ class ListServers extends ListRecords
                     ->searchable(),
                 SelectColumn::make('allocation_id')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->hidden(!auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
+                    ->hidden(fn () => !auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
+                    ->disabled(fn (Server $server) => $server->allocations->count() <= 1)
                     ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
-                    ->selectablePlaceholder(false)
+                    ->selectablePlaceholder(fn (Server $server) => $server->allocations->count() <= 1)
+                    ->placeholder('None')
                     ->sortable(),
                 TextColumn::make('allocation_id_readonly')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->hidden(auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
-                    ->state(fn (Server $server) => $server->allocation->address),
+                    ->hidden(fn () => auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
+                    ->disabled(fn (Server $server) => $server->allocations->count() <= 1)
+                    ->state(fn (Server $server) => $server->allocation->address ?? 'None'),
                 TextColumn::make('image')->hidden(),
                 TextColumn::make('backups_count')
                     ->counts('backups')

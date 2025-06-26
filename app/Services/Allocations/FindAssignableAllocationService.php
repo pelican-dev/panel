@@ -42,7 +42,9 @@ class FindAssignableAllocationService
         // server.
         /** @var Allocation|null $allocation */
         $allocation = $server->node->allocations()
-            ->where('ip', $server->allocation->ip)
+            ->when($server->allocation, function ($query) use ($server) {
+                $query->where('ip', $server->allocation->ip);
+            })
             ->whereNull('server_id')
             ->inRandomOrder()
             ->first();

@@ -84,7 +84,8 @@ class ListServers extends ListRecords
                 ->label('')
                 ->badge()
                 ->visibleFrom('md')
-                ->copyable(request()->isSecure()),
+                ->copyable(request()->isSecure())
+                ->state(fn (Server $server) => $server->allocation->address ?? 'None'),
             TextColumn::make('cpuUsage')
                 ->label('Resources')
                 ->size(TextSize::Medium)
