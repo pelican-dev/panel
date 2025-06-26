@@ -41,13 +41,13 @@ class TransferServerService
      *
      * @throws \Throwable
      */
-    public function handle(Server $server, int $node_id, int $allocation_id, array $additional_allocations): bool
+    public function handle(Server $server, int $node_id, ?int $allocation_id = null, ?array $additional_allocations = []): bool
     {
         $additional_allocations = array_map(intval(...), $additional_allocations);
 
         // Check if the node is viable for the transfer.
         $node = Node::query()
-            ->select(['nodes.id', 'nodes.fqdn', 'nodes.scheme', 'nodes.daemon_token', 'nodes.daemon_listen', 'nodes.memory', 'nodes.disk', 'nodes.cpu', 'nodes.memory_overallocate', 'nodes.disk_overallocate', 'nodes.cpu_overallocate'])
+            ->select(['nodes.id', 'nodes.fqdn', 'nodes.scheme', 'nodes.daemon_token', 'nodes.daemon_connect', 'nodes.memory', 'nodes.disk', 'nodes.cpu', 'nodes.memory_overallocate', 'nodes.disk_overallocate', 'nodes.cpu_overallocate'])
             ->withSum('servers', 'disk')
             ->withSum('servers', 'memory')
             ->withSum('servers', 'cpu')
@@ -68,15 +68,17 @@ class TransferServerService
             $transfer->server_id = $server->id;
             $transfer->old_node = $server->node_id;
             $transfer->new_node = $node_id;
-            $transfer->old_allocation = $server->allocation_id;
-            $transfer->new_allocation = $allocation_id;
-            $transfer->old_additional_allocations = $server->allocations->where('id', '!=', $server->allocation_id)->pluck('id')->all();
-            $transfer->new_additional_allocations = $additional_allocations;
+            if ($server->allocation_id) {
+                $transfer->old_allocation = $server->allocation_id;
+                $transfer->new_allocation = $allocation_id;
+                $transfer->old_additional_allocations = $server->allocations->where('id', '!=', $server->allocation_id)->pluck('id')->all();
+                $transfer->new_additional_allocations = $additional_allocations;
+
+                // Add the allocations to the server, so they cannot be automatically assigned while the transfer is in progress.
+                $this->assignAllocationsToServer($server, $node_id, $allocation_id, $additional_allocations);
+            }
 
             $transfer->save();
-
-            // Add the allocations to the server, so they cannot be automatically assigned while the transfer is in progress.
-            $this->assignAllocationsToServer($server, $node_id, $allocation_id, $additional_allocations);
 
             // Generate a token for the destination node that the source node can use to authenticate with.
             $token = $this->nodeJWTService

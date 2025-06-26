@@ -4,6 +4,8 @@ namespace App\Filament\Admin\Resources\NodeResource\Pages;
 
 use App\Filament\Admin\Resources\NodeResource;
 use App\Models\Node;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
@@ -21,6 +23,9 @@ use Illuminate\Support\HtmlString;
 
 class CreateNode extends CreateRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = NodeResource::class;
 
     protected static bool $canCreateAnother = false;
@@ -124,15 +129,10 @@ class CreateNode extends CreateRecord
                                     'lg' => 1,
                                 ]),
 
-                            TextInput::make('daemon_listen')
-                                ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 1,
-                                    'md' => 1,
-                                    'lg' => 1,
-                                ])
-                                ->label(trans('admin/node.port'))
-                                ->helperText(trans('admin/node.port_help'))
+                            TextInput::make('daemon_connect')
+                                ->columnSpan(1)
+                                ->label(fn (Get $get) => $get('connection') === 'https_proxy' ? trans('admin/node.connect_port') : trans('admin/node.port'))
+                                ->helperText(fn (Get $get) => $get('connection') === 'https_proxy' ? trans('admin/node.connect_port_help') : trans('admin/node.port_help'))
                                 ->minValue(1)
                                 ->maxValue(65535)
                                 ->default(8080)
@@ -193,7 +193,21 @@ class CreateNode extends CreateRecord
                                 ->afterStateUpdated(function ($state, Set $set) {
                                     $set('scheme', $state === 'http' ? 'http' : 'https');
                                     $set('behind_proxy', $state === 'https_proxy');
+
+                                    $set('daemon_connect', $state === 'https_proxy' ? 443 : 8080);
+                                    $set('daemon_listen', 8080);
                                 }),
+
+                            TextInput::make('daemon_listen')
+                                ->columnSpan(1)
+                                ->label(trans('admin/node.listen_port'))
+                                ->helperText(trans('admin/node.listen_port_help'))
+                                ->minValue(1)
+                                ->maxValue(65535)
+                                ->default(8080)
+                                ->required()
+                                ->integer()
+                                ->visible(fn (Get $get) => $get('connection') === 'https_proxy'),
                         ]),
                     Step::make('advanced')
                         ->label(trans('admin/node.tabs.advanced_settings'))
@@ -408,5 +422,14 @@ class CreateNode extends CreateRecord
     protected function getFormActions(): array
     {
         return [];
+    }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        if (!$data['behind_proxy']) {
+            $data['daemon_listen'] = $data['daemon_connect'];
+        }
+
+        return $data;
     }
 }

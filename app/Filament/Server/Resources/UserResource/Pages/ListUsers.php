@@ -7,6 +7,8 @@ use App\Filament\Server\Resources\UserResource;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Subusers\SubuserCreationService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions;
 use Filament\Facades\Filament;
@@ -25,9 +27,13 @@ use Filament\Resources\Pages\ListRecords;
 
 class ListUsers extends ListRecords
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = UserResource::class;
 
-    protected function getHeaderActions(): array
+    /** @return array<Actions\Action|Actions\ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */
         $server = Filament::getTenant();

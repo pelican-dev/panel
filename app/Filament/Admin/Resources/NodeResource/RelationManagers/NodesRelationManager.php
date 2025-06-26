@@ -43,8 +43,10 @@ class NodesRelationManager extends RelationManager
                     ->sortable(),
                 SelectColumn::make('allocation.id')
                     ->label(trans('admin/node.primary_allocation'))
-                    ->options(fn (Server $server) => [$server->allocation->id => $server->allocation->address])
-                    ->selectablePlaceholder(false)
+                    ->disabled(fn (Server $server) => $server->allocations->count() <= 1)
+                    ->options(fn (Server $server) => $server->allocations->take(1)->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
+                    ->selectablePlaceholder(fn (SelectColumn $select) => !$select->isDisabled())
+                    ->placeholder('None')
                     ->sortable(),
                 TextColumn::make('memory')->label(trans('admin/node.memory'))->icon('tabler-device-desktop-analytics'),
                 TextColumn::make('cpu')->label(trans('admin/node.cpu'))->icon('tabler-cpu'),

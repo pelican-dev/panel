@@ -7,15 +7,22 @@ use App\Filament\Server\Resources\AllocationResource;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Allocations\FindAssignableAllocationService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\ListRecords;
 
 class ListAllocations extends ListRecords
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = AllocationResource::class;
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */
         $server = Filament::getTenant();
@@ -30,9 +37,13 @@ class ListAllocations extends ListRecords
                 ->action(function (FindAssignableAllocationService $service) use ($server) {
                     $allocation = $service->handle($server);
 
+                    if (!$server->allocation_id) {
+                        $server->update(['allocation_id' => $allocation->id]);
+                    }
+
                     Activity::event('server:allocation.create')
                         ->subject($allocation)
-                        ->property('allocation', $allocation->toString())
+                        ->property('allocation', $allocation->address)
                         ->log();
                 }),
         ];

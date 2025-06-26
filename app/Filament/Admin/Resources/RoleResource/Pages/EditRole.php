@@ -4,6 +4,10 @@ namespace App\Filament\Admin\Resources\RoleResource\Pages;
 
 use App\Filament\Admin\Resources\RoleResource;
 use App\Models\Role;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Arr;
@@ -15,6 +19,9 @@ use Spatie\Permission\Models\Permission;
  */
 class EditRole extends EditRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = RoleResource::class;
 
     public Collection $permissions;
@@ -45,7 +52,8 @@ class EditRole extends EditRecord
         $this->record->syncPermissions($permissionModels);
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             DeleteAction::make()

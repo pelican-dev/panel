@@ -8,6 +8,8 @@ use App\Repositories\Daemon\DaemonConfigurationRepository;
 use App\Services\Helpers\SoftwareVersionService;
 use App\Services\Nodes\NodeAutoDeployService;
 use App\Services\Nodes\NodeUpdateService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions;
 use Filament\Forms;
@@ -34,6 +36,9 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditNode extends EditRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = NodeResource::class;
 
     private DaemonConfigurationRepository $daemonConfigurationRepository;
@@ -181,10 +186,10 @@ class EditNode extends EditRecord
                                     false => 'danger',
                                 ])
                                 ->columnSpan(1),
-                            TextInput::make('daemon_listen')
+                            TextInput::make('daemon_connect')
                                 ->columnSpan(1)
-                                ->label(trans('admin/node.port'))
-                                ->helperText(trans('admin/node.port_help'))
+                                ->label(fn (Get $get) => $get('connection') === 'https_proxy' ? trans('admin/node.connect_port') : trans('admin/node.port'))
+                                ->helperText(fn (Get $get) => $get('connection') === 'https_proxy' ? trans('admin/node.connect_port_help') : trans('admin/node.port_help'))
                                 ->minValue(1)
                                 ->maxValue(65535)
                                 ->default(8080)
@@ -239,7 +244,20 @@ class EditNode extends EditRecord
                                 ->afterStateUpdated(function ($state, Set $set) {
                                     $set('scheme', $state === 'http' ? 'http' : 'https');
                                     $set('behind_proxy', $state === 'https_proxy');
+
+                                    $set('daemon_connect', $state === 'https_proxy' ? 443 : 8080);
+                                    $set('daemon_listen', 8080);
                                 }),
+                            TextInput::make('daemon_listen')
+                                ->columnSpan(1)
+                                ->label(trans('admin/node.listen_port'))
+                                ->helperText(trans('admin/node.listen_port_help'))
+                                ->minValue(1)
+                                ->maxValue(65535)
+                                ->default(8080)
+                                ->required()
+                                ->integer()
+                                ->visible(fn (Get $get) => $get('connection') === 'https_proxy'),
                         ]),
                     Tab::make('adv')
                         ->label(trans('admin/node.tabs.advanced_settings'))
@@ -617,7 +635,8 @@ class EditNode extends EditRecord
         return [];
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Actions\Action|Actions\ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make()
@@ -625,6 +644,15 @@ class EditNode extends EditRecord
                 ->label(fn (Node $node) => $node->servers()->count() > 0 ? trans('admin/node.node_has_servers') : trans('filament-actions::delete.single.label')),
             $this->getSaveFormAction()->formId('form'),
         ];
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (!$data['behind_proxy']) {
+            $data['daemon_listen'] = $data['daemon_connect'];
+        }
+
+        return $data;
     }
 
     protected function afterSave(): void

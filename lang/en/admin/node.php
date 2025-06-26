@@ -20,6 +20,8 @@ return [
         'ip' => 'IP',
         'egg' => 'Egg',
         'owner' => 'Owner',
+        'allocation_notes' => 'Notes',
+        'no_notes' => 'No notes',
     ],
     'node_info' => 'Node Information',
     'wings_version' => 'Wings Version',
@@ -45,6 +47,10 @@ return [
     'port' => 'Port',
     'ports' => 'Ports',
     'port_help' => 'If you are running the daemon behind Cloudflare you should set the daemon port to 8443 to allow websocket proxying over SSL.',
+    'connect_port' => 'Connection Port',
+    'connect_port_help' => 'Connections to wings will use this port. If you are using a reverse proxy this can differ from the listen port. When using Cloudflare proxy you should use 8443.',
+    'listen_port' => 'Listening Port',
+    'listen_port_help' => 'Wings will listen on this port.',
     'display_name' => 'Display Name',
     'ssl' => 'Communicate over SSL',
     'panel_on_ssl' => 'Your Panel is using a secure SSL connection,<br>so your Daemon must too.',
@@ -105,4 +111,5 @@ return [
 
     'error_connecting' => 'Error connecting to :node',
     'error_connecting_description' => 'The configuration could not be automatically updated on Wings, you will need to manually update the configuration file.',
+    'allocation' => 'Allocation',
 ];

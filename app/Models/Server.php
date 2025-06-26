@@ -46,7 +46,7 @@ use App\Services\Subusers\SubuserDeletionService;
  * @property int $cpu
  * @property string|null $threads
  * @property bool $oom_killer
- * @property int $allocation_id
+ * @property int|null $allocation_id
  * @property int $egg_id
  * @property string $startup
  * @property string $image
@@ -171,7 +171,7 @@ class Server extends Model implements Validatable
         'threads' => ['nullable', 'regex:/^[0-9-,]+$/'],
         'oom_killer' => ['sometimes', 'boolean'],
         'disk' => ['required', 'numeric', 'min:0'],
-        'allocation_id' => ['required', 'bail', 'unique:servers', 'exists:allocations,id'],
+        'allocation_id' => ['sometimes', 'nullable', 'unique:servers', 'exists:allocations,id'],
         'egg_id' => ['required', 'exists:eggs,id'],
         'startup' => ['required', 'string'],
         'skip_scripts' => ['sometimes', 'boolean'],
@@ -220,10 +220,14 @@ class Server extends Model implements Validatable
     /**
      * Returns the format for server allocations when communicating with the Daemon.
      *
-     * @return array<int>
+     * @return array<string, array<int>>
      */
     public function getAllocationMappings(): array
     {
+        if (!$this->allocation) {
+            return ['' => []];
+        }
+
         return $this->allocations->where('node_id', $this->node_id)->groupBy('ip')->map(function ($item) {
             return $item->pluck('port');
         })->toArray();
@@ -272,6 +276,8 @@ class Server extends Model implements Validatable
 
     /**
      * Gets all allocations associated with this server.
+     *
+     * @return HasMany<Allocation, $this>
      */
     public function allocations(): HasMany
     {
@@ -435,25 +441,24 @@ class Server extends Model implements Validatable
 
     public function retrieveStatus(): ContainerStatus
     {
-        $status = cache()->get("servers.$this->uuid.container.status");
+        return cache()->remember("servers.$this->uuid.status", now()->addSeconds(15), function () {
+            // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+            $details = app(DaemonServerRepository::class)->setServer($this)->getDetails();
 
-        if ($status === null) {
-            $this->node->serverStatuses();
-
-            $status = cache()->get("servers.$this->uuid.container.status");
-        }
-
-        return ContainerStatus::tryFrom($status) ?? ContainerStatus::Missing;
+            return ContainerStatus::tryFrom(Arr::get($details, 'state')) ?? ContainerStatus::Missing;
+        });
     }
 
     /**
      * @return array<mixed>
      */
-    public function resources(): array
+    public function retrieveResources(): array
     {
-        return cache()->remember("resources:$this->uuid", now()->addSeconds(15), function () {
+        return cache()->remember("servers.$this->uuid.resources", now()->addSeconds(15), function () {
             // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
-            return Arr::get(app(DaemonServerRepository::class)->setServer($this)->getDetails(), 'utilization', []);
+            $details = app(DaemonServerRepository::class)->setServer($this)->getDetails();
+
+            return Arr::get($details, 'utilization', []);
         });
     }
 
@@ -461,7 +466,7 @@ class Server extends Model implements Validatable
     {
         $resourceAmount = $this->{$resourceKey} ?? 0;
         if (!$limit) {
-            $resourceAmount = $this->resources()[$resourceKey] ?? 0;
+            $resourceAmount = $this->retrieveResources()[$resourceKey] ?? 0;
         }
 
         if ($type === ServerResourceType::Time) {
@@ -494,7 +499,7 @@ class Server extends Model implements Validatable
     public function condition(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->isSuspended() ? ServerState::Suspended : $this->status ?? $this->retrieveStatus(),
+            get: fn () => $this->status ?? $this->retrieveStatus(),
         );
     }
 }

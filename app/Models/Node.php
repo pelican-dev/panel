@@ -38,6 +38,7 @@ use Symfony\Component\Yaml\Yaml;
  * @property string $daemon_token_id
  * @property string $daemon_token
  * @property int $daemon_listen
+ * @property int $daemon_connect
  * @property int $daemon_sftp
  * @property string|null $daemon_sftp_alias
  * @property string $daemon_base
@@ -83,7 +84,7 @@ class Node extends Model implements Validatable
         'memory', 'memory_overallocate', 'disk',
         'disk_overallocate', 'cpu', 'cpu_overallocate',
         'upload_size', 'daemon_base',
-        'daemon_sftp', 'daemon_sftp_alias', 'daemon_listen',
+        'daemon_sftp', 'daemon_sftp_alias', 'daemon_listen', 'daemon_connect',
         'description', 'maintenance_mode', 'tags',
     ];
 
@@ -105,6 +106,7 @@ class Node extends Model implements Validatable
         'daemon_sftp' => ['required', 'numeric', 'between:1,65535'],
         'daemon_sftp_alias' => ['nullable', 'string'],
         'daemon_listen' => ['required', 'numeric', 'between:1,65535'],
+        'daemon_connect' => ['required', 'numeric', 'between:1,65535'],
         'maintenance_mode' => ['boolean'],
         'upload_size' => ['int', 'between:1,1024'],
         'tags' => ['array'],
@@ -125,6 +127,7 @@ class Node extends Model implements Validatable
         'daemon_base' => '/var/lib/pelican/volumes',
         'daemon_sftp' => 2022,
         'daemon_listen' => 8080,
+        'daemon_connect' => 8080,
         'maintenance_mode' => false,
         'tags' => '[]',
     ];
@@ -136,6 +139,7 @@ class Node extends Model implements Validatable
             'disk' => 'integer',
             'cpu' => 'integer',
             'daemon_listen' => 'integer',
+            'daemon_connect' => 'integer',
             'daemon_sftp' => 'integer',
             'daemon_token' => 'encrypted',
             'behind_proxy' => 'boolean',
@@ -171,7 +175,7 @@ class Node extends Model implements Validatable
      */
     public function getConnectionAddress(): string
     {
-        return "$this->scheme://$this->fqdn:$this->daemon_listen";
+        return "$this->scheme://$this->fqdn:$this->daemon_connect";
     }
 
     /**
@@ -327,26 +331,6 @@ class Node extends Model implements Validatable
                 return ['exception' => $message->toString()];
             }
         });
-    }
-
-    /**
-     * @return array<array-key, mixed>
-     */
-    public function serverStatuses(): array
-    {
-        $statuses = [];
-        try {
-            $statuses = Http::daemon($this)->connectTimeout(1)->timeout(1)->get('/api/servers')->json() ?? [];
-        } catch (Exception $exception) {
-            report($exception);
-        }
-
-        foreach ($statuses as $status) {
-            $uuid = fluent($status)->get('configuration.uuid');
-            cache()->remember("servers.$uuid.container.status", now()->addMinute(), fn () => fluent($status)->get('state'));
-        }
-
-        return $statuses;
     }
 
     /** @return array{
