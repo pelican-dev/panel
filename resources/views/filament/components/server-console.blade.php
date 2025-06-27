@@ -14,7 +14,7 @@
             }
         </style>
     @endif
-    <link rel="stylesheet" href="{{ asset('/css/filament/server/console.css') }}">
+    @vite(['resources/js/console.js', 'resources/css/console.css'])
     @endassets
 
     <div id="terminal" wire:ignore></div>

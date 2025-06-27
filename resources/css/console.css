@@ -1,3 +1,4 @@
+@import url('@xterm/xterm/css/xterm.css');
 
 #terminal {
     border-top-left-radius: 10px;
