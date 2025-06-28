@@ -23,7 +23,8 @@ class RequirementsStep
                 ->icon($correctPhpVersion ? 'tabler-check' : 'tabler-x')
                 ->iconColor($correctPhpVersion ? 'success' : 'danger')
                 ->schema([
-                    TextEntry::make('INeedAName')
+                    TextEntry::make('php_version')
+                        ->hiddenLabel()
                         ->state('Your PHP Version is ' . PHP_VERSION . '.'),
                 ]),
         ];
@@ -46,10 +47,12 @@ class RequirementsStep
             ->icon($allExtensionsInstalled ? 'tabler-check' : 'tabler-x')
             ->iconColor($allExtensionsInstalled ? 'success' : 'danger')
             ->schema([
-                TextEntry::make('INeedAName')
+                TextEntry::make('all_extensions_installed')
+                    ->hiddenLabel()
                     ->state('All needed PHP Extensions are installed.')
                     ->visible($allExtensionsInstalled),
-                TextEntry::make('INeedAName')
+                TextEntry::make('extensions_missing')
+                    ->hiddenLabel()
                     ->state('The following PHP Extensions are missing: ' . implode(', ', array_keys($phpExtensions, false)))
                     ->visible(!$allExtensionsInstalled),
             ]);
@@ -65,10 +68,12 @@ class RequirementsStep
             ->icon($correctFolderPermissions ? 'tabler-check' : 'tabler-x')
             ->iconColor($correctFolderPermissions ? 'success' : 'danger')
             ->schema([
-                TextEntry::make('INeedAName')
+                TextEntry::make('correct_folder_permissions')
+                    ->hiddenLabel()
                     ->state('All Folders have the correct permissions.')
                     ->visible($correctFolderPermissions),
-                TextEntry::make('INeedAName2')
+                TextEntry::make('wrong_folder_permissions')
+                    ->hiddenLabel()
                     ->state('The following Folders have wrong permissions: ' . implode(', ', array_keys($folderPermissions, false)))
                     ->visible(!$correctFolderPermissions),
             ]);

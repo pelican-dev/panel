@@ -31,10 +31,10 @@ class CanaryWidget extends FormWidget
                     ->collapsed()
                     ->persistCollapsed()
                     ->schema([
-                        TextEntry::make('iNeedAName')
+                        TextEntry::make('info')
                             ->hiddenLabel()
                             ->state(trans('admin/dashboard.sections.intro-developers.content')),
-                        TextEntry::make('iNeedAName')
+                        TextEntry::make('extra')
                             ->hiddenLabel()
                             ->state(trans('admin/dashboard.sections.intro-developers.extra_note')),
                     ])

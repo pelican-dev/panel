@@ -236,9 +236,9 @@ class Settings extends ServerFormPage
                     ])
                     ->footerActionsAlignment(Alignment::Right)
                     ->schema([
-                        TextEntry::make('INeedAName1')
+                        TextEntry::make('stop_info')
                             ->label('Reinstalling your server will stop it, and then re-run the installation script that initially set it up.'),
-                        TextEntry::make('INeedAName')
+                        TextEntry::make('files_info')
                             ->label('Some files may be deleted or modified during this process, please back up your data before continuing.'),
                     ]),
             ]);

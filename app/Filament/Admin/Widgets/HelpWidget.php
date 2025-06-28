@@ -25,7 +25,7 @@ class HelpWidget extends FormWidget
                     ->collapsible()
                     ->persistCollapsed()
                     ->schema([
-                        TextEntry::make('iNeedAName')
+                        TextEntry::make('info')
                             ->hiddenLabel()
                             ->state(trans('admin/dashboard.sections.intro-help.content')),
                     ])

@@ -58,7 +58,7 @@ final class SteamProvider extends OAuthProvider
         return array_merge([
             Step::make('Create API Key')
                 ->schema([
-                    TextEntry::make('INeedAName')
+                    TextEntry::make('create_api_key')
                         ->hiddenLabel()
                         ->state(new HtmlString(Blade::render('Visit <x-filament::link href="https://steamcommunity.com/dev/apikey" target="_blank">https://steamcommunity.com/dev/apikey</x-filament::link> to generate an API key.'))),
                 ]),

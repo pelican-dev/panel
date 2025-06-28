@@ -53,7 +53,7 @@ class CreateDatabaseHost extends CreateRecord
             Step::make(trans('admin/databasehost.setup.preparations'))
                 ->columns()
                 ->schema([
-                    TextEntry::make('INeedAName')
+                    TextEntry::make('setup')
                         ->hiddenLabel()
                         ->state(trans('admin/databasehost.setup.note')),
                     Toggle::make('different_server')
@@ -88,7 +88,7 @@ class CreateDatabaseHost extends CreateRecord
                 ->schema([
                     Fieldset::make(trans('admin/databasehost.setup.database_user'))
                         ->schema([
-                            TextEntry::make('INeedAName')
+                            TextEntry::make('cli_login')
                                 ->hiddenLabel()
                                 ->state(new HtmlString(trans('admin/databasehost.setup.cli_login')))
                                 ->columnSpanFull(),
@@ -106,14 +106,14 @@ class CreateDatabaseHost extends CreateRecord
                                 ->dehydrated(false)
                                 // TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                 ->columnSpanFull(),
-                            TextEntry::make('INeedAName')
+                            TextEntry::make('cli_exit')
                                 ->hiddenLabel()
                                 ->state(new HtmlString(trans('admin/databasehost.setup.cli_exit')))
                                 ->columnSpanFull(),
                         ]),
                     Fieldset::make(trans('admin/databasehost.setup.external_access'))
                         ->schema([
-                            TextEntry::make('INeedAName2')
+                            TextEntry::make('allow_external_access')
                                 ->hiddenLabel()
                                 ->state(new HtmlString(trans('admin/databasehost.setup.allow_external_access')))
                                 ->columnSpanFull(),

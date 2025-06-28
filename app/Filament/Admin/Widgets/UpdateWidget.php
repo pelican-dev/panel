@@ -34,7 +34,7 @@ class UpdateWidget extends FormWidget
                     ->icon('tabler-checkbox')
                     ->iconColor('success')
                     ->schema([
-                        TextEntry::make('iNeedAName')
+                        TextEntry::make('info')
                             ->hiddenLabel()
                             ->state(trans('admin/dashboard.sections.intro-no-update.content', ['version' => $this->softwareVersionService->currentPanelVersion()])),
                     ])
@@ -42,7 +42,7 @@ class UpdateWidget extends FormWidget
                     ->icon('tabler-info-circle')
                     ->iconColor('warning')
                     ->schema([
-                        TextEntry::make('iNeedAName')
+                        TextEntry::make('info')
                             ->state(trans('admin/dashboard.sections.intro-update-available.content', ['latestVersion' => $this->softwareVersionService->latestPanelVersion()])),
                     ])
                     ->headerActions([

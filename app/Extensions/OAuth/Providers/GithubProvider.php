@@ -27,7 +27,7 @@ final class GithubProvider extends OAuthProvider
         return array_merge([
             Step::make('Register new Github OAuth App')
                 ->schema([
-                    TextEntry::make('INeedAName2')
+                    TextEntry::make('create_application')
                         ->hiddenLabel()
                         ->state(new HtmlString(Blade::render('<p>Visit the <x-filament::link href="https://github.com/settings/developers" target="_blank">Github Developer Dashboard</x-filament::link>, go to <b>OAuth Apps</b> and click on <b>New OAuth App</b>.</p><p>Enter an <b>Application name</b> (e.g. your panel name), set <b>Homepage URL</b> to your panel url and enter the below url as <b>Authorization callback URL</b>.</p>'))),
                     TextInput::make('_noenv_callback')
@@ -36,13 +36,13 @@ final class GithubProvider extends OAuthProvider
                         ->disabled()
                         //TODO ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                         ->default(fn () => url('/auth/oauth/callback/github')),
-                    TextEntry::make('INeedAName')
+                    TextEntry::make('register_application')
                         ->hiddenLabel()
                         ->state(new HtmlString('<p>When you filled all fields click on <b>Register application</b>.</p>')),
                 ]),
             Step::make('Create Client Secret')
                 ->schema([
-                    TextEntry::make('INeedAName3')
+                    TextEntry::make('create_client_secret')
                         ->hiddenLabel()
                         ->state(new HtmlString('<p>Once you registered your app, generate a new <b>Client Secret</b>.</p><p>You will also need the <b>Client ID</b>.</p>')),
                 ]),

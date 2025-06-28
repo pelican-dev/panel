@@ -84,16 +84,16 @@ class EditNode extends EditRecord
                                 ->columns(4)
                                 ->columnSpanFull()
                                 ->schema([
-                                    TextEntry::make('INeedAName')
+                                    TextEntry::make('wings_version')
                                         ->label(trans('admin/node.wings_version'))
                                         ->state(fn (Node $node, SoftwareVersionService $versionService) => ($node->systemInformation()['version'] ?? trans('admin/node.unknown')) . ' (' . trans('admin/node.latest') . ': ' . $versionService->latestWingsVersion() . ')'),
-                                    TextEntry::make('INeedAName2')
+                                    TextEntry::make('cpu_threads')
                                         ->label(trans('admin/node.cpu_threads'))
                                         ->state(fn (Node $node) => $node->systemInformation()['cpu_count'] ?? 0),
-                                    TextEntry::make('INeedAName3')
+                                    TextEntry::make('architecture')
                                         ->label(trans('admin/node.architecture'))
                                         ->state(fn (Node $node) => $node->systemInformation()['architecture'] ?? trans('admin/node.unknown')),
-                                    TextEntry::make('INeedAName4')
+                                    TextEntry::make('kernel')
                                         ->label(trans('admin/node.kernel'))
                                         ->state(fn (Node $node) => $node->systemInformation()['kernel_version'] ?? trans('admin/node.unknown')),
                                 ]),

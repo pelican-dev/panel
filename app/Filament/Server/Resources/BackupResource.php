@@ -138,7 +138,7 @@ class BackupResource extends Resource
                         ->icon('tabler-folder-up')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_RESTORE, $server))
                         ->schema([
-                            TextEntry::make('INeedAName')
+                            TextEntry::make('stop_info')
                                 ->hiddenLabel()
                                 ->helperText('Your server will be stopped. You will not be able to control the power state, access the file manager, or create additional backups until this process is completed.'),
                             Checkbox::make('truncate')
