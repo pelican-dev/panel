@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Filament\Components\Forms\Fields;
+namespace App\Extensions\Captcha\Schemas\Turnstile;
 
-use App\Rules\ValidTurnstileCaptcha;
 use Filament\Forms\Components\Field;
 
-class TurnstileCaptcha extends Field
+class Component extends Field
 {
     protected string $viewIdentifier = 'turnstile';
 
@@ -19,8 +18,6 @@ class TurnstileCaptcha extends Field
 
         $this->required();
 
-        $this->after(function (TurnstileCaptcha $component) {
-            $component->rule(new ValidTurnstileCaptcha());
-        });
+        $this->rule(new Rule());
     }
 }

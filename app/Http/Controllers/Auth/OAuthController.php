@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Extensions\OAuth\Providers\OAuthProvider;
+use App\Extensions\OAuth\OAuthService;
 use App\Filament\Pages\Auth\EditProfile;
-use Filament\Notifications\Notification;
-use Illuminate\Auth\AuthManager;
-use Illuminate\Http\RedirectResponse;
-use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\Users\UserUpdateService;
 use Exception;
+use Filament\Notifications\Notification;
+use Illuminate\Auth\AuthManager;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Laravel\Socialite\Facades\Socialite;
 
 class OAuthController extends Controller
 {
     public function __construct(
         private readonly AuthManager $auth,
-        private readonly UserUpdateService $updateService
+        private readonly UserUpdateService $updateService,
+        private readonly OAuthService $oauthService
     ) {}
 
     /**
@@ -27,7 +28,7 @@ class OAuthController extends Controller
     public function redirect(string $driver): RedirectResponse
     {
         // Driver is disabled - redirect to normal login
-        if (!OAuthProvider::get($driver)->isEnabled()) {
+        if (!$this->oauthService->get($driver)->isEnabled()) {
             return redirect()->route('auth.login');
         }
 
@@ -40,7 +41,7 @@ class OAuthController extends Controller
     public function callback(Request $request, string $driver): RedirectResponse
     {
         // Driver is disabled - redirect to normal login
-        if (!OAuthProvider::get($driver)->isEnabled()) {
+        if (!$this->oauthService->get($driver)?->isEnabled()) {
             return redirect()->route('auth.login');
         }
 
