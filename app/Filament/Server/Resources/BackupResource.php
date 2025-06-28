@@ -78,7 +78,7 @@ class BackupResource extends Resource
     public static function defaultForm(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 TextInput::make('name')
                     ->label('Name')
                     ->columnSpanFull(),

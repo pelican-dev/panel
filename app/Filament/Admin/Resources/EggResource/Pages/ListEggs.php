@@ -23,7 +23,6 @@ use Filament\Actions\ReplicateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
 class ListEggs extends ListRecords
@@ -82,12 +81,12 @@ class ListEggs extends ListRecords
             ])
             ->groupedBulkActions([
                 DeleteBulkAction::make()
-                    ->before(fn (Collection &$records) => $records = $records->filter(function ($egg) {
+                    ->before(fn (&$records) => $records = $records->filter(function ($egg) {
                         /** @var Egg $egg */
                         return $egg->servers_count <= 0;
                     })),
                 UpdateEggBulkAction::make()
-                    ->before(fn (Collection &$records) => $records = $records->filter(function ($egg) {
+                    ->before(fn (&$records) => $records = $records->filter(function ($egg) {
                         /** @var Egg $egg */
                         return cache()->get("eggs.$egg->uuid.update", false);
                     })),

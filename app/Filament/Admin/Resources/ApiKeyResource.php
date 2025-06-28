@@ -113,7 +113,7 @@ class ApiKeyResource extends Resource
     public static function defaultForm(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 Fieldset::make('Permissions')
                     ->columnSpanFull()
                     ->schema(

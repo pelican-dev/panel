@@ -52,7 +52,7 @@ class ServerTransferController extends Controller
         }
 
         $data = [];
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = $this->connection->transaction(function () use ($server, $transfer, $data) {
             if ($transfer->old_allocation || $transfer->old_additional_allocations) {
                 $allocations = array_merge([$transfer->old_allocation], $transfer->old_additional_allocations);

@@ -24,7 +24,7 @@ class DatabasesRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->schema([
+            ->components([
                 TextInput::make('database')
                     ->columnSpanFull(),
                 TextInput::make('username')
