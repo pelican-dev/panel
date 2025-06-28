@@ -15,13 +15,13 @@ use App\Traits\CheckMigrationsTrait;
 use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Contracts\HasSchemas;
-use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Facades\Artisan;
@@ -29,9 +29,9 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
 /**
- * @property Schema $schema
+ * @property Form $form
  */
-class PanelInstaller extends SimplePage implements HasSchemas
+class PanelInstaller extends SimplePage implements HasForms
 {
     use CheckMigrationsTrait;
     use EnvironmentWriterTrait;
@@ -42,7 +42,7 @@ class PanelInstaller extends SimplePage implements HasSchemas
 
     protected string $view = 'filament.pages.installer';
 
-    public function getMaxWidth(): Width|string
+    public function getMaxContentWidth(): Width|string
     {
         return Width::SevenExtraLarge;
     }
@@ -56,10 +56,12 @@ class PanelInstaller extends SimplePage implements HasSchemas
     {
         abort_if(self::isInstalled(), 404);
 
-        $this->schema->fill();
+        $this->form->fill();
     }
 
-    /** @return Component[] */
+    /** @return Component[]
+     * @throws Exception
+     */
     protected function getFormSchema(): array
     {
         return [

@@ -30,6 +30,7 @@ class EnvironmentStep
                 Fieldset::make('adminuser')
                     ->label('Admin User')
                     ->columns(3)
+                    ->columnSpanFull()
                     ->schema([
                         TextInput::make('user.email')
                             ->label('E-Mail')
