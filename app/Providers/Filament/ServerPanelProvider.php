@@ -47,7 +47,7 @@ class ServerPanelProvider extends PanelProvider
             ->profile(EditProfile::class, false)
             ->passwordReset()
             ->userMenuItems([
-                'profile' => fn (Action $action) => $action->label(auth()->user()->username),
+                'profile' => fn (Action $action) => $action->label(auth()->user()->username)->url(fn () => EditProfile::getUrl(panel: 'app')),
                 Action::make('toServerList')
                     ->label('Server List')
                     ->icon('tabler-brand-docker')
