@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Components\Tables\Actions;
+namespace App\Filament\Components\Actions;
 
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;

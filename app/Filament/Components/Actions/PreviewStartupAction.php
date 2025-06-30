@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Components\Forms\Actions;
+namespace App\Filament\Components\Actions;
 
 use App\Models\Server;
 use App\Services\Servers\StartupCommandService;

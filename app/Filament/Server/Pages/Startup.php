@@ -4,7 +4,7 @@ namespace App\Filament\Server\Pages;
 
 use Exception;
 use App\Facades\Activity;
-use App\Filament\Components\Forms\Actions\PreviewStartupAction;
+use App\Filament\Components\Actions\PreviewStartupAction;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Models\ServerVariable;

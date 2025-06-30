@@ -5,8 +5,8 @@ namespace App\Filament\Admin\Resources\ServerResource\Pages;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
-use App\Filament\Components\Forms\Actions\PreviewStartupAction;
-use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
+use App\Filament\Components\Actions\PreviewStartupAction;
+use App\Filament\Components\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Pages\Console;
 use App\Models\Allocation;
 use App\Models\Database;
@@ -754,7 +754,7 @@ class EditServer extends EditRecord
                                             ->password()
                                             ->revealable()
                                             ->columnSpan(1)
-                                            //->hintAction(RotateDatabasePasswordAction::make())
+                                            ->hintAction(RotateDatabasePasswordAction::make())
                                             //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                                             ->formatStateUsing(fn (Database $database) => $database->password),
                                         TextInput::make('remote')

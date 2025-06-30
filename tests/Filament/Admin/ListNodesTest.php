@@ -7,7 +7,6 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Server;
 use Filament\Actions\CreateAction;
-use Filament\Tables\Actions\CreateAction as TableCreateAction;
 
 use function Pest\Livewire\livewire;
 
@@ -63,5 +62,5 @@ it('displays the create button in the table instead of the header when 0 nodes',
     livewire(ListNodes::class)
         ->assertSuccessful()
         ->assertHeaderMissing(CreateAction::class)
-        ->assertActionExists(TableCreateAction::class);
+        ->assertActionExists(CreateAction::class);
 });

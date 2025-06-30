@@ -2,8 +2,8 @@
 
 namespace App\Filament\Server\Resources;
 
+use App\Filament\Components\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Resources\DatabaseResource\Pages\ListDatabases;
-use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\Database;
 use App\Models\Permission;

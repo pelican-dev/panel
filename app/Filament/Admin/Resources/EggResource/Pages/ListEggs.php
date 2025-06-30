@@ -4,11 +4,10 @@ namespace App\Filament\Admin\Resources\EggResource\Pages;
 
 use Exception;
 use App\Filament\Admin\Resources\EggResource;
-use App\Filament\Components\Actions\ImportEggAction as ImportEggHeaderAction;
-use App\Filament\Components\Tables\Actions\ExportEggAction;
-use App\Filament\Components\Tables\Actions\ImportEggAction;
-use App\Filament\Components\Tables\Actions\UpdateEggAction;
-use App\Filament\Components\Tables\Actions\UpdateEggBulkAction;
+use App\Filament\Components\Actions\ExportEggAction;
+use App\Filament\Components\Actions\ImportEggAction;
+use App\Filament\Components\Actions\UpdateEggAction;
+use App\Filament\Components\Actions\UpdateEggBulkAction;
 use App\Filament\Components\Tables\Filters\TagsFilter;
 use App\Models\Egg;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -16,7 +15,6 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
-use Filament\Actions\CreateAction as CreateHeaderAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
@@ -111,9 +109,9 @@ class ListEggs extends ListRecords
     protected function getDefaultHeaderActions(): array
     {
         return [
-            ImportEggHeaderAction::make()
+            ImportEggAction::make()
                 ->multiple(),
-            CreateHeaderAction::make(),
+            CreateAction::make(),
         ];
     }
 }

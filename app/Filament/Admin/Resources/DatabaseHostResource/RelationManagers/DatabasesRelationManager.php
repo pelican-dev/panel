@@ -6,7 +6,7 @@ use Exception;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Schemas\Schema;
-use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
+use App\Filament\Components\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\Database;
 use Filament\Forms\Components\TextInput;
