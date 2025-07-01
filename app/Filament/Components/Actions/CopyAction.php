@@ -6,12 +6,9 @@ use Closure;
 use Filament\Actions\Action;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
-use Livewire\Features\SupportJsEvaluation\HandlesJsEvaluation;
 
 class CopyAction extends Action
 {
-    use HandlesJsEvaluation;
-
     protected Closure|string|null $copyable = null;
 
     public static function getDefaultName(): ?string

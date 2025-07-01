@@ -42,7 +42,7 @@ final class DiscordProvider extends OAuthProvider
                         ->label('Redirect URL')
                         ->dehydrated()
                         ->disabled()
-                        ->hintCopy()
+                        //->hintCopy() // TODO: wait for filament bug fix
                         ->formatStateUsing(fn () => url('/auth/oauth/callback/discord')),
                 ]),
         ], parent::getSetupSteps());

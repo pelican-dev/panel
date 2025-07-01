@@ -33,7 +33,7 @@ final class GithubProvider extends OAuthProvider
                         ->label('Authorization callback URL')
                         ->dehydrated()
                         ->disabled()
-                        ->hintCopy()
+                        //->hintCopy() // TODO: wait for filament bug fix
                         ->default(fn () => url('/auth/oauth/callback/github')),
                     TextEntry::make('register_application')
                         ->hiddenLabel()

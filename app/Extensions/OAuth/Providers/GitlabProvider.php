@@ -53,7 +53,7 @@ final class GitlabProvider extends OAuthProvider
                         ->label('Redirect URI')
                         ->dehydrated()
                         ->disabled()
-                        ->hintCopy()
+                        //->hintCopy() // TODO: wait for filament bug fix
                         ->default(fn () => url('/auth/oauth/callback/gitlab')),
                 ]),
         ], parent::getSetupSteps());

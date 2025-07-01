@@ -620,7 +620,7 @@ class EditServer extends EditRecord
                                     ->hintAction(PreviewStartupAction::make('preview')),
 
                                 Textarea::make('defaultStartup')
-                                    ->hintCopy()
+                                    //->hintCopy() // TODO: wait for filament bug fix
                                     ->label(trans('admin/server.default_startup'))
                                     ->disabled()
                                     ->autosize()
