@@ -8,7 +8,6 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
-use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 final class GitlabProvider extends OAuthProvider
 {
@@ -54,7 +53,7 @@ final class GitlabProvider extends OAuthProvider
                         ->label('Redirect URI')
                         ->dehydrated()
                         ->disabled()
-                        //TODO ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                        ->hintCopy()
                         ->default(fn () => url('/auth/oauth/callback/gitlab')),
                 ]),
         ], parent::getSetupSteps());

@@ -42,7 +42,7 @@ final class DiscordProvider extends OAuthProvider
                         ->label('Redirect URL')
                         ->dehydrated()
                         ->disabled()
-                        //TODO ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                        ->hintCopy()
                         ->formatStateUsing(fn () => url('/auth/oauth/callback/discord')),
                 ]),
         ], parent::getSetupSteps());

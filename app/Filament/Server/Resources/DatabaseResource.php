@@ -69,12 +69,12 @@ class DatabaseResource extends Resource
         return $schema
             ->components([
                 TextInput::make('host')
-                    ->formatStateUsing(fn (Database $database) => $database->address()),
-                // TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
-                TextInput::make('database'),
-                //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
-                TextInput::make('username'),
-                //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
+                    ->formatStateUsing(fn (Database $database) => $database->address())
+                    ->suffixCopy(),
+                TextInput::make('database')
+                    ->suffixCopy(),
+                TextInput::make('username')
+                    ->suffixCopy(),
                 TextInput::make('password')
                     ->password()->revealable()
                     ->hidden(fn () => !auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
@@ -82,7 +82,7 @@ class DatabaseResource extends Resource
                         RotateDatabasePasswordAction::make()
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_DATABASE_UPDATE, $server))
                     )
-                    //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                    ->suffixCopy()
                     ->formatStateUsing(fn (Database $database) => $database->password),
                 TextInput::make('remote')
                     ->label('Connections From'),
@@ -92,7 +92,7 @@ class DatabaseResource extends Resource
                     ->label('JDBC Connection String')
                     ->password()->revealable()
                     ->hidden(!auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
-                    //TODO ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                    ->suffixCopy()
                     ->columnSpanFull()
                     ->formatStateUsing(fn (Database $database) => $database->jdbc),
             ]);

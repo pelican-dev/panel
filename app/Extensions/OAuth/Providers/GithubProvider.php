@@ -8,7 +8,6 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
-use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 final class GithubProvider extends OAuthProvider
 {
@@ -34,7 +33,7 @@ final class GithubProvider extends OAuthProvider
                         ->label('Authorization callback URL')
                         ->dehydrated()
                         ->disabled()
-                        //TODO ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                        ->hintCopy()
                         ->default(fn () => url('/auth/oauth/callback/github')),
                     TextEntry::make('register_application')
                         ->hiddenLabel()

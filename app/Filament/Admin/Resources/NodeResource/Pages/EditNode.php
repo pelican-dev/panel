@@ -293,7 +293,7 @@ class EditNode extends EditRecord
                                     'lg' => 2,
                                 ])
                                 ->label(trans('admin/node.node_uuid'))
-                                // TODO ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                                ->hintCopy()
                                 ->disabled(),
                             TagsInput::make('tags')
                                 ->label(trans('admin/node.tags'))
@@ -554,7 +554,7 @@ class EditNode extends EditRecord
                                 ->label('/etc/pelican/config.yml')
                                 ->disabled()
                                 ->rows(19)
-                                //TODO ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                                ->hintCopy()
                                 ->columnSpanFull(),
                             Grid::make()
                                 ->columns()
@@ -591,7 +591,7 @@ class EditNode extends EditRecord
                                                     ->label(trans('admin/node.auto_command'))
                                                     ->readOnly()
                                                     ->autosize()
-                                                    //TODO ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                                                    ->hintCopy()
                                                     ->formatStateUsing(fn (NodeAutoDeployService $service, Node $node, Set $set, Get $get) => $set('generatedToken', $service->handle(request(), $node, $get('docker')))),
                                             ])
                                             ->mountUsing(function (Schema $schema) {
