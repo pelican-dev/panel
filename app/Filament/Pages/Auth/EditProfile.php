@@ -3,7 +3,7 @@
 namespace App\Filament\Pages\Auth;
 
 use App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid;
-use App\Extensions\OAuth\Providers\OAuthProvider;
+use App\Extensions\OAuth\OAuthService;
 use App\Facades\Activity;
 use App\Models\ActivityLog;
 use App\Models\ApiKey;
@@ -60,9 +60,12 @@ class EditProfile extends BaseEditProfile
 
     private ToggleTwoFactorService $toggleTwoFactorService;
 
-    public function boot(ToggleTwoFactorService $toggleTwoFactorService): void
+    protected OAuthService $oauthService;
+
+    public function boot(ToggleTwoFactorService $toggleTwoFactorService, OAuthService $oauthService): void
     {
         $this->toggleTwoFactorService = $toggleTwoFactorService;
+        $this->oauthService = $oauthService;
     }
 
     public function getMaxWidth(): MaxWidth|string
@@ -72,7 +75,7 @@ class EditProfile extends BaseEditProfile
 
     protected function getForms(): array
     {
-        $oauthProviders = collect(OAuthProvider::get())->filter(fn (OAuthProvider $provider) => $provider->isEnabled())->all();
+        $oauthSchemas = $this->oauthService->getEnabled();
 
         return [
             'form' => $this->form(
@@ -155,21 +158,21 @@ class EditProfile extends BaseEditProfile
 
                                 Tab::make(trans('profile.tabs.oauth'))
                                     ->icon('tabler-brand-oauth')
-                                    ->visible(count($oauthProviders) > 0)
-                                    ->schema(function () use ($oauthProviders) {
+                                    ->visible(count($oauthSchemas) > 0)
+                                    ->schema(function () use ($oauthSchemas) {
                                         $actions = [];
 
-                                        foreach ($oauthProviders as $oauthProvider) {
+                                        foreach ($oauthSchemas as $schema) {
 
-                                            $id = $oauthProvider->getId();
-                                            $name = $oauthProvider->getName();
+                                            $id = $schema->getId();
+                                            $name = $schema->getName();
 
                                             $unlink = array_key_exists($id, $this->getUser()->oauth ?? []);
 
                                             $actions[] = Action::make("oauth_$id")
                                                 ->label(($unlink ? trans('profile.unlink') : trans('profile.link')) . $name)
                                                 ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
-                                                ->color(Color::hex($oauthProvider->getHexColor()))
+                                                ->color(Color::hex($schema->getHexColor()))
                                                 ->action(function (UserUpdateService $updateService) use ($id, $name, $unlink) {
                                                     if ($unlink) {
                                                         $oauth = auth()->user()->oauth;

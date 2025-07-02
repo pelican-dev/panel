@@ -1,26 +1,31 @@
 <?php
 
-namespace App\Extensions\Captcha\Providers;
+namespace App\Extensions\Captcha\Schemas\Turnstile;
 
-use App\Filament\Components\Forms\Fields\TurnstileCaptcha;
+use App\Extensions\Captcha\Schemas\CaptchaSchemaInterface;
+use App\Extensions\Captcha\Schemas\BaseSchema;
 use Exception;
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Component as BaseComponent;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Toggle;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\HtmlString;
 
-class TurnstileProvider extends CaptchaProvider
+class TurnstileSchema extends BaseSchema implements CaptchaSchemaInterface
 {
     public function getId(): string
     {
         return 'turnstile';
     }
 
-    public function getComponent(): Component
+    public function isEnabled(): bool
     {
-        return TurnstileCaptcha::make('turnstile');
+        return env('CAPTCHA_TURNSTILE_ENABLED', false);
+    }
+
+    public function getFormComponent(): BaseComponent
+    {
+        return Component::make('turnstile');
     }
 
     /**
@@ -34,7 +39,7 @@ class TurnstileProvider extends CaptchaProvider
     }
 
     /**
-     * @return Component[]
+     * @return BaseComponent[]
      */
     public function getSettingsForm(): array
     {
@@ -52,18 +57,12 @@ class TurnstileProvider extends CaptchaProvider
                 ->label(trans('admin/setting.captcha.info_label'))
                 ->columnSpan(2)
                 ->content(new HtmlString(trans('admin/setting.captcha.info'))),
-
         ]);
     }
 
-    public function getIcon(): string
+    public function getIcon(): ?string
     {
         return 'tabler-brand-cloudflare';
-    }
-
-    public static function register(Application $app): self
-    {
-        return new self($app);
     }
 
     /**

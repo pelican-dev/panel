@@ -1,22 +1,16 @@
 <?php
 
-namespace App\Extensions\OAuth\Providers;
+namespace App\Extensions\OAuth\Schemas;
 
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
-final class GithubProvider extends OAuthProvider
+final class GithubSchema extends OAuthSchema
 {
-    public function __construct(protected Application $app)
-    {
-        parent::__construct($app);
-    }
-
     public function getId(): string
     {
         return 'github';
@@ -54,10 +48,5 @@ final class GithubProvider extends OAuthProvider
     public function getHexColor(): string
     {
         return '#4078c0';
-    }
-
-    public static function register(Application $app): self
-    {
-        return new self($app);
     }
 }

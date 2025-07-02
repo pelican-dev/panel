@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Extensions\Avatar\Providers;
+namespace App\Extensions\Avatar\Schemas;
 
-use App\Extensions\Avatar\AvatarProvider;
+use App\Extensions\Avatar\AvatarSchemaInterface;
 use App\Models\User;
 
-class UiAvatarsProvider extends AvatarProvider
+class UiAvatarsSchema implements AvatarSchemaInterface
 {
     public function getId(): string
     {
@@ -21,10 +21,5 @@ class UiAvatarsProvider extends AvatarProvider
     {
         // UI Avatars is the default of filament so just return null here
         return null;
-    }
-
-    public static function register(): self
-    {
-        return new self();
     }
 }
