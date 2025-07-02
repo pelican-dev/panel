@@ -443,6 +443,7 @@ class CreateServer extends CreateRecord
 
                                             $text = TextInput::make('variable_value')
                                                 ->hidden($this->shouldHideComponent(...))
+                                                ->dehydratedWhenHidden()
                                                 ->required(fn (Get $get) => in_array('required', $get('rules')))
                                                 ->rules(
                                                     fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
@@ -460,6 +461,7 @@ class CreateServer extends CreateRecord
 
                                             $select = Select::make('variable_value')
                                                 ->hidden($this->shouldHideComponent(...))
+                                                ->dehydratedWhenHidden()
                                                 ->options($this->getSelectOptionsFromRules(...))
                                                 ->selectablePlaceholder(false);
 
