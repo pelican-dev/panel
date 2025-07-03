@@ -293,7 +293,7 @@ class EditProfile extends BaseEditProfile
                                             ])->headerActions([
                                                 Action::make('create')
                                                     ->label(trans('filament-actions::create.single.modal.actions.create.label'))
-                                                    ->disabled(fn (Get $get) => $get('description') === null)
+                                                    ->disabled(fn (Get $get) => empty($get('description')))
                                                     ->successRedirectUrl(self::getUrl(['tab' => '-api-keys-tab'], panel: 'app'))
                                                     ->action(function (Get $get, Action $action, User $user) {
                                                         $token = $user->createToken(
@@ -371,7 +371,7 @@ class EditProfile extends BaseEditProfile
                                             ])->headerActions([
                                                 Action::make('create')
                                                     ->label(trans('filament-actions::create.single.modal.actions.create.label'))
-                                                    ->disabled(fn (Get $get) => $get('public_key') === null)
+                                                    ->disabled(fn (Get $get) => empty($get('name')) || empty($get('public_key')))
                                                     ->successRedirectUrl(self::getUrl(['tab' => '-ssh-keys-tab'], panel: 'app'))
                                                     ->action(function (Get $get, Action $action, User $user, KeyCreationService $service) {
                                                         try {
