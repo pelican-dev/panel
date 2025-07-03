@@ -648,6 +648,7 @@ class EditServer extends EditRecord
 
                                         $text = TextInput::make('variable_value')
                                             ->hidden($this->shouldHideComponent(...))
+                                            ->dehydratedWhenHidden()
                                             ->required(fn (ServerVariable $serverVariable) => $serverVariable->variable->getRequiredAttribute())
                                             ->rules([
                                                 fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
@@ -665,6 +666,7 @@ class EditServer extends EditRecord
 
                                         $select = Select::make('variable_value')
                                             ->hidden($this->shouldHideComponent(...))
+                                            ->dehydratedWhenHidden()
                                             ->options($this->getSelectOptionsFromRules(...))
                                             ->selectablePlaceholder(false);
 
