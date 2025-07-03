@@ -89,25 +89,14 @@ class CreateNode extends CreateRecord
                                         return;
                                     }
 
-                                    $validARecords = @dns_get_record($state, DNS_A);
-                                    if ($validARecords) {
+                                    $ip = get_ip_from_hostname($state);
+                                    if ($ip) {
                                         $set('dns', true);
 
-                                        $set('ip', collect($validARecords)->first()['ip']);
-
-                                        return;
+                                        $set('ip', $ip);
+                                    } else {
+                                        $set('dns', false);
                                     }
-
-                                    $validAAAARecords = @dns_get_record($state, DNS_AAAA);
-                                    if ($validAAAARecords) {
-                                        $set('dns', true);
-
-                                        $set('ip', collect($validAAAARecords)->first()['ipv6']);
-
-                                        return;
-                                    }
-
-                                    $set('dns', false);
                                 })
                                 ->maxLength(255),
 

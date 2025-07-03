@@ -154,25 +154,14 @@ class EditNode extends EditRecord
                                         return;
                                     }
 
-                                    $validARecords = @dns_get_record($state, DNS_A);
-                                    if ($validARecords) {
+                                    $ip = get_ip_from_hostname($state);
+                                    if ($ip) {
                                         $set('dns', true);
 
-                                        $set('ip', collect($validARecords)->first()['ip']);
-
-                                        return;
+                                        $set('ip', $ip);
+                                    } else {
+                                        $set('dns', false);
                                     }
-
-                                    $validAAAARecords = @dns_get_record($state, DNS_AAAA);
-                                    if ($validAAAARecords) {
-                                        $set('dns', true);
-
-                                        $set('ip', collect($validAAAARecords)->first()['ipv6']);
-
-                                        return;
-                                    }
-
-                                    $set('dns', false);
                                 })
                                 ->maxLength(255),
                             TextInput::make('ip')
@@ -627,18 +616,12 @@ class EditNode extends EditRecord
         $data['config'] = $node->getYamlConfiguration();
 
         if (!is_ip($node->fqdn)) {
-            $validARecords = @dns_get_record($node->fqdn, DNS_A);
-            if ($validARecords) {
+            $ip = get_ip_from_hostname($node->fqdn);
+            if ($ip) {
                 $data['dns'] = true;
-                $data['ip'] = collect($validARecords)->first()['ip'];
+                $data['ip'] = $ip;
             } else {
-                $validAAAARecords = @dns_get_record($node->fqdn, DNS_AAAA);
-                if ($validAAAARecords) {
-                    $data['dns'] = true;
-                    $data['ip'] = collect($validAAAARecords)->first()['ipv6'];
-                } else {
-                    $data['dns'] = false;
-                }
+                $data['dns'] = false;
             }
         }
 
