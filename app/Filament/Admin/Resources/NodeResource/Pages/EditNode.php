@@ -154,11 +154,20 @@ class EditNode extends EditRecord
                                         return;
                                     }
 
-                                    $validRecords = gethostbynamel($state);
-                                    if ($validRecords) {
+                                    $validARecords = @dns_get_record($state, DNS_A);
+                                    if ($validARecords) {
                                         $set('dns', true);
 
-                                        $set('ip', collect($validRecords)->first());
+                                        $set('ip', collect($validARecords)->first()['ip']);
+
+                                        return;
+                                    }
+
+                                    $validAAAARecords = @dns_get_record($state, DNS_AAAA);
+                                    if ($validAAAARecords) {
+                                        $set('dns', true);
+
+                                        $set('ip', collect($validAAAARecords)->first()['ipv6']);
 
                                         return;
                                     }
@@ -618,12 +627,18 @@ class EditNode extends EditRecord
         $data['config'] = $node->getYamlConfiguration();
 
         if (!is_ip($node->fqdn)) {
-            $validRecords = gethostbynamel($node->fqdn);
-            if ($validRecords) {
+            $validARecords = @dns_get_record($node->fqdn, DNS_A);
+            if ($validARecords) {
                 $data['dns'] = true;
-                $data['ip'] = collect($validRecords)->first();
+                $data['ip'] = collect($validARecords)->first()['ip'];
             } else {
-                $data['dns'] = false;
+                $validAAAARecords = @dns_get_record($node->fqdn, DNS_AAAA);
+                if ($validAAAARecords) {
+                    $data['dns'] = true;
+                    $data['ip'] = collect($validAAAARecords)->first()['ipv6'];
+                } else {
+                    $data['dns'] = false;
+                }
             }
         }
 
