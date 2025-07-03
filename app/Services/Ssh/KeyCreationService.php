@@ -36,6 +36,7 @@ class KeyCreationService
             throw new Exception('The public key provided already exists on your account');
         }
 
+        /** @var UserSSHKey $sshKey */
         $sshKey = $user->sshKeys()->create([
             'name' => $name,
             'public_key' => $key->toString('PKCS8'),
