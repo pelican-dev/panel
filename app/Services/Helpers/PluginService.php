@@ -38,7 +38,7 @@ class PluginService
                     continue;
                 } else {
                     // Make sure to update the status if a plugin is no longer incompatible (e.g. because the user changed their panel version)
-                    if ($plugins->isIncompatible()) {
+                    if ($plugin->isIncompatible()) {
                         $this->disablePlugin($plugin);
                     }
                 }
