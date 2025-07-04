@@ -112,9 +112,29 @@ class Plugin extends Model implements HasPluginSettings
         return '\\' . $this->namespace . '\\' . $this->class;
     }
 
-    public function shouldLoad(string $panelId): bool
+    public function shouldLoad(): bool
     {
-        return !$this->isDisabled() && $this->isInstalled() && ($this->panels === null || in_array($panelId, explode(',', $this->panels)));
+        return $this->isEnabled() && $this->isInstalled() && $this->isCompatible();
+    }
+
+    public function shouldLoadPanel(string $panelId): bool
+    {
+        return $this->shouldLoad() && ($this->panels === null || in_array($panelId, explode(',', $this->panels)));
+    }
+
+    public function canEnable(): bool
+    {
+        return $this->isDisabled() && $this->isInstalled() && $this->isCompatible();
+    }
+
+    public function canDisable(): bool
+    {
+        return $this->shouldLoad();
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->status === PluginStatus::Enabled;
     }
 
     public function isDisabled(): bool
@@ -132,17 +152,25 @@ class Plugin extends Model implements HasPluginSettings
         return $this->status === PluginStatus::Errored;
     }
 
+    public function isIncompatible(): bool
+    {
+        return $this->status === PluginStatus::Incompatible;
+    }
+
     public function isCompatible(): bool
     {
-        if ($this->panel_version === null) {
-            return true;
-        }
+        $panelVersion = config('app.version', 'canary');
 
-        if (config('app.version') === 'canary') {
+        return $this->panel_version === null || $panelVersion === 'canary' || version_compare($this->panel_version, $panelVersion, $this->isPanelVersionStrict ? '=' : '>=');
+    }
+
+    public function isPanelVersionStrict(): bool
+    {
+        if ($this->panel_version === null) {
             return false;
         }
 
-        return $this->panel_version === config('app.version');
+        return !str($this->panel_version)->startsWith('^');
     }
 
     public function hasSettings(): bool

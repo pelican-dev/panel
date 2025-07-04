@@ -30,11 +30,24 @@ class PluginService
 
         $plugins = Plugin::query()->orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
-            if ($plugin->isDisabled() || !$plugin->isInstalled()) {
-                continue;
-            }
-
             try {
+                // Filter out plugins that are not compatible with the current panel version
+                if (!$plugin->isCompatible()) {
+                    $this->setStatus($plugin, PluginStatus::Incompatible, 'This Plugin is only compatible with Panel version ' . $plugin->panel_version . (!$plugin->isPanelVersionStrict() ? ' or newer' : '') . ' but you are using version ' . config('app.version') . '!');
+
+                    continue;
+                } else {
+                    // Make sure to update the status if a plugin is no longer incompatible (e.g. because the user changed their panel version)
+                    if ($plugins->isIncompatible()) {
+                        $this->disablePlugin($plugin);
+                    }
+                }
+
+                // Filter out plugins that should not be loaded (e.g. because they are disabled or not installed yet)
+                if (!$plugin->shouldLoad()) {
+                    continue;
+                }
+
                 // Load config
                 $config = plugin_path($plugin->id, 'config', $plugin->id . '.php');
                 if (file_exists($config)) {
@@ -106,11 +119,11 @@ class PluginService
 
         $plugins = Plugin::query()->orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
-            if (!$plugin->shouldLoad($panel->getId())) {
-                continue;
-            }
-
             try {
+                if (!$plugin->shouldLoadPanel($panel->getId())) {
+                    continue;
+                }
+
                 $pluginClass = $plugin->fullClass();
 
                 if (!class_exists($pluginClass)) {

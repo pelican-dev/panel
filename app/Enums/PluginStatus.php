@@ -13,6 +13,7 @@ enum PluginStatus: string implements HasColor, HasIcon, HasLabel
     case Disabled = 'disabled';
     case Enabled = 'enabled';
     case Errored = 'errored';
+    case Incompatible = 'incompatible';
 
     public function getIcon(): string
     {
@@ -21,6 +22,7 @@ enum PluginStatus: string implements HasColor, HasIcon, HasLabel
             self::Disabled => 'tabler-heart-x',
             self::Enabled => 'tabler-heart-check',
             self::Errored => 'tabler-heart-broken',
+            self::Incompatible => 'tabler-heart-cancel',
         };
     }
 
@@ -31,6 +33,7 @@ enum PluginStatus: string implements HasColor, HasIcon, HasLabel
             self::Disabled => 'warning',
             self::Enabled => 'success',
             self::Errored => 'danger',
+            self::Incompatible => 'danger',
         };
     }
 

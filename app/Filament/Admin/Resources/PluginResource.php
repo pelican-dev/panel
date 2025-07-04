@@ -2,7 +2,6 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Enums\PluginStatus;
 use App\Facades\Plugins;
 use App\Filament\Admin\Resources\PluginResource\Pages\ListPlugins;
 use App\Models\Plugin;
@@ -34,9 +33,9 @@ class PluginResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->description(fn (Plugin $plugin) => (strlen($plugin->description) > 80) ? substr($plugin->description, 0, 80).'...' : $plugin->description)
-                    ->icon(fn (Plugin $plugin) => $plugin->isCompatible() ? 'tabler-versions' : 'tabler-versions-off')
-                    ->iconColor(fn (Plugin $plugin) => $plugin->isCompatible() ? 'success' : 'danger')
-                    ->tooltip(fn (Plugin $plugin) => !$plugin->isCompatible() ? 'This Plugin is only compatible with Panel version ' . $plugin->panel_version . ' but you are using version ' . config('app.version') . '!' : null)
+                    //->icon(fn (Plugin $plugin) => $plugin->isCompatible() ? 'tabler-versions' : 'tabler-versions-off')
+                    //->iconColor(fn (Plugin $plugin) => $plugin->isCompatible() ? 'success' : 'danger')
+                    //->tooltip(fn (Plugin $plugin) => !$plugin->isCompatible() ? 'This Plugin is only compatible with Panel version ' . $plugin->panel_version . ' but you are using version ' . config('app.version') . '!' : null)
                     ->sortable(),
                 TextColumn::make('author')
                     ->sortable(),
@@ -60,7 +59,7 @@ class PluginResource extends Resource
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
                     ->icon('tabler-settings')
                     ->color('primary')
-                    ->visible(fn (Plugin $plugin) => $plugin->status === PluginStatus::Enabled && $plugin->hasSettings())
+                    ->visible(fn (Plugin $plugin) => $plugin->isEnabled() && $plugin->hasSettings())
                     ->form(fn (Plugin $plugin) => $plugin->getSettingsForm())
                     ->action(fn (array $data, Plugin $plugin) => $plugin->saveSettings($data))
                     ->slideOver(),
@@ -83,7 +82,7 @@ class PluginResource extends Resource
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
                     ->icon('tabler-check')
                     ->color('success')
-                    ->hidden(fn (Plugin $plugin) => !$plugin->isInstalled() || !$plugin->isDisabled())
+                    ->visible(fn (Plugin $plugin) => $plugin->canEnable())
                     ->action(function (Plugin $plugin) {
                         Plugins::enablePlugin($plugin);
 
@@ -98,7 +97,7 @@ class PluginResource extends Resource
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
                     ->icon('tabler-x')
                     ->color('danger')
-                    ->hidden(fn (Plugin $plugin) => !$plugin->isInstalled() || $plugin->isDisabled())
+                    ->visible(fn (Plugin $plugin) => $plugin->canDisable())
                     ->action(function (Plugin $plugin) {
                         Plugins::disablePlugin($plugin);
 
