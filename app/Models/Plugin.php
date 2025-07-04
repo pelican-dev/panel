@@ -24,6 +24,7 @@ use Sushi\Sushi;
  * @property string|null $panel_version
  * @property string $category
  * @property int $load_order
+ * @property string|null $update_url
  */
 class Plugin extends Model implements HasPluginSettings
 {
@@ -55,6 +56,7 @@ class Plugin extends Model implements HasPluginSettings
             'panel_version' => 'string',
             'category' => 'string',
             'load_order' => 'integer',
+            'update_url' => 'string',
         ];
     }
 
@@ -74,6 +76,7 @@ class Plugin extends Model implements HasPluginSettings
      *     panel_version: string,
      *     category: string,
      *     load_order: int
+     *     update_url: string,
      * }>
      */
     public function getRows(): array
@@ -171,6 +174,27 @@ class Plugin extends Model implements HasPluginSettings
         }
 
         return !str($this->panel_version)->startsWith('^');
+    }
+
+    public function isUpdateAvailable(): bool
+    {
+        if ($this->update_url === null) {
+            return false;
+        }
+
+        $panelVersion = config('app.version', 'canary');
+
+        if ($panelVersion === 'canary') {
+            return false;
+        }
+
+        /** @var array<string, array{version: string, download_url: string}> */
+        $updateData = file_get_contents($this->update_url);
+        if ($updateData[$panelVersion]) {
+            return version_compare($updateData[$panelVersion]['version'], $this->version, '>');
+        }
+
+        return false;
     }
 
     public function hasSettings(): bool

@@ -79,6 +79,7 @@ class CreatePluginCommand extends Command
             'panel_version' => config('app.version') === 'canary' ? null : config('app.version'),
             'category' => $category,
             'load_order' => 0,
+            'update_url' => null,
         ], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         // Create src directory and create main class

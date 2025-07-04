@@ -33,9 +33,9 @@ class PluginResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->description(fn (Plugin $plugin) => (strlen($plugin->description) > 80) ? substr($plugin->description, 0, 80).'...' : $plugin->description)
-                    //->icon(fn (Plugin $plugin) => $plugin->isCompatible() ? 'tabler-versions' : 'tabler-versions-off')
-                    //->iconColor(fn (Plugin $plugin) => $plugin->isCompatible() ? 'success' : 'danger')
-                    //->tooltip(fn (Plugin $plugin) => !$plugin->isCompatible() ? 'This Plugin is only compatible with Panel version ' . $plugin->panel_version . ' but you are using version ' . config('app.version') . '!' : null)
+                    ->icon(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? 'tabler-versions-off' : 'tabler-versions')
+                    ->iconColor(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? 'danger' : 'success')
+                    ->tooltip(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? 'An update for this plugin is available' : null)
                     ->sortable(),
                 TextColumn::make('author')
                     ->sortable(),
@@ -78,6 +78,7 @@ class PluginResource extends Resource
                             ->title('Plugin installed')
                             ->send();
                     }),
+                // TODO: "update" button
                 Action::make('enable')
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
                     ->icon('tabler-check')
@@ -108,6 +109,9 @@ class PluginResource extends Resource
                             ->title('Plugin disabled')
                             ->send();
                     }),
+            ])
+            ->headerActions([
+                // TODO: "import" button
             ])
             ->emptyStateIcon('tabler-packages')
             ->emptyStateDescription('')
