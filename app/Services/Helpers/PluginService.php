@@ -161,28 +161,22 @@ class PluginService
         $this->setStatus($plugin, PluginStatus::Disabled);
     }
 
-    public function getStatus(string|Plugin $plugin): PluginStatus
-    {
-        $plugin = $plugin instanceof Plugin ? $plugin->id : $plugin;
-        $data = File::json(plugin_path($plugin, 'plugin.json'), JSON_THROW_ON_ERROR);
-
-        return $data['status'] ?? PluginStatus::Errored;
-    }
-
     /** @param array<string, mixed> $data */
-    private function setData(string|Plugin $plugin, array $data): void
+    private function setMetaData(string|Plugin $plugin, array $data): void
     {
         $plugin = $plugin instanceof Plugin ? $plugin->id : $plugin;
         $path = plugin_path($plugin, 'plugin.json');
 
-        $data = array_merge(File::json($path, JSON_THROW_ON_ERROR), $data);
+        $pluginData = File::json($path, JSON_THROW_ON_ERROR);
+        $metaData = array_merge($pluginData['meta'], $data);
+        $pluginData['meta'] = $metaData;
 
-        File::put($path, json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        File::put($path, json_encode($pluginData, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
     private function setStatus(string|Plugin $plugin, PluginStatus $status, ?string $message = null): void
     {
-        $this->setData($plugin, [
+        $this->setMetaData($plugin, [
             'status' => $status,
             'status_message' => $message,
         ]);
@@ -192,7 +186,7 @@ class PluginService
     public function updateLoadOrder(array $order): void
     {
         foreach ($order as $i => $plugin) {
-            $this->setData($plugin, [
+            $this->setMetaData($plugin, [
                 'load_order' => $i,
             ]);
         }

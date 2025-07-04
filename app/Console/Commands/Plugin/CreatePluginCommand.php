@@ -49,11 +49,11 @@ class CreatePluginCommand extends Command
 
         $description = $this->option('description') ?? $this->ask('Description');
         $url = $this->option('url') ?? $this->ask('URL', 'https://github.com/' . $author . '/' . $id);
-        $panels = $this->option('panels') ?? implode(',', $this->choice('Panels', [
+        $panels = $this->option('panels') ?? $this->choice('Panels', [
             'admin' => 'Admin Area',
             'server' => 'Client Area',
             'app' => 'Server List',
-        ], 'admin,server', multiple: true));
+        ], 'admin,server', multiple: true);
         $category = $this->option('category') ?? $this->choice('Category', [
             'plugin' => 'Plugin',
             'theme' => 'Theme',
@@ -65,6 +65,11 @@ class CreatePluginCommand extends Command
 
         // Write plugin.json
         $this->filesystem->put(plugin_path($id, 'plugin.json'), json_encode([
+            'meta' => [
+                'status' => PluginStatus::Enabled,
+                'status_message' => null,
+                'load_order' => 0,
+            ],
             'id' => $id,
             'name' => $name,
             'author' => $author,
@@ -73,12 +78,9 @@ class CreatePluginCommand extends Command
             'url' => $url,
             'namespace' => $namespace,
             'class' => $class,
-            'status' => PluginStatus::Enabled,
-            'status_message' => null,
-            'panels' => $panels,
+            'panels' => !is_array($panels) ? explode(',', $panels) : $panels,
             'panel_version' => config('app.version') === 'canary' ? null : config('app.version'),
             'category' => $category,
-            'load_order' => 0,
             'update_url' => null,
         ], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 

@@ -18,13 +18,13 @@ use Sushi\Sushi;
  * @property string|null $url
  * @property string $namespace
  * @property string $class
- * @property PluginStatus $status
- * @property string|null $status_message
  * @property string|null $panels
  * @property string|null $panel_version
  * @property string $category
- * @property int $load_order
  * @property string|null $update_url
+ * @property PluginStatus $status
+ * @property string|null $status_message
+ * @property int $load_order
  */
 class Plugin extends Model implements HasPluginSettings
 {
@@ -50,13 +50,13 @@ class Plugin extends Model implements HasPluginSettings
             'url' => 'string',
             'namespace' => 'string',
             'class' => 'string',
-            'status' => 'string',
-            'status_message' => 'string',
             'panels' => 'string',
             'panel_version' => 'string',
             'category' => 'string',
-            'load_order' => 'integer',
             'update_url' => 'string',
+            'status' => 'string',
+            'status_message' => 'string',
+            'load_order' => 'integer',
         ];
     }
 
@@ -70,13 +70,13 @@ class Plugin extends Model implements HasPluginSettings
      *     url: string,
      *     namespace: string,
      *     class: string,
-     *     status: string,
-     *     status_message: string,
      *     panels: string,
      *     panel_version: string,
      *     category: string,
-     *     load_order: int
      *     update_url: string,
+     *     status: string,
+     *     status_message: string,
+     *     load_order: int
      * }>
      */
     public function getRows(): array
@@ -92,7 +92,16 @@ class Plugin extends Model implements HasPluginSettings
                 continue;
             }
 
-            $plugins[] = File::json($path, JSON_THROW_ON_ERROR);
+            $data = File::json($path, JSON_THROW_ON_ERROR);
+
+            $data = array_merge($data, $data['meta']);
+            unset($data['meta']);
+
+            if (is_array($data['panels'])) {
+                $data['panels'] = implode(',', $data['panels']);
+            }
+
+            $plugins[] = $data;
         }
 
         return $plugins;
