@@ -209,6 +209,11 @@ class Plugin extends Model implements HasPluginSettings
             try {
                 /** @var array<string, array{version: string, download_url: string}> */
                 $updateData = json_decode(file_get_contents($this->update_url), true, 512, JSON_THROW_ON_ERROR);
+
+                if (array_key_exists('*', $updateData)) {
+                    return version_compare($updateData['*']['version'], $this->version, '>');
+                }
+
                 if (array_key_exists($panelVersion, $updateData)) {
                     return version_compare($updateData[$panelVersion]['version'], $this->version, '>');
                 }
