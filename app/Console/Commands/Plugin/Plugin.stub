@@ -35,11 +35,4 @@ class $class$ implements Plugin
 
         return $plugin;
     }
-
-    public static function getProviders(): array
-    {
-        return [
-            \$namespace$\Providers\$class$Provider::class,
-        ];
-    }
 }

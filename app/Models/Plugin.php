@@ -262,12 +262,9 @@ class Plugin extends Model implements HasPluginSettings
      */
     public function getProviders(): array
     {
-        $class = $this->fullClass();
-        if (class_exists($class) && method_exists($class, 'getProviders')) {
-            return ($class)::getProviders();
-        }
+        $providers = File::allFiles(plugin_path($this->id, 'src', 'Providers'));
 
-        return [];
+        return array_map(fn ($provider) => $this->namespace . '\\Providers\\' . str($provider->getRelativePathname())->remove('.php', false), $providers);
     }
 
     /**
@@ -275,11 +272,8 @@ class Plugin extends Model implements HasPluginSettings
      */
     public function getCommands(): array
     {
-        $class = $this->fullClass();
-        if (class_exists($class) && method_exists($class, 'getCommands')) {
-            return ($class)::getCommands();
-        }
+        $providers = File::allFiles(plugin_path($this->id, 'src', 'Console', 'Commands'));
 
-        return [];
+        return array_map(fn ($provider) => $this->namespace . '\\Console\\Commands\\' . str($provider->getRelativePathname())->remove('.php', false), $providers);
     }
 }

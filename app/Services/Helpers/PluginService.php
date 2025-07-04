@@ -62,7 +62,7 @@ class PluginService
                 // Register service providers
                 foreach ($plugin->getProviders() as $provider) {
                     if (!class_exists($provider) || !is_subclass_of($provider, ServiceProvider::class)) {
-                        throw new Exception('Provider class "' . $provider . '" not found');
+                        continue;
                     }
 
                     $this->app->register($provider);
@@ -71,7 +71,7 @@ class PluginService
                 // Resolve artisan commands
                 foreach ($plugin->getCommands() as $command) {
                     if (!class_exists($command) || !is_subclass_of($command, Command::class)) {
-                        throw new Exception('Command class "' . $command . '" not found');
+                        continue;
                     }
 
                     ConsoleApplication::starting(function ($artisan) use ($command) {
