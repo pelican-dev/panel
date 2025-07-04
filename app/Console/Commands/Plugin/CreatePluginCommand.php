@@ -13,6 +13,7 @@ class CreatePluginCommand extends Command
                             {author}
                             {--description=}
                             {--url=}
+                            {--updateUrl=}
                             {--panels=}
                             {--category=}';
 
@@ -48,17 +49,18 @@ class CreatePluginCommand extends Command
         $this->info('Creating Plugin "' . $name . '" (' . $id . ') by ' . $author);
 
         $description = $this->option('description') ?? $this->ask('Description');
-        $url = $this->option('url') ?? $this->ask('URL', 'https://github.com/' . $author . '/' . $id);
-        $panels = $this->option('panels') ?? $this->choice('Panels', [
-            'admin' => 'Admin Area',
-            'server' => 'Client Area',
-            'app' => 'Server List',
-        ], 'admin,server', multiple: true);
         $category = $this->option('category') ?? $this->choice('Category', [
             'plugin' => 'Plugin',
             'theme' => 'Theme',
             'language' => 'Language Pack',
         ], 'plugin');
+        $url = $this->option('url') ?? $this->ask('URL', 'https://github.com/' . $author . '/' . $id);
+        $updateUrl = $this->option('updateUrl') ?? $this->ask('Update URL', 'https://raw.githubusercontent.com/' . $author . '/' . $id . '/refs/heads/main/update.json');
+        $panels = $this->option('panels') ?? $this->choice('Panels', [
+            'admin' => 'Admin Area',
+            'server' => 'Client Area',
+            'app' => 'Server List',
+        ], 'admin,server', multiple: true);
 
         // Create base directory
         $this->filesystem->makeDirectory(plugin_path($id));
@@ -75,13 +77,13 @@ class CreatePluginCommand extends Command
             'author' => $author,
             'version' => '1.0.0',
             'description' => $description,
+            'category' => $category,
             'url' => $url,
+            'update_url' => $updateUrl,
             'namespace' => $namespace,
             'class' => $class,
             'panels' => !is_array($panels) ? explode(',', $panels) : $panels,
             'panel_version' => config('app.version') === 'canary' ? null : config('app.version'),
-            'category' => $category,
-            'update_url' => null,
         ], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         // Create src directory and create main class

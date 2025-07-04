@@ -16,13 +16,13 @@ use Sushi\Sushi;
  * @property string $author
  * @property string $version
  * @property string|null $description
+ * @property string $category
  * @property string|null $url
+ * @property string|null $update_url
  * @property string $namespace
  * @property string $class
  * @property string|null $panels
  * @property string|null $panel_version
- * @property string $category
- * @property string|null $update_url
  * @property PluginStatus $status
  * @property string|null $status_message
  * @property int $load_order
@@ -48,13 +48,13 @@ class Plugin extends Model implements HasPluginSettings
             'author' => 'string',
             'version' => 'string',
             'description' => 'string',
+            'category' => 'string',
             'url' => 'string',
+            'update_url' => 'string',
             'namespace' => 'string',
             'class' => 'string',
             'panels' => 'string',
             'panel_version' => 'string',
-            'category' => 'string',
-            'update_url' => 'string',
             'status' => 'string',
             'status_message' => 'string',
             'load_order' => 'integer',
@@ -68,13 +68,13 @@ class Plugin extends Model implements HasPluginSettings
      *     author: string,
      *     version: string,
      *     description: string,
+     *     category: string,
      *     url: string,
+     *     update_url: string,
      *     namespace: string,
      *     class: string,
      *     panels: string,
      *     panel_version: string,
-     *     category: string,
-     *     update_url: string,
      *     status: string,
      *     status_message: string,
      *     load_order: int
