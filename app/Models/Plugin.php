@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Contracts\Plugins\HasPluginSettings;
 use App\Enums\PluginStatus;
+use Exception;
 use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
@@ -197,13 +198,19 @@ class Plugin extends Model implements HasPluginSettings
             return false;
         }
 
-        /** @var array<string, array{version: string, download_url: string}> */
-        $updateData = file_get_contents($this->update_url);
-        if ($updateData[$panelVersion]) {
-            return version_compare($updateData[$panelVersion]['version'], $this->version, '>');
-        }
+        return cache()->remember("plugins.$this->id.update", now()->addHour(), function () use ($panelVersion) {
+            try {
+                /** @var array<string, array{version: string, download_url: string}> */
+                $updateData = file_get_contents($this->update_url);
+                if ($updateData[$panelVersion]) {
+                    return version_compare($updateData[$panelVersion]['version'], $this->version, '>');
+                }
+            } catch (Exception $exception) {
+                report($exception);
+            }
 
-        return false;
+            return false;
+        });
     }
 
     public function hasSettings(): bool
