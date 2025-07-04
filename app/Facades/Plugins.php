@@ -15,7 +15,7 @@ use Filament\Panel;
  * @method static void installPlugin(Plugin $plugin)
  * @method static void enablePlugin(string|Plugin $plugin)
  * @method static void disablePlugin(string|Plugin $plugin)
- * @method static void updateLoadOrder(array $order)
+ * @method static void updateLoadOrder(array<int, string> $order)
  *
  * @see \App\Services\Helpers\PluginService
  */

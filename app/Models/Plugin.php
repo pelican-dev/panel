@@ -101,11 +101,11 @@ class Plugin extends Model implements HasPluginSettings
             $data = array_merge($data, $data['meta']);
             unset($data['meta']);
 
-            if (is_array($data['panels'])) {
+            if (array_key_exists('panels', $data) && is_array($data['panels'])) {
                 $data['panels'] = implode(',', $data['panels']);
             }
 
-            if (is_array($data['composer_packages'])) {
+            if (array_key_exists('composer_packages', $data) && is_array($data['composer_packages'])) {
                 $data['composer_packages'] = implode(',', $data['composer_packages']);
             }
 
@@ -181,7 +181,7 @@ class Plugin extends Model implements HasPluginSettings
     {
         $panelVersion = config('app.version', 'canary');
 
-        return $this->panel_version === null || $panelVersion === 'canary' || version_compare($this->panel_version, $panelVersion, $this->isPanelVersionStrict ? '=' : '>=');
+        return $this->panel_version === null || $panelVersion === 'canary' || version_compare($this->panel_version, $panelVersion, $this->isPanelVersionStrict() ? '=' : '>=');
     }
 
     public function isPanelVersionStrict(): bool
@@ -208,8 +208,8 @@ class Plugin extends Model implements HasPluginSettings
         return cache()->remember("plugins.$this->id.update", now()->addHour(), function () use ($panelVersion) {
             try {
                 /** @var array<string, array{version: string, download_url: string}> */
-                $updateData = file_get_contents($this->update_url);
-                if ($updateData[$panelVersion]) {
+                $updateData = json_decode(file_get_contents($this->update_url), true, 512, JSON_THROW_ON_ERROR);
+                if (array_key_exists($panelVersion, $updateData)) {
                     return version_compare($updateData[$panelVersion]['version'], $this->version, '>');
                 }
             } catch (Exception $exception) {
