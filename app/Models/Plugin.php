@@ -23,6 +23,7 @@ use Sushi\Sushi;
  * @property string $class
  * @property string|null $panels
  * @property string|null $panel_version
+ * @property string|null $composer_packages
  * @property PluginStatus $status
  * @property string|null $status_message
  * @property int $load_order
@@ -55,6 +56,7 @@ class Plugin extends Model implements HasPluginSettings
             'class' => 'string',
             'panels' => 'string',
             'panel_version' => 'string',
+            'composer_packages' => 'string',
             'status' => 'string',
             'status_message' => 'string',
             'load_order' => 'integer',
@@ -75,6 +77,7 @@ class Plugin extends Model implements HasPluginSettings
      *     class: string,
      *     panels: string,
      *     panel_version: string,
+     *     composer_packages: string,
      *     status: string,
      *     status_message: string,
      *     load_order: int
@@ -100,6 +103,10 @@ class Plugin extends Model implements HasPluginSettings
 
             if (is_array($data['panels'])) {
                 $data['panels'] = implode(',', $data['panels']);
+            }
+
+            if (is_array($data['composer_packages'])) {
+                $data['composer_packages'] = implode(',', $data['composer_packages']);
             }
 
             $plugins[] = $data;

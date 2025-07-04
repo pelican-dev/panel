@@ -10,13 +10,14 @@ use Filament\Panel;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 
 class PluginService
 {
-    public function __construct(private Application $app) {}
+    public function __construct(private Application $app, private Composer $composer) {}
 
     public function loadPlugins(): void
     {
@@ -141,14 +142,34 @@ class PluginService
         }
     }
 
-    public function installPlugin(Plugin $plugin): void
+    public function requireComposerPackages(Plugin $plugin): void
+    {
+        if ($plugin->composer_packages) {
+            $this->composer->requirePackages(explode(',', $plugin->composer_packages));
+        }
+    }
+
+    public function runPluginMigrations(Plugin $plugin): void
     {
         $migrations = plugin_path($plugin->id, 'database', 'migrations');
         if (file_exists($migrations)) {
             Artisan::call('migrate', ['--path' => $migrations, '--force' => true]);
         }
+    }
 
-        $this->setStatus($plugin, PluginStatus::Enabled);
+    public function installPlugin(Plugin $plugin): void
+    {
+        try {
+            $this->requireComposerPackages($plugin);
+
+            $this->runPluginMigrations($plugin);
+
+            $this->enablePlugin($plugin);
+        } catch (Exception $exception) {
+            report($exception);
+
+            $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
+        }
     }
 
     public function enablePlugin(string|Plugin $plugin): void

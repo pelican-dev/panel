@@ -12,10 +12,11 @@ class CreatePluginCommand extends Command
                             {name}
                             {author}
                             {--description=}
+                            {--category=}
                             {--url=}
                             {--updateUrl=}
                             {--panels=}
-                            {--category=}';
+                            {--composerPackages=}';
 
     protected $description = 'Create a new plugin';
 
@@ -61,6 +62,7 @@ class CreatePluginCommand extends Command
             'server' => 'Client Area',
             'app' => 'Server List',
         ], 'admin,server', multiple: true);
+        $composerPackages = $this->option('composerPackages') ?? $this->ask('Composer Packages');
 
         // Create base directory
         $this->filesystem->makeDirectory(plugin_path($id));
@@ -84,6 +86,7 @@ class CreatePluginCommand extends Command
             'class' => $class,
             'panels' => !is_array($panels) ? explode(',', $panels) : $panels,
             'panel_version' => config('app.version') === 'canary' ? null : config('app.version'),
+            'composer_packages' => !is_array($composerPackages) ? explode(',', $composerPackages) : $composerPackages,
         ], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         // Create src directory and create main class
