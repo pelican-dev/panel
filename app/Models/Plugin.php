@@ -114,12 +114,12 @@ class Plugin extends Model implements HasPluginSettings
 
     public function shouldLoad(): bool
     {
-        return $this->isEnabled() && $this->isInstalled() && $this->isCompatible();
+        return !$this->isDisabled() && $this->isInstalled() && !$this->isIncompatible();
     }
 
     public function shouldLoadPanel(string $panelId): bool
     {
-        return $this->shouldLoad() && ($this->panels === null || in_array($panelId, explode(',', $this->panels)));
+        return !$this->isDisabled() && $this->isInstalled() && !$this->isIncompatible() && ($this->panels === null || in_array($panelId, explode(',', $this->panels)));
     }
 
     public function canEnable(): bool
@@ -129,7 +129,7 @@ class Plugin extends Model implements HasPluginSettings
 
     public function canDisable(): bool
     {
-        return $this->shouldLoad();
+        return $this->isEnabled() && $this->isInstalled() && $this->isCompatible();
     }
 
     public function isEnabled(): bool
