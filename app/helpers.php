@@ -81,3 +81,20 @@ if (!function_exists('resolve_path')) {
         return implode('/', $absolutes);
     }
 }
+
+if (!function_exists('get_ip_from_hostname')) {
+    function get_ip_from_hostname(string $hostname): string|bool
+    {
+        $validARecords = @dns_get_record($hostname, DNS_A);
+        if ($validARecords) {
+            return collect($validARecords)->first()['ip'];
+        }
+
+        $validAAAARecords = @dns_get_record($hostname, DNS_AAAA);
+        if ($validAAAARecords) {
+            return collect($validAAAARecords)->first()['ipv6'];
+        }
+
+        return false;
+    }
+}
