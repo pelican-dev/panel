@@ -21,10 +21,10 @@ class FeatureService
     }
 
     /**
-     * @param  string[]  $features
+     * @param  ?string[]  $features
      * @return FeatureSchemaInterface[]
      */
-    public function getActiveSchemas(array $features): array
+    public function getActiveSchemas(?array $features = []): array
     {
         return collect($this->schemas)->only($features)->all();
     }
@@ -39,10 +39,10 @@ class FeatureService
     }
 
     /**
-     * @param  string[]  $features
+     * @param  ?string[]  $features
      * @return array<string, array<string>>
      */
-    public function getMappings(array $features): array
+    public function getMappings(?array $features = []): array
     {
         return collect($this->getActiveSchemas($features))
             ->mapWithKeys(fn (FeatureSchemaInterface $schema) => [
