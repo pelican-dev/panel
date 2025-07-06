@@ -110,7 +110,7 @@ class ListServers extends ListRecords
             ->poll('15s')
             ->columns($usingGrid ? $this->gridColumns() : $this->tableColumns())
             ->recordUrl(!$usingGrid ? (fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)) : null)
-            ->actions(!$usingGrid ? ActionGroup::make(static::getPowerActions()) : [])
+            ->actions(!$usingGrid ? ActionGroup::make(static::getPowerActions(view: 'table')) : [])
             ->actionsAlignment(Alignment::Center->value)
             ->contentGrid($usingGrid ? ['default' => 1, 'md' => 2] : null)
             ->emptyStateIcon('tabler-brand-docker')
@@ -221,40 +221,46 @@ class ListServers extends ListRecords
     }
 
     /** @return Action[]|ActionGroup[] */
-    public static function getPowerActions(): array
+    public static function getPowerActions(string $view): array
     {
-        return [
-            ActionGroup::make([
-                Action::make('start')
-                    ->color('primary')
-                    ->icon('tabler-player-play-filled')
-                    ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
-                    ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isStartable())
-                    ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'start']),
-                Action::make('restart')
-                    ->color('gray')
-                    ->icon('tabler-reload')
-                    ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
-                    ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isRestartable())
-                    ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'restart']),
-                Action::make('stop')
-                    ->color('danger')
-                    ->icon('tabler-player-stop-filled')
-                    ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
-                    ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isStoppable())
-                    ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'stop']),
-                Action::make('kill')
-                    ->color('danger')
-                    ->icon('tabler-alert-square')
-                    ->tooltip('This can result in data corruption and/or data loss!')
-                    ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
-                    ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isKillable())
-                    ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'kill']),
-            ])
-                ->icon(fn (Server $server) => $server->condition->getIcon())
-                ->color(fn (Server $server) => $server->condition->getColor())
-                ->tooltip(fn (Server $server) => $server->condition->getLabel())
-                ->iconSize(IconSize::Large),
+        $actions = [
+            Action::make('start')
+                ->color('primary')
+                ->icon('tabler-player-play-filled')
+                ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
+                ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isStartable())
+                ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'start']),
+            Action::make('restart')
+                ->color('gray')
+                ->icon('tabler-reload')
+                ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
+                ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isRestartable())
+                ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'restart']),
+            Action::make('stop')
+                ->color('danger')
+                ->icon('tabler-player-stop-filled')
+                ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
+                ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isStoppable())
+                ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'stop']),
+            Action::make('kill')
+                ->color('danger')
+                ->icon('tabler-alert-square')
+                ->tooltip('This can result in data corruption and/or data loss!')
+                ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
+                ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isKillable())
+                ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'kill']),
         ];
+
+        if ($view === 'table') {
+            return $actions;
+        } else {
+            return [
+                ActionGroup::make($actions)
+                    ->icon(fn (Server $server) => $server->condition->getIcon())
+                    ->color(fn (Server $server) => $server->condition->getColor())
+                    ->tooltip(fn (Server $server) => $server->condition->getLabel())
+                    ->iconSize(IconSize::Large),
+            ];
+        }
     }
 }
