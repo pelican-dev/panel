@@ -110,7 +110,7 @@ class ListServers extends ListRecords
             ->poll('15s')
             ->columns($usingGrid ? $this->gridColumns() : $this->tableColumns())
             ->recordUrl(!$usingGrid ? (fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)) : null)
-            ->actions(!$usingGrid ? ActionGroup::make(static::getPowerActions($view = 'table')) : [])
+            ->actions(!$usingGrid ? ActionGroup::make(static::getPowerActions(view: 'table')) : [])
             ->actionsAlignment(Alignment::Center->value)
             ->contentGrid($usingGrid ? ['default' => 1, 'md' => 2] : null)
             ->emptyStateIcon('tabler-brand-docker')
