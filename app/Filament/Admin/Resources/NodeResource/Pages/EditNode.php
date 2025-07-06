@@ -154,16 +154,14 @@ class EditNode extends EditRecord
                                         return;
                                     }
 
-                                    $validRecords = gethostbynamel($state);
-                                    if ($validRecords) {
+                                    $ip = get_ip_from_hostname($state);
+                                    if ($ip) {
                                         $set('dns', true);
 
-                                        $set('ip', collect($validRecords)->first());
-
-                                        return;
+                                        $set('ip', $ip);
+                                    } else {
+                                        $set('dns', false);
                                     }
-
-                                    $set('dns', false);
                                 })
                                 ->maxLength(255),
                             TextInput::make('ip')
@@ -618,10 +616,10 @@ class EditNode extends EditRecord
         $data['config'] = $node->getYamlConfiguration();
 
         if (!is_ip($node->fqdn)) {
-            $validRecords = gethostbynamel($node->fqdn);
-            if ($validRecords) {
+            $ip = get_ip_from_hostname($node->fqdn);
+            if ($ip) {
                 $data['dns'] = true;
-                $data['ip'] = collect($validRecords)->first();
+                $data['ip'] = $ip;
             } else {
                 $data['dns'] = false;
             }
