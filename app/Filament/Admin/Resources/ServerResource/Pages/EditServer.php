@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Resources\ServerResource\Pages;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
-use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
 use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Pages\Console;
@@ -26,6 +25,8 @@ use App\Services\Servers\ServerDeletionService;
 use App\Services\Servers\SuspensionService;
 use App\Services\Servers\ToggleInstallService;
 use App\Services\Servers\TransferServerService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Closure;
 use Exception;
 use Filament\Actions;
@@ -62,6 +63,9 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditServer extends EditRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = ServerResource::class;
 
     private DaemonServerRepository $daemonServerRepository;
@@ -644,6 +648,7 @@ class EditServer extends EditRecord
 
                                         $text = TextInput::make('variable_value')
                                             ->hidden($this->shouldHideComponent(...))
+                                            ->dehydratedWhenHidden()
                                             ->required(fn (ServerVariable $serverVariable) => $serverVariable->variable->getRequiredAttribute())
                                             ->rules([
                                                 fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
@@ -661,6 +666,7 @@ class EditServer extends EditRecord
 
                                         $select = Select::make('variable_value')
                                             ->hidden($this->shouldHideComponent(...))
+                                            ->dehydratedWhenHidden()
                                             ->options($this->getSelectOptionsFromRules(...))
                                             ->selectablePlaceholder(false);
 
@@ -1016,24 +1022,28 @@ class EditServer extends EditRecord
                 ->options(fn (Server $server) => Node::whereNot('id', $server->node->id)->pluck('name', 'id')->all()),
             Select::make('allocation_id')
                 ->label(trans('admin/server.primary_allocation'))
-                ->required()
+                ->disabled(fn (Get $get, Server $server) => !$get('node_id') || !$server->allocation_id)
+                ->required(fn (Server $server) => $server->allocation_id)
                 ->prefixIcon('tabler-network')
-                ->disabled(fn (Get $get) => !$get('node_id'))
                 ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
                 ->searchable(['ip', 'port', 'ip_alias'])
                 ->placeholder(trans('admin/server.select_allocation')),
             Select::make('allocation_additional')
                 ->label(trans('admin/server.additional_allocations'))
+                ->disabled(fn (Get $get, Server $server) => !$get('node_id') || $server->allocations->count() <= 1)
                 ->multiple()
+                ->minItems(fn (Select $select) => $select->getMaxItems())
+                ->maxItems(fn (Select $select, Server $server) => $select->isDisabled() ? null : $server->allocations->count() - 1)
                 ->prefixIcon('tabler-network')
-                ->disabled(fn (Get $get) => !$get('node_id'))
+                ->required(fn (Server $server) => $server->allocations->count() > 1)
                 ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->when($get('allocation_id'), fn ($query) => $query->whereNot('id', $get('allocation_id')))->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
                 ->searchable(['ip', 'port', 'ip_alias'])
                 ->placeholder(trans('admin/server.select_additional')),
         ];
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Actions\Action|Actions\ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */
         $server = $this->getRecord();
@@ -1134,13 +1144,6 @@ class EditServer extends EditRecord
     protected function getSavedNotification(): ?Notification
     {
         return null;
-    }
-
-    public function getRelationManagers(): array
-    {
-        return [
-            AllocationsRelationManager::class,
-        ];
     }
 
     private function shouldHideComponent(ServerVariable $serverVariable, Forms\Components\Component $component): bool

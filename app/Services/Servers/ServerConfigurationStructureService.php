@@ -2,12 +2,14 @@
 
 namespace App\Services\Servers;
 
+use App\Extensions\Features\FeatureService;
+use App\Models\Egg;
 use App\Models\Mount;
 use App\Models\Server;
 
 class ServerConfigurationStructureService
 {
-    public function __construct(private EnvironmentService $environment) {}
+    public function __construct(private EnvironmentService $environment, private FeatureService $featureService) {}
 
     /**
      * Return a configuration array for a specific server when passed a server model.
@@ -56,9 +58,9 @@ class ServerConfigurationStructureService
      *     allocations: array{
      *         force_outgoing_ip: bool,
      *         default: array{ip: string, port: int},
-     *         mappings: array<int>,
+     *         mappings: array<string, array<int>>,
      *     },
-     *     egg: array{id: string, file_denylist: string[]},
+     *     egg: array{id: string, file_denylist: string[], features: string[][]},
      *     labels?: string[],
      *     mounts: array{source: string, target: string, read_only: bool},
      * }
@@ -93,17 +95,15 @@ class ServerConfigurationStructureService
             'allocations' => [
                 'force_outgoing_ip' => $server->egg->force_outgoing_ip,
                 'default' => [
-                    'ip' => $server->allocation->ip,
-                    'port' => $server->allocation->port,
+                    'ip' => $server->allocation->ip ?? '127.0.0.1',
+                    'port' => $server->allocation->port ?? 0,
                 ],
                 'mappings' => $server->getAllocationMappings(),
             ],
             'egg' => [
                 'id' => $server->egg->uuid,
                 'file_denylist' => $server->egg->inherit_file_denylist,
-                'features' => collect($server->egg->features())->mapWithKeys(fn ($feature) => [
-                    $feature->getId() => $feature->getListeners(),
-                ])->all(),
+                'features' => $this->featureService->getMappings($server->egg->features),
             ],
         ];
 

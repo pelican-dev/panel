@@ -5,7 +5,7 @@
         $userFontSize = auth()->user()->getCustomization()['console_font_size'] ?? 14;
         $userRows =  auth()->user()->getCustomization()['console_rows'] ?? 30;
     @endphp
-    @if($userFont)
+    @if($userFont !== "monospace")
         <link rel="preload" href="{{ asset("storage/fonts/{$userFont}.ttf") }}" as="font" crossorigin>
         <style>
             @font-face {
@@ -14,13 +14,7 @@
             }
         </style>
     @endif
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm/lib/xterm.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit/lib/addon-fit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-web-links/lib/addon-web-links.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-search/lib/addon-search.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-search-bar/lib/xterm-addon-search-bar.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm/css/xterm.min.css">
-    <link rel="stylesheet" href="{{ asset('/css/filament/server/console.css') }}">
+    @vite(['resources/js/console.js', 'resources/css/console.css'])
     @endassets
 
     <div id="terminal" wire:ignore></div>
@@ -82,12 +76,13 @@
             theme: theme
         };
 
-        const terminal = new Terminal(options);
-        const fitAddon = new FitAddon.FitAddon();
-        const webLinksAddon = new WebLinksAddon.WebLinksAddon();
-        const searchAddon = new SearchAddon.SearchAddon();
-        const searchAddonBar = new SearchBarAddon.SearchBarAddon({ searchAddon });
+        const { Terminal, FitAddon, WebLinksAddon, SearchAddon, SearchBarAddon } = window.Xterm;
 
+        const terminal = new Terminal(options);
+        const fitAddon = new FitAddon();
+        const webLinksAddon = new WebLinksAddon();
+        const searchAddon = new SearchAddon();
+        const searchAddonBar = new SearchBarAddon({ searchAddon });
         terminal.loadAddon(fitAddon);
         terminal.loadAddon(webLinksAddon);
         terminal.loadAddon(searchAddon);

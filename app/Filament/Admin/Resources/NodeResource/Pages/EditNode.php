@@ -8,6 +8,8 @@ use App\Repositories\Daemon\DaemonConfigurationRepository;
 use App\Services\Helpers\SoftwareVersionService;
 use App\Services\Nodes\NodeAutoDeployService;
 use App\Services\Nodes\NodeUpdateService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions;
 use Filament\Forms;
@@ -34,6 +36,9 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class EditNode extends EditRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = NodeResource::class;
 
     private DaemonConfigurationRepository $daemonConfigurationRepository;
@@ -149,16 +154,14 @@ class EditNode extends EditRecord
                                         return;
                                     }
 
-                                    $validRecords = gethostbynamel($state);
-                                    if ($validRecords) {
+                                    $ip = get_ip_from_hostname($state);
+                                    if ($ip) {
                                         $set('dns', true);
 
-                                        $set('ip', collect($validRecords)->first());
-
-                                        return;
+                                        $set('ip', $ip);
+                                    } else {
+                                        $set('dns', false);
                                     }
-
-                                    $set('dns', false);
                                 })
                                 ->maxLength(255),
                             TextInput::make('ip')
@@ -613,10 +616,10 @@ class EditNode extends EditRecord
         $data['config'] = $node->getYamlConfiguration();
 
         if (!is_ip($node->fqdn)) {
-            $validRecords = gethostbynamel($node->fqdn);
-            if ($validRecords) {
+            $ip = get_ip_from_hostname($node->fqdn);
+            if ($ip) {
                 $data['dns'] = true;
-                $data['ip'] = collect($validRecords)->first();
+                $data['ip'] = $ip;
             } else {
                 $data['dns'] = false;
             }
@@ -630,7 +633,8 @@ class EditNode extends EditRecord
         return [];
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Actions\Action|Actions\ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make()

@@ -20,6 +20,6 @@ parameters:
             identifier: larastan.noEnvCallsOutsideOfConfig
             paths:
                 - app/Console/Commands/Environment/*.php
-                - app/Extensions/Captcha/Providers/*.php
-                - app/Extensions/OAuth/Providers/*.php
+                - app/Extensions/Captcha/Schemas/*.php
+                - app/Extensions/OAuth/Schemas/*.php
                 - app/Filament/Admin/Pages/Settings.php

@@ -3,6 +3,7 @@
 namespace App\Services\Servers;
 
 use App\Enums\ServerState;
+use App\Exceptions\Service\Deployment\NoViableNodeException;
 use Illuminate\Http\Client\ConnectionException;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
@@ -39,6 +40,7 @@ class ServerCreationService
      * no node_id the node_is will be picked from the allocation.
      *
      * @param array{
+     *     node_id?: int,
      *     oom_killer?: bool,
      *     oom_disabled?: bool,
      *     egg_id?: int,
@@ -67,19 +69,18 @@ class ServerCreationService
 
         // If a deployment object has been passed we need to get the allocation
         // that the server should use, and assign the node from that allocation.
-        if ($deployment instanceof DeploymentObject) {
+        if ($deployment) {
             $allocation = $this->configureDeployment($data, $deployment);
-            $data['allocation_id'] = $allocation->id;
-            $data['node_id'] = $allocation->node_id;
-        }
 
-        // Auto-configure the node based on the selected allocation
-        // if no node was defined.
-        if (empty($data['node_id'])) {
-            Assert::false(empty($data['allocation_id']), 'Expected a non-empty allocation_id in server creation data.');
-
-            $data['node_id'] = Allocation::query()->findOrFail($data['allocation_id'])->node_id;
+            if ($allocation) {
+                $data['allocation_id'] = $allocation->id;
+                // Auto-configure the node based on the selected allocation
+                // if no node was defined.
+                $data['node_id'] = $allocation->node_id;
+            }
+            $data['node_id'] ??= $deployment->getNode()->id;
         }
+        Assert::false(empty($data['node_id']), 'Expected a non-empty node_id in server creation data.');
 
         $eggVariableData = $this->validatorService
             ->setUserLevel(User::USER_LEVEL_ADMIN)
@@ -95,7 +96,10 @@ class ServerCreationService
             // Create the server and assign any additional allocations to it.
             $server = $this->createModel($data);
 
-            $this->storeAssignedAllocations($server, $data);
+            if ($server->allocation_id) {
+                $this->storeAssignedAllocations($server, $data);
+            }
+
             $this->storeEggVariables($server, $eggVariableData);
 
             return $server;
@@ -119,20 +123,30 @@ class ServerCreationService
      *
      * @param  array{memory?: ?int, disk?: ?int, cpu?: ?int, tags?: ?string[]}  $data
      *
-     * @throws \App\Exceptions\DisplayException
      * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
+     * @throws \App\Exceptions\Service\Deployment\NoViableNodeException
      */
-    private function configureDeployment(array $data, DeploymentObject $deployment): Allocation
+    private function configureDeployment(array $data, DeploymentObject $deployment): ?Allocation
     {
         $nodes = $this->findViableNodesService->handle(
             Arr::get($data, 'memory', 0),
             Arr::get($data, 'disk', 0),
             Arr::get($data, 'cpu', 0),
-            Arr::get($data, 'tags', []),
+            $deployment->getTags(),
         );
 
+        $availableNodes = $nodes->pluck('id');
+
+        if ($availableNodes->isEmpty()) {
+            throw new NoViableNodeException(trans('exceptions.deployment.no_viable_nodes'));
+        }
+
+        if (!$deployment->getPorts()) {
+            return null;
+        }
+
         return $this->allocationSelectionService->setDedicated($deployment->isDedicated())
-            ->setNodes($nodes->pluck('id')->toArray())
+            ->setNodes($availableNodes->toArray())
             ->setPorts($deployment->getPorts())
             ->handle();
     }

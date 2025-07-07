@@ -4,6 +4,10 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\RoleResource\Pages;
 use App\Models\Role;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
@@ -14,6 +18,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -26,6 +31,11 @@ use Spatie\Permission\Contracts\Permission;
 
 class RoleResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
+
     protected static ?string $model = Role::class;
 
     protected static ?string $navigationIcon = 'tabler-users-group';
@@ -57,7 +67,7 @@ class RoleResource extends Resource
         return static::getModel()::count() ?: null;
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([
@@ -97,7 +107,7 @@ class RoleResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         $permissionSections = [];
 
@@ -147,6 +157,8 @@ class RoleResource extends Resource
      */
     private static function makeSection(string $model, array $options): Section
     {
+        $model = ucwords($model);
+
         $icon = null;
 
         if (class_exists('\App\Filament\Admin\Resources\\' . $model . 'Resource')) {
@@ -198,7 +210,8 @@ class RoleResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListRoles::route('/'),

@@ -2,35 +2,35 @@
 
 namespace App\Http\Middleware;
 
+use App\Extensions\Captcha\CaptchaService;
 use Closure;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Events\Auth\FailedCaptcha;
-use App\Extensions\Captcha\Providers\CaptchaProvider;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 readonly class VerifyCaptcha
 {
     public function __construct(private Application $app) {}
 
-    public function handle(Request $request, Closure $next): mixed
+    public function handle(Request $request, Closure $next, CaptchaService $captchaService): mixed
     {
         if ($this->app->isLocal()) {
             return $next($request);
         }
 
-        $captchaProviders = collect(CaptchaProvider::get())->filter(fn (CaptchaProvider $provider) => $provider->isEnabled())->all();
-        foreach ($captchaProviders as $captchaProvider) {
-            $response = $captchaProvider->validateResponse();
+        $schemas = $captchaService->getActiveSchemas();
+        foreach ($schemas as $schema) {
+            $response = $schema->validateResponse();
 
-            if ($response['success'] && $captchaProvider->verifyDomain($response['hostname'] ?? '', $request->url())) {
+            if ($response['success'] && $schema->verifyDomain($response['hostname'] ?? '', $request->url())) {
                 return $next($request);
             }
 
             event(new FailedCaptcha($request->ip(), $response['message'] ?? null));
 
-            throw new HttpException(Response::HTTP_BAD_REQUEST, "Failed to validate {$captchaProvider->getId()} captcha data.");
+            throw new HttpException(Response::HTTP_BAD_REQUEST, "Failed to validate {$schema->getId()} captcha data.");
         }
 
         // No captcha enabled

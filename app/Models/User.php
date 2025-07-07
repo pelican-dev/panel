@@ -4,9 +4,8 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Exceptions\DisplayException;
-use App\Extensions\Avatar\AvatarProvider;
+use App\Extensions\Avatar\AvatarService;
 use App\Rules\Username;
-use App\Facades\Activity;
 use App\Traits\HasValidation;
 use DateTimeZone;
 use Filament\Models\Contracts\FilamentUser;
@@ -18,6 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Auth\Authenticatable;
@@ -32,7 +32,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use Illuminate\Support\Facades\Storage;
 use ResourceBundle;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -397,17 +396,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function getFilamentAvatarUrl(): ?string
     {
-        if (config('panel.filament.uploadable-avatars')) {
-            $path = "avatars/$this->id.png";
-
-            if (Storage::disk('public')->exists($path)) {
-                return Storage::url($path);
-            }
-        }
-
-        $provider = AvatarProvider::getProvider(config('panel.filament.avatar-provider'));
-
-        return $provider?->get($this);
+        return App::call(fn (AvatarService $service) => $service->getAvatarUrl($this));
     }
 
     public function canTarget(Model $model): bool

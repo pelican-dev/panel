@@ -20,6 +20,8 @@ return [
         'ip' => 'IP',
         'egg' => 'Egg',
         'owner' => 'Owner',
+        'allocation_notes' => 'Notes',
+        'no_notes' => 'No notes',
     ],
     'node_info' => 'Node Information',
     'wings_version' => 'Wings Version',
@@ -109,4 +111,5 @@ return [
 
     'error_connecting' => 'Error connecting to :node',
     'error_connecting_description' => 'The configuration could not be automatically updated on Wings, you will need to manually update the configuration file.',
+    'allocation' => 'Allocation',
 ];

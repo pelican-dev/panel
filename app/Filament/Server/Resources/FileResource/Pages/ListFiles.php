@@ -4,6 +4,7 @@ namespace App\Filament\Server\Resources\FileResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\EditorLanguages;
+use App\Exceptions\Repository\FileExistsException;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
 use App\Models\File;
@@ -12,7 +13,11 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
+use App\Livewire\AlertBanner;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action as HeaderAction;
+use Filament\Actions\ActionGroup as HeaderActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
@@ -43,6 +48,9 @@ use Livewire\Attributes\Locked;
 
 class ListFiles extends ListRecords
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = FileResource::class;
 
     #[Locked]
@@ -399,7 +407,8 @@ class ListFiles extends ListRecords
             ]);
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<HeaderAction|HeaderActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */
         $server = Filament::getTenant();
@@ -412,11 +421,22 @@ class ListFiles extends ListRecords
                 ->keyBindings('')
                 ->modalSubmitActionLabel('Create')
                 ->action(function ($data) {
-                    $this->getDaemonFileRepository()->putContent(join_paths($this->path, $data['name']), $data['editor'] ?? '');
+                    $path = join_paths($this->path, $data['name']);
+                    try {
+                        $this->getDaemonFileRepository()->putContent($path, $data['editor'] ?? '');
 
-                    Activity::event('server:file.write')
-                        ->property('file', join_paths($this->path, $data['name']))
-                        ->log();
+                        Activity::event('server:file.write')
+                            ->property('file', join_paths($path, $data['name']))
+                            ->log();
+                    } catch (FileExistsException) {
+                        AlertBanner::make()
+                            ->title('<code>' . $path . '</code> already exists!')
+                            ->danger()
+                            ->closable()
+                            ->send();
+
+                        $this->redirect(self::getUrl(['path' => dirname($path)]));
+                    }
                 })
                 ->form([
                     TextInput::make('name')
@@ -441,11 +461,22 @@ class ListFiles extends ListRecords
                 ->label('New Folder')
                 ->color('gray')
                 ->action(function ($data) {
-                    $this->getDaemonFileRepository()->createDirectory($data['name'], $this->path);
+                    try {
+                        $this->getDaemonFileRepository()->createDirectory($data['name'], $this->path);
 
-                    Activity::event('server:file.create-directory')
-                        ->property(['directory' => $this->path, 'name' => $data['name']])
-                        ->log();
+                        Activity::event('server:file.create-directory')
+                            ->property(['directory' => $this->path, 'name' => $data['name']])
+                            ->log();
+                    } catch (FileExistsException) {
+                        $path = join_paths($this->path, $data['name']);
+                        AlertBanner::make()
+                            ->title('<code>' . $path . '</code> already exists!')
+                            ->danger()
+                            ->closable()
+                            ->send();
+
+                        $this->redirect(self::getUrl(['path' => dirname($path)]));
+                    }
                 })
                 ->form([
                     TextInput::make('name')

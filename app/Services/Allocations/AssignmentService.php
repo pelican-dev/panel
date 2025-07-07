@@ -107,6 +107,10 @@ class AssignmentService
             }
         }
 
+        if ($server && !$server->allocation_id) {
+            $server->update(['allocation_id' => $ids[0]]);
+        }
+
         $this->connection->commit();
 
         return $ids;
