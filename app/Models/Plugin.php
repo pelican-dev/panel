@@ -7,6 +7,7 @@ use App\Enums\PluginStatus;
 use Exception;
 use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Sushi\Sushi;
 
@@ -69,17 +70,17 @@ class Plugin extends Model implements HasPluginSettings
      *     name: string,
      *     author: string,
      *     version: string,
-     *     description: string,
-     *     category: string,
-     *     url: string,
-     *     update_url: string,
+     *     description: ?string,
+     *     category: ?string,
+     *     url: ?string,
+     *     update_url: ?string,
      *     namespace: string,
      *     class: string,
-     *     panels: string,
-     *     panel_version: string,
-     *     composer_packages: string,
+     *     panels: ?string,
+     *     panel_version: ?string,
+     *     composer_packages: ?string,
      *     status: string,
-     *     status_message: string,
+     *     status_message: ?string,
      *     load_order: int
      * }>
      */
@@ -98,16 +99,37 @@ class Plugin extends Model implements HasPluginSettings
 
             $data = File::json($path, JSON_THROW_ON_ERROR);
 
-            $data = array_merge($data, $data['meta']);
-            unset($data['meta']);
-
-            if (array_key_exists('panels', $data) && is_array($data['panels'])) {
-                $data['panels'] = implode(',', $data['panels']);
+            $panels = null;
+            if (array_key_exists('panels', $data)) {
+                $panels = $data['panels'];
+                $panels = is_array($panels) ? implode(',', $panels) : $panels;
             }
 
-            if (array_key_exists('composer_packages', $data) && is_array($data['composer_packages'])) {
-                $data['composer_packages'] = implode(',', $data['composer_packages']);
+            $composerPackages = null;
+            if (array_key_exists('composer_packages', $data)) {
+                $composerPackages = $data['composer_packages'];
+                $composerPackages = is_array($composerPackages) ? implode(',', $composerPackages) : $composerPackages;
             }
+
+            $data = [
+                'id' => $data['id'],
+                'name' => $data['name'],
+                'author' => $data['author'],
+                'version' => Arr::get($data, 'version', '1.0.0'),
+                'description' => Arr::get($data, 'description', null),
+                'category' => Arr::get($data, 'category', null),
+                'url' => Arr::get($data, 'url', null),
+                'update_url' => Arr::get($data, 'update_url', null),
+                'namespace' => $data['namespace'],
+                'class' => $data['class'],
+                'panels' => $panels,
+                'panel_version' => Arr::get($data, 'update_url', null),
+                'composer_packages' => $composerPackages,
+
+                'status' => Arr::get($data, 'meta.status', PluginStatus::NotInstalled->value),
+                'status_message' => Arr::get($data, 'meta.status_message', null),
+                'load_order' => Arr::integer($data, 'meta.load_order', 0),
+            ];
 
             $plugins[] = $data;
         }
@@ -274,9 +296,13 @@ class Plugin extends Model implements HasPluginSettings
      */
     public function getProviders(): array
     {
-        $providers = File::allFiles(plugin_path($this->id, 'src', 'Providers'));
+        $path = plugin_path($this->id, 'src', 'Providers');
 
-        return array_map(fn ($provider) => $this->namespace . '\\Providers\\' . str($provider->getRelativePathname())->remove('.php', false), $providers);
+        if (File::missing($path)) {
+            return [];
+        }
+
+        return array_map(fn ($provider) => $this->namespace . '\\Providers\\' . str($provider->getRelativePathname())->remove('.php', false), File::allFiles($path));
     }
 
     /**
@@ -284,8 +310,12 @@ class Plugin extends Model implements HasPluginSettings
      */
     public function getCommands(): array
     {
-        $providers = File::allFiles(plugin_path($this->id, 'src', 'Console', 'Commands'));
+        $path = plugin_path($this->id, 'src', 'Console', 'Commands');
 
-        return array_map(fn ($provider) => $this->namespace . '\\Console\\Commands\\' . str($provider->getRelativePathname())->remove('.php', false), $providers);
+        if (File::missing($path)) {
+            return [];
+        }
+
+        return array_map(fn ($provider) => $this->namespace . '\\Console\\Commands\\' . str($provider->getRelativePathname())->remove('.php', false), File::allFiles($path));
     }
 }

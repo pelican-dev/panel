@@ -189,7 +189,7 @@ class PluginService
         $path = plugin_path($plugin, 'plugin.json');
 
         $pluginData = File::json($path, JSON_THROW_ON_ERROR);
-        $metaData = array_merge($pluginData['meta'], $data);
+        $metaData = array_merge($pluginData['meta'] ?? [], $data);
         $pluginData['meta'] = $metaData;
 
         File::put($path, json_encode($pluginData, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
