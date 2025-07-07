@@ -26,10 +26,5 @@ interface CaptchaSchemaInterface
 
     public function getIcon(): ?string;
 
-    /**
-     * @return array<string, string|bool>
-     */
-    public function validateResponse(?string $captchaResponse = null): array;
-
-    public function verifyDomain(string $hostname, ?string $requestUrl = null): bool;
+    public function validateResponse(?string $captchaResponse = null): void;
 }
