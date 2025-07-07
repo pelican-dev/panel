@@ -8,7 +8,9 @@ use Exception;
 use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use JsonException;
 use Sushi\Sushi;
 
 /**
@@ -97,41 +99,67 @@ class Plugin extends Model implements HasPluginSettings
                 continue;
             }
 
-            $data = File::json($path, JSON_THROW_ON_ERROR);
+            try {
+                $data = File::json($path, JSON_THROW_ON_ERROR);
 
-            $panels = null;
-            if (array_key_exists('panels', $data)) {
-                $panels = $data['panels'];
-                $panels = is_array($panels) ? implode(',', $panels) : $panels;
+                $panels = null;
+                if (array_key_exists('panels', $data)) {
+                    $panels = $data['panels'];
+                    $panels = is_array($panels) ? implode(',', $panels) : $panels;
+                }
+
+                $composerPackages = null;
+                if (array_key_exists('composer_packages', $data)) {
+                    $composerPackages = $data['composer_packages'];
+                    $composerPackages = is_array($composerPackages) ? implode(',', $composerPackages) : $composerPackages;
+                }
+
+                $data = [
+                    'id' => $data['id'],
+                    'name' => $data['name'],
+                    'author' => $data['author'],
+                    'version' => Arr::get($data, 'version', '1.0.0'),
+                    'description' => Arr::get($data, 'description', null),
+                    'category' => Arr::get($data, 'category', null),
+                    'url' => Arr::get($data, 'url', null),
+                    'update_url' => Arr::get($data, 'update_url', null),
+                    'namespace' => $data['namespace'],
+                    'class' => $data['class'],
+                    'panels' => $panels,
+                    'panel_version' => Arr::get($data, 'update_url', null),
+                    'composer_packages' => $composerPackages,
+
+                    'status' => Arr::get($data, 'meta.status', PluginStatus::NotInstalled->value),
+                    'status_message' => Arr::get($data, 'meta.status_message', null),
+                    'load_order' => Arr::integer($data, 'meta.load_order', 0),
+                ];
+
+                $plugins[] = $data;
+            } catch (Exception $exception) {
+                report($exception);
+
+                if (!$exception instanceof JsonException) {
+                    $plugins[] = [
+                        'id' => $data['id'] ?? Str::uuid(),
+                        'name' => $data['name'] ?? 'Invalid Plugin',
+                        'author' => $data['author'] ?? 'Unknown',
+                        'version' => '0.0.0',
+                        'description' => 'Plugin.json is invalid!',
+                        'category' => 'invalid',
+                        'url' => null,
+                        'update_url' => null,
+                        'namespace' => 'Error',
+                        'class' => 'Error',
+                        'panels' => null,
+                        'panel_version' => null,
+                        'composer_packages' => null,
+
+                        'status' => PluginStatus::Errored->value,
+                        'status_message' => $exception->getMessage(),
+                        'load_order' => 0,
+                    ];
+                }
             }
-
-            $composerPackages = null;
-            if (array_key_exists('composer_packages', $data)) {
-                $composerPackages = $data['composer_packages'];
-                $composerPackages = is_array($composerPackages) ? implode(',', $composerPackages) : $composerPackages;
-            }
-
-            $data = [
-                'id' => $data['id'],
-                'name' => $data['name'],
-                'author' => $data['author'],
-                'version' => Arr::get($data, 'version', '1.0.0'),
-                'description' => Arr::get($data, 'description', null),
-                'category' => Arr::get($data, 'category', null),
-                'url' => Arr::get($data, 'url', null),
-                'update_url' => Arr::get($data, 'update_url', null),
-                'namespace' => $data['namespace'],
-                'class' => $data['class'],
-                'panels' => $panels,
-                'panel_version' => Arr::get($data, 'update_url', null),
-                'composer_packages' => $composerPackages,
-
-                'status' => Arr::get($data, 'meta.status', PluginStatus::NotInstalled->value),
-                'status_message' => Arr::get($data, 'meta.status_message', null),
-                'load_order' => Arr::integer($data, 'meta.load_order', 0),
-            ];
-
-            $plugins[] = $data;
         }
 
         return $plugins;

@@ -188,11 +188,13 @@ class PluginService
         $plugin = $plugin instanceof Plugin ? $plugin->id : $plugin;
         $path = plugin_path($plugin, 'plugin.json');
 
-        $pluginData = File::json($path, JSON_THROW_ON_ERROR);
-        $metaData = array_merge($pluginData['meta'] ?? [], $data);
-        $pluginData['meta'] = $metaData;
+        if (File::exists($path)) {
+            $pluginData = File::json($path, JSON_THROW_ON_ERROR);
+            $metaData = array_merge($pluginData['meta'] ?? [], $data);
+            $pluginData['meta'] = $metaData;
 
-        File::put($path, json_encode($pluginData, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            File::put($path, json_encode($pluginData, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        }
     }
 
     private function setStatus(string|Plugin $plugin, PluginStatus $status, ?string $message = null): void
