@@ -6,7 +6,6 @@ use Closure;
 use Filament\Notifications\Concerns;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Str;
 
 final class AlertBanner extends ViewComponent implements Arrayable
 {
@@ -27,9 +26,9 @@ final class AlertBanner extends ViewComponent implements Arrayable
         $this->id($id);
     }
 
-    public static function make(?string $id = null): AlertBanner
+    public static function make(string $id): AlertBanner
     {
-        $static = new self($id ?? Str::orderedUuid());
+        $static = new self($id);
         $static->configure();
 
         return $static;

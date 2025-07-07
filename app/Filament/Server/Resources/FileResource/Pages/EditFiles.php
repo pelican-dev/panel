@@ -133,7 +133,7 @@ class EditFiles extends Page
                                 try {
                                     return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
                                 } catch (FileSizeTooLargeException) {
-                                    AlertBanner::make()
+                                    AlertBanner::make('file_too_large')
                                         ->title('<code>' . basename($this->path) . '</code> is too large!')
                                         ->body('Max is ' . convert_bytes_to_readable(config('panel.files.max_edit_size')))
                                         ->danger()
@@ -142,7 +142,7 @@ class EditFiles extends Page
 
                                     $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 } catch (FileNotFoundException) {
-                                    AlertBanner::make()
+                                    AlertBanner::make('file_not_found')
                                         ->title('<code>' . basename($this->path) . '</code> not found!')
                                         ->danger()
                                         ->closable()
@@ -150,7 +150,7 @@ class EditFiles extends Page
 
                                     $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 } catch (FileNotEditableException) {
-                                    AlertBanner::make()
+                                    AlertBanner::make('file_is_directory')
                                         ->title('<code>' . basename($this->path) . '</code> is a directory')
                                         ->danger()
                                         ->closable()
