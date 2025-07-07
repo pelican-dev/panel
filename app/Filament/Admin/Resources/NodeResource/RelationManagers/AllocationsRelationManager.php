@@ -62,7 +62,7 @@ class AllocationsRelationManager extends RelationManager
                     ->label(trans('admin/node.table.allocation_notes'))
                     ->placeholder(trans('admin/node.table.no_notes')),
                 SelectColumn::make('ip')
-                    ->options(fn (Allocation $allocation) => collect($this->getOwnerRecord()->ipAddresses())->merge([$allocation->ip])->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                    ->options(fn (Allocation $allocation) => collect($this->getOwnerRecord()->ipAddresses())->filter(fn ($ip) => Allocation::where('ip', $ip)->where('port', $allocation->port)->doesntExist())->merge([$allocation->ip])->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                     ->selectablePlaceholder(false)
                     ->searchable()
                     ->label(trans('admin/node.table.ip')),
