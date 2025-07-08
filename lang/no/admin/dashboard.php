@@ -24,7 +24,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Ingen noder oppdaget',
-            'content' => "Det ser ut til at du ikke har satt opp noen noder ennå, men ikke bekymre deg! Klikk på handlingsknappen for å opprette din første node.",
+            'content' => 'Det ser ut til at du ikke har satt opp noen noder ennå, men ikke bekymre deg! Klikk på handlingsknappen for å opprette din første node.',
             'extra_note' => 'Hvis du støter på problemer, vennligst rapporter dem på GitHub.',
             'button_label' => 'Opprett første node i Pelican',
         ],

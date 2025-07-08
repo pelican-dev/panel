@@ -24,7 +24,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Neboli nájdené žiadne Uzly',
-            'content' => "Zdá sa, že ešte nemáte nastavené žiadne uzly, ale nebojte sa, pretože kliknutím na tlačidlo akcie vytvoríte svoj prvý!",
+            'content' => 'Zdá sa, že ešte nemáte nastavené žiadne uzly, ale nebojte sa, pretože kliknutím na tlačidlo akcie vytvoríte svoj prvý!',
             'extra_note' => 'Ak narazíte na nejaké problémy, nahláste ich na GitHub.',
             'button_label' => 'Vytvoriť prvý uzol',
         ],

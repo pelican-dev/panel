@@ -24,7 +24,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Starpniekserveris nav atrasts',
-            'content' => "Šķiet, ka jums vēl nav iestatīts neviens starpniekserveris, taču neuztraucieties, jo noklikšķinot uz darbības pogas, vari izveidotu savu pirmo!",
+            'content' => 'Šķiet, ka jums vēl nav iestatīts neviens starpniekserveris, taču neuztraucieties, jo noklikšķinot uz darbības pogas, vari izveidotu savu pirmo!',
             'extra_note' => 'Ja rodas problēmas, lūdzu, ziņojiet par tām vietnē GitHub.',
             'button_label' => 'Izveido savu pirmo starpniekserveri iekš Pelican!',
         ],
