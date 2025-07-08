@@ -55,6 +55,14 @@ class PluginService
                     config()->set($plugin->id, require $config);
                 }
 
+                // Load translations
+                $translations = plugin_path($plugin->id, 'lang');
+                if (file_exists($translations)) {
+                    $this->app->afterResolving('translator', function ($translator) use ($plugin, $translations) {
+                        $translator->addNamespace($plugin->id, $translations);
+                    });
+                }
+
                 // Autoload src directory
                 if (!array_key_exists($plugin->namespace, $classLoader->getClassMap())) {
                     $classLoader->setPsr4($plugin->namespace . '\\', plugin_path($plugin->id, 'src/'));
@@ -85,14 +93,6 @@ class PluginService
                 if (file_exists($migrations)) {
                     $this->app->afterResolving('migrator', function ($migrator) use ($migrations) {
                         $migrator->path($migrations);
-                    });
-                }
-
-                // Load translations
-                $translations = plugin_path($plugin->id, 'lang');
-                if (file_exists($translations)) {
-                    $this->app->afterResolving('translator', function ($translator) use ($plugin, $translations) {
-                        $translator->addNamespace($plugin->id, $translations);
                     });
                 }
 
