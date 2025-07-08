@@ -87,10 +87,8 @@ class ServerCreationService
                     ->setPorts($ports)
                     ->handle();
 
-                if ($allocation) {
-                    $data['allocation_id'] = $allocation->id;
-                    $data['node_id'] = $allocation->node_id;
-                }
+                $data['allocation_id'] = $allocation->id;
+                $data['node_id'] = $allocation->node_id;
             }
 
             if (empty($data['node_id'])) {
