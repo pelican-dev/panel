@@ -9,7 +9,7 @@ use Illuminate\Auth\Events\Login;
 class AuthenticationListener
 {
     private const PROTECTED_FIELDS = [
-        'password', 'token', 'secret'
+        'password', 'token', 'secret',
     ];
 
     /**
