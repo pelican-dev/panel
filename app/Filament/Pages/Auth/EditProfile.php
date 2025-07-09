@@ -139,7 +139,8 @@ class EditProfile extends BaseEditProfile
                                             ->live()
                                             ->default('en')
                                             ->selectablePlaceholder(false)
-                                            ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? '' : trans('profile.language_help', ['state' => $state])))
+                                            ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? ''
+                                                    : trans('profile.language_help', ['state' => $state]) . ' <u><a href="https://crowdin.com/project/pelican-dev/">Update On Crowdin</a></u>'))
                                             ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
                                             ->native(false),
                                         FileUpload::make('avatar')
@@ -536,7 +537,7 @@ class EditProfile extends BaseEditProfile
 
                                                         return new HtmlString(<<<HTML
                                                             <style>
-                                                            {$style}  
+                                                            {$style}
                                                             </style>
                                                             <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
                                                         HTML);
