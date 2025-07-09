@@ -13,8 +13,7 @@ class Rule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         try {
-            $service = App::make(CaptchaService::class);
-            $service->get('turnstile')->validateResponse($value);
+            App::call(fn (CaptchaService $service) => $service->get('turnstile')->validateResponse($value));
         } catch (Exception $exception) {
             report($exception);
 
