@@ -281,89 +281,90 @@ class EditProfile extends \Filament\Auth\Pages\EditProfile
                                 Tab::make(trans('profile.tabs.api_keys'))
                                     ->icon('tabler-key')
                                     ->schema([
-                                        Grid::make('name')->columns(5)->schema([
-                                            Section::make(trans('profile.create_api_key'))->columnSpan(3)->schema([
-                                                TextInput::make('description')
-                                                    ->label(trans('profile.description'))
-                                                    ->live(),
-                                                TagsInput::make('allowed_ips')
-                                                    ->label(trans('profile.allowed_ips'))
-                                                    ->live()
-                                                    ->splitKeys([',', ' ', 'Tab'])
-                                                    ->placeholder('127.0.0.1 or 192.168.1.1')
-                                                    ->helperText(trans('profile.allowed_ips_help'))
-                                                    ->columnSpanFull(),
-                                            ])->headerActions([
-                                                Action::make('create')
-                                                    ->label(trans('filament-actions::create.single.modal.actions.create.label'))
-                                                    ->disabled(fn (Get $get) => empty($get('description')))
-                                                    ->successRedirectUrl(self::getUrl(['tab' => '-api-keys-tab'], panel: 'app'))
-                                                    ->action(function (Get $get, Action $action, User $user) {
-                                                        $token = $user->createToken(
-                                                            $get('description'),
-                                                            $get('allowed_ips'),
-                                                        );
+                                        Grid::make(5)
+                                            ->schema([
+                                                Section::make(trans('profile.create_api_key'))->columnSpan(3)->schema([
+                                                    TextInput::make('description')
+                                                        ->label(trans('profile.description'))
+                                                        ->live(),
+                                                    TagsInput::make('allowed_ips')
+                                                        ->label(trans('profile.allowed_ips'))
+                                                        ->live()
+                                                        ->splitKeys([',', ' ', 'Tab'])
+                                                        ->placeholder('127.0.0.1 or 192.168.1.1')
+                                                        ->helperText(trans('profile.allowed_ips_help'))
+                                                        ->columnSpanFull(),
+                                                ])->headerActions([
+                                                    Action::make('create')
+                                                        ->label(trans('filament-actions::create.single.modal.actions.create.label'))
+                                                        ->disabled(fn (Get $get) => empty($get('description')))
+                                                        ->successRedirectUrl(self::getUrl(['tab' => '-api-keys-tab'], panel: 'app'))
+                                                        ->action(function (Get $get, Action $action, User $user) {
+                                                            $token = $user->createToken(
+                                                                $get('description'),
+                                                                $get('allowed_ips'),
+                                                            );
 
-                                                        Activity::event('user:api-key.create')
-                                                            ->actor($user)
-                                                            ->subject($user)
-                                                            ->subject($token->accessToken)
-                                                            ->property('identifier', $token->accessToken->identifier)
-                                                            ->log();
+                                                            Activity::event('user:api-key.create')
+                                                                ->actor($user)
+                                                                ->subject($user)
+                                                                ->subject($token->accessToken)
+                                                                ->property('identifier', $token->accessToken->identifier)
+                                                                ->log();
 
-                                                        Notification::make()
-                                                            ->title(trans('profile.api_key_created'))
-                                                            ->body($token->accessToken->identifier . $token->plainTextToken)
-                                                            ->persistent()
-                                                            ->success()
-                                                            ->send();
+                                                            Notification::make()
+                                                                ->title(trans('profile.api_key_created'))
+                                                                ->body($token->accessToken->identifier . $token->plainTextToken)
+                                                                ->persistent()
+                                                                ->success()
+                                                                ->send();
 
-                                                        $action->success();
-                                                    }),
+                                                            $action->success();
+                                                        }),
+                                                ]),
+                                                Section::make(trans('profile.api_keys'))->columnSpan(2)->schema([
+                                                    Repeater::make('api_keys')
+                                                        ->hiddenLabel()
+                                                        ->relationship('apiKeys')
+                                                        ->addable(false)
+                                                        ->itemLabel(fn ($state) => $state['identifier'])
+                                                        ->deleteAction(function (Action $action) {
+                                                            $action->requiresConfirmation()->action(function (array $arguments, Repeater $component, User $user) {
+                                                                $items = $component->getState();
+                                                                $key = $items[$arguments['item']];
+
+                                                                $apiKey = ApiKey::find($key['id'] ?? null);
+                                                                if ($apiKey->exists()) {
+                                                                    $apiKey->delete();
+
+                                                                    Activity::event('user:api-key.delete')
+                                                                        ->actor($user)
+                                                                        ->subject($user)
+                                                                        ->subject($apiKey)
+                                                                        ->property('identifier', $apiKey->identifier)
+                                                                        ->log();
+                                                                }
+
+                                                                unset($items[$arguments['item']]);
+
+                                                                $component->state($items);
+
+                                                                $component->callAfterStateUpdated();
+                                                            });
+                                                        })
+                                                        ->schema(fn () => [
+                                                            TextEntry::make('memo')
+                                                                ->state(fn (ApiKey $key) => $key->memo),
+                                                        ]),
+                                                ]),
                                             ]),
-                                            Section::make(trans('profile.api_keys'))->columnSpan(2)->schema([
-                                                Repeater::make('api_keys')
-                                                    ->hiddenLabel()
-                                                    ->relationship('apiKeys')
-                                                    ->addable(false)
-                                                    ->itemLabel(fn ($state) => $state['identifier'])
-                                                    ->deleteAction(function (Action $action) {
-                                                        $action->requiresConfirmation()->action(function (array $arguments, Repeater $component, User $user) {
-                                                            $items = $component->getState();
-                                                            $key = $items[$arguments['item']];
-
-                                                            $apiKey = ApiKey::find($key['id'] ?? null);
-                                                            if ($apiKey->exists()) {
-                                                                $apiKey->delete();
-
-                                                                Activity::event('user:api-key.delete')
-                                                                    ->actor($user)
-                                                                    ->subject($user)
-                                                                    ->subject($apiKey)
-                                                                    ->property('identifier', $apiKey->identifier)
-                                                                    ->log();
-                                                            }
-
-                                                            unset($items[$arguments['item']]);
-
-                                                            $component->state($items);
-
-                                                            $component->callAfterStateUpdated();
-                                                        });
-                                                    })
-                                                    ->schema(fn () => [
-                                                        Placeholder::make('memo')
-                                                            ->label(fn (ApiKey $key) => $key->memo),
-                                                    ]),
-                                            ]),
-                                        ]),
                                     ]),
                             ]),
 
                         Tab::make(trans('profile.tabs.ssh_keys'))
                             ->icon('tabler-lock-code')
                             ->schema([
-                                Grid::make('name')->columns(5)->schema([
+                                Grid::make(5)->schema([
                                     Section::make(trans('profile.create_ssh_key'))->columnSpan(3)->schema([
                                         TextInput::make('name')
                                             ->label(trans('profile.name'))

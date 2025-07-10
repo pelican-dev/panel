@@ -2,7 +2,7 @@
 
 namespace App\Extensions\Captcha\Schemas\Turnstile;
 
-use Filament\Schemas\Components\Component;
+use Filament\Support\Components\Component;
 use App\Extensions\Captcha\Schemas\CaptchaSchemaInterface;
 use App\Extensions\Captcha\Schemas\BaseSchema;
 use Exception;
@@ -23,7 +23,7 @@ class TurnstileSchema extends BaseSchema implements CaptchaSchemaInterface
         return env('CAPTCHA_TURNSTILE_ENABLED', false);
     }
 
-    public function getFormComponent(): BaseComponent
+    public function getFormComponent(): Component
     {
         return Component::make('turnstile');
     }
@@ -39,7 +39,9 @@ class TurnstileSchema extends BaseSchema implements CaptchaSchemaInterface
     }
 
     /**
-     * @return BaseComponent[]
+     * @return Component[]
+     *
+     * @throws Exception
      */
     public function getSettingsForm(): array
     {

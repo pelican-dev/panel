@@ -5,7 +5,6 @@ namespace App\Extensions\OAuth\Schemas;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard\Step;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use SocialiteProviders\Discord\Provider;

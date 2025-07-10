@@ -2,7 +2,7 @@
 
 namespace App\Extensions\Captcha\Schemas;
 
-use Filament\Forms\Components\Component;
+use Filament\Support\Components\Component;
 
 interface CaptchaSchemaInterface
 {
