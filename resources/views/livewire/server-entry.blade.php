@@ -8,16 +8,12 @@
 
     <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
         <div class="flex items-center mb-5 gap-2">
-            <div class="end-0" x-on:click.stop>
-                <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1">
-                    <x-filament-tables::actions
-                        :actions="\App\Filament\App\Resources\ServerResource\Pages\ListServers::getPowerActions(view: 'grid')"
-                        :alignment="\Filament\Support\Enums\Alignment::Center"
-                        :record="$server"
-                    />
-                </div>
-            </div>
-
+            <x-filament::icon-button
+                :icon="$server->condition->getIcon()"
+                :color="$server->condition->getColor()"
+                :tooltip="$server->condition->getLabel()"
+                size="xl"
+            />
             <h2 class="text-xl font-bold">
                 {{ $server->name }}
                 <span class="dark:text-gray-400">
@@ -48,7 +44,17 @@
             <div class="hidden sm:block">
                 <p class="text-sm dark:text-gray-400">Network</p>
                 <hr class="p-0.5">
-                <p class="text-md font-semibold">{{ $server->allocation?->address ?? 'None' }}</p>
+                <p class="text-md font-semibold">{{ $server->allocation->address }} </p>
+
+            </div>
+            <div x-on:click.stop>
+                <x-filament-actions::group
+                    :actions="\App\Filament\App\Resources\ServerResource\Pages\ListServers::getPowerActions()"
+                    size="xl"
+                    icon="tabler-power"
+                    tooltip="Power Actions"
+                />
+                <x-filament-actions::modals />
             </div>
         </div>
     </div>
