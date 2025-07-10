@@ -1,0 +1,51 @@
+@import url('@xterm/xterm/css/xterm.css');
+
+#terminal {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    overflow: hidden;
+}
+
+.xterm-selection div {
+    background-color: transparent !important;
+}
+
+.xterm .xterm-rows > div {
+    padding-left: 10px;
+    padding-top: 2px;
+    padding-right: 10px;
+}
+
+#send-command:read-only {
+    cursor: not-allowed;
+}
+
+::-webkit-scrollbar {
+    background: none;
+    width: 14px;
+    height: 14px;
+}
+
+::-webkit-scrollbar-thumb {
+    border: solid 0 rgb(0 0 0 / 0%);
+    border-right-width: 4px;
+    border-left-width: 4px;
+    -webkit-border-radius: 9px 4px;
+    -webkit-box-shadow: inset 0 0 0 1px hsl(211, 10%, 53%), inset 0 0 0 4px hsl(209deg 18% 30%);
+}
+
+::-webkit-scrollbar-track-piece {
+    margin: 4px 0;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+    border-right-width: 0;
+    border-left-width: 0;
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+    -webkit-border-radius: 4px 9px;
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}

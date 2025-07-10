@@ -17,6 +17,8 @@ use Filament\Actions\ActionGroup;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Layout\Stack;
@@ -124,6 +126,9 @@ class ListServers extends ListRecords
             ->query(fn () => $baseQuery)
             ->poll('15s')
             ->columns($usingGrid ? $this->gridColumns() : $this->tableColumns())
+            ->recordUrl(!$usingGrid ? (fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)) : null)
+            ->recordActions(!$usingGrid ? ActionGroup::make(static::getPowerActions(view: 'table')) : [])
+            ->recordActionsAlignment(Alignment::Center->value)
             ->contentGrid($usingGrid ? ['default' => 1, 'md' => 2] : null)
             ->recordActions($usingGrid ? [] : ActionGroup::make(static::getPowerActions())->icon('tabler-power')->tooltip('Power Actions'))
             ->recordUrl(fn (Server $server) => $usingGrid ? null : Console::getUrl(panel: 'server', tenant: $server))
@@ -234,10 +239,10 @@ class ListServers extends ListRecords
         }
     }
 
-    /** @return Action[] */
-    public static function getPowerActions(?Server $server = null): array
+    /** @return Action[]|ActionGroup[] */
+    public static function getPowerActions(string $view): array
     {
-        return [
+        $actions = [
             Action::make('start')
                 ->color('primary')
                 ->icon('tabler-player-play-filled')
@@ -264,5 +269,17 @@ class ListServers extends ListRecords
                 ->visible(fn (?Server $record) => !($record ?? $server)->isInConflictState() & ($record ?? $server)->retrieveStatus()->isKillable())
                 ->dispatch('powerAction', fn (?Server $record) => ['server' => $record ?? $server, 'action' => 'kill']),
         ];
+
+        if ($view === 'table') {
+            return $actions;
+        } else {
+            return [
+                ActionGroup::make($actions)
+                    ->icon(fn (Server $server) => $server->condition->getIcon())
+                    ->color(fn (Server $server) => $server->condition->getColor())
+                    ->tooltip(fn (Server $server) => $server->condition->getLabel())
+                    ->iconSize(IconSize::Large),
+            ];
+        }
     }
 }

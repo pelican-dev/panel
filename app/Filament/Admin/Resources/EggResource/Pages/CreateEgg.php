@@ -258,7 +258,11 @@ class CreateEgg extends CreateRecord
                                 ->native(false)
                                 ->selectablePlaceholder(false)
                                 ->default('bash')
-                                ->options(['bash', 'ash', '/bin/bash'])
+                                ->options([
+                                    'bash' => 'bash',
+                                    'ash' => 'ash',
+                                    '/bin/bash' => '/bin/bash',
+                                ])
                                 ->required(),
                             CodeEditor::make('script_install')
                                 ->label(trans('admin/egg.script_install'))

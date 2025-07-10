@@ -110,6 +110,7 @@ class Startup extends ServerFormPage
                             ->schema(function () {
                                 $text = TextInput::make('variable_value')
                                     ->hidden($this->shouldHideComponent(...))
+                                    ->dehydratedWhenHidden()
                                     ->disabled(fn (ServerVariable $serverVariable) => !$serverVariable->variable->user_editable)
                                     ->required(fn (ServerVariable $serverVariable) => $serverVariable->variable->getRequiredAttribute())
                                     ->rules([
@@ -128,6 +129,7 @@ class Startup extends ServerFormPage
 
                                 $select = Select::make('variable_value')
                                     ->hidden($this->shouldHideComponent(...))
+                                    ->dehydratedWhenHidden()
                                     ->disabled(fn (ServerVariable $serverVariable) => !$serverVariable->variable->user_editable)
                                     ->options($this->getSelectOptionsFromRules(...))
                                     ->selectablePlaceholder(false);

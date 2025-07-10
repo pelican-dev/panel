@@ -2,7 +2,6 @@
 
 namespace App\Listeners;
 
-use App\Jobs\ProcessWebhook;
 use App\Models\WebhookConfiguration;
 
 class DispatchWebhooks
@@ -23,7 +22,7 @@ class DispatchWebhooks
         /** @var WebhookConfiguration $webhookConfig */
         foreach ($matchingHooks as $webhookConfig) {
             if (in_array($eventName, $webhookConfig->events)) {
-                ProcessWebhook::dispatch($webhookConfig, $eventName, $data);
+                $webhookConfig->run($eventName, $data);
             }
         }
     }

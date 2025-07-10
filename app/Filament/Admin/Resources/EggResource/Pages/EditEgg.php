@@ -247,7 +247,11 @@ class EditEgg extends EditRecord
                                 ->label(trans('admin/egg.script_entry'))
                                 ->native(false)
                                 ->selectablePlaceholder(false)
-                                ->options(['bash', 'ash', '/bin/bash'])
+                                ->options([
+                                    'bash' => 'bash',
+                                    'ash' => 'ash',
+                                    '/bin/bash' => '/bin/bash',
+                                ])
                                 ->required(),
                             CodeEditor::make('script_install')
                                 ->hiddenLabel()
