@@ -13,6 +13,7 @@ return [
         'invalid_mapping' => 'The mapping provided for :port was invalid and could not be processed.',
         'cidr_out_of_range' => 'CIDR notation only allows masks between /25 and /32.',
         'port_out_of_range' => 'Ports in an allocation must be greater than or equal to 1024 and less than or equal to 65535.',
+        'port_conflict_same_network' => 'Port :port is already in use on IP :ip by another node (Node #:node_id) on the same network.',
     ],
     'egg' => [
         'delete_has_servers' => 'An Egg with active servers attached to it cannot be deleted from the Panel.',

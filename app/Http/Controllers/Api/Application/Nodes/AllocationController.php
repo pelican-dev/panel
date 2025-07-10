@@ -67,6 +67,7 @@ class AllocationController extends ApplicationApiController
      * @throws \App\Exceptions\Service\Allocation\InvalidPortMappingException
      * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
      * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
+     * @throws \App\Exceptions\Service\Allocation\PortConflictOnSameNetworkException
      */
     public function store(StoreAllocationRequest $request, Node $node): JsonResponse
     {

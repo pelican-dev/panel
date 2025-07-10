@@ -25,6 +25,7 @@ class FindAssignableAllocationService
      * @throws \App\Exceptions\Service\Allocation\InvalidPortMappingException
      * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
      * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
+     * @throws \App\Exceptions\Service\Allocation\PortConflictOnSameNetworkException
      */
     public function handle(Server $server): Allocation
     {
@@ -61,6 +62,7 @@ class FindAssignableAllocationService
      * @throws \App\Exceptions\Service\Allocation\InvalidPortMappingException
      * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
      * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
+     * @throws \App\Exceptions\Service\Allocation\PortConflictOnSameNetworkException
      */
     protected function createNewAllocation(Server $server): Allocation
     {

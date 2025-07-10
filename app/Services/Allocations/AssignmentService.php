@@ -12,6 +12,7 @@ use App\Exceptions\Service\Allocation\CidrOutOfRangeException;
 use App\Exceptions\Service\Allocation\PortOutOfRangeException;
 use App\Exceptions\Service\Allocation\InvalidPortMappingException;
 use App\Exceptions\Service\Allocation\TooManyPortsInRangeException;
+use App\Exceptions\Service\Allocation\PortConflictOnSameNetworkException;
 
 class AssignmentService
 {
@@ -40,6 +41,7 @@ class AssignmentService
      * @throws \App\Exceptions\Service\Allocation\InvalidPortMappingException
      * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
      * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
+     * @throws \App\Exceptions\Service\Allocation\PortConflictOnSameNetworkException
      */
     public function handle(Node $node, array $data, ?Server $server = null): array
     {
@@ -101,6 +103,21 @@ class AssignmentService
                 }
 
                 foreach ($newAllocations as $newAllocation) {
+                    // Check for port conflicts on the same network before creating the allocation
+                    $conflictingAllocation = Allocation::getPortConflictOnSameNetwork(
+                        $newAllocation['ip'],
+                        $newAllocation['port'],
+                        $newAllocation['node_id']
+                    );
+
+                    if ($conflictingAllocation) {
+                        throw new PortConflictOnSameNetworkException(
+                            $newAllocation['port'],
+                            $newAllocation['ip'],
+                            $conflictingAllocation->node_id
+                        );
+                    }
+
                     $allocation = Allocation::query()->create($newAllocation);
                     $ids[] = $allocation->id;
                 }

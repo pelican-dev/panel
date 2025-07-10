@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use App\Exceptions\Service\Allocation\ServerUsingAllocationException;
+use App\Exceptions\Service\Allocation\PortConflictOnSameNetworkException;
 use App\Traits\HasValidation;
+use App\Rules\UniquePortOnSameNetwork;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use IPTools\Network;
 
 /**
  * App\Models\Allocation.
@@ -67,6 +70,36 @@ class Allocation extends Model
         'notes' => ['nullable', 'string', 'max:256'],
     ];
 
+    /**
+     * Returns the rules associated with the model, specifically for creating or updating.
+     *
+     * @return array<array-key, string[]|ValidationRule[]>
+     */
+    public static function getRules(): array
+    {
+        $rules = self::getValidationRules();
+        
+        // Add the custom validation rule for port conflicts on the same network
+        $rules['port'][] = new UniquePortOnSameNetwork();
+        
+        return $rules;
+    }
+
+    /**
+     * Returns the rules associated with the model, specifically for updating the given model.
+     *
+     * @return array<array-key, string[]|ValidationRule[]>
+     */
+    public static function getRulesForUpdate(self $model): array
+    {
+        $rules = self::getValidationRules();
+        
+        // For updates, we need to pass the current model ID to ignore it in validation
+        $rules['port'][] = new UniquePortOnSameNetwork($model->id);
+        
+        return $rules;
+    }
+
     protected static function booted(): void
     {
         static::deleting(function (self $allocation) {
@@ -121,5 +154,81 @@ class Allocation extends Model
     public function node(): BelongsTo
     {
         return $this->belongsTo(Node::class);
+    }
+
+    /**
+     * Check if there's a port conflict with another allocation on the same network.
+     * This method determines if nodes are on the same network by checking if their
+     * IP addresses fall within the same subnet.
+     *
+     * @param string $ip The IP address to check
+     * @param int $port The port to check
+     * @param int $nodeId The node ID to exclude from the check (current node)
+     * @return bool True if there's a conflict, false otherwise
+     */
+    public static function hasPortConflictOnSameNetwork(string $ip, int $port, int $nodeId): bool
+    {
+        // Get all allocations with the same port
+        $conflictingAllocations = static::query()
+            ->where('port', $port)
+            ->where('node_id', '!=', $nodeId)
+            ->get();
+
+        foreach ($conflictingAllocations as $allocation) {
+            // Check if the IPs are on the same network by comparing their subnets
+            if (static::areIpsOnSameNetwork($ip, $allocation->ip)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the conflicting allocation details for a port conflict on the same network.
+     *
+     * @param string $ip The IP address to check
+     * @param int $port The port to check
+     * @param int $nodeId The node ID to exclude from the check (current node)
+     * @return \App\Models\Allocation|null The conflicting allocation or null if no conflict
+     */
+    public static function getPortConflictOnSameNetwork(string $ip, int $port, int $nodeId): ?self
+    {
+        $conflictingAllocations = static::query()
+            ->where('port', $port)
+            ->where('node_id', '!=', $nodeId)
+            ->get();
+
+        foreach ($conflictingAllocations as $allocation) {
+            if (static::areIpsOnSameNetwork($ip, $allocation->ip)) {
+                return $allocation;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Determine if two IP addresses are on the same network by checking if they
+     * fall within the same subnet. This method handles both IPv4 and IPv6 addresses.
+     *
+     * @param string $ip1 First IP address
+     * @param string $ip2 Second IP address
+     * @return bool True if the IPs are on the same network, false otherwise
+     */
+    public static function areIpsOnSameNetwork(string $ip1, string $ip2): bool
+    {
+        try {
+            // For IPv4 addresses, we'll use a /24 subnet as a reasonable default
+            // This can be adjusted based on your network configuration
+            $network1 = Network::parse($ip1 . '/24');
+            $network2 = Network::parse($ip2 . '/24');
+
+            // Use loose comparison because getNetwork() returns objects
+            return $network1->getNetwork() == $network2->getNetwork();
+        } catch (\Exception $e) {
+            // If we can't parse the IPs, assume they're not on the same network
+            return false;
+        }
     }
 }
