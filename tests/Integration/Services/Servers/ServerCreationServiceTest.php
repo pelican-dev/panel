@@ -116,6 +116,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
         $this->assertInstanceOf(Server::class, $response);
         $this->assertNotNull($response->uuid);
         $this->assertSame($response->uuid_short, substr($response->uuid, 0, 8));
+        $this->assertSame($node->id, $response->node_id);
         $this->assertSame($egg->id, $response->egg_id);
         $this->assertCount(2, $response->variables);
         $this->assertSame('123', $response->variables()->firstWhere('env_variable', 'BUNGEE_VERSION')->server_value);
@@ -153,7 +154,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
         /** @var \App\Models\Node $node */
         $node = Node::factory()->create();
 
-        $deployment = (new DeploymentObject())->setNode($node);
+        $deployment = new DeploymentObject();
 
         $egg = $this->cloneEggAndVariables($this->bungeecord);
         // We want to make sure that the validator service runs as an admin, and not as a regular
@@ -204,6 +205,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
         $this->assertInstanceOf(Server::class, $response);
         $this->assertNotNull($response->uuid);
         $this->assertSame($response->uuid_short, substr($response->uuid, 0, 8));
+        $this->assertSame($node->id, $response->node_id);
         $this->assertSame($egg->id, $response->egg_id);
         $this->assertCount(2, $response->variables);
         $this->assertSame('123', $response->variables()->firstWhere('env_variable', 'BUNGEE_VERSION')->server_value);

@@ -67,19 +67,35 @@ class ServerCreationService
         $data['image'] = $data['image'] ?? collect($egg->docker_images)->first();
         $data['startup'] = $data['startup'] ?? $egg->startup;
 
-        // If a deployment object has been passed we need to get the allocation
-        // that the server should use, and assign the node from that allocation.
+        // If a deployment object has been passed we need to get the allocation and node that the server should use.
         if ($deployment) {
-            $allocation = $this->configureDeployment($data, $deployment);
+            $nodes = $this->findViableNodesService->handle(
+                Arr::get($data, 'memory', 0),
+                Arr::get($data, 'disk', 0),
+                Arr::get($data, 'cpu', 0),
+                $deployment->getTags(),
+            )->pluck('id');
 
-            if ($allocation) {
+            if ($nodes->isEmpty()) {
+                throw new NoViableNodeException(trans('exceptions.deployment.no_viable_nodes'));
+            }
+
+            $ports = $deployment->getPorts();
+            if (!empty($ports)) {
+                $allocation = $this->allocationSelectionService->setDedicated($deployment->isDedicated())
+                    ->setNodes($nodes->toArray())
+                    ->setPorts($ports)
+                    ->handle();
+
                 $data['allocation_id'] = $allocation->id;
-                // Auto-configure the node based on the selected allocation
-                // if no node was defined.
                 $data['node_id'] = $allocation->node_id;
             }
-            $data['node_id'] ??= $deployment->getNode()->id;
+
+            if (empty($data['node_id'])) {
+                $data['node_id'] = $nodes->first();
+            }
         }
+
         Assert::false(empty($data['node_id']), 'Expected a non-empty node_id in server creation data.');
 
         $eggVariableData = $this->validatorService
@@ -116,39 +132,6 @@ class ServerCreationService
         }
 
         return $server;
-    }
-
-    /**
-     * Gets an allocation to use for automatic deployment.
-     *
-     * @param  array{memory?: ?int, disk?: ?int, cpu?: ?int, tags?: ?string[]}  $data
-     *
-     * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
-     * @throws \App\Exceptions\Service\Deployment\NoViableNodeException
-     */
-    private function configureDeployment(array $data, DeploymentObject $deployment): ?Allocation
-    {
-        $nodes = $this->findViableNodesService->handle(
-            Arr::get($data, 'memory', 0),
-            Arr::get($data, 'disk', 0),
-            Arr::get($data, 'cpu', 0),
-            $deployment->getTags(),
-        );
-
-        $availableNodes = $nodes->pluck('id');
-
-        if ($availableNodes->isEmpty()) {
-            throw new NoViableNodeException(trans('exceptions.deployment.no_viable_nodes'));
-        }
-
-        if (!$deployment->getPorts()) {
-            return null;
-        }
-
-        return $this->allocationSelectionService->setDedicated($deployment->isDedicated())
-            ->setNodes($availableNodes->toArray())
-            ->setPorts($deployment->getPorts())
-            ->handle();
     }
 
     /**
