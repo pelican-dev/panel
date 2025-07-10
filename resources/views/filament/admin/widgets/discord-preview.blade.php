@@ -122,7 +122,7 @@
             @endif
         </div>
 
-        <div class="flex flex-col flex-grow">
+        <div class="flex flex-col grow">
             <div class="flex items-center space-x-2">
                 <h1 class="font-bold text-white name">{{ data_get($sender, 'name') }}</h1>
                 @if(!data_get($sender, 'human'))

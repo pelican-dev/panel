@@ -54,7 +54,7 @@
 
 <body class="fi-body min-h-screen bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white">
 <div class="fi-simple-layout flex min-h-screen flex-col items-center">
-    <div class="fi-simple-main-ctn flex w-full flex-grow items-center justify-center">
+    <div class="fi-simple-main-ctn flex w-full grow items-center justify-center">
         <main
             class="fi-simple-main my-16 w-full bg-white px-6 py-12 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 sm:rounded-xl sm:px-12 sm:max-w-lg">
             <div class="fi-simple-page">

@@ -11,7 +11,7 @@
         <x-filament::icon :icon="$icon" class="h-8 w-8 mr-2" color="{{$alertBanner->getStatus()}}" />
     @endif
 
-    <div class="flex flex-col flex-grow">
+    <div class="flex flex-col grow">
         @if (filled($title))
             <p class="font-bold">{{str($title)->sanitizeHtml()->toHtmlString()}}</p>
         @endif
