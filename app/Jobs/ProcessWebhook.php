@@ -57,8 +57,7 @@ class ProcessWebhook implements ShouldQueue
             $customHeaders = $this->webhookConfiguration->headers;
             if ($this->webhookConfiguration->type === WebhookType::Regular && empty($customHeaders)) {
                 $headers = ['X-Webhook-Event' => $this->eventName];
-            }
-            else {
+            } else {
                 $headers = $customHeaders;
             }
 
