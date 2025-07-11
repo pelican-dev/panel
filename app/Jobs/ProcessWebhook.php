@@ -28,7 +28,7 @@ class ProcessWebhook implements ShouldQueue
 
     public function handle(): void
     {
-        $data = $this->data[0];
+        $data = reset($this->data[0]);
 
         if ($this->webhookConfiguration->type === WebhookType::Discord) {
             $data = array_merge(
