@@ -58,6 +58,9 @@ class ProcessWebhook implements ShouldQueue
             if ($this->webhookConfiguration->type === WebhookType::Regular && empty($customHeaders)) {
                 $headers = ['X-Webhook-Event' => $this->eventName];
             }
+            else {
+                $headers = $customHeaders;
+            }
 
             Http::withHeaders($headers)->post($this->webhookConfiguration->endpoint, $data)->throw();
             $successful = now();
