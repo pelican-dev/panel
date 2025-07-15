@@ -22,7 +22,8 @@ class SendPowerRequest extends ClientApiRequest
                 return Permission::ACTION_CONTROL_RESTART;
         }
 
-        return '__invalid';
+        // Fallback for invalid signals
+        return Permission::ACTION_WEBSOCKET_CONNECT;
     }
 
     /**
