@@ -43,6 +43,8 @@ class Backup extends Model implements Validatable
 
     public const ADAPTER_AWS_S3 = 's3';
 
+    public const ADAPTER_RESTIC = 'restic';
+
     protected $attributes = [
         'is_successful' => false,
         'is_locked' => false,

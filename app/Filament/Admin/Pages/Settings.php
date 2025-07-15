@@ -461,6 +461,7 @@ class Settings extends Page implements HasForms
                 ->options([
                     Backup::ADAPTER_DAEMON => 'Wings',
                     Backup::ADAPTER_AWS_S3 => 'S3',
+                    Backup::ADAPTER_RESTIC => 'Restic',
                 ])
                 ->live()
                 ->default(env('APP_BACKUP_DRIVER', config('backups.default'))),
@@ -482,9 +483,25 @@ class Settings extends Page implements HasForms
                         ->suffix('Seconds')
                         ->default(config('backups.throttles.period')),
                 ]),
+            Section::make(trans('admin/setting.backup.restic.restic_title'))
+                ->columns()
+                ->visible(fn (Get $get) => $get('APP_BACKUP_DRIVER') === Backup::ADAPTER_RESTIC)
+                ->schema([
+                    TextInput::make('RESTIC_REPOSITORY')
+                        ->label(trans('admin/setting.backup.restic.repository'))
+                        ->required(fn (Get $get) => $get('RESTIC_USE_S3') === false)
+                        ->visible(fn (Get $get) => $get('RESTIC_USE_S3') === false),
+                    TextInput::make('RESTIC_PASSWORD')
+                        ->label(trans('admin/setting.backup.restic.password'))
+                        ->default(config('backups.disks.restic.password')),
+                    Toggle::make('RESTIC_USE_S3')
+                        ->label(trans('admin/setting.backup.restic.use_s3'))
+                        ->live()
+                        ->default(false),
+                ]),
             Section::make(trans('admin/setting.backup.s3.s3_title'))
                 ->columns()
-                ->visible(fn (Get $get) => $get('APP_BACKUP_DRIVER') === Backup::ADAPTER_AWS_S3)
+                ->visible(fn (Get $get) => $get('APP_BACKUP_DRIVER') === Backup::ADAPTER_AWS_S3 || ($get('APP_BACKUP_DRIVER') === Backup::ADAPTER_RESTIC && $get('RESTIC_USE_S3')))
                 ->schema([
                     TextInput::make('AWS_DEFAULT_REGION')
                         ->label(trans('admin/setting.backup.s3.default_region'))

@@ -21,7 +21,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 # Copy bare minimum to install Composer dependencies
 COPY composer.json composer.lock ./
 
-RUN composer install --no-dev --no-interaction --no-autoloader --no-scripts
+RUN composer install --no-interaction --no-autoloader --no-scripts
 
 # ================================
 # Stage 1-2: Yarn Install

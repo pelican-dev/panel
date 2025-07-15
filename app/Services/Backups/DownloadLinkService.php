@@ -31,6 +31,7 @@ class DownloadLinkService
             ->setClaims([
                 'backup_uuid' => $backup->uuid,
                 'server_uuid' => $backup->server->uuid,
+                'disk' => $backup->disk,
             ])
             ->handle($backup->server->node, $user->id . $backup->server->uuid);
 

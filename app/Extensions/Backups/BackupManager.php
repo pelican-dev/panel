@@ -2,6 +2,8 @@
 
 namespace App\Extensions\Backups;
 
+use App\Extensions\Filesystem\ResticFilesystem;
+use App\Models\Backup;
 use Closure;
 use Aws\S3\S3Client;
 use Illuminate\Support\Arr;
@@ -75,7 +77,13 @@ class BackupManager
 
         $adapterMethod = 'create' . Str::studly($adapter) . 'Adapter';
         if (method_exists($this, $adapterMethod)) {
-            $instance = $this->{$adapterMethod}($config);
+            // Special handling for Restic adapter, which requires S3 configuration.
+            if ($name === Backup::ADAPTER_RESTIC) {
+                $s3Config = $this->getConfig(Backup::ADAPTER_AWS_S3);
+                $instance = $this->{$adapterMethod}($config, $s3Config);
+            } else {
+                $instance = $this->{$adapterMethod}($config);
+            }
 
             Assert::isInstanceOf($instance, FilesystemAdapter::class);
 
@@ -121,6 +129,17 @@ class BackupManager
         $client = new S3Client($config);
 
         return new S3Filesystem($client, $config['bucket'], $config['prefix'] ?? '', $config['options'] ?? []);
+    }
+
+    /**
+     * Creates a new Restic adapter.
+     *
+     * @param  array<string, string>  $resticConfig
+     * @param  array<string, string>  $s3Config
+     */
+    public function createResticAdapter(array $resticConfig, array $s3Config): FilesystemAdapter
+    {
+        return new ResticFilesystem($resticConfig, $s3Config);
     }
 
     /**

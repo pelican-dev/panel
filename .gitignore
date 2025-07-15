@@ -27,3 +27,4 @@ public/assets/manifest.json
 filament-monaco-editor/
 _ide_helper*
 /.phpstorm.meta.php
+pelican-data/

@@ -86,6 +86,13 @@ return [
             'endpoint' => 'Endpoint',
             'use_path_style_endpoint' => 'Use Path Style Endpoint',
         ],
+        'restic' => [
+            'restic_title' => 'Restic Configuration',
+            'repository' => 'The path to the Restic repository',
+            'password' => 'The password for the Restic repository',
+            'retry_lock_seconds' => 'The time after which restic should try to get a lock again.',
+            'use_s3' => 'Should Restic use S3?',
+        ],
     ],
     'oauth' => [
         'enable' => 'Enable',

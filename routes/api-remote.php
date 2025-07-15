@@ -25,6 +25,7 @@ Route::prefix('/servers/{server:uuid}')->group(function () {
 
 Route::prefix('/backups')->group(function () {
     Route::get('/{backup:uuid}', Remote\Backups\BackupRemoteUploadController::class);
+    Route::get('/{backup:uuid}/restic', Remote\Backups\BackupRemoteResticDetailsController::class);
     Route::post('/{backup:uuid}', [Remote\Backups\BackupStatusController::class, 'index']);
     Route::post('/{backup:uuid}/restore', [Remote\Backups\BackupStatusController::class, 'restore']);
 });
