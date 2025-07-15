@@ -56,7 +56,7 @@ class PluginResource extends Resource
                     ->visible(fn (Plugin $plugin) => $plugin->url)
                     ->url(fn (Plugin $plugin) => $plugin->url, true),
                 Action::make('settings')
-                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
+                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
                     ->icon('tabler-settings')
                     ->color('primary')
                     ->visible(fn (Plugin $plugin) => $plugin->isEnabled() && $plugin->hasSettings())
@@ -64,7 +64,7 @@ class PluginResource extends Resource
                     ->action(fn (array $data, Plugin $plugin) => $plugin->saveSettings($data))
                     ->slideOver(),
                 Action::make('install')
-                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
+                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
                     ->icon('tabler-terminal')
                     ->color('success')
                     ->hidden(fn (Plugin $plugin) => $plugin->isInstalled())
@@ -80,7 +80,7 @@ class PluginResource extends Resource
                     }),
                 // TODO: "update" button
                 Action::make('enable')
-                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
+                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
                     ->icon('tabler-check')
                     ->color('success')
                     ->visible(fn (Plugin $plugin) => $plugin->canEnable())
@@ -95,7 +95,7 @@ class PluginResource extends Resource
                             ->send();
                     }),
                 Action::make('disable')
-                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update plugin', $plugin))
+                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
                     ->icon('tabler-x')
                     ->color('danger')
                     ->visible(fn (Plugin $plugin) => $plugin->canDisable())
