@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Permission;
 use App\Models\Server;
 use App\Models\User;
 
@@ -21,15 +22,17 @@ class ServerPolicy
             return null;
         }
 
-        // Owner has full server permissions
-        if ($server->owner_id === $user->id) {
-            return true;
-        }
+        if (Permission::permissionKeys()->contains($ability)) {
+            // Owner has full server permissions
+            if ($server->owner_id === $user->id) {
+                return true;
+            }
 
-        $subuser = $server->subusers->where('user_id', $user->id)->first();
-        // If the user is a subuser check their permissions
-        if ($subuser && in_array($ability, $subuser->permissions)) {
-            return true;
+            $subuser = $server->subusers->where('user_id', $user->id)->first();
+            // If the user is a subuser check their permissions
+            if ($subuser && in_array($ability, $subuser->permissions)) {
+                return true;
+            }
         }
 
         // Make sure user can target node of the server
