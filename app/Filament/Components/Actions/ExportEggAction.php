@@ -19,7 +19,7 @@ class ExportEggAction extends Action
 
         $this->label(trans('filament-actions::export.modal.actions.export.label'));
 
-        $this->icon('tabler-download');
+        $this->tableIcon('tabler-download');
 
         $this->authorize(fn () => auth()->user()->can('export egg'));
 
