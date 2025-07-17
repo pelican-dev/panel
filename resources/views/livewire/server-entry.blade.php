@@ -8,6 +8,18 @@
 
     <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
         <div class="flex items-center mb-5 gap-2">
+            <x-filament::icon-button
+                :icon="$server->condition->getIcon()"
+                :color="$server->condition->getColor()"
+                :tooltip="$server->condition->getLabel()"
+                size="lg"
+            />
+            <h2 class="text-xl font-bold">
+                {{ $server->name }}
+                <span class="dark:text-gray-400">
+                    ({{ $server->formatResource('uptime', type: \App\Enums\ServerResourceType::Time) }})
+                </span>
+            </h2>
             <div class="end-0" x-on:click.stop>
                 <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1">
                     <x-filament-tables::actions
@@ -17,13 +29,6 @@
                     />
                 </div>
             </div>
-
-            <h2 class="text-xl font-bold">
-                {{ $server->name }}
-                <span class="dark:text-gray-400">
-                    ({{ $server->formatResource('uptime', type: \App\Enums\ServerResourceType::Time) }})
-                </span>
-            </h2>
         </div>
 
         <div class="flex justify-between text-center items-center gap-4">

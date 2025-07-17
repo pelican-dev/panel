@@ -256,9 +256,9 @@ class ListServers extends ListRecords
         } else {
             return [
                 ActionGroup::make($actions)
-                    ->icon(fn (Server $server) => $server->condition->getIcon())
-                    ->color(fn (Server $server) => $server->condition->getColor())
-                    ->tooltip(fn (Server $server) => $server->condition->getLabel())
+                    ->icon('tabler-power')
+                    ->color('primary')
+                    ->tooltip('Power Actions')
                     ->iconSize(IconSize::Large),
             ];
         }
