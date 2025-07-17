@@ -191,7 +191,6 @@ class WebhookResource extends Resource
                 ->default(fn () => [
                     'X-Webhook-Event' => '{{event}}',
                 ]),
-
         ];
     }
 
