@@ -19,6 +19,7 @@ return [
     'headers' => 'Headers',
     'events' => 'Events',
     'regular' => 'Regular',
+    'reset_headers' => 'Reset Headers',
     'discord' => 'Discord',
     'discord_message' => [
         'profile' => 'Profile',
