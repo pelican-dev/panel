@@ -56,9 +56,4 @@ abstract class BaseSchema
                 ->default(env("CAPTCHA_{$id}_SECRET_KEY")),
         ];
     }
-
-    public function verifyDomain(string $hostname, ?string $requestUrl = null): bool
-    {
-        return true;
-    }
 }

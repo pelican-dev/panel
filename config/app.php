@@ -16,4 +16,6 @@ return [
         'report_all' => env('APP_REPORT_ALL_EXCEPTIONS', false),
     ],
 
+    'fallback_locale' => 'en',
+
 ];

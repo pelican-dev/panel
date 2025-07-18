@@ -52,11 +52,11 @@ class AdminPanelProvider extends PanelProvider
                     ->sort(24),
             ])
             ->navigationGroups([
-                NavigationGroup::make(trans('admin/dashboard.server'))
+                NavigationGroup::make(fn () => trans('admin/dashboard.server'))
                     ->collapsible(false),
-                NavigationGroup::make(trans('admin/dashboard.user'))
+                NavigationGroup::make(fn () => trans('admin/dashboard.user'))
                     ->collapsible(false),
-                NavigationGroup::make(trans('admin/dashboard.advanced')),
+                NavigationGroup::make(fn () => trans('admin/dashboard.advanced')),
             ])
             ->sidebarCollapsibleOnDesktop()
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
