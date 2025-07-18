@@ -14,6 +14,12 @@ use App\Http\Requests\Api\Application\Mounts\StoreMountRequest;
 use App\Http\Requests\Api\Application\Mounts\DeleteMountRequest;
 use App\Http\Requests\Api\Application\Mounts\UpdateMountRequest;
 use App\Exceptions\Service\HasActiveServersException;
+use App\Http\Requests\Api\Application\Eggs\GetEggsRequest;
+use App\Http\Requests\Api\Application\Nodes\GetNodesRequest;
+use App\Http\Requests\Api\Application\Servers\GetServerRequest;
+use App\Transformers\Api\Application\EggTransformer;
+use App\Transformers\Api\Application\NodeTransformer;
+use App\Transformers\Api\Application\ServerTransformer;
 
 class MountController extends ApplicationApiController
 {
@@ -26,7 +32,7 @@ class MountController extends ApplicationApiController
      */
     public function index(GetMountRequest $request): array
     {
-        $mounts = QueryBuilder::for(Mount::query())
+        $mounts = QueryBuilder::for(Mount::class)
             ->allowedFilters(['uuid', 'name'])
             ->allowedSorts(['id', 'uuid'])
             ->paginate($request->query('per_page') ?? 50);
@@ -114,6 +120,42 @@ class MountController extends ApplicationApiController
     }
 
     /**
+     * List assigned eggs
+     *
+     * @return array<array-key, mixed>
+     */
+    public function getEggs(GetEggsRequest $request, Mount $mount): array
+    {
+        return $this->fractal->collection($mount->eggs)
+            ->transformWith($this->getTransformer(EggTransformer::class))
+            ->toArray();
+    }
+
+    /**
+     * List assigned nodes
+     *
+     * @return array<array-key, mixed>
+     */
+    public function getNodes(GetNodesRequest $request, Mount $mount): array
+    {
+        return $this->fractal->collection($mount->nodes)
+            ->transformWith($this->getTransformer(NodeTransformer::class))
+            ->toArray();
+    }
+
+    /**
+     * List assigned servers
+     *
+     * @return array<array-key, mixed>
+     */
+    public function getServers(GetServerRequest $request, Mount $mount): array
+    {
+        return $this->fractal->collection($mount->servers)
+            ->transformWith($this->getTransformer(ServerTransformer::class))
+            ->toArray();
+    }
+
+    /**
      * Assign eggs to mount
      *
      * Adds eggs to the mount's many-to-many relation.
@@ -123,13 +165,11 @@ class MountController extends ApplicationApiController
     public function addEggs(Request $request, Mount $mount): array
     {
         $validatedData = $request->validate([
-            'eggs' => 'required|exists:eggs,id',
+            'eggs' => 'required|array|exists:eggs,id',
+            'eggs.*' => 'integer',
         ]);
 
-        $eggs = $validatedData['eggs'] ?? [];
-        if (count($eggs) > 0) {
-            $mount->eggs()->attach($eggs);
-        }
+        $mount->eggs()->attach($validatedData['eggs']);
 
         return $this->fractal->item($mount)
             ->transformWith($this->getTransformer(MountTransformer::class))
@@ -137,7 +177,7 @@ class MountController extends ApplicationApiController
     }
 
     /**
-     * Assign mounts to mount
+     * Assign nodes to mount
      *
      * Adds nodes to the mount's many-to-many relation.
      *
@@ -145,12 +185,33 @@ class MountController extends ApplicationApiController
      */
     public function addNodes(Request $request, Mount $mount): array
     {
-        $data = $request->validate(['nodes' => 'required|exists:nodes,id']);
+        $validatedData = $request->validate([
+            'nodes' => 'required|array|exists:nodes,id',
+            'nodes.*' => 'integer',
+        ]);
 
-        $nodes = $data['nodes'] ?? [];
-        if (count($nodes) > 0) {
-            $mount->nodes()->attach($nodes);
-        }
+        $mount->nodes()->attach($validatedData['nodes']);
+
+        return $this->fractal->item($mount)
+            ->transformWith($this->getTransformer(MountTransformer::class))
+            ->toArray();
+    }
+
+    /**
+     * Assign servers to mount
+     *
+     * Adds servers to the mount's many-to-many relation.
+     *
+     * @return array<array-key, mixed>
+     */
+    public function addServers(Request $request, Mount $mount): array
+    {
+        $validatedData = $request->validate([
+            'servers' => 'required|array|exists:servers,id',
+            'servers.*' => 'integer',
+        ]);
+
+        $mount->servers()->attach($validatedData['servers']);
 
         return $this->fractal->item($mount)
             ->transformWith($this->getTransformer(MountTransformer::class))
@@ -177,6 +238,18 @@ class MountController extends ApplicationApiController
     public function deleteNode(Mount $mount, int $node_id): JsonResponse
     {
         $mount->nodes()->detach($node_id);
+
+        return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Unassign server from mount
+     *
+     * Deletes a server from the mount's many-to-many relation.
+     */
+    public function deleteServer(Mount $mount, int $server_id): JsonResponse
+    {
+        $mount->servers()->detach($server_id);
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
     }
