@@ -26,7 +26,7 @@ class MountController extends ApplicationApiController
      */
     public function index(GetMountRequest $request): array
     {
-        $mounts = QueryBuilder::for(Mount::query())
+        $mounts = QueryBuilder::for(Mount::class)
             ->allowedFilters(['uuid', 'name'])
             ->allowedSorts(['id', 'uuid'])
             ->paginate($request->query('per_page') ?? 50);
