@@ -6,13 +6,19 @@ use Carbon\Carbon;
 use App\Models\Egg;
 use Illuminate\Support\Collection;
 use App\Models\EggVariable;
+use InvalidArgumentException;
+use Symfony\Component\Yaml\Yaml;
 
 class EggExporterService
 {
     /**
-     * Return a JSON representation of an egg and its variables.
+     * Return a JSON or YAML representation of an egg and its variables.
+     *
+     * @param  string  $format  Either 'json' or 'yaml'
+     *
+     * @throws InvalidArgumentException
      */
-    public function handle(int $egg): string
+    public function handle(int $egg, string $format = 'json'): string
     {
         $egg = Egg::with(['scriptFrom', 'configFrom', 'variables'])->findOrFail($egg);
 
@@ -30,9 +36,7 @@ class EggExporterService
             'tags' => $egg->tags,
             'features' => $egg->features,
             'docker_images' => $egg->docker_images,
-            'file_denylist' => Collection::make($egg->inherit_file_denylist)->filter(function ($value) {
-                return !empty($value);
-            }),
+            'file_denylist' => Collection::make($egg->inherit_file_denylist)->filter(fn ($v) => !empty($v))->values(),
             'startup' => $egg->startup,
             'config' => [
                 'files' => $egg->inherit_config_files,
@@ -50,9 +54,13 @@ class EggExporterService
             'variables' => $egg->variables->map(function (EggVariable $eggVariable) {
                 return Collection::make($eggVariable->toArray())
                     ->except(['id', 'egg_id', 'created_at', 'updated_at']);
-            }),
+            })->values()->toArray(),
         ];
 
-        return json_encode($struct, JSON_PRETTY_PRINT);
+        return match (strtolower($format)) {
+            'json' => json_encode($struct, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+            'yaml' => Yaml::dump($struct, 4, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK),
+            default => throw new InvalidArgumentException("Unsupported export format: {$format}"),
+        };
     }
 }
