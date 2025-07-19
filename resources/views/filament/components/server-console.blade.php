@@ -90,7 +90,9 @@
 
         terminal.open(document.getElementById('terminal'));
 
-        fitAddon.fit(); //Fit on first load
+        window.addEventListener('load', () => {
+            fitAddon.fit();
+        });
 
         window.addEventListener('resize', () => {
             fitAddon.fit();
