@@ -1,7 +1,7 @@
 _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
   version: PLCN_v2
-  update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/rust/egg-rust.json'
+  update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/rust/egg-rust.yaml'
 exported_at: '2025-07-19T16:37:09+00:00'
 name: Rust
 author: panel@example.com
