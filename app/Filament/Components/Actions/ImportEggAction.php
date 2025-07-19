@@ -47,13 +47,31 @@ class ImportEggAction extends Action
 
             foreach ($eggs as $egg) {
                 if ($egg instanceof TemporaryUploadedFile) {
-                    $name = str($egg->getClientOriginalName())->afterLast('egg-')->before('.json')->headline();
+                    $originalName = $egg->getClientOriginalName();
+                    $filename = str($originalName)->afterLast('egg-');
+                    $ext = str($originalName)->afterLast('.')->lower();
+
+                    $name = match ($ext) {
+                        'json' => $filename->before('.json')->headline(),
+                        'yaml' => $filename->before('.yaml')->headline(),
+                        'yml' => $filename->before('.yml')->headline(),
+                        default => $filename->headline(),
+                    };
                     $method = 'fromFile';
                 } else {
                     $egg = str($egg);
                     $egg = $egg->contains('github.com') ? $egg->replaceFirst('blob', 'raw') : $egg;
-                    $name = $egg->afterLast('/egg-')->before('.json')->headline();
                     $method = 'fromUrl';
+
+                    $filename = $egg->afterLast('/egg-');
+                    $ext = $filename->afterLast('.')->lower();
+
+                    $name = match ($ext) {
+                        'json' => $filename->before('.json')->headline(),
+                        'yaml' => $filename->before('.yaml')->headline(),
+                        'yml' => $filename->before('.yml')->headline(),
+                        default => $filename->headline(),
+                    };
                 }
                 try {
                     $eggImportService->$method($egg);
@@ -94,7 +112,7 @@ class ImportEggAction extends Action
                             FileUpload::make('files')
                                 ->label(trans('admin/egg.model_label'))
                                 ->hint(trans('admin/egg.import.egg_help'))
-                                ->acceptedFileTypes(['application/json'])
+                                ->acceptedFileTypes(['application/json', 'application/x-yaml', 'text/yaml', 'text/x-yaml'])
                                 ->preserveFilenames()
                                 ->previewable(false)
                                 ->storeFiles(false)
@@ -125,7 +143,7 @@ class ImportEggAction extends Action
                                 }),
                             Repeater::make('urls')
                                 ->label('')
-                                ->itemLabel(fn (array $state) => str($state['url'])->afterLast('/egg-')->before('.json')->headline())
+                                ->itemLabel(fn (array $state) => str($state['url'])->afterLast('/egg-')->headline())
                                 ->hint(trans('admin/egg.import.url_help'))
                                 ->addActionLabel(trans('admin/egg.import.add_url'))
                                 ->grid($isMultiple ? 2 : null)
