@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\ServerResource\Pages;
 
+use Filament\Support\Enums\TextSize;
 use App\Enums\ServerResourceType;
 use App\Filament\App\Resources\ServerResource;
 use App\Filament\Components\Tables\Columns\ServerEntryColumn;
@@ -14,7 +15,6 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Infolists\Components\TextEntry\TextEntrySize;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -71,7 +71,7 @@ class ListServers extends ListRecords
                 ->alignCenter()
                 ->default('unknown')
                 ->wrap()
-                ->size(TextEntrySize::Medium)
+                ->size(TextSize::Medium)
                 ->badge()
                 ->tooltip(fn (Server $server) => $server->formatResource('uptime', type: ServerResourceType::Time))
                 ->icon(fn (Server $server) => $server->condition->getIcon())
@@ -80,7 +80,7 @@ class ListServers extends ListRecords
                 ->label('Server')
                 ->description(fn (Server $server) => $server->description)
                 ->grow()
-                ->size(TextEntrySize::Medium)
+                ->size(TextSize::Medium)
                 ->searchable(),
             TextColumn::make('allocation.address')
                 ->label('')
@@ -90,7 +90,7 @@ class ListServers extends ListRecords
                 ->state(fn (Server $server) => $server->allocation->address ?? 'None'),
             TextColumn::make('cpuUsage')
                 ->label('Resources')
-                ->size(TextEntrySize::Medium)
+                ->size(TextSize::Medium)
                 ->icon('tabler-cpu')
                 ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('cpu', limit: true, type: ServerResourceType::Percentage, precision: 0))
                 ->state(fn (Server $server) => $server->formatResource('cpu_absolute', type: ServerResourceType::Percentage))
@@ -98,14 +98,14 @@ class ListServers extends ListRecords
             TextColumn::make('memoryUsage')
                 ->label('')
                 ->icon('tabler-device-desktop-analytics')
-                ->size(TextEntrySize::Medium)
+                ->size(TextSize::Medium)
                 ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('memory', limit: true))
                 ->state(fn (Server $server) => $server->formatResource('memory_bytes'))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'memory')),
             TextColumn::make('diskUsage')
                 ->label('')
                 ->icon('tabler-device-sd-card')
-                ->size(TextEntrySize::Medium)
+                ->size(TextSize::Medium)
                 ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('disk', limit: true))
                 ->state(fn (Server $server) => $server->formatResource('disk_bytes'))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'disk')),
