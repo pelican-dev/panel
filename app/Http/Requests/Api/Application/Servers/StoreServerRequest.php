@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Api\Application\Servers;
 
-use App\Models\Node;
 use App\Models\Server;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
@@ -177,11 +176,7 @@ class StoreServerRequest extends ApplicationApiRequest
         $object->setDedicated($this->input('deploy.dedicated_ip', false));
         $object->setTags($this->input('deploy.tags', $this->input('deploy.locations', [])));
         $object->setPorts($this->input('deploy.port_range', []));
-
-        $node = Node::find($this->input('deploy.node_id'));
-        if ($node) {
-            $object->setNode($node);
-        }
+        $object->setNode($this->input('deploy.node_id'));
 
         return $object;
     }
