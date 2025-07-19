@@ -36,7 +36,7 @@ class VariableValidatorService
 
         $data = $rules = $customAttributes = [];
         foreach ($variables as $variable) {
-            $data['environment'][$variable->env_variable] = array_get($fields, $variable->env_variable);
+            $data['environment'][$variable->env_variable] = $fields[$variable->env_variable] ?? $variable->default_value;
             $rules['environment.' . $variable->env_variable] = $variable->rules;
             $customAttributes['environment.' . $variable->env_variable] = trans('validation.internal.variable_value', ['env' => $variable->name]);
         }

@@ -13,7 +13,7 @@
                 :icon="$server->condition->getIcon()"
                 :color="$server->condition->getColor()"
                 :tooltip="$server->condition->getLabel()"
-                size="xl"
+                size="lg"
             />
             <h2 class="text-xl font-bold">
                 {{ $server->name }}
@@ -21,6 +21,15 @@
                     ({{ $server->formatResource('uptime', type: \App\Enums\ServerResourceType::Time) }})
                 </span>
             </h2>
+            <div class="end-0" x-on:click.stop>
+                <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1">
+                    <x-filament-tables::actions
+                        :actions="\App\Filament\App\Resources\ServerResource\Pages\ListServers::getPowerActions(view: 'grid')"
+                        :alignment="\Filament\Support\Enums\Alignment::Center"
+                        :record="$server"
+                    />
+                </div>
+            </div>
         </div>
 
         <div class="flex justify-between text-center items-center gap-4">

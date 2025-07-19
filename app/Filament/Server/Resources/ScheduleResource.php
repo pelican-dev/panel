@@ -7,6 +7,7 @@ use App\Filament\Server\Resources\ScheduleResource\Pages\CreateSchedule;
 use App\Filament\Server\Resources\ScheduleResource\Pages\ViewSchedule;
 use App\Filament\Server\Resources\ScheduleResource\Pages\EditSchedule;
 use App\Facades\Activity;
+use App\Filament\Components\Forms\Actions\CronPresetAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\ScheduleResource\RelationManagers\TasksRelationManager;
 use App\Helpers\Utilities;
@@ -19,7 +20,6 @@ use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use Carbon\Carbon;
 use Exception;
-use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -29,19 +29,21 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
-use Filament\Support\Enums\Operation;
+use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Schemas\Schema;
+use Illuminate\Support\HtmlString;
 use Throwable;
 
 class ScheduleResource extends Resource
@@ -85,44 +87,20 @@ class ScheduleResource extends Resource
     {
         return $schema
             ->columns([
-                'default' => 4,
-                'lg' => 5,
+                'default' => 1,
+                'lg' => 2,
             ])
             ->components([
                 TextInput::make('name')
-                    ->columnSpan([
-                        'default' => 4,
-                        'md' => 3,
-                        'lg' => 4,
-                    ])
                     ->label('Schedule Name')
                     ->placeholder('A human readable identifier for this schedule.')
                     ->autocomplete(false)
                     ->required(),
-                // TODO conditional ->hiddenOn, ->visibleOn appear broken?
-                //                ToggleButtons::make('Status')
-                //                    ->hiddenOn(Operation::Create)
-                //                    ->formatStateUsing(fn (Schedule $schedule) => !$schedule->is_active ? 'inactive' : ($schedule->is_processing ? 'processing' : 'active'))
-                //                    ->options(fn (Schedule $schedule) => !$schedule->is_active ? ['inactive' => 'Inactive'] : ($schedule->is_processing ? ['processing' => 'Processing'] : ['active' => 'Active']))
-                //                    ->colors([
-                //                        'inactive' => 'danger',
-                //                        'processing' => 'warning',
-                //                        'active' => 'success',
-                //                    ])
-                //                    ->columnSpan([
-                //                        'default' => 4,
-                //                        'md' => 1,
-                //                        'lg' => 1,
-                //                    ]),
                 Toggle::make('only_when_online')
                     ->label('Only when Server is Online?')
                     ->hintIconTooltip('Only execute this schedule when the server is in a running state.')
                     ->hintIcon('tabler-question-mark')
                     ->inline(false)
-                    ->columnSpan([
-                        'default' => 2,
-                        'lg' => 3,
-                    ])
                     ->required()
                     ->default(1),
                 Toggle::make('is_active')
@@ -130,97 +108,41 @@ class ScheduleResource extends Resource
                     ->hintIconTooltip('This schedule will be executed automatically if enabled.')
                     ->hintIcon('tabler-question-mark')
                     ->inline(false)
-                    ->columnSpan([
-                        'default' => 2,
-                        'lg' => 2,
-                    ])
+                    ->hiddenOn('view')
                     ->required()
                     ->default(1),
-                TextInput::make('cron_minute')
-                    ->columnSpan([
-                        'default' => 2,
-                        'lg' => 1,
+                ToggleButtons::make('Status')
+                    ->formatStateUsing(fn (Schedule $schedule) => !$schedule->is_active ? 'inactive' : ($schedule->is_processing ? 'processing' : 'active'))
+                    ->options(fn (Schedule $schedule) => !$schedule->is_active ? ['inactive' => 'Inactive'] : ($schedule->is_processing ? ['processing' => 'Processing'] : ['active' => 'Active']))
+                    ->colors([
+                        'inactive' => 'danger',
+                        'processing' => 'warning',
+                        'active' => 'success',
                     ])
-                    ->label('Minute')
-                    ->default('*/5')
-                    ->required(),
-                TextInput::make('cron_hour')
-                    ->columnSpan([
-                        'default' => 2,
-                        'lg' => 1,
-                    ])
-                    ->label('Hour')
-                    ->default('*')
-                    ->required(),
-                TextInput::make('cron_day_of_month')
-                    ->columnSpan([
-                        'default' => 2,
-                        'lg' => 1,
-                    ])
-                    ->label('Day of Month')
-                    ->default('*')
-                    ->required(),
-                TextInput::make('cron_month')
-                    ->columnSpan([
-                        'default' => 2,
-                        'lg' => 1,
-                    ])
-                    ->label('Month')
-                    ->default('*')
-                    ->required(),
-                TextInput::make('cron_day_of_week')
-                    ->columnSpan([
-                        'default' => 2,
-                        'lg' => 1,
-                    ])
-                    ->label('Day of Week')
-                    ->default('*')
-                    ->required(),
-                Section::make('Presets')
-                    ->hiddenOn('view')
-                    ->columns(1)
-                    ->columnSpanFull()
+                    ->visibleOn('view'),
+                Section::make('Cron')
+                    ->description(fn (Get $get) => new HtmlString('Please keep in mind that the cron inputs below always assume UTC.<br>Next run in your timezone (' . auth()->user()->timezone . '): <b>'. Utilities::getScheduleNextRunDate($get('cron_minute'), $get('cron_hour'), $get('cron_day_of_month'), $get('cron_month'), $get('cron_day_of_week'))->timezone(auth()->user()->timezone) . '</b>'))
                     ->schema([
                         Actions::make([
-                            Action::make('hourly')
-                                ->disabled(fn (string $operation) => $operation === 'view')
-                                ->action(function (Set $set) {
-                                    $set('cron_minute', '0');
-                                    $set('cron_hour', '*');
-                                    $set('cron_day_of_month', '*');
-                                    $set('cron_month', '*');
-                                    $set('cron_day_of_week', '*');
-                                }),
-                            Action::make('daily')
-                                ->disabled(fn (string $operation) => $operation === 'view')
-                                ->action(function (Set $set) {
-                                    $set('cron_minute', '0');
-                                    $set('cron_hour', '0');
-                                    $set('cron_day_of_month', '*');
-                                    $set('cron_month', '*');
-                                    $set('cron_day_of_week', '*');
-                                }),
-                            Action::make('weekly')
-                                ->disabled(fn (string $operation) => $operation === 'view')
-                                ->action(function (Set $set) {
-                                    $set('cron_minute', '0');
-                                    $set('cron_hour', '0');
-                                    $set('cron_day_of_month', '*');
-                                    $set('cron_month', '*');
-                                    $set('cron_day_of_week', '0');
-                                }),
-                            Action::make('monthly')
-                                ->disabled(fn (string $operation) => $operation === 'view')
-                                ->action(function (Set $set) {
-                                    $set('cron_minute', '0');
-                                    $set('cron_hour', '0');
-                                    $set('cron_day_of_month', '1');
-                                    $set('cron_month', '*');
-                                    $set('cron_day_of_week', '0');
-                                }),
-                            Action::make('every_x_minutes')
-                                ->disabled(fn (string $operation) => $operation === 'view')
-                                ->schema([
+                            CronPresetAction::make('hourly')
+                                ->cron('0', '*', '*', '*', '*'),
+                            CronPresetAction::make('daily')
+                                ->cron('0', '0', '*', '*', '*'),
+                            CronPresetAction::make('weekly_monday')
+                                ->label('Weekly (Monday)')
+                                ->cron('0', '0', '*', '*', '1'),
+                            CronPresetAction::make('weekly_sunday')
+                                ->label('Weekly (Sunday)')
+                                ->cron('0', '0', '*', '*', '0'),
+                            CronPresetAction::make('monthly')
+                                ->cron('0', '0', '1', '*', '*'),
+                            CronPresetAction::make('every_x_minutes')
+                                ->color(fn (Get $get) => str($get('cron_minute'))->startsWith('*/')
+                                                    && $get('cron_hour') == '*'
+                                                    && $get('cron_day_of_month') == '*'
+                                                    && $get('cron_month') == '*'
+                                                    && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
+                                ->form([
                                     TextInput::make('x')
                                         ->label('')
                                         ->numeric()
@@ -236,9 +158,13 @@ class ScheduleResource extends Resource
                                     $set('cron_month', '*');
                                     $set('cron_day_of_week', '*');
                                 }),
-                            Action::make('every_x_hours')
-                                ->disabled(fn (string $operation) => $operation === 'view')
-                                ->schema([
+                            CronPresetAction::make('every_x_hours')
+                                ->color(fn (Get $get) => $get('cron_minute') == '0'
+                                                    && str($get('cron_hour'))->startsWith('*/')
+                                                    && $get('cron_day_of_month') == '*'
+                                                    && $get('cron_month') == '*'
+                                                    && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
+                                ->form([
                                     TextInput::make('x')
                                         ->label('')
                                         ->numeric()
@@ -254,9 +180,13 @@ class ScheduleResource extends Resource
                                     $set('cron_month', '*');
                                     $set('cron_day_of_week', '*');
                                 }),
-                            Action::make('every_x_days')
-                                ->disabled(fn (string $operation) => $operation === 'view')
-                                ->schema([
+                            CronPresetAction::make('every_x_days')
+                                ->color(fn (Get $get) => $get('cron_minute') == '0'
+                                                    && $get('cron_hour') == '0'
+                                                    && str($get('cron_day_of_month'))->startsWith('*/')
+                                                    && $get('cron_month') == '*'
+                                                    && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
+                                ->form([
                                     TextInput::make('x')
                                         ->label('')
                                         ->numeric()
@@ -272,9 +202,13 @@ class ScheduleResource extends Resource
                                     $set('cron_month', '*');
                                     $set('cron_day_of_week', '*');
                                 }),
-                            Action::make('every_x_months')
-                                ->disabled(fn (string $operation) => $operation === 'view')
-                                ->schema([
+                            CronPresetAction::make('every_x_months')
+                                ->color(fn (Get $get) => $get('cron_minute') == '0'
+                                                    && $get('cron_hour') == '0'
+                                                    && $get('cron_day_of_month') == '1'
+                                                    && str($get('cron_month'))->startsWith('*/')
+                                                    && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
+                                ->form([
                                     TextInput::make('x')
                                         ->label('')
                                         ->numeric()
@@ -290,9 +224,13 @@ class ScheduleResource extends Resource
                                     $set('cron_month', '*/' . $data['x']);
                                     $set('cron_day_of_week', '*');
                                 }),
-                            Action::make('every_x_day_of_week')
-                                ->disabled(fn (string $operation) => $operation === 'view')
-                                ->schema([
+                            CronPresetAction::make('every_x_day_of_week')
+                                ->color(fn (Get $get) => $get('cron_minute') == '0'
+                                                    && $get('cron_hour') == '0'
+                                                    && $get('cron_day_of_month') == '*'
+                                                    && $get('cron_month') == '*'
+                                                    && $get('cron_day_of_week') != '*' ? 'success' : 'primary')
+                                ->form([
                                     Select::make('x')
                                         ->label('')
                                         ->prefix('Every')
@@ -315,7 +253,43 @@ class ScheduleResource extends Resource
                                     $set('cron_month', '*');
                                     $set('cron_day_of_week', $data['x']);
                                 }),
-                        ]),
+                        ])
+                            ->hiddenOn('view'),
+                        Group::make([
+                            TextInput::make('cron_minute')
+                                ->label('Minute')
+                                ->default('*/5')
+                                ->required()
+                                ->live(),
+                            TextInput::make('cron_hour')
+                                ->label('Hour')
+                                ->default('*')
+                                ->required()
+                                ->live(),
+                            TextInput::make('cron_day_of_month')
+                                ->label('Day of Month')
+                                ->default('*')
+                                ->required()
+                                ->live(),
+                            TextInput::make('cron_month')
+                                ->label('Month')
+                                ->default('*')
+                                ->required()
+                                ->live(),
+                            TextInput::make('cron_day_of_week')
+                                ->columnSpan([
+                                    'default' => 2,
+                                    'lg' => 1,
+                                ])
+                                ->label('Day of Week')
+                                ->default('*')
+                                ->required()
+                                ->live(),
+                        ])
+                            ->columns([
+                                'default' => 4,
+                                'lg' => 5,
+                            ]),
                     ]),
             ]);
     }

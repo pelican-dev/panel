@@ -9,15 +9,16 @@ use Ramsey\Uuid\Uuid;
 use App\Models\User;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Contracts\Auth\PasswordBroker;
 use App\Notifications\AccountCreated;
+use Filament\Facades\Filament;
+use Illuminate\Auth\Passwords\PasswordBroker;
+use Illuminate\Support\Facades\Password;
 
 class UserCreationService
 {
     public function __construct(
         private readonly ConnectionInterface $connection,
         private readonly Hasher $hasher,
-        private readonly PasswordBroker $passwordBroker,
     ) {}
 
     /**
@@ -53,7 +54,9 @@ class UserCreationService
         }
 
         if (isset($generateResetToken)) {
-            $token = $this->passwordBroker->createToken($user);
+            /** @var PasswordBroker $broker */
+            $broker = Password::broker(Filament::getPanel('app')->getAuthPasswordBroker());
+            $token = $broker->createToken($user);
         }
 
         $this->connection->commit();
