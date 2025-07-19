@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\ScheduleResource\Pages;
 
+use App\Filament\Components\Actions\ImportScheduleAction;
 use App\Filament\Server\Resources\ScheduleResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
@@ -23,6 +24,7 @@ class ListSchedules extends ListRecords
         return [
             CreateAction::make()
                 ->label('New Schedule'),
+            ImportScheduleAction::make(),
         ];
     }
 
