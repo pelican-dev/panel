@@ -55,6 +55,7 @@ class StoreServerRequest extends ApplicationApiRequest
 
             // Automatic deployment rules
             'deploy' => 'sometimes|required|array',
+            // Locations are deprecated, use tags
             'deploy.locations' => 'sometimes|array',
             'deploy.locations.*' => 'required_with:deploy.locations|integer|min:1',
             'deploy.tags' => 'array',
@@ -176,7 +177,6 @@ class StoreServerRequest extends ApplicationApiRequest
         $object->setDedicated($this->input('deploy.dedicated_ip', false));
         $object->setTags($this->input('deploy.tags', $this->input('deploy.locations', [])));
         $object->setPorts($this->input('deploy.port_range', []));
-        $object->setNode($this->input('deploy.node_id'));
 
         return $object;
     }

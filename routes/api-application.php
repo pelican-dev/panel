@@ -133,16 +133,21 @@ Route::prefix('/database-hosts')->group(function () {
 Route::prefix('mounts')->group(function () {
     Route::get('/', [Application\Mounts\MountController::class, 'index'])->name('api.application.mounts');
     Route::get('/{mount:id}', [Application\Mounts\MountController::class, 'view'])->name('api.application.mounts.view');
+    Route::get('/{mount:id}/eggs', [Application\Mounts\MountController::class, 'getEggs']);
+    Route::get('/{mount:id}/nodes', [Application\Mounts\MountController::class, 'getNodes']);
+    Route::get('/{mount:id}/servers', [Application\Mounts\MountController::class, 'getServers']);
 
     Route::post('/', [Application\Mounts\MountController::class, 'store']);
     Route::post('/{mount:id}/eggs', [Application\Mounts\MountController::class, 'addEggs'])->name('api.application.mounts.eggs');
     Route::post('/{mount:id}/nodes', [Application\Mounts\MountController::class, 'addNodes'])->name('api.application.mounts.nodes');
+    Route::post('/{mount:id}/servers', [Application\Mounts\MountController::class, 'addServers'])->name('api.application.mounts.servers');
 
     Route::patch('/{mount:id}', [Application\Mounts\MountController::class, 'update']);
 
     Route::delete('/{mount:id}', [Application\Mounts\MountController::class, 'delete']);
     Route::delete('/{mount:id}/eggs/{egg_id}', [Application\Mounts\MountController::class, 'deleteEgg']);
     Route::delete('/{mount:id}/nodes/{node_id}', [Application\Mounts\MountController::class, 'deleteNode']);
+    Route::delete('/{mount:id}/servers/{server_id}', [Application\Mounts\MountController::class, 'deleteServer']);
 });
 
 /*

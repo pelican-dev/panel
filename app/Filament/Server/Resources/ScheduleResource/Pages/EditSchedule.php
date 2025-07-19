@@ -3,6 +3,7 @@
 namespace App\Filament\Server\Resources\ScheduleResource\Pages;
 
 use App\Facades\Activity;
+use App\Filament\Components\Actions\ExportScheduleAction;
 use App\Filament\Server\Resources\ScheduleResource;
 use App\Models\Schedule;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -50,6 +51,7 @@ class EditSchedule extends EditRecord
                         ->property('name', $record->name)
                         ->log();
                 }),
+            ExportScheduleAction::make(),
             $this->getSaveFormAction()->formId('form')->label('Save'),
             $this->getCancelFormAction()->formId('form'),
         ];
