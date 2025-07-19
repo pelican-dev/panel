@@ -211,4 +211,11 @@ class Permission extends Model implements Validatable
 
         return collect($permissions);
     }
+
+    public static function permissionKeys(): Collection
+    {
+        return static::permissions()
+            ->map(fn ($value, $prefix) => array_map(fn ($value) => "$prefix.$value", array_keys($value['keys'])))
+            ->flatten();
+    }
 }
