@@ -34,6 +34,7 @@ class VariableValidatorServiceTest extends IntegrationTestCase
         try {
             $this->getService()->handle($egg->id, [
                 'BUNGEE_VERSION' => '1.2.3',
+                'SERVER_JARFILE' => '',
             ]);
 
             $this->fail('This statement should not be reached.');
