@@ -95,6 +95,7 @@ class ScheduleResource extends Resource
                     ->label('Schedule Name')
                     ->placeholder('A human readable identifier for this schedule.')
                     ->autocomplete(false)
+                    ->columnSpanFull()
                     ->required(),
                 Toggle::make('only_when_online')
                     ->label('Only when Server is Online?')
@@ -142,7 +143,7 @@ class ScheduleResource extends Resource
                                                     && $get('cron_day_of_month') == '*'
                                                     && $get('cron_month') == '*'
                                                     && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
-                                ->form([
+                                ->schema([
                                     TextInput::make('x')
                                         ->label('')
                                         ->numeric()
@@ -164,7 +165,7 @@ class ScheduleResource extends Resource
                                                     && $get('cron_day_of_month') == '*'
                                                     && $get('cron_month') == '*'
                                                     && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
-                                ->form([
+                                ->schema([
                                     TextInput::make('x')
                                         ->label('')
                                         ->numeric()
@@ -186,7 +187,7 @@ class ScheduleResource extends Resource
                                                     && str($get('cron_day_of_month'))->startsWith('*/')
                                                     && $get('cron_month') == '*'
                                                     && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
-                                ->form([
+                                ->schema([
                                     TextInput::make('x')
                                         ->label('')
                                         ->numeric()
@@ -208,7 +209,7 @@ class ScheduleResource extends Resource
                                                     && $get('cron_day_of_month') == '1'
                                                     && str($get('cron_month'))->startsWith('*/')
                                                     && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
-                                ->form([
+                                ->schema([
                                     TextInput::make('x')
                                         ->label('')
                                         ->numeric()
@@ -230,7 +231,7 @@ class ScheduleResource extends Resource
                                                     && $get('cron_day_of_month') == '*'
                                                     && $get('cron_month') == '*'
                                                     && $get('cron_day_of_week') != '*' ? 'success' : 'primary')
-                                ->form([
+                                ->schema([
                                     Select::make('x')
                                         ->label('')
                                         ->prefix('Every')
@@ -290,7 +291,8 @@ class ScheduleResource extends Resource
                                 'default' => 4,
                                 'lg' => 5,
                             ]),
-                    ]),
+                    ])
+                    ->columnSpanFull(),
             ]);
     }
 
