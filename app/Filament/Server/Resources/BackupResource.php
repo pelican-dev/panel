@@ -15,6 +15,7 @@ use App\Services\Backups\DownloadLinkService;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Services\Backups\DeleteBackupService;
+use App\Services\Backups\InitiateBackupService;
 use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
@@ -23,6 +24,7 @@ use App\Traits\Filament\CanModifyTable;
 use App\Traits\Filament\HasLimitBadge;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
@@ -34,12 +36,14 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
 class BackupResource extends Resource
@@ -122,18 +126,21 @@ class BackupResource extends Resource
             ->recordActions([
                 ActionGroup::make([
                     Action::make('lock')
+                        ->iconSize(IconSize::Large)
                         ->icon(fn (Backup $backup) => !$backup->is_locked ? 'tabler-lock' : 'tabler-lock-open')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DELETE, $server))
                         ->label(fn (Backup $backup) => !$backup->is_locked ? 'Lock' : 'Unlock')
                         ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->toggleLock($request, $server, $backup))
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     Action::make('download')
+                        ->iconSize(IconSize::Large)
                         ->color('primary')
                         ->icon('tabler-download')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DOWNLOAD, $server))
                         ->url(fn (DownloadLinkService $downloadLinkService, Backup $backup, Request $request) => $downloadLinkService->handle($backup, $request->user()), true)
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     Action::make('restore')
+                        ->iconSize(IconSize::Large)
                         ->color('success')
                         ->icon('tabler-folder-up')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_RESTORE, $server))
@@ -185,6 +192,7 @@ class BackupResource extends Resource
                         })
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     DeleteAction::make('delete')
+                        ->iconSize(IconSize::Large)
                         ->disabled(fn (Backup $backup) => $backup->is_locked)
                         ->modalDescription(fn (Backup $backup) => 'Do you wish to delete ' . $backup->name . '?')
                         ->modalSubmitActionLabel('Delete Backup')
@@ -207,7 +215,45 @@ class BackupResource extends Resource
                                 ->log();
                         })
                         ->visible(fn (Backup $backup) => $backup->status !== BackupStatus::InProgress),
-                ]),
+                ])->iconSize(IconSize::ExtraLarge),
+            ])
+            ->toolbarActions([
+                CreateAction::make()
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_CREATE, $server))
+                    ->icon('tabler-file-zip')
+                    ->tooltip(fn () => $server->backups()->count() >= $server->backup_limit ? 'Backup Limit Reached' : 'Create Backup')
+                    ->disabled(fn () => $server->backups()->count() >= $server->backup_limit)
+                    ->color(fn () => $server->backups()->count() >= $server->backup_limit ? 'danger' : 'primary')
+                    ->createAnother(false)
+                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->action(function (InitiateBackupService $initiateBackupService, $data) use ($server) {
+                        $action = $initiateBackupService->setIgnoredFiles(explode(PHP_EOL, $data['ignored'] ?? ''));
+
+                        if (auth()->user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {
+                            $action->setIsLocked((bool) $data['is_locked']);
+                        }
+
+                        try {
+                            $backup = $action->handle($server, $data['name']);
+
+                            Activity::event('server:backup.start')
+                                ->subject($backup)
+                                ->property(['name' => $backup->name, 'locked' => (bool) $data['is_locked']])
+                                ->log();
+
+                            return Notification::make()
+                                ->title('Backup Created')
+                                ->body($backup->name . ' created.')
+                                ->success()
+                                ->send();
+                        } catch (HttpException $e) {
+                            return Notification::make()
+                                ->danger()
+                                ->title('Backup Failed')
+                                ->body($e->getMessage() . ' Try again' . ($e->getHeaders()['Retry-After'] ? ' in ' . $e->getHeaders()['Retry-After'] . ' seconds.' : ''))
+                                ->send();
+                        }
+                    }),
             ]);
     }
 

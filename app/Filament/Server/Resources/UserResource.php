@@ -2,10 +2,12 @@
 
 namespace App\Filament\Server\Resources;
 
+use App\Facades\Activity;
 use App\Filament\Server\Resources\UserResource\Pages\ListUsers;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Models\User;
+use App\Services\Subusers\SubuserCreationService;
 use App\Services\Subusers\SubuserDeletionService;
 use App\Services\Subusers\SubuserUpdateService;
 use App\Traits\Filament\BlockAccessInConflict;
@@ -13,6 +15,8 @@ use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyTable;
 use App\Traits\Filament\HasLimitBadge;
+use Exception;
+use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
@@ -22,12 +26,14 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Actions\EditAction;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -113,7 +119,7 @@ class UserResource extends Resource
 
         return $table
             ->paginated(false)
-            ->searchable(false)
+//            ->searchable(false) TODO toolbarActions do not render without the search bar :/
             ->columns([
                 ImageColumn::make('picture')
                     ->visibleFrom('lg')
@@ -221,7 +227,101 @@ class UserResource extends Resource
 
                         return $data;
                     }),
-            ]);
+            ])
+            ->toolbarActions([
+                CreateAction::make('invite')
+                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->icon('tabler-user-plus')
+                    ->tooltip('Invite User')
+                    ->createAnother(false)
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_CREATE, $server))
+                    ->schema([
+                        Grid::make()
+                            ->columnSpanFull()
+                            ->columns([
+                                'default' => 1,
+                                'sm' => 1,
+                                'md' => 5,
+                                'lg' => 6,
+                            ])
+                            ->schema([
+                                TextInput::make('email')
+                                    ->email()
+                                    ->inlineLabel()
+                                    ->columnSpan([
+                                        'default' => 1,
+                                        'sm' => 1,
+                                        'md' => 4,
+                                        'lg' => 5,
+                                    ])
+                                    ->required(),
+                                Actions::make([
+                                    Action::make('assignAll')
+                                        ->label('Assign All')
+                                        ->action(function (Set $set, Get $get) use ($permissionsArray) {
+                                            $permissions = $permissionsArray;
+                                            foreach ($permissions as $key => $value) {
+                                                $allValues = array_unique($value);
+                                                $set($key, $allValues);
+                                            }
+                                        }),
+                                ])
+                                    ->columnSpan([
+                                        'default' => 1,
+                                        'sm' => 1,
+                                        'md' => 1,
+                                        'lg' => 1,
+                                    ]),
+                                Tabs::make()
+                                    ->columnSpanFull()
+                                    ->schema($tabs),
+                            ]),
+                    ])
+                    ->modalHeading('Invite User')
+                    ->modalIcon('tabler-user-plus')
+                    ->modalSubmitActionLabel('Invite')
+                    ->successNotificationTitle(null)
+                    ->failureNotificationTitle(null)
+                    ->action(function (Action $action, array $data, SubuserCreationService $service) use ($server) {
+                        $email = strtolower($data['email']);
+
+                        $permissions = collect($data)
+                            ->forget('email')
+                            ->flatMap(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))
+                            ->push(Permission::ACTION_WEBSOCKET_CONNECT)
+                            ->unique()
+                            ->all();
+
+                        try {
+                            $subuser = $service->handle($server, $email, $permissions);
+
+                            Activity::event('server:subuser.create')
+                                ->subject($subuser->user)
+                                ->property([
+                                    'email' => $data['email'],
+                                    'permissions' => $permissions,
+                                ]);
+
+                            Notification::make()
+                                ->title('User Invited!')
+                                ->success()
+                                ->send();
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title('Failed')
+                                ->body($exception->getMessage())
+                                ->danger()
+                                ->send();
+
+                            $action->failure();
+
+                            return;
+                        }
+
+                        $action->success();
+
+                        return redirect(self::getUrl(tenant: $server));
+                    }), ]);
     }
 
     /** @return array<string, PageRegistration> */

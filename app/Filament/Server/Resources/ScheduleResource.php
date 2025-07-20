@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources;
 
+use App\Filament\Components\Actions\ImportScheduleAction;
 use App\Filament\Server\Resources\ScheduleResource\Pages\ListSchedules;
 use App\Filament\Server\Resources\ScheduleResource\Pages\CreateSchedule;
 use App\Filament\Server\Resources\ScheduleResource\Pages\ViewSchedule;
@@ -20,6 +21,7 @@ use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use Carbon\Carbon;
 use Exception;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -38,6 +40,7 @@ use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -334,6 +337,18 @@ class ScheduleResource extends Resource
                             ->property('name', $schedule->name)
                             ->log();
                     }),
+            ])
+            ->toolbarActions([
+                CreateAction::make()
+                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->icon('tabler-calendar-plus')
+                    ->color('primary')
+                    ->tooltip('New Schedule'),
+                ImportScheduleAction::make()
+                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->icon('tabler-file-import')
+                    ->color('success')
+                    ->tooltip('Import Schedule'),
             ]);
     }
 
