@@ -10,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\IconSize;
 
 class ListSchedules extends ListRecords
 {
@@ -23,8 +24,13 @@ class ListSchedules extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('New Schedule'),
-            ImportScheduleAction::make(),
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon('tabler-calendar-plus')
+                ->tooltip('New Schedule'),
+            ImportScheduleAction::make()
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon('tabler-download')
+                ->tooltip('Import Schedule'),
         ];
     }
 

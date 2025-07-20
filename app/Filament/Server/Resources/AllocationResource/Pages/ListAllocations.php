@@ -13,6 +13,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\IconSize;
 
 class ListAllocations extends ListRecords
 {
@@ -29,8 +30,10 @@ class ListAllocations extends ListRecords
 
         return [
             Action::make('addAllocation')
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'tabler-network-off' : 'tabler-network')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_ALLOCATION_CREATE, $server))
-                ->label(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'Allocation limit reached' : 'Add Allocation')
+                ->tooltip(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'Allocation limit reached' : 'Add Allocation')
                 ->hidden(fn () => !config('panel.client_features.allocations.enabled'))
                 ->disabled(fn () => $server->allocations()->count() >= $server->allocation_limit)
                 ->color(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'danger' : 'primary')
