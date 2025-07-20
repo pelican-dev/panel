@@ -30,7 +30,7 @@ class File extends Model
 {
     use Sushi;
 
-    protected int $sushiInsertChunkSize = 100;
+    protected int $sushiInsertChunkSize = 200;
 
     public const ARCHIVE_MIMES = [
         'application/vnd.rar', // .rar

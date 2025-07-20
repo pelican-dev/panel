@@ -83,7 +83,7 @@ class ListFiles extends ListRecords
         $files = File::get($server, $this->path);
 
         return $table
-            ->paginated([25, 50])
+            ->paginationPageOptions([25, 50, 100, 150, 200])
             ->defaultPaginationPageOption(25)
             ->query(fn () => $files->orderByDesc('is_directory'))
             ->defaultSort('name')
