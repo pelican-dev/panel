@@ -63,8 +63,9 @@ class CreateWebhookConfiguration extends CreateRecord
 
         return $data;
     }
+
     protected function getRedirectUrl(): string
     {
-        return EditWebhookConfiguration::getUrl('edit', ['record' => $this->getRecord()]);
+        return EditWebhookConfiguration::getUrl(['record' => $this->getRecord()]);
     }
 }
