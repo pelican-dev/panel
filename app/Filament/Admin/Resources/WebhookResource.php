@@ -53,11 +53,6 @@ class WebhookResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'description';
 
-    public static function mount(): void
-    {
-        self::sendHelpBanner();
-    }
-
     public static function getNavigationLabel(): string
     {
         return trans('admin/webhook.nav_title');
