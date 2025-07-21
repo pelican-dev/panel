@@ -62,6 +62,8 @@ class Login extends BaseLogin
         if ($token === null) {
             $this->verifyTwoFactor = true;
 
+            $this->dispatch('reset-captcha');
+
             Activity::event('auth:checkpoint')
                 ->withRequestMetadata()
                 ->subject($user)
