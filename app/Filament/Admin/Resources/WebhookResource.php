@@ -167,8 +167,6 @@ class WebhookResource extends Resource
                     ->aside()
                     ->formBefore(),
                 Section::make(trans('admin/webhook.events'))
-                    ->collapsible()
-                    ->collapsed(fn (Get $get) => count($get('events') ?? []))
                     ->schema([
                         CheckboxList::make('events')
                             ->live()
