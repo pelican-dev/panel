@@ -68,6 +68,7 @@ class CreateWebhookConfiguration extends CreateRecord
     {
         return EditWebhookConfiguration::getUrl(['record' => $this->getRecord()]);
     }
+
     public function mount(): void
     {
         parent::mount();
