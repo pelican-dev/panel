@@ -2,7 +2,6 @@
 
 namespace App\Filament\App\Resources\ServerResource\Pages;
 
-use Filament\Support\Enums\TextSize;
 use App\Enums\ServerResourceType;
 use App\Filament\App\Resources\ServerResource;
 use App\Filament\Components\Tables\Columns\ServerEntryColumn;
@@ -12,7 +11,6 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonPowerRepository;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Notifications\Notification;
@@ -48,7 +46,6 @@ class ListServers extends ListRecords
     }
 
     /** @return Stack[]
-     * @throws Exception
      */
     protected function gridColumns(): array
     {
@@ -60,18 +57,12 @@ class ListServers extends ListRecords
         ];
     }
 
-    /** @return Column[]
-     * @throws Exception
-     */
+    /** @return Column[] */
     protected function tableColumns(): array
     {
         return [
             TextColumn::make('condition')
                 ->label('Status')
-                ->alignCenter()
-                ->default('unknown')
-                ->wrap()
-                ->size(TextSize::Medium)
                 ->badge()
                 ->tooltip(fn (Server $server) => $server->formatResource('uptime', type: ServerResourceType::Time))
                 ->icon(fn (Server $server) => $server->condition->getIcon())
@@ -80,7 +71,6 @@ class ListServers extends ListRecords
                 ->label('Server')
                 ->description(fn (Server $server) => $server->description)
                 ->grow()
-                ->size(TextSize::Medium)
                 ->searchable(),
             TextColumn::make('allocation.address')
                 ->label('')
@@ -90,7 +80,6 @@ class ListServers extends ListRecords
                 ->state(fn (Server $server) => $server->allocation->address ?? 'None'),
             TextColumn::make('cpuUsage')
                 ->label('Resources')
-                ->size(TextSize::Medium)
                 ->icon('tabler-cpu')
                 ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('cpu', limit: true, type: ServerResourceType::Percentage, precision: 0))
                 ->state(fn (Server $server) => $server->formatResource('cpu_absolute', type: ServerResourceType::Percentage))
@@ -98,23 +87,18 @@ class ListServers extends ListRecords
             TextColumn::make('memoryUsage')
                 ->label('')
                 ->icon('tabler-device-desktop-analytics')
-                ->size(TextSize::Medium)
                 ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('memory', limit: true))
                 ->state(fn (Server $server) => $server->formatResource('memory_bytes'))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'memory')),
             TextColumn::make('diskUsage')
                 ->label('')
                 ->icon('tabler-device-sd-card')
-                ->size(TextSize::Medium)
                 ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('disk', limit: true))
                 ->state(fn (Server $server) => $server->formatResource('disk_bytes'))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'disk')),
         ];
     }
 
-    /**
-     * @throws Exception
-     */
     public function table(Table $table): Table
     {
         $baseQuery = auth()->user()->accessibleServers();
@@ -130,8 +114,6 @@ class ListServers extends ListRecords
             ->recordActions(!$usingGrid ? ActionGroup::make(static::getPowerActions(view: 'table')) : [])
             ->recordActionsAlignment(Alignment::Center->value)
             ->contentGrid($usingGrid ? ['default' => 1, 'md' => 2] : null)
-            ->recordActions($usingGrid ? [] : ActionGroup::make(static::getPowerActions())->icon('tabler-power')->tooltip('Power Actions'))
-            ->recordUrl(fn (Server $server) => $usingGrid ? null : Console::getUrl(panel: 'server', tenant: $server))
             ->emptyStateIcon('tabler-brand-docker')
             ->emptyStateDescription('')
             ->emptyStateHeading(fn () => $this->activeTab === 'my' ? 'You don\'t own any servers!' : 'You don\'t have access to any servers!')
@@ -240,34 +222,34 @@ class ListServers extends ListRecords
     }
 
     /** @return Action[]|ActionGroup[] */
-    public static function getPowerActions(string $view, Server $Server): array
+    public static function getPowerActions(string $view): array
     {
         $actions = [
             Action::make('start')
                 ->color('primary')
                 ->icon('tabler-player-play-filled')
-                ->authorize(fn (?Server $record) => auth()->user()->can(Permission::ACTION_CONTROL_START, $record ?? $server))
-                ->visible(fn (?Server $record) => !($record ?? $server)->isInConflictState() & ($record ?? $server)->retrieveStatus()->isStartable())
-                ->dispatch('powerAction', fn (?Server $record) => ['server' => $record ?? $server, 'action' => 'start']),
+                ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
+                ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isStartable())
+                ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'start']),
             Action::make('restart')
                 ->color('gray')
                 ->icon('tabler-reload')
-                ->authorize(fn (?Server $record) => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $record ?? $server))
-                ->visible(fn (?Server $record) => !($record ?? $server)->isInConflictState() & ($record ?? $server)->retrieveStatus()->isRestartable())
-                ->dispatch('powerAction', fn (?Server $record) => ['server' => $record ?? $server, 'action' => 'restart']),
+                ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
+                ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isRestartable())
+                ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'restart']),
             Action::make('stop')
                 ->color('danger')
                 ->icon('tabler-player-stop-filled')
-                ->authorize(fn (?Server $record) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $record ?? $server))
-                ->visible(fn (?Server $record) => !($record ?? $server)->isInConflictState() & ($record ?? $server)->retrieveStatus()->isStoppable())
-                ->dispatch('powerAction', fn (?Server $record) => ['server' => $record ?? $server, 'action' => 'stop']),
+                ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
+                ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isStoppable())
+                ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'stop']),
             Action::make('kill')
                 ->color('danger')
                 ->icon('tabler-alert-square')
                 ->tooltip('This can result in data corruption and/or data loss!')
-                ->authorize(fn (?Server $record) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $record ?? $server))
-                ->visible(fn (?Server $record) => !($record ?? $server)->isInConflictState() & ($record ?? $server)->retrieveStatus()->isKillable())
-                ->dispatch('powerAction', fn (?Server $record) => ['server' => $record ?? $server, 'action' => 'kill']),
+                ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
+                ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isKillable())
+                ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'kill']),
         ];
 
         if ($view === 'table') {
