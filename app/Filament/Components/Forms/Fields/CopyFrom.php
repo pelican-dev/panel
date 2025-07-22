@@ -30,7 +30,7 @@ class CopyFrom extends Select
     {
         $this->helperText(trans('admin/egg.copy_from_help'));
 
-        $this->relationship('configFrom', 'name', ignoreRecord: true);
+        $this->relationship('configFrom', 'name');
 
         $this->afterStateUpdated(function ($state, Set $set) {
             $set('copy_script_from', $state);
@@ -54,7 +54,7 @@ class CopyFrom extends Select
 
     public function script(): static
     {
-        $this->relationship('scriptFrom', 'name', ignoreRecord: true);
+        $this->relationship('scriptFrom', 'name');
 
         $this->afterStateUpdated(function ($state, Set $set, Component $livewire) {
             if ($state === null) {

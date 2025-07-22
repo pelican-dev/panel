@@ -128,14 +128,14 @@ class UserResource extends Resource
                     ->label(trans('admin/user.username'))
                     ->alphaNum()
                     ->required()
-                    ->unique(ignoreRecord: true)
+                    ->unique()
                     ->minLength(3)
                     ->maxLength(255),
                 TextInput::make('email')
                     ->label(trans('admin/user.email'))
                     ->email()
                     ->required()
-                    ->unique(ignoreRecord: true)
+                    ->unique()
                     ->maxLength(255),
                 TextInput::make('password')
                     ->label(trans('admin/user.password'))

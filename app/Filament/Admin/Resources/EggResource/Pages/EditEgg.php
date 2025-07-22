@@ -179,7 +179,7 @@ class EditEgg extends EditRecord
                                         ->maxLength(255)
                                         ->columnSpanFull()
                                         ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString()))
-                                        ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
+                                        ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
                                         ->validationMessages([
                                             'unique' => trans('admin/egg.error_unique'),
                                         ])
@@ -192,7 +192,7 @@ class EditEgg extends EditRecord
                                         ->suffix('}}')
                                         ->hintIcon('tabler-code')
                                         ->hintIconTooltip(fn ($state) => "{{{$state}}}")
-                                        ->unique(ignoreRecord: true, modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
+                                        ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
                                         ->rules(EggVariable::getRulesForField('env_variable'))
                                         ->validationMessages([
                                             'unique' => trans('admin/egg.error_unique'),

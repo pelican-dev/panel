@@ -208,7 +208,7 @@ class EditServer extends EditRecord
                                         'md' => 2,
                                         'lg' => 3,
                                     ])
-                                    ->unique(ignoreRecord: true)
+                                    ->unique()
                                     ->maxLength(255),
                                 Select::make('node_id')
                                     ->label(trans('admin/server.node'))

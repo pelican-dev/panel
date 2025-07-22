@@ -190,7 +190,7 @@ class CreateEgg extends CreateRecord
                                         ->maxLength(255)
                                         ->columnSpanFull()
                                         ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString()))
-                                        ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
+                                        ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
                                         ->validationMessages([
                                             'unique' => trans('admin/egg.error_unique'),
                                         ])
@@ -203,7 +203,7 @@ class CreateEgg extends CreateRecord
                                         ->suffix('}}')
                                         ->hintIcon('tabler-code')
                                         ->hintIconTooltip(fn ($state) => "{{{$state}}}")
-                                        ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')), ignoreRecord: true)
+                                        ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
                                         ->rules(EggVariable::getRulesForField('env_variable'))
                                         ->validationMessages([
                                             'unique' => trans('admin/egg.error_unique'),
