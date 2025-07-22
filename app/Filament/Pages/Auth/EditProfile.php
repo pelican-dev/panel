@@ -95,7 +95,7 @@ class EditProfile extends BaseEditProfile
                                     ->readOnly()
                                     ->dehydrated(false)
                                     ->maxLength(255)
-                                    ->unique(ignoreRecord: true)
+                                    ->unique()
                                     ->autofocus(),
                                 TextInput::make('email')
                                     ->prefixIcon('tabler-mail')
@@ -103,7 +103,7 @@ class EditProfile extends BaseEditProfile
                                     ->email()
                                     ->required()
                                     ->maxLength(255)
-                                    ->unique(ignoreRecord: true),
+                                    ->unique(),
                                 TextInput::make('password')
                                     ->label(trans('profile.password'))
                                     ->password()
