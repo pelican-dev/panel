@@ -66,8 +66,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $name
  * @property DatabaseNotificationCollection|DatabaseNotification[] $notifications
  * @property int|null $notifications_count
- * @property \Illuminate\Database\Eloquent\Collection|RecoveryToken[] $recoveryTokens
- * @property int|null $recovery_tokens_count
  * @property \Illuminate\Database\Eloquent\Collection|Server[] $servers
  * @property int|null $servers_count
  * @property \Illuminate\Database\Eloquent\Collection|UserSSHKey[] $sshKeys
