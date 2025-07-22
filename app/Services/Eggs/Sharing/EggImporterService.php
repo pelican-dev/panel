@@ -168,6 +168,9 @@ class EggImporterService
         return $parsed;
     }
 
+    /**
+     * @param  array<string, mixed>  $parsed
+     */
     protected function fillFromParsed(Egg $model, array $parsed): Egg
     {
         return $model->forceFill([
@@ -189,6 +192,10 @@ class EggImporterService
         ]);
     }
 
+    /**
+     * @param  array<string, mixed>  $parsed
+     * @return array<string, mixed>
+     */
     protected function convertToV2(array $parsed): array
     {
         if (!isset($parsed['images'])) {

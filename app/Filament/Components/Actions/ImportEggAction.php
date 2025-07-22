@@ -49,7 +49,7 @@ class ImportEggAction extends Action
                 if ($egg instanceof TemporaryUploadedFile) {
                     $originalName = $egg->getClientOriginalName();
                     $filename = str($originalName)->afterLast('egg-');
-                    $ext = str($originalName)->afterLast('.')->lower();
+                    $ext = (string) str($originalName)->afterLast('.')->lower();
 
                     $name = match ($ext) {
                         'json' => $filename->before('.json')->headline(),
@@ -64,7 +64,7 @@ class ImportEggAction extends Action
                     $method = 'fromUrl';
 
                     $filename = $egg->afterLast('/egg-');
-                    $ext = $filename->afterLast('.')->lower();
+                    $ext = (string) $filename->afterLast('.')->lower();
 
                     $name = match ($ext) {
                         'json' => $filename->before('.json')->headline(),
