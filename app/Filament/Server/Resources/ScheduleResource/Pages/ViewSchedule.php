@@ -14,6 +14,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Enums\IconSize;
 
 class ViewSchedule extends ViewRecord
 {
@@ -41,7 +42,10 @@ class ViewSchedule extends ViewRecord
 
                     $this->fillForm();
                 }),
-            EditAction::make(),
+            EditAction::make()
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon('tabler-calendar-code')
+                ->tooltip('Edit Schedule'),
         ];
     }
 

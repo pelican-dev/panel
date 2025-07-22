@@ -23,11 +23,11 @@ To start contributing to Pelican Panel, you need to have a basic understanding o
 As IDE we recommend [Visual Studio](https://visualstudio.microsoft.com)/ [Visual Studio Code](https://code.visualstudio.com) (free) or [PhpStorm](https://www.jetbrains.com/phpstorm) (paid).
 
 To easily install PHP and the Webserver we recommend Laravel Herd. ([Windows](https://herd.laravel.com/windows) & [macOS](https://herd.laravel.com))  
-The (paid) Pro version of Laravel Herd also offers easy MySQL and Redis hosting, but it is not needed.
+The (paid) Pro version of Laravel Herd also offers easy MySQL and Redis hosting, but the free version is fine for most cases.
 
 ## Coding Standards
 
-We use PHPStan/ [Larastan](https://github.com/larastan/larastan) and PHP-CS-Fixer/ [Pint](https://laravel.com/docs/11.x/pint) to enforce certain code styles and standards.  
+We use PHPStan/ [Larastan](https://github.com/larastan/larastan) and PHP-CS-Fixer/ [Pint](https://laravel.com/docs/12.x/pint) to enforce certain code styles and standards.  
 You can run PHPStan via `\vendor\bin\phpstan analyse` and Pint via `\vendor\bin\pint`.
 
 ## Making Contributions
@@ -37,7 +37,10 @@ When you are ready, you can submit a pull request to the Pelican repository. If 
 
 Also, please make sure that your pull requests are as targeted and simple as possible and don't do a hundred things at a time. If you want to add/ change/ fix 5 different things you should make 5 different pull requests.
 
-*Note: For now we only accept pull requests that handle existing issues!*
+### Translations
+
+If you add any new translation strings make sure to only add them to english.  
+Other languages are translated via [Crowdin](https://crowdin.com/project/pelican-dev).
 
 ## Code Review Process
 
@@ -51,4 +54,4 @@ Depending on the pull request size this process can take multiple days.
 * Help: [Discord](https://discord.gg/pelican-panel)
 * Bugs: [GitHub Issues](https://github.com/pelican-dev/panel/issues)
 * Features: [GitHub Discussions](https://github.com/pelican-dev/panel/discussions)
-* Security vulnerabilities: See our [security policy](./security.md). 
+* Security vulnerabilities: See our [security policy](./security.md).

@@ -15,6 +15,7 @@ use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\IconSize;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ListBackups extends ListRecords
@@ -33,8 +34,9 @@ class ListBackups extends ListRecords
         return [
             CreateAction::make()
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_CREATE, $server))
-                ->label(fn () => $server->backups()->count() >= $server->backup_limit ? 'Backup limit reached' : 'Create Backup')
+                ->icon('tabler-file-zip')->iconButton()->iconSize(IconSize::Large)
                 ->disabled(fn () => $server->backups()->count() >= $server->backup_limit)
+                ->tooltip(fn () => $server->backups()->count() >= $server->backup_limit ? 'Backup Limit Reached' : 'Create Backup') // Disabled Buttons have no tooltips in v3 :/
                 ->color(fn () => $server->backups()->count() >= $server->backup_limit ? 'danger' : 'primary')
                 ->createAnother(false)
                 ->action(function (InitiateBackupService $initiateBackupService, $data) use ($server) {

@@ -24,6 +24,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\IconSize;
 
 class ListUsers extends ListRecords
 {
@@ -69,7 +70,9 @@ class ListUsers extends ListRecords
 
         return [
             Actions\CreateAction::make('invite')
-                ->label('Invite User')
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon('tabler-user-plus')
+                ->tooltip('Invite User')
                 ->createAnother(false)
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_CREATE, $server))
                 ->form([

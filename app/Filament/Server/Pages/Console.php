@@ -141,8 +141,12 @@ class Console extends Page
     #[On('console-status')]
     public function receivedConsoleUpdate(?string $state = null): void
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         if ($state) {
             $this->status = ContainerStatus::from($state);
+            cache()->put("servers.$server->uuid.status", $this->status, now()->addSeconds(15));
         }
 
         $this->cachedHeaderActions = [];
