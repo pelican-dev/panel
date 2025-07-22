@@ -23,7 +23,7 @@ return new class extends Migration
             $users = User::all();
             foreach ($users as $user) {
                 $user->update([
-                    'mfa_app_secret' => $user->totp_secret,
+                    'mfa_app_secret' => $user->use_totp ? $user->totp_secret : null,
                     'mfa_app_recovery_codes' => null,
                     'mfa_email_enabled' => false,
                 ]);
