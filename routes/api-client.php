@@ -117,6 +117,7 @@ Route::prefix('/servers/{server:uuid}')->middleware([ServerSubject::class, Authe
         Route::post('/', [Client\Servers\BackupController::class, 'store']);
         Route::get('/{backup:uuid}', [Client\Servers\BackupController::class, 'view']);
         Route::get('/{backup:uuid}/download', [Client\Servers\BackupController::class, 'download']);
+        Route::put('/{backup:uuid}/rename', [Client\Servers\BackupController::class, 'rename']);
         Route::post('/{backup:uuid}/lock', [Client\Servers\BackupController::class, 'toggleLock']);
         Route::post('/{backup:uuid}/restore', [Client\Servers\BackupController::class, 'restore']);
         Route::delete('/{backup:uuid}', [Client\Servers\BackupController::class, 'delete']);
