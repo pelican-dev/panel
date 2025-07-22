@@ -25,6 +25,7 @@
 
             resetCaptcha = () => {
                 turnstile.reset($refs.turnstile)
+                $wire.set('{{ $statePath }}', null)
             }
         })()"
     >
