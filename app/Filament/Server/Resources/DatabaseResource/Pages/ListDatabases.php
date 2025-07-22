@@ -16,6 +16,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\IconSize;
 
 class ListDatabases extends ListRecords
 {
@@ -32,7 +33,9 @@ class ListDatabases extends ListRecords
 
         return [
             CreateAction::make('new')
-                ->label(fn () => $server->databases()->count() >= $server->database_limit ? 'Database limit reached' : 'Create Database')
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon(fn () => $server->databases()->count() >= $server->database_limit ? 'tabler-database-x' : 'tabler-database-plus')
+                ->tooltip(fn () => $server->databases()->count() >= $server->database_limit ? 'Database limit reached' : 'Create Database')
                 ->disabled(fn () => $server->databases()->count() >= $server->database_limit)
                 ->color(fn () => $server->databases()->count() >= $server->database_limit ? 'danger' : 'primary')
                 ->createAnother(false)
