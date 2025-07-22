@@ -11,7 +11,6 @@
         "ext-zip": "*",
         "aws/aws-sdk-php": "^3.344",
         "calebporzio/sushi": "^2.5",
-        "chillerlan/php-qrcode": "^5.0.2",
         "dedoc/scramble": "^0.12.10",
         "doctrine/dbal": "~3.6.0",
         "filament/filament": "~4.0",
@@ -100,6 +99,6 @@
             "php": "8.2"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "beta",
     "prefer-stable": true
 }
