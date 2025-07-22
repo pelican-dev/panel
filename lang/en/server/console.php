@@ -1,1 +1,25 @@
 <?php
+
+return [
+    'title' => 'Console',
+    'command' => 'Type a command...',
+    'command_blocked' => 'Server Offline...',
+    'command_blocked_title' => 'Can\'t send command when the server is Offline',
+    'power_actions' => [
+        'start' => 'Start',
+        'stop' => 'Stop',
+        'restart' => 'Restart',
+        'kill' => 'Kill',
+        'kill_tooltip' => 'This can result in data corruption and/or data loss!',
+    ],
+    'labels' => [
+        'cpu' => 'CPU',
+        'memory' => 'Memory',
+        'network' => 'Network',
+        'disk' => 'Disk',
+        'name' => 'Name',
+        'status' => 'Status',
+        'address' => 'Address',
+        'unavailable' => 'Unavailable',
+    ],
+];
