@@ -123,4 +123,10 @@ class EditWebhookConfiguration extends EditRecord
     {
         $this->dispatch('refresh-widget');
     }
+
+    public function mount(int|string $record): void
+    {
+        parent::mount($record);
+        WebhookResource::sendHelpBanner();
+    }
 }

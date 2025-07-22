@@ -19,6 +19,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Forms\Get;
@@ -129,23 +130,12 @@ class WebhookResource extends Resource
                     ->live()
                     ->inline()
                     ->options(WebhookType::class)
-                    ->default(WebhookType::Regular->value)
-                    ->afterStateHydrated(function (string $state) {
-                        if ($state === WebhookType::Discord->value) {
-                            self::sendHelpBanner();
-                        }
-                    })
-                    ->afterStateUpdated(function (string $state) {
-                        if ($state === WebhookType::Discord->value) {
-                            self::sendHelpBanner();
-                        }
-                    }),
+                    ->default(WebhookType::Regular->value),
                 TextInput::make('description')
                     ->label(trans('admin/webhook.description'))
                     ->required(),
                 TextInput::make('endpoint')
                     ->label(trans('admin/webhook.endpoint'))
-                    ->activeUrl()
                     ->required()
                     ->columnSpanFull()
                     ->afterStateUpdated(fn (string $state, Set $set) => $set('type', str($state)->contains('discord.com') ? WebhookType::Discord->value : WebhookType::Regular->value)),
@@ -153,6 +143,15 @@ class WebhookResource extends Resource
                     ->hidden(fn (Get $get) => $get('type') === WebhookType::Discord->value)
                     ->dehydratedWhenHidden()
                     ->schema(fn () => self::getRegularFields())
+                    ->headerActions([
+                        Action::make('reset_headers')
+                            ->label(trans('admin/webhook.reset_headers'))
+                            ->color('danger')
+                            ->icon('heroicon-o-trash')
+                            ->action(fn (Get $get, Set $set) => $set('headers', [
+                                'X-Webhook-Event' => '{{event}}',
+                            ])),
+                    ])
                     ->formBefore(),
                 Section::make(trans('admin/webhook.discord'))
                     ->hidden(fn (Get $get) => $get('type') === WebhookType::Regular->value)
@@ -163,8 +162,6 @@ class WebhookResource extends Resource
                     ->aside()
                     ->formBefore(),
                 Section::make(trans('admin/webhook.events'))
-                    ->collapsible()
-                    ->collapsed(fn (Get $get) => count($get('events') ?? []))
                     ->schema([
                         CheckboxList::make('events')
                             ->live()
@@ -183,7 +180,10 @@ class WebhookResource extends Resource
     {
         return [
             KeyValue::make('headers')
-                ->label(trans('admin/webhook.headers')),
+                ->label(trans('admin/webhook.headers'))
+                ->default(fn () => [
+                    'X-Webhook-Event' => '{{event}}',
+                ]),
         ];
     }
 
