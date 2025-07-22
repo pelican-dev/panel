@@ -58,7 +58,6 @@ return [
             'fail' => 'La sauvegarde <b>:name</b> a échoué',
             'lock' => 'La sauvegarde <b>:name</b> a été verrouillée',
             'unlock' => 'La sauvegarde <b>:name</b> a été déverrouillée',
-            'rename' => 'La sauvegarde a été renommée de "<b>:old_name</b>" à "<b>:new_name</b>"',
         ],
         'database' => [
             'create' => 'Nouvelle base de données créée <b>:name</b>',

@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\Client\ClientApiController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Http\Requests\Api\Client\Servers\Backups\StoreBackupRequest;
 use App\Http\Requests\Api\Client\Servers\Backups\RestoreBackupRequest;
+use App\Http\Requests\Api\Client\Servers\Backups\RenameBackupRequest;
 use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server - Backup')]
@@ -205,23 +206,19 @@ class BackupController extends ClientApiController
      * @throws \Throwable
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function rename(Request $request, Server $server, Backup $backup): array
+    public function rename(RenameBackupRequest $request, Server $server, Backup $backup): array
     {
-        if (!$request->user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {
-            throw new AuthorizationException();
-        }
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
-
         $oldName = $backup->name;
-        $backup->update(['name' => $request->input('name')]);
+        $newName = $request->input('name');
 
-        Activity::event('server:backup.rename')
-            ->subject($backup)
-            ->property(['old_name' => $oldName, 'new_name' => $backup->name])
-            ->log();
+        $backup->update(['name' => $newName]);
+
+        if ($oldName !== $newName) {
+            Activity::event('server:backup.rename')
+                ->subject($backup)
+                ->property(['old_name' => $oldName, 'new_name' => $newName])
+                ->log();
+        }
 
         return $this->fractal->item($backup)
             ->transformWith($this->getTransformer(BackupTransformer::class))

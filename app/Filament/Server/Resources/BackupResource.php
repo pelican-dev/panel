@@ -127,9 +127,18 @@ class BackupResource extends Resource
                                 ->maxLength(255)
                                 ->default(fn (Backup $backup) => $backup->name),
                         ])
-                        ->action(function (Backup $backup, $data, BackupController $backupController, Request $request) use ($server) {
-                            $request->merge(['name' => $data['name']]);
-                            $backupController->rename($request, $server, $backup);
+                        ->action(function (Backup $backup, $data) {
+                            $oldName = $backup->name;
+                            $newName = $data['name'];
+
+                            $backup->update(['name' => $newName]);
+
+                            if ($oldName !== $newName) {
+                                Activity::event('server:backup.rename')
+                                    ->subject($backup)
+                                    ->property(['old_name' => $oldName, 'new_name' => $newName])
+                                    ->log();
+                            }
 
                             Notification::make()
                                 ->title('Backup Renamed')
