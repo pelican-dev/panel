@@ -18,6 +18,8 @@ class Component extends Field
 
         $this->required();
 
-        $this->rule(new Rule());
+        // Remove automatic validation rule to prevent validation during state sync
+        // CAPTCHA validation will be handled manually in the authenticate method
+        // $this->rule(new Rule());
     }
 }

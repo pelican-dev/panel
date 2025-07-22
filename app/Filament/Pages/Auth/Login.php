@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Auth;
 
 use App\Events\Auth\ProvidedAuthenticationToken;
 use App\Extensions\Captcha\CaptchaService;
+use App\Extensions\Captcha\Schemas\Turnstile\Rule as TurnstileRule;
 use App\Extensions\OAuth\OAuthService;
 use App\Facades\Activity;
 use App\Models\User;
@@ -40,7 +41,11 @@ class Login extends BaseLogin
 
     public function authenticate(): ?LoginResponse
     {
+        // Validate CAPTCHA using the Rule class before processing form to prevent token reuse
+        $this->validateCaptchaWithRule();
+
         $data = $this->form->getState();
+
         Filament::auth()->once($this->getCredentialsFromFormData($data));
 
         /** @var ?User $user */
@@ -202,5 +207,37 @@ class Login extends BaseLogin
             $loginType => mb_strtolower($data['login']),
             'password' => $data['password'],
         ];
+    }
+
+    /**
+     * Validate CAPTCHA using the Turnstile Rule class
+     * This prevents token reuse by validating only during actual form submission
+     */
+    private function validateCaptchaWithRule(): void
+    {
+        // Skip CAPTCHA validation during 2FA submission
+        if ($this->verifyTwoFactor) {
+            return;
+        }
+
+        // Get CAPTCHA token directly from request data
+        $captchaToken = request()->get('cf-turnstile-response');
+
+        if ($captchaToken) {
+            // Use the Turnstile Rule class for validation
+            $rule = new TurnstileRule();
+
+            // Create a fail closure that handles validation failure
+            $fail = function (string $message) {
+                $this->dispatch('reset-captcha');
+
+                throw ValidationException::withMessages([
+                    'data.login' => $message,
+                ]);
+            };
+
+            // Call the Rule's validate method
+            $rule->validate('captcha', $captchaToken, $fail);
+        }
     }
 }
