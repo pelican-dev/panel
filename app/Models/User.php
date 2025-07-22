@@ -29,6 +29,9 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Traits\HasAccessTokens;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
+use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -52,10 +55,10 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $remember_token
  * @property string $language
  * @property string $timezone
- * @property bool $use_totp
- * @property string|null $totp_secret
- * @property Carbon|null $totp_authenticated_at
  * @property string[]|null $oauth
+ * @property string|null $mfa_app_secret
+ * @property string[]|null $mfa_app_recovery_codes
+ * @property bool $mfa_email_enabled
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property \Illuminate\Database\Eloquent\Collection|ApiKey[] $apiKeys
@@ -87,14 +90,11 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereTimezone($value)
  * @method static Builder|User wherePassword($value)
  * @method static Builder|User whereRememberToken($value)
- * @method static Builder|User whereTotpAuthenticatedAt($value)
- * @method static Builder|User whereTotpSecret($value)
  * @method static Builder|User whereUpdatedAt($value)
- * @method static Builder|User whereUseTotp($value)
  * @method static Builder|User whereUsername($value)
  * @method static Builder|User whereUuid($value)
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAvatar, HasName, HasTenants, Validatable
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasEmailAuthentication, HasName, HasTenants, Validatable
 {
     use Authenticatable;
     use Authorizable { can as protected canned; }
@@ -125,9 +125,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password',
         'language',
         'timezone',
-        'use_totp',
-        'totp_secret',
-        'totp_authenticated_at',
+        'mfa_app_secret',
+        'mfa_app_recovery_codes',
         'oauth',
         'customization',
     ];
@@ -135,7 +134,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     /**
      * The attributes excluded from the model's JSON form.
      */
-    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at', 'oauth'];
+    protected $hidden = ['password', 'remember_token', 'mfa_app_secret', 'mfa_app_recovery_codes', 'oauth'];
 
     /**
      * Default values for specific fields in the database.
@@ -144,8 +143,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'external_id' => null,
         'language' => 'en',
         'timezone' => 'UTC',
-        'use_totp' => false,
-        'totp_secret' => null,
+        'mfa_app_secret' => null,
+        'mfa_app_recovery_codes' => null,
+        'mfa_email_enabled' => false,
         'oauth' => '[]',
         'customization' => null,
     ];
@@ -159,8 +159,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password' => ['sometimes', 'nullable', 'string'],
         'language' => ['string'],
         'timezone' => ['string'],
-        'use_totp' => ['boolean'],
-        'totp_secret' => ['nullable', 'string'],
+        'mfa_app_secret' => ['nullable', 'string'],
+        'mfa_app_recovery_codes' => ['nullable', 'array'],
+        'mfa_app_recovery_codes.*' => ['string'],
+        'mfa_email_enabled' => ['boolean'],
         'oauth' => ['array', 'nullable'],
         'customization' => ['array', 'nullable'],
         'customization.console_rows' => ['integer', 'min:1'],
@@ -171,9 +173,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected function casts(): array
     {
         return [
-            'use_totp' => 'boolean',
-            'totp_authenticated_at' => 'datetime',
-            'totp_secret' => 'encrypted',
+            'mfa_app_secret' => 'encrypted',
+            'mfa_app_recovery_codes' => 'encrypted:array',
             'oauth' => 'array',
             'customization' => 'array',
         ];
@@ -320,6 +321,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->belongsToMany(Server::class, 'subusers');
     }
 
+    /** @return array<mixed> */
+    public function getCustomization(): array
+    {
+        return json_decode($this->customization, true) ?? [];
+    }
+
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
         if ($this->canned('update', $server) || $server->owner_id === $this->id) {
@@ -444,9 +451,44 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return false;
     }
 
-    /** @return array<mixed> */
-    public function getCustomization(): array
+    public function getAppAuthenticationSecret(): ?string
     {
-        return json_decode($this->customization, true) ?? [];
+        return $this->mfa_app_secret;
+    }
+
+    public function saveAppAuthenticationSecret(?string $secret): void
+    {
+        $this->update(['mfa_app_secret' => $secret]);
+    }
+
+    public function getAppAuthenticationHolderName(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @return array<string>|null
+     */
+    public function getAppAuthenticationRecoveryCodes(): ?array
+    {
+        return $this->mfa_app_recovery_codes;
+    }
+
+    /**
+     * @param  array<string>|null  $codes
+     */
+    public function saveAppAuthenticationRecoveryCodes(?array $codes): void
+    {
+        $this->update(['mfa_app_recovery_codes' => $codes]);
+    }
+
+    public function hasEmailAuthentication(): bool
+    {
+        return $this->mfa_email_enabled;
+    }
+
+    public function toggleEmailAuthentication(bool $condition): void
+    {
+        $this->update(['mfa_email_enabled' => $condition]);
     }
 }

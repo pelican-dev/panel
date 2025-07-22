@@ -2,114 +2,27 @@
 
 namespace App\Filament\Pages\Auth;
 
-use App\Events\Auth\ProvidedAuthenticationToken;
 use App\Extensions\Captcha\CaptchaService;
 use App\Extensions\OAuth\OAuthService;
-use App\Facades\Activity;
-use App\Models\User;
-use Filament\Auth\Http\Responses\Contracts\LoginResponse;
-use Filament\Facades\Filament;
 use Filament\Actions\Action;
+use Filament\Auth\Pages\Login as BaseLogin;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Sleep;
 use Illuminate\Validation\ValidationException;
-use PragmaRX\Google2FA\Google2FA;
 
-class Login extends \Filament\Auth\Pages\Login
+class Login extends BaseLogin
 {
-    private Google2FA $google2FA;
-
-    public bool $verifyTwoFactor = false;
-
     protected OAuthService $oauthService;
 
     protected CaptchaService $captchaService;
 
-    public function boot(Google2FA $google2FA, OAuthService $oauthService, CaptchaService $captchaService): void
+    public function boot(OAuthService $oauthService, CaptchaService $captchaService): void
     {
-        $this->google2FA = $google2FA;
         $this->oauthService = $oauthService;
         $this->captchaService = $captchaService;
-    }
-
-    public function authenticate(): ?LoginResponse
-    {
-        $data = $this->form->getState();
-        Filament::auth()->once($this->getCredentialsFromFormData($data));
-
-        /** @var ?User $user */
-        $user = Filament::auth()->user();
-
-        // Make sure that rate limits apply
-        if (!$user) {
-            return parent::authenticate();
-        }
-
-        // 2FA disabled
-        if (!$user->use_totp) {
-            return parent::authenticate();
-        }
-
-        $token = $data['2fa'] ?? null;
-
-        // 2FA not shown yet
-        if ($token === null) {
-            $this->verifyTwoFactor = true;
-
-            Activity::event('auth:checkpoint')
-                ->withRequestMetadata()
-                ->subject($user)
-                ->log();
-
-            return null;
-        }
-
-        $isValidToken = false;
-        if (strlen($token) === $this->google2FA->getOneTimePasswordLength()) {
-            $isValidToken = $this->google2FA->verifyKey(
-                $user->totp_secret,
-                $token,
-                Config::integer('panel.auth.2fa.window'),
-            );
-
-            if ($isValidToken) {
-                event(new ProvidedAuthenticationToken($user));
-            }
-        } else {
-            foreach ($user->recoveryTokens as $recoveryToken) {
-                if (password_verify($token, $recoveryToken->token)) {
-                    $isValidToken = true;
-                    $recoveryToken->delete();
-
-                    event(new ProvidedAuthenticationToken($user, true));
-
-                    break;
-                }
-            }
-        }
-
-        if (!$isValidToken) {
-            // Buffer to prevent bruteforce
-            Sleep::sleep(1);
-
-            Notification::make()
-                ->title(trans('auth.failed-two-factor'))
-                ->body(trans('auth.failed'))
-                ->color('danger')
-                ->icon('tabler-auth-2fa')
-                ->danger()
-                ->send();
-
-            return null;
-        }
-
-        return parent::authenticate();
     }
 
     public function form(Schema $schema): Schema
@@ -119,26 +32,14 @@ class Login extends \Filament\Auth\Pages\Login
             $this->getPasswordFormComponent(),
             $this->getRememberFormComponent(),
             $this->getOAuthFormComponent(),
-            $this->getTwoFactorAuthenticationComponent(),
         ];
 
         if ($captchaComponent = $this->getCaptchaComponent()) {
-            $schema = array_merge($schema, [$captchaComponent]);
+            $components[] = $captchaComponent;
         }
 
         return $schema
             ->components($components);
-    }
-
-    private function getTwoFactorAuthenticationComponent(): Component
-    {
-        return TextInput::make('2fa')
-            ->label(trans('auth.two-factor-code'))
-            ->hintIcon('tabler-question-mark')
-            ->hintIconTooltip(trans('auth.two-factor-hint'))
-            ->visible(fn () => $this->verifyTwoFactor)
-            ->required()
-            ->live();
     }
 
     private function getCaptchaComponent(): ?Component
@@ -178,7 +79,7 @@ class Login extends \Filament\Auth\Pages\Login
             $actions[] = Action::make("oauth_$id")
                 ->label($schema->getName())
                 ->icon($schema->getIcon())
-                //TODO ->color(Color::hex($oauthProvider->getHexColor()))
+                ->color(Color::generateV3Palette($schema->getHexColor()))
                 ->url(route('auth.oauth.redirect', ['driver' => $id], false));
         }
 

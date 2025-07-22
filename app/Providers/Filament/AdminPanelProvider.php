@@ -5,8 +5,9 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\Login;
 use App\Http\Middleware\LanguageMiddleware;
-use App\Http\Middleware\RequireTwoFactorAuthentication;
 use Filament\Actions\Action;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -42,6 +43,10 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->profile(EditProfile::class, false)
             ->passwordReset()
+            ->multiFactorAuthentication([
+                AppAuthentication::make()->recoverable(),
+                EmailAuthentication::make(),
+            ])
             ->userMenuItems([
                 'profile' => fn (Action $action) => $action->label(auth()->user()->username),
                 Action::make('exitAdmin')
@@ -72,7 +77,6 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 LanguageMiddleware::class,
-                RequireTwoFactorAuthentication::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

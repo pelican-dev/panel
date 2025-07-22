@@ -25,10 +25,12 @@ class DisableTwoFactorCommand extends Command
 
         $email = $this->option('email') ?? $this->ask(trans('command/messages.user.ask_email'));
 
-        $user = User::query()->where('email', $email)->firstOrFail();
-        $user->use_totp = false;
-        $user->totp_secret = null;
-        $user->save();
+        $user = User::where('email', $email)->firstOrFail();
+        $user->update([
+            'mfa_app_secret' => null,
+            'mfa_app_recovery_codes' => null,
+            'mfa_email_enabled' => false,
+        ]);
 
         $this->info(trans('command/messages.user.2fa_disabled', ['email' => $user->email]));
     }

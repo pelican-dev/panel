@@ -26,7 +26,6 @@
         "league/flysystem-aws-s3-v3": "^3.29",
         "league/flysystem-memory": "^3.29",
         "phpseclib/phpseclib": "~3.0.18",
-        "pragmarx/google2fa": "~8.0.0",
         "predis/predis": "^2.3",
         "s1lentium/iptools": "~1.2.0",
         "secondnetwork/blade-tabler-icons": "^3.26",

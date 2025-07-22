@@ -8,9 +8,10 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Admin\Resources\ServerResource\Pages\EditServer;
 use App\Http\Middleware\Activity\ServerSubject;
 use App\Http\Middleware\LanguageMiddleware;
-use App\Http\Middleware\RequireTwoFactorAuthentication;
 use App\Models\Server;
 use Filament\Actions\Action;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -46,6 +47,10 @@ class ServerPanelProvider extends PanelProvider
             ->login(Login::class)
             ->profile(EditProfile::class, false)
             ->passwordReset()
+            ->multiFactorAuthentication([
+                AppAuthentication::make()->recoverable(),
+                EmailAuthentication::make(),
+            ])
             ->userMenuItems([
                 'profile' => fn (Action $action) => $action->label(auth()->user()->username)->url(fn () => EditProfile::getUrl(panel: 'app')),
                 Action::make('toServerList')
@@ -81,7 +86,6 @@ class ServerPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 LanguageMiddleware::class,
-                RequireTwoFactorAuthentication::class,
                 ServerSubject::class,
             ])
             ->authMiddleware([

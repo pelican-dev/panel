@@ -23,12 +23,12 @@ use Filament\Resources\Resource;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
 
 class UserResource extends Resource
 {
@@ -88,11 +88,11 @@ class UserResource extends Resource
                     ->label(trans('admin/user.email'))
                     ->icon('tabler-mail')
                     ->searchable(),
-                IconColumn::make('use_totp')
+                IconColumn::make('2fa')
                     ->label('2FA')
                     ->visibleFrom('lg')
-                    ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
-                    ->boolean(),
+                    ->icon(fn (User $user) => filled($user->mfa_app_secret) ? 'tabler-qrcode' : ($user->mfa_email_enabled ? 'tabler-mail' : 'tabler-lock-open-off'))
+                    ->tooltip(fn (User $user) => filled($user->mfa_app_secret) ? 'App' : ($user->mfa_email_enabled ? 'E-Mail' : 'None')),
                 TextColumn::make('roles.name')
                     ->label(trans('admin/user.roles'))
                     ->badge()

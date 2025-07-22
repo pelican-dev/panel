@@ -2,7 +2,6 @@
 
 namespace App\Extensions\Captcha\Schemas\Turnstile;
 
-use Filament\Support\Components\Component;
 use App\Extensions\Captcha\Schemas\CaptchaSchemaInterface;
 use App\Extensions\Captcha\Schemas\BaseSchema;
 use Exception;
@@ -39,7 +38,7 @@ class TurnstileSchema extends BaseSchema implements CaptchaSchemaInterface
     }
 
     /**
-     * @return Component[]
+     * @return \Filament\Support\Components\Component[]
      *
      * @throws Exception
      */
