@@ -34,6 +34,8 @@ return new class extends Migration
                 $table->dropColumn('totp_secret');
                 $table->dropColumn('totp_authenticated_at');
             });
+
+            Schema::dropIfExists('recovery_tokens');
         });
     }
 

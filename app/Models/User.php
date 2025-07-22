@@ -245,11 +245,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             ->where('key_type', ApiKey::TYPE_ACCOUNT);
     }
 
-    public function recoveryTokens(): HasMany
-    {
-        return $this->hasMany(RecoveryToken::class);
-    }
-
     public function sshKeys(): HasMany
     {
         return $this->hasMany(UserSSHKey::class);
