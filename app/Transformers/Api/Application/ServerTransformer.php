@@ -59,7 +59,7 @@ class ServerTransformer extends BaseTransformer
             'identifier' => $server->uuid_short,
             'name' => $server->name,
             'description' => $server->description,
-            'status' => $server->status,
+            'status' => $server->condition,
             // This field is deprecated, please use "status".
             'suspended' => $server->isSuspended(),
             'limits' => [
