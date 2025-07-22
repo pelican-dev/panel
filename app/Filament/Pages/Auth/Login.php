@@ -148,6 +148,10 @@ class Login extends BaseLogin
 
     private function getCaptchaComponent(): ?Component
     {
+        if ($this->verifyTwoFactor) {
+            return null;
+        }
+
         return $this->captchaService->getActiveSchema()?->getFormComponent();
     }
 
