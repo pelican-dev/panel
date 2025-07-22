@@ -69,10 +69,10 @@ class EditFiles extends Page
 
         return $form
             ->schema([
-                Section::make('Editing: ' . $this->path)
+                Section::make(trans('server/file.actions.edit.title', ['file' => $this->path]))
                     ->footerActions([
                         Action::make('save_and_close')
-                            ->label('Save & Close')
+                            ->label(trans('server/file.actions.edit.save_close'))
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+shift+s')
@@ -85,14 +85,14 @@ class EditFiles extends Page
 
                                 Notification::make()
                                     ->success()
-                                    ->title('File saved')
+                                    ->title(trans('server/file.actions.edit.notification'))
                                     ->body(fn () => $this->path)
                                     ->send();
 
                                 $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                             }),
                         Action::make('save')
-                            ->label('Save')
+                            ->label(trans('server/file.actions.edit.save'))
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
@@ -105,12 +105,12 @@ class EditFiles extends Page
 
                                 Notification::make()
                                     ->success()
-                                    ->title('File saved')
+                                    ->title(trans('server/file.actions.edit.notification'))
                                     ->body(fn () => $this->path)
                                     ->send();
                             }),
                         Action::make('cancel')
-                            ->label('Cancel')
+                            ->label(trans('server/file.actions.edit.cancel'))
                             ->color('danger')
                             ->icon('tabler-x')
                             ->url(fn () => ListFiles::getUrl(['path' => dirname($this->path)])),
@@ -118,7 +118,7 @@ class EditFiles extends Page
                     ->footerActionsAlignment(Alignment::End)
                     ->schema([
                         Select::make('lang')
-                            ->label('Syntax Highlighting')
+                            ->label(trans('server/file.actions.new_file.syntax'))
                             ->searchable()
                             ->native(false)
                             ->live()
