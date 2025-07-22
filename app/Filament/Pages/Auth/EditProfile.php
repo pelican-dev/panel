@@ -400,51 +400,52 @@ class EditProfile extends BaseEditProfile
                                                 'grid' => trans('profile.grid'),
                                                 'table' => trans('profile.table'),
                                             ]),
-                                        Section::make(trans('profile.console'))
-                                            ->collapsible()
-                                            ->icon('tabler-brand-tabler')
-                                            ->columns(4)
-                                            ->schema([
-                                                TextInput::make('console_font_size')
-                                                    ->label(trans('profile.font_size'))
-                                                    ->columnSpan(1)
-                                                    ->minValue(1)
-                                                    ->numeric()
-                                                    ->required()
-                                                    ->default(14),
-                                                Select::make('console_font')
-                                                    ->label(trans('profile.font'))
-                                                    ->required()
-                                                    ->options(function () {
-                                                        $fonts = [
-                                                            'monospace' => 'monospace', //default
-                                                        ];
+                                    ]),
+                                Section::make(trans('profile.console'))
+                                    ->collapsible()
+                                    ->icon('tabler-brand-tabler')
+                                    ->columns(4)
+                                    ->schema([
+                                        TextInput::make('console_font_size')
+                                            ->label(trans('profile.font_size'))
+                                            ->columnSpan(1)
+                                            ->minValue(1)
+                                            ->numeric()
+                                            ->required()
+                                            ->default(14),
+                                        Select::make('console_font')
+                                            ->label(trans('profile.font'))
+                                            ->required()
+                                            ->options(function () {
+                                                $fonts = [
+                                                    'monospace' => 'monospace', //default
+                                                ];
 
-                                                        if (!Storage::disk('public')->exists('fonts')) {
-                                                            Storage::disk('public')->makeDirectory('fonts');
-                                                            $this->fillForm();
-                                                        }
+                                                if (!Storage::disk('public')->exists('fonts')) {
+                                                    Storage::disk('public')->makeDirectory('fonts');
+                                                    $this->fillForm();
+                                                }
 
-                                                        foreach (Storage::disk('public')->allFiles('fonts') as $file) {
-                                                            $fileInfo = pathinfo($file);
+                                                foreach (Storage::disk('public')->allFiles('fonts') as $file) {
+                                                    $fileInfo = pathinfo($file);
 
-                                                            if ($fileInfo['extension'] === 'ttf') {
-                                                                $fonts[$fileInfo['filename']] = $fileInfo['filename'];
-                                                            }
-                                                        }
+                                                    if ($fileInfo['extension'] === 'ttf') {
+                                                        $fonts[$fileInfo['filename']] = $fileInfo['filename'];
+                                                    }
+                                                }
 
-                                                        return $fonts;
-                                                    })
-                                                    ->reactive()
-                                                    ->default('monospace')
-                                                    ->afterStateUpdated(fn ($state, Set $set) => $set('font_preview', $state)),
-                                                TextEntry::make('font_preview')
-                                                    ->label(trans('profile.font_preview'))
-                                                    ->columnSpan(2)
-                                                    ->state(function (Get $get) {
-                                                        $fontName = $get('console_font') ?? 'monospace';
-                                                        $fontSize = $get('console_font_size') . 'px';
-                                                        $style = <<<CSS
+                                                return $fonts;
+                                            })
+                                            ->reactive()
+                                            ->default('monospace')
+                                            ->afterStateUpdated(fn ($state, Set $set) => $set('font_preview', $state)),
+                                        TextEntry::make('font_preview')
+                                            ->label(trans('profile.font_preview'))
+                                            ->columnSpan(2)
+                                            ->state(function (Get $get) {
+                                                $fontName = $get('console_font') ?? 'monospace';
+                                                $fontSize = $get('console_font_size') . 'px';
+                                                $style = <<<CSS
                                                             .preview-text {
                                                                 font-family: $fontName;
                                                                 font-size: $fontSize;
@@ -452,43 +453,42 @@ class EditProfile extends BaseEditProfile
                                                                 display: block;
                                                             }
                                                         CSS;
-                                                        if ($fontName !== 'monospace') {
-                                                            $fontUrl = asset("storage/fonts/$fontName.ttf");
-                                                            $style = <<<CSS
+                                                if ($fontName !== 'monospace') {
+                                                    $fontUrl = asset("storage/fonts/$fontName.ttf");
+                                                    $style = <<<CSS
                                                                 @font-face {
                                                                     font-family: $fontName;
                                                                     src: url("$fontUrl");
                                                                 }
                                                                 $style
                                                             CSS;
-                                                        }
+                                                }
 
-                                                        return new HtmlString(<<<HTML
+                                                return new HtmlString(<<<HTML
                                                             <style>
                                                             {$style}
                                                             </style>
                                                             <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
                                                         HTML);
-                                                    }),
-                                                TextInput::make('console_graph_period')
-                                                    ->label(trans('profile.graph_period'))
-                                                    ->suffix(trans('profile.seconds'))
-                                                    ->hintIcon('tabler-question-mark')
-                                                    ->hintIconTooltip(trans('profile.graph_period_helper'))
-                                                    ->columnSpan(2)
-                                                    ->numeric()
-                                                    ->default(30)
-                                                    ->minValue(10)
-                                                    ->maxValue(120)
-                                                    ->required(),
-                                                TextInput::make('console_rows')
-                                                    ->label(trans('profile.rows'))
-                                                    ->minValue(1)
-                                                    ->numeric()
-                                                    ->required()
-                                                    ->columnSpan(2)
-                                                    ->default(30),
-                                            ]),
+                                            }),
+                                        TextInput::make('console_graph_period')
+                                            ->label(trans('profile.graph_period'))
+                                            ->suffix(trans('profile.seconds'))
+                                            ->hintIcon('tabler-question-mark')
+                                            ->hintIconTooltip(trans('profile.graph_period_helper'))
+                                            ->columnSpan(2)
+                                            ->numeric()
+                                            ->default(30)
+                                            ->minValue(10)
+                                            ->maxValue(120)
+                                            ->required(),
+                                        TextInput::make('console_rows')
+                                            ->label(trans('profile.rows'))
+                                            ->minValue(1)
+                                            ->numeric()
+                                            ->required()
+                                            ->columnSpan(2)
+                                            ->default(30),
                                     ]),
                             ]),
                     ]),
