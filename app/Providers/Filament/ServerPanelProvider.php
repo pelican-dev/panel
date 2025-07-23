@@ -62,7 +62,7 @@ class ServerPanelProvider extends PanelProvider
                     ->visible(fn (): bool => auth()->user()->canAccessPanel(Filament::getPanel('admin'))),
             ])
             ->navigationItems([
-                NavigationItem::make('Open in Admin')
+                NavigationItem::make(trans('server/console.open_in_admin'))
                     ->url(fn () => EditServer::getUrl(['record' => Filament::getTenant()], panel: 'admin'))
                     ->visible(fn () => auth()->user()->canAccessPanel(Filament::getPanel('admin')) && auth()->user()->can('view server', Filament::getTenant()))
                     ->icon('tabler-arrow-back')

@@ -5,6 +5,7 @@ return [
     'command' => 'Type a command...',
     'command_blocked' => 'Server Offline...',
     'command_blocked_title' => 'Can\'t send command when the server is Offline',
+    'open_in_admin' => 'Open in Admin',
     'power_actions' => [
         'start' => 'Start',
         'stop' => 'Stop',
