@@ -12,6 +12,7 @@ use Filament\Actions\DeleteAction;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Enums\IconSize;
 
 class EditSchedule extends EditRecord
 {
@@ -48,14 +49,26 @@ class EditSchedule extends EditRecord
     {
         return [
             DeleteAction::make()
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon('tabler-trash')
+                ->tooltip('Delete Schedule')
                 ->after(function ($record) {
                     Activity::event('server:schedule.delete')
                         ->property('name', $record->name)
                         ->log();
                 }),
-            ExportScheduleAction::make(),
-            $this->getSaveFormAction()->formId('form')->label('Save'),
-            $this->getCancelFormAction()->formId('form'),
+            ExportScheduleAction::make()
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon('tabler-download')
+                ->tooltip('Export Schedule'),
+            $this->getSaveFormAction()->formId('form')
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon('tabler-device-floppy')
+                ->tooltip('Save Schedule'),
+            $this->getCancelFormAction()->formId('form')
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon('tabler-cancel')
+                ->tooltip('Cancel'),
         ];
     }
 

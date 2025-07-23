@@ -19,8 +19,7 @@ class ListBackups extends ListRecords
     /** @return array<Action|ActionGroup> */
     protected function getDefaultHeaderActions(): array
     {
-        return [
-        ];
+        return [];
     }
 
     public function getBreadcrumbs(): array
