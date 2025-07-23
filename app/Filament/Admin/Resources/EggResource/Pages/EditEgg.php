@@ -243,7 +243,11 @@ class EditEgg extends EditRecord
                                 ->label(trans('admin/egg.script_entry'))
                                 ->native(false)
                                 ->selectablePlaceholder(false)
-                                ->options(['bash', 'ash', '/bin/bash'])
+                                ->options([
+                                    'bash' => 'bash',
+                                    'ash' => 'ash',
+                                    '/bin/bash' => '/bin/bash',
+                                ])
                                 ->required(),
                             MonacoEditor::make('script_install')
                                 ->label(trans('admin/egg.script_install'))

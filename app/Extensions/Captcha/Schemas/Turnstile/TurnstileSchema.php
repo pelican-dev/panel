@@ -66,9 +66,9 @@ class TurnstileSchema extends BaseSchema implements CaptchaSchemaInterface
     }
 
     /**
-     * @return array<string, string|bool>
+     * @throws Exception
      */
-    public function validateResponse(?string $captchaResponse = null): array
+    public function validateResponse(?string $captchaResponse = null): void
     {
         $captchaResponse ??= request()->get('cf-turnstile-response');
 
@@ -83,22 +83,33 @@ class TurnstileSchema extends BaseSchema implements CaptchaSchemaInterface
             ->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
                 'secret' => $secret,
                 'response' => $captchaResponse,
-            ]);
+            ])
+            ->json();
 
-        return count($response->json()) ? $response->json() : [
-            'success' => false,
-            'message' => 'Unknown error occurred, please try again',
-        ];
+        if (!$response['success']) {
+            match ($response['error-codes'][0] ?? null) {
+                'missing-input-secret' => throw new Exception('The secret parameter was not passed.'),
+                'invalid-input-secret' => throw new Exception('The secret parameter was invalid, did not exist, or is a testing secret key with a non-testing response.'),
+                'missing-input-response' => throw new Exception('The response parameter (token) was not passed.'),
+                'invalid-input-response' => throw new Exception('The response parameter (token) is invalid or has expired.'),
+                'bad-request' => throw new Exception('The request was rejected because it was malformed.'),
+                'timeout-or-duplicate' => throw new Exception('The response parameter (token) has already been validated before.'),
+                default => throw new Exception('An internal error happened while validating the response.'),
+            };
+        }
+
+        if (!$this->verifyDomain($response['hostname'] ?? '')) {
+            throw new Exception('Domain verification failed.');
+        }
     }
 
-    public function verifyDomain(string $hostname, ?string $requestUrl = null): bool
+    private function verifyDomain(string $hostname): bool
     {
         if (!env('CAPTCHA_TURNSTILE_VERIFY_DOMAIN', true)) {
             return true;
         }
 
-        $requestUrl ??= request()->url;
-        $requestUrl = parse_url($requestUrl);
+        $requestUrl = parse_url(request()->url());
 
         return $hostname === array_get($requestUrl, 'host');
     }

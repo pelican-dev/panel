@@ -31,6 +31,7 @@ use Filament\Notifications\Notification;
 use Filament\Panel;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\PageRegistration;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
@@ -416,9 +417,9 @@ class ListFiles extends ListRecords
         return [
             HeaderAction::make('new_file')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
-                ->label('New File')
-                ->color('gray')
-                ->keyBindings('')
+                ->tooltip('New File')
+                ->hiddenLabel()->icon('tabler-file-plus')->iconButton()->iconSize(IconSize::Large)
+                ->color('primary')
                 ->modalSubmitActionLabel('Create')
                 ->action(function ($data) {
                     $path = join_paths($this->path, $data['name']);
@@ -458,8 +459,9 @@ class ListFiles extends ListRecords
                 ]),
             HeaderAction::make('new_folder')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
-                ->label('New Folder')
-                ->color('gray')
+                ->hiddenLabel()->icon('tabler-folder-plus')->iconButton()->iconSize(IconSize::Large)
+                ->tooltip('New Folder')
+                ->color('primary')
                 ->action(function ($data) {
                     try {
                         $this->getDaemonFileRepository()->createDirectory($data['name'], $this->path);
@@ -485,7 +487,9 @@ class ListFiles extends ListRecords
                 ]),
             HeaderAction::make('upload')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
-                ->label('Upload')
+                ->hiddenLabel()->icon('tabler-upload')->iconButton()->iconSize(IconSize::Large)
+                ->tooltip('Upload')
+                ->color('success')
                 ->action(function ($data) {
                     if (count($data['files']) > 0 && !isset($data['url'])) {
                         /** @var UploadedFile $file */
@@ -534,7 +538,11 @@ class ListFiles extends ListRecords
                 ]),
             HeaderAction::make('search')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
-                ->label('Global Search')
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->tooltip('Global Search')
+                ->color('primary')
+                ->icon('tabler-world-search')
+                ->modalHeading('Global Search')
                 ->modalSubmitActionLabel('Search')
                 ->form([
                     TextInput::make('searchTerm')

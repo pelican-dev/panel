@@ -3,12 +3,14 @@
 namespace App\Filament\Server\Resources\ScheduleResource\Pages;
 
 use App\Facades\Activity;
+use App\Filament\Components\Actions\ExportScheduleAction;
 use App\Filament\Server\Resources\ScheduleResource;
 use App\Models\Schedule;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Enums\IconSize;
 
 class EditSchedule extends EditRecord
 {
@@ -45,13 +47,26 @@ class EditSchedule extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon('tabler-trash')
+                ->tooltip('Delete Schedule')
                 ->after(function ($record) {
                     Activity::event('server:schedule.delete')
                         ->property('name', $record->name)
                         ->log();
                 }),
-            $this->getSaveFormAction()->formId('form')->label('Save'),
-            $this->getCancelFormAction()->formId('form'),
+            ExportScheduleAction::make()
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon('tabler-download')
+                ->tooltip('Export Schedule'),
+            $this->getSaveFormAction()->formId('form')
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon('tabler-device-floppy')
+                ->tooltip('Save Schedule'),
+            $this->getCancelFormAction()->formId('form')
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon('tabler-cancel')
+                ->tooltip('Cancel'),
         ];
     }
 

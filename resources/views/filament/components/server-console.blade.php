@@ -90,7 +90,11 @@
 
         terminal.open(document.getElementById('terminal'));
 
-        fitAddon.fit(); //Fit on first load
+        fitAddon.fit(); // Fixes SPA issues.
+
+        window.addEventListener('load', () => {
+            fitAddon.fit();
+        });
 
         window.addEventListener('resize', () => {
             fitAddon.fit();

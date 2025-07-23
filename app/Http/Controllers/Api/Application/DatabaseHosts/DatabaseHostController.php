@@ -36,7 +36,7 @@ class DatabaseHostController extends ApplicationApiController
      */
     public function index(GetDatabaseHostRequest $request): array
     {
-        $databases = QueryBuilder::for(DatabaseHost::query())
+        $databases = QueryBuilder::for(DatabaseHost::class)
             ->allowedFilters(['name', 'host'])
             ->allowedSorts(['id', 'name', 'host'])
             ->paginate($request->query('per_page') ?? 10);

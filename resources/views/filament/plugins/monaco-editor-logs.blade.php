@@ -172,7 +172,6 @@
             @endif
         </div>
         <div class="fme-container" x-show="!showPreview">
-            <!-- Editor -->
             <div x-show="!monacoLoader" class="fme-element-wrapper">
                 <div x-ref="monacoEditorElement" class="fme-element" wire:ignore style="height: 100%"></div>
                 <div x-ref="monacoPlaceholderElement" x-show="monacoPlaceholder" @click="monacoEditorFocus()"

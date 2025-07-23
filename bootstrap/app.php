@@ -44,7 +44,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'node.maintenance' => \App\Http\Middleware\MaintenanceMiddleware::class,
-            'captcha' => \App\Http\Middleware\VerifyCaptcha::class,
         ]);
     })
     ->withSingletons([
