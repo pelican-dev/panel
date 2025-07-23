@@ -7,6 +7,11 @@ return [
     'created_at' => 'Created at',
     'status' => 'Status',
     'is_locked' => 'Lock Status',
+    'backupstatus' => [
+        'in_progress' => 'In Progress',
+        'successful' => 'Successful',
+        'failed' => 'Failed',
+    ],
     'actions' => [
         'create' => [
             'title' => 'Create Backup',
