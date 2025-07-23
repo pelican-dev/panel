@@ -602,11 +602,6 @@ class ListFiles extends ListRecords
         );
     }
 
-    public static function getNavigationLabel(): string
-    {
-        return trans('server/file.title');
-    }
-
     public function getTitle(): string
     {
         return trans('server/file.title');
