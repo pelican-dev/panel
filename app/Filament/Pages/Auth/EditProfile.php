@@ -149,6 +149,7 @@ class EditProfile extends BaseEditProfile
                                     ->acceptedFileTypes(['image/png'])
                                     ->directory('avatars')
                                     ->getUploadedFileNameForStorageUsing(fn () => $this->getUser()->id . '.png'),
+                                // TODO: wait for filament bug fix
                                 /*->hintAction(function (FileUpload $fileUpload) {
                                                 $path = $fileUpload->getDirectory() . '/' . $this->getUser()->id . '.png';
 
@@ -157,7 +158,7 @@ class EditProfile extends BaseEditProfile
                                                     ->iconButton()
                                                     ->hidden(fn () => !$fileUpload->getDisk()->exists($path))
                                                     ->action(fn () => $fileUpload->getDisk()->delete($path));
-                                            }),*/
+                                    }),*/
                             ]),
                         Tab::make(trans('profile.tabs.oauth'))
                             ->icon('tabler-brand-oauth')
@@ -210,65 +211,157 @@ class EditProfile extends BaseEditProfile
                             ->schema([
                                 Grid::make(5)
                                     ->schema([
-                                        Section::make(trans('profile.create_api_key'))->columnSpan(3)->schema([
-                                            TextInput::make('description')
-                                                ->label(trans('profile.description'))
+                                        Section::make(trans('profile.create_api_key'))->columnSpan(3)
+                                            ->schema([
+                                                TextInput::make('description')
+                                                    ->label(trans('profile.description'))
+                                                    ->live(),
+                                                TagsInput::make('allowed_ips')
+                                                    ->label(trans('profile.allowed_ips'))
+                                                    ->live()
+                                                    ->splitKeys([',', ' ', 'Tab'])
+                                                    ->placeholder('127.0.0.1 or 192.168.1.1')
+                                                    ->helperText(trans('profile.allowed_ips_help'))
+                                                    ->columnSpanFull(),
+                                            ])
+                                            ->headerActions([
+                                                Action::make('create')
+                                                    ->label(trans('filament-actions::create.single.modal.actions.create.label'))
+                                                    ->disabled(fn (Get $get) => empty($get('description')))
+                                                    ->successRedirectUrl(self::getUrl(['tab' => '-api-keys-tab'], panel: 'app'))
+                                                    ->action(function (Get $get, Action $action, User $user) {
+                                                        $token = $user->createToken(
+                                                            $get('description'),
+                                                            $get('allowed_ips'),
+                                                        );
+
+                                                        Activity::event('user:api-key.create')
+                                                            ->actor($user)
+                                                            ->subject($user)
+                                                            ->subject($token->accessToken)
+                                                            ->property('identifier', $token->accessToken->identifier)
+                                                            ->log();
+
+                                                        Notification::make()
+                                                            ->title(trans('profile.api_key_created'))
+                                                            ->body($token->accessToken->identifier . $token->plainTextToken)
+                                                            ->persistent()
+                                                            ->success()
+                                                            ->send();
+
+                                                        $action->success();
+                                                    }),
+                                            ]),
+                                        Section::make(trans('profile.api_keys'))->columnSpan(2)
+                                            ->schema([
+                                                Repeater::make('api_keys')
+                                                    ->hiddenLabel()
+                                                    ->inlineLabel(false)
+                                                    ->relationship('apiKeys')
+                                                    ->addable(false)
+                                                    ->itemLabel(fn ($state) => $state['identifier'])
+                                                    ->deleteAction(function (Action $action) {
+                                                        $action->requiresConfirmation()->action(function (array $arguments, Repeater $component, User $user) {
+                                                            $items = $component->getState();
+                                                            $key = $items[$arguments['item']];
+
+                                                            $apiKey = ApiKey::find($key['id'] ?? null);
+                                                            if ($apiKey->exists()) {
+                                                                $apiKey->delete();
+
+                                                                Activity::event('user:api-key.delete')
+                                                                    ->actor($user)
+                                                                    ->subject($user)
+                                                                    ->subject($apiKey)
+                                                                    ->property('identifier', $apiKey->identifier)
+                                                                    ->log();
+                                                            }
+
+                                                            unset($items[$arguments['item']]);
+
+                                                            $component->state($items);
+
+                                                            $component->callAfterStateUpdated();
+                                                        });
+                                                    })
+                                                    ->schema(fn () => [
+                                                        TextEntry::make('memo')
+                                                            ->hiddenLabel()
+                                                            ->state(fn (ApiKey $key) => $key->memo),
+                                                    ]),
+                                            ]),
+                                    ]),
+                            ]),
+                        Tab::make(trans('profile.tabs.ssh_keys'))
+                            ->icon('tabler-lock-code')
+                            ->schema([
+                                Grid::make(5)->schema([
+                                    Section::make(trans('profile.create_ssh_key'))->columnSpan(3)
+                                        ->schema([
+                                            TextInput::make('name')
+                                                ->label(trans('profile.name'))
                                                 ->live(),
-                                            TagsInput::make('allowed_ips')
-                                                ->label(trans('profile.allowed_ips'))
-                                                ->live()
-                                                ->splitKeys([',', ' ', 'Tab'])
-                                                ->placeholder('127.0.0.1 or 192.168.1.1')
-                                                ->helperText(trans('profile.allowed_ips_help'))
-                                                ->columnSpanFull(),
-                                        ])->headerActions([
+                                            Textarea::make('public_key')
+                                                ->label(trans('profile.public_key'))
+                                                ->autosize()
+                                                ->live(),
+                                        ])
+                                        ->headerActions([
                                             Action::make('create')
                                                 ->label(trans('filament-actions::create.single.modal.actions.create.label'))
-                                                ->disabled(fn (Get $get) => empty($get('description')))
-                                                ->successRedirectUrl(self::getUrl(['tab' => '-api-keys-tab'], panel: 'app'))
-                                                ->action(function (Get $get, Action $action, User $user) {
-                                                    $token = $user->createToken(
-                                                        $get('description'),
-                                                        $get('allowed_ips'),
-                                                    );
+                                                ->disabled(fn (Get $get) => empty($get('name')) || empty($get('public_key')))
+                                                ->successRedirectUrl(self::getUrl(['tab' => '-ssh-keys-tab'], panel: 'app'))
+                                                ->action(function (Get $get, Action $action, User $user, KeyCreationService $service) {
+                                                    try {
+                                                        $sshKey = $service->handle($user, $get('name'), $get('public_key'));
 
-                                                    Activity::event('user:api-key.create')
-                                                        ->actor($user)
-                                                        ->subject($user)
-                                                        ->subject($token->accessToken)
-                                                        ->property('identifier', $token->accessToken->identifier)
-                                                        ->log();
+                                                        Activity::event('user:ssh-key.create')
+                                                            ->actor($user)
+                                                            ->subject($user)
+                                                            ->subject($sshKey)
+                                                            ->property('fingerprint', $sshKey->fingerprint)
+                                                            ->log();
 
-                                                    Notification::make()
-                                                        ->title(trans('profile.api_key_created'))
-                                                        ->body($token->accessToken->identifier . $token->plainTextToken)
-                                                        ->persistent()
-                                                        ->success()
-                                                        ->send();
+                                                        Notification::make()
+                                                            ->title(trans('profile.ssh_key_created'))
+                                                            ->body("SHA256:{$sshKey->fingerprint}")
+                                                            ->success()
+                                                            ->send();
 
-                                                    $action->success();
+                                                        $action->success();
+                                                    } catch (Exception $exception) {
+                                                        Notification::make()
+                                                            ->title(trans('profile.could_not_create_ssh_key'))
+                                                            ->body($exception->getMessage())
+                                                            ->danger()
+                                                            ->send();
+
+                                                        $action->failure();
+                                                    }
                                                 }),
                                         ]),
-                                        Section::make(trans('profile.api_keys'))->columnSpan(2)->schema([
-                                            Repeater::make('api_keys')
+                                    Section::make(trans('profile.ssh_keys'))->columnSpan(2)
+                                        ->schema([
+                                            Repeater::make('ssh_keys')
                                                 ->hiddenLabel()
-                                                ->relationship('apiKeys')
+                                                ->inlineLabel(false)
+                                                ->relationship('sshKeys')
                                                 ->addable(false)
-                                                ->itemLabel(fn ($state) => $state['identifier'])
+                                                ->itemLabel(fn ($state) => $state['name'])
                                                 ->deleteAction(function (Action $action) {
                                                     $action->requiresConfirmation()->action(function (array $arguments, Repeater $component, User $user) {
                                                         $items = $component->getState();
                                                         $key = $items[$arguments['item']];
 
-                                                        $apiKey = ApiKey::find($key['id'] ?? null);
-                                                        if ($apiKey->exists()) {
-                                                            $apiKey->delete();
+                                                        $sshKey = UserSSHKey::find($key['id'] ?? null);
+                                                        if ($sshKey->exists()) {
+                                                            $sshKey->delete();
 
-                                                            Activity::event('user:api-key.delete')
+                                                            Activity::event('user:ssh-key.delete')
                                                                 ->actor($user)
                                                                 ->subject($user)
-                                                                ->subject($apiKey)
-                                                                ->property('identifier', $apiKey->identifier)
+                                                                ->subject($sshKey)
+                                                                ->property('fingerprint', $sshKey->fingerprint)
                                                                 ->log();
                                                         }
 
@@ -280,93 +373,11 @@ class EditProfile extends BaseEditProfile
                                                     });
                                                 })
                                                 ->schema(fn () => [
-                                                    TextEntry::make('memo')
-                                                        ->state(fn (ApiKey $key) => $key->memo),
+                                                    TextEntry::make('fingerprint')
+                                                        ->hiddenLabel()
+                                                        ->state(fn (UserSSHKey $key) => "SHA256:{$key->fingerprint}"),
                                                 ]),
                                         ]),
-                                    ]),
-                            ]),
-                        Tab::make(trans('profile.tabs.ssh_keys'))
-                            ->icon('tabler-lock-code')
-                            ->schema([
-                                Grid::make(5)->schema([
-                                    Section::make(trans('profile.create_ssh_key'))->columnSpan(3)->schema([
-                                        TextInput::make('name')
-                                            ->label(trans('profile.name'))
-                                            ->live(),
-                                        Textarea::make('public_key')
-                                            ->label(trans('profile.public_key'))
-                                            ->autosize()
-                                            ->live(),
-                                    ])->headerActions([
-                                        Action::make('create')
-                                            ->label(trans('filament-actions::create.single.modal.actions.create.label'))
-                                            ->disabled(fn (Get $get) => empty($get('name')) || empty($get('public_key')))
-                                            ->successRedirectUrl(self::getUrl(['tab' => '-ssh-keys-tab'], panel: 'app'))
-                                            ->action(function (Get $get, Action $action, User $user, KeyCreationService $service) {
-                                                try {
-                                                    $sshKey = $service->handle($user, $get('name'), $get('public_key'));
-
-                                                    Activity::event('user:ssh-key.create')
-                                                        ->actor($user)
-                                                        ->subject($user)
-                                                        ->subject($sshKey)
-                                                        ->property('fingerprint', $sshKey->fingerprint)
-                                                        ->log();
-
-                                                    Notification::make()
-                                                        ->title(trans('profile.ssh_key_created'))
-                                                        ->body("SHA256:{$sshKey->fingerprint}")
-                                                        ->success()
-                                                        ->send();
-
-                                                    $action->success();
-                                                } catch (Exception $exception) {
-                                                    Notification::make()
-                                                        ->title(trans('profile.could_not_create_ssh_key'))
-                                                        ->body($exception->getMessage())
-                                                        ->danger()
-                                                        ->send();
-
-                                                    $action->failure();
-                                                }
-                                            }),
-                                    ]),
-                                    Section::make(trans('profile.ssh_keys'))->columnSpan(2)->schema([
-                                        Repeater::make('ssh_keys')
-                                            ->hiddenLabel()
-                                            ->relationship('sshKeys')
-                                            ->addable(false)
-                                            ->itemLabel(fn ($state) => $state['name'])
-                                            ->deleteAction(function (Action $action) {
-                                                $action->requiresConfirmation()->action(function (array $arguments, Repeater $component, User $user) {
-                                                    $items = $component->getState();
-                                                    $key = $items[$arguments['item']];
-
-                                                    $sshKey = UserSSHKey::find($key['id'] ?? null);
-                                                    if ($sshKey->exists()) {
-                                                        $sshKey->delete();
-
-                                                        Activity::event('user:ssh-key.delete')
-                                                            ->actor($user)
-                                                            ->subject($user)
-                                                            ->subject($sshKey)
-                                                            ->property('fingerprint', $sshKey->fingerprint)
-                                                            ->log();
-                                                    }
-
-                                                    unset($items[$arguments['item']]);
-
-                                                    $component->state($items);
-
-                                                    $component->callAfterStateUpdated();
-                                                });
-                                            })
-                                            ->schema(fn () => [
-                                                TextEntry::make('fingerprint')
-                                                    ->label(fn (UserSSHKey $key) => "SHA256:{$key->fingerprint}"),
-                                            ]),
-                                    ]),
                                 ]),
                             ]),
                         Tab::make(trans('profile.tabs.activity'))
@@ -374,6 +385,7 @@ class EditProfile extends BaseEditProfile
                             ->schema([
                                 Repeater::make('activity')
                                     ->hiddenLabel()
+                                    ->inlineLabel(false)
                                     ->deletable(false)
                                     ->addable(false)
                                     ->relationship(null, function (Builder $query) {
@@ -381,7 +393,7 @@ class EditProfile extends BaseEditProfile
                                     })
                                     ->schema([
                                         TextEntry::make('log')
-                                            ->label('')
+                                            ->hiddenLabel()
                                             ->state(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
                                     ]),
                             ]),
