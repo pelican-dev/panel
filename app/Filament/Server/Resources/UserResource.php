@@ -234,4 +234,9 @@ class UserResource extends Resource
             'index' => Pages\ListUsers::route('/'),
         ];
     }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('server/user.title');
+    }
 }

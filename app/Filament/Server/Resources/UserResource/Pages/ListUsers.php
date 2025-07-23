@@ -163,11 +163,6 @@ class ListUsers extends ListRecords
         return [];
     }
 
-    public static function getNavigationLabel(): string
-    {
-        return trans('server/user.title');
-    }
-
     public function getTitle(): string|Htmlable
     {
         return trans('server/user.title');
