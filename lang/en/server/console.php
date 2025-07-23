@@ -22,4 +22,16 @@ return [
         'address' => 'Address',
         'unavailable' => 'Unavailable',
     ],
+    'status' => [
+        'created' => 'Created',
+        'starting' => 'Starting',
+        'running' => 'Running',
+        'restarting' => 'Restarting',
+        'exited' => 'Exited',
+        'paused' => 'Paused',
+        'dead' => 'Dead',
+        'removing' => 'Removing',
+        'stopping' => 'Stopping',
+        'offline' => 'Offline',
+    ],
 ];
