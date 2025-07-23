@@ -114,4 +114,9 @@ class AllocationResource extends Resource
             'index' => Pages\ListAllocations::route('/'),
         ];
     }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('server/network.title');
+    }
 }

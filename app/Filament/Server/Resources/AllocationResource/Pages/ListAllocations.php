@@ -56,4 +56,14 @@ class ListAllocations extends ListRecords
     {
         return [];
     }
+
+    public function getTitle(): string
+    {
+        return trans('server/network.title');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('server/network.title');
+    }
 }
