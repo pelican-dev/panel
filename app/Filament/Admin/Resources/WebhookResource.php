@@ -132,14 +132,15 @@ class WebhookResource extends Resource
                     ->live()
                     ->inline()
                     ->options(WebhookType::class)
-                    ->default(WebhookType::Regular->value)
-                    ->afterStateHydrated(function (string $state) {
-                        if ($state === WebhookType::Discord->value) {
+                    ->default(WebhookType::Regular)
+                    ->afterStateHydrated(function (WebhookType $state) {
+                        if ($state === WebhookType::Discord) {
                             self::sendHelpBanner();
                         }
                     })
-                    ->afterStateUpdated(function (string $state) {
-                        if ($state === WebhookType::Discord->value) {
+                    ->afterStateUpdated(function (WebhookType $state) {
+                        if ($state === WebhookType::Discord) {
+                            self::sendHelpBanner();
                         }
                     }),
                 TextInput::make('description')
@@ -150,23 +151,26 @@ class WebhookResource extends Resource
                     ->activeUrl()
                     ->required()
                     ->columnSpanFull()
-                    ->afterStateUpdated(fn (string $state, Set $set) => $set('type', str($state)->contains('discord.com') ? WebhookType::Discord->value : WebhookType::Regular->value)),
+                    ->afterStateUpdated(fn (string $state, Set $set) => $set('type', str($state)->contains('discord.com') ? WebhookType::Discord : WebhookType::Regular)),
                 Section::make(trans('admin/webhook.regular'))
-                    ->hidden(fn (Get $get) => $get('type') === WebhookType::Discord->value)
+                    ->hidden(fn (Get $get) => $get('type') === WebhookType::Discord)
                     ->dehydratedWhenHidden()
                     ->schema(fn () => self::getRegularFields())
-                    ->formBefore(),
+                    ->formBefore()
+                    ->columnSpanFull(),
                 Section::make(trans('admin/webhook.discord'))
-                    ->hidden(fn (Get $get) => $get('type') === WebhookType::Regular->value)
+                    ->hidden(fn (Get $get) => $get('type') === WebhookType::Regular)
                     ->dehydratedWhenHidden()
                     ->afterStateUpdated(fn (Livewire $livewire) => $livewire->dispatch('refresh-widget'))
                     ->schema(fn () => self::getDiscordFields())
                     ->view('filament.components.webhooksection')
                     ->aside()
-                    ->formBefore(),
+                    ->formBefore()
+                    ->columnSpanFull(),
                 Section::make(trans('admin/webhook.events'))
                     ->collapsible()
                     ->collapsed(fn (Get $get) => count($get('events') ?? []))
+                    ->columnSpanFull()
                     ->schema([
                         CheckboxList::make('events')
                             ->live()
