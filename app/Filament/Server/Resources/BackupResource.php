@@ -236,4 +236,9 @@ class BackupResource extends Resource
             'index' => Pages\ListBackups::route('/'),
         ];
     }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('server/backup.title');
+    }
 }

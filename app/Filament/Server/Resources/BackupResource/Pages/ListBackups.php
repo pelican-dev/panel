@@ -79,9 +79,4 @@ class ListBackups extends ListRecords
     {
         return trans('server/backup.title');
     }
-
-    public static function getNavigationLabel(): string
-    {
-        return trans('server/backup.title');
-    }
 }
