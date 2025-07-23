@@ -2,18 +2,18 @@
 
 namespace App\Livewire;
 
+use Filament\Notifications\Collection;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
 class AlertBannerContainer extends Component
 {
-    /** @var array<AlertBanner> */
-    public array $alertBanners;
+    public Collection $alertBanners;
 
     public function mount(): void
     {
-        $this->alertBanners = [];
+        $this->alertBanners = new Collection();
         $this->pullFromSession();
     }
 
@@ -21,15 +21,16 @@ class AlertBannerContainer extends Component
     public function pullFromSession(): void
     {
         foreach (session()->pull('alert-banners', []) as $alertBanner) {
-            $alertBanner = AlertBanner::fromLivewire($alertBanner);
-            $this->alertBanners[$alertBanner->getId()] = $alertBanner;
+            $alertBanner = AlertBanner::fromArray($alertBanner);
+            $this->alertBanners->put($alertBanner->getId(), $alertBanner);
         }
     }
 
     public function remove(string $id): void
     {
-        $alertBanners = &$this->alertBanners;
-        unset($alertBanners[$id]);
+        if ($this->alertBanners->has($id)) {
+            $this->alertBanners->forget($id);
+        }
     }
 
     public function render(): View
