@@ -52,7 +52,7 @@ class Startup extends ServerFormPage
                         'lg' => 4,
                     ])
                     ->autosize()
-                    ->hintAction(PreviewStartupAction::make('preview'))
+                    ->hintAction(PreviewStartupAction::make())
                     ->readOnly(),
                 TextInput::make('custom_image')
                     ->label(trans('server/startup.docker_image'))

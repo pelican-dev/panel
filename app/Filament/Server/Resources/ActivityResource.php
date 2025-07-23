@@ -91,6 +91,7 @@ class ActivityResource extends Resource
                             ->label(trans('server/activity.event'))
                             ->content(fn (ActivityLog $activityLog) => new HtmlString($activityLog->getLabel())),
                         TextInput::make('user')
+                            ->label(trans('server/activity.user'))
                             ->formatStateUsing(function (ActivityLog $activityLog) use ($server) {
                                 if (!$activityLog->actor instanceof User) {
                                     return $activityLog->actor_id === null ? trans('server/activity.system') : trans('server/activity.deleted_user');

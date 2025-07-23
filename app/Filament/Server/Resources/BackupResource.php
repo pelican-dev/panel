@@ -102,7 +102,7 @@ class BackupResource extends Resource
                     ->label(trans('server/backup.actions.create.name'))
                     ->searchable(),
                 BytesColumn::make('bytes')
-                    ->label('Size'),
+                    ->label(trans('server/backup.size')),
                 DateTimeColumn::make('created_at')
                     ->label(trans('server/backup.created_at'))
                     ->since()
