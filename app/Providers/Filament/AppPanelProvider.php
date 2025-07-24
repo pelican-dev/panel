@@ -42,7 +42,7 @@ class AppPanelProvider extends PanelProvider
             ->passwordReset()
             ->userMenuItems([
                 MenuItem::make()
-                    ->label('Admin')
+                    ->label(trans('profile.admin'))
                     ->url('/admin')
                     ->icon('tabler-arrow-forward')
                     ->sort(5)

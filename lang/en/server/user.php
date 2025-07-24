@@ -1,7 +1,22 @@
 <?php
 
 return [
+    'title' => 'Users',
+    'username' => 'Username',
+    'email' => 'Email',
+    'assign_all' => 'Assign all',
+    'invite_user' => 'Invite User',
+    'action' => 'Invite',
+    'remove' => 'Remove User',
+    'edit' => 'Edit User',
+    'editing' => 'Editing :user',
+    'delete' => 'Delete User',
+    'notification_add' => 'User Invited!',
+    'notification_edit' => 'User Updated!',
+    'notification_delete' => 'User Deleted!',
+    'notification_failed' => 'Failed to invite user!',
     'permissions' => [
+        'title' => 'Permissions',
         'activity_desc' => 'Permissions that control a user\'s access to the server activity logs.',
         'startup_desc' => 'Permissions that control a user\'s ability to view this server\'s startup parameters.',
         'settings_desc' => 'Permissions that control a user\'s ability to modify this server\'s settings.',

@@ -35,7 +35,7 @@ class ListDatabases extends ListRecords
             CreateAction::make('new')
                 ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
                 ->icon(fn () => $server->databases()->count() >= $server->database_limit ? 'tabler-database-x' : 'tabler-database-plus')
-                ->tooltip(fn () => $server->databases()->count() >= $server->database_limit ? 'Database limit reached' : 'Create Database')
+                ->tooltip(fn () => $server->databases()->count() >= $server->database_limit ? trans('server/database.limit') : trans('server/database.create_database'))
                 ->disabled(fn () => $server->databases()->count() >= $server->database_limit)
                 ->color(fn () => $server->databases()->count() >= $server->database_limit ? 'danger' : 'primary')
                 ->createAnother(false)
@@ -44,20 +44,20 @@ class ListDatabases extends ListRecords
                         ->columns(2)
                         ->schema([
                             Select::make('database_host_id')
-                                ->label('Database Host')
+                                ->label(trans('server/database.database_host'))
                                 ->columnSpan(2)
                                 ->required()
-                                ->placeholder('Select Database Host')
+                                ->placeholder(trans('server/database.database_host_select'))
                                 ->options(fn () => $server->node->databaseHosts->mapWithKeys(fn (DatabaseHost $databaseHost) => [$databaseHost->id => $databaseHost->name])),
                             TextInput::make('database')
+                                ->label(trans('server/database.name'))
                                 ->columnSpan(1)
-                                ->label('Database Name')
                                 ->prefix('s'. $server->id . '_')
                                 ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip('Leaving this blank will auto generate a random name'),
+                                ->hintIconTooltip(trans('server/database.name_hint')),
                             TextInput::make('remote')
+                                ->label(trans('server/database.connections_from'))
                                 ->columnSpan(1)
-                                ->label('Connections From')
                                 ->default('%'),
                         ]),
                 ])
@@ -75,5 +75,10 @@ class ListDatabases extends ListRecords
     public function getBreadcrumbs(): array
     {
         return [];
+    }
+
+    public function getTitle(): string
+    {
+        return trans('server/database.title');
     }
 }

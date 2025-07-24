@@ -66,13 +66,17 @@ class DatabaseResource extends Resource
         return $form
             ->schema([
                 TextInput::make('host')
+                    ->label(trans('server/database.host'))
                     ->formatStateUsing(fn (Database $database) => $database->address())
                     ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
                 TextInput::make('database')
+                    ->label(trans('server/database.database'))
                     ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
                 TextInput::make('username')
+                    ->label(trans('server/database.username'))
                     ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
                 TextInput::make('password')
+                    ->label(trans('server/database.password'))
                     ->password()->revealable()
                     ->hidden(fn () => !auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
                     ->hintAction(
@@ -82,11 +86,12 @@ class DatabaseResource extends Resource
                     ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
                     ->formatStateUsing(fn (Database $database) => $database->password),
                 TextInput::make('remote')
-                    ->label('Connections From'),
+                    ->label(trans('server/database.remote')),
                 TextInput::make('max_connections')
+                    ->label(trans('server/database.max_connections'))
                     ->formatStateUsing(fn (Database $database) => $database->max_connections === 0 ? $database->max_connections : 'Unlimited'),
                 TextInput::make('jdbc')
-                    ->label('JDBC Connection String')
+                    ->label(trans('server/database.jdbc'))
                     ->password()->revealable()
                     ->hidden(!auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
                     ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
@@ -100,12 +105,17 @@ class DatabaseResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('host')
+                    ->label(trans('server/database.host'))
                     ->state(fn (Database $database) => $database->address())
                     ->badge(),
-                TextColumn::make('database'),
-                TextColumn::make('username'),
-                TextColumn::make('remote'),
+                TextColumn::make('database')
+                    ->label(trans('server/database.database')),
+                TextColumn::make('username')
+                    ->label(trans('server/database.username')),
+                TextColumn::make('remote')
+                    ->label(trans('server/database.remote')),
                 DateTimeColumn::make('created_at')
+                    ->label(trans('server/database.created_at'))
                     ->sortable(),
             ])
             ->actions([
@@ -147,5 +157,10 @@ class DatabaseResource extends Resource
         return [
             'index' => Pages\ListDatabases::route('/'),
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('server/database.title');
     }
 }

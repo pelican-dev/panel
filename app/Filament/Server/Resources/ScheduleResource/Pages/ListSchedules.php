@@ -26,16 +26,21 @@ class ListSchedules extends ListRecords
             CreateAction::make()
                 ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
                 ->icon('tabler-calendar-plus')
-                ->tooltip('New Schedule'),
+                ->tooltip(trans('server/schedule.new')),
             ImportScheduleAction::make()
                 ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
                 ->icon('tabler-download')
-                ->tooltip('Import Schedule'),
+                ->tooltip(trans('server/schedule.import')),
         ];
     }
 
     public function getBreadcrumbs(): array
     {
         return [];
+    }
+
+    public function getTitle(): string
+    {
+        return trans('server/schedule.title');
     }
 }

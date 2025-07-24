@@ -30,10 +30,10 @@ class TasksRelationManager extends RelationManager
     private function getActionOptions(bool $full = true): array
     {
         return [
-            Task::ACTION_POWER => $full ? 'Send power action' : 'Power action',
-            Task::ACTION_COMMAND => $full ? 'Send command' : 'Command',
-            Task::ACTION_BACKUP => $full ? 'Create backup' : 'Files to ignore',
-            Task::ACTION_DELETE_FILES => $full ? 'Delete files' : 'Files to delete',
+            Task::ACTION_POWER => $full ? trans('server/schedule.tasks.actions.power.title') : trans('server/schedule.tasks.actions.power.action'),
+            Task::ACTION_COMMAND => $full ? trans('server/schedule.tasks.actions.command.title') : trans('server/schedule.tasks.actions.command.command'),
+            Task::ACTION_BACKUP => $full ? trans('server/schedule.tasks.actions.backup.title') : trans('server/schedule.tasks.actions.backup.files_to_ignore'),
+            Task::ACTION_DELETE_FILES => $full ? trans('server/schedule.tasks.actions.delete.title') : trans('server/schedule.tasks.actions.delete.files_to_delete'),
         ];
     }
 
@@ -44,6 +44,7 @@ class TasksRelationManager extends RelationManager
     {
         return [
             Select::make('action')
+                ->label(trans('server/schedule.tasks.actions.title'))
                 ->required()
                 ->live()
                 ->disableOptionWhen(fn (string $value) => $value === Task::ACTION_BACKUP && $schedule->server->backup_limit === 0)
@@ -53,27 +54,29 @@ class TasksRelationManager extends RelationManager
                 ->afterStateUpdated(fn ($state, Set $set) => $set('payload', $state === Task::ACTION_POWER ? 'restart' : null)),
             Textarea::make('payload')
                 ->hidden(fn (Get $get) => $get('action') === Task::ACTION_POWER)
-                ->label(fn (Get $get) => $this->getActionOptions(false)[$get('action')] ?? 'Payload'),
+                ->label(fn (Get $get) => $this->getActionOptions(false)[$get('action')] ?? trans('server/schedule.tasks.payload')),
             Select::make('payload')
                 ->visible(fn (Get $get) => $get('action') === Task::ACTION_POWER)
-                ->label('Power Action')
+                ->label(trans('server/schedule.tasks.actions.power.action'))
                 ->required()
                 ->options([
-                    'start' => 'Start',
-                    'restart' => 'Restart',
-                    'stop' => 'Stop',
-                    'kill' => 'Kill',
+                    'start' => trans('server/schedule.tasks.actions.power.start'),
+                    'restart' => trans('server/schedule.tasks.actions.power.restart'),
+                    'stop' => trans('server/schedule.tasks.actions.power.stop'),
+                    'kill' => trans('server/schedule.tasks.actions.power.kill'),
                 ])
                 ->selectablePlaceholder(false)
                 ->default('restart'),
             TextInput::make('time_offset')
+                ->label(trans('server/schedule.tasks.time_offset'))
                 ->hidden(fn (Get $get) => config('queue.default') === 'sync' || $get('sequence_id') === 1)
                 ->default(0)
                 ->numeric()
                 ->minValue(0)
                 ->maxValue(900)
-                ->suffix('Seconds'),
-            Toggle::make('continue_on_failure'),
+                ->suffix(trans('server/schedule.tasks.seconds')),
+            Toggle::make('continue_on_failure')
+                ->label(trans('server/schedule.tasks.continue_on_failure')),
         ];
     }
 
@@ -87,17 +90,21 @@ class TasksRelationManager extends RelationManager
             ->defaultSort('sequence_id')
             ->columns([
                 TextColumn::make('action')
+                    ->label(trans('server/schedule.tasks.actions.title'))
                     ->state(fn (Task $task) => $this->getActionOptions()[$task->action] ?? $task->action),
                 TextColumn::make('payload')
+                    ->label(trans('server/schedule.tasks.payload'))
                     ->state(fn (Task $task) => match ($task->payload) {
                         'start', 'restart', 'stop', 'kill' => mb_ucfirst($task->payload),
                         default => explode(PHP_EOL, $task->payload)
                     })
                     ->badge(),
                 TextColumn::make('time_offset')
+                    ->label(trans('server/schedule.tasks.time_offset'))
                     ->hidden(fn () => config('queue.default') === 'sync')
-                    ->suffix(' Seconds'),
+                    ->suffix(' '. trans('server/schedule.tasks.seconds')),
                 IconColumn::make('continue_on_failure')
+                    ->label(trans('server/schedule.tasks.continue_on_failure'))
                     ->boolean(),
             ])
             ->actions([
@@ -133,7 +140,7 @@ class TasksRelationManager extends RelationManager
             ->headerActions([
                 CreateAction::make()
                     ->createAnother(false)
-                    ->label(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10) ? 'Task Limit Reached' : 'Create Task')
+                    ->label(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10) ? trans('server/schedule.tasks.limit') : trans('server/schedule.tasks.create'))
                     ->disabled(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10))
                     ->form($this->getTaskForm($schedule))
                     ->action(function ($data) use ($schedule) {

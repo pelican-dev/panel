@@ -38,10 +38,6 @@ class ActivityResource extends Resource
 
     protected static ?string $model = ActivityLog::class;
 
-    protected static ?string $modelLabel = 'Activity';
-
-    protected static ?string $pluralModelLabel = 'Activity';
-
     protected static ?int $navigationSort = 8;
 
     protected static ?string $navigationIcon = 'tabler-stack';
@@ -56,14 +52,16 @@ class ActivityResource extends Resource
             ->defaultPaginationPageOption(25)
             ->columns([
                 TextColumn::make('event')
+                    ->label(trans('server/activity.event'))
                     ->html()
                     ->description(fn ($state) => $state)
                     ->icon(fn (ActivityLog $activityLog) => $activityLog->getIcon())
                     ->formatStateUsing(fn (ActivityLog $activityLog) => $activityLog->getLabel()),
                 TextColumn::make('user')
+                    ->label(trans('server/activity.user'))
                     ->state(function (ActivityLog $activityLog) use ($server) {
                         if (!$activityLog->actor instanceof User) {
-                            return $activityLog->actor_id === null ? 'System' : 'Deleted user';
+                            return $activityLog->actor_id === null ? trans('server/activity.system') : trans('server/activity.deleted_user');
                         }
 
                         $user = $activityLog->actor->username;
@@ -79,6 +77,7 @@ class ActivityResource extends Resource
                     ->url(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User && auth()->user()->can('update', $activityLog->actor) ? EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin') : '')
                     ->grow(false),
                 DateTimeColumn::make('timestamp')
+                    ->label(trans('server/activity.timestamp'))
                     ->since()
                     ->sortable()
                     ->grow(false),
@@ -89,11 +88,13 @@ class ActivityResource extends Resource
                     //->visible(fn (ActivityLog $activityLog) => $activityLog->hasAdditionalMetadata())
                     ->form([
                         Placeholder::make('event')
+                            ->label(trans('server/activity.event'))
                             ->content(fn (ActivityLog $activityLog) => new HtmlString($activityLog->getLabel())),
                         TextInput::make('user')
+                            ->label(trans('server/activity.user'))
                             ->formatStateUsing(function (ActivityLog $activityLog) use ($server) {
                                 if (!$activityLog->actor instanceof User) {
-                                    return $activityLog->actor_id === null ? 'System' : 'Deleted user';
+                                    return $activityLog->actor_id === null ? trans('server/activity.system') : trans('server/activity.deleted_user');
                                 }
 
                                 $user = $activityLog->actor->username;
@@ -116,9 +117,10 @@ class ActivityResource extends Resource
                                     ->visible(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User && auth()->user()->can('update', $activityLog->actor))
                                     ->url(fn (ActivityLog $activityLog) => EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin'))
                             ),
-                        DateTimePicker::make('timestamp'),
+                        DateTimePicker::make('timestamp')
+                            ->label(trans('server/activity.timestamp')),
                         KeyValue::make('properties')
-                            ->label('Metadata')
+                            ->label(trans('server/activity.metadata'))
                             ->formatStateUsing(fn ($state) => Arr::dot($state)),
                     ]),
             ])
@@ -167,5 +169,10 @@ class ActivityResource extends Resource
         return [
             'index' => Pages\ListActivities::route('/'),
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('server/activity.title');
     }
 }

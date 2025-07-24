@@ -80,6 +80,6 @@ class ServerMemoryChart extends ChartWidget
 
     public function getHeading(): string
     {
-        return 'Memory';
+        return trans('server/console.labels.memory');
     }
 }

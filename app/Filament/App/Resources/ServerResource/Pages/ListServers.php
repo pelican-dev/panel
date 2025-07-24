@@ -23,6 +23,7 @@ use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Livewire\Attributes\On;
@@ -61,13 +62,13 @@ class ListServers extends ListRecords
     {
         return [
             TextColumn::make('condition')
-                ->label('Status')
+                ->label(trans('server/dashboard.status'))
                 ->badge()
                 ->tooltip(fn (Server $server) => $server->formatResource('uptime', type: ServerResourceType::Time))
                 ->icon(fn (Server $server) => $server->condition->getIcon())
                 ->color(fn (Server $server) => $server->condition->getColor()),
             TextColumn::make('name')
-                ->label('Server')
+                ->label(trans('server/dashboard.server'))
                 ->description(fn (Server $server) => $server->description)
                 ->grow()
                 ->searchable(),
@@ -78,21 +79,21 @@ class ListServers extends ListRecords
                 ->copyable(request()->isSecure())
                 ->state(fn (Server $server) => $server->allocation->address ?? 'None'),
             TextColumn::make('cpuUsage')
-                ->label('Resources')
+                ->label(trans('server/dashboard.resources'))
                 ->icon('tabler-cpu')
-                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('cpu', limit: true, type: ServerResourceType::Percentage, precision: 0))
+                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource('cpu', limit: true, type: ServerResourceType::Percentage, precision: 0)]))
                 ->state(fn (Server $server) => $server->formatResource('cpu_absolute', type: ServerResourceType::Percentage))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'cpu')),
             TextColumn::make('memoryUsage')
                 ->label('')
                 ->icon('tabler-device-desktop-analytics')
-                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('memory', limit: true))
+                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource('memory', limit: true)]))
                 ->state(fn (Server $server) => $server->formatResource('memory_bytes'))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'memory')),
             TextColumn::make('diskUsage')
                 ->label('')
                 ->icon('tabler-device-sd-card')
-                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('disk', limit: true))
+                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource('disk', limit: true)]))
                 ->state(fn (Server $server) => $server->formatResource('disk_bytes'))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'disk')),
         ];
@@ -115,7 +116,7 @@ class ListServers extends ListRecords
             ->contentGrid($usingGrid ? ['default' => 1, 'md' => 2] : null)
             ->emptyStateIcon('tabler-brand-docker')
             ->emptyStateDescription('')
-            ->emptyStateHeading(fn () => $this->activeTab === 'my' ? 'You don\'t own any servers!' : 'You don\'t have access to any servers!')
+            ->emptyStateHeading(fn () => $this->activeTab === 'my' ? trans('server/dashboard.empty_own') : trans('server/dashboard.empty_other'))
             ->persistFiltersInSession()
             ->filters([
                 SelectFilter::make('egg')
@@ -142,15 +143,15 @@ class ListServers extends ListRecords
         $other = (clone $all)->whereNot('owner_id', auth()->user()->id);
 
         return [
-            'my' => Tab::make('My Servers')
+            'my' => Tab::make(trans('server/dashboard.my_servers'))
                 ->badge(fn () => $my->count())
                 ->modifyQueryUsing(fn () => $my),
 
-            'other' => Tab::make('Others\' Servers')
+            'other' => Tab::make(trans('server/dashboard.other_servers'))
                 ->badge(fn () => $other->count())
                 ->modifyQueryUsing(fn () => $other),
 
-            'all' => Tab::make('All Servers')
+            'all' => Tab::make(trans('server/dashboard.all_servers'))
                 ->badge($all->count()),
         ];
     }
@@ -225,24 +226,28 @@ class ListServers extends ListRecords
     {
         $actions = [
             Action::make('start')
+                ->label(trans('server/console.power_actions.start'))
                 ->color('primary')
                 ->icon('tabler-player-play-filled')
                 ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
                 ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isStartable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'start']),
             Action::make('restart')
+                ->label(trans('server/console.power_actions.restart'))
                 ->color('gray')
                 ->icon('tabler-reload')
                 ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
                 ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isRestartable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'restart']),
             Action::make('stop')
+                ->label(trans('server/console.power_actions.stop'))
                 ->color('danger')
                 ->icon('tabler-player-stop-filled')
                 ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isStoppable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'stop']),
             Action::make('kill')
+                ->label(trans('server/console.power_actions.kill'))
                 ->color('danger')
                 ->icon('tabler-alert-square')
                 ->tooltip('This can result in data corruption and/or data loss!')
@@ -258,9 +263,14 @@ class ListServers extends ListRecords
                 ActionGroup::make($actions)
                     ->icon('tabler-power')
                     ->color('primary')
-                    ->tooltip('Power Actions')
+                    ->tooltip(trans('server/dashboard.power_actions'))
                     ->iconSize(IconSize::Large),
             ];
         }
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return trans('server/dashboard.title');
     }
 }

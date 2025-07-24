@@ -80,6 +80,6 @@ class ServerCpuChart extends ChartWidget
 
     public function getHeading(): string
     {
-        return 'CPU';
+        return trans('server/console.labels.cpu');
     }
 }

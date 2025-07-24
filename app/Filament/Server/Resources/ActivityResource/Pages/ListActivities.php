@@ -18,4 +18,9 @@ class ListActivities extends ListRecords
     {
         return [];
     }
+
+    public function getTitle(): string
+    {
+        return trans('server/activity.title');
+    }
 }

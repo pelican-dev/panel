@@ -85,21 +85,20 @@ class ScheduleResource extends Resource
             ])
             ->schema([
                 TextInput::make('name')
+                    ->label(trans('server/schedule.name'))
                     ->columnSpanFull()
-                    ->label('Schedule Name')
-                    ->placeholder('A human readable identifier for this schedule.')
                     ->autocomplete(false)
                     ->required(),
                 Toggle::make('only_when_online')
-                    ->label('Only when Server is Online?')
-                    ->hintIconTooltip('Only execute this schedule when the server is in a running state.')
+                    ->label(trans('server/schedule.only_online'))
+                    ->hintIconTooltip(trans('server/schedule.only_online_hint'))
                     ->hintIcon('tabler-question-mark')
                     ->inline(false)
                     ->required()
                     ->default(1),
                 Toggle::make('is_active')
-                    ->label('Enable Schedule?')
-                    ->hintIconTooltip('This schedule will be executed automatically if enabled.')
+                    ->label(trans('server/schedule.enabled'))
+                    ->hintIconTooltip(trans('server/schedule.enabled_hint'))
                     ->hintIcon('tabler-question-mark')
                     ->inline(false)
                     ->hiddenOn('view')
@@ -107,7 +106,7 @@ class ScheduleResource extends Resource
                     ->default(1),
                 ToggleButtons::make('Status')
                     ->formatStateUsing(fn (Schedule $schedule) => !$schedule->is_active ? 'inactive' : ($schedule->is_processing ? 'processing' : 'active'))
-                    ->options(fn (Schedule $schedule) => !$schedule->is_active ? ['inactive' => 'Inactive'] : ($schedule->is_processing ? ['processing' => 'Processing'] : ['active' => 'Active']))
+                    ->options(fn (Schedule $schedule) => !$schedule->is_active ? ['inactive' => trans('server/schedule.inactive')] : ($schedule->is_processing ? ['processing' => trans('server/schedule.processing')] : ['active' => trans('server/schedule.active')]))
                     ->colors([
                         'inactive' => 'danger',
                         'processing' => 'warning',
@@ -115,22 +114,27 @@ class ScheduleResource extends Resource
                     ])
                     ->visibleOn('view'),
                 Section::make('Cron')
-                    ->description(fn (Get $get) => new HtmlString('Please keep in mind that the cron inputs below always assume UTC.<br>Next run in your timezone (' . auth()->user()->timezone . '): <b>'. Utilities::getScheduleNextRunDate($get('cron_minute'), $get('cron_hour'), $get('cron_day_of_month'), $get('cron_month'), $get('cron_day_of_week'))->timezone(auth()->user()->timezone) . '</b>'))
+                    ->label(trans('server/schedule.cron'))
+                    ->description(fn (Get $get) => new HtmlString(trans('server/schedule.cron_body') . '<br>' . trans('server/schedule.cron_timezone', ['timezone' => auth()->user()->timezone, 'next_run' => Utilities::getScheduleNextRunDate($get('cron_minute'), $get('cron_hour'), $get('cron_day_of_month'), $get('cron_month'), $get('cron_day_of_week'))->timezone(auth()->user()->timezone)])))
                     ->schema([
                         Actions::make([
                             CronPresetAction::make('hourly')
+                                ->label(trans('server/schedule.time.hourly'))
                                 ->cron('0', '*', '*', '*', '*'),
                             CronPresetAction::make('daily')
+                                ->label(trans('server/schedule.time.daily'))
                                 ->cron('0', '0', '*', '*', '*'),
                             CronPresetAction::make('weekly_monday')
-                                ->label('Weekly (Monday)')
+                                ->label(trans('server/schedule.time.weekly_mon'))
                                 ->cron('0', '0', '*', '*', '1'),
                             CronPresetAction::make('weekly_sunday')
-                                ->label('Weekly (Sunday)')
+                                ->label(trans('server/schedule.time.weekly_sun'))
                                 ->cron('0', '0', '*', '*', '0'),
                             CronPresetAction::make('monthly')
+                                ->label(trans('server/schedule.time.monthly'))
                                 ->cron('0', '0', '1', '*', '*'),
                             CronPresetAction::make('every_x_minutes')
+                                ->label(trans('server/schedule.time.every_min'))
                                 ->color(fn (Get $get) => str($get('cron_minute'))->startsWith('*/')
                                                     && $get('cron_hour') == '*'
                                                     && $get('cron_day_of_month') == '*'
@@ -142,8 +146,8 @@ class ScheduleResource extends Resource
                                         ->numeric()
                                         ->minValue(1)
                                         ->maxValue(60)
-                                        ->prefix('Every')
-                                        ->suffix('Minutes'),
+                                        ->prefix(trans('server/schedule.time.every'))
+                                        ->suffix(trans('server/schedule.time.minutes')),
                                 ])
                                 ->action(function (Set $set, $data) {
                                     $set('cron_minute', '*/' . $data['x']);
@@ -164,8 +168,8 @@ class ScheduleResource extends Resource
                                         ->numeric()
                                         ->minValue(1)
                                         ->maxValue(24)
-                                        ->prefix('Every')
-                                        ->suffix('Hours'),
+                                        ->prefix(trans('server/schedule.time.every'))
+                                        ->suffix(trans('server/schedule.time.hours')),
                                 ])
                                 ->action(function (Set $set, $data) {
                                     $set('cron_minute', '0');
@@ -186,8 +190,8 @@ class ScheduleResource extends Resource
                                         ->numeric()
                                         ->minValue(1)
                                         ->maxValue(24)
-                                        ->prefix('Every')
-                                        ->suffix('Days'),
+                                        ->prefix(trans('server/schedule.time.every'))
+                                        ->suffix(trans('server/schedule.time.days')),
                                 ])
                                 ->action(function (Set $set, $data) {
                                     $set('cron_minute', '0');
@@ -208,8 +212,8 @@ class ScheduleResource extends Resource
                                         ->numeric()
                                         ->minValue(1)
                                         ->maxValue(24)
-                                        ->prefix('Every')
-                                        ->suffix('Months'),
+                                        ->prefix(trans('server/schedule.time.every'))
+                                        ->suffix(trans('server/schedule.time.months')),
                                 ])
                                 ->action(function (Set $set, $data) {
                                     $set('cron_minute', '0');
@@ -227,15 +231,15 @@ class ScheduleResource extends Resource
                                 ->form([
                                     Select::make('x')
                                         ->label('')
-                                        ->prefix('Every')
+                                        ->prefix(trans('server/schedule.time.every'))
                                         ->options([
-                                            '1' => 'Monday',
-                                            '2' => 'Tuesday',
-                                            '3' => 'Wednesday',
-                                            '4' => 'Thursday',
-                                            '5' => 'Friday',
-                                            '6' => 'Saturday',
-                                            '0' => 'Sunday',
+                                            '1' => trans('server/schedule.time.monday'),
+                                            '2' => trans('server/schedule.time.tuesday'),
+                                            '3' => trans('server/schedule.time.wednesday'),
+                                            '4' => trans('server/schedule.time.thursday'),
+                                            '5' => trans('server/schedule.time.friday'),
+                                            '6' => trans('server/schedule.time.saturday'),
+                                            '0' => trans('server/schedule.time.sunday'),
                                         ])
                                         ->selectablePlaceholder(false)
                                         ->native(false),
@@ -251,47 +255,47 @@ class ScheduleResource extends Resource
                             ->hiddenOn('view'),
                         Group::make([
                             TextInput::make('cron_minute')
+                                ->label(trans('server/schedule.time.minute'))
                                 ->columnSpan([
                                     'default' => 2,
                                     'lg' => 1,
                                 ])
-                                ->label('Minute')
                                 ->default('*/5')
                                 ->required()
                                 ->live(),
                             TextInput::make('cron_hour')
+                                ->label(trans('server/schedule.time.hour'))
                                 ->columnSpan([
                                     'default' => 2,
                                     'lg' => 1,
                                 ])
-                                ->label('Hour')
                                 ->default('*')
                                 ->required()
                                 ->live(),
                             TextInput::make('cron_day_of_month')
+                                ->label(trans('server/schedule.time.day_of_month'))
                                 ->columnSpan([
                                     'default' => 2,
                                     'lg' => 1,
                                 ])
-                                ->label('Day of Month')
                                 ->default('*')
                                 ->required()
                                 ->live(),
                             TextInput::make('cron_month')
+                                ->label(trans('server/schedule.time.month'))
                                 ->columnSpan([
                                     'default' => 2,
                                     'lg' => 1,
                                 ])
-                                ->label('Month')
                                 ->default('*')
                                 ->required()
                                 ->live(),
                             TextInput::make('cron_day_of_week')
+                                ->label(trans('server/schedule.time.day_of_week'))
                                 ->columnSpan([
                                     'default' => 2,
                                     'lg' => 1,
                                 ])
-                                ->label('Day of Week')
                                 ->default('*')
                                 ->required()
                                 ->live(),
@@ -309,22 +313,26 @@ class ScheduleResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(trans('server/schedule.name'))
                     ->searchable(),
                 TextColumn::make('cron')
+                    ->label(trans('server/schedule.cron'))
                     ->state(fn (Schedule $schedule) => $schedule->cron_minute . ' ' . $schedule->cron_hour . ' ' . $schedule->cron_day_of_month . ' ' . $schedule->cron_month . ' ' . $schedule->cron_day_of_week),
                 TextColumn::make('status')
-                    ->state(fn (Schedule $schedule) => !$schedule->is_active ? 'Inactive' : ($schedule->is_processing ? 'Processing' : 'Active')),
+                    ->label(trans('server/schedule.status'))
+                    ->state(fn (Schedule $schedule) => !$schedule->is_active ? trans('server/schedule.inactive') : ($schedule->is_processing ? trans('server/schedule.processing') : trans('server/schedule.active'))),
                 IconColumn::make('only_when_online')
+                    ->label(trans('server/schedule.online_only'))
                     ->boolean()
                     ->sortable(),
                 DateTimeColumn::make('last_run_at')
-                    ->label('Last run')
-                    ->placeholder('Never')
+                    ->label(trans('server/schedule.last_run'))
+                    ->placeholder(trans('server/schedule.never'))
                     ->since()
                     ->sortable(),
                 DateTimeColumn::make('next_run_at')
-                    ->label('Next run')
-                    ->placeholder('Never')
+                    ->label(trans('server/schedule.next_run'))
+                    ->placeholder(trans('server/schedule.never'))
                     ->since()
                     ->sortable()
                     ->state(fn (Schedule $schedule) => $schedule->is_active ? $schedule->next_run_at : null),
@@ -367,11 +375,16 @@ class ScheduleResource extends Resource
             return Utilities::getScheduleNextRunDate($minute, $hour, $dayOfMonth, $month, $dayOfWeek);
         } catch (Exception) {
             Notification::make()
-                ->title('The cron data provided does not evaluate to a valid expression')
+                ->title(trans('server/schedule.notification_invalid_cron'))
                 ->danger()
                 ->send();
 
             throw new Halt();
         }
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('server/schedule.title');
     }
 }
