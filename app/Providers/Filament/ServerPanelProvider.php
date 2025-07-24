@@ -6,6 +6,7 @@ use App\Filament\App\Resources\ServerResource\Pages\ListServers;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Admin\Resources\ServerResource\Pages\EditServer;
 use App\Filament\Pages\Auth\EditProfile;
+use App\Filament\Server\Pages\Console;
 use App\Http\Middleware\Activity\ServerSubject;
 use App\Http\Middleware\LanguageMiddleware;
 use App\Http\Middleware\RequireTwoFactorAuthentication;
@@ -55,7 +56,7 @@ class ServerPanelProvider extends PanelProvider
                     ->url(fn () => ListServers::getUrl(panel: 'app'))
                     ->sort(6),
                 MenuItem::make()
-                    ->label('Admin')
+                    ->label(trans('profile.admin'))
                     ->icon('tabler-arrow-forward')
                     ->url(fn () => Filament::getPanel('admin')->getUrl())
                     ->sort(5)
