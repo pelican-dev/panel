@@ -34,5 +34,6 @@ return [
         'removing' => 'Removing',
         'stopping' => 'Stopping',
         'offline' => 'Offline',
+        'missing' => 'Missing',
     ],
 ];
