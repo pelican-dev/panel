@@ -102,23 +102,23 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         FilamentView::registerRenderHook(
-            PanelsRenderHook::HEAD_START,
-            fn () => Blade::render('filament.layouts.header')
-        );
-
-        FilamentView::registerRenderHook(
             PanelsRenderHook::PAGE_START,
             fn () => Blade::render('@livewire(\App\Livewire\AlertBannerContainer::class)'),
         );
 
         FilamentView::registerRenderHook(
-            PanelsRenderHook::BODY_END,
-            fn () => Blade::render('filament.layouts.body-end'),
+            PanelsRenderHook::FOOTER,
+            fn () => Blade::render('filament.layouts.footer'),
         );
 
         FilamentView::registerRenderHook(
-            PanelsRenderHook::FOOTER,
-            fn () => Blade::render('filament.layouts.footer'),
+            PanelsRenderHook::STYLES_AFTER,
+            fn () => Blade::render("@vite(['resources/css/app.css'])")
+        );
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::SCRIPTS_AFTER,
+            fn () => Blade::render("@vite(['resources/js/app.js'])"),
         );
 
         on('dehydrate', function (Component $component) {

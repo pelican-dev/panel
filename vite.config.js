@@ -7,8 +7,9 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/js/console.js',
+
                 'resources/css/console.css',
+                'resources/js/console.js',
             ],
             refresh: [...refreshPaths, 'app/Livewire/**'],
         }),
