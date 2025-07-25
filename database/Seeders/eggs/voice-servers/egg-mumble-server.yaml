@@ -1,0 +1,68 @@
+_comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
+meta:
+  version: PLCN_v2
+  update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/voice-servers/egg-mumble-server.yaml'
+exported_at: '2025-07-25T13:30:48+00:00'
+name: 'Mumble Server'
+author: panel@example.com
+uuid: 727ee758-7fb2-4979-972b-d3eba4e1e9f0
+description: |-
+  Mumble is an open source, low-latency, high quality voice chat software primarily intended for use
+  while gaming.
+tags:
+  - voice
+features: {  }
+docker_images:
+  Mumble: 'ghcr.io/parkervcp/yolks:voice_mumble'
+file_denylist: {  }
+startup: 'mumble-server -fg -ini murmur.ini'
+config:
+  files:
+    murmur.ini:
+      parser: ini
+      find:
+        database: /home/container/murmur.sqlite
+        logfile: /home/container/murmur.log
+        port: '{{server.allocations.default.port}}'
+        host: ''
+        users: '{{server.environment.MAX_USERS}}'
+  startup:
+    done: 'Server listening on'
+  logs: {  }
+  stop: ^C
+scripts:
+  installation:
+    script: |-
+      #!/bin/ash
+
+      if [ ! -d /mnt/server/ ]; then
+          mkdir /mnt/server/
+      fi
+
+      cd /mnt/server
+
+      FILE=/mnt/server/murmur.ini
+      if [ -f "$FILE" ]; then
+          echo "Config file already exists."
+      else 
+          echo "Downloading the config file."
+          apk add --no-cache murmur
+          cp /etc/murmur.ini /mnt/server/murmur.ini
+          apk del murmur
+      fi
+      echo "done"
+    container: 'ghcr.io/parkervcp/installers:alpine'
+    entrypoint: ash
+variables:
+  -
+    name: 'Maximum Users'
+    description: 'Maximum concurrent users on the mumble server.'
+    env_variable: MAX_USERS
+    default_value: 100
+    user_viewable: true
+    user_editable: false
+    rules:
+      - required
+      - numeric
+      - 'digits_between:1,5'
+    sort: 1
