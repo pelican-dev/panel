@@ -2,11 +2,13 @@ _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
   version: PLCN_v2
   update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/source-engine/egg-garrys-mod.yaml'
-exported_at: '2025-07-25T11:40:20+00:00'
+exported_at: '2025-07-25T13:30:30+00:00'
 name: 'Garrys Mod'
 author: panel@example.com
 uuid: 60ef81d4-30a2-4d98-ab64-f59c69e2f915
-description: 'Garrys Mod, is a sandbox physics game created by Garry Newman, and developed by his company, Facepunch Studios.'
+description: |-
+  Garrys Mod, is a sandbox physics game created by Garry Newman, and developed by his company,
+  Facepunch Studios.
 tags:
   - source
   - steamcmd
@@ -25,7 +27,108 @@ config:
   stop: quit
 scripts:
   installation:
-    script: "#!/bin/bash\r\n# steamcmd Base Installation Script\r\n#\r\n# Server Files: /mnt/server\r\n\r\n## just in case someone removed the defaults.\r\nif [ \"${STEAM_USER}\" == \"\" ]; then\r\n    echo -e \"steam user is not set.\\n\"\r\n    echo -e \"Using anonymous user.\\n\"\r\n    STEAM_USER=anonymous\r\n    STEAM_PASS=\"\"\r\n    STEAM_AUTH=\"\"\r\nelse\r\n    echo -e \"user set to ${STEAM_USER}\"\r\nfi\r\n\r\n## download and install steamcmd\r\ncd /tmp\r\nmkdir -p /mnt/server/steamcmd\r\ncurl -sSL -o steamcmd.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz\r\ntar -xzvf steamcmd.tar.gz -C /mnt/server/steamcmd\r\nmkdir -p /mnt/server/steamapps # Fix steamcmd disk write error when this folder is missing\r\ncd /mnt/server/steamcmd\r\n\r\n# SteamCMD fails otherwise for some reason, even running as root.\r\n# This is changed at the end of the install process anyways.\r\nchown -R root:root /mnt\r\nexport HOME=/mnt/server\r\n\r\n## install game using steamcmd\r\n./steamcmd.sh +force_install_dir /mnt/server +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ \"${WINDOWS_INSTALL}\" == \"1\" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${SRCDS_APPID} ${EXTRA_FLAGS} validate +quit ## other flags may be needed depending on install. looking at you cs 1.6\r\n\r\n## set up 32 bit libraries\r\nmkdir -p /mnt/server/.steam/sdk32\r\ncp -v linux32/steamclient.so ../.steam/sdk32/steamclient.so\r\n\r\n## set up 64 bit libraries\r\nmkdir -p /mnt/server/.steam/sdk64\r\ncp -v linux64/steamclient.so ../.steam/sdk64/steamclient.so\r\n\r\n# Creating needed default files for the game\r\ncd /mnt/server/garrysmod/lua/autorun/server\r\necho '\r\n-- Docs: https://wiki.garrysmod.com/page/resource/AddWorkshop\r\n-- Place the ID of the workshop addon you want to be downloaded to people who join your server, not the collection ID\r\n-- Use https://beta.configcreator.com/create/gmod/resources.lua to easily create a list based on your collection ID\r\n\r\nresource.AddWorkshop( \"\" )\r\n' > workshop.lua\r\n\r\ncd /mnt/server/garrysmod/cfg\r\necho '\r\n// Please do not set RCon in here, use the startup parameters.\r\n\r\nhostname\t\t\"New Gmod Server\"\r\nsv_password\t\t\"\"\r\nsv_loadingurl   \"\"\r\nsv_downloadurl  \"\"\r\n\r\n// Steam Server List Settings\r\n// sv_location \"eu\"\r\nsv_region \"255\"\r\nsv_lan \"0\"\r\nsv_max_queries_sec_global \"30000\"\r\nsv_max_queries_window \"45\"\r\nsv_max_queries_sec \"5\"\r\n\r\n// Server Limits\r\nsbox_maxprops\t\t100\r\nsbox_maxragdolls\t5\r\nsbox_maxnpcs\t\t10\r\nsbox_maxballoons\t10\r\nsbox_maxeffects\t\t10\r\nsbox_maxdynamite\t10\r\nsbox_maxlamps\t\t10\r\nsbox_maxthrusters\t10\r\nsbox_maxwheels\t\t10\r\nsbox_maxhoverballs\t10\r\nsbox_maxvehicles\t20\r\nsbox_maxbuttons\t\t10\r\nsbox_maxsents\t\t20\r\nsbox_maxemitters\t5\r\nsbox_godmode\t\t0\r\nsbox_noclip\t\t    0\r\n\r\n// Network Settings - Please keep these set to default.\r\n\r\nsv_minrate\t\t75000\r\nsv_maxrate\t\t0\r\ngmod_physiterations\t2\r\nnet_splitpacket_maxrate\t45000\r\ndecalfrequency\t\t12 \r\n\r\n// Execute Ban Files - Please do not edit\r\nexec banned_ip.cfg \r\nexec banned_user.cfg \r\n\r\n// Add custom lines under here\r\n' > server.cfg"
+    script: |-
+      #!/bin/bash
+      # steamcmd Base Installation Script
+      #
+      # Server Files: /mnt/server
+
+      ## just in case someone removed the defaults.
+      if [ "${STEAM_USER}" == "" ]; then
+          echo -e "steam user is not set.
+      "
+          echo -e "Using anonymous user.
+      "
+          STEAM_USER=anonymous
+          STEAM_PASS=""
+          STEAM_AUTH=""
+      else
+          echo -e "user set to ${STEAM_USER}"
+      fi
+
+      ## download and install steamcmd
+      cd /tmp
+      mkdir -p /mnt/server/steamcmd
+      curl -sSL -o steamcmd.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
+      tar -xzvf steamcmd.tar.gz -C /mnt/server/steamcmd
+      mkdir -p /mnt/server/steamapps # Fix steamcmd disk write error when this folder is missing
+      cd /mnt/server/steamcmd
+
+      # SteamCMD fails otherwise for some reason, even running as root.
+      # This is changed at the end of the install process anyways.
+      chown -R root:root /mnt
+      export HOME=/mnt/server
+
+      ## install game using steamcmd
+      ./steamcmd.sh +force_install_dir /mnt/server +login ${STEAM_USER} ${STEAM_PASS} ${STEAM_AUTH} $( [[ "${WINDOWS_INSTALL}" == "1" ]] && printf %s '+@sSteamCmdForcePlatformType windows' ) +app_update ${SRCDS_APPID} ${EXTRA_FLAGS} validate +quit ## other flags may be needed depending on install. looking at you cs 1.6
+
+      ## set up 32 bit libraries
+      mkdir -p /mnt/server/.steam/sdk32
+      cp -v linux32/steamclient.so ../.steam/sdk32/steamclient.so
+
+      ## set up 64 bit libraries
+      mkdir -p /mnt/server/.steam/sdk64
+      cp -v linux64/steamclient.so ../.steam/sdk64/steamclient.so
+
+      # Creating needed default files for the game
+      cd /mnt/server/garrysmod/lua/autorun/server
+      echo '
+      -- Docs: https://wiki.garrysmod.com/page/resource/AddWorkshop
+      -- Place the ID of the workshop addon you want to be downloaded to people who join your server, not the collection ID
+      -- Use https://beta.configcreator.com/create/gmod/resources.lua to easily create a list based on your collection ID
+
+      resource.AddWorkshop( "" )
+      ' > workshop.lua
+
+      cd /mnt/server/garrysmod/cfg
+      echo '
+      // Please do not set RCon in here, use the startup parameters.
+
+      hostname		"New Gmod Server"
+      sv_password		""
+      sv_loadingurl   ""
+      sv_downloadurl  ""
+
+      // Steam Server List Settings
+      // sv_location "eu"
+      sv_region "255"
+      sv_lan "0"
+      sv_max_queries_sec_global "30000"
+      sv_max_queries_window "45"
+      sv_max_queries_sec "5"
+
+      // Server Limits
+      sbox_maxprops		100
+      sbox_maxragdolls	5
+      sbox_maxnpcs		10
+      sbox_maxballoons	10
+      sbox_maxeffects		10
+      sbox_maxdynamite	10
+      sbox_maxlamps		10
+      sbox_maxthrusters	10
+      sbox_maxwheels		10
+      sbox_maxhoverballs	10
+      sbox_maxvehicles	20
+      sbox_maxbuttons		10
+      sbox_maxsents		20
+      sbox_maxemitters	5
+      sbox_godmode		0
+      sbox_noclip		    0
+
+      // Network Settings - Please keep these set to default.
+
+      sv_minrate		75000
+      sv_maxrate		0
+      gmod_physiterations	2
+      net_splitpacket_maxrate	45000
+      decalfrequency		12 
+
+      // Execute Ban Files - Please do not edit
+      exec banned_ip.cfg 
+      exec banned_user.cfg 
+
+      // Add custom lines under here
+      ' > server.cfg
     container: 'ghcr.io/parkervcp/installers:debian'
     entrypoint: bash
 variables:

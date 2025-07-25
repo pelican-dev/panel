@@ -57,7 +57,7 @@ class EggExporterService
 
         return match ($format) {
             EggFormat::JSON => json_encode($struct, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
-            EggFormat::YAML => Yaml::dump($this->yamlExport($struct), 4, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK | Yaml::DUMP_OBJECT_AS_MAP),
+            EggFormat::YAML => Yaml::dump($this->yamlExport($struct), 10, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK | Yaml::DUMP_OBJECT_AS_MAP),
         };
     }
 
@@ -69,12 +69,31 @@ class EggExporterService
 
         if (is_string($data)) {
             $decoded = json_decode($data, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return $this->yamlExport($decoded);
+            }
 
-            return (json_last_error() === JSON_ERROR_NONE) ? $this->yamlExport($decoded) : $data;
+            return str_replace(["\r\n", '\\r\\n', '\\n'], "\n", $data);
         }
 
         if (is_array($data)) {
-            return array_map([$this, 'yamlExport'], $data);
+            $result = [];
+
+            foreach ($data as $key => $value) {
+                if (
+                    is_string($value) &&
+                    strtolower($key) === 'description' &&
+                    (str_contains($value, "\n") || strlen($value) > 80)
+                ) {
+                    $value = wordwrap($value, 100, "\n");
+                } else {
+                    $value = $this->yamlExport($value);
+                }
+
+                $result[$key] = $value;
+            }
+
+            return $result;
         }
 
         return $data;

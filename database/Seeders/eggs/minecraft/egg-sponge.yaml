@@ -2,7 +2,7 @@ _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
   version: PLCN_v2
   update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/minecraft/egg-sponge--sponge-vanilla.yaml'
-exported_at: '2025-07-25T11:39:41+00:00'
+exported_at: '2025-07-25T13:30:14+00:00'
 name: Sponge
 author: panel@example.com
 uuid: f0d2f88f-1ff3-42a0-b03f-ac44c5571e6d
@@ -25,20 +25,90 @@ config:
   files:
     server.properties:
       parser: properties
-      find: { server-ip: 0.0.0.0, server-port: '{{server.allocations.default.port}}', query.port: '{{server.allocations.default.port}}' }
+      find:
+        server-ip: 0.0.0.0
+        server-port: '{{server.allocations.default.port}}'
+        query.port: '{{server.allocations.default.port}}'
   startup:
     done: ')! For help, type '
   logs: {  }
   stop: stop
 scripts:
   installation:
-    script: "#!/bin/ash\r\n# Sponge Installation Script\r\n#\r\n# Server Files: /mnt/server\r\n\r\ncd /mnt/server\r\n\r\nif [ $MINECRAFT_VERSION = 'latest' ] || [ -z $MINECRAFT_VERSION ]; then\r\n  TARGET_VERSION_JSON=$(curl -sSL https://dl-api.spongepowered.org/v2/groups/org.spongepowered/artifacts/${SPONGE_TYPE}/latest?recommended=true)\r\n  if [ -z \"${TARGET_VERSION_JSON}\" ]; then\r\n    echo -e \"Failed to find latest recommended version!\"\r\n    exit 1\r\n  fi\r\n  echo -e \"Found latest version for ${SPONGE_TYPE}\"\r\nelse\r\n  if [ $SPONGE_TYPE = 'spongevanilla' ]; then \r\n    VERSIONS_JSON=$(curl -sSL https://dl-api.spongepowered.org/v2/groups/org.spongepowered/artifacts/${SPONGE_TYPE}/versions?tags=,minecraft:${MINECRAFT_VERSION}&offset=0&limit=1)\r\n  else\r\n    FORGETAG='forge'\r\n    if [ $SPONGE_TYPE = 'spongeneo' ]; then\r\n      FORGETAG='neoforge'\r\n    fi\r\n    VERSIONS_JSON=$(curl -sSL https://dl-api.spongepowered.org/v2/groups/org.spongepowered/artifacts/${SPONGE_TYPE}/versions?tags=,minecraft:${MINECRAFT_VERSION},${FORGETAG}:${FORGE_VERSION}&offset=0&limit=1)\r\n  fi\r\n  \r\n  if [ -z \"${VERSIONS_JSON}\" ]; then\r\n    echo -e \"Failed to find recommended ${MINECRAFT_VERSION} version for ${SPONGE_TYPE} ${FORGE_VERSION}!\"\r\n    exit 1\r\n  fi\r\n  \r\n  VERSION_KEY=$(echo $VERSIONS_JSON | jq -r '.artifacts | to_entries[0].key')\r\n  TARGET_VERSION_JSON=$(curl -sSL https://dl-api.spongepowered.org/v2/groups/org.spongepowered/artifacts/${SPONGE_TYPE}/versions/${VERSION_KEY})\r\n  \r\n  if [ -z \"${TARGET_VERSION_JSON}\" ]; then\r\n    echo -e \"Failed to find ${VERSION_KEY} for ${SPONGE_TYPE} ${FORGE_VERSION}!\"\r\n    exit 1\r\n  fi\r\n\r\n  echo -e \"Found ${MINECRAFT_VERSION} for ${SPONGE_TYPE}\"\r\nfi\r\n\r\nTARGET_VERSION=`echo $TARGET_VERSION_JSON | jq '.assets[] | select(.classifier == \"universal\")'`\r\nif [ -z \"${TARGET_VERSION}\" ]; then\r\n  TARGET_VERSION=`echo $TARGET_VERSION_JSON  | jq '.assets[] | select(.classifier == \"\" and .extension == \"jar\")'`\r\nfi\r\n\r\nif [ -z \"${TARGET_VERSION}\" ]; then\r\n  echo -e \"Failed to get download url data from the selected version\"\r\n  exit 1\r\nfi\r\n\r\nSPONGE_URL=$(echo $TARGET_VERSION | jq -r '.downloadUrl')\r\nCHECKSUM=$(echo $TARGET_VERSION | jq -r '.md5')\r\necho -e \"Found file at ${SPONGE_URL} with checksum ${CHECKSUM}\"\r\n\r\necho -e \"running: curl -o ${SERVER_JARFILE} ${SPONGE_URL}\"\r\ncurl -o ${SERVER_JARFILE} ${SPONGE_URL}\r\n\r\nif [ $(basename $(md5sum ${SERVER_JARFILE})) = ${CHECKSUM} ] ; then\r\n  echo \"Checksum passed\"\r\nelse\r\n  echo \"Checksum failed\"\r\nfi\r\n\r\necho -e \"Install Complete\""
+    script: |-
+      #!/bin/ash
+      # Sponge Installation Script
+      #
+      # Server Files: /mnt/server
+
+      cd /mnt/server
+
+      if [ $MINECRAFT_VERSION = 'latest' ] || [ -z $MINECRAFT_VERSION ]; then
+        TARGET_VERSION_JSON=$(curl -sSL https://dl-api.spongepowered.org/v2/groups/org.spongepowered/artifacts/${SPONGE_TYPE}/latest?recommended=true)
+        if [ -z "${TARGET_VERSION_JSON}" ]; then
+          echo -e "Failed to find latest recommended version!"
+          exit 1
+        fi
+        echo -e "Found latest version for ${SPONGE_TYPE}"
+      else
+        if [ $SPONGE_TYPE = 'spongevanilla' ]; then 
+          VERSIONS_JSON=$(curl -sSL https://dl-api.spongepowered.org/v2/groups/org.spongepowered/artifacts/${SPONGE_TYPE}/versions?tags=,minecraft:${MINECRAFT_VERSION}&offset=0&limit=1)
+        else
+          FORGETAG='forge'
+          if [ $SPONGE_TYPE = 'spongeneo' ]; then
+            FORGETAG='neoforge'
+          fi
+          VERSIONS_JSON=$(curl -sSL https://dl-api.spongepowered.org/v2/groups/org.spongepowered/artifacts/${SPONGE_TYPE}/versions?tags=,minecraft:${MINECRAFT_VERSION},${FORGETAG}:${FORGE_VERSION}&offset=0&limit=1)
+        fi
+        
+        if [ -z "${VERSIONS_JSON}" ]; then
+          echo -e "Failed to find recommended ${MINECRAFT_VERSION} version for ${SPONGE_TYPE} ${FORGE_VERSION}!"
+          exit 1
+        fi
+        
+        VERSION_KEY=$(echo $VERSIONS_JSON | jq -r '.artifacts | to_entries[0].key')
+        TARGET_VERSION_JSON=$(curl -sSL https://dl-api.spongepowered.org/v2/groups/org.spongepowered/artifacts/${SPONGE_TYPE}/versions/${VERSION_KEY})
+        
+        if [ -z "${TARGET_VERSION_JSON}" ]; then
+          echo -e "Failed to find ${VERSION_KEY} for ${SPONGE_TYPE} ${FORGE_VERSION}!"
+          exit 1
+        fi
+
+        echo -e "Found ${MINECRAFT_VERSION} for ${SPONGE_TYPE}"
+      fi
+
+      TARGET_VERSION=`echo $TARGET_VERSION_JSON | jq '.assets[] | select(.classifier == "universal")'`
+      if [ -z "${TARGET_VERSION}" ]; then
+        TARGET_VERSION=`echo $TARGET_VERSION_JSON  | jq '.assets[] | select(.classifier == "" and .extension == "jar")'`
+      fi
+
+      if [ -z "${TARGET_VERSION}" ]; then
+        echo -e "Failed to get download url data from the selected version"
+        exit 1
+      fi
+
+      SPONGE_URL=$(echo $TARGET_VERSION | jq -r '.downloadUrl')
+      CHECKSUM=$(echo $TARGET_VERSION | jq -r '.md5')
+      echo -e "Found file at ${SPONGE_URL} with checksum ${CHECKSUM}"
+
+      echo -e "running: curl -o ${SERVER_JARFILE} ${SPONGE_URL}"
+      curl -o ${SERVER_JARFILE} ${SPONGE_URL}
+
+      if [ $(basename $(md5sum ${SERVER_JARFILE})) = ${CHECKSUM} ] ; then
+        echo "Checksum passed"
+      else
+        echo "Checksum failed"
+      fi
+
+      echo -e "Install Complete"
     container: 'ghcr.io/parkervcp/installers:alpine'
     entrypoint: ash
 variables:
   -
     name: 'Forge/Neoforge Version'
-    description: 'The modding api target version if set to `spongeforge` or `spongeneo`. Leave blank if using `spongevanilla`'
+    description: |-
+      The modding api target version if set to `spongeforge` or `spongeneo`. Leave blank if using
+      `spongevanilla`
     env_variable: FORGE_VERSION
     default_value: ''
     user_viewable: true
@@ -48,7 +118,9 @@ variables:
     sort: 3
   -
     name: 'Minecraft Version'
-    description: 'The version of Minecraft to target. Use "latest" to install the latest version. Go to Settings > Reinstall Server to apply.'
+    description: |-
+      The version of Minecraft to target. Use "latest" to install the latest version. Go to Settings >
+      Reinstall Server to apply.
     env_variable: MINECRAFT_VERSION
     default_value: latest
     user_viewable: true
