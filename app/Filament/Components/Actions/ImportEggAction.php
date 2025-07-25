@@ -112,7 +112,7 @@ class ImportEggAction extends Action
                             FileUpload::make('files')
                                 ->label(trans('admin/egg.model_label'))
                                 ->hint(trans('admin/egg.import.egg_help'))
-                                ->acceptedFileTypes(['application/json', 'application/yaml', 'application/x-yaml'])
+                                ->acceptedFileTypes(['application/json', 'application/yaml', 'application/x-yaml', 'text/yaml'])
                                 ->preserveFilenames()
                                 ->previewable(false)
                                 ->storeFiles(false)
