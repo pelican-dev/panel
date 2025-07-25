@@ -2,11 +2,11 @@
 
 namespace App\Services\Eggs\Sharing;
 
+use App\Enums\EggFormat;
 use Carbon\Carbon;
 use App\Models\Egg;
 use Illuminate\Support\Collection;
 use App\Models\EggVariable;
-use InvalidArgumentException;
 use Symfony\Component\Yaml\Yaml;
 
 class EggExporterService
@@ -14,11 +14,9 @@ class EggExporterService
     /**
      * Return a JSON or YAML representation of an egg and its variables.
      *
-     * @param  string  $format  Either 'json' or 'yaml'
-     *
-     * @throws InvalidArgumentException
+     * @param  EggFormat  $format  Either 'json' or 'yaml'
      */
-    public function handle(int $egg, string $format = 'json'): string
+    public function handle(int $egg, EggFormat $format = EggFormat::JSON): string
     {
         $egg = Egg::with(['scriptFrom', 'configFrom', 'variables'])->findOrFail($egg);
 
@@ -57,10 +55,9 @@ class EggExporterService
             })->values()->toArray(),
         ];
 
-        return match (strtolower($format)) {
-            'json' => json_encode($struct, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
-            'yaml' => Yaml::dump($struct, 4, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK),
-            default => throw new InvalidArgumentException("Unsupported export format: {$format}"),
+        return match ($format) {
+            EggFormat::JSON => json_encode($struct, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+            EggFormat::YAML => Yaml::dump($struct, 4, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK),
         };
     }
 }

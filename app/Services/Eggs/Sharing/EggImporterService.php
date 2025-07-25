@@ -93,7 +93,7 @@ class EggImporterService
         }
 
         $mime = match ($extension) {
-            'yaml', 'yml' => 'application/x-yaml',
+            'yaml', 'yml' => 'application/yaml',
             default => 'application/json',
         };
 
