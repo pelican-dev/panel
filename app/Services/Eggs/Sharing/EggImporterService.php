@@ -3,6 +3,7 @@
 namespace App\Services\Eggs\Sharing;
 
 use App\Exceptions\Service\InvalidFileUploadException;
+use JsonException;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
 use App\Models\Egg;
@@ -11,8 +12,8 @@ use App\Models\EggVariable;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Collection;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
+use stdClass;
 use Symfony\Component\Yaml\Yaml;
-use Symfony\Component\Yaml\Exception\ParseException;
 use Throwable;
 
 class EggImporterService
@@ -105,7 +106,7 @@ class EggImporterService
      *
      * @return array<array-key, mixed>
      *
-     * @throws InvalidFileUploadException
+     * @throws InvalidFileUploadException|JsonException
      */
     protected function parseFile(UploadedFile $file): array
     {
@@ -124,8 +125,8 @@ class EggImporterService
                 str_contains($mime, 'yaml') => Yaml::parse($content),
                 default => json_decode($content, true, 512, JSON_THROW_ON_ERROR),
             };
-        } catch (\JsonException|ParseException $e) {
-            throw new InvalidFileUploadException('Could not read file: ' . $e->getMessage());
+        } catch (Throwable $e) {
+            throw new InvalidFileUploadException('File parse failed: ' . $e->getMessage());
         }
 
         $version = $parsed['meta']['version'] ?? '';
@@ -136,14 +137,33 @@ class EggImporterService
             default => throw new InvalidFileUploadException('The file format is not recognized.'),
         };
 
-        if (array_get($parsed['config'], 'files')) {
-            $parsed['config']['files'] = str_replace(
-                array_keys(self::UPGRADE_VARIABLES),
-                array_values(self::UPGRADE_VARIABLES),
-                $parsed['config']['files'],
-            );
+        if (isset($parsed['config']) && (is_array($parsed['config']) || $parsed['config'] instanceof stdClass)) {
+            $parsed['config'] = (array) $parsed['config'];
+            foreach ($parsed['config'] as $key => $value) {
+                if (is_array($value) || $value instanceof stdClass) {
+                    $parsed['config'][$key] = json_encode((array) $value, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+                }
+
+                if ($key === 'files' && is_string($parsed['config'][$key])) {
+                    $parsed['config'][$key] = str_replace(
+                        array_keys(self::UPGRADE_VARIABLES),
+                        array_values(self::UPGRADE_VARIABLES),
+                        $parsed['config'][$key]
+                    );
+                }
+            }
         }
 
+        if (isset($parsed['scripts']['installation']) && (is_array($parsed['scripts']['installation']) || $parsed['scripts']['installation'] instanceof stdClass)) {
+            $parsed['scripts']['installation'] = (array) $parsed['scripts']['installation'];
+            foreach ($parsed['scripts']['installation'] as $key => $value) {
+                if (is_array($value) || $value instanceof stdClass) {
+                    $parsed['scripts']['installation'][$key] = json_encode((array) $value, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+                }
+            }
+        }
+
+        // Reserved env var name handling
         [$forbidden, $allowed] = collect($parsed['variables'])
             ->map(fn ($variable) => array_merge(
                 $variable,
@@ -181,9 +201,9 @@ class EggImporterService
             'docker_images' => Arr::get($parsed, 'docker_images'),
             'file_denylist' => Collection::make(Arr::get($parsed, 'file_denylist'))->filter(fn ($value) => !empty($value)),
             'update_url' => Arr::get($parsed, 'meta.update_url'),
-            'config_files' => Arr::get($parsed, 'config.files'),
-            'config_startup' => Arr::get($parsed, 'config.startup'),
-            'config_logs' => Arr::get($parsed, 'config.logs'),
+            'config_files' => json_encode(json_decode(Arr::get($parsed, 'config.files')), JSON_PRETTY_PRINT),
+            'config_startup' => json_encode(json_decode(Arr::get($parsed, 'config.startup')), JSON_PRETTY_PRINT),
+            'config_logs' => json_encode(json_decode(Arr::get($parsed, 'config.logs')), JSON_PRETTY_PRINT),
             'config_stop' => Arr::get($parsed, 'config.stop'),
             'startup' => Arr::get($parsed, 'startup'),
             'script_install' => Arr::get($parsed, 'scripts.installation.script'),

@@ -69,6 +69,7 @@ class EggExporterService
 
         if (is_string($data)) {
             $decoded = json_decode($data, true);
+
             return (json_last_error() === JSON_ERROR_NONE) ? $this->yamlExport($decoded) : $data;
         }
 
