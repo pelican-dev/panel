@@ -2,7 +2,7 @@ _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
   version: PLCN_v2
   update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/rust/egg-rust.yaml'
-exported_at: '2025-07-19T16:37:09+00:00'
+exported_at: '2025-07-25T11:40:02+00:00'
 name: Rust
 author: panel@example.com
 uuid: bace2dfb-209c-452a-9459-7d6f340b07ae
@@ -14,12 +14,13 @@ features:
   - steam_disk_space
 docker_images:
   'ghcr.io/parkervcp/games:rust': 'ghcr.io/parkervcp/games:rust'
-file_denylist: null
+file_denylist: {  }
 startup: './RustDedicated -batchmode +server.port {{SERVER_PORT}} +server.queryport {{QUERY_PORT}} +server.identity "rust" +rcon.port {{RCON_PORT}} +rcon.web true +server.hostname \"{{SERVER_HOSTNAME}}\" +server.level \"{{LEVEL}}\" +server.description \"{{DESCRIPTION}}\" +server.url \"{{SERVER_URL}}\" +server.headerimage \"{{SERVER_IMG}}\" +server.logoimage \"{{SERVER_LOGO}}\" +server.maxplayers {{MAX_PLAYERS}} +rcon.password \"{{RCON_PASS}}\" +server.saveinterval {{SAVEINTERVAL}} +app.port {{APP_PORT}}  $( [ -z ${MAP_URL} ] && printf %s "+server.worldsize \"{{WORLD_SIZE}}\" +server.seed \"{{WORLD_SEED}}\"" || printf %s "+server.levelurl {{MAP_URL}}" ) {{ADDITIONAL_ARGS}}'
 config:
-  files: '{}'
-  startup: "{\r\n    \"done\": \"Server startup complete\"\r\n}"
-  logs: '{}'
+  files: {  }
+  startup:
+    done: 'Server startup complete'
+  logs: {  }
   stop: quit
 scripts:
   installation:
@@ -42,7 +43,7 @@ variables:
     name: 'App ID'
     description: ''
     env_variable: SRCDS_APPID
-    default_value: '258550'
+    default_value: 258550
     user_viewable: false
     user_editable: false
     rules:
@@ -54,7 +55,7 @@ variables:
     name: 'App Port'
     description: 'Port for the Rust+ App. -1 to disable.'
     env_variable: APP_PORT
-    default_value: '28082'
+    default_value: 28082
     user_viewable: true
     user_editable: false
     rules:
@@ -99,7 +100,7 @@ variables:
     name: 'Max Players'
     description: 'The maximum amount of players allowed in the server at once.'
     env_variable: MAX_PLAYERS
-    default_value: '40'
+    default_value: 40
     user_viewable: true
     user_editable: true
     rules:
@@ -121,7 +122,7 @@ variables:
     name: 'Query Port'
     description: "Server Query Port. Can't be the same as Game's primary port."
     env_variable: QUERY_PORT
-    default_value: '27017'
+    default_value: 27017
     user_viewable: true
     user_editable: false
     rules:
@@ -144,7 +145,7 @@ variables:
     name: 'RCON Port'
     description: 'Port for RCON connections.'
     env_variable: RCON_PORT
-    default_value: '28016'
+    default_value: 28016
     user_viewable: true
     user_editable: false
     rules:
@@ -155,7 +156,7 @@ variables:
     name: 'Save Interval'
     description: 'Sets the server’s auto-save interval in seconds.'
     env_variable: SAVEINTERVAL
-    default_value: '60'
+    default_value: 60
     user_viewable: true
     user_editable: true
     rules:
@@ -222,7 +223,7 @@ variables:
     name: 'World Size'
     description: 'The world size for a procedural map.'
     env_variable: WORLD_SIZE
-    default_value: '3000'
+    default_value: 3000
     user_viewable: true
     user_editable: true
     rules:

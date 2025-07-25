@@ -2,7 +2,7 @@ _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
   version: PLCN_v2
   update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/source-engine/egg-garrys-mod.yaml'
-exported_at: '2025-07-19T16:36:33+00:00'
+exported_at: '2025-07-25T11:40:20+00:00'
 name: 'Garrys Mod'
 author: panel@example.com
 uuid: 60ef81d4-30a2-4d98-ab64-f59c69e2f915
@@ -15,12 +15,13 @@ features:
   - steam_disk_space
 docker_images:
   'ghcr.io/parkervcp/games:source': 'ghcr.io/parkervcp/games:source'
-file_denylist: null
+file_denylist: {  }
 startup: './srcds_run -game garrysmod -console -port {{SERVER_PORT}} +ip 0.0.0.0 +host_workshop_collection {{WORKSHOP_ID}} +map {{SRCDS_MAP}} +gamemode {{GAMEMODE}} -strictportbind -norestart +sv_setsteamaccount {{STEAM_ACC}} +maxplayers {{MAX_PLAYERS}}  -tickrate {{TICKRATE}}  $( [ "$LUA_REFRESH" == "1" ] || printf %s ''-disableluarefresh'' )'
 config:
-  files: '{}'
-  startup: "{\r\n    \"done\": \"gameserver Steam ID\"\r\n}"
-  logs: '{}'
+  files: {  }
+  startup:
+    done: 'gameserver Steam ID'
+  logs: {  }
   stop: quit
 scripts:
   installation:
@@ -43,7 +44,7 @@ variables:
     name: 'Lua Refresh'
     description: "0 = disable Lua refresh,\r\n1 = enable Lua refresh"
     env_variable: LUA_REFRESH
-    default_value: '0'
+    default_value: 0
     user_viewable: true
     user_editable: true
     rules:
@@ -66,7 +67,7 @@ variables:
     name: 'Max Players'
     description: 'The maximum amount of players allowed on your game server.'
     env_variable: MAX_PLAYERS
-    default_value: '32'
+    default_value: 32
     user_viewable: true
     user_editable: true
     rules:
@@ -78,7 +79,7 @@ variables:
     name: 'Source AppID'
     description: 'Required for game to update on server restart. Do not modify this.'
     env_variable: SRCDS_APPID
-    default_value: '4020'
+    default_value: 4020
     user_viewable: false
     user_editable: false
     rules:
@@ -103,7 +104,7 @@ variables:
     name: Tickrate
     description: "The tickrate defines how fast the server will update each entity's location."
     env_variable: TICKRATE
-    default_value: '22'
+    default_value: 22
     user_viewable: true
     user_editable: true
     rules:

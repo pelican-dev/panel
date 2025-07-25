@@ -2,7 +2,7 @@ _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
   version: PLCN_v2
   update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/voice-servers/egg-teamspeak3-server.yaml'
-exported_at: '2025-07-19T16:37:02+00:00'
+exported_at: '2025-07-25T11:40:49+00:00'
 name: 'Teamspeak3 Server'
 author: panel@example.com
 uuid: 983b1fac-d322-4d5f-a636-436127326b37
@@ -12,12 +12,13 @@ tags:
 features: {  }
 docker_images:
   Debian: 'ghcr.io/parkervcp/yolks:debian'
-file_denylist: null
+file_denylist: {  }
 startup: './ts3server default_voice_port={{SERVER_PORT}} query_port={{QUERY_PORT}} filetransfer_ip=0.0.0.0 filetransfer_port={{FILE_TRANSFER}} query_http_port={{QUERY_HTTP}} query_ssh_port={{QUERY_SSH}} query_protocols={{QUERY_PROTOCOLS_VAR}} license_accepted=1'
 config:
-  files: '{}'
-  startup: "{\r\n    \"done\": \"listening on 0.0.0.0:\"\r\n}"
-  logs: '{}'
+  files: {  }
+  startup:
+    done: 'listening on 0.0.0.0:'
+  logs: {  }
   stop: ^C
 scripts:
   installation:
@@ -29,7 +30,7 @@ variables:
     name: 'File Transfer Port'
     description: 'The Teamspeak file transfer port'
     env_variable: FILE_TRANSFER
-    default_value: '30033'
+    default_value: 30033
     user_viewable: true
     user_editable: false
     rules:
@@ -41,7 +42,7 @@ variables:
     name: 'Query HTTP Port'
     description: 'TCP Port opened for ServerQuery connections using http'
     env_variable: QUERY_HTTP
-    default_value: '10080'
+    default_value: 10080
     user_viewable: true
     user_editable: false
     rules:
@@ -53,7 +54,7 @@ variables:
     name: 'Query Port'
     description: 'The Teamspeak Query Port'
     env_variable: QUERY_PORT
-    default_value: '10011'
+    default_value: 10011
     user_viewable: true
     user_editable: false
     rules:
@@ -77,7 +78,7 @@ variables:
     name: 'Query SSH Port'
     description: 'TCP Port opened for ServerQuery connections using SSH'
     env_variable: QUERY_SSH
-    default_value: '10022'
+    default_value: 10022
     user_viewable: true
     user_editable: false
     rules:

@@ -2,7 +2,7 @@ _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
   version: PLCN_v2
   update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/source-engine/egg-insurgency.yaml'
-exported_at: '2025-07-19T16:36:45+00:00'
+exported_at: '2025-07-25T11:40:27+00:00'
 name: Insurgency
 author: panel@example.com
 uuid: a5702286-655b-4069-bf1e-925c7300b61a
@@ -14,12 +14,13 @@ features:
   - steam_disk_space
 docker_images:
   'ghcr.io/parkervcp/games:source': 'ghcr.io/parkervcp/games:source'
-file_denylist: null
+file_denylist: {  }
 startup: './srcds_run -game insurgency -console -port {{SERVER_PORT}} +map {{SRCDS_MAP}} +ip 0.0.0.0 -strictportbind -norestart'
 config:
-  files: '{}'
-  startup: "{\r\n    \"done\": \"gameserver Steam ID\"\r\n}"
-  logs: '{}'
+  files: {  }
+  startup:
+    done: 'gameserver Steam ID'
+  logs: {  }
   stop: quit
 scripts:
   installation:
@@ -42,7 +43,7 @@ variables:
     name: 'Game ID'
     description: 'The ID corresponding to the game to download and run using SRCDS.'
     env_variable: SRCDS_APPID
-    default_value: '237410'
+    default_value: 237410
     user_viewable: true
     user_editable: false
     rules:
