@@ -2,6 +2,7 @@
 
 namespace App\Filament\Components\Actions;
 
+use App\Enums\EggFormat;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggExporterService;
 use Filament\Actions\Action;
@@ -44,7 +45,7 @@ class ExportEggAction extends Action
             Action::make('yaml')
                 ->label(trans('admin/egg.export.as') . ' .yaml')
                 ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
-                    echo $service->handle($egg->id, 'yaml');
+                    echo $service->handle($egg->id, EggFormat::YAML);
                 }, 'egg-' . $egg->getKebabName() . '.yaml'))
                 ->close(),
         ]);
