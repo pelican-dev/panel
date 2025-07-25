@@ -57,7 +57,25 @@ class EggExporterService
 
         return match ($format) {
             EggFormat::JSON => json_encode($struct, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
-            EggFormat::YAML => Yaml::dump($struct, 4, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK),
+            EggFormat::YAML => Yaml::dump($this->yamlExport($struct), 4, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK | Yaml::DUMP_OBJECT_AS_MAP),
         };
+    }
+
+    protected function yamlExport(mixed $data): mixed
+    {
+        if ($data instanceof Collection) {
+            $data = $data->all();
+        }
+
+        if (is_string($data)) {
+            $decoded = json_decode($data, true);
+            return (json_last_error() === JSON_ERROR_NONE) ? $this->yamlExport($decoded) : $data;
+        }
+
+        if (is_array($data)) {
+            return array_map([$this, 'yamlExport'], $data);
+        }
+
+        return $data;
     }
 }
