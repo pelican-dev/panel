@@ -131,7 +131,7 @@ class ImportEggAction extends Action
                                         ->label(trans('admin/egg.import.url'))
                                         ->placeholder('https://github.com/pelican-eggs/generic/blob/main/nodejs/egg-node-js-generic.json')
                                         ->url()
-                                        ->endsWith('.json')
+                                        ->endsWith(['.json', '.yaml', '.yml'])
                                         ->validationAttribute(trans('admin/egg.import.url')),
                                 ]),
                         ]),
