@@ -58,7 +58,7 @@ return [
         'months' => 'Months',
 
         'monday' => 'Monday',
-        'tues' => 'Tuesday',
+        'tuesday' => 'Tuesday',
         'wednesday' => 'Wednesday',
         'thursday' => 'Thursday',
         'friday' => 'Friday',

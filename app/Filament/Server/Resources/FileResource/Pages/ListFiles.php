@@ -275,7 +275,7 @@ class ListFiles extends ListRecords
                             $this->getDaemonFileRepository()->chmodFiles($this->path, [['file' => $file->name, 'mode' => $mode]]);
 
                             Notification::make()
-                                ->title(trans('server/file.actions.permissions.permissions.notification', ['mode' => $mode]))
+                                ->title(trans('server/file.actions.permissions.notification', ['mode' => $mode]))
                                 ->success()
                                 ->send();
                         }),
@@ -367,7 +367,7 @@ class ListFiles extends ListRecords
                             ->log();
 
                         Notification::make()
-                            ->title(trans('server/file.actions.move.bulk.notification', ['count' => count($files), 'directory' => resolve_path(join_paths($this->path, $location))]))
+                            ->title(trans('server/file.actions.move.bulk_notification', ['count' => count($files), 'directory' => resolve_path(join_paths($this->path, $location))]))
                             ->success()
                             ->send();
                     }),
@@ -410,7 +410,7 @@ class ListFiles extends ListRecords
                             ->log();
 
                         Notification::make()
-                            ->title(trans('server/file.actions.delete.bulk.notification', ['count' => count($files)]))
+                            ->title(trans('server/file.actions.delete.bulk_notification', ['count' => count($files)]))
                             ->success()
                             ->send();
                     }),
