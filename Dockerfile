@@ -63,7 +63,7 @@ FROM --platform=$TARGETOS/$TARGETARCH localhost:5000/base-php:$TARGETARCH AS fin
 WORKDIR /var/www/html
 
 # Install additional required libraries
-RUN apk update && apk add --no-cache \
+RUN apk add --no-cache \
     caddy ca-certificates supervisor supercronic
 
 COPY --chown=root:www-data --chmod=640 --from=composerbuild /build .
