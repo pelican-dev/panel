@@ -117,7 +117,7 @@ class ImportEggAction extends Action
                                     }
                                 }),
                             Repeater::make('urls')
-                                ->itemLabel(fn (array $state) => str($state['url'])->afterLast('/egg-')->before('.json')->headline())
+                                ->itemLabel(fn (array $state) => str($state['url'])->afterLast('/egg-')->beforeLast('.')->headline())
                                 ->hint(trans('admin/egg.import.url_help'))
                                 ->addActionLabel(trans('admin/egg.import.add_url'))
                                 ->grid($isMultiple ? 2 : null)
