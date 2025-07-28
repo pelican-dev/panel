@@ -225,6 +225,7 @@ class ListFiles extends ListRecords
                             CheckboxList::make('owner')
                                 ->label(trans('server/file.actions.permissions.owner'))
                                 ->bulkToggleable()
+                                ->columns(3)
                                 ->options([
                                     'read' => trans('server/file.actions.permissions.read'),
                                     'write' => trans('server/file.actions.permissions.write'),
@@ -238,6 +239,7 @@ class ListFiles extends ListRecords
                             CheckboxList::make('group')
                                 ->label(trans('server/file.actions.permissions.group'))
                                 ->bulkToggleable()
+                                ->columns(3)
                                 ->options([
                                     'read' => trans('server/file.actions.permissions.read'),
                                     'write' => trans('server/file.actions.permissions.write'),
@@ -251,6 +253,7 @@ class ListFiles extends ListRecords
                             CheckboxList::make('public')
                                 ->label(trans('server/file.actions.permissions.public'))
                                 ->bulkToggleable()
+                                ->columns(3)
                                 ->options([
                                     'read' => trans('server/file.actions.permissions.read'),
                                     'write' => trans('server/file.actions.permissions.write'),
