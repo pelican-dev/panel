@@ -1,5 +1,4 @@
 #!/bin/ash -e
-
 ## check for .env file or symlink and generate app keys if missing
 if [ -f /var/www/html/.env ]; then
   echo "external vars exist."
@@ -24,6 +23,7 @@ else
 fi
 
 sed -i "s/upload_max_filesize = 2M/upload_max_filesize = ${UPLOAD_LIMIT}M/" /usr/local/etc/php/php.ini-production
+
 mkdir -p /pelican-data/database /pelican-data/storage/avatars /pelican-data/storage/fonts /var/www/html/storage/logs/supervisord 2>/dev/null
 
 if ! grep -q "APP_KEY=" .env || grep -q "APP_KEY=$" .env; then
@@ -41,6 +41,9 @@ echo -e "Optimizing Filament"
 php artisan filament:optimize
 
 export SUPERVISORD_CADDY=false
+export CADDY_TRUSTED_PROXIES="*"
+
+if [[ ! -z ${TRUSTED_PROXIES} ]]
 
 ## disable caddy if SKIP_CADDY is set
 if [[ "${SKIP_CADDY:-}" == "true" ]]; then
