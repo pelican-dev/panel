@@ -82,7 +82,7 @@ class EggImporterService
     public function fromUrl(string $url, ?Egg $egg = null): Egg
     {
         $info = pathinfo($url);
-        $extension = strtolower($info['extension'] ?? 'json');
+        $extension = strtolower($info['extension']);
 
         $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
         $tmpPath = $tmpDir->path($info['basename']);
@@ -95,7 +95,8 @@ class EggImporterService
 
         $mime = match ($extension) {
             'yaml', 'yml' => 'application/yaml',
-            default => 'application/json',
+            'json' => 'application/json',
+            default => throw new InvalidFileUploadException('Unsupported file format.'),
         };
 
         return $this->fromFile(new UploadedFile($tmpPath, $info['basename'], $mime), $egg);

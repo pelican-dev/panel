@@ -13,10 +13,8 @@ class EggExporterService
 {
     /**
      * Return a JSON or YAML representation of an egg and its variables.
-     *
-     * @param  EggFormat  $format  Either 'json' or 'yaml'
      */
-    public function handle(int $egg, EggFormat $format = EggFormat::JSON): string
+    public function handle(int $egg, EggFormat $format): string
     {
         $egg = Egg::with(['scriptFrom', 'configFrom', 'variables'])->findOrFail($egg);
 

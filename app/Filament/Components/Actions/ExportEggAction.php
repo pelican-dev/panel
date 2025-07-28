@@ -39,7 +39,7 @@ class ExportEggAction extends Action
             Action::make('json')
                 ->label(trans('admin/egg.export.as') . ' .json')
                 ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
-                    echo $service->handle($egg->id);
+                    echo $service->handle($egg->id, EggFormat::JSON);
                 }, 'egg-' . $egg->getKebabName() . '.json'))
                 ->close(),
             Action::make('yaml')
