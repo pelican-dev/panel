@@ -29,6 +29,9 @@ class ServerEntry extends Component
                     <x-filament::loading-indicator class="h-6 w-6" />
                     <h2 class="text-xl font-bold">
                         {{ $server->name }}
+                        <span class="dark:text-gray-400">
+                            (Loading)
+                        </span>
                     </h2>
                 </div>
 
