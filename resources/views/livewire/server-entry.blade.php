@@ -34,9 +34,9 @@
         <div class="flex justify-between text-center items-center gap-4">
             <div>
                 <p class="text-sm dark:text-gray-400">CPU</p>
-                <p class="text-md font-semibold">{{ $server->formatResource(\App\Enums\ServerResourceType::Cpu) }}</p>
+                <p class="text-md font-semibold">{{ $server->formatResource(\App\Enums\ServerResourceType::CPU) }}</p>
                 <hr class="p-0.5">
-                <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::CpuLimit) }}</p>
+                <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::CPULimit) }}</p>
             </div>
             <div>
                 <p class="text-sm dark:text-gray-400">Memory</p>
