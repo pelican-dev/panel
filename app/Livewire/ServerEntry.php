@@ -24,20 +24,20 @@ class ServerEntry extends Component
                 style="background-color: #D97706;">
             </div>
 
-            <div class="flex-1 dark:bg-gray-850 dark:text-white rounded-lg overflow-hidden p-2">
-                <div class="flex items-center mb-5 gap-2">
+            <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
+                <div class="flex items-center mb-5 gap-2>
                     <x-filament::loading-indicator class="h-5 w-5" />
                     <h2 class="text-xl font-bold">
                         {{ $server->name }}
                     </h2>
                 </div>
 
-                <div class="flex justify-between text-center">
+                <div class="flex justify-between text-center items-center gap-4">
                     <div>
                         <p class="text-sm dark:text-gray-400">CPU</p>
                         <p class="text-md font-semibold">{{ Number::format(0, precision: 2, locale: auth()->user()->language ?? 'en') . '%' }}</p>
                         <hr class="p-0.5">
-                        <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::CpuLimit) }}</p>
+                        <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::CPULimit) }}</p>
                     </div>
                     <div>
                         <p class="text-sm dark:text-gray-400">Memory</p>
