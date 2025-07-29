@@ -23,8 +23,10 @@ enum ServerResourceType: string
         if ($this->isLimit()) {
             $resourceAmount = $server->{$this->value} ?? 0;
 
-            // Our limits are entered as MiB/ MB so we need to convert them to bytes
-            $resourceAmount *= config('panel.use_binary_prefix') ? 1024 * 1024 : 1000 * 1000;
+            if (!$this->isPercentage()) {
+                // Our limits are entered as MiB/ MB so we need to convert them to bytes
+                $resourceAmount *= config('panel.use_binary_prefix') ? 1024 * 1024 : 1000 * 1000;
+            }
 
             return $resourceAmount;
         }
