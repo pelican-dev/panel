@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Enums\ContainerStatus;
-use App\Enums\ServerResourceType;
 use App\Enums\ServerState;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Traits\HasValidation;
@@ -462,17 +461,18 @@ class Server extends Model implements Validatable
         });
     }
 
-    public function formatResource(string $resourceKey, bool $limit = false, ServerResourceType $type = ServerResourceType::Unit, int $precision = 2): string
+    public function formatResource(string $resourceKey): string
     {
-        $resourceAmount = $this->{$resourceKey} ?? 0;
-        if (!$limit) {
-            $resourceAmount = $this->retrieveResources()[$resourceKey] ?? 0;
-        }
+        $limit = $resourceKey === 'cpu' || $resourceKey === 'memory' || $resourceKey === 'disk';
 
-        if ($type === ServerResourceType::Time) {
+        $resourceAmount = $limit ? $this->{$resourceKey} : $this->retrieveResources()[$resourceKey];
+        $resourceAmount ??= 0;
+
+        if ($resourceKey === 'uptime') {
             if ($this->isSuspended()) {
-                return 'Suspended';
+                return ServerState::Suspended->getLabel();
             }
+
             if ($resourceAmount === 0) {
                 return ContainerStatus::Offline->getLabel();
             }
@@ -481,19 +481,20 @@ class Server extends Model implements Validatable
         }
 
         if ($resourceAmount === 0 & $limit) {
+            // Unlimited symbol
             return "\u{221E}";
         }
 
-        if ($type === ServerResourceType::Percentage) {
-            return Number::format($resourceAmount, precision: $precision, locale: auth()->user()->language ?? 'en') . '%';
+        if ($resourceKey === 'cpu' || $resourceKey === 'cpu_absolute') {
+            return Number::format($resourceAmount, precision: 2, locale: auth()->user()->language ?? 'en') . '%';
         }
 
-        // Our current limits are set in MB
         if ($limit) {
-            $resourceAmount *= 2 ** 20;
+            // Convert limit from MiB/ MB to bytes
+            $resourceAmount *= config('panel.use_binary_prefix') ? 1024 * 1024 : 1000 * 1000;
         }
 
-        return convert_bytes_to_readable($resourceAmount, decimals: $precision, base: 3);
+        return convert_bytes_to_readable($resourceAmount, base: 3);
     }
 
     public function condition(): Attribute

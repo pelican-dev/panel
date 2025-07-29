@@ -37,19 +37,19 @@ class ServerEntry extends Component
                         <p class="text-sm dark:text-gray-400">CPU</p>
                         <p class="text-md font-semibold">{{ Number::format(0, precision: 2, locale: auth()->user()->language ?? 'en') . '%' }}</p>
                         <hr class="p-0.5">
-                        <p class="text-xs dark:text-gray-400">{{ $server->formatResource('cpu', type: \App\Enums\ServerResourceType::Percentage, limit: true) }}</p>
+                        <p class="text-xs dark:text-gray-400">{{ $server->formatResource('cpu') }}</p>
                     </div>
                     <div>
                         <p class="text-sm dark:text-gray-400">Memory</p>
                         <p class="text-md font-semibold">{{ convert_bytes_to_readable(0, decimals: 2) }}</p>
                         <hr class="p-0.5">
-                        <p class="text-xs dark:text-gray-400">{{ $server->formatResource('memory', limit: true) }}</p>
+                        <p class="text-xs dark:text-gray-400">{{ $server->formatResource('memory') }}</p>
                     </div>
                     <div>
                         <p class="text-sm dark:text-gray-400">Disk</p>
                         <p class="text-md font-semibold">{{ convert_bytes_to_readable(0, decimals: 2) }}</p>
                         <hr class="p-0.5">
-                        <p class="text-xs dark:text-gray-400">{{ $server->formatResource('disk', limit: true) }}</p>
+                        <p class="text-xs dark:text-gray-400">{{ $server->formatResource('disk') }}</p>
                     </div>
                     <div class="hidden sm:block">
                         <p class="text-sm dark:text-gray-400">Network</p>

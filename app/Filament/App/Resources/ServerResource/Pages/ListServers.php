@@ -2,7 +2,6 @@
 
 namespace App\Filament\App\Resources\ServerResource\Pages;
 
-use App\Enums\ServerResourceType;
 use App\Filament\App\Resources\ServerResource;
 use App\Filament\Components\Tables\Columns\ServerEntryColumn;
 use App\Filament\Server\Pages\Console;
@@ -63,7 +62,7 @@ class ListServers extends ListRecords
             TextColumn::make('condition')
                 ->label('Status')
                 ->badge()
-                ->tooltip(fn (Server $server) => $server->formatResource('uptime', type: ServerResourceType::Time))
+                ->tooltip(fn (Server $server) => $server->formatResource('uptime'))
                 ->icon(fn (Server $server) => $server->condition->getIcon())
                 ->color(fn (Server $server) => $server->condition->getColor()),
             TextColumn::make('name')
@@ -80,19 +79,19 @@ class ListServers extends ListRecords
             TextColumn::make('cpuUsage')
                 ->label('Resources')
                 ->icon('tabler-cpu')
-                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('cpu', limit: true, type: ServerResourceType::Percentage, precision: 0))
-                ->state(fn (Server $server) => $server->formatResource('cpu_absolute', type: ServerResourceType::Percentage))
+                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('cpu'))
+                ->state(fn (Server $server) => $server->formatResource('cpu_absolute'))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'cpu')),
             TextColumn::make('memoryUsage')
                 ->label('')
                 ->icon('tabler-device-desktop-analytics')
-                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('memory', limit: true))
+                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('memory'))
                 ->state(fn (Server $server) => $server->formatResource('memory_bytes'))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'memory')),
             TextColumn::make('diskUsage')
                 ->label('')
                 ->icon('tabler-device-sd-card')
-                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('disk', limit: true))
+                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('disk'))
                 ->state(fn (Server $server) => $server->formatResource('disk_bytes'))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'disk')),
         ];
