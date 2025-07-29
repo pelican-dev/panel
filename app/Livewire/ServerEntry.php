@@ -25,8 +25,8 @@ class ServerEntry extends Component
             </div>
 
             <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
-                <div class="flex items-center mb-5 gap-2>
-                    <x-filament::loading-indicator class="h-5 w-5" />
+                <div class="flex items-center mb-5 gap-2">
+                    <x-filament::loading-indicator class="h-6 w-6" />
                     <h2 class="text-xl font-bold">
                         {{ $server->name }}
                     </h2>
