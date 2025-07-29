@@ -400,7 +400,8 @@ class Settings extends Page implements HasForms
                     TextInput::make('MAIL_FROM_NAME')
                         ->label(trans('admin/setting.mail.from_name'))
                         ->required()
-                        ->default(env('MAIL_FROM_NAME', config('mail.from.name'))),
+                        ->default(env('MAIL_FROM_NAME', config('mail.from.name')))
+                        ->rule("not_regex:/[']/"),
                 ]),
             Section::make(trans('admin/setting.mail.smtp.smtp_title'))
                 ->columns()
