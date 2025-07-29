@@ -17,7 +17,7 @@
             <h2 class="text-xl font-bold">
                 {{ $server->name }}
                 <span class="dark:text-gray-400">
-                    ({{ $server->formatResource('uptime') }})
+                    ({{ $server->formatResource(\App\Enums\ServerResourceType::Uptime) }})
                 </span>
             </h2>
             <div class="end-0" x-on:click.stop>
@@ -34,21 +34,21 @@
         <div class="flex justify-between text-center items-center gap-4">
             <div>
                 <p class="text-sm dark:text-gray-400">CPU</p>
-                <p class="text-md font-semibold">{{ $server->formatResource('cpu_absolute') }}</p>
+                <p class="text-md font-semibold">{{ $server->formatResource(\App\Enums\ServerResourceType::Cpu) }}</p>
                 <hr class="p-0.5">
-                <p class="text-xs dark:text-gray-400">{{ $server->formatResource('cpu') }}</p>
+                <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::CpuLimit) }}</p>
             </div>
             <div>
                 <p class="text-sm dark:text-gray-400">Memory</p>
-                <p class="text-md font-semibold">{{ $server->formatResource('memory_bytes') }}</p>
+                <p class="text-md font-semibold">{{ $server->formatResource(\App\Enums\ServerResourceType::Memory) }}</p>
                 <hr class="p-0.5">
-                <p class="text-xs dark:text-gray-400">{{ $server->formatResource('memory') }}</p>
+                <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::MemoryLimit) }}</p>
             </div>
             <div>
                 <p class="text-sm dark:text-gray-400">Disk</p>
-                <p class="text-md font-semibold">{{ $server->formatResource('disk_bytes') }}</p>
+                <p class="text-md font-semibold">{{ $server->formatResource(\App\Enums\ServerResourceType::Disk) }}</p>
                 <hr class="p-0.5">
-                <p class="text-xs dark:text-gray-400">{{ $server->formatResource('disk') }}</p>
+                <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::DiskLimit) }}</p>
             </div>
             <div class="hidden sm:block">
                 <p class="text-sm dark:text-gray-400">Network</p>

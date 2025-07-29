@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Enums\ContainerStatus;
+use App\Enums\ServerResourceType;
 use App\Enums\ServerState;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Traits\HasValidation;
@@ -461,16 +462,13 @@ class Server extends Model implements Validatable
         });
     }
 
-    public function formatResource(string $resourceKey): string
+    public function formatResource(ServerResourceType $resourceType): string
     {
-        $limit = $resourceKey === 'cpu' || $resourceKey === 'memory' || $resourceKey === 'disk';
+        $resourceAmount = $resourceType->getResourceAmount($this);
 
-        $resourceAmount = $limit ? $this->{$resourceKey} : $this->retrieveResources()[$resourceKey];
-        $resourceAmount ??= 0;
-
-        if ($resourceKey === 'uptime') {
-            if ($this->isSuspended()) {
-                return ServerState::Suspended->getLabel();
+        if ($resourceType->isTime()) {
+            if (!is_null($this->status)) {
+                return $this->status->getLabel();
             }
 
             if ($resourceAmount === 0) {
@@ -480,18 +478,13 @@ class Server extends Model implements Validatable
             return now()->subMillis($resourceAmount)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 4);
         }
 
-        if ($resourceAmount === 0 & $limit) {
+        if ($resourceAmount === 0 & $resourceType->isLimit()) {
             // Unlimited symbol
             return "\u{221E}";
         }
 
-        if ($resourceKey === 'cpu' || $resourceKey === 'cpu_absolute') {
+        if ($resourceType->isPercentage()) {
             return Number::format($resourceAmount, precision: 2, locale: auth()->user()->language ?? 'en') . '%';
-        }
-
-        if ($limit) {
-            // Convert limit from MiB/ MB to bytes
-            $resourceAmount *= config('panel.use_binary_prefix') ? 1024 * 1024 : 1000 * 1000;
         }
 
         return convert_bytes_to_readable($resourceAmount, base: 3);
