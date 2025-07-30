@@ -16,6 +16,12 @@ trait EnvironmentWriterTrait
      */
     public function writeToEnvironment(array $values = []): void
     {
+        foreach ($values as $key => $value) {
+            if (preg_match("/'/", $value)) {
+                throw new RuntimeException("$key is invalid.");
+                return;
+            }
+        }
         Env::writeVariables($values, base_path('.env'), true);
     }
 }
