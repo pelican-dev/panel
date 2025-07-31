@@ -8,8 +8,8 @@ return [
     'port' => 'Port',
     'notes' => 'Notes',
     'no_notes' => 'No Notes',
+    'make_primary' => 'Make Primary',
     'primary' => 'Primary',
-    'already' => 'Already',
     'make' => 'Make',
     'delete' => 'Delete',
 ];

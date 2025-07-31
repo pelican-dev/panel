@@ -12,6 +12,11 @@ class PreviewStartupAction extends Action
 {
     public static function getDefaultName(): ?string
     {
+        return 'preview';
+    }
+
+    public function getLabel(): string
+    {
         return trans('server/startup.preview');
     }
 

@@ -62,7 +62,7 @@ class AllocationResource extends Resource
                         true => 'warning',
                         default => 'gray',
                     })
-                    ->tooltip(fn (Allocation $allocation) => ($allocation->id === $server->allocation_id ? trans('server/network.already') : trans('server/network.make')) . ' ' . trans('server/network.primary'))
+                    ->tooltip(fn (Allocation $allocation) => $allocation->id === $server->allocation_id ? trans('server/network.primary') : trans('server/network.make_primary'))
                     ->action(fn (Allocation $allocation) => auth()->user()->can(PERMISSION::ACTION_ALLOCATION_UPDATE, $server) && $server->update(['allocation_id' => $allocation->id]))
                     ->default(fn (Allocation $allocation) => $allocation->id === $server->allocation_id)
                     ->label(trans('server/network.primary')),
