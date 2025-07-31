@@ -58,6 +58,7 @@ return [
             'fail' => 'Marked the <b>:name</b> backup as failed',
             'lock' => 'Locked the <b>:name</b> backup',
             'unlock' => 'Unlocked the <b>:name</b> backup',
+            'rename' => 'Renamed backup from "<b>:old_name</b>" to "<b>:new_name</b>"',
         ],
         'database' => [
             'create' => 'Created new database <b>:name</b>',
