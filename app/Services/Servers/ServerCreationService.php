@@ -39,15 +39,7 @@ class ServerCreationService
      * as possible given the input data. For example, if an allocation_id is passed with
      * no node_id the node_is will be picked from the allocation.
      *
-     * @param array{
-     *     node_id?: int,
-     *     oom_killer?: bool,
-     *     oom_disabled?: bool,
-     *     egg_id?: int,
-     *     image?: ?string,
-     *     startup?: ?string,
-     *     start_on_completion?: ?bool,
-     * } $data
+     * @param  array<mixed, mixed>  $data
      *
      * @throws \Throwable
      * @throws \App\Exceptions\DisplayException
@@ -94,6 +86,8 @@ class ServerCreationService
             if (empty($data['node_id'])) {
                 $data['node_id'] = $nodes->first();
             }
+        } else {
+            $data['node_id'] = Allocation::find($data['allocation_id'])?->node_id;
         }
 
         Assert::false(empty($data['node_id']), 'Expected a non-empty node_id in server creation data.');
