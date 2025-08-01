@@ -249,7 +249,7 @@ class Startup extends ServerFormPage
         return null;
     }
 
-    public function getTitle(): string|Htmlable
+    public function getTitle(): string
     {
         return trans('server/startup.title');
     }

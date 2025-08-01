@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources;
 
+use App\Filament\Components\Actions\CopyAction;
 use App\Filament\Components\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Resources\DatabaseResource\Pages\ListDatabases;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;

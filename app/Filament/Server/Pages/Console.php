@@ -191,7 +191,6 @@ class Console extends Page
                 ->label(trans('server/console.power_actions.kill'))
                 ->color('danger')
                 ->tooltip(trans('server/console.power_actions.kill_tooltip'))
-                ->size(ActionSize::ExtraLarge)
                 ->requiresConfirmation()
                 ->size(Size::ExtraLarge)
                 ->action(fn () => $this->dispatch('setServerState', state: 'kill', uuid: $server->uuid))

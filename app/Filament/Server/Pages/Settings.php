@@ -188,7 +188,7 @@ class Settings extends ServerFormPage
                                 TextEntry::make('password')
                                     ->label(trans('server/setting.node_info.sftp.password'))
                                     ->columnSpan(1)
-                                    ->content(trans('server/setting.node_info.sftp.password_body')),
+                                    ->label(trans('server/setting.node_info.sftp.password_body')),
                             ]),
                     ]),
                 Section::make(trans('server/setting.reinstall.title'))

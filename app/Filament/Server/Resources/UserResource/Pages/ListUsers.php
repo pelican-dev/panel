@@ -2,12 +2,28 @@
 
 namespace App\Filament\Server\Resources\UserResource\Pages;
 
+use App\Facades\Activity;
 use App\Filament\Server\Resources\UserResource;
+use App\Models\Permission;
+use App\Models\Server;
+use App\Services\Subusers\SubuserCreationService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\IconSize;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -18,7 +34,9 @@ class ListUsers extends ListRecords
 
     protected static string $resource = UserResource::class;
 
-    /** @return array<Action|ActionGroup> */
+    /** @return array<Action|ActionGroup>
+     * @throws Exception
+     */
     protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */
@@ -54,13 +72,13 @@ class ListUsers extends ListRecords
         }
 
         return [
-            Actions\CreateAction::make('invite')
+            CreateAction::make('invite')
                 ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
                 ->icon('tabler-user-plus')
                 ->tooltip(trans('server/user.invite_user'))
                 ->createAnother(false)
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_CREATE, $server))
-                ->form([
+                ->schema([
                     Grid::make()
                         ->columnSpanFull()
                         ->columns([
@@ -81,23 +99,15 @@ class ListUsers extends ListRecords
                                     'lg' => 5,
                                 ])
                                 ->required(),
-                            assignAll::make([
-                                Action::make('assignAll')
-                                    ->label(trans('server/user.assign_all'))
-                                    ->action(function (Set $set, Get $get) use ($permissionsArray) {
-                                        $permissions = $permissionsArray;
-                                        foreach ($permissions as $key => $value) {
-                                            $allValues = array_unique($value);
-                                            $set($key, $allValues);
-                                        }
-                                    }),
-                            ])
-                                ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 1,
-                                    'md' => 1,
-                                    'lg' => 1,
-                                ]),
+                            Action::make('assignAll')
+                                ->label(trans('server/user.assign_all'))
+                                ->action(function (Set $set, Get $get) use ($permissionsArray) {
+                                    $permissions = $permissionsArray;
+                                    foreach ($permissions as $key => $value) {
+                                        $allValues = array_unique($value);
+                                        $set($key, $allValues);
+                                    }
+                                }),
                             Tabs::make()
                                 ->columnSpanFull()
                                 ->schema($tabs),
