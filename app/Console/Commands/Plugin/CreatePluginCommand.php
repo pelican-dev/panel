@@ -9,8 +9,8 @@ use Illuminate\Filesystem\Filesystem;
 class CreatePluginCommand extends Command
 {
     protected $signature = 'p:plugin:create
-                            {name}
-                            {author}
+                            {--name=}
+                            {--author=}
                             {--description=}
                             {--category=}
                             {--url=}
@@ -27,7 +27,7 @@ class CreatePluginCommand extends Command
 
     public function handle(): void
     {
-        $name = $this->argument('name');
+        $name = $this->option('name') ?? $this->ask('Name');
         $id = str_slug(strtolower($name));
 
         if ($this->filesystem->exists(plugin_path($id))) {
@@ -36,7 +36,7 @@ class CreatePluginCommand extends Command
             return;
         }
 
-        $author = $this->argument('author');
+        $author = $this->option('$author') ?? $this->ask('$author');
 
         $namespace = $author . '\\' . studly_case($name);
         $class = studly_case($name . 'Plugin');
