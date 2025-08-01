@@ -8,7 +8,6 @@ use Filament\Support\Contracts\HasLabel;
 
 enum ServerState: string implements HasColor, HasIcon, HasLabel
 {
-    case Normal = 'normal';
     case Installing = 'installing';
     case InstallFailed = 'install_failed';
     case ReinstallFailed = 'reinstall_failed';
@@ -18,7 +17,6 @@ enum ServerState: string implements HasColor, HasIcon, HasLabel
     public function getIcon(): string
     {
         return match ($this) {
-            self::Normal => 'tabler-heart',
             self::Installing => 'tabler-heart-bolt',
             self::InstallFailed => 'tabler-heart-x',
             self::ReinstallFailed => 'tabler-heart-x',
@@ -31,14 +29,13 @@ enum ServerState: string implements HasColor, HasIcon, HasLabel
     {
         if ($hex) {
             return match ($this) {
-                self::Normal, self::Installing, self::RestoringBackup => '#2563EB',
+                self::Installing, self::RestoringBackup => '#2563EB',
                 self::Suspended => '#D97706',
                 self::InstallFailed, self::ReinstallFailed => '#EF4444',
             };
         }
 
         return match ($this) {
-            self::Normal => 'primary',
             self::Installing => 'primary',
             self::InstallFailed => 'danger',
             self::ReinstallFailed => 'danger',

@@ -462,17 +462,15 @@ class Server extends Model implements Validatable
         });
     }
 
-    public function formatResource(string $resourceKey, bool $limit = false, ServerResourceType $type = ServerResourceType::Unit, int $precision = 2): string
+    public function formatResource(ServerResourceType $resourceType): string
     {
-        $resourceAmount = $this->{$resourceKey} ?? 0;
-        if (!$limit) {
-            $resourceAmount = $this->retrieveResources()[$resourceKey] ?? 0;
-        }
+        $resourceAmount = $resourceType->getResourceAmount($this);
 
-        if ($type === ServerResourceType::Time) {
-            if ($this->isSuspended()) {
-                return 'Suspended';
+        if ($resourceType->isTime()) {
+            if (!is_null($this->status)) {
+                return $this->status->getLabel();
             }
+
             if ($resourceAmount === 0) {
                 return ContainerStatus::Offline->getLabel();
             }
@@ -480,20 +478,16 @@ class Server extends Model implements Validatable
             return now()->subMillis($resourceAmount)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 4);
         }
 
-        if ($resourceAmount === 0 & $limit) {
+        if ($resourceAmount === 0 & $resourceType->isLimit()) {
+            // Unlimited symbol
             return "\u{221E}";
         }
 
-        if ($type === ServerResourceType::Percentage) {
-            return Number::format($resourceAmount, precision: $precision, locale: auth()->user()->language ?? 'en') . '%';
+        if ($resourceType->isPercentage()) {
+            return Number::format($resourceAmount, precision: 2, locale: auth()->user()->language ?? 'en') . '%';
         }
 
-        // Our current limits are set in MB
-        if ($limit) {
-            $resourceAmount *= 2 ** 20;
-        }
-
-        return convert_bytes_to_readable($resourceAmount, decimals: $precision, base: 3);
+        return convert_bytes_to_readable($resourceAmount, base: 3);
     }
 
     public function condition(): Attribute

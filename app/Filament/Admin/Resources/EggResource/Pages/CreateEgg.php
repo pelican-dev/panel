@@ -207,7 +207,7 @@ class CreateEgg extends CreateRecord
                                             '*' => trans('admin/egg.error_reserved'),
                                         ])
                                         ->required(),
-                                    TextInput::make('default_value')->label(trans('admin/egg.default_value'))->maxLength(255),
+                                    TextInput::make('default_value')->label(trans('admin/egg.default_value')),
                                     Fieldset::make(trans('admin/egg.user_permissions'))
                                         ->schema([
                                             Checkbox::make('user_viewable')->label(trans('admin/egg.viewable')),

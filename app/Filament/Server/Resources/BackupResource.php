@@ -118,6 +118,37 @@ class BackupResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
+                    Action::make('rename')
+                        ->icon('tabler-pencil')
+                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DELETE, $server))
+                        ->label('Rename')
+                        ->form([
+                            TextInput::make('name')
+                                ->label('Backup Name')
+                                ->required()
+                                ->maxLength(255)
+                                ->default(fn (Backup $backup) => $backup->name),
+                        ])
+                        ->action(function (Backup $backup, $data) {
+                            $oldName = $backup->name;
+                            $newName = $data['name'];
+
+                            $backup->update(['name' => $newName]);
+
+                            if ($oldName !== $newName) {
+                                Activity::event('server:backup.rename')
+                                    ->subject($backup)
+                                    ->property(['old_name' => $oldName, 'new_name' => $newName])
+                                    ->log();
+                            }
+
+                            Notification::make()
+                                ->title('Backup Renamed')
+                                ->body('The backup has been successfully renamed.')
+                                ->success()
+                                ->send();
+                        })
+                        ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     Action::make('lock')
                         ->icon(fn (Backup $backup) => !$backup->is_locked ? 'tabler-lock' : 'tabler-lock-open')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DELETE, $server))
