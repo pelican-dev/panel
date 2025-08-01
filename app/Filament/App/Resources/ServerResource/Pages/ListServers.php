@@ -78,21 +78,21 @@ class ListServers extends ListRecords
                 ->copyable(request()->isSecure())
                 ->state(fn (Server $server) => $server->allocation->address ?? 'None'),
             TextColumn::make('cpuUsage')
-                ->label('Resources')
+                ->label(trans('server/dashboard.resources'))
                 ->icon('tabler-cpu')
-                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource(ServerResourceType::CPULimit))
+                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::CPULimit)]))
                 ->state(fn (Server $server) => $server->formatResource(ServerResourceType::CPU))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'cpu')),
             TextColumn::make('memoryUsage')
                 ->label('')
                 ->icon('tabler-device-desktop-analytics')
-                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource(ServerResourceType::MemoryLimit))
+                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::MemoryLimit)]))
                 ->state(fn (Server $server) => $server->formatResource(ServerResourceType::Memory))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'memory')),
             TextColumn::make('diskUsage')
                 ->label('')
                 ->icon('tabler-device-sd-card')
-                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource(ServerResourceType::DiskLimit))
+                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::DiskLimit)]))
                 ->state(fn (Server $server) => $server->formatResource(ServerResourceType::Disk))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'disk')),
         ];

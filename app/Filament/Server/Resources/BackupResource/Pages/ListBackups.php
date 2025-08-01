@@ -36,7 +36,7 @@ class ListBackups extends ListRecords
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_CREATE, $server))
                 ->icon('tabler-file-zip')->iconButton()->iconSize(IconSize::Large)
                 ->disabled(fn () => $server->backups()->count() >= $server->backup_limit)
-                ->tooltip(fn () => $server->backups()->count() >= $server->backup_limit ? 'Backup Limit Reached' : 'Create Backup') // Disabled Buttons have no tooltips in v3 :/
+                ->tooltip(fn () => $server->backups()->count() >= $server->backup_limit ? trans('server/backup.actions.create.limit') : trans('server/backup.actions.create.title'))
                 ->color(fn () => $server->backups()->count() >= $server->backup_limit ? 'danger' : 'primary')
                 ->createAnother(false)
                 ->action(function (InitiateBackupService $initiateBackupService, $data) use ($server) {
@@ -55,15 +55,15 @@ class ListBackups extends ListRecords
                             ->log();
 
                         return Notification::make()
-                            ->title('Backup Created')
-                            ->body($backup->name . ' created.')
+                            ->title(trans('server/backup.actions.create.notification_success'))
+                            ->body(trans('server/backup.actions.create.created', ['name' => $backup->name]))
                             ->success()
                             ->send();
                     } catch (HttpException $e) {
                         return Notification::make()
-                            ->danger()
-                            ->title('Backup Failed')
+                            ->title(trans('server/backup.actions.create.notification_fail'))
                             ->body($e->getMessage() . ' Try again' . ($e->getHeaders()['Retry-After'] ? ' in ' . $e->getHeaders()['Retry-After'] . ' seconds.' : ''))
+                            ->danger()
                             ->send();
                     }
                 }),
@@ -73,5 +73,10 @@ class ListBackups extends ListRecords
     public function getBreadcrumbs(): array
     {
         return [];
+    }
+
+    public function getTitle(): string
+    {
+        return trans('server/backup.title');
     }
 }

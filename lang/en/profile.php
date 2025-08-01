@@ -12,6 +12,7 @@ return [
         'customization' => 'Customization',
     ],
     'username' => 'Username',
+    'admin' => 'Admin',
     'exit_admin' => 'Exit Admin',
     'email' => 'Email',
     'password' => 'Password',

@@ -1,0 +1,51 @@
+<?php
+
+return [
+    'title' => 'Settings',
+    'server_info' => [
+        'title' => 'Server Information',
+        'information' => 'Information',
+        'name' => 'Server Name',
+        'notification_name' => 'Updated Server Name',
+        'description' => 'Server Description',
+        'notification_description' => 'Updated Server Description',
+        'failed' => 'Failed',
+        'uuid' => 'Server UUID',
+        'id' => 'Server ID',
+        'limits' => [
+            'title' => 'Limits',
+            'unlimited' => 'Unlimited',
+            'of' => 'of',
+            'cpu' => 'CPU',
+            'memory' => 'Memory',
+            'disk' => 'Disk Space',
+            'backups' => 'Backups',
+            'databases' => 'Databases',
+            'allocations' => 'Allocations',
+            'no_allocations' => 'No Additional Allocations',
+        ],
+    ],
+    'node_info' => [
+        'title' => 'Node Information',
+        'name' => 'Node Name',
+        'sftp' => [
+            'title' => 'SFTP Information',
+            'connection' => 'Connection',
+            'action' => 'Connect to SFTP',
+            'username' => 'Username',
+            'password' => 'Password',
+            'password_body' => 'Your SFTP password is the same as the password you use to access this panel.',
+        ],
+    ],
+    'reinstall' => [
+        'title' => 'Reinstall Server',
+        'body' => 'Reinstalling your server will stop it, and then re-run the installation script that initially set it up.',
+        'body2' => 'Some files may be deleted or modified during this process, please back up your data before continuing.',
+        'action' => 'Reinstall',
+        'modal' => 'Are you sure you want to reinstall the server?',
+        'modal_description' => 'Some files may be deleted or modified during this process, please back up your data before continuing.',
+        'yes' => 'Yes, Reinstall',
+        'notification_start' => 'Reinstall Started',
+        'notification_fail' => 'Reinstall Failed',
+    ],
+];

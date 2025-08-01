@@ -25,6 +25,7 @@ use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\IconSize;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ListUsers extends ListRecords
 {
@@ -48,14 +49,14 @@ class ListUsers extends ListRecords
 
             foreach ($data['permissions'] as $permission) {
                 $options[$permission] = str($permission)->headline();
-                $descriptions[$permission] = trans('server/users.permissions.' . $data['name'] . '_' . str($permission)->replace('-', '_'));
+                $descriptions[$permission] = trans('server/user.permissions.' . $data['name'] . '_' . str($permission)->replace('-', '_'));
                 $permissionsArray[$data['name']][] = $permission;
             }
 
             $tabs[] = Tab::make(str($data['name'])->headline())
                 ->schema([
                     Section::make()
-                        ->description(trans('server/users.permissions.' . $data['name'] . '_desc'))
+                        ->description(trans('server/user.permissions.' . $data['name'] . '_desc'))
                         ->icon($data['icon'])
                         ->schema([
                             CheckboxList::make($data['name'])
@@ -72,7 +73,7 @@ class ListUsers extends ListRecords
             Actions\CreateAction::make('invite')
                 ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
                 ->icon('tabler-user-plus')
-                ->tooltip('Invite User')
+                ->tooltip(trans('server/user.invite_user'))
                 ->createAnother(false)
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_CREATE, $server))
                 ->form([
@@ -86,6 +87,7 @@ class ListUsers extends ListRecords
                         ])
                         ->schema([
                             TextInput::make('email')
+                                ->label(trans('server/user.email'))
                                 ->email()
                                 ->inlineLabel()
                                 ->columnSpan([
@@ -97,7 +99,7 @@ class ListUsers extends ListRecords
                                 ->required(),
                             assignAll::make([
                                 Action::make('assignAll')
-                                    ->label('Assign All')
+                                    ->label(trans('server/user.assign_all'))
                                     ->action(function (Set $set, Get $get) use ($permissionsArray) {
                                         $permissions = $permissionsArray;
                                         foreach ($permissions as $key => $value) {
@@ -117,8 +119,8 @@ class ListUsers extends ListRecords
                                 ->schema($tabs),
                         ]),
                 ])
-                ->modalHeading('Invite User')
-                ->modalSubmitActionLabel('Invite')
+                ->modalHeading(trans('server/user.invite_user'))
+                ->modalSubmitActionLabel(trans('server/user.action'))
                 ->action(function (array $data, SubuserCreationService $service) use ($server) {
                     $email = strtolower($data['email']);
 
@@ -140,12 +142,12 @@ class ListUsers extends ListRecords
                             ]);
 
                         Notification::make()
-                            ->title('User Invited!')
+                            ->title(trans('server/user.notification_add'))
                             ->success()
                             ->send();
                     } catch (Exception $exception) {
                         Notification::make()
-                            ->title('Failed')
+                            ->title(trans('server/user.notification_failed'))
                             ->body($exception->getMessage())
                             ->danger()
                             ->send();
@@ -159,5 +161,10 @@ class ListUsers extends ListRecords
     public function getBreadcrumbs(): array
     {
         return [];
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return trans('server/user.title');
     }
 }

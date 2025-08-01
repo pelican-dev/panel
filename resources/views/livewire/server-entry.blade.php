@@ -33,27 +33,27 @@
 
         <div class="flex justify-between text-center items-center gap-4">
             <div>
-                <p class="text-sm dark:text-gray-400">CPU</p>
+                <p class="text-sm dark:text-gray-400">{{ trans('server/dashboard.cpu') }}</p>
                 <p class="text-md font-semibold">{{ $server->formatResource(\App\Enums\ServerResourceType::CPU) }}</p>
                 <hr class="p-0.5">
                 <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::CPULimit) }}</p>
             </div>
             <div>
-                <p class="text-sm dark:text-gray-400">Memory</p>
+                <p class="text-sm dark:text-gray-400">{{ trans('server/dashboard.memory') }}</p>
                 <p class="text-md font-semibold">{{ $server->formatResource(\App\Enums\ServerResourceType::Memory) }}</p>
                 <hr class="p-0.5">
                 <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::MemoryLimit) }}</p>
             </div>
             <div>
-                <p class="text-sm dark:text-gray-400">Disk</p>
+                <p class="text-sm dark:text-gray-400">{{ trans('server/dashboard.disk') }}</p>
                 <p class="text-md font-semibold">{{ $server->formatResource(\App\Enums\ServerResourceType::Disk) }}</p>
                 <hr class="p-0.5">
                 <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::DiskLimit) }}</p>
             </div>
             <div class="hidden sm:block">
-                <p class="text-sm dark:text-gray-400">Network</p>
+                <p class="text-sm dark:text-gray-400">{{ trans('server/dashboard.network') }}</p>
                 <hr class="p-0.5">
-                <p class="text-md font-semibold">{{ $server->allocation?->address ?? 'None' }}</p>
+                <p class="text-md font-semibold">{{ $server->allocation?->address ?? trans('server/dashboard.none') }}</p>
             </div>
         </div>
     </div>

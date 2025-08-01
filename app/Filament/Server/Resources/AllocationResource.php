@@ -30,10 +30,6 @@ class AllocationResource extends Resource
 
     protected static ?string $model = Allocation::class;
 
-    protected static ?string $modelLabel = 'Network';
-
-    protected static ?string $pluralModelLabel = 'Network';
-
     protected static ?int $navigationSort = 7;
 
     protected static ?string $navigationIcon = 'tabler-network';
@@ -46,16 +42,17 @@ class AllocationResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('ip')
-                    ->label('Address')
+                    ->label(trans('server/network.address'))
                     ->formatStateUsing(fn (Allocation $allocation) => $allocation->alias),
                 TextColumn::make('alias')
                     ->hidden(),
-                TextColumn::make('port'),
+                TextColumn::make('port')
+                    ->label(trans('server/network.port')),
                 TextInputColumn::make('notes')
+                    ->label(trans('server/network.notes'))
                     ->visibleFrom('sm')
                     ->disabled(fn () => !auth()->user()->can(Permission::ACTION_ALLOCATION_UPDATE, $server))
-                    ->label('Notes')
-                    ->placeholder('No Notes'),
+                    ->placeholder(trans('server/network.no_notes')),
                 IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
                         true => 'tabler-star-filled',
@@ -65,15 +62,15 @@ class AllocationResource extends Resource
                         true => 'warning',
                         default => 'gray',
                     })
-                    ->tooltip(fn (Allocation $allocation) => ($allocation->id === $server->allocation_id ? 'Already' : 'Make') . ' Primary')
+                    ->tooltip(fn (Allocation $allocation) => $allocation->id === $server->allocation_id ? trans('server/network.primary') : trans('server/network.make_primary'))
                     ->action(fn (Allocation $allocation) => auth()->user()->can(PERMISSION::ACTION_ALLOCATION_UPDATE, $server) && $server->update(['allocation_id' => $allocation->id]))
                     ->default(fn (Allocation $allocation) => $allocation->id === $server->allocation_id)
-                    ->label('Primary'),
+                    ->label(trans('server/network.primary')),
             ])
             ->actions([
                 DetachAction::make()
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_ALLOCATION_DELETE, $server))
-                    ->label('Delete')
+                    ->label(trans('server/network.delete'))
                     ->icon('tabler-trash')
                     ->action(function (Allocation $allocation) {
                         Allocation::query()->where('id', $allocation->id)->update([
@@ -116,5 +113,10 @@ class AllocationResource extends Resource
         return [
             'index' => Pages\ListAllocations::route('/'),
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('server/network.title');
     }
 }
