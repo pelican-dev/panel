@@ -39,6 +39,8 @@ class ServerCreationService
      * as possible given the input data. For example, if an allocation_id is passed with
      * no node_id the node_is will be picked from the allocation.
      *
+     * @param  array<mixed, mixed>  $data
+     *
      * @throws \Throwable
      * @throws \App\Exceptions\DisplayException
      * @throws \Illuminate\Validation\ValidationException
