@@ -39,8 +39,8 @@
                 <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::CPULimit) }}</p>
             </div>
             <div>
-                <p class="text-md font-semibold">{{ $server->formatResource(\App\Enums\ServerResourceType::Memory) }}</p>
                 <p class="text-sm dark:text-gray-400">{{ trans('server/dashboard.memory') }}</p>
+                <p class="text-md font-semibold">{{ $server->formatResource(\App\Enums\ServerResourceType::Memory) }}</p>
                 <hr class="p-0.5">
                 <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::MemoryLimit) }}</p>
             </div>

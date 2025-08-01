@@ -63,7 +63,7 @@ class ListServers extends ListRecords
             TextColumn::make('condition')
                 ->label('Status')
                 ->badge()
-                ->tooltip(fn (Server $server) => $server->formatResource('uptime', type: ServerResourceType::Time))
+                ->tooltip(fn (Server $server) => $server->formatResource(ServerResourceType::Uptime))
                 ->icon(fn (Server $server) => $server->condition->getIcon())
                 ->color(fn (Server $server) => $server->condition->getColor()),
             TextColumn::make('name')
@@ -86,14 +86,14 @@ class ListServers extends ListRecords
             TextColumn::make('memoryUsage')
                 ->label('')
                 ->icon('tabler-device-desktop-analytics')
-                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::Memory)]))
+                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::MemoryLimit)]))
                 ->state(fn (Server $server) => $server->formatResource(ServerResourceType::Memory))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'memory')),
             TextColumn::make('diskUsage')
                 ->label('')
                 ->icon('tabler-device-sd-card')
-                ->state(fn (Server $server) => $server->formatResource(ServerResourceType::Disk))
                 ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::DiskLimit)]))
+                ->state(fn (Server $server) => $server->formatResource(ServerResourceType::Disk))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'disk')),
         ];
     }
