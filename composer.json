@@ -46,7 +46,6 @@
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.6",
         "fakerphp/faker": "^1.23.1",
-        "filament/upgrade": "v4.0.0-beta20",
         "larastan/larastan": "^3.4",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.15.3",
