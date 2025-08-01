@@ -5,11 +5,17 @@ namespace App\Filament\Admin\Resources;
 use App\Facades\Plugins;
 use App\Filament\Admin\Resources\PluginResource\Pages\ListPlugins;
 use App\Models\Plugin;
+use Exception;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Http\UploadedFile;
 
 class PluginResource extends Resource
 {
@@ -111,7 +117,57 @@ class PluginResource extends Resource
                     }),
             ])
             ->headerActions([
-                // TODO: "import" button
+                Action::make('download')
+                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('create', $plugin))
+                    ->icon('tabler-download')
+                    ->form([
+                        Tabs::make('Tabs')
+                            ->contained(false)
+                            ->tabs([
+                                Tab::make('From File')
+                                    ->icon('tabler-file-upload')
+                                    ->schema([
+                                        FileUpload::make('file')
+                                            ->acceptedFileTypes(['application/zip', 'application/zip-compressed', 'application/x-zip-compressed'])
+                                            ->preserveFilenames()
+                                            ->previewable(false)
+                                            ->storeFiles(false),
+                                    ]),
+                                Tab::make('From URL')
+                                    ->icon('tabler-world-upload')
+                                    ->schema([
+                                        TextInput::make('url')
+                                            ->url()
+                                            ->endsWith('.zip'),
+                                    ]),
+                            ]),
+                    ])
+                    ->action(function ($data) {
+                        try {
+                            if ($data['file'] instanceof UploadedFile) {
+                                Plugins::downloadPluginFromFile($data['file']);
+                            }
+
+                            if (is_string($data['url'])) {
+                                Plugins::downloadPluginFromUrl($data['url']);
+                            }
+
+                            redirect(ListPlugins::getUrl());
+
+                            Notification::make()
+                                ->success()
+                                ->title('Plugin downloaded')
+                                ->send();
+                        } catch (Exception $exception) {
+                            report($exception);
+
+                            Notification::make()
+                                ->danger()
+                                ->title('Could not download plugin.')
+                                ->body($exception->getMessage())
+                                ->send();
+                        }
+                    }),
             ])
             ->emptyStateIcon('tabler-packages')
             ->emptyStateDescription('')

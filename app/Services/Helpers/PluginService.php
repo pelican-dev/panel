@@ -3,6 +3,7 @@
 namespace App\Services\Helpers;
 
 use App\Enums\PluginStatus;
+use App\Exceptions\Service\InvalidFileUploadException;
 use App\Models\Plugin;
 use Composer\Autoload\ClassLoader;
 use Exception;
@@ -10,10 +11,13 @@ use Filament\Panel;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
+use ZipArchive;
 
 class PluginService
 {
@@ -170,6 +174,37 @@ class PluginService
 
             $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
         }
+    }
+
+    public function downloadPluginFromFile(UploadedFile $file): void
+    {
+        $zip = new ZipArchive();
+
+        if (!$zip->open($file->getPathname())) {
+            throw new Exception('Could not open zip file.');
+        }
+
+        $pluginName = str($file->getClientOriginalName())->before('.zip')->toString();
+        $extractPath = $zip->locateName($pluginName) ? base_path('plugins') : plugin_path($pluginName);
+
+        if (!$zip->extractTo($extractPath)) {
+            throw new Exception('Could not extract zip file.');
+        }
+
+        $zip->close();
+    }
+
+    public function downloadPluginFromUrl(string $url): void
+    {
+        $info = pathinfo($url);
+        $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
+        $tmpPath = $tmpDir->path($info['basename']);
+
+        if (!file_put_contents($tmpPath, file_get_contents($url))) {
+            throw new InvalidFileUploadException('Could not write temporary file.');
+        }
+
+        $this->downloadPluginFromFile(new UploadedFile($tmpPath, $info['basename'], 'application/zip'));
     }
 
     public function enablePlugin(string|Plugin $plugin): void
