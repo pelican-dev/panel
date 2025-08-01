@@ -112,6 +112,6 @@ class ServerNetworkChart extends ChartWidget
     {
         $lastData = collect(cache()->get("servers.{$this->server->id}.network"))->last();
 
-        return 'Network - ↓' . convert_bytes_to_readable($lastData->rx_bytes ?? 0) . ' - ↑' . convert_bytes_to_readable($lastData->tx_bytes ?? 0);
+        return trans('server/console.labels.network') . ' - ↓' . convert_bytes_to_readable($lastData->rx_bytes ?? 0) . ' - ↑' . convert_bytes_to_readable($lastData->tx_bytes ?? 0);
     }
 }

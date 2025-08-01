@@ -20,14 +20,14 @@ class ServerOverview extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            SmallStatBlock::make('Name', $this->server->name)
+            SmallStatBlock::make(trans('server/console.labels.name'), $this->server->name)
                 ->copyOnClick(fn () => request()->isSecure()),
-            SmallStatBlock::make('Status', $this->status()),
-            SmallStatBlock::make('Address', $this->server?->allocation->address ?? 'None')
+            SmallStatBlock::make(trans('server/console.labels.status'), $this->status()),
+            SmallStatBlock::make(trans('server/console.labels.address'), $this->server?->allocation->address ?? 'None')
                 ->copyOnClick(fn () => request()->isSecure()),
-            SmallStatBlock::make('CPU', $this->cpuUsage()),
-            SmallStatBlock::make('Memory', $this->memoryUsage()),
-            SmallStatBlock::make('Disk', $this->diskUsage()),
+            SmallStatBlock::make(trans('server/console.labels.cpu'), $this->cpuUsage()),
+            SmallStatBlock::make(trans('server/console.labels.memory'), $this->memoryUsage()),
+            SmallStatBlock::make(trans('server/console.labels.disk'), $this->diskUsage()),
         ];
     }
 

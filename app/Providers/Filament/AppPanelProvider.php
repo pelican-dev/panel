@@ -48,7 +48,7 @@ class AppPanelProvider extends PanelProvider
             ->userMenuItems([
                 'profile' => fn (Action $action) => $action->label(auth()->user()->username),
                 Action::make('toAdmin')
-                    ->label('Admin')
+                    ->label(trans('profile.admin'))
                     ->url('/admin')
                     ->icon('tabler-arrow-forward')
                     ->sort(5)

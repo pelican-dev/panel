@@ -60,4 +60,9 @@ class FileResource extends Resource
             'index' => ListFiles::route('/{path?}'),
         ];
     }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('server/file.title');
+    }
 }

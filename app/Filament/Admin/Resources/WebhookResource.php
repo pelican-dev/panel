@@ -9,6 +9,7 @@ use App\Filament\Admin\Resources\WebhookResource\Pages\ViewWebhookConfiguration;
 use App\Livewire\AlertBanner;
 use App\Models\WebhookConfiguration;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use App\Traits\Filament\CanCustomizePages;
@@ -132,23 +133,12 @@ class WebhookResource extends Resource
                     ->live()
                     ->inline()
                     ->options(WebhookType::class)
-                    ->default(WebhookType::Regular)
-                    ->afterStateHydrated(function (WebhookType $state) {
-                        if ($state === WebhookType::Discord) {
-                            self::sendHelpBanner();
-                        }
-                    })
-                    ->afterStateUpdated(function (WebhookType $state) {
-                        if ($state === WebhookType::Discord) {
-                            self::sendHelpBanner();
-                        }
-                    }),
+                    ->default(WebhookType::Regular->value),
                 TextInput::make('description')
                     ->label(trans('admin/webhook.description'))
                     ->required(),
                 TextInput::make('endpoint')
                     ->label(trans('admin/webhook.endpoint'))
-                    ->activeUrl()
                     ->required()
                     ->columnSpanFull()
                     ->afterStateUpdated(fn (string $state, Set $set) => $set('type', str($state)->contains('discord.com') ? WebhookType::Discord : WebhookType::Regular)),
@@ -156,8 +146,16 @@ class WebhookResource extends Resource
                     ->hidden(fn (Get $get) => $get('type') === WebhookType::Discord)
                     ->dehydratedWhenHidden()
                     ->schema(fn () => self::getRegularFields())
-                    ->formBefore()
-                    ->columnSpanFull(),
+                    ->headerActions([
+                        Action::make('reset_headers')
+                            ->label(trans('admin/webhook.reset_headers'))
+                            ->color('danger')
+                            ->icon('heroicon-o-trash')
+                            ->action(fn (Get $get, Set $set) => $set('headers', [
+                                'X-Webhook-Event' => '{{event}}',
+                            ])),
+                    ])
+                    ->formBefore(),
                 Section::make(trans('admin/webhook.discord'))
                     ->hidden(fn (Get $get) => $get('type') === WebhookType::Regular)
                     ->dehydratedWhenHidden()
@@ -168,9 +166,6 @@ class WebhookResource extends Resource
                     ->formBefore()
                     ->columnSpanFull(),
                 Section::make(trans('admin/webhook.events'))
-                    ->collapsible()
-                    ->collapsed(fn (Get $get) => count($get('events') ?? []))
-                    ->columnSpanFull()
                     ->schema([
                         CheckboxList::make('events')
                             ->live()
@@ -191,7 +186,10 @@ class WebhookResource extends Resource
     {
         return [
             KeyValue::make('headers')
-                ->label(trans('admin/webhook.headers')),
+                ->label(trans('admin/webhook.headers'))
+                ->default(fn () => [
+                    'X-Webhook-Event' => '{{event}}',
+                ]),
         ];
     }
 

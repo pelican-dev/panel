@@ -19,11 +19,25 @@ class ListSchedules extends ListRecords
     /** @return array<Action|ActionGroup> */
     protected function getDefaultHeaderActions(): array
     {
-        return [];
+        return [
+            CreateAction::make()
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon('tabler-calendar-plus')
+                ->tooltip(trans('server/schedule.new')),
+            ImportScheduleAction::make()
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->icon('tabler-download')
+                ->tooltip(trans('server/schedule.import')),
+        ];
     }
 
     public function getBreadcrumbs(): array
     {
         return [];
+    }
+
+    public function getTitle(): string
+    {
+        return trans('server/schedule.title');
     }
 }

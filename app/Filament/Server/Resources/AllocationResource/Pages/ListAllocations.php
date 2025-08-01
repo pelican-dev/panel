@@ -33,7 +33,7 @@ class ListAllocations extends ListRecords
                 ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
                 ->icon(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'tabler-network-off' : 'tabler-network')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_ALLOCATION_CREATE, $server))
-                ->tooltip(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'Allocation limit reached' : 'Add Allocation')
+                ->tooltip(fn () => $server->allocations()->count() >= $server->allocation_limit ? trans('server/network.limit') : trans('server/network.add'))
                 ->hidden(fn () => !config('panel.client_features.allocations.enabled'))
                 ->disabled(fn () => $server->allocations()->count() >= $server->allocation_limit)
                 ->color(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'danger' : 'primary')
@@ -55,5 +55,15 @@ class ListAllocations extends ListRecords
     public function getBreadcrumbs(): array
     {
         return [];
+    }
+
+    public function getTitle(): string
+    {
+        return trans('server/network.title');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('server/network.title');
     }
 }

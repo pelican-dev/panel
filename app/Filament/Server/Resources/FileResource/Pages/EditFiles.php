@@ -72,10 +72,10 @@ class EditFiles extends Page
 
         return $schema
             ->components([
-                Section::make('Editing: ' . $this->path)
+                Section::make(trans('server/file.actions.edit.title', ['file' => $this->path]))
                     ->footerActions([
                         Action::make('save_and_close')
-                            ->label('Save & Close')
+                            ->label(trans('server/file.actions.edit.save_close'))
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+shift+s')
@@ -88,14 +88,14 @@ class EditFiles extends Page
 
                                 Notification::make()
                                     ->success()
-                                    ->title('File saved')
+                                    ->title(trans('server/file.actions.edit.notification'))
                                     ->body(fn () => $this->path)
                                     ->send();
 
                                 $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                             }),
                         Action::make('save')
-                            ->label('Save')
+                            ->label(trans('server/file.actions.edit.save'))
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
@@ -108,20 +108,20 @@ class EditFiles extends Page
 
                                 Notification::make()
                                     ->success()
-                                    ->title('File saved')
+                                    ->title(trans('server/file.actions.edit.notification'))
                                     ->body(fn () => $this->path)
                                     ->send();
                             }),
                         Action::make('cancel')
-                            ->label('Cancel')
+                            ->label(trans('server/file.actions.edit.cancel'))
                             ->color('danger')
                             ->icon('tabler-x')
                             ->url(fn () => ListFiles::getUrl(['path' => dirname($this->path)])),
                     ])
                     ->footerActionsAlignment(Alignment::End) //TODO MISSING PADDING
                     ->schema([
-                        Select::make('lang') //TODO BROKEN
-                            ->label('Syntax Highlighting')
+                        Select::make('lang')
+                            ->label(trans('server/file.actions.new_file.syntax'))
                             ->searchable()
                             ->live()
                             ->options(EditorLanguages::class)
@@ -133,7 +133,7 @@ class EditFiles extends Page
                                 try {
                                     return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
                                 } catch (FileSizeTooLargeException) {
-                                    AlertBanner::make()
+                                    AlertBanner::make('file_too_large')
                                         ->title('<code>' . basename($this->path) . '</code> is too large!')
                                         ->body('Max is ' . convert_bytes_to_readable(config('panel.files.max_edit_size')))
                                         ->danger()
@@ -142,7 +142,7 @@ class EditFiles extends Page
 
                                     $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 } catch (FileNotFoundException) {
-                                    AlertBanner::make()
+                                    AlertBanner::make('file_not_found')
                                         ->title('<code>' . basename($this->path) . '</code> not found!')
                                         ->danger()
                                         ->closable()
@@ -150,7 +150,7 @@ class EditFiles extends Page
 
                                     $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 } catch (FileNotEditableException) {
-                                    AlertBanner::make()
+                                    AlertBanner::make('file_is_directory')
                                         ->title('<code>' . basename($this->path) . '</code> is a directory')
                                         ->danger()
                                         ->closable()
@@ -183,15 +183,6 @@ class EditFiles extends Page
                 ->info()
                 ->closable()
                 ->send();
-
-            try {
-                $this->getDaemonFileRepository()->getDirectory('/');
-            } catch (ConnectionException) {
-                AlertBanner::make('node_connection_error')
-                    ->title('Could not connect to the node!')
-                    ->danger()
-                    ->send();
-            }
         }
     }
 

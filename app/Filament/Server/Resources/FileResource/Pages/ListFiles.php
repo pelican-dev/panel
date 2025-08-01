@@ -91,14 +91,17 @@ class ListFiles extends ListRecords
             ->defaultSort('name')
             ->columns([
                 TextColumn::make('name')
+                    ->label(trans('server/file.name'))
                     ->searchable()
                     ->sortable()
                     ->icon(fn (File $file) => $file->getIcon()),
                 BytesColumn::make('size')
+                    ->label(trans('server/file.size'))
                     ->visibleFrom('md')
                     ->state(fn (File $file) => $file->is_directory ? null : $file->size)
                     ->sortable(),
                 DateTimeColumn::make('modified_at')
+                    ->label(trans('server/file.modified_at'))
                     ->visibleFrom('md')
                     ->since()
                     ->sortable(),
@@ -117,7 +120,7 @@ class ListFiles extends ListRecords
             ->recordActions([
                 Action::make('view')
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
-                    ->label('Open')
+                    ->label(trans('server/file.actions.open'))
                     ->icon('tabler-eye')->iconSize(IconSize::Large)
                     ->visible(fn (File $file) => $file->is_directory)
                     ->url(fn (File $file) => self::getUrl(['path' => join_paths($this->path, $file->name)])),
@@ -129,11 +132,11 @@ class ListFiles extends ListRecords
                 ActionGroup::make([
                     Action::make('rename')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
-                        ->label('Rename')
+                        ->label(trans('server/file.actions.rename.title'))
                         ->icon('tabler-forms')->iconSize(IconSize::Large)
                         ->schema([
                             TextInput::make('name')
-                                ->label('File name')
+                                ->label(trans('server/file.actions.rename.name'))
                                 ->default(fn (File $file) => $file->name)
                                 ->required(),
                         ])
@@ -150,14 +153,14 @@ class ListFiles extends ListRecords
                                 ->log();
 
                             Notification::make()
-                                ->title('File Renamed')
+                                ->title(trans('server/file.actions.rename.notification'))
                                 ->body(fn () => $file->name . ' -> ' . $data['name'])
                                 ->success()
                                 ->send();
                         }),
                     Action::make('copy')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
-                        ->label('Copy')
+                        ->label(trans('server/file.actions.copy.title'))
                         ->icon('tabler-copy')->iconSize(IconSize::Large)
                         ->visible(fn (File $file) => $file->is_file)
                         ->action(function (File $file) {
@@ -168,7 +171,7 @@ class ListFiles extends ListRecords
                                 ->log();
 
                             Notification::make()
-                                ->title('File copied')
+                                ->title(trans('server/file.actions.copy.notification'))
                                 ->success()
                                 ->send();
 
@@ -176,18 +179,18 @@ class ListFiles extends ListRecords
                         }),
                     Action::make('download')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server))
-                        ->label('Download')
+                        ->label(trans('server/file.actions.download'))
                         ->icon('tabler-download')->iconSize(IconSize::Large)
                         ->visible(fn (File $file) => $file->is_file)
                         ->url(fn (File $file) => DownloadFiles::getUrl(['path' => join_paths($this->path, $file->name)]), true),
                     Action::make('move')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
-                        ->label('Move')
+                        ->label(trans('server/file.actions.move.title'))
                         ->icon('tabler-replace')->iconSize(IconSize::Large)
                         ->schema([
                             TextInput::make('location')
-                                ->label('New location')
-                                ->hint('Enter the location of this file or folder, relative to the current directory.')
+                                ->label(trans('server/file.actions.move.new_location'))
+                                ->hint(trans('server/file.actions.move.new_location_hint'))
                                 ->required()
                                 ->live(),
                             TextEntry::make('new_location')
@@ -210,22 +213,24 @@ class ListFiles extends ListRecords
                                 ->log();
 
                             Notification::make()
-                                ->title('File Moved')
+                                ->title(trans('server/file.actions.move.notification'))
                                 ->body($oldLocation . ' -> ' . $newLocation)
                                 ->success()
                                 ->send();
                         }),
                     Action::make('permissions')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
-                        ->label('Permissions')
+                        ->label(trans('server/file.actions.permissions.title'))
                         ->icon('tabler-license')->iconSize(IconSize::Large)
                         ->schema([
                             CheckboxList::make('owner')
+                                ->label(trans('server/file.actions.permissions.owner'))
                                 ->bulkToggleable()
+                                ->columns(3)
                                 ->options([
-                                    'read' => 'Read',
-                                    'write' => 'Write',
-                                    'execute' => 'Execute',
+                                    'read' => trans('server/file.actions.permissions.read'),
+                                    'write' => trans('server/file.actions.permissions.write'),
+                                    'execute' => trans('server/file.actions.permissions.execute'),
                                 ])
                                 ->formatStateUsing(function ($state, File $file) {
                                     $mode = (int) substr((string) $file->mode_bits, 0, 1);
@@ -233,11 +238,13 @@ class ListFiles extends ListRecords
                                     return $this->getPermissionsFromModeBit($mode);
                                 }),
                             CheckboxList::make('group')
+                                ->label(trans('server/file.actions.permissions.group'))
                                 ->bulkToggleable()
+                                ->columns(3)
                                 ->options([
-                                    'read' => 'Read',
-                                    'write' => 'Write',
-                                    'execute' => 'Execute',
+                                    'read' => trans('server/file.actions.permissions.read'),
+                                    'write' => trans('server/file.actions.permissions.write'),
+                                    'execute' => trans('server/file.actions.permissions.execute'),
                                 ])
                                 ->formatStateUsing(function ($state, File $file) {
                                     $mode = (int) substr((string) $file->mode_bits, 1, 1);
@@ -245,11 +252,13 @@ class ListFiles extends ListRecords
                                     return $this->getPermissionsFromModeBit($mode);
                                 }),
                             CheckboxList::make('public')
+                                ->label(trans('server/file.actions.permissions.public'))
                                 ->bulkToggleable()
+                                ->columns(3)
                                 ->options([
-                                    'read' => 'Read',
-                                    'write' => 'Write',
-                                    'execute' => 'Execute',
+                                    'read' => trans('server/file.actions.permissions.read'),
+                                    'write' => trans('server/file.actions.permissions.write'),
+                                    'execute' => trans('server/file.actions.permissions.execute'),
                                 ])
                                 ->formatStateUsing(function ($state, File $file) {
                                     $mode = (int) substr((string) $file->mode_bits, 2, 1);
@@ -267,17 +276,17 @@ class ListFiles extends ListRecords
                             $this->getDaemonFileRepository()->chmodFiles($this->path, [['file' => $file->name, 'mode' => $mode]]);
 
                             Notification::make()
-                                ->title('Permissions changed to ' . $mode)
+                                ->title(trans('server/file.actions.permissions.notification', ['mode' => $mode]))
                                 ->success()
                                 ->send();
                         }),
                     Action::make('archive')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
-                        ->label('Archive')
+                        ->label(trans('server/file.actions.archive.title'))
                         ->icon('tabler-archive')->iconSize(IconSize::Large)
                         ->schema([
                             TextInput::make('name')
-                                ->label('Archive name')
+                                ->label(trans('server/file.actions.archive.archive_name'))
                                 ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
                                 ->suffix('.tar.gz'),
                         ])
@@ -291,7 +300,7 @@ class ListFiles extends ListRecords
                                 ->log();
 
                             Notification::make()
-                                ->title('Archive created')
+                                ->title(trans('server/file.actions.archive.notification'))
                                 ->body($archive['name'])
                                 ->success()
                                 ->send();
@@ -300,7 +309,7 @@ class ListFiles extends ListRecords
                         }),
                     Action::make('unarchive')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
-                        ->label('Unarchive')
+                        ->label(trans('server/file.actions.unarchive.title'))
                         ->icon('tabler-archive')->iconSize(IconSize::Large)
                         ->visible(fn (File $file) => $file->isArchive())
                         ->action(function (File $file) {
@@ -312,7 +321,7 @@ class ListFiles extends ListRecords
                                 ->log();
 
                             Notification::make()
-                                ->title('Unarchive completed')
+                                ->title(trans('server/file.actions.unarchive.notification'))
                                 ->success()
                                 ->send();
 
@@ -341,10 +350,10 @@ class ListFiles extends ListRecords
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->schema([
                             TextInput::make('location')
-                                ->label('Directory')
-                                ->hint('Enter the new directory, relative to the current directory.')
-                                ->required()
-                                ->live(),
+                            ->label(trans('server/file.actions.move.directory'))
+                            ->hint(trans('server/file.actions.move.directory_hint'))
+                            ->required()
+                            ->live(),
                             TextEntry::make('new_location')
                                 ->state(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location') ?? ''))),
                         ])
@@ -359,21 +368,21 @@ class ListFiles extends ListRecords
                                 ->property('files', $files)
                                 ->log();
 
-                            Notification::make()
-                                ->title(count($files) . ' Files were moved to ' . resolve_path(join_paths($this->path, $location)))
-                                ->success()
-                                ->send();
-                        }),
-                    BulkAction::make('archive')
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
-                        ->schema([
-                            TextInput::make('name')
-                                ->label('Archive name')
-                                ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
-                                ->suffix('.tar.gz'),
-                        ])
-                        ->action(function ($data, Collection $files) {
-                            $files = $files->map(fn ($file) => $file['name'])->toArray();
+                        Notification::make()
+                            ->title(trans('server/file.actions.move.bulk_notification', ['count' => count($files), 'directory' => resolve_path(join_paths($this->path, $location))]))
+                            ->success()
+                            ->send();
+                    }),
+                BulkAction::make('archive')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
+                    ->form([
+                        TextInput::make('name')
+                            ->label(trans('server/file.actions.archive.archive_name'))
+                            ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
+                            ->suffix('.tar.gz'),
+                    ])
+                    ->action(function ($data, Collection $files) {
+                        $files = $files->map(fn ($file) => $file['name'])->toArray();
 
                             $archive = $this->getDaemonFileRepository()->compressFiles($this->path, $files, $data['name']);
 
@@ -383,11 +392,11 @@ class ListFiles extends ListRecords
                                 ->property('files', $files)
                                 ->log();
 
-                            Notification::make()
-                                ->title('Archive created')
-                                ->body($archive['name'])
-                                ->success()
-                                ->send();
+                        Notification::make()
+                            ->title(trans('server/file.actions.archive.notification'))
+                            ->body($archive['name'])
+                            ->success()
+                            ->send();
 
                             return redirect(ListFiles::getUrl(['path' => $this->path]));
                         }),
@@ -402,23 +411,13 @@ class ListFiles extends ListRecords
                                 ->property('files', $files)
                                 ->log();
 
-                            Notification::make()
-                                ->title(count($files) . ' Files deleted.')
-                                ->success()
-                                ->send();
-                        }),
-                ]),
-                Action::make('new_file')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
-                    ->tooltip('New File')
-                    ->hiddenLabel()->icon('tabler-file-plus')->iconButton()->iconSize(IconSize::ExtraLarge)
-                    ->color('primary')
-                    ->keyBindings('')
-                    ->modalSubmitActionLabel('Create')
-                    ->action(function ($data) {
-                        $path = join_paths($this->path, $data['name']);
-                        try {
-                            $this->getDaemonFileRepository()->putContent($path, $data['editor'] ?? '');
+                        Notification::make()
+                            ->title(trans('server/file.actions.delete.bulk_notification', ['count' => count($files)]))
+                            ->success()
+                            ->send();
+                    }),
+            ]);
+    }
 
                             Activity::event('server:file.write')
                                 ->property('file', join_paths($path, $data['name']))
@@ -430,65 +429,89 @@ class ListFiles extends ListRecords
                                 ->closable()
                                 ->send();
 
-                            $this->redirect(self::getUrl(['path' => dirname($path)]));
-                        }
-                    })
-                    ->schema([
-                        TextInput::make('name')
-                            ->label('Name')
-                            ->required(),
-                        CodeEditor::make('editor')
-                            ->hiddenLabel(),
-                    ]),
-                Action::make('new_folder')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
-                    ->hiddenLabel()->icon('tabler-folder-plus')->iconButton()->iconSize(IconSize::ExtraLarge)
-                    ->tooltip('New Folder')
-                    ->color('primary')
-                    ->action(function ($data) {
-                        try {
-                            $this->getDaemonFileRepository()->createDirectory($data['name'], $this->path);
+        return [
+            HeaderAction::make('new_file')
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
+                ->tooltip(trans('server/file.actions.new_file.title'))
+                ->hiddenLabel()->icon('tabler-file-plus')->iconButton()->iconSize(IconSize::Large)
+                ->color('primary')
+                ->modalSubmitActionLabel(trans('server/file.actions.new_file.create'))
+                ->action(function ($data) {
+                    $path = join_paths($this->path, $data['name']);
+                    try {
+                        $this->getDaemonFileRepository()->putContent($path, $data['editor'] ?? '');
 
-                            Activity::event('server:file.create-directory')
-                                ->property(['directory' => $this->path, 'name' => $data['name']])
-                                ->log();
-                        } catch (FileExistsException) {
-                            $path = join_paths($this->path, $data['name']);
-                            AlertBanner::make()
-                                ->title('<code>' . $path . '</code> already exists!')
-                                ->danger()
-                                ->closable()
-                                ->send();
+                        Activity::event('server:file.write')
+                            ->property('file', join_paths($path, $data['name']))
+                            ->log();
+                    } catch (FileExistsException) {
+                        AlertBanner::make('file_already_exists')
+                            ->title('<code>' . $path . '</code> already exists!')
+                            ->danger()
+                            ->closable()
+                            ->send();
 
-                            $this->redirect(self::getUrl(['path' => dirname($path)]));
-                        }
-                    })
-                    ->schema([
-                        TextInput::make('name')
-                            ->label('Folder Name')
-                            ->required(),
-                    ]),
-                Action::make('upload')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
-                    ->hiddenLabel()->icon('tabler-upload')->iconButton()->iconSize(IconSize::ExtraLarge)
-                    ->tooltip('Upload')
-                    ->color('success')
-                    ->action(function ($data) {
-                        if (count($data['files']) > 0 && !isset($data['url'])) {
-                            /** @var UploadedFile $file */
-                            foreach ($data['files'] as $file) {
-                                $this->getDaemonFileRepository()->putContent(join_paths($this->path, $file->getClientOriginalName()), $file->getContent());
+                        $this->redirect(self::getUrl(['path' => dirname($path)]));
+                    }
+                })
+                ->form([
+                    TextInput::make('name')
+                        ->label(trans('server/file.actions.new_file.file_name'))
+                        ->required(),
+                    Select::make('lang')
+                        ->label(trans('server/file.actions.new_file.syntax'))
+                        ->searchable()
+                        ->native(false)
+                        ->live()
+                        ->options(EditorLanguages::class)
+                        ->selectablePlaceholder(false)
+                        ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
+                        ->default(EditorLanguages::plaintext->value),
+                    MonacoEditor::make('editor')
+                        ->label('')
+                        ->view('filament.plugins.monaco-editor')
+                        ->language(fn (Get $get) => $get('lang') ?? 'plaintext'),
+                ]),
+            HeaderAction::make('new_folder')
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
+                ->hiddenLabel()->icon('tabler-folder-plus')->iconButton()->iconSize(IconSize::Large)
+                ->tooltip(trans('server/file.actions.new_folder.title'))
+                ->color('primary')
+                ->action(function ($data) {
+                    try {
+                        $this->getDaemonFileRepository()->createDirectory($data['name'], $this->path);
 
-                                Activity::event('server:file.uploaded')
-                                    ->property('directory', $this->path)
-                                    ->property('file', $file->getClientOriginalName())
-                                    ->log();
-                            }
-                        } elseif ($data['url'] !== null) {
-                            $this->getDaemonFileRepository()->pull($data['url'], $this->path);
+                        Activity::event('server:file.create-directory')
+                            ->property(['directory' => $this->path, 'name' => $data['name']])
+                            ->log();
+                    } catch (FileExistsException) {
+                        $path = join_paths($this->path, $data['name']);
+                        AlertBanner::make('folder_already_exists')
+                            ->title('<code>' . $path . '</code> already exists!')
+                            ->danger()
+                            ->closable()
+                            ->send();
 
-                            Activity::event('server:file.pull')
-                                ->property('url', $data['url'])
+                        $this->redirect(self::getUrl(['path' => dirname($path)]));
+                    }
+                })
+                ->form([
+                    TextInput::make('name')
+                        ->label(trans('server/file.actions.new_folder.folder_name'))
+                        ->required(),
+                ]),
+            HeaderAction::make('upload')
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
+                ->hiddenLabel()->icon('tabler-upload')->iconButton()->iconSize(IconSize::Large)
+                ->tooltip(trans('server/file.actions.upload.title'))
+                ->color('success')
+                ->action(function ($data) {
+                    if (count($data['files']) > 0 && !isset($data['url'])) {
+                        /** @var UploadedFile $file */
+                        foreach ($data['files'] as $file) {
+                            $this->getDaemonFileRepository()->putContent(join_paths($this->path, $file->getClientOriginalName()), $file->getContent());
+
+                            Activity::event('server:file.uploaded')
                                 ->property('directory', $this->path)
                                 ->log();
                         }
@@ -540,12 +563,53 @@ class ListFiles extends ListRecords
             ]);
     }
 
-    /**
-     * @return array<Action|ActionGroup>
-     */
-    protected function getDefaultHeaderActions(): array
-    {
-        return [];
+                    return redirect(ListFiles::getUrl(['path' => $this->path]));
+                })
+                ->form([
+                    Tabs::make()
+                        ->contained(false)
+                        ->schema([
+                            Tab::make(trans('server/file.actions.upload.from_files'))
+                                ->live()
+                                ->schema([
+                                    FileUpload::make('files')
+                                        ->storeFiles(false)
+                                        ->previewable(false)
+                                        ->preserveFilenames()
+                                        ->maxSize((int) round($server->node->upload_size * (config('panel.use_binary_prefix') ? 1.048576 * 1024 : 1000)))
+                                        ->multiple(),
+                                ]),
+                            Tab::make(trans('server/file.actions.upload.url'))
+                                ->live()
+                                ->disabled(fn (Get $get) => count($get('files')) > 0)
+                                ->schema([
+                                    TextInput::make('url')
+                                        ->label(trans('server/file.actions.upload.url'))
+                                        ->url(),
+                                ]),
+                        ]),
+                ]),
+            HeaderAction::make('search')
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->tooltip(trans('server/file.actions.global_search.title'))
+                ->color('primary')
+                ->icon('tabler-world-search')
+                ->modalHeading(trans('server/file.actions.global_search.title'))
+                ->modalSubmitActionLabel(trans('server/file.actions.global_search.search'))
+                ->form([
+                    TextInput::make('searchTerm')
+                        ->label(trans('server/file.actions.global_search.search_term'))
+                        ->placeholder(trans('server/file.actions.global_search.search_term_placeholder'))
+                        ->required()
+                        ->regex('/^[^*]*\*?[^*]*$/')
+                        ->minValue(3),
+                ])
+                ->action(fn ($data) => redirect(SearchFiles::getUrl([
+                    'searchTerm' => $data['searchTerm'],
+                    'path' => $this->path,
+                ]))),
+        ];
     }
 
     /**
@@ -583,5 +647,10 @@ class ListFiles extends ListRecords
                 ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
                 ->where('path', '.*'),
         );
+    }
+
+    public function getTitle(): string
+    {
+        return trans('server/file.title');
     }
 }

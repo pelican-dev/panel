@@ -97,14 +97,14 @@ class UserResource extends Resource
 
             foreach ($data['permissions'] as $permission) {
                 $options[$permission] = str($permission)->headline();
-                $descriptions[$permission] = trans('server/users.permissions.' . $data['name'] . '_' . str($permission)->replace('-', '_'));
+                $descriptions[$permission] = trans('server/user.permissions.' . $data['name'] . '_' . str($permission)->replace('-', '_'));
                 $permissionsArray[$data['name']][] = $permission;
             }
 
             $tabs[] = Tab::make(str($data['name'])->headline())
                 ->schema([
                     Section::make()
-                        ->description(trans('server/users.permissions.' . $data['name'] . '_desc'))
+                        ->description(trans('server/user.permissions.' . $data['name'] . '_desc'))
                         ->icon($data['icon'])
                         ->schema([
                             CheckboxList::make($data['name'])
@@ -127,30 +127,33 @@ class UserResource extends Resource
                     ->alignCenter()->circular()
                     ->defaultImageUrl(fn (User $user) => Filament::getUserAvatarUrl($user)),
                 TextColumn::make('username')
+                    ->label(trans('server/user.username'))
                     ->searchable(),
                 TextColumn::make('email')
+                    ->label(trans('server/user.email'))
                     ->searchable(),
                 TextColumn::make('permissions')
+                    ->label(trans('server/user.permissions.title'))
                     ->state(fn (User $user) => count($server->subusers->where('user_id', $user->id)->first()->permissions)),
             ])
             ->recordActions([
                 DeleteAction::make()
-                    ->label('Remove User')
+                    ->label(trans('server/user.delete'))
                     ->hidden(fn (User $user) => auth()->user()->id === $user->id)
                     ->action(function (User $user, SubuserDeletionService $subuserDeletionService) use ($server) {
                         $subuser = $server->subusers->where('user_id', $user->id)->first();
                         $subuserDeletionService->handle($subuser, $server);
 
                         Notification::make()
-                            ->title('User Deleted!')
+                            ->title(trans('server/user.notification_delete'))
                             ->success()
                             ->send();
                     }),
                 EditAction::make()
-                    ->label('Edit User')
+                    ->label(trans('server/user.edit'))
                     ->hidden(fn (User $user) => auth()->user()->id === $user->id)
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_UPDATE, $server))
-                    ->modalHeading(fn (User $user) => 'Editing ' . $user->email)
+                    ->modalHeading(fn (User $user) => trans('server/user.editing', ['user' => $user->email]))
                     ->action(function (array $data, SubuserUpdateService $subuserUpdateService, User $user) use ($server) {
                         $subuser = $server->subusers->where('user_id', $user->id)->first();
 
@@ -164,7 +167,7 @@ class UserResource extends Resource
                         $subuserUpdateService->handle($subuser, $server, $permissions);
 
                         Notification::make()
-                            ->title('User Updated!')
+                            ->title(trans('server/user.notification_edit'))
                             ->success()
                             ->send();
 
@@ -191,7 +194,7 @@ class UserResource extends Resource
                                     ]),
                                 Actions::make([
                                     Action::make('assignAll')
-                                        ->label('Assign All')
+                                        ->label(trans('server/user.assign_all'))
                                         ->action(function (Set $set) use ($permissionsArray) {
                                             $permissions = $permissionsArray;
                                             foreach ($permissions as $key => $value) {
@@ -330,5 +333,10 @@ class UserResource extends Resource
         return [
             'index' => ListUsers::route('/'),
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('server/user.title');
     }
 }
