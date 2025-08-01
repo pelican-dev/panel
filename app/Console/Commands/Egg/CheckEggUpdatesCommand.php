@@ -2,10 +2,13 @@
 
 namespace App\Console\Commands\Egg;
 
+use App\Enums\EggFormat;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggExporterService;
 use Exception;
 use Illuminate\Console\Command;
+use JsonException;
+use Symfony\Component\Yaml\Yaml;
 
 class CheckEggUpdatesCommand extends Command
 {
@@ -23,6 +26,9 @@ class CheckEggUpdatesCommand extends Command
         }
     }
 
+    /**
+     * @throws JsonException
+     */
     private function check(Egg $egg, EggExporterService $exporterService): void
     {
         if (is_null($egg->update_url)) {
@@ -31,22 +37,26 @@ class CheckEggUpdatesCommand extends Command
             return;
         }
 
-        $currentJson = json_decode($exporterService->handle($egg->id));
-        unset($currentJson->exported_at);
+        $ext = strtolower(pathinfo(parse_url($egg->update_url, PHP_URL_PATH), PATHINFO_EXTENSION));
+        $isYaml = in_array($ext, ['yaml', 'yml']);
 
-        $updatedEgg = file_get_contents($egg->update_url);
-        assert($updatedEgg !== false);
-        $updatedJson = json_decode($updatedEgg);
-        unset($updatedJson->exported_at);
+        $local = $isYaml
+            ? Yaml::parse($exporterService->handle($egg->id, EggFormat::YAML))
+            : json_decode($exporterService->handle($egg->id, EggFormat::JSON), true);
 
-        if (md5(json_encode($currentJson, JSON_THROW_ON_ERROR)) === md5(json_encode($updatedJson, JSON_THROW_ON_ERROR))) {
-            $this->info("$egg->name: Up-to-date");
-            cache()->put("eggs.$egg->uuid.update", false, now()->addHour());
+        $remote = file_get_contents($egg->update_url);
+        assert($remote !== false);
 
-            return;
-        }
+        $remote = $isYaml ? Yaml::parse($remote) : json_decode($remote, true);
 
-        $this->warn("$egg->name: Found update");
-        cache()->put("eggs.$egg->uuid.update", true, now()->addHour());
+        unset($local['exported_at'], $remote['exported_at']);
+
+        $localHash = md5(json_encode($local, JSON_THROW_ON_ERROR));
+        $remoteHash = md5(json_encode($remote, JSON_THROW_ON_ERROR));
+
+        $status = $localHash === $remoteHash ? 'Up-to-date' : 'Found update';
+        $this->{($localHash === $remoteHash) ? 'info' : 'warn'}("$egg->name: $status");
+
+        cache()->put("eggs.$egg->uuid.update", $localHash !== $remoteHash, now()->addHour());
     }
 }
