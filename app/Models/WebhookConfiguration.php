@@ -181,19 +181,19 @@ class WebhookConfiguration extends Model
                 $trimmed = trim($matches[1]);
 
                 $value = Arr::get($replacement, $trimmed);
-                
+
                 if ($value !== null) {
                     return is_scalar($value) ? (string) $value : json_encode($value);
                 }
-                
+
                 if (str_contains($trimmed, '.')) {
                     $value = $this->searchNestedValue($replacement, $trimmed);
-                    
+
                     if ($value !== null) {
                         return is_scalar($value) ? (string) $value : json_encode($value);
                     }
                 }
-                
+
                 return '';
             },
             $subject
@@ -202,6 +202,8 @@ class WebhookConfiguration extends Model
 
     /**
      * Recursively search for a dot-notation key in nested arrays
+     *
+     * @param  array<mixed, mixed>  $data
      */
     private function searchNestedValue(array $data, string $key): mixed
     {
@@ -210,10 +212,10 @@ class WebhookConfiguration extends Model
             if (str_ends_with($path, $key)) {
                 return $value;
             }
-            
+
             $pathParts = explode('.', $path);
             $keyParts = explode('.', $key);
-            
+
             if (count($pathParts) >= count($keyParts)) {
                 $endParts = array_slice($pathParts, -count($keyParts));
                 if ($endParts === $keyParts) {
@@ -221,22 +223,25 @@ class WebhookConfiguration extends Model
                 }
             }
         }
-        
+
         return null;
     }
 
     /**
      * Flatten a nested array with dot notation keys
+     *
+     * @param  array<mixed, mixed>  $array
+     * @return array<string, mixed>
      */
     private function flattenArrayWithKeys(array $array, string $prefix = ''): array
     {
         $result = [];
-        
+
         foreach ($array as $key => $value) {
-            $newKey = $prefix === '' ? (string)$key : $prefix . '.' . $key;
+            $newKey = $prefix === '' ? (string) $key : $prefix . '.' . $key;
             if (is_array($value) || is_object($value)) {
                 $valueAsArray = is_array($value) ? $value : json_decode(json_encode($value), true);
-                
+
                 if (is_array($valueAsArray) && !empty($valueAsArray)) {
                     $subResult = $this->flattenArrayWithKeys($valueAsArray, $newKey);
                     $result = array_merge($result, $subResult);
@@ -247,7 +252,7 @@ class WebhookConfiguration extends Model
                 $result[$newKey] = $value;
             }
         }
-        
+
         return $result;
     }
 
@@ -297,4 +302,3 @@ class WebhookConfiguration extends Model
         ];
     }
 }
-
