@@ -41,9 +41,11 @@ echo -e "Optimizing Filament"
 php artisan filament:optimize
 
 export SUPERVISORD_CADDY=false
-export CADDY_TRUSTED_PROXIES="*"
 
-if [[ ! -z ${TRUSTED_PROXIES} ]]
+if [[ ! -z ${TRUSTED_PROXIES} ]]; then
+  export CADDY_TRUSTED_PROXIES=$(echo "trusted_proxies static ${TRUSTED_PROXIES}" | sed 's/,/ /g')
+  export CADDY_STRICT_PROXIES="trusted_proxies_strict"
+fi
 
 ## disable caddy if SKIP_CADDY is set
 if [[ "${SKIP_CADDY:-}" == "true" ]]; then
