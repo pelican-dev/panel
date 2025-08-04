@@ -8,14 +8,16 @@ use Illuminate\Console\Command;
 
 class UpdatePluginCommand extends Command
 {
-    protected $signature = 'p:plugin:update {id}';
+    protected $signature = 'p:plugin:update {--id=}';
 
     protected $description = 'Updates a plugin';
 
     public function handle(): void
     {
+        $id = $this->option('id') ?? $this->choice('Plugin', Plugin::pluck('name', 'id')->toArray());
+
         /** @var ?Plugin $plugin */
-        $plugin = Plugin::where('id', $this->argument('id'))->first();
+        $plugin = Plugin::where('id', $id)->first();
 
         if (!$plugin) {
             $this->error('Plugin does not exist!');

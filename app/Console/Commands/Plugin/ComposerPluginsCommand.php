@@ -11,7 +11,7 @@ class ComposerPluginsCommand extends Command
 {
     protected $signature = 'p:plugin:composer';
 
-    protected $description = 'Runs composer require on all installed plugins.';
+    protected $description = 'Runs "composer require" on all installed plugins.';
 
     public function handle(): void
     {
