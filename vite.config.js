@@ -1,14 +1,13 @@
 import { defineConfig } from 'vite';
 import laravel, { refreshPaths } from 'laravel-vite-plugin';
+import { globSync } from 'glob';
 
 export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/css/app.css',
-                'resources/js/app.js',
-                'resources/js/console.js',
-                'resources/css/console.css',
+                ...globSync('resources/css/**/*.css'),
+                ...globSync('resources/js/**/*.js'),
             ],
             refresh: [...refreshPaths, 'app/Livewire/**'],
         }),
