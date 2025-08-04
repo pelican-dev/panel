@@ -59,6 +59,6 @@ return [
     'graph_period' => 'Graph Period',
     'graph_period_helper' => 'The amount of data points, seconds, shown on the console graphs.',
     'navigation' => 'Navigation Type',
-    'top' => 'Top',
-    'side' => 'Side',
+    'top' => 'Topbar',
+    'side' => 'Sidebar',
 ];
