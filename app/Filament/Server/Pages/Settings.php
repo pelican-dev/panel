@@ -39,7 +39,7 @@ class Settings extends ServerFormPage
                 'lg' => 6,
             ])
             ->schema([
-                Section::make('Server Information')
+                Section::make(trans('server/setting.server_info.title'))
                     ->columns([
                         'default' => 1,
                         'sm' => 2,
@@ -47,11 +47,11 @@ class Settings extends ServerFormPage
                         'lg' => 6,
                     ])
                     ->schema([
-                        Fieldset::make('Server')
-                            ->label('Information')
+                        Fieldset::make()
+                            ->label(trans('server/setting.server_info.information'))
                             ->schema([
                                 TextInput::make('name')
-                                    ->label('Server Name')
+                                    ->label(trans('server/setting.server_info.name'))
                                     ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
                                     ->required()
                                     ->columnSpan([
@@ -63,7 +63,7 @@ class Settings extends ServerFormPage
                                     ->live(onBlur: true)
                                     ->afterStateUpdated(fn ($state, Server $server) => $this->updateName($state, $server)),
                                 Textarea::make('description')
-                                    ->label('Server Description')
+                                    ->label(trans('server/setting.server_info.description'))
                                     ->hidden(!config('panel.editable_server_descriptions'))
                                     ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
                                     ->columnSpan([
@@ -76,7 +76,7 @@ class Settings extends ServerFormPage
                                     ->live(onBlur: true)
                                     ->afterStateUpdated(fn ($state, Server $server) => $this->updateDescription($state ?? '', $server)),
                                 TextInput::make('uuid')
-                                    ->label('Server UUID')
+                                    ->label(trans('server/setting.server_info.uuid'))
                                     ->columnSpan([
                                         'default' => 1,
                                         'sm' => 1,
@@ -85,12 +85,12 @@ class Settings extends ServerFormPage
                                     ])
                                     ->disabled(),
                                 TextInput::make('id')
-                                    ->label('Server ID')
+                                    ->label(trans('server/setting.server_info.id'))
                                     ->disabled()
                                     ->columnSpan(1),
                             ]),
-                        Fieldset::make('Limits')
-                            ->label('Limits')
+                        Fieldset::make()
+                            ->label(trans('server/setting.server_info.limits.title'))
                             ->columns([
                                 'default' => 1,
                                 'sm' => 1,
@@ -100,57 +100,56 @@ class Settings extends ServerFormPage
                             ->schema([
                                 TextInput::make('cpu')
                                     ->label('')
-                                    ->prefix('CPU')
+                                    ->prefix(trans('server/setting.server_info.limits.cpu'))
                                     ->prefixIcon('tabler-cpu')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'Unlimited' : Number::format($server->cpu, locale: auth()->user()->language) . '%'),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : Number::format($server->cpu, locale: auth()->user()->language) . '%'),
                                 TextInput::make('memory')
                                     ->label('')
-                                    ->prefix('Memory')
+                                    ->prefix(trans('server/setting.server_info.limits.memory'))
                                     ->prefixIcon('tabler-device-desktop-analytics')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'Unlimited' : convert_bytes_to_readable($server->memory * 2 ** 20)),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : convert_bytes_to_readable($server->memory * 2 ** 20)),
                                 TextInput::make('disk')
                                     ->label('')
-                                    ->prefix('Disk Space')
+                                    ->prefix(trans('server/setting.server_info.limits.disk'))
                                     ->prefixIcon('tabler-device-sd-card')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'Unlimited' : convert_bytes_to_readable($server->disk * 2 ** 20)),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : convert_bytes_to_readable($server->disk * 2 ** 20)),
                                 TextInput::make('backup_limit')
                                     ->label('')
-                                    ->prefix('Backups')
+                                    ->prefix(trans('server/setting.server_info.limits.backups'))
                                     ->prefixIcon('tabler-file-zip')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Backups' : $server->backups->count() . ' of ' . $state),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Backups' : $server->backups->count() . ' ' .trans('server/setting.server_info.limits.of') . ' ' . $state),
                                 TextInput::make('database_limit')
                                     ->label('')
-                                    ->prefix('Databases')
+                                    ->prefix(trans('server/setting.server_info.limits.databases'))
                                     ->prefixIcon('tabler-database')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Databases' : $server->databases->count() . ' of ' . $state),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Databases' : $server->databases->count() . ' ' . trans('server/setting.server_info.limits.of') . ' ' .$state),
                                 TextInput::make('allocation_limit')
                                     ->label('')
-                                    ->prefix('Allocations')
+                                    ->prefix(trans('server/setting.server_info.limits.allocations'))
                                     ->prefixIcon('tabler-network')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Additional Allocations' : $server->allocations->count() . ' of ' . $state),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.no_allocations') : $server->allocations->count() . ' ' .trans('server/setting.server_info.limits.of') . ' ' . $state),
                             ]),
                     ]),
-                Section::make('Node Information')
+                Section::make(trans('server/setting.node_info.title'))
                     ->schema([
                         TextInput::make('node.name')
-                            ->label('Node Name')
+                            ->label(trans('server/setting.node_info.name'))
                             ->formatStateUsing(fn (Server $server) => $server->node->name)
                             ->disabled(),
-                        Fieldset::make('SFTP Information')
+                        Fieldset::make(trans('server/setting.node_info.sftp.title'))
                             ->hidden(fn () => !auth()->user()->can(Permission::ACTION_FILE_SFTP, $server))
-                            ->label('SFTP Information')
                             ->columns([
                                 'default' => 1,
                                 'sm' => 1,
@@ -159,13 +158,13 @@ class Settings extends ServerFormPage
                             ])
                             ->schema([
                                 TextInput::make('connection')
-                                    ->label('Connection')
+                                    ->label(trans('server/setting.node_info.sftp.connection'))
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->hintAction(
                                         Action::make('connect_sftp')
-                                            ->label('Connect to SFTP')
+                                            ->label(trans('server/setting.node_info.sftp.action'))
                                             ->color('success')
                                             ->icon('tabler-plug')
                                             ->url(function (Server $server) {
@@ -180,28 +179,29 @@ class Settings extends ServerFormPage
                                         return 'sftp://' . auth()->user()->username . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
                                     }),
                                 TextInput::make('username')
-                                    ->label('Username')
+                                    ->label(trans('server/setting.node_info.sftp.username'))
                                     ->columnSpan(1)
                                     ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->disabled()
                                     ->formatStateUsing(fn (Server $server) => auth()->user()->username . '.' . $server->uuid_short),
                                 Placeholder::make('password')
+                                    ->label(trans('server/setting.node_info.sftp.password'))
                                     ->columnSpan(1)
-                                    ->content('Your SFTP password is the same as the password you use to access this panel.'),
+                                    ->content(trans('server/setting.node_info.sftp.password_body')),
                             ]),
                     ]),
-                Section::make('Reinstall Server')
+                Section::make(trans('server/setting.reinstall.title'))
                     ->hidden(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
                     ->collapsible()
                     ->footerActions([
                         Action::make('reinstall')
+                            ->label(trans('server/setting.reinstall.action'))
                             ->color('danger')
                             ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
-                            ->label('Reinstall')
                             ->requiresConfirmation()
-                            ->modalHeading('Are you sure you want to reinstall the server?')
-                            ->modalDescription('Some files may be deleted or modified during this process, please back up your data before continuing.')
-                            ->modalSubmitActionLabel('Yes, Reinstall')
+                            ->modalHeading(trans('server/setting.reinstall.modal'))
+                            ->modalDescription(trans('server/setting.reinstall.modal_description'))
+                            ->modalSubmitActionLabel(trans('server/setting.reinstall.yes'))
                             ->action(function (Server $server, ReinstallServerService $reinstallService) {
                                 abort_unless(auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server), 403);
 
@@ -211,9 +211,9 @@ class Settings extends ServerFormPage
                                     report($exception);
 
                                     Notification::make()
-                                        ->danger()
-                                        ->title('Server Reinstall failed')
+                                        ->title(trans('server/setting.reinstall.notification_fail'))
                                         ->body($exception->getMessage())
+                                        ->danger()
                                         ->send();
 
                                     return;
@@ -223,8 +223,8 @@ class Settings extends ServerFormPage
                                     ->log();
 
                                 Notification::make()
+                                    ->title(trans('server/setting.reinstall.notification_start'))
                                     ->success()
-                                    ->title('Server Reinstall started')
                                     ->send();
 
                                 redirect(Console::getUrl());
@@ -233,9 +233,9 @@ class Settings extends ServerFormPage
                     ->footerActionsAlignment(Alignment::Right)
                     ->schema([
                         Placeholder::make('')
-                            ->label('Reinstalling your server will stop it, and then re-run the installation script that initially set it up.'),
+                            ->label(trans('server/setting.reinstall.body')),
                         Placeholder::make('')
-                            ->label('Some files may be deleted or modified during this process, please back up your data before continuing.'),
+                            ->label(trans('server/setting.reinstall.body2')),
                     ]),
             ]);
     }
@@ -258,15 +258,15 @@ class Settings extends ServerFormPage
             }
 
             Notification::make()
-                ->success()
-                ->title('Updated Server Name')
+                ->title(trans('server/setting.notification_name'))
                 ->body(fn () => $original . ' -> ' . $name)
+                ->success()
                 ->send();
         } catch (Exception $exception) {
             Notification::make()
-                ->danger()
-                ->title('Failed')
+                ->title(trans('server/setting.failed'))
                 ->body($exception->getMessage())
+                ->danger()
                 ->send();
         }
     }
@@ -289,16 +289,26 @@ class Settings extends ServerFormPage
             }
 
             Notification::make()
-                ->success()
-                ->title('Updated Server Description')
+                ->title(trans('server/setting.notification_description'))
                 ->body(fn () => $original . ' -> ' . $description)
+                ->success()
                 ->send();
         } catch (Exception $exception) {
             Notification::make()
-                ->danger()
-                ->title('Failed')
+                ->title(trans('server/setting.failed'))
                 ->body($exception->getMessage())
+                ->danger()
                 ->send();
         }
+    }
+
+    public function getTitle(): string
+    {
+        return trans('server/setting.title');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('server/setting.title');
     }
 }

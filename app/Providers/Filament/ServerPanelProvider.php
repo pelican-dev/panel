@@ -55,14 +55,14 @@ class ServerPanelProvider extends PanelProvider
                     ->url(fn () => ListServers::getUrl(panel: 'app'))
                     ->sort(6),
                 MenuItem::make()
-                    ->label('Admin')
+                    ->label(trans('profile.admin'))
                     ->icon('tabler-arrow-forward')
                     ->url(fn () => Filament::getPanel('admin')->getUrl())
                     ->sort(5)
                     ->visible(fn (): bool => auth()->user()->canAccessPanel(Filament::getPanel('admin'))),
             ])
             ->navigationItems([
-                NavigationItem::make('Open in Admin')
+                NavigationItem::make(trans('server/console.open_in_admin'))
                     ->url(fn () => EditServer::getUrl(['record' => Filament::getTenant()], panel: 'admin'))
                     ->visible(fn () => auth()->user()->canAccessPanel(Filament::getPanel('admin')) && auth()->user()->can('view server', Filament::getTenant()))
                     ->icon('tabler-arrow-back')

@@ -15,6 +15,11 @@ class PreviewStartupAction extends Action
         return 'preview';
     }
 
+    public function getLabel(): string
+    {
+        return trans('server/startup.preview');
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

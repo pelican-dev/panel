@@ -63,7 +63,7 @@ class ListServers extends ListRecords
             TextColumn::make('condition')
                 ->label('Status')
                 ->badge()
-                ->tooltip(fn (Server $server) => $server->formatResource('uptime', type: ServerResourceType::Time))
+                ->tooltip(fn (Server $server) => $server->formatResource(ServerResourceType::Uptime))
                 ->icon(fn (Server $server) => $server->condition->getIcon())
                 ->color(fn (Server $server) => $server->condition->getColor()),
             TextColumn::make('name')
@@ -78,22 +78,22 @@ class ListServers extends ListRecords
                 ->copyable(request()->isSecure())
                 ->state(fn (Server $server) => $server->allocation->address ?? 'None'),
             TextColumn::make('cpuUsage')
-                ->label('Resources')
+                ->label(trans('server/dashboard.resources'))
                 ->icon('tabler-cpu')
-                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('cpu', limit: true, type: ServerResourceType::Percentage, precision: 0))
-                ->state(fn (Server $server) => $server->formatResource('cpu_absolute', type: ServerResourceType::Percentage))
+                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::CPULimit)]))
+                ->state(fn (Server $server) => $server->formatResource(ServerResourceType::CPU))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'cpu')),
             TextColumn::make('memoryUsage')
                 ->label('')
                 ->icon('tabler-device-desktop-analytics')
-                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('memory', limit: true))
-                ->state(fn (Server $server) => $server->formatResource('memory_bytes'))
+                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::MemoryLimit)]))
+                ->state(fn (Server $server) => $server->formatResource(ServerResourceType::Memory))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'memory')),
             TextColumn::make('diskUsage')
                 ->label('')
                 ->icon('tabler-device-sd-card')
-                ->tooltip(fn (Server $server) => 'Usage Limit: ' . $server->formatResource('disk', limit: true))
-                ->state(fn (Server $server) => $server->formatResource('disk_bytes'))
+                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::DiskLimit)]))
+                ->state(fn (Server $server) => $server->formatResource(ServerResourceType::Disk))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'disk')),
         ];
     }

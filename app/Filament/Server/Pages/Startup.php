@@ -18,6 +18,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 
@@ -43,7 +44,7 @@ class Startup extends ServerFormPage
                 Hidden::make('previewing')
                     ->default(false),
                 Textarea::make('startup')
-                    ->label('Startup Command')
+                    ->label(trans('server/startup.command'))
                     ->columnSpan([
                         'default' => 1,
                         'sm' => 1,
@@ -51,10 +52,10 @@ class Startup extends ServerFormPage
                         'lg' => 4,
                     ])
                     ->autosize()
-                    ->hintAction(PreviewStartupAction::make('preview'))
+                    ->hintAction(PreviewStartupAction::make())
                     ->readOnly(),
                 TextInput::make('custom_image')
-                    ->label('Docker Image')
+                    ->label(trans('server/startup.docker_image'))
                     ->readOnly()
                     ->visible(fn (Server $server) => !in_array($server->image, $server->egg->docker_images))
                     ->formatStateUsing(fn (Server $server) => $server->image)
@@ -65,7 +66,7 @@ class Startup extends ServerFormPage
                         'lg' => 2,
                     ]),
                 Select::make('image')
-                    ->label('Docker Image')
+                    ->label(trans('server/startup.docker_image'))
                     ->live()
                     ->visible(fn (Server $server) => in_array($server->image, $server->egg->docker_images))
                     ->disabled(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
@@ -80,8 +81,8 @@ class Startup extends ServerFormPage
                         }
 
                         Notification::make()
-                            ->title('Docker image updated')
-                            ->body('Restart the server to use the new image.')
+                            ->title(trans('server/startup.notification_docker'))
+                            ->body(trans('server/startup.notification_docker_body'))
                             ->success()
                             ->send();
                     })
@@ -97,10 +98,10 @@ class Startup extends ServerFormPage
                         'md' => 2,
                         'lg' => 2,
                     ]),
-                Section::make('Server Variables')
+                Section::make(trans('server/startup.variables'))
                     ->schema([
                         Repeater::make('server_variables')
-                            ->label('')
+                            ->hiddenLabel()
                             ->relationship('serverVariables', fn (Builder $query) => $query->where('egg_variables.user_viewable', true)->orderByPowerJoins('variable.sort'))
                             ->grid()
                             ->disabled(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
@@ -207,9 +208,9 @@ class Startup extends ServerFormPage
 
             if ($validator->fails()) {
                 Notification::make()
-                    ->danger()
-                    ->title('Validation Failed: ' . $serverVariable->variable->name)
+                    ->title(trans('server/startup.validation_fail', ['variable' => $serverVariable->variable->name]))
                     ->body(implode(', ', $validator->errors()->all()))
+                    ->danger()
                     ->send();
 
                 return null;
@@ -232,18 +233,28 @@ class Startup extends ServerFormPage
                     ->log();
             }
             Notification::make()
-                ->success()
-                ->title('Updated: ' . $serverVariable->variable->name)
+                ->title(trans('server/startup.update', ['variable' => $serverVariable->variable->name]))
                 ->body(fn () => $original . ' -> ' . $state)
+                ->success()
                 ->send();
         } catch (\Exception $e) {
             Notification::make()
-                ->danger()
-                ->title('Failed: ' . $serverVariable->variable->name)
+                ->title(trans('server/startup.fail', ['variable' => $serverVariable->variable->name]))
                 ->body($e->getMessage())
+                ->danger()
                 ->send();
         }
 
         return null;
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return trans('server/startup.title');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('server/startup.title');
     }
 }
