@@ -117,7 +117,7 @@ class ImportEggAction extends Action
                                     }
                                 }),
                             Repeater::make('urls')
-                                ->itemLabel(fn (array $state) => str($state['url'])->afterLast('/egg-')->before('.json')->headline())
+                                ->itemLabel(fn (array $state) => str($state['url'])->afterLast('/egg-')->beforeLast('.')->headline())
                                 ->hint(trans('admin/egg.import.url_help'))
                                 ->addActionLabel(trans('admin/egg.import.add_url'))
                                 ->grid($isMultiple ? 2 : null)
@@ -131,7 +131,7 @@ class ImportEggAction extends Action
                                         ->label(trans('admin/egg.import.url'))
                                         ->placeholder('https://github.com/pelican-eggs/generic/blob/main/nodejs/egg-node-js-generic.json')
                                         ->url()
-                                        ->endsWith('.json')
+                                        ->endsWith(['.json', '.yaml', '.yml'])
                                         ->validationAttribute(trans('admin/egg.import.url')),
                                 ]),
                         ]),
