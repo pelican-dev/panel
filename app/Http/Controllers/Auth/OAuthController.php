@@ -12,6 +12,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
 class OAuthController extends Controller
@@ -88,9 +89,27 @@ class OAuthController extends Controller
                 return redirect()->route('auth.login');
             }
 
+            $username = $oauthUser->getNickname();
+            $email = $oauthUser->getEmail();
+
+            if (!$username && $email) {
+                $username = str($email)->before('@')->toString() . Str::random(3);
+            }
+
+            // Incomplete data, can't create user - redirect to normal login
+            if (!$username && !$email) {
+                Notification::make()
+                    ->title('No linked User found')
+                    ->danger()
+                    ->persistent()
+                    ->send();
+
+                return redirect()->route('auth.login');
+            }
+
             $data = [
-                'username' => $oauthUser->getNickname(),
-                'email' => $oauthUser->getEmail(),
+                'username' => $username,
+                'email' => $email,
                 'oauth' => [
                     $driver->getId() => $oauthUser->getId(),
                 ],
