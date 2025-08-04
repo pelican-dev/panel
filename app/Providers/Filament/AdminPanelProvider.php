@@ -37,7 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
             ->favicon(config('app.favicon', '/pelican.ico'))
-            ->topNavigation(config('panel.filament.top-navigation', false))
+            ->topNavigation(fn () => (bool) auth()->user()->getCustomization()['navigation'] ?? false)
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->login(Login::class)
             ->passwordReset()
