@@ -243,36 +243,66 @@ class Plugin extends Model implements HasPluginSettings
         return !str($this->panel_version)->startsWith('^');
     }
 
-    public function isUpdateAvailable(): bool
+    /** @return null|array<string, array{version: string, download_url: string}> */
+    private function getUpdateData(): ?array
     {
         if ($this->update_url === null) {
-            return false;
+            return null;
         }
 
+        return cache()->remember("plugins.$this->id.update", now()->addMinutes(10), function () {
+            try {
+                return json_decode(file_get_contents($this->update_url), true, 512, JSON_THROW_ON_ERROR);
+            } catch (Exception $exception) {
+                report($exception);
+            }
+
+            return null;
+        });
+    }
+
+    public function isUpdateAvailable(): bool
+    {
         $panelVersion = config('app.version', 'canary');
 
         if ($panelVersion === 'canary') {
             return false;
         }
 
-        return cache()->remember("plugins.$this->id.update", now()->addHour(), function () use ($panelVersion) {
-            try {
-                /** @var array<string, array{version: string, download_url: string}> */
-                $updateData = json_decode(file_get_contents($this->update_url), true, 512, JSON_THROW_ON_ERROR);
-
-                if (array_key_exists('*', $updateData)) {
-                    return version_compare($updateData['*']['version'], $this->version, '>');
-                }
-
-                if (array_key_exists($panelVersion, $updateData)) {
-                    return version_compare($updateData[$panelVersion]['version'], $this->version, '>');
-                }
-            } catch (Exception $exception) {
-                report($exception);
+        $updateData = $this->getUpdateData();
+        if ($updateData) {
+            if (array_key_exists($panelVersion, $updateData)) {
+                return version_compare($updateData[$panelVersion]['version'], $this->version, '>');
             }
 
-            return false;
-        });
+            if (array_key_exists('*', $updateData)) {
+                return version_compare($updateData['*']['version'], $this->version, '>');
+            }
+        }
+
+        return false;
+    }
+
+    public function getDownloadUrlForUpdate(): ?string
+    {
+        $panelVersion = config('app.version', 'canary');
+
+        if ($panelVersion === 'canary') {
+            return null;
+        }
+
+        $updateData = $this->getUpdateData();
+        if ($updateData) {
+            if (array_key_exists($panelVersion, $updateData)) {
+                return $updateData['panelVersion']['download_url'];
+            }
+
+            if (array_key_exists('*', $updateData)) {
+                return $updateData['*']['download_url'];
+            }
+        }
+
+        return null;
     }
 
     public function hasSettings(): bool

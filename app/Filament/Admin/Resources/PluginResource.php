@@ -84,7 +84,21 @@ class PluginResource extends Resource
                             ->title('Plugin installed')
                             ->send();
                     }),
-                // TODO: "update" button
+                Action::make('update')
+                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
+                    ->icon('tabler-download')
+                    ->color('success')
+                    ->visible(fn (Plugin $plugin) => $plugin->isUpdateAvailable())
+                    ->action(function (Plugin $plugin) {
+                        Plugins::updatePlugin($plugin);
+
+                        redirect(ListPlugins::getUrl());
+
+                        Notification::make()
+                            ->success()
+                            ->title('Plugin updated')
+                            ->send();
+                    }),
                 Action::make('enable')
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
                     ->icon('tabler-check')

@@ -176,7 +176,24 @@ class PluginService
         }
     }
 
-    public function downloadPluginFromFile(UploadedFile $file): void
+    public function updatePlugin(Plugin $plugin): void
+    {
+        try {
+            $this->downloadPluginFromUrl($plugin->getDownloadUrlForUpdate(), true);
+
+            $this->requireComposerPackages($plugin);
+
+            $this->runPluginMigrations($plugin);
+
+            cache()->forget("plugins.$plugin->id.update");
+        } catch (Exception $exception) {
+            report($exception);
+
+            $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
+        }
+    }
+
+    public function downloadPluginFromFile(UploadedFile $file, bool $cleanDownload = false): void
     {
         $zip = new ZipArchive();
 
@@ -185,6 +202,11 @@ class PluginService
         }
 
         $pluginName = str($file->getClientOriginalName())->before('.zip')->toString();
+
+        if ($cleanDownload) {
+            File::deleteDirectory(plugin_path($pluginName));
+        }
+
         $extractPath = $zip->locateName($pluginName) ? base_path('plugins') : plugin_path($pluginName);
 
         if (!$zip->extractTo($extractPath)) {
@@ -194,7 +216,7 @@ class PluginService
         $zip->close();
     }
 
-    public function downloadPluginFromUrl(string $url): void
+    public function downloadPluginFromUrl(string $url, bool $cleanDownload = false): void
     {
         $info = pathinfo($url);
         $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
@@ -204,7 +226,7 @@ class PluginService
             throw new InvalidFileUploadException('Could not write temporary file.');
         }
 
-        $this->downloadPluginFromFile(new UploadedFile($tmpPath, $info['basename'], 'application/zip'));
+        $this->downloadPluginFromFile(new UploadedFile($tmpPath, $info['basename'], 'application/zip'), $cleanDownload);
     }
 
     public function enablePlugin(string|Plugin $plugin): void

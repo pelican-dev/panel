@@ -14,6 +14,7 @@ use Filament\Panel;
  * @method static void requireComposerPackages(Plugin $plugin)
  * @method static void runPluginMigrations(Plugin $plugin)
  * @method static void installPlugin(Plugin $plugin)
+ * @method static void updatePlugin(Plugin $plugin)
  * @method static void downloadPluginFromFile(UploadedFile $file)
  * @method static void downloadPluginFromUrl(string $url)
  * @method static void enablePlugin(string|Plugin $plugin)
