@@ -56,7 +56,7 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return !empty(auth()->user()->getCustomization()['navigation']) ? false : trans('admin/dashboard.user');
+        return !empty(auth()->user()->getCustomization()['top_navigation']) ? false : trans('admin/dashboard.user');
     }
 
     public static function getNavigationBadge(): ?string

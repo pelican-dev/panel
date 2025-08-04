@@ -471,13 +471,13 @@ class EditProfile extends BaseEditProfile
                                                         'grid' => trans('profile.grid'),
                                                         'table' => trans('profile.table'),
                                                     ]),
-                                                ToggleButtons::make('navigation')
+                                                ToggleButtons::make('top_navigation')
                                                     ->label(trans('profile.navigation'))
                                                     ->inline()
                                                     ->required()
                                                     ->options([
-                                                        false => trans('profile.side'),
                                                         true => trans('profile.top'),
+                                                        false => trans('profile.side'),
                                                     ]),
                                             ]),
                                         Section::make(trans('profile.console'))
@@ -636,10 +636,10 @@ class EditProfile extends BaseEditProfile
             'console_rows' => $data['console_rows'],
             'console_graph_period' => $data['console_graph_period'],
             'dashboard_layout' => $data['dashboard_layout'],
-            'navigation' => $data['navigation'],
+            'navigation' => $data['top_navigation'],
         ];
 
-        unset($data['console_font'],$data['console_font_size'], $data['console_rows'], $data['dashboard_layout'], $data['navigation']);
+        unset($data['console_font'],$data['console_font_size'], $data['console_rows'], $data['dashboard_layout'], $data['top_navigation']);
         $data['customization'] = json_encode($moarbetterdata);
 
         return $data;
@@ -654,7 +654,7 @@ class EditProfile extends BaseEditProfile
         $data['console_rows'] = $moarbetterdata['console_rows'] ?? 30;
         $data['console_graph_period'] = $moarbetterdata['console_graph_period'] ?? 30;
         $data['dashboard_layout'] = $moarbetterdata['dashboard_layout'] ?? 'grid';
-        $data['navigation'] = $moarbetterdata['navigation'] ?? false;
+        $data['top_navigation'] = $moarbetterdata['top_navigation'] ?? false;
 
         return $data;
     }

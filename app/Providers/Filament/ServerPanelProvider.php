@@ -41,7 +41,7 @@ class ServerPanelProvider extends PanelProvider
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
             ->favicon(config('app.favicon', '/pelican.ico'))
-            ->topNavigation(fn () => auth()->user()->getCustomization()['navigation'])
+            ->topNavigation(fn () => auth()->user()->getCustomization()['top_navigation'] ?? false)
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->login(Login::class)
             ->passwordReset()
