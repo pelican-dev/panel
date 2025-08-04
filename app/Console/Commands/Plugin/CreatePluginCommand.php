@@ -36,7 +36,7 @@ class CreatePluginCommand extends Command
             return;
         }
 
-        $author = $this->option('$author') ?? $this->ask('$author');
+        $author = $this->option('author') ?? $this->ask('author');
 
         $namespace = $author . '\\' . studly_case($name);
         $class = studly_case($name . 'Plugin');
