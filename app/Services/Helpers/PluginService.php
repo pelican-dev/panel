@@ -15,6 +15,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\ServiceProvider;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use ZipArchive;
@@ -161,12 +162,35 @@ class PluginService
         }
     }
 
+    public function buildAssets(): bool
+    {
+        try {
+            $result = Process::run('yarn install');
+            if ($result->failed()) {
+                throw new Exception('Could not install dependencies: ' . $result->errorOutput());
+            }
+
+            $result = Process::run('yarn build');
+            if ($result->failed()) {
+                throw new Exception('Could not build assets: ' . $result->errorOutput());
+            }
+
+            return true;
+        } catch (Exception $exception) {
+            report($exception);
+        }
+
+        return false;
+    }
+
     public function installPlugin(Plugin $plugin): void
     {
         try {
             $this->requireComposerPackages($plugin);
 
             $this->runPluginMigrations($plugin);
+
+            $this->buildAssets();
 
             $this->enablePlugin($plugin);
         } catch (Exception $exception) {
@@ -184,6 +208,8 @@ class PluginService
             $this->requireComposerPackages($plugin);
 
             $this->runPluginMigrations($plugin);
+
+            $this->buildAssets();
 
             cache()->forget("plugins.$plugin->id.update");
         } catch (Exception $exception) {
