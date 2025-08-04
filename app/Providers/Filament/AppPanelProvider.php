@@ -37,7 +37,8 @@ class AppPanelProvider extends PanelProvider
             ->topNavigation(fn () => !empty(auth()->user()->getCustomization()['navigation'])
                 ? auth()->user()->getCustomization()['navigation']
                 : config('panel.filament.top-navigation')
-            )            ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
+            )
+            ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->navigation(false)
             ->profile(EditProfile::class, false)
             ->login(Login::class)

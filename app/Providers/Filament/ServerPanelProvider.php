@@ -44,7 +44,8 @@ class ServerPanelProvider extends PanelProvider
             ->topNavigation(fn () => !empty(auth()->user()->getCustomization()['navigation'])
                 ? auth()->user()->getCustomization()['navigation']
                 : config('panel.filament.top-navigation')
-            )            ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
+            )
+            ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->login(Login::class)
             ->passwordReset()
             ->userMenuItems([
