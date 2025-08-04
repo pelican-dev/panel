@@ -30,7 +30,6 @@ config:
     server.properties:
       parser: properties
       find:
-        server-ip: 0.0.0.0
         server-port: '{{server.allocations.default.port}}'
         query.port: '{{server.allocations.default.port}}'
   startup:
