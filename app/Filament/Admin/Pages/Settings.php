@@ -169,16 +169,6 @@ class Settings extends Page implements HasForms
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('APP_DEBUG', (bool) $state))
                         ->default(env('APP_DEBUG', config('app.debug'))),
-                    ToggleButtons::make('FILAMENT_TOP_NAVIGATION')
-                        ->label(trans('admin/setting.general.navigation'))
-                        ->inline()
-                        ->options([
-                            false => trans('admin/setting.general.sidebar'),
-                            true => trans('admin/setting.general.topbar'),
-                        ])
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_TOP_NAVIGATION', (bool) $state))
-                        ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
                 ]),
             Group::make()
                 ->columns(2)
