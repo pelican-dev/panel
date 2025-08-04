@@ -112,7 +112,7 @@ class AppServiceProvider extends ServiceProvider
         );
 
         FilamentView::registerRenderHook(
-            PanelsRenderHook::STYLES_AFTER,
+            PanelsRenderHook::STYLES_BEFORE,
             fn () => Blade::render("@vite(['resources/css/app.css'])")
         );
 
