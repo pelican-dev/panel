@@ -34,10 +34,7 @@ class AppPanelProvider extends PanelProvider
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
             ->favicon(config('app.favicon', '/pelican.ico'))
-            ->topNavigation(fn () => !empty(auth()->user()->getCustomization()['navigation'])
-                ? auth()->user()->getCustomization()['navigation']
-                : config('panel.filament.top-navigation')
-            )
+            ->topNavigation(fn () => auth()->user()->getCustomization()['navigation'])
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->navigation(false)
             ->profile(EditProfile::class, false)
