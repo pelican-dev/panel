@@ -6,26 +6,21 @@ use App\Extensions\OAuth\OAuthService;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Notifications\AccountCreated;
+use App\Services\Users\UserCreationService;
 use App\Services\Users\UserUpdateService;
-use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Illuminate\Auth\AuthManager;
-use Illuminate\Auth\Passwords\PasswordBroker;
-use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
 use Laravel\Socialite\Facades\Socialite;
-use Ramsey\Uuid\Uuid;
 
 class OAuthController extends Controller
 {
     public function __construct(
         private readonly AuthManager $auth,
+        private UserCreationService $userCreation,
         private readonly UserUpdateService $updateService,
         private readonly OAuthService $oauthService,
-        private readonly Hasher $hasher,
     ) {}
 
     /**
@@ -93,20 +88,15 @@ class OAuthController extends Controller
                 return redirect()->route('auth.login');
             }
 
-            $user = User::create([
-                'uuid' => Uuid::uuid4()->toString(),
+            $data = [
                 'username' => $oauthUser->getNickname(),
                 'email' => $oauthUser->getEmail(),
-                'password' => $this->hasher->make(str_random(30)),
                 'oauth' => [
                     $driver->getId() => $oauthUser->getId(),
                 ],
-            ]);
+            ];
 
-            /** @var PasswordBroker $broker */
-            $broker = Password::broker(Filament::getPanel('app')->getAuthPasswordBroker());
-
-            $user->notify(new AccountCreated($broker->createToken($user)));
+            $user = $this->userCreation->handle($data);
         }
 
         $this->auth->guard()->login($user, true);
