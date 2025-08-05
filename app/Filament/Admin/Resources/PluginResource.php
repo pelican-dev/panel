@@ -68,7 +68,8 @@ class PluginResource extends Resource
                 TextColumn::make('category')
                     ->label(trans('admin/plugin.category'))
                     ->badge()
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(fn ($livewire) => $livewire->activeTab === 'all'),
                 TextColumn::make('status')
                     ->label(trans('admin/plugin.status'))
                     ->badge()

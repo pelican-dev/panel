@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Contracts\Plugins\HasPluginSettings;
+use App\Enums\PluginCategory;
 use App\Enums\PluginStatus;
 use Exception;
 use Filament\Forms\Components\Component;
@@ -19,7 +20,7 @@ use Sushi\Sushi;
  * @property string $author
  * @property string $version
  * @property string|null $description
- * @property string $category
+ * @property PluginCategory $category
  * @property string|null $url
  * @property string|null $update_url
  * @property string $namespace
@@ -73,7 +74,7 @@ class Plugin extends Model implements HasPluginSettings
      *     author: string,
      *     version: string,
      *     description: ?string,
-     *     category: ?string,
+     *     category: string,
      *     url: ?string,
      *     update_url: ?string,
      *     namespace: string,
@@ -120,7 +121,7 @@ class Plugin extends Model implements HasPluginSettings
                     'author' => $data['author'],
                     'version' => Arr::get($data, 'version', '1.0.0'),
                     'description' => Arr::get($data, 'description', null),
-                    'category' => Arr::get($data, 'category', null),
+                    'category' => $data['category'],
                     'url' => Arr::get($data, 'url', null),
                     'update_url' => Arr::get($data, 'update_url', null),
                     'namespace' => $data['namespace'],
@@ -145,7 +146,7 @@ class Plugin extends Model implements HasPluginSettings
                         'author' => $data['author'] ?? 'Unknown',
                         'version' => '0.0.0',
                         'description' => 'Plugin.json is invalid!',
-                        'category' => 'invalid',
+                        'category' => PluginCategory::Plugin->value,
                         'url' => null,
                         'update_url' => null,
                         'namespace' => 'Error',
@@ -174,6 +175,7 @@ class Plugin extends Model implements HasPluginSettings
     {
         return [
             'status' => PluginStatus::class,
+            'category' => PluginCategory::class,
         ];
     }
 
@@ -245,12 +247,12 @@ class Plugin extends Model implements HasPluginSettings
 
     public function isTheme(): bool
     {
-        return $this->category === 'theme';
+        return $this->category === PluginCategory::Theme;
     }
 
     public function isLanguage(): bool
     {
-        return $this->category === 'language';
+        return $this->category === PluginCategory::Language;
     }
 
     /** @return null|array<string, array{version: string, download_url: string}> */

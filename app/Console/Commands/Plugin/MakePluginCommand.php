@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Plugin;
 
+use App\Enums\PluginCategory;
 use App\Enums\PluginStatus;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
@@ -51,11 +52,15 @@ class MakePluginCommand extends Command
         $this->info('Creating Plugin "' . $name . '" (' . $id . ') by ' . $author);
 
         $description = $this->option('description') ?? $this->ask('Description');
-        $category = $this->option('category') ?? $this->choice('Category', [
-            'plugin' => 'Plugin',
-            'theme' => 'Theme',
-            'language' => 'Language Pack',
-        ], 'plugin');
+
+        $category = $this->option('category') ?? $this->choice('Category', collect(PluginCategory::cases())->mapWithKeys(fn (PluginCategory $category) => [$category->value => $category->getLabel()])->toArray(), PluginCategory::Plugin->value);
+
+        if (!PluginCategory::tryFrom($category)) {
+            $this->error('Unknown plugin category!');
+
+            return;
+        }
+
         $url = $this->option('url') ?? $this->ask('URL', 'https://github.com/' . $author . '/' . $id);
         $updateUrl = $this->option('updateUrl') ?? $this->ask('Update URL');
         $panels = $this->option('panels') ?? $this->choice('Panels', [

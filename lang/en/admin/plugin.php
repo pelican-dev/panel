@@ -20,6 +20,7 @@ return [
     'no_plugins' => 'No Plugins',
     'from_file' => 'From File',
     'from_url' => 'From URL',
+    'all' => 'All',
 
     'status_enum' => [
         'not_installed' => 'Not Installed',
@@ -27,6 +28,12 @@ return [
         'enabled' => 'Enabled',
         'errored' => 'Errored',
         'incompatible' => 'Incompatible',
+    ],
+
+    'category_enum' => [
+        'plugin' => 'Plugin',
+        'theme' => 'Theme',
+        'language' => 'Language Pack',
     ],
 
     'notifications' => [
