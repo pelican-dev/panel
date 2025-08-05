@@ -40,19 +40,22 @@ php artisan migrate --force
 echo -e "Optimizing Filament"
 php artisan filament:optimize
 
+# default to caddy not starting
 export SUPERVISORD_CADDY=false
-
-if [[ ! -z ${TRUSTED_PROXIES} ]]; then
-  export CADDY_TRUSTED_PROXIES=$(echo "trusted_proxies static ${TRUSTED_PROXIES}" | sed 's/,/ /g')
-  export CADDY_STRICT_PROXIES="trusted_proxies_strict"
-fi
 
 ## disable caddy if SKIP_CADDY is set
 if [[ "${SKIP_CADDY:-}" == "true" ]]; then
   echo "Starting PHP-FPM only"
 else
   echo "Starting PHP-FPM and Caddy"
+  # enable caddy
   export SUPERVISORD_CADDY=true
+
+  # handle trusted proxies for caddy
+  if [[ ! -z ${TRUSTED_PROXIES} ]]; then
+    export CADDY_TRUSTED_PROXIES=$(echo "trusted_proxies static ${TRUSTED_PROXIES}" | sed 's/,/ /g')
+    export CADDY_STRICT_PROXIES="trusted_proxies_strict"
+  fi
 fi
 
 echo "Starting Supervisord"
