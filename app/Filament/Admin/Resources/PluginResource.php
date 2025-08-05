@@ -25,6 +25,21 @@ class PluginResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getNavigationLabel(): string
+    {
+        return trans('admin/plugin.nav_title');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return trans('admin/plugin.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return trans('admin/plugin.model_label_plural');
+    }
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count() ?: null;
@@ -38,30 +53,37 @@ class PluginResource extends Resource
             ->defaultSort('load_order')
             ->columns([
                 TextColumn::make('name')
+                    ->label(trans('admin/plugin.name'))
                     ->description(fn (Plugin $plugin) => (strlen($plugin->description) > 80) ? substr($plugin->description, 0, 80).'...' : $plugin->description)
                     ->icon(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? 'tabler-versions-off' : 'tabler-versions')
                     ->iconColor(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? 'danger' : 'success')
-                    ->tooltip(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? 'An update for this plugin is available' : null)
+                    ->tooltip(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? trans('admin/plugin.update_available') : null)
                     ->sortable(),
                 TextColumn::make('author')
+                    ->label(trans('admin/plugin.author'))
                     ->sortable(),
                 TextColumn::make('version')
+                    ->label(trans('admin/plugin.version'))
                     ->sortable(),
                 TextColumn::make('category')
+                    ->label(trans('admin/plugin.category'))
                     ->badge()
                     ->sortable(),
                 TextColumn::make('status')
+                    ->label(trans('admin/plugin.status'))
                     ->badge()
                     ->tooltip(fn (Plugin $plugin) => $plugin->status_message)
                     ->sortable(),
             ])
             ->actions([
                 Action::make('view')
+                    ->label(trans('filament-actions::view.single.label'))
                     ->icon('tabler-eye-share')
                     ->color('gray')
                     ->visible(fn (Plugin $plugin) => $plugin->url)
                     ->url(fn (Plugin $plugin) => $plugin->url, true),
                 Action::make('settings')
+                    ->label(trans('admin/plugin.settings'))
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
                     ->icon('tabler-settings')
                     ->color('primary')
@@ -70,6 +92,7 @@ class PluginResource extends Resource
                     ->action(fn (array $data, Plugin $plugin) => $plugin->saveSettings($data))
                     ->slideOver(),
                 Action::make('install')
+                    ->label(trans('admin/plugin.install'))
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
                     ->icon('tabler-terminal')
                     ->color('success')
@@ -81,10 +104,11 @@ class PluginResource extends Resource
 
                         Notification::make()
                             ->success()
-                            ->title('Plugin installed')
+                            ->title(trans('admin/plugin.notifications.installed'))
                             ->send();
                     }),
                 Action::make('update')
+                    ->label(trans('admin/plugin.update'))
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
                     ->icon('tabler-download')
                     ->color('success')
@@ -96,10 +120,11 @@ class PluginResource extends Resource
 
                         Notification::make()
                             ->success()
-                            ->title('Plugin updated')
+                            ->title(trans('admin/plugin.notifications.updated'))
                             ->send();
                     }),
                 Action::make('enable')
+                    ->label(trans('admin/plugin.enable'))
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
                     ->icon('tabler-check')
                     ->color('success')
@@ -114,10 +139,11 @@ class PluginResource extends Resource
 
                         Notification::make()
                             ->success()
-                            ->title('Plugin enabled')
+                            ->title(trans('admin/plugin.notifications.updated'))
                             ->send();
                     }),
                 Action::make('disable')
+                    ->label(trans('admin/plugin.disable'))
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
                     ->icon('tabler-x')
                     ->color('danger')
@@ -129,19 +155,20 @@ class PluginResource extends Resource
 
                         Notification::make()
                             ->success()
-                            ->title('Plugin disabled')
+                            ->title(trans('admin/plugin.notifications.updated'))
                             ->send();
                     }),
             ])
             ->headerActions([
-                Action::make('download')
+                Action::make('import')
+                    ->label(trans('admin/plugin.import'))
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('create', $plugin))
                     ->icon('tabler-download')
                     ->form([
                         Tabs::make('Tabs')
                             ->contained(false)
                             ->tabs([
-                                Tab::make('From File')
+                                Tab::make(trans('admin/plugin.from_file'))
                                     ->icon('tabler-file-upload')
                                     ->schema([
                                         FileUpload::make('file')
@@ -150,7 +177,7 @@ class PluginResource extends Resource
                                             ->previewable(false)
                                             ->storeFiles(false),
                                     ]),
-                                Tab::make('From URL')
+                                Tab::make(trans('admin/plugin.from_url'))
                                     ->icon('tabler-world-upload')
                                     ->schema([
                                         TextInput::make('url')
@@ -173,14 +200,14 @@ class PluginResource extends Resource
 
                             Notification::make()
                                 ->success()
-                                ->title('Plugin downloaded')
+                                ->title(trans('admin/plugin.notifications.downloaded'))
                                 ->send();
                         } catch (Exception $exception) {
                             report($exception);
 
                             Notification::make()
                                 ->danger()
-                                ->title('Could not download plugin.')
+                                ->title(trans('admin/plugin.notifications.download_failed'))
                                 ->body($exception->getMessage())
                                 ->send();
                         }
@@ -188,7 +215,7 @@ class PluginResource extends Resource
             ])
             ->emptyStateIcon('tabler-packages')
             ->emptyStateDescription('')
-            ->emptyStateHeading('No Plugins');
+            ->emptyStateHeading(trans('admin/plugin.no_plugins'));
     }
 
     public static function getPages(): array
