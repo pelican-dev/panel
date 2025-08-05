@@ -6,9 +6,9 @@ use App\Enums\PluginStatus;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 
-class CreatePluginCommand extends Command
+class MakePluginCommand extends Command
 {
-    protected $signature = 'p:plugin:create
+    protected $signature = 'p:plugin:make
                             {--name=}
                             {--author=}
                             {--description=}
