@@ -36,7 +36,8 @@ class MakePluginCommand extends Command
             return;
         }
 
-        $author = $this->option('author') ?? $this->ask('author');
+        $author = $this->option('author') ?? $this->ask('author', cache('plugin.author'));
+        cache()->forever('plugin.author', $author);
 
         $namespace = $author . '\\' . studly_case($name);
         $class = studly_case($name . 'Plugin');
@@ -56,7 +57,7 @@ class MakePluginCommand extends Command
             'language' => 'Language Pack',
         ], 'plugin');
         $url = $this->option('url') ?? $this->ask('URL', 'https://github.com/' . $author . '/' . $id);
-        $updateUrl = $this->option('updateUrl') ?? $this->ask('Update URL', 'https://raw.githubusercontent.com/' . $author . '/' . $id . '/refs/heads/main/update.json');
+        $updateUrl = $this->option('updateUrl') ?? $this->ask('Update URL');
         $panels = $this->option('panels') ?? $this->choice('Panels', [
             'admin' => 'Admin Area',
             'server' => 'Client Area',
@@ -84,9 +85,9 @@ class MakePluginCommand extends Command
             'update_url' => $updateUrl,
             'namespace' => $namespace,
             'class' => $class,
-            'panels' => !is_array($panels) ? explode(',', $panels) : $panels,
+            'panels' => is_string($panels) ? explode(',', $panels) : $panels,
             'panel_version' => config('app.version') === 'canary' ? null : config('app.version'),
-            'composer_packages' => !is_array($composerPackages) ? explode(',', $composerPackages) : $composerPackages,
+            'composer_packages' => is_string($composerPackages) ? explode(',', $composerPackages) : $composerPackages,
         ], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         // Create src directory and create main class
