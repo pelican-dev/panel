@@ -105,8 +105,8 @@ class PluginResource extends Resource
                     ->color('success')
                     ->visible(fn (Plugin $plugin) => $plugin->canEnable())
                     ->requiresConfirmation(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled())
-                    ->modalHeading('Theme already enabled')
-                    ->modalDescription('You already have a theme enabled. Enabling multiple themes can result in visual bugs. Do you want to continue?')
+                    ->modalHeading(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled() ? 'Theme already enabled' : null)
+                    ->modalDescription(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled() ? 'You already have a theme enabled. Enabling multiple themes can result in visual bugs. Do you want to continue?' : null)
                     ->action(function (Plugin $plugin) {
                         Plugins::enablePlugin($plugin);
 
