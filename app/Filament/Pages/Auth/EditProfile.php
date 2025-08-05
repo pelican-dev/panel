@@ -636,7 +636,7 @@ class EditProfile extends BaseEditProfile
             'console_rows' => $data['console_rows'],
             'console_graph_period' => $data['console_graph_period'],
             'dashboard_layout' => $data['dashboard_layout'],
-            'navigation' => $data['top_navigation'],
+            'top_navigation' => $data['top_navigation'],
         ];
 
         unset($data['console_font'],$data['console_font_size'], $data['console_rows'], $data['dashboard_layout'], $data['top_navigation']);
