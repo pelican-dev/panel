@@ -248,6 +248,11 @@ class Plugin extends Model implements HasPluginSettings
         return $this->category === 'theme';
     }
 
+    public function isLanguage(): bool
+    {
+        return $this->category === 'language';
+    }
+
     /** @return null|array<string, array{version: string, download_url: string}> */
     private function getUpdateData(): ?array
     {

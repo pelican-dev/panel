@@ -21,6 +21,7 @@ use Filament\Panel;
  * @method static void disablePlugin(string|Plugin $plugin)
  * @method static void updateLoadOrder(array<int, string> $order)
  * @method static bool hasThemePluginEnabled()
+ * @method static string[] getPluginLanguages()
  *
  * @see \App\Services\Helpers\PluginService
  */

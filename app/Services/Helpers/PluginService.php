@@ -64,7 +64,11 @@ class PluginService
                 $translations = plugin_path($plugin->id, 'lang');
                 if (file_exists($translations)) {
                     $this->app->afterResolving('translator', function ($translator) use ($plugin, $translations) {
-                        $translator->addNamespace($plugin->id, $translations);
+                        if ($plugin->isLanguage()) {
+                            $translator->addPath($translations);
+                        } else {
+                            $translator->addNamespace($plugin->id, $translations);
+                        }
                     });
                 }
 
@@ -308,5 +312,12 @@ class PluginService
         }
 
         return false;
+    }
+
+    /** @return string[] */
+    public function getPluginLanguages(): array
+    {
+        // TODO
+        return ['pirate'];
     }
 }
