@@ -20,6 +20,7 @@ use Filament\Panel;
  * @method static void enablePlugin(string|Plugin $plugin)
  * @method static void disablePlugin(string|Plugin $plugin)
  * @method static void updateLoadOrder(array<int, string> $order)
+ * @method static bool hasThemePluginEnabled()
  *
  * @see \App\Services\Helpers\PluginService
  */

@@ -243,6 +243,11 @@ class Plugin extends Model implements HasPluginSettings
         return !str($this->panel_version)->startsWith('^');
     }
 
+    public function isTheme(): bool
+    {
+        return $this->category === 'theme';
+    }
+
     /** @return null|array<string, array{version: string, download_url: string}> */
     private function getUpdateData(): ?array
     {

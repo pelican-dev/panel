@@ -297,4 +297,16 @@ class PluginService
             ]);
         }
     }
+
+    public function hasThemePluginEnabled(): bool
+    {
+        $plugins = Plugin::query()->orderBy('load_order')->get();
+        foreach ($plugins as $plugin) {
+            if ($plugin->isTheme() && $plugin->isEnabled()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
