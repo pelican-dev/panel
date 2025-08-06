@@ -56,7 +56,7 @@ abstract class OAuthSchema implements OAuthSchemaInterface
                 ->autocomplete(false)
                 ->default(env("OAUTH_{$id}_CLIENT_SECRET")),
             Toggle::make("OAUTH_{$id}_SHOULD_CREATE_MISSING_USERS")
-                ->label('Should missing users be automatically created when trying to login?')
+                ->label(trans('admin/setting.oauth.create_missing_users'))
                 ->columnSpanFull()
                 ->inline(false)
                 ->onIcon('tabler-check')
