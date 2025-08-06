@@ -161,7 +161,7 @@ class ImportEggAction extends Action
                                 ->deletable(fn (array $state) => count($state) > 1)
                                 ->schema([
                                     TextInput::make('url')
-                                        ->default(fn (Egg $egg) => $egg->update_url)
+                                        ->default(fn (?Egg $egg) => $egg->update_url ?? '')
                                         ->live()
                                         ->label(trans('admin/egg.import.url'))
                                         ->placeholder('https://github.com/pelican-eggs/generic/blob/main/nodejs/egg-node-js-generic.json')
