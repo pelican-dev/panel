@@ -79,7 +79,7 @@ class OAuthController extends Controller
 
         if (!$user) {
             // No user found and auto creation is disabled - redirect to normal login
-            if (!$driver->shouldCreatingMissingUsers()) {
+            if (!$driver->shouldCreateMissingUsers()) {
                 Notification::make()
                     ->title('No linked User found')
                     ->danger()

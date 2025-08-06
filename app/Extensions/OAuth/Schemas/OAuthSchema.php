@@ -110,7 +110,7 @@ abstract class OAuthSchema implements OAuthSchemaInterface
         return env("OAUTH_{$id}_ENABLED", false);
     }
 
-    public function shouldCreatingMissingUsers(): bool
+    public function shouldCreateMissingUsers(): bool
     {
         $id = Str::upper($this->getId());
 
