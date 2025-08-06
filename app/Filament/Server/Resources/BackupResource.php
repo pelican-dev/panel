@@ -131,7 +131,7 @@ class BackupResource extends Resource
                         ->icon('tabler-pencil')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DELETE, $server))
                         ->label('Rename')
-                        ->form([
+                        ->schema([
                             TextInput::make('name')
                                 ->label('Backup Name')
                                 ->required()

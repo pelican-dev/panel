@@ -206,8 +206,8 @@ class BackupController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \Throwable
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws Throwable
+     * @throws AuthorizationException
      */
     public function rename(RenameBackupRequest $request, Server $server, Backup $backup): array
     {

@@ -369,11 +369,11 @@ class ListFiles extends ListRecords
                     BulkAction::make('archive')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
                         ->schema([
-                                TextInput::make('name')
-                                    ->label(trans('server/file.actions.archive.archive_name'))
-                                    ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
-                                    ->suffix('.tar.gz'),
-                            ])
+                            TextInput::make('name')
+                                ->label(trans('server/file.actions.archive.archive_name'))
+                                ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
+                                ->suffix('.tar.gz'),
+                        ])
                         ->action(function ($data, Collection $files) {
                             $files = $files->map(fn ($file) => $file['name'])->toArray();
 
