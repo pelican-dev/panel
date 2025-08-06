@@ -176,15 +176,6 @@ class Settings extends Page implements HasSchemas
                         ->offColor('danger')
                         ->stateCast(new BooleanStateCast(false))
                         ->default(env('APP_DEBUG', config('app.debug'))),
-                    ToggleButtons::make('FILAMENT_TOP_NAVIGATION')
-                        ->label(trans('admin/setting.general.navigation'))
-                        ->inline()
-                        ->options([
-                            0 => trans('admin/setting.general.sidebar'),
-                            1 => trans('admin/setting.general.topbar'),
-                        ])
-                        ->stateCast(new BooleanStateCast(false, true))
-                        ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
                 ]),
             Group::make()
                 ->columns(2)

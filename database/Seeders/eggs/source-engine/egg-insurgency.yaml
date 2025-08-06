@@ -1,0 +1,82 @@
+_comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
+meta:
+  version: PLCN_v2
+  update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/source-engine/egg-insurgency.yaml'
+exported_at: '2025-07-25T13:30:35+00:00'
+name: Insurgency
+author: panel@example.com
+uuid: a5702286-655b-4069-bf1e-925c7300b61a
+description: |-
+  Take to the streets for intense close quarters combat, where a team's survival depends upon securing
+  crucial strongholds and destroying enemy supply in this multiplayer and cooperative Source Engine
+  based experience.
+tags:
+  - source
+  - steamcmd
+features:
+  - steam_disk_space
+docker_images:
+  'ghcr.io/parkervcp/games:source': 'ghcr.io/parkervcp/games:source'
+file_denylist: {  }
+startup: './srcds_run -game insurgency -console -port {{SERVER_PORT}} +map {{SRCDS_MAP}} +ip 0.0.0.0 -strictportbind -norestart'
+config:
+  files: {  }
+  startup:
+    done: 'gameserver Steam ID'
+  logs: {  }
+  stop: quit
+scripts:
+  installation:
+    script: |-
+      #!/bin/bash
+      # steamcmd Base Installation Script
+      #
+      # Server Files: /mnt/server
+
+      ## download and install steamcmd
+      cd /tmp
+      mkdir -p /mnt/server/steamcmd
+      curl -sSL -o steamcmd.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
+      tar -xzvf steamcmd.tar.gz -C /mnt/server/steamcmd
+      cd /mnt/server/steamcmd
+
+      # SteamCMD fails otherwise for some reason, even running as root.
+      # This is changed at the end of the install process anyways.
+      chown -R root:root /mnt
+      export HOME=/mnt/server
+
+      ## install game using steamcmd
+      ./steamcmd.sh +force_install_dir /mnt/server +login anonymous +app_update ${SRCDS_APPID} ${EXTRA_FLAGS} +quit
+
+      ## set up 32 bit libraries
+      mkdir -p /mnt/server/.steam/sdk32
+      cp -v linux32/steamclient.so ../.steam/sdk32/steamclient.so
+
+      ## set up 64 bit libraries
+      mkdir -p /mnt/server/.steam/sdk64
+      cp -v linux64/steamclient.so ../.steam/sdk64/steamclient.so
+    container: 'ghcr.io/parkervcp/installers:debian'
+    entrypoint: bash
+variables:
+  -
+    name: 'Default Map'
+    description: 'The default map to use when starting the server.'
+    env_variable: SRCDS_MAP
+    default_value: sinjar
+    user_viewable: true
+    user_editable: true
+    rules:
+      - required
+      - 'regex:/^(\w{1,20})$/'
+    sort: 2
+  -
+    name: 'Game ID'
+    description: 'The ID corresponding to the game to download and run using SRCDS.'
+    env_variable: SRCDS_APPID
+    default_value: 237410
+    user_viewable: true
+    user_editable: false
+    rules:
+      - required
+      - 'regex:/^(237410)$/'
+    sort: 1

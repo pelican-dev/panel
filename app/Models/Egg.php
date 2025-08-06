@@ -71,7 +71,7 @@ class Egg extends Model implements Validatable
     /**
      * Defines the current egg export version.
      */
-    public const EXPORT_VERSION = 'PLCN_v1';
+    public const EXPORT_VERSION = 'PLCN_v2';
 
     /**
      * Fields that are not mass assignable.
