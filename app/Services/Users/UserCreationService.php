@@ -3,6 +3,7 @@
 namespace App\Services\Users;
 
 use App\Models\Role;
+use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use App\Models\User;
 use Illuminate\Contracts\Hashing\Hasher;
@@ -41,6 +42,16 @@ class UserCreationService
 
         $isRootAdmin = array_key_exists('root_admin', $data) && $data['root_admin'];
         unset($data['root_admin']);
+
+        if (empty($data['username'])) {
+            $username = str($data['email'])
+                ->before('@')
+                ->replace(['.', '-'], '')
+                ->ascii()
+                ->substr(0, 64);
+
+            $data['username'] = $username->toString() . Str::random(3);
+        }
 
         /** @var User $user */
         $user = User::query()->forceCreate(array_merge($data, [
