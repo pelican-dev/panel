@@ -59,7 +59,7 @@ class RoleResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return config('panel.filament.top-navigation', false) ? trans('admin/dashboard.advanced') : trans('admin/dashboard.user');
+        return !empty(auth()->user()->getCustomization()['top_navigation']) ? trans('admin/dashboard.advanced') : trans('admin/dashboard.user');
     }
 
     public static function getNavigationBadge(): ?string

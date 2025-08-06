@@ -40,7 +40,8 @@ class NodeResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return config('panel.filament.top-navigation', false) ? null : trans('admin/dashboard.server');
+        return !empty(auth()->user()->getCustomization()['top_navigation']) ? false : trans('admin/dashboard.server');
+
     }
 
     public static function getNavigationBadge(): ?string
