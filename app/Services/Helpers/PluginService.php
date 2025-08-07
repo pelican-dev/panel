@@ -187,7 +187,7 @@ class PluginService
         return false;
     }
 
-    public function installPlugin(Plugin $plugin): void
+    public function installPlugin(Plugin $plugin, bool $enable = true): void
     {
         try {
             $this->requireComposerPackages($plugin);
@@ -196,7 +196,9 @@ class PluginService
 
             $this->buildAssets();
 
-            $this->enablePlugin($plugin);
+            if ($enable) {
+                $this->enablePlugin($plugin);
+            }
         } catch (Exception $exception) {
             report($exception);
 
@@ -209,11 +211,7 @@ class PluginService
         try {
             $this->downloadPluginFromUrl($plugin->getDownloadUrlForUpdate(), true);
 
-            $this->requireComposerPackages($plugin);
-
-            $this->runPluginMigrations($plugin);
-
-            $this->buildAssets();
+            $this->installPlugin($plugin, false);
 
             cache()->forget("plugins.$plugin->id.update");
         } catch (Exception $exception) {
