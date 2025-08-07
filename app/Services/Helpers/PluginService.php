@@ -317,7 +317,17 @@ class PluginService
     /** @return string[] */
     public function getPluginLanguages(): array
     {
-        // TODO
-        return ['pirate'];
+        $languages = [];
+
+        $plugins = Plugin::query()->orderBy('load_order')->get();
+        foreach ($plugins as $plugin) {
+            if (!$plugin->isEnabled() || !$plugin->isLanguage()) {
+                continue;
+            }
+
+            $languages = array_merge($languages, collect(File::directories(plugin_path($plugin->id, 'lang')))->map(fn ($path) => basename($path))->toArray());
+        }
+
+        return array_unique($languages);
     }
 }
