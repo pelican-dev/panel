@@ -45,6 +45,7 @@ services:
       <<: [*panel-environment, *mail-environment]
       XDG_DATA_HOME: /pelican-data
       # SKIP_CADDY: true # enable when not using caddy.
+      TRUSTED_PROXIES:
 
 volumes:
   pelican-data:
