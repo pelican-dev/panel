@@ -32,4 +32,6 @@ interface OAuthSchemaInterface
     public function getHexColor(): ?string;
 
     public function isEnabled(): bool;
+
+    public function shouldCreateMissingUsers(): bool;
 }
