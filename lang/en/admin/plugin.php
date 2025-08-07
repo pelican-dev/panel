@@ -43,5 +43,7 @@ return [
         'disabled' => 'Plugin disabled',
         'downloaded' => 'Plugin downloaded',
         'download_failed' => 'Could not download plugin',
+        'created' => 'Plugin created',
+        'create_failed' => 'Could not create plugin',
     ],
 ];

@@ -2,20 +2,26 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Enums\PluginCategory;
 use App\Facades\Plugins;
 use App\Filament\Admin\Resources\PluginResource\Pages\ListPlugins;
 use App\Models\Plugin;
 use Exception;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Artisan;
 
 class PluginResource extends Resource
 {
@@ -161,6 +167,35 @@ class PluginResource extends Resource
                     }),
             ])
             ->headerActions([
+                CreateAction::make()
+                    ->createAnother(false)
+                    ->visible(fn () => Plugins::isDevModeActive())
+                    ->action(function ($data) {
+                        $exitCode = Artisan::call('p:plugin:make', [
+                            '--name' => $data['name'],
+                            '--author' => $data['author'],
+                            '--description' => $data['description'],
+                            '--category' => $data['category'],
+                            '--url' => $data['url'] ?? '',
+                            '--updateUrl' => $data['update_url'] ?? '',
+                            '--panels' => $data['panels'] ?? [],
+                            '--composerPackages' => $data['composer_packages'] ?? [],
+                        ]);
+
+                        if ($exitCode === 0) {
+                            redirect(ListPlugins::getUrl());
+
+                            Notification::make()
+                                ->success()
+                                ->title(trans('admin/plugin.notifications.created'))
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->danger()
+                                ->title(trans('admin/plugin.notifications.create_failed'))
+                                ->send();
+                        }
+                    }),
                 Action::make('import')
                     ->label(trans('admin/plugin.import'))
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('create', $plugin))
@@ -217,6 +252,38 @@ class PluginResource extends Resource
             ->emptyStateIcon('tabler-packages')
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/plugin.no_plugins'));
+    }
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name')
+                    ->required(),
+                TextInput::make('author')
+                    ->required()
+                    ->default(fn () => auth()->user()->username),
+                TextInput::make('description')
+                    ->columnSpanFull(),
+                Select::make('category')
+                    ->selectablePlaceholder(false)
+                    ->default(PluginCategory::Plugin->value)
+                    ->options(PluginCategory::class),
+                Select::make('panels')
+                    ->multiple()
+                    ->options([
+                        'admin' => 'Admin Area',
+                        'server' => 'Client Area',
+                        'app' => 'Server List',
+                    ]),
+                TextInput::make('url')
+                    ->url(),
+                TextInput::make('update_url')
+                    ->url(),
+                TagsInput::make('composer_packages')
+                    ->columnSpanFull()
+                    ->placeholder('New Package'),
+            ]);
     }
 
     public static function getPages(): array
