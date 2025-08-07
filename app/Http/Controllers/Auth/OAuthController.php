@@ -102,15 +102,13 @@ class OAuthController extends Controller
                 return redirect()->route('auth.login');
             }
 
-            $data = [
+            $user = $this->userCreation->handle([
                 'username' => $username,
                 'email' => $email,
                 'oauth' => [
                     $driver->getId() => $oauthUser->getId(),
                 ],
-            ];
-
-            $user = $this->userCreation->handle($data);
+            ]);
         }
 
         $this->auth->guard()->login($user, true);
