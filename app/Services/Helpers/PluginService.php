@@ -140,7 +140,7 @@ class PluginService
                     throw new Exception('Class "' . $pluginClass . '" not found');
                 }
 
-                $panel->plugin($pluginClass::make());
+                $panel->plugin(new $pluginClass());
 
                 $this->enablePlugin($plugin);
             } catch (Exception $exception) {

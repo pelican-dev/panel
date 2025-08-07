@@ -320,10 +320,10 @@ class Plugin extends Model implements HasPluginSettings
     public function hasSettings(): bool
     {
         $class = $this->fullClass();
-        if (class_exists($class) && method_exists($class, 'get')) {
-            $pluginObject = ($class)::get();
+        if (class_exists($class)) {
+            $pluginObject = filament($this->id);
 
-            return method_exists($pluginObject, 'getSettingsForm') && method_exists($pluginObject, 'saveSettings');
+            return $pluginObject instanceof HasPluginSettings;
         }
 
         return false;
@@ -335,10 +335,10 @@ class Plugin extends Model implements HasPluginSettings
     public function getSettingsForm(): array
     {
         $class = $this->fullClass();
-        if (class_exists($class) && method_exists($class, 'get')) {
-            $pluginObject = ($class)::get();
+        if (class_exists($class)) {
+            $pluginObject = filament($this->id);
 
-            if (method_exists($pluginObject, 'getSettingsForm')) {
+            if ($pluginObject instanceof HasPluginSettings) {
                 return $pluginObject->getSettingsForm();
             }
         }
@@ -352,10 +352,10 @@ class Plugin extends Model implements HasPluginSettings
     public function saveSettings(array $data): void
     {
         $class = $this->fullClass();
-        if (class_exists($class) && method_exists($class, 'get')) {
-            $pluginObject = ($class)::get();
+        if (class_exists($class)) {
+            $pluginObject = filament($this->id);
 
-            if (method_exists($pluginObject, 'saveSettings')) {
+            if ($pluginObject instanceof HasPluginSettings) {
                 $pluginObject->saveSettings($data);
             }
         }
