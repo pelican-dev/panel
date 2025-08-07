@@ -191,7 +191,7 @@ class Plugin extends Model implements HasPluginSettings
 
     public function shouldLoadPanel(string $panelId): bool
     {
-        return !$this->isDisabled() && $this->isInstalled() && !$this->isIncompatible() && ($this->panels === null || in_array($panelId, explode(',', $this->panels)));
+        return !$this->isDisabled() && $this->isInstalled() && !$this->isIncompatible() && (!$this->panels || in_array($panelId, explode(',', $this->panels)));
     }
 
     public function canEnable(): bool
@@ -233,12 +233,12 @@ class Plugin extends Model implements HasPluginSettings
     {
         $panelVersion = config('app.version', 'canary');
 
-        return $this->panel_version === null || $panelVersion === 'canary' || version_compare($this->panel_version, $panelVersion, $this->isPanelVersionStrict() ? '=' : '>=');
+        return !$this->panel_version || $panelVersion === 'canary' || version_compare($this->panel_version, $panelVersion, $this->isPanelVersionStrict() ? '=' : '>=');
     }
 
     public function isPanelVersionStrict(): bool
     {
-        if ($this->panel_version === null) {
+        if (!$this->panel_version) {
             return false;
         }
 
@@ -258,7 +258,7 @@ class Plugin extends Model implements HasPluginSettings
     /** @return null|array<string, array{version: string, download_url: string}> */
     private function getUpdateData(): ?array
     {
-        if ($this->update_url === null) {
+        if (!$this->update_url) {
             return null;
         }
 
