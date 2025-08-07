@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Enums\CustomizationKey;
+use App\Facades\Plugins;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\Login;
 use App\Http\Middleware\LanguageMiddleware;
@@ -27,7 +28,7 @@ abstract class PanelProvider extends BasePanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return $panel
+        $panel
             ->spa()
             ->databaseNotifications()
             ->brandName(config('app.name', 'Pelican'))
@@ -94,5 +95,9 @@ abstract class PanelProvider extends BasePanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+
+        Plugins::loadPanelPlugins($panel);
+
+        return $panel;
     }
 }

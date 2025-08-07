@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Facades\Plugins;
 use App\Filament\Admin\Resources\Servers\Pages\EditServer;
 use App\Filament\App\Resources\Servers\Pages\ListServers;
 use App\Http\Middleware\Activity\ServerSubject;
@@ -15,7 +14,7 @@ class ServerPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        $panel = parent::panel($panel)
+        return parent::panel($panel)
             ->id('server')
             ->path('server')
             ->homeUrl(fn () => Filament::getPanel('app')->getUrl())
@@ -44,9 +43,5 @@ class ServerPanelProvider extends PanelProvider
             ->tenantMiddleware([
                 ServerSubject::class,
             ]);
-
-        Plugins::loadPanelPlugins($panel);
-
-        return $panel;
     }
 }

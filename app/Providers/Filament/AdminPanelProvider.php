@@ -3,7 +3,6 @@
 namespace App\Providers\Filament;
 
 use AchyutN\FilamentLogViewer\FilamentLogViewer;
-use App\Facades\Plugins;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
@@ -13,7 +12,7 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        $panel = parent::panel($panel)
+        return parent::panel($panel)
             ->id('admin')
             ->path('admin')
             ->homeUrl('/')
@@ -41,9 +40,5 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationGroup(fn () => trans('admin/dashboard.advanced'))
                     ->navigationIcon('tabler-file-info'),
             ]);
-
-        Plugins::loadPanelPlugins($panel);
-
-        return $panel;
     }
 }
