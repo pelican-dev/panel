@@ -61,7 +61,7 @@ class MakePluginCommand extends Command
             return;
         }
 
-        $url = $this->option('url') ?? $this->ask('URL', 'https://github.com/' . $author . '/' . $id);
+        $url = $this->option('url') ?? $this->ask('URL');
         $updateUrl = $this->option('updateUrl') ?? $this->ask('Update URL');
         $panels = $this->option('panels') ?? $this->choice('Panels', [
             'admin' => 'Admin Area',
