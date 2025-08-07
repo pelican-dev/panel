@@ -44,14 +44,14 @@ class UserCreationService
         unset($data['root_admin']);
 
         if (empty($data['username'])) {
-            $username = str($data['email'])
-                ->before('@')
-                ->replace(['.', '-'], '')
-                ->ascii()
-                ->substr(0, 64);
-
-            $data['username'] = $username->toString() . Str::random(3);
+            $data['username'] = str($data['email'])->before('@')->toString() . Str::random(3);
         }
+
+        $data['username'] = str($data['username'])
+            ->replace(['.', '-'], '')
+            ->ascii()
+            ->substr(0, 64)
+            ->toString();
 
         /** @var User $user */
         $user = User::query()->forceCreate(array_merge($data, [
