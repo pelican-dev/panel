@@ -11,9 +11,11 @@ class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return parent::panel($panel)
+        $panel
             ->id('app')
-            ->default()
+            ->default();
+
+        return parent::panel($panel)
             ->breadcrumbs(false)
             ->navigation(false)
             ->topbar(true)

@@ -14,10 +14,12 @@ class ServerPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return parent::panel($panel)
+        $panel
             ->id('server')
             ->path('server')
-            ->homeUrl(fn () => Filament::getPanel('app')->getUrl())
+            ->homeUrl(fn () => Filament::getPanel('app')->getUrl());
+
+        return parent::panel($panel)
             ->tenant(Server::class, 'uuid_short')
             ->userMenuItems([
                 Action::make('to_serverList')

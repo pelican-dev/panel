@@ -12,10 +12,12 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return parent::panel($panel)
+        $panel
             ->id('admin')
             ->path('admin')
-            ->homeUrl('/')
+            ->homeUrl('/');
+
+        return parent::panel($panel)
             ->breadcrumbs(false)
             ->sidebarCollapsibleOnDesktop(fn () => !$panel->hasTopNavigation())
             ->userMenuItems([
