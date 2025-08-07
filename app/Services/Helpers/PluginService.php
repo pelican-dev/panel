@@ -113,6 +113,10 @@ class PluginService
                     });
                 }
             } catch (Exception $exception) {
+                if ($this->isDevModeActive()) {
+                    throw ($exception);
+                }
+
                 report($exception);
 
                 $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
@@ -144,6 +148,10 @@ class PluginService
 
                 $this->enablePlugin($plugin);
             } catch (Exception $exception) {
+                if ($this->isDevModeActive()) {
+                    throw ($exception);
+                }
+
                 report($exception);
 
                 $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
@@ -181,6 +189,10 @@ class PluginService
 
             return true;
         } catch (Exception $exception) {
+            if ($this->isDevModeActive()) {
+                throw ($exception);
+            }
+
             report($exception);
         }
 
@@ -200,6 +212,10 @@ class PluginService
                 $this->enablePlugin($plugin);
             }
         } catch (Exception $exception) {
+            if ($this->isDevModeActive()) {
+                throw ($exception);
+            }
+
             report($exception);
 
             $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
@@ -215,6 +231,10 @@ class PluginService
 
             cache()->forget("plugins.$plugin->id.update");
         } catch (Exception $exception) {
+            if ($this->isDevModeActive()) {
+                throw ($exception);
+            }
+
             report($exception);
 
             $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
@@ -327,5 +347,10 @@ class PluginService
         }
 
         return array_unique($languages);
+    }
+
+    public function isDevModeActive(): bool
+    {
+        return config('panel.plugin.dev_mode', false);
     }
 }
