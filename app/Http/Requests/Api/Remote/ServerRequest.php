@@ -11,7 +11,7 @@ class ServerRequest extends FormRequest
     public function authorize(): bool
     {
         /** @var Node $node */
-        $node = request()->attributes->get('node');
+        $node = $this->attributes->get('node');
 
         /** @var ?Server $server */
         $server = $this->route()->parameter('server');

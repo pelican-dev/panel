@@ -35,7 +35,7 @@ class ServerTransferController extends Controller
             throw new ConflictHttpException('Server is not being transferred.');
         }
 
-        $this->connection->transaction(function () use (&$transfer) {
+        $this->connection->transaction(function () use ($transfer) {
             $transfer->forceFill(['successful' => false])->saveOrFail();
 
             if ($transfer->new_allocation || $transfer->new_additional_allocations) {
