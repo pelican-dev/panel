@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Remote;
 
+use App\Models\Node;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Models\User;
@@ -14,7 +15,7 @@ class ActivityProcessingController extends Controller
 {
     public function __invoke(ActivityEventRequest $request): void
     {
-        /** @var \App\Models\Node $node */
+        /** @var Node $node */
         $node = $request->attributes->get('node');
 
         $servers = $node->servers()->whereIn('uuid', $request->servers())->get()->keyBy('uuid');
@@ -22,7 +23,7 @@ class ActivityProcessingController extends Controller
 
         $logs = [];
         foreach ($request->input('data') as $datum) {
-            /** @var \App\Models\Server|null $server */
+            /** @var Server|null $server */
             $server = $servers->get($datum['server']);
             if (is_null($server) || !Str::startsWith($datum['event'], 'server:')) {
                 continue;
