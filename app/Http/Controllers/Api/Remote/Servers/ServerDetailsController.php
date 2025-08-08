@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api\Remote\Servers;
 
 use App\Enums\ServerState;
+use App\Http\Requests\Api\Remote\ServerRequest;
+use App\Models\ActivityLog;
 use App\Models\Backup;
+use App\Models\Node;
 use Illuminate\Http\Request;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
@@ -29,7 +32,7 @@ class ServerDetailsController extends Controller
      * Returns details about the server that allows daemon to self-recover and ensure
      * that the state of the server matches the Panel at all times.
      */
-    public function __invoke(Server $server): JsonResponse
+    public function __invoke(ServerRequest $request, Server $server): JsonResponse
     {
         return new JsonResponse([
             'settings' => $this->configurationStructureService->handle($server),
@@ -42,7 +45,7 @@ class ServerDetailsController extends Controller
      */
     public function list(Request $request): ServerConfigurationCollection
     {
-        /** @var \App\Models\Node $node */
+        /** @var Node $node */
         $node = $request->attributes->get('node');
 
         // Avoid run-away N+1 SQL queries by preloading the relationships that are used
@@ -85,9 +88,9 @@ class ServerDetailsController extends Controller
             ->get();
 
         $this->connection->transaction(function () use ($node, $servers) {
-            /** @var \App\Models\Server $server */
+            /** @var Server $server */
             foreach ($servers as $server) {
-                /** @var \App\Models\ActivityLog|null $activity */
+                /** @var ActivityLog|null $activity */
                 $activity = $server->activity->first();
                 if (!$activity) {
                     continue;
