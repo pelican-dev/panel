@@ -11,7 +11,7 @@ return [
 
     'status' => 'Status',
     'server' => 'Server',
-    'resource' => 'Resource',
+    'resources' => 'Resources',
     'usage_limit' => 'Usage Limit: :resource',
 
     'cpu' => 'CPU',
