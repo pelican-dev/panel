@@ -23,7 +23,7 @@
         "laravel/socialite": "^5.21",
         "laravel/tinker": "^2.10.1",
         "laravel/ui": "^4.6",
-        "lcobucci/jwt": "~4.3.0",
+        "lcobucci/jwt": "^5.5",
         "league/flysystem-aws-s3-v3": "^3.29",
         "league/flysystem-memory": "^3.29",
         "phpseclib/phpseclib": "~3.0.18",
