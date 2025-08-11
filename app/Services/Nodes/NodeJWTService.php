@@ -2,16 +2,16 @@
 
 namespace App\Services\Nodes;
 
+use App\Extensions\Lcobucci\JWT\Encoding\TimestampDates;
 use Carbon\CarbonImmutable;
 use DateTimeImmutable;
 use Illuminate\Support\Str;
 use App\Models\Node;
 use App\Models\User;
-use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
-use App\Extensions\Lcobucci\JWT\Encoding\TimestampDates;
+use Lcobucci\JWT\UnencryptedToken;
 
 class NodeJWTService
 {
@@ -64,7 +64,7 @@ class NodeJWTService
     /**
      * Generate a new JWT for a given node.
      */
-    public function handle(Node $node, ?string $identifiedBy, string $algo = 'md5'): Plain
+    public function handle(Node $node, ?string $identifiedBy, string $algo = 'sha256'): UnencryptedToken
     {
         $identifier = hash($algo, $identifiedBy);
         $config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText($node->daemon_token));
@@ -80,7 +80,9 @@ class NodeJWTService
         $builder = $builder->expiresAt($this->expiresAt);
 
         if (!empty($this->subject)) {
-            $builder = $builder->relatedTo($this->subject)->withHeader('sub', $this->subject);
+            $builder = $builder
+                ->relatedTo($this->subject)
+                ->withHeader('sub', $this->subject);
         }
 
         foreach ($this->claims as $key => $value) {
@@ -88,14 +90,7 @@ class NodeJWTService
         }
 
         if (!is_null($this->user)) {
-            $builder = $builder
-                ->withClaim('user_uuid', $this->user->uuid)
-                // The "user_id" claim is deprecated and should not be referenced — it remains
-                // here solely to ensure older versions of daemon are unaffected when the Panel
-                // is updated.
-                //
-                // This claim will be removed in Panel@1.11 or later.
-                ->withClaim('user_id', $this->user->id);
+            $builder = $builder->withClaim('user_uuid', $this->user->uuid);
         }
 
         return $builder
