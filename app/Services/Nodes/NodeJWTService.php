@@ -7,11 +7,11 @@ use DateTimeImmutable;
 use Illuminate\Support\Str;
 use App\Models\Node;
 use App\Models\User;
-use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use App\Extensions\Lcobucci\JWT\Encoding\TimestampDates;
+use Lcobucci\JWT\UnencryptedToken;
 
 class NodeJWTService
 {
@@ -64,7 +64,7 @@ class NodeJWTService
     /**
      * Generate a new JWT for a given node.
      */
-    public function handle(Node $node, ?string $identifiedBy, string $algo = 'md5'): Plain
+    public function handle(Node $node, ?string $identifiedBy, string $algo = 'md5'): UnencryptedToken
     {
         $identifier = hash($algo, $identifiedBy);
         $config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText($node->daemon_token));
