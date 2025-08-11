@@ -71,15 +71,15 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
             'Failed to validate that the JWT data returned was signed using the Node\'s secret key.'
         );
 
-        $expect = CarbonImmutable::createFromTimestamp(CarbonImmutable::now()->getTimestamp())->timezone('UTC');
+        $expect = CarbonImmutable::createFromTimestamp(CarbonImmutable::now()->getTimestamp())->timezone('UTC')->setMicroseconds(0);
 
         $claims = $token->claims();
         $this->assertSame(config('app.url'), $claims->get('iss'));
         $this->assertSame($server->node->getConnectionAddress(), $claims->get('aud')[0] ?? null);
-        $this->assertEquals($expect, CarbonImmutable::instance($claims->get('iat')));
-        $this->assertEquals($expect->subMinutes(5), CarbonImmutable::instance($claims->get('nbf')));
-        $this->assertEquals($expect->addMinutes(10), CarbonImmutable::instance($claims->get('exp')));
-        $this->assertSame($user->id, $claims->get('user_id'));
+        $this->assertEquals($expect, CarbonImmutable::instance($claims->get('iat'))->setMicroseconds(0));
+        $this->assertEquals($expect->subMinutes(5), CarbonImmutable::instance($claims->get('nbf'))->setMicroseconds(0));
+        $this->assertEquals($expect->addMinutes(10), CarbonImmutable::instance($claims->get('exp'))->setMicroseconds(0));
+        $this->assertSame($user->uuid, $claims->get('user_uuid'));
         $this->assertSame($server->uuid, $claims->get('server_uuid'));
         $this->assertSame(['*'], $claims->get('permissions'));
     }
