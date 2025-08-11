@@ -97,6 +97,7 @@ return [
         'base_url' => 'Base URL',
         'display_name' => 'Display Name',
         'auth_url' => 'Authorization callback URL',
+        'create_missing_users' => 'Auto Create Missing Users?',
     ],
     'misc' => [
         'auto_allocation' => [

@@ -6,6 +6,7 @@ use App\Models\Node;
 use Throwable;
 use App\Models\ActivityLog;
 use App\Enums\ServerState;
+use App\Http\Requests\Api\Remote\ServerRequest;
 use App\Models\Backup;
 use Illuminate\Http\Request;
 use App\Models\Server;
@@ -32,7 +33,7 @@ class ServerDetailsController extends Controller
      * Returns details about the server that allows daemon to self-recover and ensure
      * that the state of the server matches the Panel at all times.
      */
-    public function __invoke(Server $server): JsonResponse
+    public function __invoke(ServerRequest $request, Server $server): JsonResponse
     {
         return new JsonResponse([
             'settings' => $this->configurationStructureService->handle($server),

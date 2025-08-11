@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Remote\Servers;
 
 use App\Exceptions\Model\DataValidationException;
 use App\Enums\ServerState;
+use App\Http\Requests\Api\Remote\ServerRequest;
 use Illuminate\Http\Response;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
@@ -16,14 +17,12 @@ class ServerInstallController extends Controller
     /**
      * Returns installation information for a server.
      */
-    public function index(Server $server): JsonResponse
+    public function index(ServerRequest $request, Server $server): JsonResponse
     {
-        $egg = $server->egg;
-
         return new JsonResponse([
-            'container_image' => $egg->copy_script_container,
-            'entrypoint' => $egg->copy_script_entry,
-            'script' => $egg->copy_script_install,
+            'container_image' => $server->egg->copy_script_container,
+            'entrypoint' => $server->egg->copy_script_entry,
+            'script' => $server->egg->copy_script_install,
         ]);
     }
 

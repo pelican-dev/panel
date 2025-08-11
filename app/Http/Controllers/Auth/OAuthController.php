@@ -6,8 +6,8 @@ use App\Extensions\OAuth\OAuthService;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\Users\UserCreationService;
 use App\Services\Users\UserUpdateService;
-use Exception;
 use Filament\Notifications\Notification;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\RedirectResponse;
@@ -18,8 +18,9 @@ class OAuthController extends Controller
 {
     public function __construct(
         private readonly AuthManager $auth,
+        private UserCreationService $userCreation,
         private readonly UserUpdateService $updateService,
-        private readonly OAuthService $oauthService
+        private readonly OAuthService $oauthService,
     ) {}
 
     /**
@@ -40,8 +41,10 @@ class OAuthController extends Controller
      */
     public function callback(Request $request, string $driver): RedirectResponse
     {
-        // Driver is disabled - redirect to normal login
-        if (!$this->oauthService->get($driver)?->isEnabled()) {
+        $driver = $this->oauthService->get($driver);
+
+        // Unknown driver or driver is disabled - redirect to normal login
+        if (!$driver || !$driver->isEnabled()) {
             return redirect()->route('auth.login');
         }
 
@@ -59,32 +62,56 @@ class OAuthController extends Controller
             return redirect()->route('auth.login');
         }
 
-        $oauthUser = Socialite::driver($driver)->user();
+        $oauthUser = Socialite::driver($driver->getId())->user();
 
         // User is already logged in and wants to link a new OAuth Provider
         if ($request->user()) {
             $oauth = $request->user()->oauth;
-            $oauth[$driver] = $oauthUser->getId();
+            $oauth[$driver->getId()] = $oauthUser->getId();
 
             $this->updateService->handle($request->user(), ['oauth' => $oauth]);
 
             return redirect(EditProfile::getUrl(['tab' => '-oauth-tab'], panel: 'app'));
         }
 
-        try {
-            $user = User::query()->whereJsonContains('oauth->'. $driver, $oauthUser->getId())->firstOrFail();
+        $user = User::whereJsonContains('oauth->'. $driver->getId(), $oauthUser->getId())->first();
 
-            $this->auth->guard()->login($user, true);
-        } catch (Exception) {
-            // No user found - redirect to normal login
-            Notification::make()
-                ->title('No linked User found')
-                ->danger()
-                ->persistent()
-                ->send();
+        if (!$user) {
+            // No user found and auto creation is disabled - redirect to normal login
+            if (!$driver->shouldCreateMissingUsers()) {
+                Notification::make()
+                    ->title('No linked User found')
+                    ->danger()
+                    ->persistent()
+                    ->send();
 
-            return redirect()->route('auth.login');
+                return redirect()->route('auth.login');
+            }
+
+            $username = $oauthUser->getNickname();
+            $email = $oauthUser->getEmail();
+
+            // Incomplete data, can't create user - redirect to normal login
+            if (!$email) {
+                Notification::make()
+                    ->title('No linked User found')
+                    ->danger()
+                    ->persistent()
+                    ->send();
+
+                return redirect()->route('auth.login');
+            }
+
+            $user = $this->userCreation->handle([
+                'username' => $username,
+                'email' => $email,
+                'oauth' => [
+                    $driver->getId() => $oauthUser->getId(),
+                ],
+            ]);
         }
+
+        $this->auth->guard()->login($user, true);
 
         return redirect('/');
     }
