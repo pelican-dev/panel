@@ -2,6 +2,7 @@
 
 namespace App\Services\Nodes;
 
+use App\Extensions\Lcobucci\JWT\Encoding\TimestampDates;
 use Carbon\CarbonImmutable;
 use DateTimeImmutable;
 use Illuminate\Support\Str;
@@ -63,12 +64,12 @@ class NodeJWTService
     /**
      * Generate a new JWT for a given node.
      */
-    public function handle(Node $node, ?string $identifiedBy, string $algo = 'md5'): UnencryptedToken
+    public function handle(Node $node, ?string $identifiedBy, string $algo = 'sha256'): UnencryptedToken
     {
         $identifier = hash($algo, $identifiedBy);
         $config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText($node->daemon_token));
 
-        $builder = $config->builder()
+        $builder = $config->builder(new TimestampDates())
             ->issuedBy(config('app.url'))
             ->permittedFor($node->getConnectionAddress())
             ->identifiedBy($identifier)
