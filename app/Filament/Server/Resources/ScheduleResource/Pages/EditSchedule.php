@@ -49,7 +49,7 @@ class EditSchedule extends EditRecord
     {
         return [
             DeleteAction::make()
-                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-trash')
                 ->tooltip(trans('server/schedule.delete'))
                 ->after(function ($record) {
@@ -58,15 +58,15 @@ class EditSchedule extends EditRecord
                         ->log();
                 }),
             ExportScheduleAction::make()
-                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-download')
                 ->tooltip(trans('server/schedule.export')),
             $this->getSaveFormAction()->formId('form')
-                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy')
                 ->tooltip(trans('server/schedule.save')),
             $this->getCancelFormAction()->formId('form')
-                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-cancel')
                 ->tooltip(trans('server/schedule.cancel')),
         ];

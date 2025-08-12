@@ -118,7 +118,7 @@ class EditFiles extends Page
                             ->icon('tabler-x')
                             ->url(fn () => ListFiles::getUrl(['path' => dirname($this->path)])),
                     ])
-                    ->footerActionsAlignment(Alignment::End) //TODO MISSING PADDING
+                    ->footerActionsAlignment(Alignment::End)
                     ->schema([
                         Select::make('lang')
                             ->label(trans('server/file.actions.new_file.syntax'))

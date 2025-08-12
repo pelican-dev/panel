@@ -43,7 +43,7 @@ class ViewSchedule extends ViewRecord
                     $this->fillForm();
                 }),
             EditAction::make()
-                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-calendar-code')
                 ->tooltip(trans('server/schedule.edit')),
         ];

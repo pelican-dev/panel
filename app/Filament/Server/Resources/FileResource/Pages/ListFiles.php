@@ -2,6 +2,8 @@
 
 namespace App\Filament\Server\Resources\FileResource\Pages;
 
+use App\Exceptions\Repository\FileExistsException;
+use App\Livewire\AlertBanner;
 use Exception;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\FileResource;
@@ -22,17 +24,23 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\CodeEditor;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Panel;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\PageRegistration;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route as RouteFacade;
@@ -78,10 +86,13 @@ class ListFiles extends ListRecords
         $files = File::get($server, $this->path);
 
         return $table
-            ->paginated([25, 50])
+            ->paginated()
+            ->paginationMode(PaginationMode::Simple)
+            ->searchable()
             ->defaultPaginationPageOption(25)
             ->query(fn () => $files->orderByDesc('is_directory'))
             ->defaultSort('name')
+            ->deferLoading()
             ->columns([
                 TextColumn::make('name')
                     ->label(trans('server/file.name'))
@@ -410,6 +421,137 @@ class ListFiles extends ListRecords
                                 ->send();
                         }),
                 ]),
+
+                Action::make('new_file')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
+                    ->tooltip(trans('server/file.actions.new_file.title'))
+                    ->hiddenLabel()->icon('tabler-file-plus')->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->color('primary')
+                    ->modalSubmitActionLabel(trans('server/file.actions.new_file.create'))
+                    ->action(function ($data) {
+                        $path = join_paths($this->path, $data['name']);
+                        try {
+                            $this->getDaemonFileRepository()->putContent($path, $data['editor'] ?? '');
+
+                            Activity::event('server:file.write')
+                                ->property('file', join_paths($path, $data['name']))
+                                ->log();
+                        } catch (FileExistsException) {
+                            AlertBanner::make('file_already_exists')
+                                ->title('<code>' . $path . '</code> already exists!')
+                                ->danger()
+                                ->closable()
+                                ->send();
+
+                            $this->redirect(self::getUrl(['path' => dirname($path)]));
+                        }
+                    })
+                    ->schema([
+                        TextInput::make('name')
+                            ->label(trans('server/file.actions.new_file.file_name'))
+                            ->required(),
+                        CodeEditor::make('editor')
+                            ->hiddenLabel(),
+                    ]),
+                Action::make('new_folder')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
+                    ->hiddenLabel()->icon('tabler-folder-plus')->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->tooltip(trans('server/file.actions.new_folder.title'))
+                    ->color('primary')
+                    ->action(function ($data) {
+                        try {
+                            $this->getDaemonFileRepository()->createDirectory($data['name'], $this->path);
+
+                            Activity::event('server:file.create-directory')
+                                ->property(['directory' => $this->path, 'name' => $data['name']])
+                                ->log();
+                        } catch (FileExistsException) {
+                            $path = join_paths($this->path, $data['name']);
+                            AlertBanner::make('folder_already_exists')
+                                ->title('<code>' . $path . '</code> already exists!')
+                                ->danger()
+                                ->closable()
+                                ->send();
+
+                            $this->redirect(self::getUrl(['path' => dirname($path)]));
+                        }
+                    })
+                    ->schema([
+                        TextInput::make('name')
+                            ->label(trans('server/file.actions.new_folder.folder_name'))
+                            ->required(),
+                    ]),
+                Action::make('upload')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
+                    ->hiddenLabel()->icon('tabler-upload')->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->tooltip(trans('server/file.actions.upload.title'))
+                    ->color('success')
+                    ->action(function ($data) {
+                        if (count($data['files']) > 0 && !isset($data['url'])) {
+                            /** @var UploadedFile $file */
+                            foreach ($data['files'] as $file) {
+                                $this->getDaemonFileRepository()->putContent(join_paths($this->path, $file->getClientOriginalName()), $file->getContent());
+
+                                Activity::event('server:file.uploaded')
+                                    ->property('directory', $this->path)
+                                    ->property('file', $file->getClientOriginalName())
+                                    ->log();
+                            }
+                        } elseif ($data['url'] !== null) {
+                            $this->getDaemonFileRepository()->pull($data['url'], $this->path);
+
+                            Activity::event('server:file.pull')
+                                ->property('url', $data['url'])
+                                ->property('directory', $this->path)
+                                ->log();
+                        }
+
+                        return redirect(ListFiles::getUrl(['path' => $this->path]));
+                    })
+                    ->schema([
+                        Tabs::make()
+                            ->contained(false)
+                            ->schema([
+                                Tab::make(trans('server/file.actions.upload.from_files'))
+                                    ->live()
+                                    ->schema([
+                                        FileUpload::make('files')
+                                            ->storeFiles(false)
+                                            ->previewable(false)
+                                            ->preserveFilenames()
+                                            ->maxSize((int) round($server->node->upload_size * (config('panel.use_binary_prefix') ? 1.048576 * 1024 : 1000)))
+                                            ->multiple(),
+                                    ]),
+                                Tab::make(trans('server/file.actions.upload.url'))
+                                    ->live()
+                                    ->disabled(fn (Get $get) => count($get('files')) > 0)
+                                    ->schema([
+                                        TextInput::make('url')
+                                            ->label(trans('server/file.actions.upload.url'))
+                                            ->url(),
+                                    ]),
+                            ]),
+                    ]),
+                Action::make('search')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
+                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->tooltip(trans('server/file.actions.global_search.title'))
+                    ->color('primary')
+                    ->icon('tabler-world-search')
+                    ->modalHeading(trans('server/file.actions.global_search.title'))
+                    ->modalSubmitActionLabel(trans('server/file.actions.global_search.search'))
+                    ->schema([
+                        TextInput::make('searchTerm')
+                            ->label(trans('server/file.actions.global_search.search_term'))
+                            ->placeholder(trans('server/file.actions.global_search.search_term_placeholder'))
+                            ->required()
+                            ->regex('/^[^*]*\*?[^*]*$/')
+                            ->minValue(3),
+                    ])
+                    ->action(fn ($data) => redirect(SearchFiles::getUrl([
+                        'searchTerm' => $data['searchTerm'],
+                        'path' => $this->path,
+                    ]))),
             ]);
     }
 

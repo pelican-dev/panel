@@ -94,7 +94,7 @@ class AllocationResource extends Resource
             ])
             ->toolbarActions([
                 Action::make('addAllocation')
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->icon(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'tabler-network-off' : 'tabler-network')
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_ALLOCATION_CREATE, $server))
                     ->tooltip(fn () => $server->allocations()->count() >= $server->allocation_limit ? trans('server/network.limit') : trans('server/network.add'))

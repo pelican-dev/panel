@@ -119,7 +119,6 @@ class UserResource extends Resource
 
         return $table
             ->paginated(false)
-//            ->searchable(false) TODO toolbarActions do not render without the search bar :/
             ->columns([
                 ImageColumn::make('picture')
                     ->visibleFrom('lg')

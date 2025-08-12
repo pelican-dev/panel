@@ -255,7 +255,7 @@ class BackupResource extends Resource
                                 ->log();
                         })
                         ->visible(fn (Backup $backup) => $backup->status !== BackupStatus::InProgress),
-                ])->iconSize(IconSize::ExtraLarge),
+                ])->iconSize(IconSize::Large),
             ])
             ->toolbarActions([
                 CreateAction::make()

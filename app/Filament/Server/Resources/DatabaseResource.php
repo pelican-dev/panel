@@ -141,7 +141,7 @@ class DatabaseResource extends Resource
             ])
             ->toolbarActions([
                 CreateAction::make('new')
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->icon(fn () => $server->databases()->count() >= $server->database_limit ? 'tabler-database-x' : 'tabler-database-plus')
                     ->tooltip(fn () => $server->databases()->count() >= $server->database_limit ? trans('server/database.limit') : trans('server/database.create_database'))
                     ->disabled(fn () => $server->databases()->count() >= $server->database_limit)
