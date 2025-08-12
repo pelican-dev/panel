@@ -78,7 +78,7 @@ class BackupManager
         $adapterMethod = 'create' . Str::studly($adapter) . 'Adapter';
         if (method_exists($this, $adapterMethod)) {
             // Special handling for Restic adapter, which requires S3 configuration.
-            if ($name === Backup::ADAPTER_RESTIC) {
+            if ($adapter === Backup::ADAPTER_RESTIC) {
                 $s3Config = $this->getConfig(Backup::ADAPTER_AWS_S3);
                 $instance = $this->{$adapterMethod}($config, $s3Config);
             } else {

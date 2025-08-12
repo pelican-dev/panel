@@ -120,20 +120,30 @@ readonly class ResticFilesystem implements FilesystemAdapter
         // TODO-IThundxr: Implement copy() method.
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getResticInfo(): array
     {
-        return [
-            'use_s3' => $this->resticConfig['use_s3'],
+        $useS3 = (bool) $this->resticConfig['use_s3'];
+
+        $resticInfo = [
+            'use_s3' => $useS3,
             'repository' => $this->resticConfig['repository'],
             'password' => $this->resticConfig['password'],
-            'retry_lock_seconds' => $this->resticConfig['retry_lock_seconds'],
-            's3' => [
-                'region' => $this->s3Config['region'] ?? null,
+            'retry_lock_seconds' => (int) $this->resticConfig['retry_lock_seconds'],
+        ];
+
+        if ($useS3) {
+            $resticInfo['s3'] = [
+                'region' => $this->s3Config['region'],
                 'access_key_id' => $this->s3Config['key'],
                 'access_key' => $this->s3Config['secret'],
                 'bucket' => $this->s3Config['bucket'],
-                'endpoint' => $this->s3Config['endpoint'] ?? null,
-            ],
-        ];
+                'endpoint' => $this->s3Config['endpoint'],
+            ];
+        }
+
+        return $resticInfo;
     }
 }
