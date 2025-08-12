@@ -494,7 +494,8 @@ class Settings extends Page implements HasForms
                         ->hintIcon('tabler-question-mark')
                         ->hintIconTooltip(trans('admin/setting.backup.restic.repository_help'))
                         ->required(fn (Get $get) => $get('RESTIC_USE_S3') === false)
-                        ->visible(fn (Get $get) => $get('RESTIC_USE_S3') === false),
+                        ->visible(fn (Get $get) => $get('RESTIC_USE_S3') === false)
+                        ->default(config('backups.disks.restic.repository')),
                     TextInput::make('RESTIC_PASSWORD')
                         ->label(trans('admin/setting.backup.restic.password'))
                         ->hintIcon('tabler-question-mark')
