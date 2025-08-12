@@ -20,7 +20,15 @@ class EggConfigurationService
      * @return array{
      *     startup: array{done: string[], user_interaction: string[], strip_ansi: bool},
      *     stop: array{type: string, value: string},
-     *     configs: array }
+     *     configs: list<array{
+     *         file: string,
+     *         replace: list<array{
+     *             match: string,
+     *             if_value?: string,
+     *             replace_with: string
+     *         }>
+     *     }>
+     * }
      */
     public function handle(Server $server): array
     {
@@ -79,6 +87,10 @@ class EggConfigurationService
         ];
     }
 
+    /**
+     * @param  array<string, mixed>  $configs
+     * @return array<int, array<string, mixed>>
+     */
     protected function replacePlaceholders(Server $server, object|array $configs): array
     {
         // Get the legacy configuration structure for the server so that we
