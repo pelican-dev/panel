@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Remote\Backups;
 
 use App\Exceptions\Http\HttpForbiddenException;
+use App\Extensions\Backups\Adapter\ResticBackupAdapter;
 use App\Extensions\Backups\BackupManager;
-use App\Extensions\Filesystem\ResticFilesystem;
 use App\Http\Controllers\Controller;
 use App\Models\Backup;
 use App\Models\Node;
@@ -49,7 +49,7 @@ class BackupRemoteResticDetailsController extends Controller
 
         // Ensure we are using the Restic adapter.
         $adapter = $this->backupManager->adapter();
-        if (!$adapter instanceof ResticFilesystem) {
+        if (!$adapter instanceof ResticBackupAdapter) {
             throw new BadRequestHttpException('The configured backup adapter is not a Restic compatible adapter.');
         }
 

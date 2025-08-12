@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Remote\Backups;
 
+use App\Extensions\Backups\Adapter\S3BackupAdapter;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use App\Models\Backup;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Extensions\Backups\BackupManager;
-use App\Extensions\Filesystem\S3Filesystem;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Exceptions\Http\HttpForbiddenException;
@@ -62,7 +62,7 @@ class BackupRemoteUploadController extends Controller
 
         // Ensure we are using the S3 adapter.
         $adapter = $this->backupManager->adapter();
-        if (!$adapter instanceof S3Filesystem) {
+        if (!$adapter instanceof S3BackupAdapter) {
             throw new BadRequestHttpException('The configured backup adapter is not an S3 compatible adapter.');
         }
 

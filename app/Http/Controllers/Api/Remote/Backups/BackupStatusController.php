@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Remote\Backups;
 
+use App\Extensions\Backups\Adapter\S3BackupAdapter;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use App\Models\Backup;
@@ -10,7 +11,6 @@ use App\Facades\Activity;
 use App\Exceptions\DisplayException;
 use App\Http\Controllers\Controller;
 use App\Extensions\Backups\BackupManager;
-use App\Extensions\Filesystem\S3Filesystem;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Http\Requests\Api\Remote\ReportBackupCompleteRequest;
 use App\Exceptions\Http\HttpForbiddenException;
@@ -70,7 +70,7 @@ class BackupStatusController extends Controller
             // Check if we are using the s3 backup adapter. If so, make sure we mark the backup as
             // being completed in S3 correctly.
             $adapter = $this->backupManager->adapter();
-            if ($adapter instanceof S3Filesystem) {
+            if ($adapter instanceof S3BackupAdapter) {
                 $this->completeMultipartUpload($model, $adapter, $successful, $request->input('parts'));
             }
         });
@@ -111,7 +111,7 @@ class BackupStatusController extends Controller
      * @throws \Exception
      * @throws \App\Exceptions\DisplayException
      */
-    protected function completeMultipartUpload(Backup $backup, S3Filesystem $adapter, bool $successful, ?array $parts): void
+    protected function completeMultipartUpload(Backup $backup, S3BackupAdapter $adapter, bool $successful, ?array $parts): void
     {
         // This should never really happen, but if it does don't let us fall victim to Amazon's
         // wildly fun error messaging. Just stop the process right here.
