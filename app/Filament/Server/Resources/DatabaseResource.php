@@ -7,6 +7,7 @@ use App\Filament\Components\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Resources\DatabaseResource\Pages\ListDatabases;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\Database;
+use App\Models\DatabaseHost;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
@@ -17,13 +18,17 @@ use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use App\Traits\Filament\HasLimitBadge;
 use Exception;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -109,6 +114,9 @@ class DatabaseResource extends Resource
      */
     public static function defaultTable(Table $table): Table
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         return $table
             ->columns([
                 TextColumn::make('host')
@@ -130,6 +138,45 @@ class DatabaseResource extends Resource
                     ->modalHeading(fn (Database $database) => 'Viewing ' . $database->database),
                 DeleteAction::make()
                     ->using(fn (Database $database, DatabaseManagementService $service) => $service->delete($database)),
+            ])
+            ->toolbarActions([
+                CreateAction::make('new')
+                    ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                    ->icon(fn () => $server->databases()->count() >= $server->database_limit ? 'tabler-database-x' : 'tabler-database-plus')
+                    ->tooltip(fn () => $server->databases()->count() >= $server->database_limit ? trans('server/database.limit') : trans('server/database.create_database'))
+                    ->disabled(fn () => $server->databases()->count() >= $server->database_limit)
+                    ->color(fn () => $server->databases()->count() >= $server->database_limit ? 'danger' : 'primary')
+                    ->createAnother(false)
+                    ->schema([
+                        Grid::make()
+                            ->columns(2)
+                            ->schema([
+                                Select::make('database_host_id')
+                                    ->label(trans('server/database.database_host'))
+                                    ->columnSpan(2)
+                                    ->required()
+                                    ->placeholder(trans('server/database.database_host_select'))
+                                    ->options(fn () => $server->node->databaseHosts->mapWithKeys(fn (DatabaseHost $databaseHost) => [$databaseHost->id => $databaseHost->name])),
+                                TextInput::make('database')
+                                    ->label(trans('server/database.name'))
+                                    ->columnSpan(1)
+                                    ->prefix('s'. $server->id . '_')
+                                    ->hintIcon('tabler-question-mark')
+                                    ->hintIconTooltip(trans('server/database.name_hint')),
+                                TextInput::make('remote')
+                                    ->label(trans('server/database.connections_from'))
+                                    ->columnSpan(1)
+                                    ->default('%'),
+                            ]),
+                    ])
+                    ->action(function ($data, DatabaseManagementService $service) use ($server) {
+                        if (empty($data['database'])) {
+                            $data['database'] = str_random(12);
+                        }
+                        $data['database'] = 's'. $server->id . '_' . $data['database'];
+
+                        $service->create($server, $data);
+                    }),
             ]);
     }
 

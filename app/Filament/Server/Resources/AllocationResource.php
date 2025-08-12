@@ -7,15 +7,18 @@ use App\Facades\Activity;
 use App\Models\Allocation;
 use App\Models\Permission;
 use App\Models\Server;
+use App\Services\Allocations\FindAssignableAllocationService;
 use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyTable;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Actions\DetachAction;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -88,6 +91,28 @@ class AllocationResource extends Resource
                             ->log();
                     })
                     ->after(fn (Allocation $allocation) => $allocation->id === $server->allocation_id && $server->update(['allocation_id' => $server->allocations()->first()?->id])),
+            ])
+            ->toolbarActions([
+                Action::make('addAllocation')
+                    ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                    ->icon(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'tabler-network-off' : 'tabler-network')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_ALLOCATION_CREATE, $server))
+                    ->tooltip(fn () => $server->allocations()->count() >= $server->allocation_limit ? trans('server/network.limit') : trans('server/network.add'))
+                    ->hidden(fn () => !config('panel.client_features.allocations.enabled'))
+                    ->disabled(fn () => $server->allocations()->count() >= $server->allocation_limit)
+                    ->color(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'danger' : 'primary')
+                    ->action(function (FindAssignableAllocationService $service) use ($server) {
+                        $allocation = $service->handle($server);
+
+                        if (!$server->allocation_id) {
+                            $server->update(['allocation_id' => $allocation->id]);
+                        }
+
+                        Activity::event('server:allocation.create')
+                            ->subject($allocation)
+                            ->property('allocation', $allocation->address)
+                            ->log();
+                    }),
             ]);
     }
 
