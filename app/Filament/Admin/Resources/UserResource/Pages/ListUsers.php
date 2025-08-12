@@ -8,6 +8,7 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\CreateAction;
 
 class ListUsers extends ListRecords
 {
@@ -19,6 +20,8 @@ class ListUsers extends ListRecords
     /** @return array<Action|ActionGroup> */
     protected function getDefaultHeaderActions(): array
     {
-        return [];
+        return [
+            CreateAction::make(),
+        ];
     }
 }
