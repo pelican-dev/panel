@@ -90,7 +90,7 @@ return [
         ],
         'restic' => [
             'restic_title' => 'Restic Configuration',
-            'restic_help' => 'The configuration for <u><a href="https://restic.net/" target="_blank">Restic</a></u> backups. Ensure that Restic is installed on all your Wings nodes if you\'d like to use this feature.\n You do not need to install Restic on your nodes if you are using the Wings docker image.',
+            'restic_help' => 'The configuration for <u><a href="https://restic.net/" target="_blank">Restic</a></u> backups. Ensure that Restic is installed on all your Wings nodes if you\'d like to use this feature.<br> You do not need to install Restic on your nodes if you are using the Wings docker image.',
             'repository' => 'Repository Path',
             'repository_help' => 'The path to the Restic repository',
             'password' => 'Repository Password',
