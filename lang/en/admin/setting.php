@@ -83,7 +83,9 @@ return [
             'access_key' => 'Access Key ID',
             'secret_key' => 'Secret Access Key',
             'bucket' => 'Bucket',
+            'bucket_validation' => 'The bucket name must match the <u><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html" target="_blank">AWS naming rules</a></u>',
             'endpoint' => 'Endpoint',
+            'endpoint_validation' => 'The endpoint must be a valid URL (e.g. https://s3.example.com)',
             'use_path_style_endpoint' => 'Use Path Style Endpoint',
         ],
         'restic' => [

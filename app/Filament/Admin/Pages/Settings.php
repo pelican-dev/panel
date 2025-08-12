@@ -532,15 +532,23 @@ class Settings extends Page implements HasForms
                     TextInput::make('AWS_SECRET_ACCESS_KEY')
                         ->label(trans('admin/setting.backup.s3.secret_key'))
                         ->required()
+                        ->password()
                         ->default(config('backups.disks.s3.secret')),
                     TextInput::make('AWS_BACKUPS_BUCKET')
                         ->label(trans('admin/setting.backup.s3.bucket'))
                         ->required()
-                        ->password()
+                        ->regex('/^(?!.*\.\.)(?!\d{1,3}(\.\d{1,3}){3}$)[a-z0-9][a-z0-9.-]{3,61}[a-z0-9]$/')
+                        ->validationMessages([
+                            'regex' => new HtmlString(trans('admin/setting.backup.s3.bucket_validation')),
+                        ])
                         ->default(config('backups.disks.s3.bucket')),
                     TextInput::make('AWS_ENDPOINT')
                         ->label(trans('admin/setting.backup.s3.endpoint'))
                         ->required()
+                        ->regex('/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*)/')
+                        ->validationMessages([
+                            'regex' => trans('admin/setting.backup.s3.endpoint_validation'),
+                        ])
                         ->default(config('backups.disks.s3.endpoint')),
                     Toggle::make('AWS_USE_PATH_STYLE_ENDPOINT')
                         ->label(trans('admin/setting.backup.s3.use_path_style_endpoint'))
