@@ -40,6 +40,7 @@ use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 /**
@@ -484,20 +485,37 @@ class Settings extends Page implements HasForms
                         ->default(config('backups.throttles.period')),
                 ]),
             Section::make(trans('admin/setting.backup.restic.restic_title'))
+                ->description(new HtmlString(trans('admin/setting.backup.restic.restic_help')))
                 ->columns()
                 ->visible(fn (Get $get) => $get('APP_BACKUP_DRIVER') === Backup::ADAPTER_RESTIC)
                 ->schema([
                     TextInput::make('RESTIC_REPOSITORY')
                         ->label(trans('admin/setting.backup.restic.repository'))
+                        ->hintIcon('tabler-question-mark')
+                        ->hintIconTooltip(trans('admin/setting.backup.restic.repository_help'))
                         ->required(fn (Get $get) => $get('RESTIC_USE_S3') === false)
                         ->visible(fn (Get $get) => $get('RESTIC_USE_S3') === false),
                     TextInput::make('RESTIC_PASSWORD')
                         ->label(trans('admin/setting.backup.restic.password'))
+                        ->hintIcon('tabler-question-mark')
+                        ->hintIconTooltip(trans('admin/setting.backup.restic.password_help'))
+                        ->password()
                         ->default(config('backups.disks.restic.password')),
+                    TextInput::make('RESTIC_RETRY_LOCK_SECONDS')
+                        ->label(trans('admin/setting.backup.restic.retry_lock_seconds'))
+                        ->hintIcon('tabler-question-mark')
+                        ->hintIconTooltip(trans('admin/setting.backup.restic.retry_lock_seconds_help'))
+                        ->numeric()
+                        ->minValue(1)
+                        ->suffix('Seconds')
+                        ->default(config('backups.disks.restic.retry_lock_seconds')),
                     Toggle::make('RESTIC_USE_S3')
                         ->label(trans('admin/setting.backup.restic.use_s3'))
                         ->live()
-                        ->default(false),
+                        ->inline(false)
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('RESTIC_USE_S3', (bool) $state))
+                        ->default(config('backups.disks.restic.use_s3')),
                 ]),
             Section::make(trans('admin/setting.backup.s3.s3_title'))
                 ->columns()
@@ -518,6 +536,7 @@ class Settings extends Page implements HasForms
                     TextInput::make('AWS_BACKUPS_BUCKET')
                         ->label(trans('admin/setting.backup.s3.bucket'))
                         ->required()
+                        ->password()
                         ->default(config('backups.disks.s3.bucket')),
                     TextInput::make('AWS_ENDPOINT')
                         ->label(trans('admin/setting.backup.s3.endpoint'))

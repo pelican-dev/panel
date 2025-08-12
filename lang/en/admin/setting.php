@@ -88,10 +88,14 @@ return [
         ],
         'restic' => [
             'restic_title' => 'Restic Configuration',
-            'repository' => 'The path to the Restic repository',
-            'password' => 'The password for the Restic repository',
-            'retry_lock_seconds' => 'The time after which restic should try to get a lock again.',
-            'use_s3' => 'Should Restic use S3?',
+            'restic_help' => 'The configuration for <u><a href="https://restic.net/" target="_blank">Restic</a></u> backups. Ensure that Restic is installed on all your Wings nodes if you\'d like to use this feature.\n You do not need to install Restic on your nodes if you are using the Wings docker image.',
+            'repository' => 'Repository Path',
+            'repository_help' => 'The path to the Restic repository',
+            'password' => 'Repository Password',
+            'password_help' => 'The password for the Restic repository',
+            'retry_lock_seconds' => 'Repository Lock Retry Time',
+            'retry_lock_seconds_help' => 'The time after which Restic should try to get a lock again.',
+            'use_s3' => 'Use S3 Restic Repository',
         ],
     ],
     'oauth' => [
