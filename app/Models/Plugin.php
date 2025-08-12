@@ -319,11 +319,12 @@ class Plugin extends Model implements HasPluginSettings
 
     public function hasSettings(): bool
     {
-        $class = $this->fullClass();
-        if (class_exists($class)) {
+        try {
             $pluginObject = filament($this->id);
 
             return $pluginObject instanceof HasPluginSettings;
+        } catch (Exception) {
+            // Plugin is not loaded on the current panel, so no settings
         }
 
         return false;
@@ -334,13 +335,14 @@ class Plugin extends Model implements HasPluginSettings
      */
     public function getSettingsForm(): array
     {
-        $class = $this->fullClass();
-        if (class_exists($class)) {
+        try {
             $pluginObject = filament($this->id);
 
             if ($pluginObject instanceof HasPluginSettings) {
                 return $pluginObject->getSettingsForm();
             }
+        } catch (Exception) {
+            // Plugin is not loaded on the current panel, so no settings
         }
 
         return [];
