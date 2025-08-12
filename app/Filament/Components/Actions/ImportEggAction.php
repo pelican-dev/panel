@@ -17,7 +17,6 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
@@ -100,9 +99,6 @@ class ImportEggAction extends Action
         });
     }
 
-    /**
-     * @throws Exception
-     */
     public function multiple(bool|Closure $condition = true): static
     {
         $isMultiple = (bool) $this->evaluate($condition);
@@ -132,16 +128,11 @@ class ImportEggAction extends Action
                                 ->searchable()
                                 ->preload()
                                 ->live()
-                                ->hintAction(
-                                    Action::make('refresh')
-                                        ->hiddenLabel()
-                                        ->icon('tabler-refresh')
-                                        ->iconSize(IconSize::Medium)
-                                        ->tooltip(trans('admin/egg.import.refresh'))
-                                        ->action(function () {
-                                            Artisan::call(UpdateEggIndexCommand::class);
-                                        })
-                                )
+                                ->hintIcon('tabler-refresh')
+                                ->hintIconTooltip(trans('admin/egg.import.refresh'))
+                                ->hintAction(function () {
+                                    Artisan::call(UpdateEggIndexCommand::class);
+                                })
                                 ->afterStateUpdated(function ($state, Set $set, Get $get) use ($isMultiple) {
                                     if ($state) {
                                         $urls = $isMultiple ? $get('urls') : [];
