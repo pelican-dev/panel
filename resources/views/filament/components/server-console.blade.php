@@ -27,7 +27,7 @@
             />
             <input
                 id="send-command"
-                class="w-full focus:outline-none focus:ring-0 border-none dark:bg-gray-900"
+                class="w-full focus:outline-none focus:ring-0 border-none dark:bg-gray-900 p-1"
                 type="text"
                 :readonly="{{ $this->canSendCommand() ? 'false' : 'true' }}"
                 title="{{ $this->canSendCommand() ? '' : trans('server/console.command_blocked_title') }}"
