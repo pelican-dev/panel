@@ -30,14 +30,10 @@ class Settings extends ServerFormPage
     public function form(Schema $schema): Schema
     {
         return parent::form($schema)
-            ->columns([
-                'default' => 1,
-                'sm' => 2,
-                'md' => 4,
-                'lg' => 6,
-            ])
+            ->columns(4)
             ->components([
                 Section::make(trans('server/setting.server_info.title'))
+                    ->columnSpanFull()
                     ->columns([
                         'default' => 1,
                         'sm' => 2,
@@ -47,7 +43,12 @@ class Settings extends ServerFormPage
                     ->schema([
                         Fieldset::make()
                             ->label(trans('server/setting.server_info.information'))
-                            ->columnSpanFull()
+                            ->columnSpan([
+                                'default' => 1,
+                                'sm' => 2,
+                                'md' => 2,
+                                'lg' => 6,
+                            ])
                             ->schema([
                                 TextInput::make('name')
                                     ->label(trans('server/setting.server_info.name'))
@@ -56,7 +57,7 @@ class Settings extends ServerFormPage
                                     ->columnSpan([
                                         'default' => 1,
                                         'sm' => 2,
-                                        'md' => 4,
+                                        'md' => 2,
                                         'lg' => 6,
                                     ])
                                     ->live(onBlur: true)
@@ -68,7 +69,7 @@ class Settings extends ServerFormPage
                                     ->columnSpan([
                                         'default' => 1,
                                         'sm' => 2,
-                                        'md' => 4,
+                                        'md' => 2,
                                         'lg' => 6,
                                     ])
                                     ->autosize()
@@ -90,11 +91,16 @@ class Settings extends ServerFormPage
                             ]),
                         Fieldset::make()
                             ->label(trans('server/setting.server_info.limits.title'))
-                            ->columnSpanFull()
+                            ->columnSpan([
+                                'default' => 1,
+                                'sm' => 2,
+                                'md' => 2,
+                                'lg' => 6,
+                            ])
                             ->columns([
                                 'default' => 1,
                                 'sm' => 1,
-                                'md' => 3,
+                                'md' => 1,
                                 'lg' => 3,
                             ])
                             ->schema([
@@ -143,6 +149,7 @@ class Settings extends ServerFormPage
                             ]),
                     ]),
                 Section::make(trans('server/setting.node_info.title'))
+                    ->columnSpan(2)
                     ->schema([
                         TextInput::make('node.name')
                             ->label(trans('server/setting.node_info.name'))
@@ -193,7 +200,7 @@ class Settings extends ServerFormPage
                     ]),
                 Section::make(trans('server/setting.reinstall.title'))
                     ->hidden(fn (Server $server) => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
-                    ->columnSpanFull()
+                    ->columnSpan(2)
                     ->collapsible()
                     ->footerActions([
                         Action::make('reinstall')
