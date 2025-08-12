@@ -87,7 +87,7 @@ class ServerCreationService
                 $data['node_id'] = $nodes->first();
             }
         } else {
-            $data['node_id'] = Allocation::find($data['allocation_id'])?->node_id;
+            $data['node_id'] = $data['node_id'] ?? Allocation::find($data['allocation_id'])?->node_id;
         }
 
         Assert::false(empty($data['node_id']), 'Expected a non-empty node_id in server creation data.');
