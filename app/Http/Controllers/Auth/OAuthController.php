@@ -10,24 +10,23 @@ use App\Models\User;
 use App\Services\Users\UserCreationService;
 use Exception;
 use Filament\Notifications\Notification;
-use Illuminate\Auth\AuthManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Contracts\User as OAuthUser;
 use Laravel\Socialite\Facades\Socialite;
+use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 
 class OAuthController extends Controller
 {
     public function __construct(
-        private readonly AuthManager $auth,
-        private UserCreationService $userCreation,
+        private readonly UserCreationService $userCreation,
         private readonly OAuthService $oauthService,
     ) {}
 
     /**
      * Redirect user to the OAuth provider
      */
-    public function redirect(string $driver): RedirectResponse
+    public function redirect(string $driver): SymfonyRedirectResponse|RedirectResponse
     {
         if (!$this->oauthService->get($driver)->isEnabled()) {
             return redirect()->route('auth.login');
@@ -55,9 +54,6 @@ class OAuthController extends Controller
         }
 
         $oauthUser = Socialite::driver($driver->getId())->user();
-        if (!$oauthUser) {
-            return redirect()->route('auth.login');
-        }
 
         if ($request->user()) {
             $this->linkUser($request->user(), $driver, $oauthUser);
@@ -123,7 +119,7 @@ class OAuthController extends Controller
 
     private function loginUser(User $user): RedirectResponse
     {
-        $this->auth->guard()->login($user, true);
+        auth()->guard()->login($user, true);
 
         return redirect('/');
     }
