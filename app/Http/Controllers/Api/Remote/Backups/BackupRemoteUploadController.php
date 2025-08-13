@@ -10,7 +10,6 @@ use App\Models\Backup;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Extensions\Backups\BackupManager;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Exceptions\Http\HttpForbiddenException;
 use Throwable;
 
@@ -35,7 +34,7 @@ class BackupRemoteUploadController extends Controller
         $node = $request->attributes->get('node');
 
         // Get the size query parameter.
-        $size = (int) $request->query('size') ?? 0;
+        $size = (int) ($request->query('size') ?? 0);
 
         /** @var Backup $model */
         $model = Backup::query()
