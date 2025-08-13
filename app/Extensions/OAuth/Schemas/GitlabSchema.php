@@ -47,7 +47,7 @@ final class GitlabSchema extends OAuthSchema
                         ->label('Redirect URI')
                         ->dehydrated()
                         ->disabled()
-                        //->hintCopy() // TODO: wait for filament bug fix
+                        ->hintCopy()
                         ->default(fn () => url('/auth/oauth/callback/gitlab')),
                 ]),
         ], parent::getSetupSteps());

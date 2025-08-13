@@ -36,7 +36,7 @@ final class DiscordSchema extends OAuthSchema
                         ->label('Redirect URL')
                         ->dehydrated()
                         ->disabled()
-                        //->hintCopy() // TODO: wait for filament bug fix
+                        ->hintCopy()
                         ->formatStateUsing(fn () => url('/auth/oauth/callback/discord')),
                 ]),
         ], parent::getSetupSteps());

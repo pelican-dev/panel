@@ -27,7 +27,7 @@ final class GithubSchema extends OAuthSchema
                         ->label('Authorization callback URL')
                         ->dehydrated()
                         ->disabled()
-                        //->hintCopy() // TODO: wait for filament bug fix
+                        ->hintCopy()
                         ->default(fn () => url('/auth/oauth/callback/github')),
                     TextEntry::make('register_application')
                         ->hiddenLabel()

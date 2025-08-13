@@ -48,14 +48,14 @@ class QueueStep
                 TextInput::make('crontab')
                     ->label(new HtmlString('Run the following command to set up your crontab. Note that <code>www-data</code> is your webserver user. On some systems this username might be different!'))
                     ->disabled()
-                    //->hintCopy() // TODO: wait for filament bug fix
+                    ->hintCopy()
                     ->default('(crontab -l -u www-data 2>/dev/null; echo "* * * * * php ' . base_path() . '/artisan schedule:run >> /dev/null 2>&1") | crontab -u www-data -')
                     ->hidden(fn () => @file_exists('/.dockerenv'))
                     ->columnSpanFull(),
                 TextInput::make('queueService')
                     ->label(new HtmlString('To setup the queue worker service you simply have to run the following command.'))
                     ->disabled()
-                    //->hintCopy() // TODO: wait for filament bug fix
+                    ->hintCopy()
                     ->default('sudo php ' . base_path() . '/artisan p:environment:queue-service')
                     ->hidden(fn () => @file_exists('/.dockerenv'))
                     ->columnSpanFull(),
