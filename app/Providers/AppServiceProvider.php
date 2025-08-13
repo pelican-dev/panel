@@ -153,12 +153,12 @@ class AppServiceProvider extends ServiceProvider
 
         Field::macro('suffixCopy', function () {
             /** @var TextInput $this */
-            return $this->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null); // @phpstan-ignore varTag.nativeType
+            return $this->suffixAction(fn (?string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null); // @phpstan-ignore varTag.nativeType
         });
 
         Field::macro('hintCopy', function () {
             /** @var Field $this */
-            return $this->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null); // @phpstan-ignore varTag.nativeType
+            return $this->hintAction(fn (?string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null); // @phpstan-ignore varTag.nativeType
         });
 
         // Don't run any health checks during tests
