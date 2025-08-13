@@ -45,6 +45,21 @@ class ServerDeletionService
      */
     public function handle(Server $server): void
     {
+        // Delete all the backups
+        foreach ($server->backups as $backup) {
+            try {
+                $this->deleteBackupService->handle($backup);
+            } catch (Exception $exception) {
+                if (!$this->force) {
+                    throw $exception;
+                }
+
+                $backup->delete();
+
+                logger()->warning($exception);
+            }
+        }
+
         try {
             $this->daemonServerRepository->setServer($server)->delete();
         } catch (ConnectionException $exception) {
@@ -75,21 +90,6 @@ class ServerDeletionService
                     // the host instance, but we couldn't delete it anyways so not sure how we would
                     // handle this better anyways.
                     $database->delete();
-
-                    logger()->warning($exception);
-                }
-            }
-
-            foreach ($server->backups as $backup) {
-                try {
-                    $this->deleteBackupService->handle($backup);
-                } catch (Exception $exception) {
-                    if (!$this->force) {
-                        throw $exception;
-                    }
-
-                    // Delete it from the db, can't really handle this in any other way
-                    $backup->delete();
 
                     logger()->warning($exception);
                 }
