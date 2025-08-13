@@ -13,13 +13,13 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Throwable;
 
-readonly class S3BackupAdapter implements BackupAdapter
+class S3BackupAdapter implements BackupAdapter
 {
     public const DEFAULT_MAX_PART_SIZE = 5 * 1024 * 1024 * 1024;
 
     public function __construct(
-        private S3ClientInterface $client,
-        private string $bucket,
+        private readonly S3ClientInterface $client,
+        private readonly string $bucket,
     ) {}
 
     public function getClient(): S3ClientInterface
