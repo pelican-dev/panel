@@ -92,7 +92,6 @@ class ListFiles extends ListRecords
             ->defaultPaginationPageOption(25)
             ->query(fn () => $files->orderByDesc('is_directory'))
             ->defaultSort('name')
-            ->deferLoading()
             ->columns([
                 TextColumn::make('name')
                     ->label(trans('server/file.name'))
