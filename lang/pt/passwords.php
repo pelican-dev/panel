@@ -17,6 +17,6 @@ return [
     'sent' => 'Enviámos por e-mail um link de redefinição da palavra-passe.',
     'throttled' => 'Por favor, aguarde antes de tentar novamente.',
     'token' => 'Este token de redefinição de palavra-passe é inválido.',
-    'user' => "Não encontrei um utilizador com esse endereço de e-mail.",
+    'user' => 'Não encontrei um utilizador com esse endereço de e-mail.',
 
 ];

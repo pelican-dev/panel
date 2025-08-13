@@ -17,6 +17,6 @@ return [
     'sent' => 'Poslali smo vam link za resetovanje šifre putem e-pošte.',
     'throttled' => 'Molimo sačekajte pre nego što pokušate ponovo.',
     'token' => 'Ovaj token za resetovanje šifre je nevažeći.',
-    'user' => "Ne možemo pronaći korisnika sa tom email adresom.",
+    'user' => 'Ne možemo pronaći korisnika sa tom email adresom.',
 
 ];

@@ -24,7 +24,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Inga noder upptäckta',
-            'content' => "Det verkar som att du inte har några noder uppsatta ännu, men oroa dig inte, du kan klicka på åtgärdsknappen för att skapa din första!",
+            'content' => 'Det verkar som att du inte har några noder uppsatta ännu, men oroa dig inte, du kan klicka på åtgärdsknappen för att skapa din första!',
             'extra_note' => 'Om du stöter på några problem, vänligen rapportera dem på GitHub.',
             'button_label' => 'Skapa första noden i Pelican',
         ],

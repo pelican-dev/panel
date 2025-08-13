@@ -24,7 +24,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Nie wykryto żadnych węzłów',
-            'content' => "Wygląda na to, że nie masz jeszcze skonfigurowanych żadnych węzłów, ale nie martw się, ponieważ wystarczy, że klikniesz przycisk akcji, aby utworzyć swój pierwszy węzeł!",
+            'content' => 'Wygląda na to, że nie masz jeszcze skonfigurowanych żadnych węzłów, ale nie martw się, ponieważ wystarczy, że klikniesz przycisk akcji, aby utworzyć swój pierwszy węzeł!',
             'extra_note' => 'Jeśli napotkasz jakieś problemy, zgłoś je na GitHubie.',
             'button_label' => 'Stwórz pierwszy węzeł w Pelican',
         ],

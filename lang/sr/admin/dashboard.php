@@ -24,7 +24,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Nijedan cvor nije detektovan.',
-            'content' => "Izgleda da još nemate nijedne Čvorove postavljene, ali ne brinite, jer možete kliknuti na dugme za akciju da napravite svoj prvi!",
+            'content' => 'Izgleda da još nemate nijedne Čvorove postavljene, ali ne brinite, jer možete kliknuti na dugme za akciju da napravite svoj prvi!',
             'extra_note' => 'Ako naiđeš na bilo kakav problem, molim te da grešku prijaviš na GitHub.',
             'button_label' => 'Napravi prvi Čvor u Pelican',
         ],

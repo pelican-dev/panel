@@ -24,7 +24,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Ingen Nodes fundet',
-            'content' => "Ser ikke ud til at der er nogen nodes opsat endnu, klik på handlingsknappen for at oprette den første!",
+            'content' => 'Ser ikke ud til at der er nogen nodes opsat endnu, klik på handlingsknappen for at oprette den første!',
             'extra_note' => 'Hvis du løber ind i nogen problemer, bedes du rapportere dem på GitHub.',
             'button_label' => 'Opret den første node i Pelican',
         ],

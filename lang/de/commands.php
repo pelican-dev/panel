@@ -5,7 +5,7 @@ return [
         'comment' => [
             'author' => 'Gib eine E-Mail-Adresse an, von der exportierte Eggs von diesem Panel stammen sollen. Dies sollte eine gültige E-Mail-Adresse sein.',
             'url' => 'Die URL der Anwendung MUSS mit https:// oder http:// beginnen, je nachdem, ob Du SSL verwendest oder nicht. Wenn Du dies nicht einbindest, werden Deine E-Mails und andere Inhalte auf eine falsche Seite linken.',
-            'timezone' => "Die Zeitzone sollte mit einer der unterstützten PHP-Zeitzonen übereinstimmen. Wenn Du Dir nicht sicher bist, schau unter folgendem Link nach https://php.net/manual/en/timezones.php.",
+            'timezone' => 'Die Zeitzone sollte mit einer der unterstützten PHP-Zeitzonen übereinstimmen. Wenn Du Dir nicht sicher bist, schau unter folgendem Link nach https://php.net/manual/en/timezones.php.',
         ],
         'redis' => [
             'note' => 'Du hast den Redis-Treiber für eine oder mehrere Optionen ausgewählt, bitte gib unten gültige Verbindungsinformationen an. In den meisten Fällen kannst Du die vorgegebenen Standardwerte verwenden, es sei denn, Du hast in Deinem Setup etwas geändert.',
@@ -15,7 +15,7 @@ return [
     ],
     'database_settings' => [
         'DB_HOST_note' => 'Es wird davon abgeraten "localhost" als Datenbank-Host zu verwenden, da wir häufig Probleme mit den Socket-Verbindungen hatten. Wenn Du eine lokale Verbindung verwenden möchtest, solltest Du "127.0.0.1" verwenden.',
-        'DB_USERNAME_note' => "Die Verwendung des root-Kontos für MySQL-Verbindungen ist nicht nur sehr umstritten, sondern auch von dieser Anwendung nicht erlaubt. Du musst einen eigenen MySQL-Benutzer für diese Software erstellt haben.",
+        'DB_USERNAME_note' => 'Die Verwendung des root-Kontos für MySQL-Verbindungen ist nicht nur sehr umstritten, sondern auch von dieser Anwendung nicht erlaubt. Du musst einen eigenen MySQL-Benutzer für diese Software erstellt haben.',
         'DB_PASSWORD_note' => 'Es scheint, als hättest Du bereits ein Passwort für die MySQL-Verbindung definiert, möchtest Du es ändern?',
         'DB_error_2' => 'Deine Verbindungsdaten wurden NICHT gespeichert. Du musst gültige Verbindungsdaten angeben, bevor Du fortfährst.',
         'go_back' => 'Zurück und erneut versuchen',
@@ -34,7 +34,7 @@ return [
         'disk_overallocate' => 'Gib die Menge an zusätzlichem Speicher an, den Du zuweisen möchtest. -1 deaktiviert die Überprüfung, und 0 verhindert das Erstellen eines neuen Servers.',
         'cpu' => 'Gib die maximale Menge an CPU an',
         'cpu_overallocate' => 'Gib die Menge an zusätzlicher CPU-Leistung an, die Du zuweisen möchtest. -1 deaktiviert die Überprüfung, und 0 verhindert das Erstellen eines neuen Servers.',
-        'upload_size' => "Gib die maximale Dateigröße für das Hochladen an",
+        'upload_size' => 'Gib die maximale Dateigröße für das Hochladen an',
         'daemonListen' => 'Gib den Port für den Daemon an',
         'daemonSFTP' => 'Gib den SFTP-Port für den Daemon an',
         'daemonSFTPAlias' => 'Gib den Daemon SFTP-Alias ein (kann leer sein)',

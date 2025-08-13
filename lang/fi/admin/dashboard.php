@@ -24,7 +24,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Solmuja ei löydetty',
-            'content' => "Näyttää siltä, että sinulla ei ole vielä mitään solmuja asetettu, mutta älä huoli, koska voit painaa toiminto painiketta luodaksesi ensimmäisen!",
+            'content' => 'Näyttää siltä, että sinulla ei ole vielä mitään solmuja asetettu, mutta älä huoli, koska voit painaa toiminto painiketta luodaksesi ensimmäisen!',
             'extra_note' => 'Jos kohtaat ongelmia, ilmoita niistä GitHubissa.',
             'button_label' => 'Luo ensimmäinen solmu Pelicaniin',
         ],

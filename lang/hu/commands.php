@@ -5,7 +5,7 @@ return [
         'comment' => [
             'author' => 'Adj meg egy e-mail címet, amire exportálni tudjuk az eggs-t. Mindenképp valós e-mail cím legyen.',
             'url' => 'Az URL címnek kötelező, hogy "https://" vagy "http://"-el kezdődjön, attól függően, hogy SSL-t használsz-e vagy nem. Hogyha hibásan adod meg, rossz helyre fog menni.',
-            'timezone' => "Az időzónának egyeznie kell a PHP által támogatott időzónákkal. Hogyha nem vagy biztos, kérlek, látogasd meg a https://php.net/manual/en/timezones.php oldalt.",
+            'timezone' => 'Az időzónának egyeznie kell a PHP által támogatott időzónákkal. Hogyha nem vagy biztos, kérlek, látogasd meg a https://php.net/manual/en/timezones.php oldalt.',
         ],
         'redis' => [
             'note' => 'A Redis drivert választottad egy vagy több beállításhoz, kérlek add meg az érvényes kapcsolati adatokat alább. A legtöbb esetben használhatod az alapértelmezett értékeket, hacsak nem módosítottad a beállításaidat.',
@@ -15,7 +15,7 @@ return [
     ],
     'database_settings' => [
         'DB_HOST_note' => 'Erősen ajánlott, hogy ne használd a "localhost" megnevezést adatbázis hosztként, mivel gyakran találkoztunk csatlakozási problémákkal. Ha helyi kapcsolatot szeretnél használni, inkább a "127.0.0.1" címet használd.',
-        'DB_USERNAME_note' => "A root fiók használata MySQL kapcsolathoz nemcsak erősen ellenjavallt, hanem ez az alkalmazás által sem engedélyezett. Létre kell hoznod egy MySQL felhasználót a szoftver számára.",
+        'DB_USERNAME_note' => 'A root fiók használata MySQL kapcsolathoz nemcsak erősen ellenjavallt, hanem ez az alkalmazás által sem engedélyezett. Létre kell hoznod egy MySQL felhasználót a szoftver számára.',
         'DB_PASSWORD_note' => 'Úgy tűnik, már van MySQL kapcsolati jelszavad megadva, szeretnéd megváltoztatni?',
         'DB_error_2' => 'A kapcsolati adataid NINCSENEK elmentve. Érvényes kapcsolati információkat kell megadnod a folytatáshoz.',
         'go_back' => 'Menj vissza és próbáld újra',
@@ -34,7 +34,7 @@ return [
         'disk_overallocate' => 'Add meg a lemezterület túlallokálás mértékét, -1 letiltja az ellenőrzést, 0 pedig megakadályozza az új szerverek létrehozását',
         'cpu' => 'Add meg a maximális CPU mennyiséget',
         'cpu_overallocate' => 'Add meg a CPU túlallokálás mértékét, -1 letiltja az ellenőrzést, 0 pedig megakadályozza az új szerverek létrehozását',
-        'upload_size' => "Add meg a maximális fájlfeltöltési méretet",
+        'upload_size' => 'Add meg a maximális fájlfeltöltési méretet',
         'daemonListen' => 'Add meg a daemon figyelő portját',
         'daemonSFTP' => 'Add meg a daemon SFTP figyelő portját',
         'daemonSFTPAlias' => 'Add meg a daemon SFTP álnevét (üres is lehet).',

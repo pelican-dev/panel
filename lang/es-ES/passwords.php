@@ -17,6 +17,6 @@ return [
     'sent' => 'Te hemos enviado el enlace para restablecer la contraseña por correo electrónico.',
     'throttled' => 'Por favor espera antes de reintentar.',
     'token' => 'Este token para restablecer la contraseña no es válido.',
-    'user' => "No existe ningún usuario con esta dirección de correo electrónico ",
+    'user' => 'No existe ningún usuario con esta dirección de correo electrónico ',
 
 ];

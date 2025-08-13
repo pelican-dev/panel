@@ -15,7 +15,7 @@ return [
     ],
     'database_settings' => [
         'DB_HOST_note' => 'Preporučuje se da ne koristite "localhost" kao domaćina baze podataka jer su uočeni česti problemi sa povezivanjem putem socket-a. Ako želite da koristite lokalnu vezu, trebalo bi da koristite "127.0.0.1".',
-        'DB_USERNAME_note' => "Korišćenje root naloga za MySQL konekcije ne samo da je veoma nepoželjno, već to ova aplikacija i ne dozvoljava. Biće potrebno da kreirate MySQL korisnika specifično za ovaj softver.",
+        'DB_USERNAME_note' => 'Korišćenje root naloga za MySQL konekcije ne samo da je veoma nepoželjno, već to ova aplikacija i ne dozvoljava. Biće potrebno da kreirate MySQL korisnika specifično za ovaj softver.',
         'DB_PASSWORD_note' => 'Izgleda da već imate definisanu lozinku za MySQL konekciju. Da li želite da je promenite?',
         'DB_error_2' => 'Vaši podaci za povezivanje NISU sačuvani. Morate obezbediti važeće informacije za povezivanje pre nego što nastavite.',
         'go_back' => 'Vratite se nazad i pokušajte ponovo',
@@ -34,7 +34,7 @@ return [
         'disk_overallocate' => 'Unesite količinu diska za prealokaciju, -1 će onemogućiti proveru, a 0 će sprečiti kreiranje novog servera',
         'cpu' => 'Unesite maksimalnu količinu CPU-a',
         'cpu_overallocate' => 'Unesite količinu CPU-a za prealokaciju, -1 će onemogućiti proveru, a 0 će sprečiti kreiranje novog servera',
-        'upload_size' => "Unesite maksimalnu veličinu fajla za upload",
+        'upload_size' => 'Unesite maksimalnu veličinu fajla za upload',
         'daemonListen' => 'Unesite port na kojem demon sluša',
         'daemonSFTP' => 'Unesite port na kojem demon SFTP sluša',
         'daemonSFTPAlias' => 'Unesite alias za demon SFTP (može ostati prazno)',

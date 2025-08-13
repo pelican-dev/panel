@@ -17,6 +17,6 @@ return [
     'sent' => 'Vi har sendt deg en e-post med lenken for tilbakestilling av passord.',
     'throttled' => 'Vennligst vent før du prøver igjen.',
     'token' => 'Dette passordtilbakestillingstokenet er ugyldig.',
-    'user' => "Vi finner ingen bruker med den e-postadressen.",
+    'user' => 'Vi finner ingen bruker med den e-postadressen.',
 
 ];

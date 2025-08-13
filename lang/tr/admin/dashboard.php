@@ -24,7 +24,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Hiç Düğüm Algılanmadı',
-            'content' => "Görünüşe göre henüz herhangi bir Düğüm ayarlamadınız, ancak endişelenmeyin çünkü ilk düğümünüzü oluşturmak için eylem düğmesine tıklayabilirsiniz!",
+            'content' => 'Görünüşe göre henüz herhangi bir Düğüm ayarlamadınız, ancak endişelenmeyin çünkü ilk düğümünüzü oluşturmak için eylem düğmesine tıklayabilirsiniz!',
             'extra_note' => 'Herhangi bir sorunla karşılaşırsanız, lütfen GitHub üzerinde bildirin.',
             'button_label' => 'Pelican\'da İlk Düğümü Oluştur',
         ],
