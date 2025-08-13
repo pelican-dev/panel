@@ -14,6 +14,6 @@ class WingsBackupAdapter implements BackupAdapter
     {
         return response()->json([
             'error' => 'WingsBackupAdapter does not support provideUploadInfo().',
-        ], HttpStatusCode::BadRequest);
+        ], HttpStatusCode::BadRequest->value);
     }
 }
