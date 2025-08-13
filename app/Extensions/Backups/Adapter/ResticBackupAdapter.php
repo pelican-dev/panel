@@ -3,6 +3,9 @@
 namespace App\Extensions\Backups\Adapter;
 
 use App\Extensions\Backups\BackupAdapter;
+use App\Models\Backup;
+use App\Models\Server;
+use Illuminate\Http\JsonResponse;
 
 readonly class ResticBackupAdapter implements BackupAdapter
 {
@@ -15,10 +18,10 @@ readonly class ResticBackupAdapter implements BackupAdapter
         private array $s3Config,
     ) {}
 
-    /**
-     * @return array<string, mixed>
+    /*
+     * Provides Wings with the restic info that's been configured in the panel.
      */
-    public function getResticInfo(): array
+    public function provideUploadInfo(int $backupSize, Backup $model, Server $server): JsonResponse
     {
         $useS3 = (bool) $this->resticConfig['use_s3'];
 
@@ -39,6 +42,6 @@ readonly class ResticBackupAdapter implements BackupAdapter
             ];
         }
 
-        return $resticInfo;
+        return new JsonResponse($resticInfo);
     }
 }
