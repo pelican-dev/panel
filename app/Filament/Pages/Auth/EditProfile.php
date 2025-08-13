@@ -148,9 +148,8 @@ class EditProfile extends BaseEditProfile
                                     ->avatar()
                                     ->acceptedFileTypes(['image/png'])
                                     ->directory('avatars')
-                                    ->getUploadedFileNameForStorageUsing(fn () => $this->getUser()->id . '.png'),
-                                // TODO: wait for filament bug fix
-                                /*->hintAction(function (FileUpload $fileUpload) {
+                                    ->getUploadedFileNameForStorageUsing(fn () => $this->getUser()->id . '.png')
+                                    ->hintAction(function (FileUpload $fileUpload) {
                                                 $path = $fileUpload->getDirectory() . '/' . $this->getUser()->id . '.png';
 
                                                 return Action::make('remove_avatar')
@@ -158,7 +157,7 @@ class EditProfile extends BaseEditProfile
                                                     ->iconButton()
                                                     ->hidden(fn () => !$fileUpload->getDisk()->exists($path))
                                                     ->action(fn () => $fileUpload->getDisk()->delete($path));
-                                    }),*/
+                                    }),
                             ]),
                         Tab::make(trans('profile.tabs.oauth'))
                             ->icon('tabler-brand-oauth')
