@@ -19,7 +19,7 @@ class S3BackupAdapter implements BackupAdapter
 
     public function __construct(
         private readonly S3ClientInterface $client,
-        private readonly string $bucket,
+        private readonly string            $bucket,
     ) {}
 
     public function getClient(): S3ClientInterface
