@@ -5,19 +5,16 @@ namespace App\Filament\Admin\Resources\ServerResource\Pages;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Admin\Resources\ServerResource\RelationManagers\AllocationsRelationManager;
+use App\Filament\Admin\Resources\ServerResource\RelationManagers\DatabasesRelationManager;
 use App\Filament\Components\Actions\PreviewStartupAction;
-use App\Filament\Components\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Pages\Console;
 use App\Models\Allocation;
-use App\Models\Database;
-use App\Models\DatabaseHost;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonServerRepository;
-use App\Services\Databases\DatabaseManagementService;
 use App\Services\Eggs\EggChangerService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ReinstallServerService;
@@ -706,136 +703,6 @@ class EditServer extends EditRecord
                             ->schema(fn (Get $get) => [
                                 ServerResource::getMountCheckboxList($get),
                             ]),
-                        Tab::make(trans('admin/server.databases'))
-                            ->hidden(fn () => !auth()->user()->can('viewAny', Database::class))
-                            ->icon('tabler-database')
-                            ->columns(4)
-                            ->schema([
-                                Repeater::make('databases')
-                                    ->label('')
-                                    ->grid()
-                                    ->helperText(fn (Server $server) => $server->databases->isNotEmpty() ? '' : trans('admin/server.no_databases'))
-                                    ->columns(2)
-                                    ->schema([
-                                        TextInput::make('host')
-                                            ->label(trans('admin/databasehost.table.host'))
-                                            ->disabled()
-                                            ->formatStateUsing(fn ($record) => $record->address())
-                                            ->suffixCopy()
-                                            ->columnSpan(1),
-                                        TextInput::make('database')
-                                            ->label(trans('admin/databasehost.table.database'))
-                                            ->disabled()
-                                            ->formatStateUsing(fn ($record) => $record->database)
-                                            ->suffixCopy()
-                                            ->hintAction(
-                                                Action::make('Delete')
-                                                    ->label(trans('filament-actions::delete.single.modal.actions.delete.label'))
-                                                    //->authorize(fn (Database $database) => auth()->user()->can('delete database', $database))
-                                                    ->color('danger')
-                                                    ->icon('tabler-trash')
-                                                    ->requiresConfirmation()
-                                                    ->modalIcon('tabler-database-x')
-                                                    ->modalHeading(trans('admin/server.delete_db_heading'))
-                                                    ->modalSubmitActionLabel(trans('filament-actions::delete.single.label'))
-                                                    ->modalDescription(fn (Get $get) => trans('admin/server.delete_db', ['name' => $get('database')]))
-                                                    ->action(function (DatabaseManagementService $databaseManagementService, $record) {
-                                                        $databaseManagementService->delete($record);
-                                                        $this->fillForm();
-                                                    })
-                                            ),
-                                        TextInput::make('username')
-                                            ->label(trans('admin/databasehost.table.username'))
-                                            ->disabled()
-                                            ->formatStateUsing(fn ($record) => $record->username)
-                                            ->suffixCopy()
-                                            ->columnSpan(1),
-                                        TextInput::make('password')
-                                            ->label(trans('admin/databasehost.table.password'))
-                                            ->disabled()
-                                            ->password()
-                                            ->revealable()
-                                            ->columnSpan(1)
-                                            ->hintAction(RotateDatabasePasswordAction::make())
-                                            ->suffixCopy()
-                                            ->formatStateUsing(fn (Database $database) => $database->password),
-                                        TextInput::make('remote')
-                                            ->disabled()
-                                            ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? 'Anywhere ( % )' : $record->remote)
-                                            ->columnSpan(1)
-                                            ->label(trans('admin/databasehost.table.remote')),
-                                        TextInput::make('max_connections')
-                                            ->label(trans('admin/databasehost.table.max_connections'))
-                                            ->disabled()
-                                            ->formatStateUsing(fn (Database $record) => $record->max_connections === 0 ? 'Unlimited' : $record->max_connections)
-                                            ->columnSpan(1),
-                                        TextInput::make('jdbc')
-                                            ->disabled()
-                                            ->password()
-                                            ->revealable()
-                                            ->label(trans('admin/databasehost.table.connection_string'))
-                                            ->columnSpan(2)
-                                            ->formatStateUsing(fn (Database $record) => $record->jdbc)
-                                            ->suffixCopy(),
-                                    ])
-                                    ->relationship('databases')
-                                    ->deletable(false)
-                                    ->addable(false)
-                                    ->columnSpan(4),
-                                Actions::make([
-                                    Action::make('createDatabase')
-                                        ->authorize(fn () => auth()->user()->can('create', Database::class))
-                                        ->disabled(fn () => DatabaseHost::query()->count() < 1)
-                                        ->label(fn () => DatabaseHost::query()->count() < 1 ? trans('admin/server.no_db_hosts') : trans('admin/server.create_database'))
-                                        ->color(fn () => DatabaseHost::query()->count() < 1 ? 'danger' : 'primary')
-                                        ->modalSubmitActionLabel(trans('admin/server.create_database'))
-                                        ->action(function (array $data, DatabaseManagementService $service, Server $server, RandomWordService $randomWordService) {
-                                            if (empty($data['database'])) {
-                                                $data['database'] = $randomWordService->word() . random_int(1, 420);
-                                            }
-                                            if (empty($data['remote'])) {
-                                                $data['remote'] = '%';
-                                            }
-
-                                            $data['database'] = $service->generateUniqueDatabaseName($data['database'], $server->id);
-
-                                            try {
-                                                $service->setValidateDatabaseLimit(false)->create($server, $data);
-                                            } catch (Exception $e) {
-                                                Notification::make()
-                                                    ->title(trans('admin/server.failed_to_create'))
-                                                    ->body($e->getMessage())
-                                                    ->danger()
-                                                    ->persistent()->send();
-                                            }
-                                            $this->fillForm();
-                                        })
-                                        ->schema([
-                                            Select::make('database_host_id')
-                                                ->label(trans('admin/databasehost.table.name'))
-                                                ->required()
-                                                ->placeholder('Select Database Host')
-                                                ->options(fn (Server $server) => DatabaseHost::query()
-                                                    ->whereHas('nodes', fn ($query) => $query->where('nodes.id', $server->node_id))
-                                                    ->pluck('name', 'id')
-                                                )
-                                                ->default(fn () => (DatabaseHost::query()->first())?->id)
-                                                ->selectablePlaceholder(false),
-                                            TextInput::make('database')
-                                                ->label(trans('admin/server.name'))
-                                                ->alphaDash()
-                                                ->prefix(fn (Server $server) => 's' . $server->id . '_')
-                                                ->hintIcon('tabler-question-mark')
-                                                ->hintIconTooltip(trans('admin/databasehost.table.name_helper')),
-                                            TextInput::make('remote')
-                                                ->columnSpan(1)
-                                                ->regex('/^[\w\-\/.%:]+$/')
-                                                ->label(trans('admin/databasehost.table.remote'))
-                                                ->hintIcon('tabler-question-mark')
-                                                ->hintIconTooltip(trans('admin/databasehost.table.remote_helper')),
-                                        ]),
-                                ])->alignCenter()->columnSpanFull(),
-                            ]),
                         Tab::make(trans('admin/server.actions'))
                             ->icon('tabler-settings')
                             ->schema([
@@ -1162,6 +1029,7 @@ class EditServer extends EditRecord
     {
         return [
             AllocationsRelationManager::class,
+            DatabasesRelationManager::class,
         ];
     }
 
