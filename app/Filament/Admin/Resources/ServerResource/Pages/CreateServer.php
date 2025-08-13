@@ -115,7 +115,7 @@ class CreateServer extends CreateRecord
                                 ->selectablePlaceholder(false)
                                 ->default(function () {
                                     /** @var ?Node $latestNode */
-                                    $latestNode = auth()->user()->accessibleNodes()->latest()->first();
+                                    $latestNode = auth()->user()->accessibleNodes()->where('public', true)->latest()->first();
                                     $this->node = $latestNode;
 
                                     return $this->node?->id;
@@ -126,7 +126,9 @@ class CreateServer extends CreateRecord
                                     'md' => 2,
                                 ])
                                 ->live()
-                                ->relationship('node', 'name', fn (Builder $query) => $query->whereIn('id', auth()->user()->accessibleNodes()->pluck('id')))
+                                ->relationship('node', 'name', fn (Builder $query) => $query
+                                    ->whereIn('id', auth()->user()->accessibleNodes()->pluck('id'))
+                                    ->where('public', true))
                                 ->searchable()
                                 ->required()
                                 ->preload()
