@@ -5,7 +5,6 @@ namespace App\Filament\Server\Resources\UserResource\Pages;
 use App\Filament\Server\Resources\UserResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\ListRecords;
@@ -18,9 +17,7 @@ class ListUsers extends ListRecords
 
     protected static string $resource = UserResource::class;
 
-    /** @return array<Action|ActionGroup>
-     * @throws Exception
-     */
+    /** @return array<Action|ActionGroup> */
     protected function getDefaultHeaderActions(): array
     {
         return [];

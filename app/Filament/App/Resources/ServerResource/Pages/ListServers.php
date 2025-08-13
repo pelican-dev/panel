@@ -264,9 +264,4 @@ class ListServers extends ListRecords
             ];
         }
     }
-
-    public function isTableColumnToggledHidden(string $name): bool
-    {
-        // TODO: Implement isTableColumnToggledHidden() method.
-    }
 }

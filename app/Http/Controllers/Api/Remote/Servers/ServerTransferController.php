@@ -12,6 +12,7 @@ use Illuminate\Database\ConnectionInterface;
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Illuminate\Http\Client\ConnectionException;
+use Throwable;
 
 class ServerTransferController extends Controller
 {
