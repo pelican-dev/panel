@@ -37,7 +37,7 @@ class ProcessWebhook implements ShouldQueue
             $data = json_decode($data, true) ?? [];
         } elseif (is_object($data)) {
             $data = (array) $data;
-        } else {
+        } elseif (!is_array($data)) {
             $data = [];
         }
         $data['event'] = $this->webhookConfiguration->transformClassName($this->eventName);
