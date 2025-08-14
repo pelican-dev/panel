@@ -334,7 +334,8 @@ class CreateServer extends CreateRecord
                                     $variables = [];
                                     $set($path = 'server_variables', $serverVariables->sortBy(['sort'])->all());
                                     for ($i = 0; $i < $serverVariables->count(); $i++) {
-                                        $set("$path.$i.variable_value", $serverVariables[$i]['default_value']);
+                                        $set("$path.$i.variable_value_input", $serverVariables[$i]['default_value']);
+                                        $set("$path.$i.variable_value_select", $serverVariables[$i]['default_value']);
                                         $set("$path.$i.variable_id", $serverVariables[$i]['id']);
                                         $variables[$serverVariables[$i]['env_variable']] = $serverVariables[$i]['default_value'];
                                     }
@@ -426,12 +427,10 @@ class CreateServer extends CreateRecord
                                 ->schema([
                                     TextEntry::make(trans('admin/server.select_egg'))
                                         ->hidden(fn (Get $get) => $get('egg_id')),
-
                                     TextEntry::make(trans('admin/server.no_variables'))
                                         ->hidden(fn (Get $get) => !$get('egg_id') ||
                                             Egg::query()->find($get('egg_id'))?->variables()?->count()
                                         ),
-
                                     Repeater::make('server_variables')
                                         ->label('')
                                         ->relationship('serverVariables', fn (Builder $query) => $query->orderByPowerJoins('variable.sort'))
@@ -443,9 +442,19 @@ class CreateServer extends CreateRecord
                                         ->deletable(false)
                                         ->default([])
                                         ->hidden(fn ($state) => empty($state))
-                                        ->schema(function () {
+                                        ->mutateRelationshipDataBeforeCreateUsing(function ($data) {
+                                            $data['variable_value'] = ($data['is_select'] ? $data['variable_value_select'] : $data['variable_value_input']) ?? '';
 
-                                            $text = TextInput::make('variable_value')
+                                            return $data;
+                                        })
+                                        ->schema(function () {
+                                            $isSelect = Hidden::make('is_select')
+                                                ->dehydrated(false)
+                                                ->formatStateUsing(fn (Get $get) => (bool) collect($get('rules'))->reduce(
+                                                    fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
+                                                ));
+
+                                            $text = TextInput::make('variable_value_input')
                                                 ->hidden($this->shouldHideComponent(...))
                                                 ->dehydratedWhenHidden()
                                                 ->required(fn (Get $get) => in_array('required', $get('rules')))
@@ -463,7 +472,7 @@ class CreateServer extends CreateRecord
                                                     },
                                                 );
 
-                                            $select = Select::make('variable_value')
+                                            $select = Select::make('variable_value_select')
                                                 ->hidden($this->shouldHideComponent(...))
                                                 ->dehydratedWhenHidden()
                                                 ->options($this->getSelectOptionsFromRules(...))
@@ -486,7 +495,7 @@ class CreateServer extends CreateRecord
                                                     });
                                             }
 
-                                            return $components;
+                                            return [$isSelect, ...$components];
                                         })
                                         ->columnSpan(2),
                                 ]),

@@ -646,19 +646,18 @@ class EditServer extends EditRecord
                                         return $query->orderByPowerJoins('variable.sort');
                                     })
                                     ->grid()
-                                    ->mutateRelationshipDataBeforeSaveUsing(function (array &$data): array {
-                                        foreach ($data as $key => $value) {
-                                            if (!isset($data['variable_value'])) {
-                                                $data['variable_value'] = '';
-                                            }
-                                        }
+                                    ->mutateRelationshipDataBeforeSaveUsing(function (array $data) {
+                                        $data['variable_value'] = ($data['is_select'] ? $data['variable_value_select'] : $data['variable_value_input']) ?? '';
 
                                         return $data;
                                     })
                                     ->reorderable(false)->addable(false)->deletable(false)
                                     ->schema(function () {
+                                        $isSelect = Hidden::make('is_select')
+                                            ->dehydrated(false)
+                                            ->formatStateUsing(fn (ServerVariable $serverVariable) => (bool) array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'), false));
 
-                                        $text = TextInput::make('variable_value')
+                                        $text = TextInput::make('variable_value_input')
                                             ->hidden($this->shouldHideComponent(...))
                                             ->dehydratedWhenHidden()
                                             ->required(fn (ServerVariable $serverVariable) => $serverVariable->variable->getRequiredAttribute())
@@ -676,7 +675,7 @@ class EditServer extends EditRecord
                                                 },
                                             ]);
 
-                                        $select = Select::make('variable_value')
+                                        $select = Select::make('variable_value_select')
                                             ->hidden($this->shouldHideComponent(...))
                                             ->dehydratedWhenHidden()
                                             ->options($this->getSelectOptionsFromRules(...))
@@ -691,10 +690,11 @@ class EditServer extends EditRecord
                                                 ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable->name)
                                                 ->hintIconTooltip(fn (ServerVariable $serverVariable) => implode('|', $serverVariable->variable->rules))
                                                 ->prefix(fn (ServerVariable $serverVariable) => '{{' . $serverVariable->variable->env_variable . '}}')
-                                                ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description);
+                                                ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description)
+                                                ->formatStateUsing(fn (ServerVariable $serverVariable) => $serverVariable->variable_value);
                                         }
 
-                                        return $components;
+                                        return [$isSelect, ...$components];
                                     })
                                     ->columnSpan(6),
                             ]),
