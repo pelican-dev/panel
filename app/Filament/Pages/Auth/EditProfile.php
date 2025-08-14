@@ -150,13 +150,13 @@ class EditProfile extends BaseEditProfile
                                     ->directory('avatars')
                                     ->getUploadedFileNameForStorageUsing(fn () => $this->getUser()->id . '.png')
                                     ->hintAction(function (FileUpload $fileUpload) {
-                                                $path = $fileUpload->getDirectory() . '/' . $this->getUser()->id . '.png';
+                                        $path = $fileUpload->getDirectory() . '/' . $this->getUser()->id . '.png';
 
-                                                return Action::make('remove_avatar')
-                                                    ->icon('tabler-photo-minus')
-                                                    ->iconButton()
-                                                    ->hidden(fn () => !$fileUpload->getDisk()->exists($path))
-                                                    ->action(fn () => $fileUpload->getDisk()->delete($path));
+                                        return Action::make('remove_avatar')
+                                            ->icon('tabler-photo-minus')
+                                            ->iconButton()
+                                            ->hidden(fn () => !$fileUpload->getDisk()->exists($path))
+                                            ->action(fn () => $fileUpload->getDisk()->delete($path));
                                     }),
                             ]),
                         Tab::make(trans('profile.tabs.oauth'))
