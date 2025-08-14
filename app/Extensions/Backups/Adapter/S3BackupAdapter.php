@@ -48,7 +48,7 @@ class S3BackupAdapter implements BackupAdapter
         }
 
         // The path where backup will be uploaded to
-        $path = sprintf('%s/%s.tar.gz', $model->server->uuid, $model->uuid);
+        $path = sprintf('%s/%s.tar.gz', $server->uuid, $model->uuid);
 
         // Get the S3 client
         $client = $this->getClient();
