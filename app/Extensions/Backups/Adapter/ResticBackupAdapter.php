@@ -18,8 +18,8 @@ readonly class ResticBackupAdapter implements BackupAdapter
         private array $s3Config,
     ) {}
 
-    /*
-     * Provides Wings with the restic info that's been configured in the panel.
+    /**
+     * Provides Wings with the Restic info that's been configured in the panel.
      */
     public function provideUploadInfo(int $backupSize, Backup $model, Server $server): JsonResponse
     {

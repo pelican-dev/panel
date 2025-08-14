@@ -103,7 +103,7 @@ class S3BackupAdapter implements BackupAdapter
      * Note if the received config cannot be converted to int (0), is zero or is negative,
      * the fallback value will be used too.
      *
-     * The fallback value is {@see BackupRemoteUploadController::DEFAULT_MAX_PART_SIZE}.
+     * The fallback value is {@see self::DEFAULT_MAX_PART_SIZE}.
      */
     private function getConfiguredMaxPartSize(): int
     {

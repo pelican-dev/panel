@@ -46,19 +46,21 @@ class ServerDeletionService
     public function handle(Server $server): void
     {
         // Delete all the backups
-        foreach ($server->backups as $backup) {
-            try {
-                $this->deleteBackupService->handle($backup);
-            } catch (Exception $exception) {
-                if (!$this->force) {
-                    throw $exception;
+        $this->connection->transaction(function () use ($server) {
+            foreach ($server->backups as $backup) {
+                try {
+                    $this->deleteBackupService->handle($backup);
+                } catch (Exception $exception) {
+                    if (!$this->force) {
+                        throw $exception;
+                    }
+
+                    $backup->delete();
+
+                    logger()->warning($exception);
                 }
-
-                $backup->delete();
-
-                logger()->warning($exception);
             }
-        }
+        });
 
         try {
             $this->daemonServerRepository->setServer($server)->delete();
