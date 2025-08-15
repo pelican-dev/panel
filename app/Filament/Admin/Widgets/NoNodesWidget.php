@@ -3,7 +3,7 @@
 namespace App\Filament\Admin\Widgets;
 
 use Exception;
-use App\Filament\Admin\Resources\NodeResource\Pages\CreateNode;
+use App\Filament\Admin\Resources\Nodes\Pages\CreateNode;
 use App\Models\Node;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;

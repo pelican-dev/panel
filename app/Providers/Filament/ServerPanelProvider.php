@@ -2,8 +2,8 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\App\Resources\ServerResource\Pages\ListServers;
-use App\Filament\Admin\Resources\ServerResource\Pages\EditServer;
+use App\Filament\App\Resources\Servers\Pages\ListServers;
+use App\Filament\Admin\Resources\Servers\Pages\EditServer;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\Activity\ServerSubject;
 use App\Models\Server;
