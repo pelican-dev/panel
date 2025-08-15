@@ -2,7 +2,6 @@
 
 namespace App\Extensions\Backups\Adapter;
 
-use App\Enums\HttpStatusCode;
 use App\Extensions\Backups\BackupAdapter;
 use App\Models\Backup;
 use App\Models\Server;
