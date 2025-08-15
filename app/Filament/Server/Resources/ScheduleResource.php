@@ -115,7 +115,15 @@ class ScheduleResource extends Resource
                     ->visibleOn('view'),
                 Section::make('Cron')
                     ->label(trans('server/schedule.cron'))
-                    ->description(fn (Get $get) => new HtmlString(trans('server/schedule.cron_body') . '<br>' . trans('server/schedule.cron_timezone', ['timezone' => auth()->user()->timezone, 'next_run' => Utilities::getScheduleNextRunDate($get('cron_minute'), $get('cron_hour'), $get('cron_day_of_month'), $get('cron_month'), $get('cron_day_of_week'))->timezone(auth()->user()->timezone)])))
+                    ->description(function (Get $get) {
+                        try {
+                            $nextRun = Utilities::getScheduleNextRunDate($get('cron_minute'), $get('cron_hour'), $get('cron_day_of_month'), $get('cron_month'), $get('cron_day_of_week'))->timezone(auth()->user()->timezone);
+                        } catch (Exception) {
+                            $nextRun = trans('server/schedule.invalid');
+                        }
+
+                        return new HtmlString(trans('server/schedule.cron_body') . '<br>' . trans('server/schedule.cron_timezone', ['timezone' => auth()->user()->timezone, 'next_run' => $nextRun]));
+                    })
                     ->schema([
                         Actions::make([
                             CronPresetAction::make('hourly')

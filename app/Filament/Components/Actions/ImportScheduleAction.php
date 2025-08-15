@@ -39,26 +39,26 @@ class ImportScheduleAction extends Action
             Tabs::make('Tabs')
                 ->contained(false)
                 ->tabs([
-                    Tab::make(trans('admin/schedule.import.file'))
+                    Tab::make(trans('server/schedule.import_action.file'))
                         ->icon('tabler-file-upload')
                         ->schema([
                             FileUpload::make('files')
-                                ->label(trans('admin/schedule.model_label'))
-                                ->hint(trans('admin/schedule.import.schedule_help'))
+                                ->hiddenLabel()
+                                ->hint(trans('server/schedule.import_action.schedule_help'))
                                 ->acceptedFileTypes(['application/json'])
                                 ->preserveFilenames()
                                 ->previewable(false)
                                 ->storeFiles(false)
                                 ->multiple(true),
                         ]),
-                    Tab::make(trans('admin/schedule.import.url'))
+                    Tab::make(trans('server/schedule.import_action.url'))
                         ->icon('tabler-world-upload')
                         ->schema([
                             Repeater::make('urls')
-                                ->label('')
+                                ->hiddenLabel()
                                 ->itemLabel(fn (array $state) => str($state['url'])->afterLast('/schedule-')->before('.json')->headline())
-                                ->hint(trans('admin/schedule.import.url_help'))
-                                ->addActionLabel(trans('admin/schedule.import.add_url'))
+                                ->hint(trans('server/schedule.import_action.url_help'))
+                                ->addActionLabel(trans('server/schedule.import_action.add_url'))
                                 ->grid(2)
                                 ->reorderable(false)
                                 ->addable(true)
@@ -66,10 +66,10 @@ class ImportScheduleAction extends Action
                                 ->schema([
                                     TextInput::make('url')
                                         ->live()
-                                        ->label(trans('admin/schedule.import.url'))
+                                        ->label(trans('server/schedule.import_action.url'))
                                         ->url()
                                         ->endsWith('.json')
-                                        ->validationAttribute(trans('admin/schedule.import.url')),
+                                        ->validationAttribute(trans('server/schedule.import_action.url')),
                                 ]),
                         ]),
                 ]),
@@ -104,14 +104,14 @@ class ImportScheduleAction extends Action
 
             if ($failed->count() > 0) {
                 Notification::make()
-                    ->title(trans('admin/schedule.import.import_failed'))
+                    ->title(trans('server/schedule.import_action.import_failed'))
                     ->body($failed->join(', '))
                     ->danger()
                     ->send();
             }
             if ($success->count() > 0) {
                 Notification::make()
-                    ->title(trans('admin/schedule.import.import_success'))
+                    ->title(trans('server/schedule.import_action.import_success'))
                     ->body($success->join(', '))
                     ->success()
                     ->send();
