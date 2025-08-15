@@ -322,6 +322,7 @@ class EditProfile extends BaseEditProfile
                                             Section::make(trans('profile.api_keys'))->columnSpan(2)->schema([
                                                 Repeater::make('api_keys')
                                                     ->hiddenLabel()
+                                                    ->inlineLabel(false)
                                                     ->relationship('apiKeys')
                                                     ->addable(false)
                                                     ->itemLabel(fn ($state) => $state['identifier'])
@@ -406,6 +407,7 @@ class EditProfile extends BaseEditProfile
                                             Section::make(trans('profile.ssh_keys'))->columnSpan(2)->schema([
                                                 Repeater::make('ssh_keys')
                                                     ->hiddenLabel()
+                                                    ->inlineLabel(false)
                                                     ->relationship('sshKeys')
                                                     ->addable(false)
                                                     ->itemLabel(fn ($state) => $state['name'])
@@ -445,14 +447,17 @@ class EditProfile extends BaseEditProfile
                                     ->icon('tabler-history')
                                     ->schema([
                                         Repeater::make('activity')
-                                            ->label('')
+                                            ->hiddenLabel()
+                                            ->inlineLabel(false)
                                             ->deletable(false)
                                             ->addable(false)
                                             ->relationship(null, function (Builder $query) {
                                                 $query->orderBy('timestamp', 'desc');
                                             })
                                             ->schema([
-                                                Placeholder::make('activity!')->label('')->content(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
+                                                Placeholder::make('log')
+                                                    ->hiddenLabel()
+                                                    ->content(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
                                             ]),
                                     ]),
 
