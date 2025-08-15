@@ -63,9 +63,20 @@ abstract class OAuthSchema implements OAuthSchemaInterface
                 ->offIcon('tabler-x')
                 ->onColor('success')
                 ->offColor('danger')
-                ->formatStateUsing(fn ($state): bool => (bool) $state)
+                ->formatStateUsing(fn ($state) => (bool) $state)
                 ->afterStateUpdated(fn ($state, Set $set) => $set("OAUTH_{$id}_SHOULD_CREATE_MISSING_USERS", (bool) $state))
                 ->default(env("OAUTH_{$id}_SHOULD_CREATE_MISSING_USERS")),
+            Toggle::make("OAUTH_{$id}_SHOULD_LINK_MISSING_USERS")
+                ->label(trans('admin/setting.oauth.link_missing_users'))
+                ->columnSpanFull()
+                ->inline(false)
+                ->onIcon('tabler-check')
+                ->offIcon('tabler-x')
+                ->onColor('success')
+                ->offColor('danger')
+                ->formatStateUsing(fn ($state) => (bool) $state)
+                ->afterStateUpdated(fn ($state, Set $set) => $set("OAUTH_{$id}_SHOULD_LINK_MISSING_USERS", (bool) $state))
+                ->default(env("OAUTH_{$id}_SHOULD_LINK_MISSING_USERS")),
         ];
     }
 
@@ -115,5 +126,12 @@ abstract class OAuthSchema implements OAuthSchemaInterface
         $id = Str::upper($this->getId());
 
         return env("OAUTH_{$id}_SHOULD_CREATE_MISSING_USERS", false);
+    }
+
+    public function shouldLinkMissingUsers(): bool
+    {
+        $id = Str::upper($this->getId());
+
+        return env("OAUTH_{$id}_SHOULD_LINK_MISSING_USERS", false);
     }
 }
