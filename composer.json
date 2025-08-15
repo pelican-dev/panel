@@ -13,7 +13,7 @@
         "calebporzio/sushi": "^2.5",
         "dedoc/scramble": "^0.12.10",
         "doctrine/dbal": "~3.6.0",
-        "filament/filament": "4.0.0",
+        "filament/filament": "~4.0",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^12.23",
         "laravel/helpers": "^1.7",
