@@ -162,7 +162,11 @@ class PluginService
     public function requireComposerPackages(Plugin $plugin): void
     {
         if ($plugin->composer_packages) {
-            $this->composer->requirePackages(explode(',', $plugin->composer_packages));
+            $success = $this->composer->requirePackages(explode(',', $plugin->composer_packages));
+
+            if (!$success) {
+                throw new Exception("Could not require composer packages for plugin '{$plugin->id}'");
+            }
         }
     }
 
@@ -170,7 +174,11 @@ class PluginService
     {
         $migrations = plugin_path($plugin->id, 'database', 'migrations');
         if (file_exists($migrations)) {
-            Artisan::call('migrate', ['--path' => $migrations, '--force' => true]);
+            $success = Artisan::call('migrate', ['--path' => $migrations, '--force' => true]) === 0;
+
+            if (!$success) {
+                throw new Exception("Could not run migrations for plugin '{$plugin->id}'");
+            }
         }
     }
 
