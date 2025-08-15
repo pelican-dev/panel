@@ -106,4 +106,13 @@ return [
 
     'notification_invalid_cron' => 'The cron data provided does not evaluate to a valid expression',
 
+    'import_action' => [
+        'file' => 'File',
+        'url' => 'URL',
+        'schedule_help' => 'This should be the raw .json file ( schedule-daily-restart.json )',
+        'url_help' => 'URLs must point directly to the raw .json file',
+        'add_url' => 'New URL',
+        'import_failed' => 'Import Failed',
+        'import_success' => 'Import Success',
+    ],
 ];
