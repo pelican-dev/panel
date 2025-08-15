@@ -12,5 +12,5 @@ interface BackupAdapter
     /**
      * @throws Exception
      */
-    public function provideUploadInfo(int $backupSize, Backup $model, Server $server): JsonResponse;
+    public function provideUploadInfo(int $backupSize, ?Backup $model, ?Server $server): JsonResponse;
 }

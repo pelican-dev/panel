@@ -10,6 +10,7 @@ use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Throwable;
 
@@ -39,8 +40,12 @@ class S3BackupAdapter implements BackupAdapter
      * @throws Throwable
      * @throws ModelNotFoundException
      */
-    public function provideUploadInfo(int $backupSize, Backup $model, Server $server): JsonResponse
+    public function provideUploadInfo(int $backupSize, ?Backup $model, ?Server $server): JsonResponse
     {
+        if ($model == null || $server == null) {
+            return new JsonResponse(['error' => 'A backup id must be passed to provideUploadInfo for s3.'], Response::HTTP_BAD_REQUEST);
+        }
+
         // Prevent backups that have already been completed from trying to
         // be uploaded again.
         if (!is_null($model->completed_at)) {

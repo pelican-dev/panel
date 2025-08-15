@@ -21,7 +21,7 @@ readonly class ResticBackupAdapter implements BackupAdapter
     /**
      * Provides Wings with the Restic info that's been configured in the panel.
      */
-    public function provideUploadInfo(int $backupSize, Backup $model, Server $server): JsonResponse
+    public function provideUploadInfo(int $backupSize, ?Backup $model, ?Server $server): JsonResponse
     {
         $useS3 = (bool) $this->resticConfig['use_s3'];
 

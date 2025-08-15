@@ -3,7 +3,6 @@
 namespace App\Services\Servers;
 
 use App\Exceptions\DisplayException;
-use App\Services\Backups\DeleteBackupService;
 use Exception;
 use App\Models\Server;
 use Illuminate\Database\ConnectionInterface;
@@ -22,7 +21,6 @@ class ServerDeletionService
      */
     public function __construct(
         private readonly ConnectionInterface $connection,
-        private readonly DeleteBackupService $deleteBackupService,
         private readonly DaemonServerRepository $daemonServerRepository,
         private readonly DatabaseManagementService $databaseManagementService
     ) {}
@@ -45,23 +43,6 @@ class ServerDeletionService
      */
     public function handle(Server $server): void
     {
-        // Delete all the backups
-        $this->connection->transaction(function () use ($server) {
-            foreach ($server->backups as $backup) {
-                try {
-                    $this->deleteBackupService->handle($backup);
-                } catch (Exception $exception) {
-                    if (!$this->force) {
-                        throw $exception;
-                    }
-
-                    $backup->delete();
-
-                    logger()->warning($exception);
-                }
-            }
-        });
-
         try {
             $this->daemonServerRepository->setServer($server)->delete();
         } catch (ConnectionException $exception) {
