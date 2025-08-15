@@ -30,6 +30,8 @@ return [
     'cron_body' => 'Please keep in mind that the cron inputs below always assume UTC.',
     'cron_timezone' => 'Next run in your timezone (:timezone): <b> :next_run </b>',
 
+    'invalid' => 'Invalid',
+
     'time' => [
         'minute' => 'Minute',
         'hour' => 'Hour',
