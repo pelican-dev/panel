@@ -40,6 +40,7 @@ use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 /**
@@ -461,6 +462,7 @@ class Settings extends Page implements HasForms
                 ->options([
                     Backup::ADAPTER_DAEMON => 'Wings',
                     Backup::ADAPTER_AWS_S3 => 'S3',
+                    Backup::ADAPTER_RESTIC => 'Restic',
                 ])
                 ->live()
                 ->default(env('APP_BACKUP_DRIVER', config('backups.default'))),
@@ -482,9 +484,43 @@ class Settings extends Page implements HasForms
                         ->suffix('Seconds')
                         ->default(config('backups.throttles.period')),
                 ]),
+            Section::make(trans('admin/setting.backup.restic.restic_title'))
+                ->description(new HtmlString(trans('admin/setting.backup.restic.restic_help')))
+                ->columns()
+                ->visible(fn (Get $get) => $get('APP_BACKUP_DRIVER') === Backup::ADAPTER_RESTIC)
+                ->schema([
+                    TextInput::make('RESTIC_REPOSITORY')
+                        ->label(trans('admin/setting.backup.restic.repository'))
+                        ->hintIcon('tabler-question-mark')
+                        ->hintIconTooltip(trans('admin/setting.backup.restic.repository_help'))
+                        ->required(fn (Get $get) => $get('RESTIC_USE_S3') === false)
+                        ->visible(fn (Get $get) => $get('RESTIC_USE_S3') === false)
+                        ->default(config('backups.disks.restic.repository')),
+                    TextInput::make('RESTIC_PASSWORD')
+                        ->label(trans('admin/setting.backup.restic.password'))
+                        ->hintIcon('tabler-question-mark')
+                        ->hintIconTooltip(trans('admin/setting.backup.restic.password_help'))
+                        ->password()
+                        ->default(config('backups.disks.restic.password')),
+                    TextInput::make('RESTIC_RETRY_LOCK_SECONDS')
+                        ->label(trans('admin/setting.backup.restic.retry_lock_seconds'))
+                        ->hintIcon('tabler-question-mark')
+                        ->hintIconTooltip(trans('admin/setting.backup.restic.retry_lock_seconds_help'))
+                        ->numeric()
+                        ->minValue(1)
+                        ->suffix('Seconds')
+                        ->default(config('backups.disks.restic.retry_lock_seconds')),
+                    Toggle::make('RESTIC_USE_S3')
+                        ->label(trans('admin/setting.backup.restic.use_s3'))
+                        ->live()
+                        ->inline(false)
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('RESTIC_USE_S3', (bool) $state))
+                        ->default(config('backups.disks.restic.use_s3')),
+                ]),
             Section::make(trans('admin/setting.backup.s3.s3_title'))
                 ->columns()
-                ->visible(fn (Get $get) => $get('APP_BACKUP_DRIVER') === Backup::ADAPTER_AWS_S3)
+                ->visible(fn (Get $get) => $get('APP_BACKUP_DRIVER') === Backup::ADAPTER_AWS_S3 || ($get('APP_BACKUP_DRIVER') === Backup::ADAPTER_RESTIC && $get('RESTIC_USE_S3')))
                 ->schema([
                     TextInput::make('AWS_DEFAULT_REGION')
                         ->label(trans('admin/setting.backup.s3.default_region'))
@@ -497,14 +533,23 @@ class Settings extends Page implements HasForms
                     TextInput::make('AWS_SECRET_ACCESS_KEY')
                         ->label(trans('admin/setting.backup.s3.secret_key'))
                         ->required()
+                        ->password()
                         ->default(config('backups.disks.s3.secret')),
                     TextInput::make('AWS_BACKUPS_BUCKET')
                         ->label(trans('admin/setting.backup.s3.bucket'))
                         ->required()
+                        ->regex('/^(?!.*\.\.)(?!\d{1,3}(\.\d{1,3}){3}$)[a-z0-9][a-z0-9.-]{3,61}[a-z0-9]$/')
+                        ->validationMessages([
+                            'regex' => new HtmlString(trans('admin/setting.backup.s3.bucket_validation')),
+                        ])
                         ->default(config('backups.disks.s3.bucket')),
                     TextInput::make('AWS_ENDPOINT')
                         ->label(trans('admin/setting.backup.s3.endpoint'))
                         ->required()
+                        ->regex('/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/\/=]*)/')
+                        ->validationMessages([
+                            'regex' => trans('admin/setting.backup.s3.endpoint_validation'),
+                        ])
                         ->default(config('backups.disks.s3.endpoint')),
                     Toggle::make('AWS_USE_PATH_STYLE_ENDPOINT')
                         ->label(trans('admin/setting.backup.s3.use_path_style_endpoint'))
