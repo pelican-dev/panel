@@ -17,9 +17,7 @@ class StartupVariable extends Field
     use HasExtraAlpineAttributes;
     use HasExtraInputAttributes;
 
-    /**
-     * @var view-string
-     */
+    /** @var view-string */
     protected string $view = 'filament.components.startup-variable';
 
     protected string|Closure|null $variableName = null;
@@ -30,6 +28,7 @@ class StartupVariable extends Field
 
     protected string|Closure|null $variableDefault = null;
 
+    /** @var string[]|Closure|null */
     protected array|Closure|null $variableRules = [];
 
     protected function setUp(): void
@@ -79,6 +78,7 @@ class StartupVariable extends Field
         return $this;
     }
 
+    /** @param string[]|Closure|null $rules */
     public function variableRules(array|Closure|null $rules): static
     {
         $this->variableRules = $rules;
@@ -134,7 +134,7 @@ class StartupVariable extends Field
             return $record->variable->rules;
         }
 
-        return (array) $this->evaluate($this->variableRules) ?? [];
+        return (array) ($this->evaluate($this->variableRules) ?? []);
     }
 
     public function isRequired(): bool
