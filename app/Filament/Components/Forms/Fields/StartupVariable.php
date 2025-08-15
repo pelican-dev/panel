@@ -9,6 +9,7 @@ use Filament\Forms\Components\Concerns\HasAffixes;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Field;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class StartupVariable extends Field
@@ -148,7 +149,7 @@ class StartupVariable extends Field
     {
         $rules = $this->getVariableRules();
 
-        if (array_first($rules, fn ($value) => str($value)->startsWith('in:'), false)) {
+        if (Arr::first($rules, fn ($value) => str($value)->startsWith('in:'), false)) {
             return StartupVariableType::Select;
         }
 
@@ -164,7 +165,7 @@ class StartupVariable extends Field
     {
         $rules = $this->getVariableRules();
 
-        $inRule = array_first($rules, fn ($value) => str($value)->startsWith('in:'));
+        $inRule = Arr::first($rules, fn ($value) => str($value)->startsWith('in:'));
         if ($inRule) {
             return str($inRule)
                 ->after('in:')
