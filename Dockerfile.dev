@@ -68,7 +68,7 @@ WORKDIR /var/www/html
 
 # Install additional required libraries
 RUN apk add --no-cache \
-    caddy ca-certificates supervisor supercronic coreutils
+    caddy ca-certificates supervisor supercronic fcgi coreutils
 
 COPY --chown=root:www-data --chmod=640 --from=composerbuild /build .
 COPY --chown=root:www-data --chmod=640 --from=yarnbuild /build/public ./public
@@ -89,7 +89,8 @@ RUN chown root:www-data ./ \
     && ln -s  /pelican-data/storage/fonts /var/www/html/storage/app/public/fonts \
     # Allow www-data write permissions where necessary
     && chown -R www-data:www-data /pelican-data ./storage ./bootstrap/cache /var/run/supervisord /var/www/html/public/storage \
-    && chmod -R u+rwX,g+rwX,o-rwx /pelican-data ./storage ./bootstrap/cache /var/run/supervisord
+    && chmod -R u+rwX,g+rwX,o-rwx /pelican-data ./storage ./bootstrap/cache /var/run/supervisord \
+    && chown -R www-data: /usr/local/etc/php/
 
 # Configure Supervisor
 COPY docker/supervisord.conf /etc/supervisord.conf

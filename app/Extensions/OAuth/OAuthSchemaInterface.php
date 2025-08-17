@@ -34,4 +34,6 @@ interface OAuthSchemaInterface
     public function isEnabled(): bool;
 
     public function shouldCreateMissingUsers(): bool;
+
+    public function shouldLinkMissingUsers(): bool;
 }
