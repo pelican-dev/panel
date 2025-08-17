@@ -20,6 +20,6 @@
     </div>
 
     @if ($isCloseable())
-        <x-filament::icon-button color="gray" icon="tabler-x" wire:click="remove('{{$getID()}}')" />
+        <x-filament::icon-button color="gray" icon="tabler-x" wire:click="remove('{{$getId()}}')" />
     @endif
 </div>
