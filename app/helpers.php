@@ -103,8 +103,8 @@ if (!function_exists('format_number')) {
     function format_number(int|float $number, ?int $precision = null, ?int $maxPrecision = null): false|string
     {
         try {
-            return Number::format($number, $precision, $maxPrecision, auth()->user()->language);
-        } catch (Exception) {
+            return Number::format($number, $precision, $maxPrecision, auth()->user()->language ?? 'en');
+        } catch (Throwable) {
             // User language is invalid, so default to english
             return Number::format($number, $precision, $maxPrecision, 'en');
         }
