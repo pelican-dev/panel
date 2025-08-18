@@ -17,7 +17,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Number;
 use Psr\Http\Message\ResponseInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -484,7 +483,7 @@ class Server extends Model implements Validatable
         }
 
         if ($resourceType->isPercentage()) {
-            return Number::format($resourceAmount, precision: 2, locale: auth()->user()->language ?? 'en') . '%';
+            return format_number($resourceAmount, precision: 2) . '%';
         }
 
         return convert_bytes_to_readable($resourceAmount, base: 3);
