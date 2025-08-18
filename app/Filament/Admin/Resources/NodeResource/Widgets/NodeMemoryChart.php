@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Resources\NodeResource\Widgets;
 use App\Models\Node;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Number;
 
 class NodeMemoryChart extends ChartWidget
 {
@@ -85,12 +84,12 @@ class NodeMemoryChart extends ChartWidget
         $latestMemoryUsed = array_slice(end($this->memoryHistory), -60);
 
         $used = config('panel.use_binary_prefix')
-            ? Number::format($latestMemoryUsed['memory'], maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($latestMemoryUsed['memory'], maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+            ? format_number($latestMemoryUsed['memory'], maxPrecision: 2) .' GiB'
+            : format_number($latestMemoryUsed['memory'], maxPrecision: 2) . ' GB';
 
         $total = config('panel.use_binary_prefix')
-            ? Number::format($this->totalMemory / 1024 / 1024 / 1024, maxPrecision: 2, locale: auth()->user()->language) .' GiB'
-            : Number::format($this->totalMemory / 1000 / 1000 / 1000, maxPrecision: 2, locale: auth()->user()->language) . ' GB';
+            ? format_number($this->totalMemory / 1024 / 1024 / 1024, maxPrecision: 2) .' GiB'
+            : format_number($this->totalMemory / 1000 / 1000 / 1000, maxPrecision: 2) . ' GB';
 
         return trans('admin/node.memory_chart', ['used' => $used, 'total' => $total]);
     }

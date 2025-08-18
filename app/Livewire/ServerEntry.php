@@ -38,7 +38,7 @@ class ServerEntry extends Component
                 <div class="flex justify-between text-center items-center gap-4">
                     <div>
                         <p class="text-sm dark:text-gray-400">{{ trans('server/dashboard.cpu') }}</p>
-                        <p class="text-md font-semibold">{{ Number::format(0, precision: 2, locale: auth()->user()->language ?? 'en') . '%' }}</p>
+                        <p class="text-md font-semibold">{{ format_number(0, precision: 2) . '%' }}</p>
                         <hr class="p-0.5">
                         <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::CPULimit) }}</p>
                     </div>

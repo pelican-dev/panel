@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use Filament\Facades\Filament;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Number;
 
 class ServerMemoryChart extends ChartWidget
 {
@@ -31,7 +30,7 @@ class ServerMemoryChart extends ChartWidget
         $memUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))
             ->slice(-$period)
             ->map(fn ($value, $key) => [
-                'memory' => Number::format(config('panel.use_binary_prefix') ? $value / 1024 / 1024 / 1024 : $value / 1000 / 1000 / 1000, maxPrecision: 2),
+                'memory' => round(config('panel.use_binary_prefix') ? $value / 1024 / 1024 / 1024 : $value / 1000 / 1000 / 1000, 2),
                 'timestamp' => Carbon::createFromTimestamp($key, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
             ])
             ->all();

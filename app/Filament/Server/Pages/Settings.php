@@ -17,7 +17,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Support\Number;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class Settings extends ServerFormPage
@@ -104,7 +103,7 @@ class Settings extends ServerFormPage
                                     ->prefixIcon('tabler-cpu')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : Number::format($server->cpu, locale: auth()->user()->language) . '%'),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : format_number($server->cpu) . '%'),
                                 TextInput::make('memory')
                                     ->label('')
                                     ->prefix(trans('server/setting.server_info.limits.memory'))
