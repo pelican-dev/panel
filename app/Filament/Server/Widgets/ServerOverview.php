@@ -68,7 +68,7 @@ class ServerOverview extends StatsOverviewWidget
         }
 
         $latestMemoryUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->last(default: 0);
-        $totalMemory = $this->server->memory * (config('panel.use_binary_prefix') ? 2 ** 20 : 1000 * 1000);
+        $totalMemory = $this->server->memory * (config('panel.use_binary_prefix') ? 1024 * 1024 : 1000 * 1000);
 
         $used = convert_bytes_to_readable($latestMemoryUsed);
         $total = convert_bytes_to_readable($totalMemory);
