@@ -8,15 +8,12 @@ use Lcobucci\JWT\Configuration;
 use App\Models\Permission;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 
 class WebsocketControllerTest extends ClientApiIntegrationTestCase
 {
-    /**
-     * Test that a subuser attempting to connect to the websocket receives an error if they
-     * do not explicitly have the permission.
-     */
     public function test_subuser_without_websocket_permission_receives_error(): void
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_CONTROL_RESTART]);
@@ -59,41 +56,34 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
         $response->assertJsonStructure(['data' => ['token', 'socket']]);
 
         $connection = $response->json('data.socket');
-        $this->assertStringStartsWith('wss://', $connection, 'Failed asserting that websocket connection address has expected "wss://" prefix.');
-        $this->assertStringEndsWith("/api/servers/$server->uuid/ws", $connection, 'Failed asserting that websocket connection address uses expected Daemon endpoint.');
+        $this->assertStringStartsWith('wss://', $connection);
+        $this->assertStringEndsWith("/api/servers/$server->uuid/ws", $connection);
 
-        $config = Configuration::forSymmetricSigner(new Sha256(), $key = InMemory::plainText($server->node->daemon_token));
-        $config->setValidationConstraints(new SignedWith(new Sha256(), $key));
-        /** @var \Lcobucci\JWT\Token\Plain $token */
+        $key = InMemory::plainText($server->node->daemon_token);
+        $config = Configuration::forSymmetricSigner(new Sha256(), $key);
+
         $token = $config->parser()->parse($response->json('data.token'));
+        $this->assertInstanceOf(UnencryptedToken::class, $token);
 
+        $constraints = [new SignedWith(new Sha256(), $key)];
         $this->assertTrue(
-            $config->validator()->validate($token, ...$config->validationConstraints()),
+            $config->validator()->validate($token, ...$constraints),
             'Failed to validate that the JWT data returned was signed using the Node\'s secret key.'
         );
 
-        // The way we generate times for the JWT will truncate the microseconds from the
-        // time, but CarbonImmutable::now() will include them, thus causing test failures.
-        //
-        // This little chunk of logic just strips those out by generating a new CarbonImmutable
-        // instance from the current timestamp, which is how the JWT works. We also need to
-        // switch to UTC here for consistency.
-        $expect = CarbonImmutable::createFromTimestamp(CarbonImmutable::now()->getTimestamp())->timezone('UTC');
+        $expect = CarbonImmutable::createFromTimestamp(CarbonImmutable::now()->getTimestamp())->timezone('UTC')->setMicroseconds(0);
 
-        // Check that the claims are generated correctly.
-        $this->assertTrue($token->hasBeenIssuedBy(config('app.url')));
-        $this->assertTrue($token->isPermittedFor($server->node->getConnectionAddress()));
-        $this->assertEquals($expect, $token->claims()->get('iat'));
-        $this->assertEquals($expect->subMinutes(5), $token->claims()->get('nbf'));
-        $this->assertEquals($expect->addMinutes(10), $token->claims()->get('exp'));
-        $this->assertSame($user->id, $token->claims()->get('user_id'));
-        $this->assertSame($server->uuid, $token->claims()->get('server_uuid'));
-        $this->assertSame(['*'], $token->claims()->get('permissions'));
+        $claims = $token->claims();
+        $this->assertSame(config('app.url'), $claims->get('iss'));
+        $this->assertSame($server->node->getConnectionAddress(), $claims->get('aud')[0] ?? null);
+        $this->assertEquals($expect, CarbonImmutable::instance($claims->get('iat'))->setMicroseconds(0));
+        $this->assertEquals($expect->subMinutes(5), CarbonImmutable::instance($claims->get('nbf'))->setMicroseconds(0));
+        $this->assertEquals($expect->addMinutes(10), CarbonImmutable::instance($claims->get('exp'))->setMicroseconds(0));
+        $this->assertSame($user->uuid, $claims->get('user_uuid'));
+        $this->assertSame($server->uuid, $claims->get('server_uuid'));
+        $this->assertSame(['*'], $claims->get('permissions'));
     }
 
-    /**
-     * Test that the subuser's permissions are passed along correctly in the generated JWT.
-     */
     public function test_jwt_is_configured_correctly_for_server_subuser(): void
     {
         $permissions = [Permission::ACTION_WEBSOCKET_CONNECT, Permission::ACTION_CONTROL_CONSOLE];
@@ -107,17 +97,18 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
         $response->assertOk();
         $response->assertJsonStructure(['data' => ['token', 'socket']]);
 
-        $config = Configuration::forSymmetricSigner(new Sha256(), $key = InMemory::plainText($server->node->daemon_token));
-        $config->setValidationConstraints(new SignedWith(new Sha256(), $key));
-        /** @var \Lcobucci\JWT\Token\Plain $token */
-        $token = $config->parser()->parse($response->json('data.token'));
+        $key = InMemory::plainText($server->node->daemon_token);
+        $config = Configuration::forSymmetricSigner(new Sha256(), $key);
 
+        $token = $config->parser()->parse($response->json('data.token'));
+        $this->assertInstanceOf(UnencryptedToken::class, $token);
+
+        $constraints = [new SignedWith(new Sha256(), $key)];
         $this->assertTrue(
-            $config->validator()->validate($token, ...$config->validationConstraints()),
+            $config->validator()->validate($token, ...$constraints),
             'Failed to validate that the JWT data returned was signed using the Node\'s secret key.'
         );
 
-        // Check that the claims are generated correctly.
         $this->assertSame($permissions, $token->claims()->get('permissions'));
     }
 }

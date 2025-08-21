@@ -67,8 +67,8 @@ FROM --platform=$TARGETOS/$TARGETARCH base AS final
 WORKDIR /var/www/html
 
 # Install additional required libraries
-RUN apk update && apk add --no-cache \
-    caddy ca-certificates supervisor supercronic
+RUN apk add --no-cache \
+    caddy ca-certificates supervisor supercronic fcgi coreutils
 
 COPY --chown=root:www-data --chmod=640 --from=composerbuild /build .
 COPY --chown=root:www-data --chmod=640 --from=yarnbuild /build/public ./public
@@ -89,7 +89,8 @@ RUN chown root:www-data ./ \
     && ln -s  /pelican-data/storage/fonts /var/www/html/storage/app/public/fonts \
     # Allow www-data write permissions where necessary
     && chown -R www-data:www-data /pelican-data ./storage ./bootstrap/cache /var/run/supervisord /var/www/html/public/storage \
-    && chmod -R u+rwX,g+rwX,o-rwx /pelican-data ./storage ./bootstrap/cache /var/run/supervisord
+    && chmod -R u+rwX,g+rwX,o-rwx /pelican-data ./storage ./bootstrap/cache /var/run/supervisord \
+    && chown -R www-data: /usr/local/etc/php/
 
 # Configure Supervisor
 COPY docker/supervisord.conf /etc/supervisord.conf
@@ -97,10 +98,11 @@ COPY docker/Caddyfile /etc/caddy/Caddyfile
 # Add Laravel scheduler to crontab
 COPY docker/crontab /etc/supercronic/crontab
 
-COPY docker/entrypoint.sh ./docker/entrypoint.sh
+COPY docker/entrypoint.sh /entrypoint.sh
+COPY docker/healthcheck.sh /healthcheck.sh
 
 HEALTHCHECK --interval=5m --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost/up || exit 1
+  CMD /bin/ash /healthcheck.sh
 
 EXPOSE 80 443
 
@@ -108,5 +110,5 @@ VOLUME /pelican-data
 
 USER www-data
 
-ENTRYPOINT [ "/bin/ash", "docker/entrypoint.sh" ]
+ENTRYPOINT [ "/bin/ash", "/entrypoint.sh" ]
 CMD [ "supervisord", "-n", "-c", "/etc/supervisord.conf" ]

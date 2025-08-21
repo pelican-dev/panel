@@ -56,8 +56,8 @@ class ServerCreationService
         $egg = Egg::query()->findOrFail($data['egg_id']);
 
         // Fill missing fields from egg
-        $data['image'] = $data['image'] ?? collect($egg->docker_images)->first();
-        $data['startup'] = $data['startup'] ?? $egg->startup;
+        $data['image'] ??= collect($egg->docker_images)->first();
+        $data['startup'] ??= $egg->startup;
 
         // If a deployment object has been passed we need to get the allocation and node that the server should use.
         if ($deployment) {
@@ -87,7 +87,7 @@ class ServerCreationService
                 $data['node_id'] = $nodes->first();
             }
         } else {
-            $data['node_id'] = Allocation::find($data['allocation_id'])?->node_id;
+            $data['node_id'] ??= Allocation::find($data['allocation_id'])?->node_id;
         }
 
         Assert::false(empty($data['node_id']), 'Expected a non-empty node_id in server creation data.');
