@@ -1,7 +1,6 @@
 @php
     $statePath = $getStatePath();
     $isDisabled = $isDisabled();
-    $isRequired = $isRequired();
     $type = $getType();
 @endphp
 
@@ -14,6 +13,7 @@
     </x-slot>
 
     <x-filament::input.wrapper
+        :disabled="$isDisabled"
         :prefix="$getPrefixLabel()"
         :valid="! $errors->has($statePath)"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())->class([
@@ -24,7 +24,7 @@
         @if ($type === \App\Enums\StartupVariableType::Select)
             <x-filament::input.select
                 :id="$getId()"
-                :required="$isRequired"
+                :required="$isRequired()"
                 :disabled="$isDisabled"
                 :attributes="
                     $getExtraInputAttributeBag()
@@ -41,14 +41,14 @@
             </x-filament::input.select>
         @else
             <x-filament::input
+                :id="$getId()"
+                :required="$isRequired()"
+                :disabled="$isDisabled"
+                :placeholder="$getPlaceholder()"
                 :attributes="
                     \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                         ->merge($getExtraAlpineAttributes(), escape: false)
                         ->merge([
-                            'id' => $getId(),
-                            'required' => $isRequired,
-                            'disabled' => $isDisabled,
-                            'placeholder' => $getPlaceholder(),
                             $applyStateBindingModifiers('wire:model') => $statePath,
                         ], escape: false)
                 "
