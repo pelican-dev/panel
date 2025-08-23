@@ -439,7 +439,12 @@ class CreateServer extends CreateRecord
                                         ->hidden(fn ($state) => empty($state))
                                         ->schema([
                                             StartupVariable::make('variable_value')
-                                                ->fromForm(),
+                                                ->fromForm()
+                                                ->afterStateUpdated(function (Set $set, Get $get, $state) {
+                                                    $environment = $get($envPath = '../../environment');
+                                                    $environment[$get('env_variable')] = $state;
+                                                    $set($envPath, $environment);
+                                                }),
                                         ])
                                         ->columnSpan(2),
                                 ]),
