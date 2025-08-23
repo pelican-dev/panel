@@ -9,6 +9,7 @@ use Filament\Forms\Components\Concerns\HasAffixes;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Get;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -55,6 +56,28 @@ class StartupVariable extends Field
         $this->live(onBlur: true);
     }
 
+    public function fromForm(): static
+    {
+        $this->variableName(fn (Get $get) => $get('name'));
+        $this->variableDesc(fn (Get $get) => $get('description'));
+        $this->variableEnv(fn (Get $get) => $get('env_variable'));
+        $this->variableDefault(fn (Get $get) => $get('default_value'));
+        $this->variableRules(fn (Get $get) => $get('rules'));
+
+        return $this;
+    }
+
+    public function fromRecord(): static
+    {
+        $this->variableName(fn (ServerVariable $record) => $record->variable->name);
+        $this->variableDesc(fn (ServerVariable $record) => $record->variable->description);
+        $this->variableEnv(fn (ServerVariable $record) => $record->variable->env_variable);
+        $this->variableDefault(fn (ServerVariable $record) => $record->variable->default_value);
+        $this->variableRules(fn (ServerVariable $record) => $record->variable->rules);
+
+        return $this;
+    }
+
     public function variableName(string|Closure|null $name): static
     {
         $this->variableName = $name;
@@ -93,52 +116,27 @@ class StartupVariable extends Field
 
     public function getVariableName(): ?string
     {
-        $record = $this->getRecord();
-        if ($record instanceof ServerVariable) {
-            return $record->variable->name;
-        }
-
         return $this->evaluate($this->variableName);
     }
 
     public function getVariableDesc(): ?string
     {
-        $record = $this->getRecord();
-        if ($record instanceof ServerVariable) {
-            return $record->variable->description;
-        }
-
         return $this->evaluate($this->variableDesc);
     }
 
     public function getVariableEnv(): ?string
     {
-        $record = $this->getRecord();
-        if ($record instanceof ServerVariable) {
-            return $record->variable->env_variable;
-        }
-
         return $this->evaluate($this->variableEnv);
     }
 
     public function getVariableDefault(): ?string
     {
-        $record = $this->getRecord();
-        if ($record instanceof ServerVariable) {
-            return $record->variable->default_value;
-        }
-
         return $this->evaluate($this->variableDefault);
     }
 
     /** @return string[] */
     public function getVariableRules(): array
     {
-        $record = $this->getRecord();
-        if ($record instanceof ServerVariable) {
-            return $record->variable->rules;
-        }
-
         return (array) ($this->evaluate($this->variableRules) ?? []);
     }
 

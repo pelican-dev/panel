@@ -438,7 +438,8 @@ class CreateServer extends CreateRecord
                                         ->default([])
                                         ->hidden(fn ($state) => empty($state))
                                         ->schema([
-                                            StartupVariable::make('variable_value'),
+                                            StartupVariable::make('variable_value')
+                                                ->fromForm(),
                                         ])
                                         ->columnSpan(2),
                                 ]),

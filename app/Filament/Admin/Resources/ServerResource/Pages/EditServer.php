@@ -639,7 +639,8 @@ class EditServer extends EditRecord
                                     })
                                     ->reorderable(false)->addable(false)->deletable(false)
                                     ->schema([
-                                        StartupVariable::make('variable_value'),
+                                        StartupVariable::make('variable_value')
+                                            ->fromRecord(),
                                     ])
                                     ->columnSpan(6),
                             ]),
