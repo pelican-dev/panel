@@ -1,6 +1,7 @@
 @php
     $statePath = $getStatePath();
     $isDisabled = $isDisabled();
+    $isRequired = $isRequired();
     $type = $getType();
 @endphp
 
@@ -23,7 +24,7 @@
         @if ($type === \App\Enums\StartupVariableType::Select)
             <x-filament::input.select
                 :id="$getId()"
-                :required="$isRequired()"
+                :required="$isRequired"
                 :disabled="$isDisabled"
                 :attributes="
                     $getExtraInputAttributeBag()
@@ -45,9 +46,9 @@
                         ->merge($getExtraAlpineAttributes(), escape: false)
                         ->merge([
                             'id' => $getId(),
-                            'required' => $isRequired(),
+                            'required' => $isRequired,
                             'disabled' => $isDisabled,
-                            'placeholder' => $getVariableDefault(),
+                            'placeholder' => $getPlaceholder(),
                             $applyStateBindingModifiers('wire:model') => $statePath,
                         ], escape: false)
                 "
