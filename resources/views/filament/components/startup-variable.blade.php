@@ -1,5 +1,6 @@
 @php
     $statePath = $getStatePath();
+    $isRequired = $isRequired();
     $isDisabled = $isDisabled();
     $type = $getType();
 @endphp
@@ -24,7 +25,7 @@
         @if ($type === \App\Enums\StartupVariableType::Select)
             <x-filament::input.select
                 :id="$getId()"
-                :required="$isRequired()"
+                :required="$isRequired"
                 :disabled="$isDisabled"
                 :attributes="
                     $getExtraInputAttributeBag()
@@ -33,6 +34,14 @@
                         ], escape: false)
                 "
             >
+                @if (!$isRequired)
+                    <option value="">
+                        @if (!$isDisabled)
+                            {{ trans('filament-forms::components.select.placeholder') }}
+                        @endif
+                    </option>
+                @endif
+
                 @foreach ($getSelectOptions() as $value)
                     <option value="{{ $value }}">
                         {{ $value }}
@@ -42,7 +51,7 @@
         @else
             <x-filament::input
                 :id="$getId()"
-                :required="$isRequired()"
+                :required="$isRequired"
                 :disabled="$isDisabled"
                 :placeholder="$getPlaceholder()"
                 :attributes="
