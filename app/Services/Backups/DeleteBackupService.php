@@ -2,7 +2,7 @@
 
 namespace App\Services\Backups;
 
-use App\Extensions\Filesystem\S3Filesystem;
+use App\Extensions\Backups\Adapter\S3BackupAdapter;
 use Aws\S3\S3Client;
 use Illuminate\Http\Response;
 use App\Models\Backup;
@@ -69,7 +69,7 @@ class DeleteBackupService
         $this->connection->transaction(function () use ($backup) {
             $backup->delete();
 
-            /** @var S3Filesystem $adapter */
+            /** @var S3BackupAdapter $adapter */
             $adapter = $this->manager->adapter(Backup::ADAPTER_AWS_S3);
 
             /** @var S3Client $client */

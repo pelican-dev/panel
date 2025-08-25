@@ -62,5 +62,15 @@ return [
 
             'storage_class' => env('AWS_BACKUPS_STORAGE_CLASS'),
         ],
+
+        // Configuration for storing backups in a Restic repository.
+        'restic' => [
+            'adapter' => Backup::ADAPTER_RESTIC,
+
+            'use_s3' => env('RESTIC_USE_S3', false),
+            'repository' => env('RESTIC_REPOSITORY'),
+            'password' => env('RESTIC_PASSWORD'),
+            'retry_lock_seconds' => env('RESTIC_RETRY_LOCK_SECONDS', 60),
+        ],
     ],
 ];

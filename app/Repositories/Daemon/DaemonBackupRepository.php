@@ -59,6 +59,6 @@ class DaemonBackupRepository extends DaemonRepository
      */
     public function delete(Backup $backup): Response
     {
-        return $this->getHttpClient()->delete("/api/servers/{$this->server->uuid}/backup/$backup->uuid");
+        return $this->getHttpClient()->delete("/api/servers/{$this->server->uuid}/backup/$backup->uuid/$backup->disk");
     }
 }
