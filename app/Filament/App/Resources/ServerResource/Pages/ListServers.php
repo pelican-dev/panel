@@ -61,13 +61,13 @@ class ListServers extends ListRecords
     {
         return [
             TextColumn::make('condition')
-                ->label('Status')
+                ->label(trans('server/dashboard.status'))
                 ->badge()
                 ->tooltip(fn (Server $server) => $server->formatResource(ServerResourceType::Uptime))
                 ->icon(fn (Server $server) => $server->condition->getIcon())
                 ->color(fn (Server $server) => $server->condition->getColor()),
             TextColumn::make('name')
-                ->label('Server')
+                ->label(trans('server/dashboard.title'))
                 ->description(fn (Server $server) => $server->description)
                 ->grow()
                 ->searchable(),
@@ -142,15 +142,18 @@ class ListServers extends ListRecords
         $other = (clone $all)->whereNot('owner_id', auth()->user()->id);
 
         return [
-            'my' => Tab::make('My Servers')
+            'my' => Tab::make('my')
+                ->label(trans('server/dashboard.tabs.my'))
                 ->badge(fn () => $my->count())
                 ->modifyQueryUsing(fn () => $my),
 
-            'other' => Tab::make('Others\' Servers')
+            'other' => Tab::make('other')
+                ->label(trans('server/dashboard.tabs.other'))
                 ->badge(fn () => $other->count())
                 ->modifyQueryUsing(fn () => $other),
 
-            'all' => Tab::make('All Servers')
+            'all' => Tab::make('all')
+                ->label(trans('server/dashboard.tabs.all'))
                 ->badge($all->count()),
         ];
     }
@@ -204,7 +207,7 @@ class ListServers extends ListRecords
             $this->daemonPowerRepository->setServer($server)->send($action);
 
             Notification::make()
-                ->title('Power Action')
+                ->title(trans('server/dashboard.power_actions'))
                 ->body($action . ' sent to ' . $server->name)
                 ->success()
                 ->send();

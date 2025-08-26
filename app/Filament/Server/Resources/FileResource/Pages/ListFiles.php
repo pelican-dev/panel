@@ -135,7 +135,7 @@ class ListFiles extends ListRecords
                         ->icon('tabler-forms')
                         ->form([
                             TextInput::make('name')
-                                ->label(trans('server/file.actions.rename.name'))
+                                ->label(trans('server/file.actions.rename.file_name'))
                                 ->default(fn (File $file) => $file->name)
                                 ->required(),
                         ])
@@ -525,7 +525,8 @@ class ListFiles extends ListRecords
                     Tabs::make()
                         ->contained(false)
                         ->schema([
-                            Tab::make(trans('server/file.actions.upload.from_files'))
+                            Tab::make('from_files')
+                                ->label(trans('server/file.actions.upload.from_files'))
                                 ->live()
                                 ->schema([
                                     FileUpload::make('files')
@@ -535,7 +536,8 @@ class ListFiles extends ListRecords
                                         ->maxSize((int) round($server->node->upload_size * (config('panel.use_binary_prefix') ? 1.048576 * 1024 : 1000)))
                                         ->multiple(),
                                 ]),
-                            Tab::make(trans('server/file.actions.upload.url'))
+                            Tab::make('url')
+                                ->label(trans('server/file.actions.upload.url'))
                                 ->live()
                                 ->disabled(fn (Get $get) => count($get('files')) > 0)
                                 ->schema([

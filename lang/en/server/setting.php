@@ -15,7 +15,7 @@ return [
         'limits' => [
             'title' => 'Limits',
             'unlimited' => 'Unlimited',
-            'of' => 'of',
+            'of' => 'of :max',
             'cpu' => 'CPU',
             'memory' => 'Memory',
             'disk' => 'Disk Space',

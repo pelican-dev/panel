@@ -132,6 +132,8 @@ return [
         'reinstall_started' => 'Reinstall started',
         'reinstall_failed' => 'Could not start reinstall',
         'log_failed' => 'Could not connect to Wings to retrieve server install log.',
+        'transfer_started' => 'Transfer started',
+        'transfer_failed' => 'Transfer failed',
     ],
     'notes' => 'Notes',
     'no_notes' => 'No Notes',

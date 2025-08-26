@@ -119,7 +119,7 @@ class Settings extends Page implements HasForms
                         ->label(trans('admin/setting.navigation.backup'))
                         ->icon('tabler-box')
                         ->schema($this->backupSettings()),
-                    Tab::make('OAuth')
+                    Tab::make('oauth')
                         ->label(trans('admin/setting.navigation.oauth'))
                         ->icon('tabler-brand-oauth')
                         ->schema($this->oauthSettings()),

@@ -29,7 +29,7 @@ return [
     'architecture' => 'Architecture',
     'kernel' => 'Kernel',
     'unknown' => 'Unknown',
-    'latest' => 'Latest',
+    'latest' => '(Latest: :version)',
     'node_uuid' => 'Node UUID',
     'node_id' => 'Node ID',
 
@@ -88,6 +88,7 @@ return [
 
     'auto_deploy' => 'Auto Deploy Command',
     'auto_question' => 'Choose between Standalone and Docker install.',
+    'auto_label' => 'Type',
     'standalone' => 'Standalone',
     'docker' => 'Docker',
     'auto_command' => 'To auto-configure your node run the following command:',

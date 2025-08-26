@@ -80,7 +80,7 @@ class UserResource extends Resource
                     ->label(trans('admin/user.email'))
                     ->icon('tabler-mail'),
                 IconColumn::make('use_totp')
-                    ->label('2FA')
+                    ->label(trans('profile.tabs.2fa'))
                     ->visibleFrom('lg')
                     ->icon(fn (User $user) => $user->use_totp ? 'tabler-lock' : 'tabler-lock-open-off')
                     ->boolean(),

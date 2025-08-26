@@ -68,7 +68,7 @@ enum ContainerStatus: string implements HasColor, HasIcon, HasLabel
 
     public function getLabel(): string
     {
-        return trans('server/console.status.' . strtolower($this->value));
+        return trans('server/console.status.' . $this->value);
     }
 
     public function isOffline(): bool

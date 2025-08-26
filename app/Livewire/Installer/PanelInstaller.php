@@ -77,7 +77,7 @@ class PanelInstaller extends SimplePage implements HasForms
                         size="sm"
                         wire:loading.attr="disabled"
                     >
-                        Finish
+                        trans('installer.finish') 
                         <span wire:loading><x-filament::loading-indicator class="h-4 w-4" /></span>
                     </x-filament::button>
                 BLADE))),
