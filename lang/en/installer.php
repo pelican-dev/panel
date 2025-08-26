@@ -4,17 +4,17 @@ return [
     'requirements' => [
         'title' => 'Server Requirements',
         'sections' => [
-            [
+            'version' => [
                 'title' => 'PHP Version',
                 'or_newer' => ':version or newer',
-                'version' => 'Your PHP Version is :version.',
+                'content' => 'Your PHP Version is :version.',
             ],
-            [
+            'extensions' => [
                 'title' => 'PHP Extensions',
                 'good' => 'All needed PHP Extensions are installed.',
                 'bad' => 'The following PHP Extensions are missing: :extensions',
             ],
-            [
+            'permissions' => [
                 'title' => 'Folder Permissions',
                 'good' => 'All Folders have the correct permissions.',
                 'bad' => 'The following Folders have wrong permissions: :folderss',
@@ -55,7 +55,10 @@ return [
             'password' => 'Database Password',
             'password_help' => 'The password of your database user. Can be empty.',
         ],
-        'exception' => 'Database connection failed',
+        'exceptions' => [
+            'connection' => 'Database connection failed',
+            'migration' => 'Migrations failed',
+        ],
     ],
     'session' => [
         'title' => 'Session',
@@ -88,6 +91,11 @@ return [
             'crontab' => 'Run the following command to set up your crontab. Note that <code>www-data</code> is your webserver user. On some systems this username might be different!',
             'service' => 'To setup the queue worker service you simply have to run the following command.',
         ],
+    ],
+    'exceptions' => [
+        'write_env' => 'Could not write to .env file',
+        'migration' => 'Could not run migrations',
+        'create_user' => 'Could not create admin user',
     ],
     'finish' => 'Finish',
 ];

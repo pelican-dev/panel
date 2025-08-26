@@ -143,8 +143,7 @@ class BackupResource extends Resource
                             }
 
                             Notification::make()
-                                ->title('Backup Renamed')
-                                ->body('The backup has been successfully renamed.')
+                                ->title(trans('server/backup.actions.rename.notification_success'))
                                 ->success()
                                 ->send();
                         })

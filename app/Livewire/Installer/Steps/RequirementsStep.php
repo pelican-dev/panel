@@ -18,13 +18,13 @@ class RequirementsStep
         $correctPhpVersion = $compare >= 0;
 
         $fields = [
-            Section::make(trans('installer.requirements.sections.0.title'))
-                ->description(trans('installer.requirements.sections.0.or_newer', ['version' => self::MIN_PHP_VERSION]))
+            Section::make(trans('installer.requirements.sections.version.title'))
+                ->description(trans('installer.requirements.sections.version.or_newer', ['version' => self::MIN_PHP_VERSION]))
                 ->icon($correctPhpVersion ? 'tabler-check' : 'tabler-x')
                 ->iconColor($correctPhpVersion ? 'success' : 'danger')
                 ->schema([
                     Placeholder::make('')
-                        ->content(trans('installer.requirements.sections.0.version', ['version' => PHP_VERSION])),
+                        ->content(trans('installer.requirements.sections.version.content', ['version' => PHP_VERSION])),
                 ]),
         ];
 
@@ -41,16 +41,16 @@ class RequirementsStep
         ];
         $allExtensionsInstalled = !in_array(false, $phpExtensions);
 
-        $fields[] = Section::make(trans('installer.requirements.sections.1.title'))
+        $fields[] = Section::make(trans('installer.requirements.sections.extensions.title'))
             ->description(implode(', ', array_keys($phpExtensions)))
             ->icon($allExtensionsInstalled ? 'tabler-check' : 'tabler-x')
             ->iconColor($allExtensionsInstalled ? 'success' : 'danger')
             ->schema([
                 Placeholder::make('')
-                    ->content(trans('installer.requirements.sections.1.good'))
+                    ->content(trans('installer.requirements.sections.extensions.good'))
                     ->visible($allExtensionsInstalled),
                 Placeholder::make('')
-                    ->content(trans('installer.requirements.sections.1.bad', ['extensions' => implode(', ', array_keys($phpExtensions, false))]))
+                    ->content(trans('installer.requirements.sections.extensions.bad', ['extensions' => implode(', ', array_keys($phpExtensions, false))]))
                     ->visible(!$allExtensionsInstalled),
             ]);
 
@@ -60,16 +60,16 @@ class RequirementsStep
         ];
         $correctFolderPermissions = !in_array(false, $folderPermissions);
 
-        $fields[] = Section::make(trans('installer.requirements.sections.2.title'))
+        $fields[] = Section::make(trans('installer.requirements.sections.permissions.title'))
             ->description(implode(', ', array_keys($folderPermissions)))
             ->icon($correctFolderPermissions ? 'tabler-check' : 'tabler-x')
             ->iconColor($correctFolderPermissions ? 'success' : 'danger')
             ->schema([
                 Placeholder::make('')
-                    ->content(trans('installer.requirements.sections.2.good'))
+                    ->content(trans('installer.requirements.sections.permissions.good'))
                     ->visible($correctFolderPermissions),
                 Placeholder::make('')
-                    ->content(trans('installer.requirements.sections.2.bad', ['extensions' => implode(', ', array_keys($folderPermissions, false))]))
+                    ->content(trans('installer.requirements.sections.permissions.bad', ['extensions' => implode(', ', array_keys($folderPermissions, false))]))
                     ->visible(!$correctFolderPermissions),
             ]);
 

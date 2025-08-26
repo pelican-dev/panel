@@ -98,7 +98,7 @@ class ServerOverview extends StatsOverviewWidget
         $this->js("window.navigator.clipboard.writeText('{$value}');");
 
         Notification::make()
-            ->title('Copied to clipboard')
+            ->title(trans('server/dashboard.copied'))
             ->body($value)
             ->success()
             ->send();

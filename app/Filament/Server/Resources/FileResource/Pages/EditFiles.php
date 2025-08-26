@@ -32,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
+use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
 
 /**
@@ -134,8 +135,8 @@ class EditFiles extends Page
                                     return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
                                 } catch (FileSizeTooLargeException) {
                                     AlertBanner::make('file_too_large')
-                                        ->title('<code>' . basename($this->path) . '</code> is too large!')
-                                        ->body('Max is ' . convert_bytes_to_readable(config('panel.files.max_edit_size')))
+                                        ->title(fn () => new HtmlString(trans('server/file.alerts.file_too_large.title', ['name' => basename($this->path)])))
+                                        ->body(trans('server/file.alerts.file_too_large.body', ['max' => convert_bytes_to_readable(config('panel.files.max_edit_size'))]))
                                         ->danger()
                                         ->closable()
                                         ->send();
@@ -143,7 +144,7 @@ class EditFiles extends Page
                                     $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 } catch (FileNotFoundException) {
                                     AlertBanner::make('file_not_found')
-                                        ->title('<code>' . basename($this->path) . '</code> not found!')
+                                        ->title(fn () => new HtmlString(trans('server/file.alerts.file_not_found.title', ['name' => basename($this->path)])))
                                         ->danger()
                                         ->closable()
                                         ->send();
@@ -151,7 +152,7 @@ class EditFiles extends Page
                                     $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 } catch (FileNotEditableException) {
                                     AlertBanner::make('file_is_directory')
-                                        ->title('<code>' . basename($this->path) . '</code> is a directory')
+                                        ->title(fn () => new HtmlString(trans('server/file.alerts.file_not_found.title', ['name' => basename($this->path)])))
                                         ->danger()
                                         ->closable()
                                         ->send();
@@ -179,8 +180,8 @@ class EditFiles extends Page
 
         if (str($path)->endsWith('.pelicanignore')) {
             AlertBanner::make('.pelicanignore_info')
-                ->title('You\'re editing a <code>.pelicanignore</code> file!')
-                ->body('Any files or directories listed in here will be excluded from backups. Wildcards are supported by using an asterisk (<code>*</code>).<br>You can negate a prior rule by prepending an exclamation point (<code>!</code>).')
+                ->title(fn () => new HtmlString(trans('server/file.alerts.pelicanignore.title')))
+                ->body(fn () => new HtmlString(trans('server/file.alerts.pelicanignore.body')))
                 ->info()
                 ->closable()
                 ->send();

@@ -440,7 +440,7 @@ class ListFiles extends ListRecords
                             ->log();
                     } catch (FileExistsException) {
                         AlertBanner::make('file_already_exists')
-                            ->title('<code>' . $path . '</code> already exists!')
+                            ->title(trans('server/file.alerts.file_already_exists.title', ['name' => $path]))
                             ->danger()
                             ->closable()
                             ->send();
@@ -481,7 +481,7 @@ class ListFiles extends ListRecords
                     } catch (FileExistsException) {
                         $path = join_paths($this->path, $data['name']);
                         AlertBanner::make('folder_already_exists')
-                            ->title('<code>' . $path . '</code> already exists!')
+                            ->title(trans('server/file.alerts.file_already_exists.title', ['name' => $path]))
                             ->danger()
                             ->closable()
                             ->send();

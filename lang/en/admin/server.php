@@ -111,6 +111,7 @@ return [
     'notifications' => [
         'server_suspension' => 'Server Suspension',
         'server_suspended' => 'Server has been suspended',
+        'server_already_suspended' => 'Server is already suspended!',
         'server_suspend_help' => 'This will suspend the Server, stop any running processes, and immediately block the user from being able to access their files or otherwise manage the Server through the panel or API.',
         'server_unsuspend_help' => 'This will unsuspend the Server and restore normal user access.',
         'server_unsuspended' => 'Server has been unsuspended',
@@ -134,6 +135,7 @@ return [
         'log_failed' => 'Could not connect to Wings to retrieve server install log.',
         'transfer_started' => 'Transfer started',
         'transfer_failed' => 'Transfer failed',
+        'already_transfering' => 'Server is currently being transferred.',
     ],
     'notes' => 'Notes',
     'no_notes' => 'No Notes',

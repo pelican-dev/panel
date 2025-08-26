@@ -32,6 +32,7 @@ return [
         'rename' => [
             'title' => 'Rename',
             'new_name' => 'Backup Name',
+            'notification_success' => 'Backup Renamed Successfully',
         ],
         'restore' => [
             'title' => 'Restore',

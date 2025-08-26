@@ -24,4 +24,6 @@ return [
     'loading' => 'Loading...',
 
     'power_actions' => 'Power Actions',
+
+    'copied' => 'Copied to clipboard',
 ];

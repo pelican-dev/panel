@@ -103,7 +103,7 @@ class DatabaseStep
                 $driver = $get('env_database.DB_CONNECTION');
 
                 if (!self::testConnection($driver, $get('env_database.DB_HOST'), $get('env_database.DB_PORT'), $get('env_database.DB_DATABASE'), $get('env_database.DB_USERNAME'), $get('env_database.DB_PASSWORD'))) {
-                    throw new Halt('Database connection failed');
+                    throw new Halt(trans('installer.database.exception'));
                 }
 
                 $installer->writeToEnv('env_database');
