@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Permission;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -10,7 +10,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Permission::where('name', 'seeIps activity')->update(['name' => 'seeIps activityLog']);
+        DB::table('permissions')
+            ->where('name', 'seeIps activity')
+            ->update(['name' => 'seeIps activityLog']);
     }
 
     /**
@@ -18,6 +20,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Permission::where('name', 'seeIps activityLog')->update(['name' => 'seeIps activity']);
+        DB::table('permissions')
+            ->where('name', 'seeIps activityLog')
+            ->update(['name' => 'seeIps activity']);
     }
 };
