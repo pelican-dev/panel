@@ -106,7 +106,7 @@ class PanelInstaller extends SimplePage implements HasForms
             $this->writeToEnv('env_session');
 
             // Redirect to admin panel
-            $this->redirect(Dashboard::getUrl());
+            $this->redirect(Dashboard::getUrl(panel: 'app'));
         } catch (Halt) {
         }
     }

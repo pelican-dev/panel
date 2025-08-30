@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
+use Filament\Facades\Filament;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
@@ -23,7 +24,7 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn () => EditProfile::getUrl(panel: 'app')),
                 MenuItem::make()
                     ->label(fn () => trans('profile.exit_admin'))
-                    ->url('/')
+                    ->url(fn () => Filament::getPanel('app')->getUrl())
                     ->icon('tabler-arrow-back')
                     ->sort(24),
             ])
