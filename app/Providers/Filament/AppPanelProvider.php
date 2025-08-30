@@ -18,7 +18,7 @@ class AppPanelProvider extends PanelProvider
             ->userMenuItems([
                 MenuItem::make()
                     ->label(trans('profile.admin'))
-                    ->url('/admin')
+                    ->url(fn () => Filament::getPanel('admin')->getUrl())
                     ->icon('tabler-arrow-forward')
                     ->sort(5)
                     ->visible(fn () => auth()->user()->canAccessPanel(Filament::getPanel('admin'))),
