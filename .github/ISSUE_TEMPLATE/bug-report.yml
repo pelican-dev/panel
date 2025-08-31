@@ -64,10 +64,9 @@ body:
     label: Error Logs
     description: |
       Run the following command to collect logs on your system.
-
-      Wings: `sudo wings diagnostics`
-      Panel: `tail -n 150 /var/www/pelican/storage/logs/laravel-$(date +%F).log | curl -X POST -F 'c=@-' paste.pelistuff.com`
-    placeholder: "https://pelipaste.com/a1h6z"
+      Wings: `sudo wings diagnostics --hastebin-url=https://logs.pelican.dev`
+      Panel: `tail -n 300 /var/www/pelican/storage/logs/laravel-$(date +%F).log | curl --data-binary @- https://logs.pelican.dev`
+    placeholder: "https://logs.pelican.dev/c17f750e"
     render: bash
   validations:
     required: false

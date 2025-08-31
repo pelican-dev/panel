@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Resources\NodeResource\Widgets;
 use App\Models\Node;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Number;
 
 class NodeCpuChart extends ChartWidget
 {
@@ -82,8 +81,8 @@ class NodeCpuChart extends ChartWidget
     {
         $data = array_slice(end($this->cpuHistory), -60);
 
-        $cpu = Number::format($data['cpu'], maxPrecision: 2, locale: auth()->user()->language);
-        $max = Number::format($this->threads * 100, locale: auth()->user()->language);
+        $cpu = format_number($data['cpu'], maxPrecision: 2);
+        $max = format_number($this->threads * 100);
 
         return trans('admin/node.cpu_chart', ['cpu' => $cpu, 'max' => $max]);
     }
