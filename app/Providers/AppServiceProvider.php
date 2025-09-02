@@ -28,7 +28,6 @@ use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Components\TextInput;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentView;
@@ -149,11 +148,6 @@ class AppServiceProvider extends ServiceProvider
             }
 
             $component->dispatch('alertBannerSent');
-        });
-
-        Field::macro('suffixCopy', function () {
-            /** @var TextInput $this */
-            return $this->suffixAction(fn (?string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null); // @phpstan-ignore varTag.nativeType
         });
 
         Field::macro('hintCopy', function () {

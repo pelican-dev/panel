@@ -2,7 +2,6 @@
 
 namespace App\Filament\Server\Resources\Databases;
 
-use App\Filament\Components\Actions\CopyAction;
 use App\Filament\Components\Actions\RotateDatabasePasswordAction;
 use App\Filament\Server\Resources\Databases\Pages\ListDatabases;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
@@ -77,13 +76,13 @@ class DatabaseResource extends Resource
                 TextInput::make('host')
                     ->label(trans('server/database.host'))
                     ->formatStateUsing(fn (Database $database) => $database->address())
-                    ->suffixCopy(),
+                    ->copyable(),
                 TextInput::make('database')
                     ->label(trans('server/database.database'))
-                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
+                    ->copyable(),
                 TextInput::make('username')
                     ->label(trans('server/database.username'))
-                    ->suffixAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null),
+                    ->copyable(),
                 TextInput::make('password')
                     ->label(trans('server/database.password'))
                     ->password()->revealable()
@@ -92,7 +91,7 @@ class DatabaseResource extends Resource
                         RotateDatabasePasswordAction::make()
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_DATABASE_UPDATE, $server))
                     )
-                    ->suffixCopy()
+                    ->copyable()
                     ->formatStateUsing(fn (Database $database) => $database->password),
                 TextInput::make('remote')
                     ->label(trans('server/database.remote')),
@@ -103,7 +102,7 @@ class DatabaseResource extends Resource
                     ->label(trans('server/database.jdbc'))
                     ->password()->revealable()
                     ->hidden(!auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
-                    ->suffixCopy()
+                    ->copyable()
                     ->columnSpanFull()
                     ->formatStateUsing(fn (Database $database) => $database->jdbc),
             ]);

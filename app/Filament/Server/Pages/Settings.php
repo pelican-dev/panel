@@ -168,7 +168,7 @@ class Settings extends ServerFormPage
                                     ->label(trans('server/setting.node_info.sftp.connection'))
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->suffixCopy()
+                                    ->copyable()
                                     ->hintAction(
                                         Action::make('connect_sftp')
                                             ->label(trans('server/setting.node_info.sftp.action'))
@@ -188,7 +188,7 @@ class Settings extends ServerFormPage
                                 TextInput::make('username')
                                     ->label(trans('server/setting.node_info.sftp.username'))
                                     ->columnSpan(1)
-                                    ->suffixCopy()
+                                    ->copyable()
                                     ->disabled()
                                     ->formatStateUsing(fn (Server $server) => auth()->user()->username . '.' . $server->uuid_short),
                                 TextEntry::make('password')
