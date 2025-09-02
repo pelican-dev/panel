@@ -67,11 +67,11 @@ class StartupVariable extends Field
         return match ($this->getType()) {
             StartupVariableType::Number => [
                 ...parent::getDefaultStateCasts(),
-                app(NumberStateCast::class, ['isNullable' => false]),
+                new NumberStateCast(false),
             ],
             StartupVariableType::Toggle => [
                 ...parent::getDefaultStateCasts(),
-                app(BooleanStateCast::class, ['isNullable' => false]),
+                new BooleanStateCast(false),
             ],
             default => parent::getDefaultStateCasts()
         };
