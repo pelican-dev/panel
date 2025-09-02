@@ -46,7 +46,7 @@ class Role extends BaseRole
         'health' => [
             'view',
         ],
-        'activity' => [
+        'activityLog' => [
             'seeIps',
         ],
     ];

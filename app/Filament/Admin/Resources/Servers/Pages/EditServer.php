@@ -4,8 +4,6 @@ namespace App\Filament\Admin\Resources\Servers\Pages;
 
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\Servers\ServerResource;
-use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
-use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManager;
 use App\Filament\Components\Actions\PreviewStartupAction;
 use App\Filament\Server\Pages\Console;
 use App\Models\Allocation;
@@ -24,18 +22,8 @@ use App\Services\Servers\ToggleInstallService;
 use App\Services\Servers\TransferServerService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Closure;
 use Exception;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Forms\Components\CodeEditor;
-use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Fieldset;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
+use Filament\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -53,7 +41,6 @@ use Filament\Support\Enums\Alignment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
 use LogicException;
 use Filament\Schemas\Schema;
@@ -629,7 +616,7 @@ class EditServer extends EditRecord
                                     }),
 
                                 Repeater::make('server_variables')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->relationship('serverVariables', function (Builder $query) {
                                         /** @var Server $server */
                                         $server = $this->getRecord();
@@ -646,56 +633,16 @@ class EditServer extends EditRecord
                                         return $query->orderByPowerJoins('variable.sort');
                                     })
                                     ->grid()
-                                    ->mutateRelationshipDataBeforeSaveUsing(function (array $data) {
-                                        $data['variable_value'] = ($data['is_select'] ? $data['variable_value_select'] : $data['variable_value_input']) ?? '';
+                                    ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
+                                        $data['variable_value'] ??= '';
 
                                         return $data;
                                     })
                                     ->reorderable(false)->addable(false)->deletable(false)
-                                    ->schema(function () {
-                                        $isSelect = Hidden::make('is_select')
-                                            ->dehydrated(false)
-                                            ->formatStateUsing(fn (ServerVariable $serverVariable) => (bool) array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'), false));
-
-                                        $text = TextInput::make('variable_value_input')
-                                            ->hidden($this->shouldHideComponent(...))
-                                            ->dehydratedWhenHidden()
-                                            ->required(fn (ServerVariable $serverVariable) => $serverVariable->variable->getRequiredAttribute())
-                                            ->rules([
-                                                fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
-                                                    $validator = Validator::make(['validatorkey' => $value], [
-                                                        'validatorkey' => $serverVariable->variable->rules,
-                                                    ]);
-
-                                                    if ($validator->fails()) {
-                                                        $message = str($validator->errors()->first())->replace('validatorkey', $serverVariable->variable->name);
-
-                                                        $fail($message);
-                                                    }
-                                                },
-                                            ]);
-
-                                        $select = Select::make('variable_value_select')
-                                            ->hidden($this->shouldHideComponent(...))
-                                            ->dehydratedWhenHidden()
-                                            ->options($this->getSelectOptionsFromRules(...))
-                                            ->selectablePlaceholder(false);
-
-                                        $components = [$text, $select];
-
-                                        foreach ($components as &$component) {
-                                            $component = $component
-                                                ->live(onBlur: true)
-                                                ->hintIcon('tabler-code')
-                                                ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable->name)
-                                                ->hintIconTooltip(fn (ServerVariable $serverVariable) => implode('|', $serverVariable->variable->rules))
-                                                ->prefix(fn (ServerVariable $serverVariable) => '{{' . $serverVariable->variable->env_variable . '}}')
-                                                ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description)
-                                                ->formatStateUsing(fn (ServerVariable $serverVariable) => $serverVariable->variable_value);
-                                        }
-
-                                        return [$isSelect, ...$components];
-                                    })
+                                    ->schema([
+                                        StartupVariable::make('variable_value')
+                                            ->fromRecord(),
+                                    ])
                                     ->columnSpan(6),
                             ]),
                         Tab::make(trans('admin/server.mounts'))
@@ -1031,35 +978,5 @@ class EditServer extends EditRecord
             AllocationsRelationManager::class,
             DatabasesRelationManager::class,
         ];
-    }
-
-    private function shouldHideComponent(ServerVariable $serverVariable, Component $component): bool
-    {
-        $containsRuleIn = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'), false);
-
-        if ($component instanceof Select) {
-            return !$containsRuleIn;
-        }
-
-        if ($component instanceof TextInput) {
-            return $containsRuleIn;
-        }
-
-        throw new Exception('Component type not supported: ' . $component::class);
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
-    {
-        $inRule = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'));
-
-        return str($inRule)
-            ->after('in:')
-            ->explode(',')
-            ->each(fn ($value) => str($value)->trim())
-            ->mapWithKeys(fn ($value) => [$value => $value])
-            ->all();
     }
 }

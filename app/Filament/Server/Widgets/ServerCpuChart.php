@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use Filament\Facades\Filament;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Number;
 
 class ServerCpuChart extends ChartWidget
 {
@@ -31,7 +30,7 @@ class ServerCpuChart extends ChartWidget
         $cpu = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))
             ->slice(-$period)
             ->map(fn ($value, $key) => [
-                'cpu' => Number::format($value, maxPrecision: 2),
+                'cpu' => round($value, 2),
                 'timestamp' => Carbon::createFromTimestamp($key, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
             ])
             ->all();

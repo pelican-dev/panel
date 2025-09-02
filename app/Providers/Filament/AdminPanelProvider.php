@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 
@@ -20,7 +21,7 @@ class AdminPanelProvider extends PanelProvider
                 'profile' => fn (Action $action) => $action->label(auth()->user()->username),
                 Action::make('exitAdmin')
                     ->label(fn () => trans('profile.exit_admin'))
-                    ->url('/')
+                    ->url(fn () => Filament::getPanel('app')->getUrl())
                     ->icon('tabler-arrow-back')
                     ->sort(24),
             ])

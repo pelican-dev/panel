@@ -19,7 +19,7 @@ class AppPanelProvider extends PanelProvider
                 'profile' => fn (Action $action) => $action->label(auth()->user()->username),
                 Action::make('toAdmin')
                     ->label(trans('profile.admin'))
-                    ->url('/admin')
+                    ->url(fn () => Filament::getPanel('admin')->getUrl())
                     ->icon('tabler-arrow-forward')
                     ->sort(5)
                     ->visible(fn () => auth()->user()->canAccessPanel(Filament::getPanel('admin'))),

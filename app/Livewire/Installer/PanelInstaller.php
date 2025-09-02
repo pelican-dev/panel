@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Installer;
 
-use App\Filament\Admin\Pages\Dashboard;
 use App\Livewire\Installer\Steps\CacheStep;
 use App\Livewire\Installer\Steps\DatabaseStep;
 use App\Livewire\Installer\Steps\EnvironmentStep;
@@ -15,6 +14,7 @@ use App\Traits\CheckMigrationsTrait;
 use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -110,7 +110,7 @@ class PanelInstaller extends SimplePage implements HasForms
             $this->writeToEnv('env_session');
 
             // Redirect to admin panel
-            $this->redirect(Dashboard::getUrl());
+            $this->redirect(Filament::getPanel('admin')->getUrl());
         } catch (Halt) {
         }
     }
