@@ -22,7 +22,7 @@
             </h2>
             <div class="end-0" x-on:click.stop>
                 <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1">
-                    @foreach (\App\Filament\App\Resources\ServerResource\Pages\ListServers::getPowerActions(view: 'grid') as $action)
+                    @foreach (\App\Filament\App\Resources\Servers\Pages\ListServers::getPowerActions(view: 'grid') as $action)
                         {{ $action->record($server) }}
                     @endforeach
                 </div>
