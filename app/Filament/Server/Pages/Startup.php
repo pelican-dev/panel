@@ -20,6 +20,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 
 class Startup extends ServerFormPage
@@ -168,7 +169,7 @@ class Startup extends ServerFormPage
 
     private function shouldHideComponent(ServerVariable $serverVariable, Component $component): bool
     {
-        $containsRuleIn = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'), false);
+        $containsRuleIn = Arr::first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'), false);
 
         if ($component instanceof Select) {
             return !$containsRuleIn;
@@ -186,7 +187,7 @@ class Startup extends ServerFormPage
      */
     private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
     {
-        $inRule = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'));
+        $inRule = Arr::first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'));
 
         return str($inRule)
             ->after('in:')
