@@ -76,13 +76,13 @@ class DatabaseResource extends Resource
                 TextInput::make('host')
                     ->label(trans('server/database.host'))
                     ->formatStateUsing(fn (Database $database) => $database->address())
-                    ->copyable(),
+                    ->copyable(fn () => request()->isSecure()),
                 TextInput::make('database')
                     ->label(trans('server/database.database'))
-                    ->copyable(),
+                    ->copyable(fn () => request()->isSecure()),
                 TextInput::make('username')
                     ->label(trans('server/database.username'))
-                    ->copyable(),
+                    ->copyable(fn () => request()->isSecure()),
                 TextInput::make('password')
                     ->label(trans('server/database.password'))
                     ->password()->revealable()
@@ -91,7 +91,7 @@ class DatabaseResource extends Resource
                         RotateDatabasePasswordAction::make()
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_DATABASE_UPDATE, $server))
                     )
-                    ->copyable()
+                    ->copyable(fn () => request()->isSecure())
                     ->formatStateUsing(fn (Database $database) => $database->password),
                 TextInput::make('remote')
                     ->label(trans('server/database.remote')),
@@ -102,7 +102,7 @@ class DatabaseResource extends Resource
                     ->label(trans('server/database.jdbc'))
                     ->password()->revealable()
                     ->hidden(!auth()->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
-                    ->copyable()
+                    ->copyable(fn () => request()->isSecure())
                     ->columnSpanFull()
                     ->formatStateUsing(fn (Database $database) => $database->jdbc),
             ]);

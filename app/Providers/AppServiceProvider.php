@@ -22,12 +22,12 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
-use App\Filament\Components\Actions\CopyAction;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\TextInput\Actions\CopyAction;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentView;
@@ -152,7 +152,7 @@ class AppServiceProvider extends ServiceProvider
 
         Field::macro('hintCopy', function () {
             /** @var Field $this */
-            return $this->hintAction(fn (?string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null); // @phpstan-ignore varTag.nativeType
+            return $this->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null); // @phpstan-ignore varTag.nativeType
         });
 
         // Don't run any health checks during tests

@@ -176,7 +176,7 @@ class EditServer extends EditRecord
 
                                 TextInput::make('uuid')
                                     ->label(trans('admin/server.uuid'))
-                                    ->copyable()
+                                    ->copyable(fn () => request()->isSecure())
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -187,7 +187,7 @@ class EditServer extends EditRecord
                                     ->dehydrated(false),
                                 TextInput::make('uuid_short')
                                     ->label(trans('admin/server.short_uuid'))
-                                    ->copyable()
+                                    ->copyable(fn () => request()->isSecure())
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
