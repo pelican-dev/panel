@@ -9,6 +9,9 @@ use Filament\Forms\Components\Concerns\HasAffixes;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Filament\Forms\Components\Field;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\StateCasts\NumberStateCast;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Arr;
@@ -54,6 +57,24 @@ class StartupVariable extends Field
         $this->placeholder(fn (StartupVariable $component) => $component->getVariableDefault());
 
         $this->live(onBlur: true);
+    }
+
+    /**
+     * @return StateCast[]
+     */
+    public function getDefaultStateCasts(): array
+    {
+        return match ($this->getType()) {
+            StartupVariableType::Number => [
+                ...parent::getDefaultStateCasts(),
+                app(NumberStateCast::class, ['isNullable' => false]),
+            ],
+            StartupVariableType::Toggle => [
+                ...parent::getDefaultStateCasts(),
+                app(BooleanStateCast::class, ['isNullable' => false]),
+            ],
+            default => parent::getDefaultStateCasts()
+        };
     }
 
     public function fromForm(): static
@@ -147,6 +168,36 @@ class StartupVariable extends Field
         return in_array('required', $rules);
     }
 
+    public function getMinValue(): ?int
+    {
+        $rules = $this->getVariableRules();
+
+        $minRule = Arr::first($rules, fn ($value) => str($value)->startsWith('min:'));
+        if ($minRule) {
+            return str($minRule)
+                ->after('min:')
+                ->trim()
+                ->toInteger();
+        }
+
+        return null;
+    }
+
+    public function getMaxValue(): ?int
+    {
+        $rules = $this->getVariableRules();
+
+        $maxRule = Arr::first($rules, fn ($value) => str($value)->startsWith('max:'));
+        if ($maxRule) {
+            return str($maxRule)
+                ->after('max:')
+                ->trim()
+                ->toInteger();
+        }
+
+        return null;
+    }
+
     public function getType(): StartupVariableType
     {
         $rules = $this->getVariableRules();
@@ -157,6 +208,10 @@ class StartupVariable extends Field
 
         if (in_array('boolean', $rules)) {
             return StartupVariableType::Toggle;
+        }
+
+        if (in_array('numeric', $rules) || in_array('integer', $rules)) {
+            return StartupVariableType::Number;
         }
 
         return StartupVariableType::Text;
@@ -177,5 +232,15 @@ class StartupVariable extends Field
         }
 
         return [];
+    }
+
+    public function getTextType(): string
+    {
+        return $this->getType() === StartupVariableType::Number ? 'number' : 'text';
+    }
+
+    public function getTextInputMode(): ?string
+    {
+        return $this->getType() === StartupVariableType::Number ? 'decimal' : null;
     }
 }

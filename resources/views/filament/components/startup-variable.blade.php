@@ -68,6 +68,10 @@
                 :required="$isRequired"
                 :disabled="$isDisabled"
                 :placeholder="$getPlaceholder()"
+                :type="$getTextType()"
+                :inputmode="$getTextInputMode()"
+                :max="$getMaxValue()"
+                :min="$getMinValue()"
                 :attributes="
                     \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                         ->merge($getExtraAlpineAttributes(), escape: false)
