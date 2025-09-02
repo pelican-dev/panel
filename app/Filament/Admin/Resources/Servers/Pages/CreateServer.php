@@ -332,8 +332,7 @@ class CreateServer extends CreateRecord
                                     $variables = [];
                                     $set($path = 'server_variables', $serverVariables->sortBy(['sort'])->all());
                                     for ($i = 0; $i < $serverVariables->count(); $i++) {
-                                        $set("$path.$i.variable_value_input", $serverVariables[$i]['default_value']);
-                                        $set("$path.$i.variable_value_select", $serverVariables[$i]['default_value']);
+                                        $set("$path.$i.variable_value", $serverVariables[$i]['default_value']);
                                         $set("$path.$i.variable_id", $serverVariables[$i]['id']);
                                         $variables[$serverVariables[$i]['env_variable']] = $serverVariables[$i]['default_value'];
                                     }
