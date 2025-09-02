@@ -233,14 +233,4 @@ class StartupVariable extends Field
 
         return [];
     }
-
-    public function getTextType(): string
-    {
-        return $this->getType() === StartupVariableType::Number ? 'number' : 'text';
-    }
-
-    public function getTextInputMode(): ?string
-    {
-        return $this->getType() === StartupVariableType::Number ? 'decimal' : null;
-    }
 }
