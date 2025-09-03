@@ -69,7 +69,7 @@ class RequirementsStep
                     ->content(trans('installer.requirements.sections.permissions.good'))
                     ->visible($correctFolderPermissions),
                 Placeholder::make('')
-                    ->content(trans('installer.requirements.sections.permissions.bad', ['extensions' => implode(', ', array_keys($folderPermissions, false))]))
+                    ->content(trans('installer.requirements.sections.permissions.bad', ['folders' => implode(', ', array_keys($folderPermissions, false))]))
                     ->visible(!$correctFolderPermissions),
             ]);
 

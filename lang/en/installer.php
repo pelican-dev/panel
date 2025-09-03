@@ -17,7 +17,7 @@ return [
             'permissions' => [
                 'title' => 'Folder Permissions',
                 'good' => 'All Folders have the correct permissions.',
-                'bad' => 'The following Folders have wrong permissions: :folderss',
+                'bad' => 'The following Folders have wrong permissions: :folders',
             ],
         ],
         'exception' => 'Some requirements are missing',

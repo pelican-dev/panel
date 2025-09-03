@@ -208,7 +208,7 @@ class ListServers extends ListRecords
 
             Notification::make()
                 ->title(trans('server/dashboard.power_actions'))
-                ->body($action . ' sent to ' . $server->name)
+                ->body(trans('server/dashboard.power_action_sent', ['action' => $action, 'name' => $server->name]))
                 ->success()
                 ->send();
 

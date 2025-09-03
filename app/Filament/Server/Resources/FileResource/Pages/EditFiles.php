@@ -135,7 +135,7 @@ class EditFiles extends Page
                                     return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
                                 } catch (FileSizeTooLargeException) {
                                     AlertBanner::make('file_too_large')
-                                        ->title(fn () => new HtmlString(trans('server/file.alerts.file_too_large.title', ['name' => basename($this->path)])))
+                                        ->title(trans('server/file.alerts.file_too_large.title', ['name' => basename($this->path)]))
                                         ->body(trans('server/file.alerts.file_too_large.body', ['max' => convert_bytes_to_readable(config('panel.files.max_edit_size'))]))
                                         ->danger()
                                         ->closable()
@@ -144,7 +144,7 @@ class EditFiles extends Page
                                     $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 } catch (FileNotFoundException) {
                                     AlertBanner::make('file_not_found')
-                                        ->title(fn () => new HtmlString(trans('server/file.alerts.file_not_found.title', ['name' => basename($this->path)])))
+                                        ->title(trans('server/file.alerts.file_not_found.title', ['name' => basename($this->path)]))
                                         ->danger()
                                         ->closable()
                                         ->send();
@@ -152,7 +152,7 @@ class EditFiles extends Page
                                     $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 } catch (FileNotEditableException) {
                                     AlertBanner::make('file_is_directory')
-                                        ->title(fn () => new HtmlString(trans('server/file.alerts.file_not_found.title', ['name' => basename($this->path)])))
+                                        ->title(trans('server/file.alerts.file_not_found.title', ['name' => basename($this->path)]))
                                         ->danger()
                                         ->closable()
                                         ->send();
@@ -180,8 +180,8 @@ class EditFiles extends Page
 
         if (str($path)->endsWith('.pelicanignore')) {
             AlertBanner::make('.pelicanignore_info')
-                ->title(fn () => new HtmlString(trans('server/file.alerts.pelicanignore.title')))
-                ->body(fn () => new HtmlString(trans('server/file.alerts.pelicanignore.body')))
+                ->title(trans('server/file.alerts.pelicanignore.title'))
+                ->body(trans('server/file.alerts.pelicanignore.body'))
                 ->info()
                 ->closable()
                 ->send();

@@ -24,6 +24,7 @@ return [
     'loading' => 'Loading...',
 
     'power_actions' => 'Power Actions',
+    'power_action_sent' => ':action sent to :name',
 
     'copied' => 'Copied to clipboard',
 ];

@@ -448,7 +448,7 @@ class EditProfile extends BaseEditProfile
                                         ]),
                                     ]),
 
-                                Tab::make('acitivity')
+                                Tab::make('activity')
                                     ->label(trans('profile.tabs.activity'))
                                     ->icon('tabler-history')
                                     ->schema([

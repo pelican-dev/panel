@@ -125,14 +125,14 @@ class Settings extends ServerFormPage
                                     ->prefixIcon('tabler-file-zip')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Backups' : $server->backups->count() . ' ' .trans('server/setting.server_info.limits.of', ['max' => $state])),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/backup.empty') : $server->backups->count() . ' ' .trans('server/setting.server_info.limits.of', ['max' => $state])),
                                 TextInput::make('database_limit')
                                     ->label('')
                                     ->prefix(trans('server/setting.server_info.limits.databases'))
                                     ->prefixIcon('tabler-database')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Databases' : $server->databases->count() . ' ' . trans('server/setting.server_info.limits.of', ['max' => $state])),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/database.empty') : $server->databases->count() . ' ' . trans('server/setting.server_info.limits.of', ['max' => $state])),
                                 TextInput::make('allocation_limit')
                                     ->label('')
                                     ->prefix(trans('server/setting.server_info.limits.allocations'))

@@ -38,7 +38,7 @@ class DatabaseStep
                     ->default(config('database.default'))
                     ->live()
                     ->afterStateUpdated(function ($state, Set $set, Get $get) {
-                        $set('env_database.DB_DATABASE', $state === 'sqlite' ? 'database' : 'panel');
+                        $set('env_database.DB_DATABASE', $state === 'sqlite' ? 'database.sqlite' : 'panel');
 
                         switch ($state) {
                             case 'sqlite':
@@ -103,7 +103,7 @@ class DatabaseStep
                 $driver = $get('env_database.DB_CONNECTION');
 
                 if (!self::testConnection($driver, $get('env_database.DB_HOST'), $get('env_database.DB_PORT'), $get('env_database.DB_DATABASE'), $get('env_database.DB_USERNAME'), $get('env_database.DB_PASSWORD'))) {
-                    throw new Halt(trans('installer.database.exception'));
+                    throw new Halt(trans('installer.database.exceptions.connection'));
                 }
 
                 $installer->writeToEnv('env_database');
@@ -133,7 +133,7 @@ class DatabaseStep
             DB::disconnect('_panel_install_test');
 
             Notification::make()
-                ->title(trans('installer.database.exception'))
+                ->title(trans('installer.database.exceptions.connection'))
                 ->body($exception->getMessage())
                 ->danger()
                 ->send();
