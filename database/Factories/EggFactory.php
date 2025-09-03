@@ -30,7 +30,7 @@ class EggFactory extends Factory
             'config_files' => '{}',
             'name' => $this->faker->name(),
             'description' => implode(' ', $this->faker->sentences()),
-            'startup' => 'java -jar test.jar',
+            'startup_commands' => ['java -jar test.jar'],
         ];
     }
 }
