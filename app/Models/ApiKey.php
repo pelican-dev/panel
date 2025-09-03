@@ -216,7 +216,7 @@ class ApiKey extends PersonalAccessToken
     {
         Assert::oneOf($type, [self::TYPE_ACCOUNT, self::TYPE_APPLICATION]);
 
-        return $type === self::TYPE_ACCOUNT ? 'plcn_' : 'peli_';
+        return $type === self::TYPE_ACCOUNT ? 'pacc_' : 'papp_';
     }
 
     /**
