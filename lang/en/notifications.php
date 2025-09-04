@@ -2,9 +2,10 @@
 
 return [
     'open_server' => 'Open Server',
-    'installation' => 'Server Installation',
-    'reinstallation' => 'Server Reinstallation',
-    'completed' => 'Completed',
+    'installation_completed' => 'Server Installation Completed',
+    'installation_failed' => 'Server Installation Failed',
+    'reinstallation_completed' => 'Server Reinstallation Completed',
+    'reinstallation_failed' => 'Server Reinstallation Failed',
     'failed' => 'Failed',
     'user_added' => [
         'title' => 'Added to Server',
