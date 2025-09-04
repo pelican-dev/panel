@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Contracts\Validatable;
 use App\Livewire\AlertBanner;
 use App\Repositories\Daemon\DaemonFileRepository;
+use App\Traits\HasValidation;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,9 +28,15 @@ use Sushi\Sushi;
  * @property bool $is_symlink
  * @property string $mime_type
  */
-class File extends Model
+class File extends Model implements Validatable
 {
+    use HasValidation;
     use Sushi;
+
+    /** @var array<array-key, string[]> */
+    public static array $validationRules = [
+        'name' => ['required', 'string', 'not_regex:/[{}#]/'],
+    ];
 
     protected int $sushiInsertChunkSize = 100;
 

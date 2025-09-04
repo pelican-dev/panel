@@ -136,6 +136,7 @@ class ListFiles extends ListRecords
                         ->form([
                             TextInput::make('name')
                                 ->label(trans('server/file.actions.rename.name'))
+                                ->rules(File::getRulesForField('name'))
                                 ->default(fn (File $file) => $file->name)
                                 ->required(),
                         ])
@@ -189,6 +190,7 @@ class ListFiles extends ListRecords
                         ->form([
                             TextInput::make('location')
                                 ->label(trans('server/file.actions.move.new_location'))
+                                ->rules(File::getRulesForField('name'))
                                 ->hint(trans('server/file.actions.move.new_location_hint'))
                                 ->required()
                                 ->live(),
@@ -349,6 +351,7 @@ class ListFiles extends ListRecords
                     ->form([
                         TextInput::make('location')
                             ->label(trans('server/file.actions.move.directory'))
+                            ->rules(File::getRulesForField('name'))
                             ->hint(trans('server/file.actions.move.directory_hint'))
                             ->required()
                             ->live(),
@@ -451,6 +454,7 @@ class ListFiles extends ListRecords
                 ->form([
                     TextInput::make('name')
                         ->label(trans('server/file.actions.new_file.file_name'))
+                        ->rules(File::getRulesForField('name'))
                         ->required(),
                     Select::make('lang')
                         ->label(trans('server/file.actions.new_file.syntax'))
@@ -492,6 +496,7 @@ class ListFiles extends ListRecords
                 ->form([
                     TextInput::make('name')
                         ->label(trans('server/file.actions.new_folder.folder_name'))
+                        ->rules(File::getRulesForField('name'))
                         ->required(),
                 ]),
             HeaderAction::make('upload')
@@ -556,9 +561,9 @@ class ListFiles extends ListRecords
                 ->form([
                     TextInput::make('searchTerm')
                         ->label(trans('server/file.actions.global_search.search_term'))
-                        ->placeholder(trans('server/file.actions.global_search.search_term_placeholder'))
+                        ->rules(array_merge(File::getRulesForField('name'), ['regex:/^[^*]*\*?[^*]*$/']))
                         ->required()
-                        ->regex('/^[^*]*\*?[^*]*$/')
+                        ->placeholder(trans('server/file.actions.global_search.search_term_placeholder'))
                         ->minValue(3),
                 ])
                 ->action(fn ($data) => redirect(SearchFiles::getUrl([
