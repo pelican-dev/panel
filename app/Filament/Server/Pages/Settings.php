@@ -148,7 +148,7 @@ class Settings extends ServerFormPage
                             ]),
                     ]),
                 Section::make(trans('server/setting.node_info.title'))
-                    ->columnSpan(2)
+                    ->columnSpanFull()
                     ->schema([
                         TextInput::make('node.name')
                             ->label(trans('server/setting.node_info.name'))
@@ -199,8 +199,7 @@ class Settings extends ServerFormPage
                     ]),
                 Section::make(trans('server/setting.reinstall.title'))
                     ->hidden(fn (Server $server) => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
-                    ->columnSpan(2)
-                    ->collapsible()
+                    ->columnSpanFull()
                     ->footerActions([
                         Action::make('reinstall')
                             ->label(trans('server/setting.reinstall.action'))
