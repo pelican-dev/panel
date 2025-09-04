@@ -144,10 +144,9 @@ class EditEgg extends EditRecord
                         ->icon('tabler-variable')
                         ->schema([
                             Repeater::make('variables')
-                                ->label('')
+                                ->hiddenLabel()
                                 ->grid()
                                 ->relationship('variables')
-                                ->name('name')
                                 ->reorderable()
                                 ->collapsible()->collapsed()
                                 ->orderColumn()

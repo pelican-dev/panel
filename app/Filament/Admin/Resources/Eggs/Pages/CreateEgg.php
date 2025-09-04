@@ -154,11 +154,10 @@ class CreateEgg extends CreateRecord
                         ->columnSpanFull()
                         ->schema([
                             Repeater::make('variables')
-                                ->label('')
+                                ->hiddenLabel()
                                 ->addActionLabel(trans('admin/egg.add_new_variable'))
                                 ->grid()
                                 ->relationship('variables')
-                                ->name('name')
                                 ->reorderable()->orderColumn()
                                 ->collapsible()->collapsed()
                                 ->columnSpan(2)
