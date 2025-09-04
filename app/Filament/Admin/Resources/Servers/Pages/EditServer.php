@@ -721,7 +721,8 @@ class EditServer extends EditRecord
                                                             }
                                                         }),
                                                 ])->fullWidth(),
-                                                ToggleButtons::make('installHelp')
+                                                ToggleButtons::make('install_help')
+                                                    ->hiddenLabel()
                                                     ->hint(trans('admin/server.toggle_install_help')),
                                             ]),
                                         Grid::make()
@@ -771,10 +772,12 @@ class EditServer extends EditRecord
                                                             }
                                                         }),
                                                 ])->fullWidth(),
-                                                ToggleButtons::make('serverSuspend')
+                                                ToggleButtons::make('server_suspend')
+                                                    ->hiddenLabel()
                                                     ->hidden(fn (Server $server) => $server->isSuspended())
                                                     ->hint(trans('admin/server.notifications.server_suspend_help')),
-                                                ToggleButtons::make('serverUnsuspend')
+                                                ToggleButtons::make('server_unsuspend')
+                                                    ->hiddenLabel()
                                                     ->hidden(fn (Server $server) => !$server->isSuspended())
                                                     ->hint(trans('admin/server.notifications.server_unsuspend_help')),
                                             ]),
@@ -804,7 +807,8 @@ class EditServer extends EditRecord
                                                             }
                                                         }),
                                                 ])->fullWidth(),
-                                                ToggleButtons::make('serverTransfer')
+                                                ToggleButtons::make('server_transfer')
+                                                    ->hiddenLabel()
                                                     ->hint(new HtmlString(trans('admin/server.transfer_help'))),
                                             ]),
                                         Grid::make()
@@ -835,7 +839,8 @@ class EditServer extends EditRecord
                                                             }
                                                         }),
                                                 ])->fullWidth(),
-                                                ToggleButtons::make('serverReinstall')
+                                                ToggleButtons::make('server_reinstall')
+                                                    ->hiddenLabel()
                                                     ->hint(trans('admin/server.reinstall_help')),
                                             ]),
                                     ]),
