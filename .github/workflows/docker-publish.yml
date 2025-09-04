@@ -134,6 +134,16 @@ jobs:
           docker push localhost:5000/base-php:arm64
           rm base-php-arm64.tar base-php-amd64.tar
           
+      - name: Update version in config/app.php (tag)
+        if: "github.event_name == 'release' && github.event.action == 'published'"
+        run: |
+          sed -i "s/'version' => 'canary',/'version' => '${{ steps.build_info.outputs.version_tag }}',/" config/app.php
+          
+      - name: Update version in config/app.php (main)
+        if: "github.event_name == 'push' && contains(github.ref, 'main')"
+        run: |
+          sed -i "s/'version' => 'canary',/'version' => 'dev-${{ steps.build_info.outputs.short_sha }}',/" config/app.php
+          
       - name: Build and Push (tag)
         uses: docker/build-push-action@v6
         if: "github.event_name == 'release' && github.event.action == 'published'"
