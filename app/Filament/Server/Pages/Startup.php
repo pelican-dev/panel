@@ -17,6 +17,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
@@ -43,17 +44,50 @@ class Startup extends ServerFormPage
             ->schema([
                 Hidden::make('previewing')
                     ->default(false),
-                Textarea::make('startup')
+                TextInput::make('custom_startup')
                     ->label(trans('server/startup.command'))
+                    ->readOnly()
+                    ->visible(fn (Server $server) => !in_array($server->startup, $server->egg->startup_commands))
+                    ->formatStateUsing(fn (Server $server) => $server->startup)
                     ->columnSpan([
                         'default' => 1,
                         'sm' => 1,
                         'md' => 2,
                         'lg' => 4,
-                    ])
-                    ->autosize()
-                    ->hintAction(PreviewStartupAction::make())
-                    ->readOnly(),
+                    ]),
+                Select::make('startup_select')
+                    ->label(trans('server/startup.command'))
+                    ->live()
+                    ->visible(fn (Server $server) => in_array($server->startup, $server->egg->startup_commands))
+                    ->disabled(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
+                    ->formatStateUsing(fn (Server $server) => $server->startup)
+                    ->afterStateUpdated(function ($state, Server $server, Set $set) {
+                        $original = $server->startup;
+                        $server->forceFill(['startup' => $state])->saveOrFail();
+
+                        $set('startup', $state);
+
+                        if ($original !== $server->startup) {
+                            $startups = array_flip($server->egg->startup_commands);
+                            Activity::event('server:startup.command')
+                                ->property(['old' => $startups[$original], 'new' => $startups[$state]])
+                                ->log();
+                        }
+
+                        Notification::make()
+                            ->title(trans('server/startup.notification_startup'))
+                            ->body(trans('server/startup.notification_startup_body'))
+                            ->success()
+                            ->send();
+                    })
+                    ->options(fn (Server $server) => array_flip($server->egg->startup_commands))
+                    ->selectablePlaceholder(false)
+                    ->columnSpan([
+                        'default' => 1,
+                        'sm' => 1,
+                        'md' => 2,
+                        'lg' => 4,
+                    ]),
                 TextInput::make('custom_image')
                     ->label(trans('server/startup.docker_image'))
                     ->readOnly()
@@ -98,6 +132,12 @@ class Startup extends ServerFormPage
                         'md' => 2,
                         'lg' => 2,
                     ]),
+                Textarea::make('startup')
+                    ->hiddenLabel()
+                    ->columnSpanFull()
+                    ->autosize()
+                    ->hintAction(PreviewStartupAction::make())
+                    ->readOnly(),
                 Section::make(trans('server/startup.variables'))
                     ->schema([
                         Repeater::make('server_variables')
