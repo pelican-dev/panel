@@ -110,3 +110,10 @@ if (!function_exists('format_number')) {
         }
     }
 }
+
+if (!function_exists('encode_path')) {
+    function encode_path(string $path): string
+    {
+        return implode('/', array_map('rawurlencode', explode('/', $path)));
+    }
+}

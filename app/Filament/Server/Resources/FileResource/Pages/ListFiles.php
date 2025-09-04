@@ -114,7 +114,7 @@ class ListFiles extends ListRecords
                     return null;
                 }
 
-                return $file->canEdit() ? EditFiles::getUrl(['path' => join_paths($this->path, $file->name)]) : null;
+                return $file->canEdit() ? EditFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]) : null;
             })
             ->actions([
                 Action::make('view')
@@ -122,12 +122,12 @@ class ListFiles extends ListRecords
                     ->label(trans('server/file.actions.open'))
                     ->icon('tabler-eye')
                     ->visible(fn (File $file) => $file->is_directory)
-                    ->url(fn (File $file) => self::getUrl(['path' => join_paths($this->path, $file->name)])),
+                    ->url(fn (File $file) => self::getUrl(['path' => encode_path(join_paths($this->path, $file->name))])),
                 EditAction::make('edit')
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server))
                     ->icon('tabler-edit')
                     ->visible(fn (File $file) => $file->canEdit())
-                    ->url(fn (File $file) => EditFiles::getUrl(['path' => join_paths($this->path, $file->name)])),
+                    ->url(fn (File $file) => EditFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))])),
                 ActionGroup::make([
                     Action::make('rename')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
@@ -182,7 +182,7 @@ class ListFiles extends ListRecords
                         ->label(trans('server/file.actions.download'))
                         ->icon('tabler-download')
                         ->visible(fn (File $file) => $file->is_file)
-                        ->url(fn (File $file) => DownloadFiles::getUrl(['path' => join_paths($this->path, $file->name)]), true),
+                        ->url(fn (File $file) => DownloadFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]), true),
                     Action::make('move')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->label(trans('server/file.actions.move.title'))
