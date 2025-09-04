@@ -4,6 +4,7 @@ return [
     'nav_title' => 'Nodes',
     'model_label' => 'Node',
     'model_label_plural' => 'Nodes',
+    'create' => 'Create Node',
     'tabs' => [
         'overview' => 'Overview',
         'basic_settings' => 'Basic Settings',

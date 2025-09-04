@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Panel Installer',
     'requirements' => [
         'title' => 'Server Requirements',
         'sections' => [
@@ -97,5 +98,6 @@ return [
         'migration' => 'Could not run migrations',
         'create_user' => 'Could not create admin user',
     ],
+    'next_step' => 'Next Step',
     'finish' => 'Finish',
 ];

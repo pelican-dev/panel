@@ -5,6 +5,7 @@ return [
     'model_label' => 'Server',
     'model_label_plural' => 'Servers',
     'no_servers' => 'No Servers',
+    'create' => 'Create Server',
     'next_step' => 'Next Step',
     'ip_address' => 'IP Address',
     'ip_address_helper' => 'Usually your machine\'s public IP unless you are port forwarding.',
