@@ -62,11 +62,11 @@ class DatabaseStep
                     }),
                 TextInput::make('env_database.DB_DATABASE')
                     ->label(fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite' ? trans('installer.database.fields.path') : trans('installer.database.fields.name'))
-                    ->placeholder(fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite' ? 'database' : 'panel')
+                    ->placeholder(fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite' ? 'database.sqlite' : 'panel')
                     ->hintIcon('tabler-question-mark')
                     ->hintIconTooltip(fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite' ? trans('installer.database.fields.path_help') : trans('installer.database.fields.name_help'))
                     ->required()
-                    ->default('database'),
+                    ->default('database.sqlite'),
                 TextInput::make('env_database.DB_HOST')
                     ->label(trans('installer.database.fields.host'))
                     ->placeholder('127.0.0.1')
