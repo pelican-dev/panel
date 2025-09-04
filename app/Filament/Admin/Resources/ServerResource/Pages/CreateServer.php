@@ -39,6 +39,7 @@ use Filament\Resources\Pages\CreateRecord;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use LogicException;
@@ -316,7 +317,7 @@ class CreateServer extends CreateRecord
                                 ->live()
                                 ->afterStateUpdated(function ($state, Set $set, Get $get, $old) {
                                     $egg = Egg::query()->find($state);
-                                    $set('startup', $egg->startup ?? '');
+                                    $set('startup', Arr::first($egg->startup_commands, default: ''));
                                     $set('image', '');
 
                                     $variables = $egg->variables ?? [];
@@ -391,7 +392,6 @@ class CreateServer extends CreateRecord
                                 ->inline(),
 
                             Textarea::make('startup')
-                                ->hintIcon('tabler-code')
                                 ->label(trans('admin/server.startup_cmd'))
                                 ->hidden(fn (Get $get) => $get('egg_id') === null)
                                 ->required()

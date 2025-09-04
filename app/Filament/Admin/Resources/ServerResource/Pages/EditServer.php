@@ -602,7 +602,7 @@ class EditServer extends EditRecord
                                     ->autosize()
                                     ->hintAction(PreviewStartupAction::make('preview')),
 
-                                Textarea::make('defaultStartup')
+                                Textarea::make('default_startup')
                                     ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
                                     ->label(trans('admin/server.default_startup'))
                                     ->disabled()
@@ -611,7 +611,7 @@ class EditServer extends EditRecord
                                     ->formatStateUsing(function ($state, Get $get) {
                                         $egg = Egg::query()->find($get('egg_id'));
 
-                                        return $egg->startup;
+                                        return Arr::first($egg->startup_commands);
                                     }),
 
                                 Repeater::make('server_variables')
