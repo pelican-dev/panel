@@ -404,7 +404,7 @@ class CreateNode extends CreateRecord
                                                 type="submit"
                                                 size="sm"
                                             >
-                                                Create Node
+                                                {{ trans('admin/node.create') }}
                                             </x-filament::button>
                                         BLADE))),
             ]);

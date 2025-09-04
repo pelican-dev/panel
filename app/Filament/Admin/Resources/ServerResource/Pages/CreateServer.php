@@ -777,7 +777,7 @@ class CreateServer extends CreateRecord
                                                 type="submit"
                                                 size="sm"
                                             >
-                                                Create Server
+                                                {{ trans('admin/server.create') }}
                                             </x-filament::button>
                                         BLADE))),
             ]);
