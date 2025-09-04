@@ -8,7 +8,6 @@ use App\Models\Server;
 use Carbon\CarbonInterface;
 use Filament\Notifications\Notification;
 use Filament\Widgets\StatsOverviewWidget;
-use Illuminate\Support\Number;
 use Livewire\Attributes\On;
 
 class ServerOverview extends StatsOverviewWidget
@@ -54,9 +53,9 @@ class ServerOverview extends StatsOverviewWidget
         }
 
         $data = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))->last(default: 0);
-        $cpu = Number::format($data, maxPrecision: 2, locale: auth()->user()->language) . ' %';
+        $cpu = format_number($data, maxPrecision: 2) . ' %';
 
-        return $cpu . ($this->server->cpu > 0 ? ' / ' . Number::format($this->server->cpu, locale: auth()->user()->language) . ' %' : ' / ∞');
+        return $cpu . ($this->server->cpu > 0 ? ' / ' . format_number($this->server->cpu) . ' %' : ' / ∞');
     }
 
     public function memoryUsage(): string
@@ -68,7 +67,7 @@ class ServerOverview extends StatsOverviewWidget
         }
 
         $latestMemoryUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))->last(default: 0);
-        $totalMemory = $this->server->memory * 2 ** 20;
+        $totalMemory = $this->server->memory * (config('panel.use_binary_prefix') ? 1024 * 1024 : 1000 * 1000);
 
         $used = convert_bytes_to_readable($latestMemoryUsed);
         $total = convert_bytes_to_readable($totalMemory);
@@ -98,7 +97,7 @@ class ServerOverview extends StatsOverviewWidget
         $this->js("window.navigator.clipboard.writeText('{$value}');");
 
         Notification::make()
-            ->title('Copied to clipboard')
+            ->title(trans('server/dashboard.copied'))
             ->body($value)
             ->success()
             ->send();

@@ -44,7 +44,8 @@ class EditEgg extends EditRecord
         return $form
             ->schema([
                 Tabs::make()->tabs([
-                    Tab::make(trans('admin/egg.tabs.configuration'))
+                    Tab::make('configuration')
+                        ->label(trans('admin/egg.tabs.configuration'))
                         ->columns(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 4])
                         ->icon('tabler-egg')
                         ->schema([
@@ -115,7 +116,8 @@ class EditEgg extends EditRecord
                                 ->valueLabel(trans('admin/egg.docker_uri'))
                                 ->helperText(trans('admin/egg.docker_help')),
                         ]),
-                    Tab::make(trans('admin/egg.tabs.process_management'))
+                    Tab::make('process_management')
+                        ->label(trans('admin/egg.tabs.process_management'))
                         ->columns()
                         ->icon('tabler-server-cog')
                         ->schema([
@@ -135,7 +137,8 @@ class EditEgg extends EditRecord
                                 ->label(trans('admin/egg.log_config'))
                                 ->helperText(trans('admin/egg.log_config_help')),
                         ]),
-                    Tab::make(trans('admin/egg.tabs.egg_variables'))
+                    Tab::make('egg_variables')
+                        ->label(trans('admin/egg.tabs.egg_variables'))
                         ->columnSpanFull()
                         ->icon('tabler-variable')
                         ->schema([
@@ -228,7 +231,8 @@ class EditEgg extends EditRecord
                                         ]),
                                 ]),
                         ]),
-                    Tab::make(trans('admin/egg.tabs.install_script'))
+                    Tab::make('install_script')
+                        ->label(trans('admin/egg.tabs.install_script'))
                         ->columns(3)
                         ->icon('tabler-file-download')
                         ->schema([

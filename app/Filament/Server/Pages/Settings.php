@@ -17,7 +17,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Alignment;
-use Illuminate\Support\Number;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class Settings extends ServerFormPage
@@ -104,7 +103,7 @@ class Settings extends ServerFormPage
                                     ->prefixIcon('tabler-cpu')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : Number::format($server->cpu, locale: auth()->user()->language) . '%'),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : format_number($server->cpu) . '%'),
                                 TextInput::make('memory')
                                     ->label('')
                                     ->prefix(trans('server/setting.server_info.limits.memory'))
@@ -125,21 +124,21 @@ class Settings extends ServerFormPage
                                     ->prefixIcon('tabler-file-zip')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Backups' : $server->backups->count() . ' ' .trans('server/setting.server_info.limits.of') . ' ' . $state),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/backup.empty') : $server->backups->count() . ' ' .trans('server/setting.server_info.limits.of', ['max' => $state])),
                                 TextInput::make('database_limit')
                                     ->label('')
                                     ->prefix(trans('server/setting.server_info.limits.databases'))
                                     ->prefixIcon('tabler-database')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? 'No Databases' : $server->databases->count() . ' ' . trans('server/setting.server_info.limits.of') . ' ' .$state),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/database.empty') : $server->databases->count() . ' ' . trans('server/setting.server_info.limits.of', ['max' => $state])),
                                 TextInput::make('allocation_limit')
                                     ->label('')
                                     ->prefix(trans('server/setting.server_info.limits.allocations'))
                                     ->prefixIcon('tabler-network')
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.no_allocations') : $server->allocations->count() . ' ' .trans('server/setting.server_info.limits.of') . ' ' . $state),
+                                    ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.no_allocations') : $server->allocations->count() . ' ' .trans('server/setting.server_info.limits.of', ['max' => $state])),
                             ]),
                     ]),
                 Section::make(trans('server/setting.node_info.title'))
@@ -258,13 +257,13 @@ class Settings extends ServerFormPage
             }
 
             Notification::make()
-                ->title(trans('server/setting.notification_name'))
+                ->title(trans('server/setting.server_info.notification_name'))
                 ->body(fn () => $original . ' -> ' . $name)
                 ->success()
                 ->send();
         } catch (Exception $exception) {
             Notification::make()
-                ->title(trans('server/setting.failed'))
+                ->title(trans('server/setting.server_info.failed'))
                 ->body($exception->getMessage())
                 ->danger()
                 ->send();
@@ -289,13 +288,13 @@ class Settings extends ServerFormPage
             }
 
             Notification::make()
-                ->title(trans('server/setting.notification_description'))
+                ->title(trans('server/setting.server_info.notification_description'))
                 ->body(fn () => $original . ' -> ' . $description)
                 ->success()
                 ->send();
         } catch (Exception $exception) {
             Notification::make()
-                ->title(trans('server/setting.failed'))
+                ->title(trans('server/setting.server_info.failed'))
                 ->body($exception->getMessage())
                 ->danger()
                 ->send();

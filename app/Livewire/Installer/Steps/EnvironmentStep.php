@@ -12,36 +12,36 @@ class EnvironmentStep
     public static function make(PanelInstaller $installer): Step
     {
         return Step::make('environment')
-            ->label('Environment')
+            ->label(trans('installer.environment.title'))
             ->columns()
             ->schema([
                 TextInput::make('env_general.APP_NAME')
-                    ->label('App Name')
+                    ->label(trans('installer.environment.fields.app_name'))
                     ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip('This will be the Name of your Panel.')
+                    ->hintIconTooltip(trans('installer.environment.fields.app_name_help'))
                     ->required()
                     ->default(config('app.name')),
                 TextInput::make('env_general.APP_URL')
-                    ->label('App URL')
+                    ->label(trans('installer.environment.fields.app_url'))
                     ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip('This will be the URL you access your Panel from.')
+                    ->hintIconTooltip(trans('installer.environment.fields.app_url_help'))
                     ->required()
                     ->default(url('')),
-                Fieldset::make('adminuser')
-                    ->label('Admin User')
+                Fieldset::make('admin_user')
+                    ->label(trans('installer.environment.fields.account.section'))
                     ->columns(3)
                     ->schema([
                         TextInput::make('user.email')
-                            ->label('E-Mail')
+                            ->label(trans('installer.environment.fields.account.email'))
                             ->required()
                             ->email()
                             ->placeholder('admin@example.com'),
                         TextInput::make('user.username')
-                            ->label('Username')
+                            ->label(trans('installer.environment.fields.account.username'))
                             ->required()
                             ->placeholder('admin'),
                         TextInput::make('user.password')
-                            ->label('Password')
+                            ->label(trans('installer.environment.fields.account.password'))
                             ->required()
                             ->password()
                             ->revealable(),

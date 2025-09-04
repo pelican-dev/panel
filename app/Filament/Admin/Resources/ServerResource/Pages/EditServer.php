@@ -7,6 +7,7 @@ use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Filament\Components\Forms\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Actions\RotateDatabasePasswordAction;
+use App\Filament\Components\Forms\Fields\StartupVariable;
 use App\Filament\Server\Pages\Console;
 use App\Models\Allocation;
 use App\Models\Database;
@@ -27,10 +28,8 @@ use App\Services\Servers\ToggleInstallService;
 use App\Services\Servers\TransferServerService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Closure;
 use Exception;
 use Filament\Actions;
-use Filament\Forms;
 use Filament\Forms\Components\Actions as FormActions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
@@ -56,7 +55,6 @@ use Filament\Support\Enums\Alignment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
 use LogicException;
 use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
@@ -89,7 +87,8 @@ class EditServer extends EditRecord
                     ])
                     ->columnSpanFull()
                     ->tabs([
-                        Tab::make(trans('admin/server.tabs.information'))
+                        Tab::make('information')
+                            ->label(trans('admin/server.tabs.information'))
                             ->icon('tabler-info-circle')
                             ->schema([
                                 TextInput::make('name')
@@ -221,7 +220,8 @@ class EditServer extends EditRecord
                                     ])
                                     ->disabled(),
                             ]),
-                        Tab::make(trans('admin/server.tabs.environment_configuration'))
+                        Tab::make('environment_configuration')
+                            ->label(trans('admin/server.tabs.environment_configuration'))
                             ->icon('tabler-brand-docker')
                             ->schema([
                                 Fieldset::make(trans('admin/server.resource_limits'))
@@ -528,7 +528,8 @@ class EditServer extends EditRecord
                                             ->columnSpanFull(),
                                     ]),
                             ]),
-                        Tab::make(trans('admin/server.egg'))
+                        Tab::make('egg')
+                            ->label(trans('admin/server.egg'))
                             ->icon('tabler-egg')
                             ->columns([
                                 'default' => 1,
@@ -617,7 +618,7 @@ class EditServer extends EditRecord
                                     }),
 
                                 Repeater::make('server_variables')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->relationship('serverVariables', function (Builder $query) {
                                         /** @var Server $server */
                                         $server = $this->getRecord();
@@ -634,64 +635,26 @@ class EditServer extends EditRecord
                                         return $query->orderByPowerJoins('variable.sort');
                                     })
                                     ->grid()
-                                    ->mutateRelationshipDataBeforeSaveUsing(function (array &$data): array {
-                                        foreach ($data as $key => $value) {
-                                            if (!isset($data['variable_value'])) {
-                                                $data['variable_value'] = '';
-                                            }
-                                        }
+                                    ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
+                                        $data['variable_value'] ??= '';
 
                                         return $data;
                                     })
                                     ->reorderable(false)->addable(false)->deletable(false)
-                                    ->schema(function () {
-
-                                        $text = TextInput::make('variable_value')
-                                            ->hidden($this->shouldHideComponent(...))
-                                            ->dehydratedWhenHidden()
-                                            ->required(fn (ServerVariable $serverVariable) => $serverVariable->variable->getRequiredAttribute())
-                                            ->rules([
-                                                fn (ServerVariable $serverVariable): Closure => function (string $attribute, $value, Closure $fail) use ($serverVariable) {
-                                                    $validator = Validator::make(['validatorkey' => $value], [
-                                                        'validatorkey' => $serverVariable->variable->rules,
-                                                    ]);
-
-                                                    if ($validator->fails()) {
-                                                        $message = str($validator->errors()->first())->replace('validatorkey', $serverVariable->variable->name);
-
-                                                        $fail($message);
-                                                    }
-                                                },
-                                            ]);
-
-                                        $select = Select::make('variable_value')
-                                            ->hidden($this->shouldHideComponent(...))
-                                            ->dehydratedWhenHidden()
-                                            ->options($this->getSelectOptionsFromRules(...))
-                                            ->selectablePlaceholder(false);
-
-                                        $components = [$text, $select];
-
-                                        foreach ($components as &$component) {
-                                            $component = $component
-                                                ->live(onBlur: true)
-                                                ->hintIcon('tabler-code')
-                                                ->label(fn (ServerVariable $serverVariable) => $serverVariable->variable->name)
-                                                ->hintIconTooltip(fn (ServerVariable $serverVariable) => implode('|', $serverVariable->variable->rules))
-                                                ->prefix(fn (ServerVariable $serverVariable) => '{{' . $serverVariable->variable->env_variable . '}}')
-                                                ->helperText(fn (ServerVariable $serverVariable) => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description);
-                                        }
-
-                                        return $components;
-                                    })
+                                    ->schema([
+                                        StartupVariable::make('variable_value')
+                                            ->fromRecord(),
+                                    ])
                                     ->columnSpan(6),
                             ]),
-                        Tab::make(trans('admin/server.mounts'))
+                        Tab::make('mounts')
+                            ->label(trans('admin/server.mounts'))
                             ->icon('tabler-layers-linked')
                             ->schema(fn (Get $get) => [
                                 ServerResource::getMountCheckboxList($get),
                             ]),
-                        Tab::make(trans('admin/server.databases'))
+                        Tab::make('databases')
+                            ->label(trans('admin/server.databases'))
                             ->hidden(fn () => !auth()->user()->can('viewAny', Database::class))
                             ->icon('tabler-database')
                             ->columns(4)
@@ -821,7 +784,8 @@ class EditServer extends EditRecord
                                         ]),
                                 ])->alignCenter()->columnSpanFull(),
                             ]),
-                        Tab::make(trans('admin/server.actions'))
+                        Tab::make('actions')
+                            ->label(trans('admin/server.actions'))
                             ->icon('tabler-settings')
                             ->schema([
                                 Fieldset::make(trans('admin/server.actions'))
@@ -954,12 +918,12 @@ class EditServer extends EditRecord
                                                                 $transfer->handle($server, Arr::get($data, 'node_id'), Arr::get($data, 'allocation_id'), Arr::get($data, 'allocation_additional', []));
 
                                                                 Notification::make()
-                                                                    ->title('Transfer started')
+                                                                    ->title(trans('admin/server.notifications.transfer_started'))
                                                                     ->success()
                                                                     ->send();
                                                             } catch (Exception $exception) {
                                                                 Notification::make()
-                                                                    ->title('Transfer failed')
+                                                                    ->title(trans('admin/server.notifications.transfer_failed'))
                                                                     ->body($exception->getMessage())
                                                                     ->danger()
                                                                     ->send();
@@ -1144,35 +1108,5 @@ class EditServer extends EditRecord
     protected function getSavedNotification(): ?Notification
     {
         return null;
-    }
-
-    private function shouldHideComponent(ServerVariable $serverVariable, Forms\Components\Component $component): bool
-    {
-        $containsRuleIn = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'), false);
-
-        if ($component instanceof Select) {
-            return !$containsRuleIn;
-        }
-
-        if ($component instanceof TextInput) {
-            return $containsRuleIn;
-        }
-
-        throw new Exception('Component type not supported: ' . $component::class);
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    private function getSelectOptionsFromRules(ServerVariable $serverVariable): array
-    {
-        $inRule = array_first($serverVariable->variable->rules, fn ($value) => str($value)->startsWith('in:'));
-
-        return str($inRule)
-            ->after('in:')
-            ->explode(',')
-            ->each(fn ($value) => str($value)->trim())
-            ->mapWithKeys(fn ($value) => [$value => $value])
-            ->all();
     }
 }

@@ -95,7 +95,8 @@ class UserResource extends Resource
                 $permissionsArray[$data['name']][] = $permission;
             }
 
-            $tabs[] = Tab::make(str($data['name'])->headline())
+            $tabs[] = Tab::make($data['name'])
+                ->label(str($data['name'])->headline())
                 ->schema([
                     Section::make()
                         ->description(trans('server/user.permissions.' . $data['name'] . '_desc'))

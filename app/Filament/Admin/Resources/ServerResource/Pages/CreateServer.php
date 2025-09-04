@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
 use App\Filament\Admin\Resources\ServerResource;
+use App\Filament\Components\Forms\Fields\StartupVariable;
 use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
@@ -13,11 +14,9 @@ use App\Services\Servers\ServerCreationService;
 use App\Services\Users\UserCreationService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Closure;
 use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
@@ -41,7 +40,6 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
 use LogicException;
 
@@ -266,7 +264,7 @@ class CreateServer extends CreateRecord
                                         ->preload()
                                         ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                         ->prefixIcon('tabler-network')
-                                        ->label('Additional Allocations')
+                                        ->label(trans('admin/server.additional_allocations'))
                                         ->columnSpan(2)
                                         ->disabled(fn (Get $get) => $get('../../allocation_id') === null || $get('../../node_id') === null)
                                         ->searchable(['ip', 'port', 'ip_alias'])
@@ -429,7 +427,7 @@ class CreateServer extends CreateRecord
                                         ),
 
                                     Repeater::make('server_variables')
-                                        ->label('')
+                                        ->hiddenLabel()
                                         ->relationship('serverVariables', fn (Builder $query) => $query->orderByPowerJoins('variable.sort'))
                                         ->saveRelationshipsBeforeChildrenUsing(null)
                                         ->saveRelationshipsUsing(null)
@@ -439,51 +437,15 @@ class CreateServer extends CreateRecord
                                         ->deletable(false)
                                         ->default([])
                                         ->hidden(fn ($state) => empty($state))
-                                        ->schema(function () {
-
-                                            $text = TextInput::make('variable_value')
-                                                ->hidden($this->shouldHideComponent(...))
-                                                ->dehydratedWhenHidden()
-                                                ->required(fn (Get $get) => in_array('required', $get('rules')))
-                                                ->rules(
-                                                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                                        $validator = Validator::make(['validatorkey' => $value], [
-                                                            'validatorkey' => $get('rules'),
-                                                        ]);
-
-                                                        if ($validator->fails()) {
-                                                            $message = str($validator->errors()->first())->replace('validatorkey', $get('name'))->toString();
-
-                                                            $fail($message);
-                                                        }
-                                                    },
-                                                );
-
-                                            $select = Select::make('variable_value')
-                                                ->hidden($this->shouldHideComponent(...))
-                                                ->dehydratedWhenHidden()
-                                                ->options($this->getSelectOptionsFromRules(...))
-                                                ->selectablePlaceholder(false);
-
-                                            $components = [$text, $select];
-
-                                            foreach ($components as &$component) {
-                                                $component = $component
-                                                    ->live(onBlur: true)
-                                                    ->hintIcon('tabler-code')
-                                                    ->label(fn (Get $get) => $get('name'))
-                                                    ->hintIconTooltip(fn (Get $get) => implode('|', $get('rules')))
-                                                    ->prefix(fn (Get $get) => '{{' . $get('env_variable') . '}}')
-                                                    ->helperText(fn (Get $get) => empty($get('description')) ? '—' : $get('description'))
-                                                    ->afterStateUpdated(function (Set $set, Get $get, $state) {
-                                                        $environment = $get($envPath = '../../environment');
-                                                        $environment[$get('env_variable')] = $state;
-                                                        $set($envPath, $environment);
-                                                    });
-                                            }
-
-                                            return $components;
-                                        })
+                                        ->schema([
+                                            StartupVariable::make('variable_value')
+                                                ->fromForm()
+                                                ->afterStateUpdated(function (Set $set, Get $get, $state) {
+                                                    $environment = $get($envPath = '../../environment');
+                                                    $environment[$get('env_variable')] = $state;
+                                                    $set($envPath, $environment);
+                                                }),
+                                        ])
                                         ->columnSpan(2),
                                 ]),
                         ]),
@@ -799,7 +761,7 @@ class CreateServer extends CreateRecord
 
                                     KeyValue::make('docker_labels')
                                         ->live()
-                                        ->label('Container Labels')
+                                        ->label(trans('admin/server.container_labels'))
                                         ->keyLabel(trans('admin/server.title'))
                                         ->valueLabel(trans('admin/server.description'))
                                         ->columnSpanFull(),
@@ -815,7 +777,7 @@ class CreateServer extends CreateRecord
                                                 type="submit"
                                                 size="sm"
                                             >
-                                                Create Server
+                                                {{ trans('admin/server.create') }}
                                             </x-filament::button>
                                         BLADE))),
             ]);
@@ -849,40 +811,6 @@ class CreateServer extends CreateRecord
 
             throw new Halt();
         }
-    }
-
-    private function shouldHideComponent(Get $get, Component $component): bool
-    {
-        $containsRuleIn = collect($get('rules'))->reduce(
-            fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
-        );
-
-        if ($component instanceof Select) {
-            return $containsRuleIn;
-        }
-
-        if ($component instanceof TextInput) {
-            return !$containsRuleIn;
-        }
-
-        throw new Exception('Component type not supported: ' . $component::class);
-    }
-
-    /**
-     * @return array<array-key, string>
-     */
-    private function getSelectOptionsFromRules(Get $get): array
-    {
-        $inRule = collect($get('rules'))->reduce(
-            fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''
-        );
-
-        return str($inRule)
-            ->after('in:')
-            ->explode(',')
-            ->each(fn ($value) => str($value)->trim())
-            ->mapWithKeys(fn ($value) => [$value => $value])
-            ->all();
     }
 
     /**

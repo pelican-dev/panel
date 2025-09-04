@@ -2,6 +2,7 @@
 
 return [
     'title' => 'Databases',
+    'empty' => 'No Databases',
     'create_database' => 'Create Database',
     'limit' => 'Database limit reached',
     'viewing' => 'Viewing: :database',

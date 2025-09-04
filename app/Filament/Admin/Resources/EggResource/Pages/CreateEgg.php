@@ -57,7 +57,8 @@ class CreateEgg extends CreateRecord
         return $form
             ->schema([
                 Tabs::make()->tabs([
-                    Tab::make(trans('admin/egg.tabs.configuration'))
+                    Tab::make('configuration')
+                        ->label(trans('admin/egg.tabs.configuration'))
                         ->columns(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 4])
                         ->schema([
                             TextInput::make('name')
@@ -123,7 +124,8 @@ class CreateEgg extends CreateRecord
                                 ->helperText(trans('admin/egg.docker_help')),
                         ]),
 
-                    Tab::make(trans('admin/egg.tabs.process_management'))
+                    Tab::make('process_management')
+                        ->label(trans('admin/egg.tabs.process_management'))
                         ->columns()
                         ->schema([
                             CopyFrom::make('copy_process_from')
@@ -146,7 +148,8 @@ class CreateEgg extends CreateRecord
                                 ->default('{}')
                                 ->helperText(trans('admin/egg.log_config_help')),
                         ]),
-                    Tab::make(trans('admin/egg.tabs.egg_variables'))
+                    Tab::make('egg_variables')
+                        ->label(trans('admin/egg.tabs.egg_variables'))
                         ->columnSpanFull()
                         ->schema([
                             Repeater::make('variables')
@@ -239,7 +242,8 @@ class CreateEgg extends CreateRecord
                                         ]),
                                 ]),
                         ]),
-                    Tab::make(trans('admin/egg.tabs.install_script'))
+                    Tab::make('install_script')
+                        ->label(trans('admin/egg.tabs.install_script'))
                         ->columns(3)
                         ->schema([
                             CopyFrom::make('copy_script_from')

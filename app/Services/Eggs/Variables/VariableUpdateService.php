@@ -46,7 +46,7 @@ class VariableUpdateService
     {
         if (!is_null(array_get($data, 'env_variable'))) {
             if (in_array(strtoupper(array_get($data, 'env_variable')), EggVariable::RESERVED_ENV_NAMES)) {
-                throw new ReservedVariableNameException(trans('exceptions.service.variables.reserved_name', ['name' => array_get($data, 'env_variable')]));
+                throw new ReservedVariableNameException(trans('exceptions.variables.reserved_name', ['name' => array_get($data, 'env_variable')]));
             }
 
             $search = EggVariable::query()
@@ -56,7 +56,7 @@ class VariableUpdateService
                 ->count();
 
             if ($search > 0) {
-                throw new DisplayException(trans('exceptions.service.variables.env_not_unique', ['name' => array_get($data, 'env_variable')]));
+                throw new DisplayException(trans('exceptions.variables.env_not_unique', ['name' => array_get($data, 'env_variable')]));
             }
         }
 

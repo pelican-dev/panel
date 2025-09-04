@@ -45,7 +45,7 @@ if (!function_exists('convert_bytes_to_readable')) {
         $fromBase = log($bytes) / log($conversionUnit);
         $base ??= floor($fromBase);
 
-        return Number::format(pow($conversionUnit, $fromBase - $base), $decimals, locale: auth()->user()->language) . ' ' . $suffix[$base];
+        return format_number(pow($conversionUnit, $fromBase - $base), precision: $decimals) . ' ' . $suffix[$base];
     }
 }
 
@@ -96,5 +96,24 @@ if (!function_exists('get_ip_from_hostname')) {
         }
 
         return false;
+    }
+}
+
+if (!function_exists('format_number')) {
+    function format_number(int|float $number, ?int $precision = null, ?int $maxPrecision = null): false|string
+    {
+        try {
+            return Number::format($number, $precision, $maxPrecision, auth()->user()->language ?? 'en');
+        } catch (Throwable) {
+            // User language is invalid, so default to english
+            return Number::format($number, $precision, $maxPrecision, 'en');
+        }
+    }
+}
+
+if (!function_exists('encode_path')) {
+    function encode_path(string $path): string
+    {
+        return implode('/', array_map('rawurlencode', explode('/', $path)));
     }
 }
