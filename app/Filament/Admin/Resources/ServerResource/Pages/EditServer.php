@@ -593,26 +593,47 @@ class EditServer extends EditRecord
                                         true => 'tabler-code-off',
                                     ])
                                     ->required(),
+
                                 Hidden::make('previewing')
                                     ->default(false),
-                                Textarea::make('startup')
+
+                                Select::make('select_startup')
+                                    ->label(trans('admin/server.startup_name'))
+                                    ->live()
+                                    ->afterStateUpdated(fn (Set $set, $state) => $set('startup', $state))
+                                    ->options(function ($state, Get $get, Set $set) {
+                                        $egg = Egg::query()->find($get('egg_id'));
+                                        $startups = $egg->startup_commands ?? [];
+
+                                        $currentStartup = $get('startup');
+                                        if (!$currentStartup && $startups) {
+                                            $currentStartup = collect($startups)->first();
+                                            $set('startup', $currentStartup);
+                                            $set('select_startup', $currentStartup);
+                                        }
+
+                                        return array_flip($startups) + ['' => 'Custom Startup'];
+                                    })
+                                    ->selectablePlaceholder(false)
+                                    ->columnSpanFull(),
+
+                                TextInput::make('startup')
                                     ->label(trans('admin/server.startup_cmd'))
                                     ->required()
-                                    ->columnSpan(6)
-                                    ->autosize()
-                                    ->hintAction(PreviewStartupAction::make('preview')),
-
-                                Textarea::make('default_startup')
-                                    ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
-                                    ->label(trans('admin/server.default_startup'))
-                                    ->disabled()
-                                    ->autosize()
-                                    ->columnSpan(6)
-                                    ->formatStateUsing(function ($state, Get $get) {
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                         $egg = Egg::query()->find($get('egg_id'));
+                                        $startups = $egg->startup_commands ?? [];
 
-                                        return Arr::first($egg->startup_commands);
-                                    }),
+                                        if (in_array($state, $startups)) {
+                                            $set('select_startup', $state);
+                                        } else {
+                                            $set('select_startup', '');
+                                        }
+                                    })
+                                    ->placeholder(trans('admin/server.startup_placeholder'))
+                                    ->columnSpanFull()
+                                    ->hintAction(PreviewStartupAction::make('preview')),
 
                                 Repeater::make('server_variables')
                                     ->hiddenLabel()

@@ -9,8 +9,10 @@ class StartupCommandService
     /**
      * Generates a startup command for a given server instance.
      */
-    public function handle(Server $server, bool $hideAllValues = false): string
+    public function handle(Server $server, ?string $startup = null, bool $hideAllValues = false): string
     {
+        $startup ??= $server->startup;
+
         $find = ['{{SERVER_MEMORY}}', '{{SERVER_IP}}', '{{SERVER_PORT}}'];
         $replace = [
             (string) $server->memory,
@@ -23,6 +25,6 @@ class StartupCommandService
             $replace[] = ($variable->user_viewable && !$hideAllValues) ? ($variable->server_value ?? $variable->default_value) : '[hidden]';
         }
 
-        return str_replace($find, $replace, $server->startup);
+        return str_replace($find, $replace, $startup);
     }
 }
