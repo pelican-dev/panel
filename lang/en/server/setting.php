@@ -6,6 +6,7 @@ return [
         'title' => 'Server Information',
         'information' => 'Information',
         'name' => 'Server Name',
+        'server_name' => 'Server Name: :name',
         'notification_name' => 'Updated Server Name',
         'description' => 'Server Description',
         'notification_description' => 'Updated Server Description',

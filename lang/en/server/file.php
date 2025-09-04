@@ -66,6 +66,7 @@ return [
             'search_term' => 'Search term',
             'search_term_placeholder' => 'Enter a search term, ex. *.txt',
             'search' => 'Search',
+            'search_for_term' => 'Search :term',
         ],
         'delete' => [
             'notification' => 'File Deleted',

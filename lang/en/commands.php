@@ -54,7 +54,7 @@ return [
     'schedule' => [
         'process' => [
             'no_tasks' => 'There are no scheduled tasks for servers that need to be run.',
-            'error_message' => 'An error was encountered while processing Schedule: ',
+            'error_message' => 'An error was encountered while processing Schedule: :schedules',
         ],
     ],
     'upgrade' => [

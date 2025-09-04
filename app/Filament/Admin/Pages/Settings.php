@@ -553,7 +553,7 @@ class Settings extends Page implements HasForms
                             ->label(trans('admin/setting.oauth.enable'))
                             ->color('success')
                             ->steps($schema->getSetupSteps())
-                            ->modalHeading(trans('admin/setting.oauth.enable') . ' ' . $schema->getName())
+                            ->modalHeading(trans('admin/setting.oauth.enable_schema', ['schema' => $schema->getName()]))
                             ->modalSubmitActionLabel(trans('admin/setting.oauth.enable'))
                             ->modalCancelAction(false)
                             ->action(function ($data, Set $set) use ($key) {
