@@ -107,7 +107,7 @@ class ListFiles extends ListRecords
             ])
             ->recordUrl(function (File $file) use ($server) {
                 if ($file->is_directory) {
-                    return self::getUrl(['path' => join_paths($this->path, $file->name)]);
+                    return self::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]);
                 }
 
                 if (!auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server)) {
