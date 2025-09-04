@@ -12,7 +12,7 @@ class SubUserRemovedListener
     {
         Notification::make()
             ->title(trans('notifications.user_removed.title'))
-            ->body(trans('notifications.user_removed.body', ['name' => $event->server->name]))
+            ->body(trans('notifications.user_removed.body', ['server' => $event->server->name]))
             ->sendToDatabase($event->user);
 
         $event->user->notify(new RemovedFromServer($event->server));

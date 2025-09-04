@@ -5,6 +5,7 @@ return [
     'installation' => 'Server Installation',
     'reinstallation' => 'Server Reinstallation',
     'completed' => 'Completed',
+    'failed' => 'Failed',
     'user_added' => [
         'title' => 'Added to Server',
         'body' => 'You have been added as a subuser to :server.',
@@ -13,5 +14,4 @@ return [
         'title' => 'Removed from Server',
         'body' => 'You have been removed as a subuser from :server.',
     ],
-    'failed' => 'Failed',
 ];

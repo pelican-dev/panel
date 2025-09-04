@@ -17,7 +17,7 @@ class SubUserAddedListener
 
         Notification::make()
             ->title(trans('notifications.user_added.title'))
-            ->body(trans('notifications.user_added.body', ['name' => $event->subuser->server->name]))
+            ->body(trans('notifications.user_added.body', ['server' => $event->subuser->server->name]))
             ->actions([
                 Action::make('view')
                     ->button()
