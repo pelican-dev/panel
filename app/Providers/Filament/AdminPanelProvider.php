@@ -18,12 +18,10 @@ class AdminPanelProvider extends PanelProvider
             ->breadcrumbs(false)
             ->sidebarCollapsibleOnDesktop()
             ->userMenuItems([
-                'profile' => fn (Action $action) => $action->label(auth()->user()->username),
-                Action::make('exitAdmin')
+                Action::make('exit_admin')
                     ->label(fn () => trans('profile.exit_admin'))
                     ->url(fn () => Filament::getPanel('app')->getUrl())
-                    ->icon('tabler-arrow-back')
-                    ->sort(24),
+                    ->icon('tabler-arrow-back'),
             ])
             ->navigationGroups([
                 NavigationGroup::make(fn () => trans('admin/dashboard.server'))

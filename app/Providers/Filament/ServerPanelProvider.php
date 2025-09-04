@@ -4,7 +4,6 @@ namespace App\Providers\Filament;
 
 use App\Filament\App\Resources\Servers\Pages\ListServers;
 use App\Filament\Admin\Resources\Servers\Pages\EditServer;
-use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\Activity\ServerSubject;
 use App\Models\Server;
 use Filament\Actions\Action;
@@ -19,20 +18,17 @@ class ServerPanelProvider extends PanelProvider
         return parent::panel($panel)
             ->id('server')
             ->path('server')
-            ->homeUrl('/')
+            ->homeUrl(fn () => Filament::getPanel('app')->getUrl())
             ->tenant(Server::class)
             ->userMenuItems([
-                'profile' => fn (Action $action) => $action->label(auth()->user()->username)->url(fn () => EditProfile::getUrl(panel: 'app')),
-                Action::make('toServerList')
-                    ->label('Server List')
+                Action::make('to_serverList')
+                    ->label(trans('profile.server_list'))
                     ->icon('tabler-brand-docker')
-                    ->url(fn () => ListServers::getUrl(panel: 'app'))
-                    ->sort(6),
-                Action::make('toAdmin')
+                    ->url(fn () => ListServers::getUrl(panel: 'app')),
+                Action::make('to_admin')
                     ->label(trans('profile.admin'))
                     ->icon('tabler-arrow-forward')
                     ->url(fn () => Filament::getPanel('admin')->getUrl())
-                    ->sort(5)
                     ->visible(fn () => auth()->user()->canAccessPanel(Filament::getPanel('admin'))),
             ])
             ->navigationItems([

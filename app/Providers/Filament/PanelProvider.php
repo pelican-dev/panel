@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\LanguageMiddleware;
+use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Http\Middleware\Authenticate;
@@ -34,6 +35,10 @@ abstract class PanelProvider extends BasePanelProvider
             ->topNavigation(fn () => auth()->user()->getCustomization()['top_navigation'] ?? false)
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->profile(EditProfile::class, false)
+            ->userMenuItems([
+                'profile' => fn (Action $action) => $action
+                    ->url(fn () => EditProfile::getUrl(panel: 'app')),
+            ])
             ->login(Login::class)
             ->passwordReset()
             ->multiFactorAuthentication([
