@@ -26,7 +26,7 @@ return [
     'unlinked' => ':name unlinked',
     'scan_qr' => 'Scan QR Code',
     'code' => 'Code',
-    'setup_key' => 'Setup Key',
+    'setup_key' => 'Setup Key: :secret',
     'invalid_code' => 'Invalid 2FA Code',
     'code_help' => 'Scan the QR code above using your two-step authentication app, then enter the code generated.',
     '2fa_enabled' => 'Two Factor Authentication is currently enabled!',

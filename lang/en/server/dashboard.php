@@ -3,9 +3,11 @@
 return [
     'title' => 'Servers',
     'list' => 'Server List',
-    'my_servers' => 'My Servers',
-    'other_servers' => 'Others\' Servers',
-    'all_servers' => 'All Servers',
+    'tabs' => [
+        'my' => 'My Servers',
+        'other' => 'Others\' Servers',
+        'all' => 'All Servers',
+    ],
     'empty_own' => 'You don\'t own any servers!',
     'empty_other' => 'You don\'t have access to any servers!',
 
@@ -22,4 +24,7 @@ return [
     'loading' => 'Loading...',
 
     'power_actions' => 'Power Actions',
+    'power_action_sent' => ':action sent to :name',
+
+    'copied' => 'Copied to clipboard',
 ];

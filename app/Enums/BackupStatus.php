@@ -32,6 +32,6 @@ enum BackupStatus: string implements HasColor, HasIcon, HasLabel
 
     public function getLabel(): string
     {
-        return trans('server/backup.backup_status.' . strtolower($this->value));
+        return trans('server/backup.backup_status.' . $this->value);
     }
 }

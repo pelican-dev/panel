@@ -203,7 +203,7 @@ class File extends Model implements Validatable
             }
 
             AlertBanner::make('files_node_error')
-                ->title('Could not load files!')
+                ->title(trans('server/file.alerts.files_node_error.title'))
                 ->body($message->toString())
                 ->danger()
                 ->send();

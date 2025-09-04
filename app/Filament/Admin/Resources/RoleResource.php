@@ -129,7 +129,6 @@ class RoleResource extends Resource
                     ->required()
                     ->disabled(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
                 TextInput::make('guard_name')
-                    ->label('Guard Name')
                     ->default(Role::DEFAULT_GUARD_NAME)
                     ->nullable()
                     ->hidden(),

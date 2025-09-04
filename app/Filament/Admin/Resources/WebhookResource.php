@@ -211,7 +211,7 @@ class WebhookResource extends Resource
                     TextInput::make('thread_name')
                         ->label(trans('admin/webhook.discord_message.forum_thread')),
                     CheckboxList::make('flags')
-                        ->label('Flags')
+                        ->label(trans('admin/webhook.discord_embed.flags'))
                         ->options([
                             (1 << 2) => trans('admin/webhook.discord_message.supress_embeds'),
                             (1 << 12) => trans('admin/webhook.discord_message.supress_notifications'),

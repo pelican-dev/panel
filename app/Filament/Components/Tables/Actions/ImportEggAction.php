@@ -86,7 +86,8 @@ class ImportEggAction extends Action
             Tabs::make('Tabs')
                 ->contained(false)
                 ->tabs([
-                    Tab::make(trans('admin/egg.import.file'))
+                    Tab::make('file')
+                        ->label(trans('admin/egg.import.file'))
                         ->icon('tabler-file-upload')
                         ->schema([
                             FileUpload::make('files')
@@ -98,7 +99,8 @@ class ImportEggAction extends Action
                                 ->storeFiles(false)
                                 ->multiple($isMultiple),
                         ]),
-                    Tab::make(trans('admin/egg.import.url'))
+                    Tab::make('url')
+                        ->label(trans('admin/egg.import.url'))
                         ->icon('tabler-world-upload')
                         ->schema([
                             Select::make('github')

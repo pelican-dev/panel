@@ -163,7 +163,7 @@ class Login extends BaseLogin
     protected function getLoginFormComponent(): Component
     {
         return TextInput::make('login')
-            ->label('Login')
+            ->label(trans('filament-panels::pages/auth/login.title'))
             ->required()
             ->autocomplete()
             ->autofocus()
