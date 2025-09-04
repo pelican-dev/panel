@@ -135,7 +135,7 @@ class EggImporterService
         $parsed = match ($version) {
             'PTDL_v1' => $this->convertToV3($this->convertLegacy($parsed)),
             'PTDL_v2', 'PLCN_v1', 'PLCN_v2' => $this->convertToV3($parsed),
-            'PLCN_v3' => $parsed,
+            Egg::EXPORT_VERSION => $parsed,
             default => throw new InvalidFileUploadException('The file format is not recognized.'),
         };
 
