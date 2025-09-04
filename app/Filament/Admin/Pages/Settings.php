@@ -116,7 +116,7 @@ class Settings extends Page implements HasSchemas
                         ->label(trans('admin/setting.navigation.captcha'))
                         ->icon('tabler-shield')
                         ->schema($this->captchaSettings())
-                        ->columns(3),
+                        ->columns(1),
                     Tab::make('mail')
                         ->label(trans('admin/setting.navigation.mail'))
                         ->icon('tabler-mail')
@@ -128,7 +128,8 @@ class Settings extends Page implements HasSchemas
                     Tab::make('OAuth')
                         ->label(trans('admin/setting.navigation.oauth'))
                         ->icon('tabler-brand-oauth')
-                        ->schema($this->oauthSettings()),
+                        ->schema($this->oauthSettings())
+                        ->columns(1),
                     Tab::make('misc')
                         ->label(trans('admin/setting.navigation.misc'))
                         ->icon('tabler-tool')
