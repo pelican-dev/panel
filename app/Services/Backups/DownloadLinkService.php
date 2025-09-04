@@ -2,6 +2,7 @@
 
 namespace App\Services\Backups;
 
+use App\Extensions\Backups\Adapter\S3BackupAdapter;
 use Carbon\CarbonImmutable;
 use App\Models\User;
 use App\Models\Backup;
@@ -31,6 +32,7 @@ class DownloadLinkService
             ->setClaims([
                 'backup_uuid' => $backup->uuid,
                 'server_uuid' => $backup->server->uuid,
+                'disk' => $backup->disk,
             ])
             ->handle($backup->server->node, $user->id . $backup->server->uuid);
 
@@ -43,7 +45,7 @@ class DownloadLinkService
      */
     protected function getS3BackupUrl(Backup $backup): string
     {
-        /** @var \App\Extensions\Filesystem\S3Filesystem $adapter */
+        /** @var S3BackupAdapter $adapter */
         $adapter = $this->backupManager->adapter(Backup::ADAPTER_AWS_S3);
 
         $request = $adapter->getClient()->createPresignedRequest(
