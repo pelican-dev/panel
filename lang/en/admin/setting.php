@@ -89,6 +89,7 @@ return [
     ],
     'oauth' => [
         'enable' => 'Enable',
+        'enable_schema' => 'Enable :schema',
         'disable' => 'Disable',
         'client_id' => 'Client ID',
         'client_secret' => 'Client Secret',

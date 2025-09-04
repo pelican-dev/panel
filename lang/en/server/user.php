@@ -34,7 +34,7 @@ return [
         'settings_rename' => 'Allows a user to rename this server.',
         'settings_description' => 'Allows a user to change the description of this server.',
         'activity_read' => 'Allows a user to view the activity logs for the server.',
-        'websocket_*' => 'Allows a user access to the websocket for this server.',
+        'websocket_connect' => 'Allows a user access to the websocket for this server.',
         'control_console' => 'Allows a user to send data to the server console.',
         'control_start' => 'Allows a user to start the server instance.',
         'control_stop' => 'Allows a user to stop the server instance.',

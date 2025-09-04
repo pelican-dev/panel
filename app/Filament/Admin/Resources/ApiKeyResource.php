@@ -96,7 +96,7 @@ class ApiKeyResource extends Resource
             ])
             ->emptyStateIcon('tabler-key')
             ->emptyStateDescription('')
-            ->emptyStateHeading(trans('admin/apikey.empty_table'))
+            ->emptyStateHeading(trans('admin/apikey.empty'))
             ->emptyStateActions([
                 CreateAction::make(),
             ]);

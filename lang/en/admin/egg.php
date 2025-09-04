@@ -23,7 +23,7 @@ return [
     ],
     'export' => [
         'modal' => 'How would you like to export :egg ?',
-        'as' => 'As',
+        'as' => 'As .:format',
     ],
     'in_use' => 'In Use',
     'servers' => 'Servers',

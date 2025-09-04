@@ -39,7 +39,8 @@ class ImportScheduleAction extends Action
             Tabs::make('Tabs')
                 ->contained(false)
                 ->tabs([
-                    Tab::make(trans('server/schedule.import_action.file'))
+                    Tab::make('file')
+                        ->label(trans('server/schedule.import_action.file'))
                         ->icon('tabler-file-upload')
                         ->schema([
                             FileUpload::make('files')
@@ -51,7 +52,8 @@ class ImportScheduleAction extends Action
                                 ->storeFiles(false)
                                 ->multiple(true),
                         ]),
-                    Tab::make(trans('server/schedule.import_action.url'))
+                    Tab::make('url')
+                        ->label(trans('server/schedule.import_action.url'))
                         ->icon('tabler-world-upload')
                         ->schema([
                             Repeater::make('urls')

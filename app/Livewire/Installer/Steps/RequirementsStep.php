@@ -18,13 +18,13 @@ class RequirementsStep
         $correctPhpVersion = $compare >= 0;
 
         $fields = [
-            Section::make('PHP Version')
-                ->description(self::MIN_PHP_VERSION . ' or newer')
+            Section::make(trans('installer.requirements.sections.version.title'))
+                ->description(trans('installer.requirements.sections.version.or_newer', ['version' => self::MIN_PHP_VERSION]))
                 ->icon($correctPhpVersion ? 'tabler-check' : 'tabler-x')
                 ->iconColor($correctPhpVersion ? 'success' : 'danger')
                 ->schema([
                     Placeholder::make('')
-                        ->content('Your PHP Version is ' . PHP_VERSION . '.'),
+                        ->content(trans('installer.requirements.sections.version.content', ['version' => PHP_VERSION])),
                 ]),
         ];
 
@@ -41,16 +41,16 @@ class RequirementsStep
         ];
         $allExtensionsInstalled = !in_array(false, $phpExtensions);
 
-        $fields[] = Section::make('PHP Extensions')
+        $fields[] = Section::make(trans('installer.requirements.sections.extensions.title'))
             ->description(implode(', ', array_keys($phpExtensions)))
             ->icon($allExtensionsInstalled ? 'tabler-check' : 'tabler-x')
             ->iconColor($allExtensionsInstalled ? 'success' : 'danger')
             ->schema([
                 Placeholder::make('')
-                    ->content('All needed PHP Extensions are installed.')
+                    ->content(trans('installer.requirements.sections.extensions.good'))
                     ->visible($allExtensionsInstalled),
                 Placeholder::make('')
-                    ->content('The following PHP Extensions are missing: ' . implode(', ', array_keys($phpExtensions, false)))
+                    ->content(trans('installer.requirements.sections.extensions.bad', ['extensions' => implode(', ', array_keys($phpExtensions, false))]))
                     ->visible(!$allExtensionsInstalled),
             ]);
 
@@ -60,30 +60,30 @@ class RequirementsStep
         ];
         $correctFolderPermissions = !in_array(false, $folderPermissions);
 
-        $fields[] = Section::make('Folder Permissions')
+        $fields[] = Section::make(trans('installer.requirements.sections.permissions.title'))
             ->description(implode(', ', array_keys($folderPermissions)))
             ->icon($correctFolderPermissions ? 'tabler-check' : 'tabler-x')
             ->iconColor($correctFolderPermissions ? 'success' : 'danger')
             ->schema([
                 Placeholder::make('')
-                    ->content('All Folders have the correct permissions.')
+                    ->content(trans('installer.requirements.sections.permissions.good'))
                     ->visible($correctFolderPermissions),
                 Placeholder::make('')
-                    ->content('The following Folders have wrong permissions: ' . implode(', ', array_keys($folderPermissions, false)))
+                    ->content(trans('installer.requirements.sections.permissions.bad', ['folders' => implode(', ', array_keys($folderPermissions, false))]))
                     ->visible(!$correctFolderPermissions),
             ]);
 
         return Step::make('requirements')
-            ->label('Server Requirements')
+            ->label(trans('installer.requirements.title'))
             ->schema($fields)
             ->afterValidation(function () use ($correctPhpVersion, $allExtensionsInstalled, $correctFolderPermissions) {
                 if (!$correctPhpVersion || !$allExtensionsInstalled || !$correctFolderPermissions) {
                     Notification::make()
-                        ->title('Some requirements are missing!')
+                        ->title(trans('installer.requirements.exception'))
                         ->danger()
                         ->send();
 
-                    throw new Halt('Some requirements are missing');
+                    throw new Halt(trans('installer.requirements.title'));
                 }
             });
     }

@@ -29,7 +29,7 @@ return [
     'architecture' => 'Architecture',
     'kernel' => 'Kernel',
     'unknown' => 'Unknown',
-    'latest' => 'Latest',
+    'latest' => '(Latest: :version)',
     'node_uuid' => 'Node UUID',
     'node_id' => 'Node ID',
 
@@ -88,6 +88,7 @@ return [
 
     'auto_deploy' => 'Auto Deploy Command',
     'auto_question' => 'Choose between Standalone and Docker install.',
+    'auto_label' => 'Type',
     'standalone' => 'Standalone',
     'docker' => 'Docker',
     'auto_command' => 'To auto-configure your node run the following command:',
@@ -112,4 +113,9 @@ return [
     'error_connecting' => 'Error connecting to :node',
     'error_connecting_description' => 'The configuration could not be automatically updated on Wings, you will need to manually update the configuration file.',
     'allocation' => 'Allocation',
+
+    'cloudflare_issue' => [
+        'title' => 'Cloudflare Issue',
+        'body' => 'Your Node is not accessible by Cloudflare',
+    ],
 ];
