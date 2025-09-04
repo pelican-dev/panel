@@ -125,6 +125,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'timezone',
         'mfa_app_secret',
         'mfa_app_recovery_codes',
+        'mfa_email_enabled',
         'oauth',
         'customization',
     ];
