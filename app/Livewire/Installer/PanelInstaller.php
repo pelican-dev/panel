@@ -46,6 +46,11 @@ class PanelInstaller extends SimplePage implements HasForms
 
     protected static string $view = 'filament.pages.installer';
 
+    public function getTitle(): string
+    {
+        return trans('installer.title');
+    }
+
     public function getMaxWidth(): MaxWidth|string
     {
         return MaxWidth::SevenExtraLarge;
@@ -79,14 +84,18 @@ class PanelInstaller extends SimplePage implements HasForms
                 SessionStep::make(),
             ])
                 ->persistStepInQueryString()
-                ->nextAction(fn (Action $action) => $action->keyBindings('enter'))
+                ->nextAction(function (Action $action) {
+                    $action
+                        ->label(trans('installer.next_step'))
+                        ->keyBindings('enter');
+                })
                 ->submitAction(new HtmlString(Blade::render(<<<'BLADE'
                     <x-filament::button
                         type="submit"
                         size="sm"
                         wire:loading.attr="disabled"
                     >
-                        trans('installer.finish') 
+                        {{ trans('installer.finish') }}
                         <span wire:loading><x-filament::loading-indicator class="h-4 w-4" /></span>
                     </x-filament::button>
                 BLADE))),
