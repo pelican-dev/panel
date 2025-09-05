@@ -37,9 +37,7 @@ class Startup extends ServerFormPage
         return $form
             ->columns([
                 'default' => 1,
-                'sm' => 1,
-                'md' => 4,
-                'lg' => 6,
+                'md' => 2,
             ])
             ->schema([
                 Hidden::make('previewing')
@@ -48,13 +46,7 @@ class Startup extends ServerFormPage
                     ->label(trans('server/startup.command'))
                     ->readOnly()
                     ->visible(fn (Server $server) => !in_array($server->startup, $server->egg->startup_commands))
-                    ->formatStateUsing(fn () => 'Custom Startup')
-                    ->columnSpan([
-                        'default' => 1,
-                        'sm' => 1,
-                        'md' => 2,
-                        'lg' => 4,
-                    ]),
+                    ->formatStateUsing(fn () => 'Custom Startup'),
                 Select::make('startup_select')
                     ->label(trans('server/startup.command'))
                     ->live()
@@ -81,24 +73,12 @@ class Startup extends ServerFormPage
                             ->send();
                     })
                     ->options(fn (Server $server) => array_flip($server->egg->startup_commands))
-                    ->selectablePlaceholder(false)
-                    ->columnSpan([
-                        'default' => 1,
-                        'sm' => 1,
-                        'md' => 2,
-                        'lg' => 4,
-                    ]),
+                    ->selectablePlaceholder(false),
                 TextInput::make('custom_image')
                     ->label(trans('server/startup.docker_image'))
                     ->readOnly()
                     ->visible(fn (Server $server) => !in_array($server->image, $server->egg->docker_images))
-                    ->formatStateUsing(fn (Server $server) => $server->image)
-                    ->columnSpan([
-                        'default' => 1,
-                        'sm' => 1,
-                        'md' => 2,
-                        'lg' => 2,
-                    ]),
+                    ->formatStateUsing(fn (Server $server) => $server->image),
                 Select::make('image')
                     ->label(trans('server/startup.docker_image'))
                     ->live()
@@ -124,14 +104,7 @@ class Startup extends ServerFormPage
                         $images = $server->egg->docker_images;
 
                         return array_flip($images);
-                    })
-                    ->selectablePlaceholder(false)
-                    ->columnSpan([
-                        'default' => 1,
-                        'sm' => 1,
-                        'md' => 2,
-                        'lg' => 2,
-                    ]),
+                    }),
                 Textarea::make('startup')
                     ->hiddenLabel()
                     ->columnSpanFull()
