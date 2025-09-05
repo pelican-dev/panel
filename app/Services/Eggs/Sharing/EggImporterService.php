@@ -247,7 +247,7 @@ class EggImporterService
         unset($parsed['startup']);
 
         $parsed['startup_commands'] = [
-            $startup => $startup,
+            'Default' => $startup,
         ];
 
         return $parsed;

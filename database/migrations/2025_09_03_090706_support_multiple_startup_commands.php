@@ -18,9 +18,7 @@ return new class extends Migration
         });
 
         DB::table('eggs')->select(['id', 'startup'])->cursor()->each(function ($egg) {
-            $startup = $egg->startup;
-
-            DB::table('eggs')->where('id', $egg->id)->update(['startup_commands' => [$startup => $startup]]);
+            DB::table('eggs')->where('id', $egg->id)->update(['startup_commands' => ['Default' => $egg->startup]]);
         });
 
         Schema::table('eggs', function (Blueprint $table) {
