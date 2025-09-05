@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use Throwable;
 use Illuminate\Support\Arr;
 use App\Models\Egg;
 use App\Models\User;
@@ -24,7 +25,7 @@ class StartupModificationService
      *
      * @param  array<array-key, mixed>  $data
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(Server $server, array $data): Server
     {

@@ -2,6 +2,8 @@
 
 namespace App\Extensions\Spatie\Fractalistic;
 
+use Spatie\Fractalistic\Exceptions\InvalidTransformation;
+use Spatie\Fractalistic\Exceptions\NoTransformerSpecified;
 use League\Fractal\Scope;
 use League\Fractal\TransformerAbstract;
 use Spatie\Fractal\Fractal as SpatieFractal;
@@ -14,8 +16,8 @@ class Fractal extends SpatieFractal
     /**
      * Create fractal data.
      *
-     * @throws \Spatie\Fractalistic\Exceptions\InvalidTransformation
-     * @throws \Spatie\Fractalistic\Exceptions\NoTransformerSpecified
+     * @throws InvalidTransformation
+     * @throws NoTransformerSpecified
      */
     public function createData(): Scope
     {

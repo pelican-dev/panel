@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
 use Illuminate\Database\Eloquent\Model;
@@ -19,11 +20,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array<int>|null $new_additional_allocations array of allocation.id's
  * @property bool|null $successful
  * @property bool $archived
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\Models\Server $server
- * @property \App\Models\Node $oldNode
- * @property \App\Models\Node $newNode
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Server $server
+ * @property Node $oldNode
+ * @property Node $newNode
  */
 class ServerTransfer extends Model implements Validatable
 {

@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
 import laravel, { refreshPaths } from 'laravel-vite-plugin';
 import { globSync } from 'glob';
 
@@ -9,7 +10,8 @@ export default defineConfig({
                 ...globSync('resources/css/**/*.css'),
                 ...globSync('resources/js/**/*.js'),
             ],
-            refresh: [...refreshPaths, 'app/Livewire/**'],
+            refresh: true,
         }),
+        tailwindcss(),
     ],
 });

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Collection;
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
 use Illuminate\Database\Connection;
@@ -20,11 +22,11 @@ use Illuminate\Support\Facades\DB;
  * @property string $password
  * @property int|null $max_databases
  * @property int|null $node_id
- * @property \Carbon\CarbonImmutable $created_at
- * @property \Carbon\CarbonImmutable $updated_at
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Node[] $nodes
+ * @property CarbonImmutable $created_at
+ * @property CarbonImmutable $updated_at
+ * @property Collection|Node[] $nodes
  * @property int|null $nodes_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Database[] $databases
+ * @property Collection|Database[] $databases
  * @property int|null $databases_count
  */
 class DatabaseHost extends Model implements Validatable

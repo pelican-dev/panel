@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\User;
 
+use App\Exceptions\Model\DataValidationException;
 use App\Models\User;
 use Illuminate\Console\Command;
 
@@ -14,7 +15,7 @@ class DisableTwoFactorCommand extends Command
     /**
      * Handle command execution process.
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function handle(): void
     {
@@ -24,10 +25,12 @@ class DisableTwoFactorCommand extends Command
 
         $email = $this->option('email') ?? $this->ask(trans('command/messages.user.ask_email'));
 
-        $user = User::query()->where('email', $email)->firstOrFail();
-        $user->use_totp = false;
-        $user->totp_secret = null;
-        $user->save();
+        $user = User::where('email', $email)->firstOrFail();
+        $user->update([
+            'mfa_app_secret' => null,
+            'mfa_app_recovery_codes' => null,
+            'mfa_email_enabled' => false,
+        ]);
 
         $this->info(trans('command/messages.user.2fa_disabled', ['email' => $user->email]));
     }

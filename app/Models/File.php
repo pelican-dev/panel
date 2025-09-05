@@ -147,6 +147,10 @@ class File extends Model
      */
     public function getRows(): array
     {
+        if (!isset(self::$server)) {
+            return [];
+        }
+
         try {
             $fileRepository = (new DaemonFileRepository())->setServer(self::$server);
 

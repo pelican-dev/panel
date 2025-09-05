@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use Throwable;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Response;
 use App\Models\Server;
@@ -63,7 +64,7 @@ class FileController extends ClientApiController
      *
      * Return the contents of a specified file for the user.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function contents(GetFileContentsRequest $request, Server $server): Response
     {
@@ -86,7 +87,7 @@ class FileController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function download(GetFileContentsRequest $request, Server $server): array
     {
@@ -138,7 +139,7 @@ class FileController extends ClientApiController
      *
      * Creates a new folder on the server.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function create(CreateFolderRequest $request, Server $server): JsonResponse
     {
@@ -159,7 +160,7 @@ class FileController extends ClientApiController
      *
      * Renames a file on the remote machine.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function rename(RenameFileRequest $request, Server $server): JsonResponse
     {
@@ -291,7 +292,7 @@ class FileController extends ClientApiController
      *
      * Requests that a file be downloaded from a remote location by daemon.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function pull(PullFileRequest $request, Server $server): JsonResponse
     {

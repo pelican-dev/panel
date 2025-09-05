@@ -12,5 +12,5 @@ abstract class FormWidget extends Widget implements HasForms
 
     protected static bool $isLazy = false;
 
-    protected static string $view = 'filament.admin.widgets.form-widget';
+    protected string $view = 'filament.admin.widgets.form-widget';
 }

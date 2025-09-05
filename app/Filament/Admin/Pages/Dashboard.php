@@ -7,7 +7,7 @@ use Filament\Pages\Dashboard as BaseDashboard;
 
 class Dashboard extends BaseDashboard
 {
-    protected static ?string $navigationIcon = 'tabler-layout-dashboard';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-layout-dashboard';
 
     private SoftwareVersionService $softwareVersionService;
 
@@ -16,7 +16,7 @@ class Dashboard extends BaseDashboard
         $this->softwareVersionService = $softwareVersionService;
     }
 
-    public function getColumns(): int
+    public function getColumns(): int|array
     {
         return 1;
     }

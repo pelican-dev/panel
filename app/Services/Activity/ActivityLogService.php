@@ -2,6 +2,7 @@
 
 namespace App\Services\Activity;
 
+use Closure;
 use App\Models\User;
 use Illuminate\Support\Arr;
 use Throwable;
@@ -167,9 +168,9 @@ class ActivityLogService
      * and will only save the activity log entry if everything else successfully
      * settles.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
-    public function transaction(\Closure $callback): mixed
+    public function transaction(Closure $callback): mixed
     {
         return $this->connection->transaction(function () use ($callback) {
             $response = $callback($this);
@@ -224,7 +225,7 @@ class ActivityLogService
     /**
      * Saves the activity log instance and attaches all the subject models.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function save(): ActivityLog
     {

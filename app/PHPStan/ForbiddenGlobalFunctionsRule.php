@@ -2,6 +2,7 @@
 
 namespace App\PHPStan;
 
+use PhpParser\Node\Name;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
@@ -21,7 +22,7 @@ class ForbiddenGlobalFunctionsRule implements Rule
     public function processNode(Node $node, Scope $scope): array
     {
         /** @var FuncCall $node */
-        if ($node->name instanceof Node\Name) {
+        if ($node->name instanceof Name) {
             $functionName = (string) $node->name;
             if (in_array($functionName, self::FORBIDDEN_FUNCTIONS, true)) {
                 return [

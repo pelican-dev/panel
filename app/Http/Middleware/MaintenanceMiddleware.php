@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use Closure;
+use App\Models\Server;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Routing\ResponseFactory;
 
@@ -15,9 +17,9 @@ class MaintenanceMiddleware
     /**
      * Handle an incoming request.
      */
-    public function handle(Request $request, \Closure $next): mixed
+    public function handle(Request $request, Closure $next): mixed
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = $request->attributes->get('server');
         $node = $server->getRelation('node');
 

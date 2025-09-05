@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\User;
 
+use App\Exceptions\Model\DataValidationException;
 use Exception;
 use Illuminate\Console\Command;
 use App\Services\Users\UserCreationService;
@@ -25,7 +26,7 @@ class MakeUserCommand extends Command
      * Handle command request to create a new user.
      *
      * @throws Exception
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function handle(): int
     {

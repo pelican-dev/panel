@@ -2,27 +2,32 @@
 
 namespace App\Filament\Admin\Widgets;
 
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class HelpWidget extends FormWidget
 {
     protected static ?int $sort = 4;
 
-    public function form(Form $form): Form
+    /**
+     * @throws Exception
+     */
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make(trans('admin/dashboard.sections.intro-help.heading'))
                     ->icon('tabler-question-mark')
                     ->iconColor('info')
                     ->collapsible()
                     ->persistCollapsed()
                     ->schema([
-                        Placeholder::make('')
-                            ->content(trans('admin/dashboard.sections.intro-help.content')),
+                        TextEntry::make('info')
+                            ->hiddenLabel()
+                            ->state(trans('admin/dashboard.sections.intro-help.content')),
                     ])
                     ->headerActions([
                         Action::make('docs')

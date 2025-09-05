@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Exceptions\Model\DataValidationException;
+use Exception;
 use App\Models\Task;
 use Illuminate\Http\Response;
 use App\Models\Server;
@@ -38,8 +40,8 @@ class ScheduleTaskController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Service\ServiceLimitExceededException
+     * @throws DataValidationException
+     * @throws ServiceLimitExceededException
      */
     public function store(StoreTaskRequest $request, Server $server, Schedule $schedule): array
     {
@@ -52,10 +54,10 @@ class ScheduleTaskController extends ClientApiController
             throw new HttpForbiddenException("A backup task cannot be created when the server's backup limit is set to 0.");
         }
 
-        /** @var \App\Models\Task|null $lastTask */
+        /** @var Task|null $lastTask */
         $lastTask = $schedule->tasks()->orderByDesc('sequence_id')->first();
 
-        /** @var \App\Models\Task $task */
+        /** @var Task $task */
         $task = $this->connection->transaction(function () use ($request, $schedule, $lastTask) {
             $sequenceId = ($lastTask->sequence_id ?? 0) + 1;
             $requestSequenceId = $request->integer('sequence_id', $sequenceId);
@@ -103,7 +105,7 @@ class ScheduleTaskController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function update(StoreTaskRequest $request, Server $server, Schedule $schedule, Task $task): array
     {
@@ -160,7 +162,7 @@ class ScheduleTaskController extends ClientApiController
      * Delete a given task for a schedule. If there are subsequent tasks stored in the database
      * for this schedule their sequence IDs are decremented properly.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(ClientApiRequest $request, Server $server, Schedule $schedule, Task $task): JsonResponse
     {

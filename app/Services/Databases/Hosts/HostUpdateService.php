@@ -2,6 +2,7 @@
 
 namespace App\Services\Databases\Hosts;
 
+use Throwable;
 use App\Models\DatabaseHost;
 use Illuminate\Database\ConnectionInterface;
 
@@ -19,7 +20,7 @@ class HostUpdateService
      *
      * @param  array<mixed>  $data
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(DatabaseHost|int $host, array $data): DatabaseHost
     {

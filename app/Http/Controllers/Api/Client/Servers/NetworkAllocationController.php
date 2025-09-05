@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Exceptions\Model\DataValidationException;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
@@ -51,7 +52,7 @@ class NetworkAllocationController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function update(UpdateAllocationRequest $request, Server $server, Allocation $allocation): array
     {
@@ -78,7 +79,7 @@ class NetworkAllocationController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function setPrimary(SetPrimaryAllocationRequest $request, Server $server, Allocation $allocation): array
     {
@@ -102,7 +103,7 @@ class NetworkAllocationController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      */
     public function store(NewAllocationRequest $request, Server $server): array
     {
@@ -127,7 +128,7 @@ class NetworkAllocationController extends ClientApiController
      *
      * Delete an allocation from a server.
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      */
     public function delete(DeleteAllocationRequest $request, Server $server, Allocation $allocation): JsonResponse
     {

@@ -12,6 +12,7 @@ use Illuminate\Database\ConnectionInterface;
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Illuminate\Http\Client\ConnectionException;
+use Throwable;
 
 class ServerTransferController extends Controller
 {
@@ -26,7 +27,7 @@ class ServerTransferController extends Controller
     /**
      * The daemon notifies us about a transfer failure.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function failure(ServerRequest $request, Server $server): JsonResponse
     {
@@ -50,7 +51,7 @@ class ServerTransferController extends Controller
     /**
      * The daemon notifies us about a transfer success.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function success(ServerRequest $request, Server $server): JsonResponse
     {

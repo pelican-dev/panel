@@ -2,29 +2,35 @@
 
 namespace App\Filament\Admin\Widgets;
 
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class SupportWidget extends FormWidget
 {
     protected static ?int $sort = 3;
 
-    public function form(Form $form): Form
+    /**
+     * @throws Exception
+     */
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make(trans('admin/dashboard.sections.intro-support.heading'))
                     ->icon('tabler-heart-filled')
                     ->iconColor('danger')
                     ->collapsible()
                     ->persistCollapsed()
                     ->schema([
-                        Placeholder::make('')
-                            ->content(trans('admin/dashboard.sections.intro-support.content')),
-                        Placeholder::make('')
-                            ->content(trans('admin/dashboard.sections.intro-support.extra_note')),
+                        TextEntry::make('info')
+                            ->hiddenLabel()
+                            ->state(trans('admin/dashboard.sections.intro-support.content')),
+                        TextEntry::make('extra')
+                            ->hiddenLabel()
+                            ->state(trans('admin/dashboard.sections.intro-support.extra_note')),
                     ])
                     ->headerActions([
                         Action::make('donate')

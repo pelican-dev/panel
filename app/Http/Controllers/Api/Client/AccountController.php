@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client;
 
+use Throwable;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -60,7 +61,7 @@ class AccountController extends ClientApiController
      * Update the authenticated user's password. All existing sessions will be logged
      * out immediately.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function updatePassword(UpdatePasswordRequest $request): JsonResponse
     {

@@ -1,3 +1,3 @@
 <x-filament::widget>
-        @livewire(\App\Filament\Admin\Resources\NodeResource\Widgets\NodeCpuChart::class, ['node'=> $getRecord()])
+        @livewire(\App\Filament\Admin\Resources\Nodes\Widgets\NodeCpuChart::class, ['node'=> $getRecord()])
 </x-filament::widget>

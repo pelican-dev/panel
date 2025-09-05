@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Installer\Steps;
 
+use Filament\Schemas\Components\Wizard\Step;
 use App\Livewire\Installer\PanelInstaller;
-use Filament\Forms\Components\Fieldset;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard\Step;
 
 class EnvironmentStep
 {
@@ -30,6 +30,7 @@ class EnvironmentStep
                 Fieldset::make('admin_user')
                     ->label(trans('installer.environment.fields.account.section'))
                     ->columns(3)
+                    ->columnSpanFull()
                     ->schema([
                         TextInput::make('user.email')
                             ->label(trans('installer.environment.fields.account.email'))

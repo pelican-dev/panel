@@ -11,7 +11,7 @@ use App\Exceptions\Http\Base\InvalidPasswordProvidedException;
 class UpdateEmailRequest extends ClientApiRequest
 {
     /**
-     * @throws \App\Exceptions\Http\Base\InvalidPasswordProvidedException
+     * @throws InvalidPasswordProvidedException
      */
     public function authorize(): bool
     {

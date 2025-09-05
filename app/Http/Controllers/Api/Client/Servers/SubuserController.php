@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Exceptions\Model\DataValidationException;
+use App\Exceptions\Service\Subuser\ServerSubuserExistsException;
+use App\Exceptions\Service\Subuser\UserIsServerOwnerException;
+use Throwable;
+use App\Models\Subuser;
 use App\Models\User;
 use App\Services\Subusers\SubuserDeletionService;
 use App\Services\Subusers\SubuserUpdateService;
@@ -70,10 +75,10 @@ class SubuserController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Service\Subuser\ServerSubuserExistsException
-     * @throws \App\Exceptions\Service\Subuser\UserIsServerOwnerException
-     * @throws \Throwable
+     * @throws DataValidationException
+     * @throws ServerSubuserExistsException
+     * @throws UserIsServerOwnerException
+     * @throws Throwable
      */
     public function store(StoreSubuserRequest $request, Server $server): array
     {
@@ -100,11 +105,11 @@ class SubuserController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function update(UpdateSubuserRequest $request, Server $server, User $user): array
     {
-        /** @var \App\Models\Subuser $subuser */
+        /** @var Subuser $subuser */
         $subuser = $request->attributes->get('subuser');
 
         $this->updateService->handle($subuser, $server, $this->getDefaultPermissions($request));
@@ -121,7 +126,7 @@ class SubuserController extends ClientApiController
      */
     public function delete(DeleteSubuserRequest $request, Server $server, User $user): JsonResponse
     {
-        /** @var \App\Models\Subuser $subuser */
+        /** @var Subuser $subuser */
         $subuser = $request->attributes->get('subuser');
 
         $this->deletionService->handle($subuser, $server);

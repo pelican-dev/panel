@@ -1,3 +1,3 @@
 <x-filament::widget>
-        @livewire(\App\Filament\Admin\Resources\NodeResource\Widgets\NodeMemoryChart::class, ['node'=> $getRecord()])
+        @livewire(\App\Filament\Admin\Resources\Nodes\Widgets\NodeMemoryChart::class, ['node'=> $getRecord()])
 </x-filament::widget>

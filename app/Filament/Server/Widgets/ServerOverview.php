@@ -12,7 +12,7 @@ use Livewire\Attributes\On;
 
 class ServerOverview extends StatsOverviewWidget
 {
-    protected static ?string $pollingInterval = '1s';
+    protected ?string $pollingInterval = '1s';
 
     public ?Server $server = null;
 

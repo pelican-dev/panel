@@ -20,21 +20,24 @@ use Filament\Facades\Filament;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Pages\Page;
-use Filament\Support\Enums\ActionSize;
+use Filament\Schemas\Components\Concerns\HasHeaderActions;
+use Filament\Support\Enums\Size;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Livewire\Attributes\On;
 
 class Console extends Page
 {
-    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderActions, HasHeaderActions {
+        CanCustomizeHeaderActions::getHeaderActions insteadof HasHeaderActions;
+    }
     use InteractsWithActions;
-
-    protected static ?string $navigationIcon = 'tabler-brand-tabler';
 
     protected static ?int $navigationSort = 1;
 
-    protected static string $view = 'filament.server.pages.console';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-brand-tabler';
+
+    protected string $view = 'filament.server.pages.console';
 
     public ContainerStatus $status = ContainerStatus::Offline;
 
@@ -149,9 +152,7 @@ class Console extends Page
             cache()->put("servers.$server->uuid.status", $this->status, now()->addSeconds(15));
         }
 
-        $this->cachedHeaderActions = [];
-
-        $this->cacheHeaderActions();
+        $this->headerActions($this->getHeaderActions());
     }
 
     /** @return array<Action|ActionGroup> */
@@ -164,24 +165,24 @@ class Console extends Page
             Action::make('start')
                 ->label(trans('server/console.power_actions.start'))
                 ->color('primary')
-                ->size(ActionSize::ExtraLarge)
-                ->dispatch('setServerState', ['state' => 'start', 'uuid' => $server->uuid])
+                ->size(Size::ExtraLarge)
+                ->action(fn () => $this->dispatch('setServerState', state: 'start', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isStartable())
                 ->icon('tabler-player-play-filled'),
             Action::make('restart')
                 ->label(trans('server/console.power_actions.restart'))
                 ->color('gray')
-                ->size(ActionSize::ExtraLarge)
-                ->dispatch('setServerState', ['state' => 'restart', 'uuid' => $server->uuid])
+                ->size(Size::ExtraLarge)
+                ->action(fn () => $this->dispatch('setServerState', state: 'restart', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isRestartable())
                 ->icon('tabler-reload'),
             Action::make('stop')
                 ->label(trans('server/console.power_actions.stop'))
                 ->color('danger')
-                ->size(ActionSize::ExtraLarge)
-                ->dispatch('setServerState', ['state' => 'stop', 'uuid' => $server->uuid])
+                ->size(Size::ExtraLarge)
+                ->action(fn () => $this->dispatch('setServerState', state: 'stop', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->hidden(fn () => $this->status->isStartingOrStopping() || $this->status->isKillable())
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isStoppable())
@@ -190,8 +191,9 @@ class Console extends Page
                 ->label(trans('server/console.power_actions.kill'))
                 ->color('danger')
                 ->tooltip(trans('server/console.power_actions.kill_tooltip'))
-                ->size(ActionSize::ExtraLarge)
-                ->dispatch('setServerState', ['state' => 'kill', 'uuid' => $server->uuid])
+                ->requiresConfirmation()
+                ->size(Size::ExtraLarge)
+                ->action(fn () => $this->dispatch('setServerState', state: 'kill', uuid: $server->uuid))
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable())
                 ->icon('tabler-alert-square'),

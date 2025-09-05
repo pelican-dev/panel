@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
+use App\Models\Node;
+use Throwable;
+use App\Models\ActivityLog;
 use App\Enums\ServerState;
 use App\Http\Requests\Api\Remote\ServerRequest;
-use App\Models\ActivityLog;
 use App\Models\Backup;
-use App\Models\Node;
 use Illuminate\Http\Request;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
@@ -65,7 +66,7 @@ class ServerDetailsController extends Controller
      * do not get incorrectly stuck in installing/restoring from backup states since
      * a daemon reboot would completely stop those processes.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function resetState(Request $request): JsonResponse
     {

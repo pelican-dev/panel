@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Exceptions\Model\DataValidationException;
+use Throwable;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -57,12 +59,12 @@ class ScheduleController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\DisplayException
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DisplayException
+     * @throws DataValidationException
      */
     public function store(StoreScheduleRequest $request, Server $server): array
     {
-        /** @var \App\Models\Schedule $model */
+        /** @var Schedule $model */
         $model = Schedule::query()->create([
             'server_id' => $server->id,
             'name' => $request->input('name'),
@@ -113,8 +115,8 @@ class ScheduleController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\DisplayException
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DisplayException
+     * @throws DataValidationException
      */
     public function update(UpdateScheduleRequest $request, Server $server, Schedule $schedule): array
     {
@@ -156,7 +158,7 @@ class ScheduleController extends ClientApiController
      * Executes a given schedule immediately rather than waiting on it's normally scheduled time
      * to pass. This does not care about the schedule state.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function execute(TriggerScheduleRequest $request, Server $server, Schedule $schedule): JsonResponse
     {
@@ -184,7 +186,7 @@ class ScheduleController extends ClientApiController
     /**
      * Get the next run timestamp based on the cron data provided.
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      */
     protected function getNextRunAt(Request $request): Carbon
     {

@@ -16,7 +16,7 @@ use Livewire\Attributes\On;
 
 class ServerConsole extends Widget
 {
-    protected static string $view = 'filament.components.server-console';
+    protected string $view = 'filament.components.server-console';
 
     protected int|string|array $columnSpan = 'full';
 

@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use Throwable;
 use App\Enums\ServerState;
 use App\Enums\SuspendAction;
 use Filament\Notifications\Notification;
@@ -21,7 +22,7 @@ class SuspensionService
     /**
      * Suspends a server on the system.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(Server $server, SuspendAction $action): void
     {

@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use App\Models\Subuser;
 use App\Models\User;
 use App\Models\Server;
 
@@ -30,7 +31,7 @@ class GetUserPermissionsService
             return ['*'];
         }
 
-        /** @var \App\Models\Subuser|null $subuserPermissions */
+        /** @var Subuser|null $subuserPermissions */
         $subuserPermissions = $server->subusers()->where('user_id', $user->id)->first();
 
         return $subuserPermissions ? $subuserPermissions->permissions : [];

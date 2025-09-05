@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use Throwable;
 use App\Facades\Activity;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\Settings\DescriptionServerRequest;
@@ -75,7 +76,7 @@ class SettingsController extends ClientApiController
      *
      * Reinstalls the server on the daemon.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function reinstall(ReinstallServerRequest $request, Server $server): JsonResponse
     {
@@ -91,7 +92,7 @@ class SettingsController extends ClientApiController
      *
      * Changes the Docker image in use by the server.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function dockerImage(SetDockerImageRequest $request, Server $server): JsonResponse
     {

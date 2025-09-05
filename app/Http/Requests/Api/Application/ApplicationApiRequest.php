@@ -29,7 +29,7 @@ abstract class ApplicationApiRequest extends FormRequest
      * Determine if the current user is authorized to perform
      * the requested action against the API.
      *
-     * @throws \App\Exceptions\PanelException
+     * @throws PanelException
      */
     public function authorize(): bool
     {

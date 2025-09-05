@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use Exception;
 use App\Contracts\Validatable;
 use App\Helpers\Utilities;
 use App\Traits\HasValidation;
@@ -22,12 +25,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $is_active
  * @property bool $is_processing
  * @property bool $only_when_online
- * @property \Carbon\Carbon|null $last_run_at
- * @property \Carbon\Carbon|null $next_run_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\Models\Server $server
- * @property \App\Models\Task[]|\Illuminate\Support\Collection $tasks
+ * @property Carbon|null $last_run_at
+ * @property Carbon|null $next_run_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Server $server
+ * @property Task[]|Collection $tasks
  */
 class Schedule extends Model implements Validatable
 {
@@ -107,7 +110,7 @@ class Schedule extends Model implements Validatable
     /**
      * Returns the schedule's execution crontab entry as a string.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getNextRunDate(): string
     {

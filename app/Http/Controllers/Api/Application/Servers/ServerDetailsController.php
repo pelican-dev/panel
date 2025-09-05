@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\Application\Servers;
 
+use App\Exceptions\DisplayException;
+use App\Exceptions\Model\DataValidationException;
 use App\Models\Server;
 use App\Services\Servers\BuildModificationService;
 use App\Services\Servers\DetailsModificationService;
@@ -31,8 +33,8 @@ class ServerDetailsController extends ApplicationApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\DisplayException
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DisplayException
+     * @throws DataValidationException
      */
     public function details(UpdateServerDetailsRequest $request, Server $server): array
     {
@@ -56,8 +58,8 @@ class ServerDetailsController extends ApplicationApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\DisplayException
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DisplayException
+     * @throws DataValidationException
      */
     public function build(UpdateServerBuildConfigurationRequest $request, Server $server): array
     {

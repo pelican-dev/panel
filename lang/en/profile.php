@@ -14,6 +14,7 @@ return [
     'username' => 'Username',
     'admin' => 'Admin',
     'exit_admin' => 'Exit Admin',
+    'server_list' => 'Server List',
     'email' => 'Email',
     'password' => 'Password',
     'current_password' => 'Current Password',

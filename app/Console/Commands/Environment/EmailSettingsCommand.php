@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Environment;
 
+use App\Exceptions\PanelException;
 use App\Traits\EnvironmentWriterTrait;
 use Illuminate\Console\Command;
 
@@ -28,7 +29,7 @@ class EmailSettingsCommand extends Command
     /**
      * Handle command execution.
      *
-     * @throws \App\Exceptions\PanelException
+     * @throws PanelException
      */
     public function handle(): void
     {

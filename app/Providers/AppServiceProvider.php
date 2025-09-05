@@ -2,6 +2,18 @@
 
 namespace App\Providers;
 
+use App\Models\Allocation;
+use App\Models\ApiKey;
+use App\Models\Backup;
+use App\Models\Database;
+use App\Models\Egg;
+use App\Models\EggVariable;
+use App\Models\Schedule;
+use App\Models\Server;
+use App\Models\UserSSHKey;
+use App\Models\Task;
+use App\Models\User;
+use App\Models\Node;
 use App\Checks\CacheCheck;
 use App\Checks\DatabaseCheck;
 use App\Checks\DebugModeCheck;
@@ -10,11 +22,12 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
-use App\Models;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Components\TextInput\Actions\CopyAction;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentView;
@@ -57,23 +70,23 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Relation::enforceMorphMap([
-            'allocation' => Models\Allocation::class,
-            'api_key' => Models\ApiKey::class,
-            'backup' => Models\Backup::class,
-            'database' => Models\Database::class,
-            'egg' => Models\Egg::class,
-            'egg_variable' => Models\EggVariable::class,
-            'schedule' => Models\Schedule::class,
-            'server' => Models\Server::class,
-            'ssh_key' => Models\UserSSHKey::class,
-            'task' => Models\Task::class,
-            'user' => Models\User::class,
-            'node' => Models\Node::class,
+            'allocation' => Allocation::class,
+            'api_key' => ApiKey::class,
+            'backup' => Backup::class,
+            'database' => Database::class,
+            'egg' => Egg::class,
+            'egg_variable' => EggVariable::class,
+            'schedule' => Schedule::class,
+            'server' => Server::class,
+            'ssh_key' => UserSSHKey::class,
+            'task' => Task::class,
+            'user' => User::class,
+            'node' => Node::class,
         ]);
 
         Http::macro(
             'daemon',
-            fn (Models\Node $node, array $headers = []) => Http::acceptJson()
+            fn (Node $node, array $headers = []) => Http::acceptJson()
                 ->asJson()
                 ->withToken($node->daemon_token)
                 ->withHeaders($headers)
@@ -83,7 +96,7 @@ class AppServiceProvider extends ServiceProvider
                 ->baseUrl($node->getConnectionAddress())
         );
 
-        Sanctum::usePersonalAccessTokenModel(Models\ApiKey::class);
+        Sanctum::usePersonalAccessTokenModel(ApiKey::class);
 
         Gate::define('viewApiDocs', fn () => true);
 
@@ -98,7 +111,7 @@ class AppServiceProvider extends ServiceProvider
             'primary' => Color::Blue,
             'success' => Color::Green,
             'warning' => Color::Amber,
-            'blurple' => Color::hex('#5865F2'),
+            'blurple' => Color::generateV3Palette('#5865F2'),
         ]);
 
         FilamentView::registerRenderHook(
@@ -137,6 +150,11 @@ class AppServiceProvider extends ServiceProvider
             $component->dispatch('alertBannerSent');
         });
 
+        Field::macro('hintCopy', function () {
+            /** @var Field $this */
+            return $this->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null); // @phpstan-ignore varTag.nativeType
+        });
+
         // Don't run any health checks during tests
         if (!$app->runningUnitTests()) {
             Health::checks([
@@ -151,7 +169,7 @@ class AppServiceProvider extends ServiceProvider
             ]);
         }
 
-        Gate::before(function (Models\User $user, $ability) {
+        Gate::before(function (User $user, $ability) {
             return $user->isRootAdmin() ? true : null;
         });
 

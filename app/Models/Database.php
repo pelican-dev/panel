@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -19,10 +20,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $password
  * @property int $max_connections
  * @property string $jdbc
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\Models\Server $server
- * @property \App\Models\DatabaseHost $host
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Server $server
+ * @property DatabaseHost $host
  */
 class Database extends Model implements Validatable
 {

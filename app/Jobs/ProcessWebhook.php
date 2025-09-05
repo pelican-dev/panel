@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\WebhookConfiguration;
 use Exception;
+use App\Models\WebhookConfiguration;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
