@@ -292,9 +292,9 @@ class Server extends Model implements Validatable
     /**
      * Gets information for the egg associated with this server.
      */
-    public function egg(): HasOne
+    public function egg(): BelongsTo
     {
-        return $this->hasOne(Egg::class, 'id', 'egg_id');
+        return $this->belongsTo(Egg::class);
     }
 
     public function eggVariables(): HasMany
