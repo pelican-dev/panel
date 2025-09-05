@@ -432,11 +432,12 @@ class ListFiles extends ListRecords
                 ->modalSubmitActionLabel(trans('server/file.actions.new_file.create'))
                 ->action(function ($data) {
                     $path = join_paths($this->path, $data['name']);
+
                     try {
                         $this->getDaemonFileRepository()->putContent($path, $data['editor'] ?? '');
 
                         Activity::event('server:file.write')
-                            ->property('file', join_paths($path, $data['name']))
+                            ->property('file', $path)
                             ->log();
                     } catch (FileExistsException) {
                         AlertBanner::make('file_already_exists')
