@@ -1,8 +1,8 @@
 _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
-  version: PLCN_v2
+  version: PLCN_v3
   update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/minecraft/egg-bungeecord.yaml'
-exported_at: '2025-07-25T13:32:34+00:00'
+exported_at: '2025-09-05T08:54:34+00:00'
 name: Bungeecord
 author: panel@example.com
 uuid: 9e6b409e-4028-4947-aea8-50a2c404c271
@@ -26,7 +26,8 @@ docker_images:
   'Java 11': 'ghcr.io/parkervcp/yolks:java_11'
   'Java 8': 'ghcr.io/parkervcp/yolks:java_8'
 file_denylist: {  }
-startup: 'java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}'
+startup_commands:
+  Default: 'java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}'
 config:
   files:
     config.yml:
