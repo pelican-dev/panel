@@ -66,6 +66,7 @@ return [
             'search_term' => 'Search term',
             'search_term_placeholder' => 'Enter a search term, ex. *.txt',
             'search' => 'Search',
+            'search_for_term' => 'Search :term',
         ],
         'delete' => [
             'notification' => 'File Deleted',
@@ -77,6 +78,28 @@ return [
             'save' => 'Save',
             'cancel' => 'Cancel',
             'notification' => 'File Saved',
+        ],
+    ],
+    'alerts' => [
+        'file_too_large' => [
+            'title' => '<code>:name</code> is too large!',
+            'body' => 'Max is :max',
+        ],
+        'file_not_found' => [
+            'title' => '<code>:name</code> not found!',
+        ],
+        'file_not_editable' => [
+            'title' => '<code>:name</code> is a directory',
+        ],
+        'file_already_exists' => [
+            'title' => '<code>:name</code> already exists!',
+        ],
+        'files_node_error' => [
+            'title' => 'Could not load files!',
+        ],
+        'pelicanignore' => [
+            'title' => 'You are editing a <code>.pelicanignore</code> file!',
+            'body' => 'Any files or directories listed in here will be excluded from backups. Wildcards are supported by using an asterisk (<code>*</code>).<br>You can negate a prior rule by prepending an exclamation point (<code>!</code>).',
         ],
     ],
 ];

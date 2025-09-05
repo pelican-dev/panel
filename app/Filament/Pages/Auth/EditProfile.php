@@ -86,7 +86,8 @@ class EditProfile extends BaseEditProfile
                     ->schema([
                         Tabs::make()->persistTabInQueryString()
                             ->schema([
-                                Tab::make(trans('profile.tabs.account'))
+                                Tab::make('account')
+                                    ->label(trans('profile.tabs.account'))
                                     ->icon('tabler-user')
                                     ->schema([
                                         TextInput::make('username')
@@ -160,7 +161,8 @@ class EditProfile extends BaseEditProfile
                                             }),
                                     ]),
 
-                                Tab::make(trans('profile.tabs.oauth'))
+                                Tab::make('oauth')
+                                    ->label(trans('profile.tabs.oauth'))
                                     ->icon('tabler-brand-oauth')
                                     ->visible(count($oauthSchemas) > 0)
                                     ->schema(function () use ($oauthSchemas) {
@@ -199,7 +201,8 @@ class EditProfile extends BaseEditProfile
                                         return [Actions::make($actions)];
                                     }),
 
-                                Tab::make(trans('profile.tabs.2fa'))
+                                Tab::make('2fa')
+                                    ->label(trans('profile.tabs.2fa'))
                                     ->icon('tabler-shield-lock')
                                     ->schema(function (TwoFactorSetupService $setupService) {
                                         if ($this->getUser()->use_totp) {
@@ -263,7 +266,7 @@ class EditProfile extends BaseEditProfile
                                                 ->content(fn () => new HtmlString("
                                                 <div style='width: 300px; background-color: rgb(24, 24, 27);'>$image</div>
                                             "))
-                                                ->helperText(trans('profile.setup_key') .': '. $secret),
+                                                ->helperText(trans('profile.setup_key', ['secret' => $secret])),
                                             TextInput::make('2facode')
                                                 ->label(trans('profile.code'))
                                                 ->requiredWith('2fapassword')
@@ -276,7 +279,8 @@ class EditProfile extends BaseEditProfile
                                         ];
                                     }),
 
-                                Tab::make(trans('profile.tabs.api_keys'))
+                                Tab::make('api_keys')
+                                    ->label(trans('profile.tabs.api_keys'))
                                     ->icon('tabler-key')
                                     ->schema([
                                         Grid::make('name')->columns(5)->schema([
@@ -358,7 +362,8 @@ class EditProfile extends BaseEditProfile
                                         ]),
                                     ]),
 
-                                Tab::make(trans('profile.tabs.ssh_keys'))
+                                Tab::make('ssh_keys')
+                                    ->label(trans('profile.tabs.ssh_keys'))
                                     ->icon('tabler-lock-code')
                                     ->schema([
                                         Grid::make('name')->columns(5)->schema([
@@ -443,7 +448,8 @@ class EditProfile extends BaseEditProfile
                                         ]),
                                     ]),
 
-                                Tab::make(trans('profile.tabs.activity'))
+                                Tab::make('activity')
+                                    ->label(trans('profile.tabs.activity'))
                                     ->icon('tabler-history')
                                     ->schema([
                                         Repeater::make('activity')
@@ -461,7 +467,8 @@ class EditProfile extends BaseEditProfile
                                             ]),
                                     ]),
 
-                                Tab::make(trans('profile.tabs.customization'))
+                                Tab::make('customization')
+                                    ->label(trans('profile.tabs.customization'))
                                     ->icon('tabler-adjustments')
                                     ->schema([
                                         Section::make(trans('profile.dashboard'))

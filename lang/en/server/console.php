@@ -36,4 +36,8 @@ return [
         'offline' => 'Offline',
         'missing' => 'Missing',
     ],
+    'websocket_error' => [
+        'title' => 'Could not connect to websocket!',
+        'body' => 'Check your browser console for more details.',
+    ],
 ];

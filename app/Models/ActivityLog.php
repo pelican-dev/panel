@@ -21,7 +21,6 @@ use Illuminate\Support\Str;
  * \App\Models\ActivityLog.
  *
  * @property int $id
- * @property string|null $batch
  * @property string $event
  * @property string $ip
  * @property string|null $description
@@ -43,7 +42,6 @@ use Illuminate\Support\Str;
  * @method static Builder|ActivityLog whereActorId($value)
  * @method static Builder|ActivityLog whereActorType($value)
  * @method static Builder|ActivityLog whereApiKeyId($value)
- * @method static Builder|ActivityLog whereBatch($value)
  * @method static Builder|ActivityLog whereDescription($value)
  * @method static Builder|ActivityLog whereEvent($value)
  * @method static Builder|ActivityLog whereId($value)
@@ -76,7 +74,6 @@ class ActivityLog extends Model implements HasIcon, HasLabel
     /** @var array<array-key, string[]> */
     public static array $validationRules = [
         'event' => ['required', 'string'],
-        'batch' => ['nullable', 'uuid'],
         'ip' => ['required', 'string'],
         'description' => ['nullable', 'string'],
         'properties' => ['array'],

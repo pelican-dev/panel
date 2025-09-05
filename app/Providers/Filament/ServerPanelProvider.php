@@ -26,7 +26,7 @@ class ServerPanelProvider extends PanelProvider
                     ->label(fn () => trans('filament-panels::pages/auth/edit-profile.label'))
                     ->url(fn () => EditProfile::getUrl(panel: 'app')),
                 MenuItem::make()
-                    ->label('Server List')
+                    ->label(trans('server/dashboard.list'))
                     ->icon('tabler-brand-docker')
                     ->url(fn () => ListServers::getUrl(panel: 'app'))
                     ->sort(6),

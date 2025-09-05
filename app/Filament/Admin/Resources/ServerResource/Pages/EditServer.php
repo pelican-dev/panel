@@ -87,7 +87,8 @@ class EditServer extends EditRecord
                     ])
                     ->columnSpanFull()
                     ->tabs([
-                        Tab::make(trans('admin/server.tabs.information'))
+                        Tab::make('information')
+                            ->label(trans('admin/server.tabs.information'))
                             ->icon('tabler-info-circle')
                             ->schema([
                                 TextInput::make('name')
@@ -219,7 +220,8 @@ class EditServer extends EditRecord
                                     ])
                                     ->disabled(),
                             ]),
-                        Tab::make(trans('admin/server.tabs.environment_configuration'))
+                        Tab::make('environment_configuration')
+                            ->label(trans('admin/server.tabs.environment_configuration'))
                             ->icon('tabler-brand-docker')
                             ->schema([
                                 Fieldset::make(trans('admin/server.resource_limits'))
@@ -526,7 +528,8 @@ class EditServer extends EditRecord
                                             ->columnSpanFull(),
                                     ]),
                             ]),
-                        Tab::make(trans('admin/server.egg'))
+                        Tab::make('egg')
+                            ->label(trans('admin/server.egg'))
                             ->icon('tabler-egg')
                             ->columns([
                                 'default' => 1,
@@ -665,12 +668,14 @@ class EditServer extends EditRecord
                                     ])
                                     ->columnSpan(6),
                             ]),
-                        Tab::make(trans('admin/server.mounts'))
+                        Tab::make('mounts')
+                            ->label(trans('admin/server.mounts'))
                             ->icon('tabler-layers-linked')
                             ->schema(fn (Get $get) => [
                                 ServerResource::getMountCheckboxList($get),
                             ]),
-                        Tab::make(trans('admin/server.databases'))
+                        Tab::make('databases')
+                            ->label(trans('admin/server.databases'))
                             ->hidden(fn () => !auth()->user()->can('viewAny', Database::class))
                             ->icon('tabler-database')
                             ->columns(4)
@@ -800,7 +805,8 @@ class EditServer extends EditRecord
                                         ]),
                                 ])->alignCenter()->columnSpanFull(),
                             ]),
-                        Tab::make(trans('admin/server.actions'))
+                        Tab::make('actions')
+                            ->label(trans('admin/server.actions'))
                             ->icon('tabler-settings')
                             ->schema([
                                 Fieldset::make(trans('admin/server.actions'))
@@ -933,12 +939,12 @@ class EditServer extends EditRecord
                                                                 $transfer->handle($server, Arr::get($data, 'node_id'), Arr::get($data, 'allocation_id'), Arr::get($data, 'allocation_additional', []));
 
                                                                 Notification::make()
-                                                                    ->title('Transfer started')
+                                                                    ->title(trans('admin/server.notifications.transfer_started'))
                                                                     ->success()
                                                                     ->send();
                                                             } catch (Exception $exception) {
                                                                 Notification::make()
-                                                                    ->title('Transfer failed')
+                                                                    ->title(trans('admin/server.notifications.transfer_failed'))
                                                                     ->body($exception->getMessage())
                                                                     ->danger()
                                                                     ->send();
