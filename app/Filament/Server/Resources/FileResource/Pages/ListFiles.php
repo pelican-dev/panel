@@ -193,7 +193,7 @@ class ListFiles extends ListRecords
                                 ->required()
                                 ->live(),
                             Placeholder::make('new_location')
-                                ->content(fn (Get $get, File $file) => resolve_path('./' . join_paths($this->path, $get('location') ?? '/', $file->name))),
+                                ->content(fn (Get $get, File $file) => resolve_path(join_paths($this->path, $get('location') ?? '/', $file->name))),
                         ])
                         ->action(function ($data, File $file) {
                             $location = $data['location'];
@@ -353,7 +353,7 @@ class ListFiles extends ListRecords
                             ->required()
                             ->live(),
                         Placeholder::make('new_location')
-                            ->content(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location') ?? ''))),
+                            ->content(fn (Get $get) => resolve_path(join_paths($this->path, $get('location') ?? ''))),
                     ])
                     ->action(function (Collection $files, $data) {
                         $location = $data['location'];
