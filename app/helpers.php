@@ -57,7 +57,7 @@ if (!function_exists('join_paths')) {
         $paths = array_map(fn (string $path) => trim($path, '/'), $paths);
         $paths = array_filter($paths, fn (string $path) => strlen($path) > 0);
 
-        if (empty($base) || $base === '/') {
+        if (empty($base)) {
             return implode('/', $paths);
         }
 
