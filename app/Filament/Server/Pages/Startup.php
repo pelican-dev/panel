@@ -48,7 +48,7 @@ class Startup extends ServerFormPage
                     ->label(trans('server/startup.command'))
                     ->readOnly()
                     ->visible(fn (Server $server) => !in_array($server->startup, $server->egg->startup_commands))
-                    ->formatStateUsing(fn (Server $server) => $server->startup)
+                    ->formatStateUsing(fn () => 'Custom Startup')
                     ->columnSpan([
                         'default' => 1,
                         'sm' => 1,
