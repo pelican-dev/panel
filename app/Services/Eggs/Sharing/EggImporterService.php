@@ -181,9 +181,9 @@ class EggImporterService
         if ($forbidden->count()) {
             $parsed['variables'] = $allowed->merge($updatedVariables)->all();
 
-            if (count($parsed['startup_commands']) > 0) {
+            foreach ($parsed['startup_commands'] ?? [] as $name => $startup) {
                 $pattern = '/\b(' . collect($forbidden)->map(fn ($variable) => preg_quote($variable['env_variable']))->join('|') . ')\b/';
-                $parsed['startup'] = preg_replace($pattern, 'SERVER_$1', $parsed['startup']) ?? $parsed['startup'];
+                $parsed['startup_commands'][$name] = preg_replace($pattern, 'SERVER_$1', $startup) ?? $startup;
             }
         }
 
