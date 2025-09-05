@@ -687,8 +687,17 @@ class EditServer extends EditRecord
                                                     ->modalHeading(trans('admin/server.delete_db_heading'))
                                                     ->modalSubmitActionLabel(trans('filament-actions::delete.single.label'))
                                                     ->modalDescription(fn (Get $get) => trans('admin/server.delete_db', ['name' => $get('database')]))
-                                                    ->action(function (DatabaseManagementService $databaseManagementService, $record) {
-                                                        $databaseManagementService->delete($record);
+                                                    ->action(function (DatabaseManagementService $service, $record) {
+                                                        try {
+                                                            $service->delete($record);
+                                                        } catch (Exception $e) {
+                                                            Notification::make()
+                                                                ->title(trans('admin/databasehost.delete_error'))
+                                                                ->body($e->getMessage())
+                                                                ->danger()
+                                                                ->persistent()->send();
+                                                        }
+
                                                         $this->fillForm();
                                                     })
                                             ),
@@ -737,13 +746,9 @@ class EditServer extends EditRecord
                                         ->label(fn () => DatabaseHost::query()->count() < 1 ? trans('admin/server.no_db_hosts') : trans('admin/server.create_database'))
                                         ->color(fn () => DatabaseHost::query()->count() < 1 ? 'danger' : 'primary')
                                         ->modalSubmitActionLabel(trans('admin/server.create_database'))
-                                        ->action(function (array $data, DatabaseManagementService $service, Server $server, RandomWordService $randomWordService) {
-                                            if (empty($data['database'])) {
-                                                $data['database'] = $randomWordService->word() . random_int(1, 420);
-                                            }
-                                            if (empty($data['remote'])) {
-                                                $data['remote'] = '%';
-                                            }
+                                        ->action(function (array $data, DatabaseManagementService $service, Server $server) {
+                                            $data['database'] ??= str_random(12);
+                                            $data['remote'] ??= '%';
 
                                             $data['database'] = $service->generateUniqueDatabaseName($data['database'], $server->id);
 
