@@ -391,7 +391,7 @@ class CreateServer extends CreateRecord
                                 ->inline(),
 
                             Select::make('select_startup')
-                                ->label(trans('admin/server.startup_name'))
+                                ->label(trans('admin/server.startup_cmd'))
                                 ->hidden(fn (Get $get) => $get('egg_id') === null)
                                 ->live()
                                 ->afterStateUpdated(fn (Set $set, $state) => $set('startup', $state))
@@ -411,11 +411,12 @@ class CreateServer extends CreateRecord
                                 ->selectablePlaceholder(false)
                                 ->columnSpanFull(),
 
-                            TextInput::make('startup')
-                                ->label(trans('admin/server.startup_cmd'))
+                            Textarea::make('startup')
+                                ->hiddenLabel()
                                 ->hidden(fn (Get $get) => $get('egg_id') === null)
                                 ->required()
                                 ->live()
+                                ->autosize()
                                 ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                     $egg = Egg::query()->find($get('egg_id'));
                                     $startups = $egg->startup_commands ?? [];

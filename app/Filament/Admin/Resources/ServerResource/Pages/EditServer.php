@@ -601,7 +601,7 @@ class EditServer extends EditRecord
                                     ->default(false),
 
                                 Select::make('select_startup')
-                                    ->label(trans('admin/server.startup_name'))
+                                    ->label(trans('admin/server.startup_cmd'))
                                     ->live()
                                     ->afterStateUpdated(fn (Set $set, $state) => $set('startup', $state))
                                     ->options(function ($state, Get $get, Set $set) {
@@ -618,12 +618,14 @@ class EditServer extends EditRecord
                                         return array_flip($startups) + ['' => 'Custom Startup'];
                                     })
                                     ->selectablePlaceholder(false)
-                                    ->columnSpanFull(),
+                                    ->columnSpanFull()
+                                    ->hintAction(PreviewStartupAction::make('preview')),
 
-                                TextInput::make('startup')
-                                    ->label(trans('admin/server.startup_cmd'))
+                                Textarea::make('startup')
+                                    ->hiddenLabel()
                                     ->required()
                                     ->live()
+                                    ->autosize()
                                     ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                         $egg = Egg::query()->find($get('egg_id'));
                                         $startups = $egg->startup_commands ?? [];
@@ -635,8 +637,7 @@ class EditServer extends EditRecord
                                         }
                                     })
                                     ->placeholder(trans('admin/server.startup_placeholder'))
-                                    ->columnSpanFull()
-                                    ->hintAction(PreviewStartupAction::make('preview')),
+                                    ->columnSpanFull(),
 
                                 Repeater::make('server_variables')
                                     ->hiddenLabel()
