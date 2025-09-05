@@ -8,6 +8,7 @@ use Exception;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
 
 class DaemonServerRepository extends DaemonRepository
 {
@@ -148,5 +149,17 @@ class DaemonServerRepository extends DaemonRepository
             ->get("/api/servers/{$this->server->uuid}/install-logs")
             ->throw()
             ->json('data');
+    }
+
+    /**
+     * Sends a power action to the server instance.
+     *
+     * @throws ConnectionException
+     */
+    public function power(string $action): Response
+    {
+        return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/power",
+            ['action' => $action],
+        );
     }
 }

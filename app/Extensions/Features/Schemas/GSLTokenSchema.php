@@ -7,7 +7,7 @@ use App\Facades\Activity;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Models\ServerVariable;
-use App\Repositories\Daemon\DaemonPowerRepository;
+use App\Repositories\Daemon\DaemonServerRepository;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
@@ -76,7 +76,7 @@ class GSLTokenSchema implements FeatureSchemaInterface
                     ->prefix(fn () => '{{' . $serverVariable->variable->env_variable . '}}')
                     ->helperText(fn () => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description),
             ])
-            ->action(function (array $data, DaemonPowerRepository $powerRepository) use ($server, $serverVariable) {
+            ->action(function (array $data, DaemonServerRepository $serverRepository) use ($server, $serverVariable) {
                 /** @var Server $server */
                 $server = Filament::getTenant();
                 try {
@@ -98,7 +98,7 @@ class GSLTokenSchema implements FeatureSchemaInterface
                             ->log();
                     }
 
-                    $powerRepository->setServer($server)->send('restart');
+                    $serverRepository->setServer($server)->power('restart');
 
                     Notification::make()
                         ->title('GSL Token updated')

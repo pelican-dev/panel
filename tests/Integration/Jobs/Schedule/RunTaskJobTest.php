@@ -10,8 +10,8 @@ use App\Models\Server;
 use App\Models\Schedule;
 use Illuminate\Support\Facades\Bus;
 use App\Jobs\Schedule\RunTaskJob;
+use App\Repositories\Daemon\DaemonServerRepository;
 use App\Tests\Integration\IntegrationTestCase;
-use App\Repositories\Daemon\DaemonPowerRepository;
 use Illuminate\Http\Client\ConnectionException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -84,13 +84,13 @@ class RunTaskJobTest extends IntegrationTestCase
             'continue_on_failure' => false,
         ]);
 
-        $mock = \Mockery::mock(DaemonPowerRepository::class);
-        $this->instance(DaemonPowerRepository::class, $mock);
+        $mock = \Mockery::mock(DaemonServerRepository::class);
+        $this->instance(DaemonServerRepository::class, $mock);
 
         $mock->expects('setServer')->with(\Mockery::on(function ($value) use ($server) {
             return $value instanceof Server && $value->id === $server->id;
         }))->andReturnSelf();
-        $mock->expects('send')->with('start');
+        $mock->expects('power')->with('start');
 
         Bus::dispatchSync(new RunTaskJob($task, $isManualRun));
 
@@ -117,10 +117,10 @@ class RunTaskJobTest extends IntegrationTestCase
             'continue_on_failure' => $continueOnFailure,
         ]);
 
-        $mock = \Mockery::mock(DaemonPowerRepository::class);
-        $this->instance(DaemonPowerRepository::class, $mock);
+        $mock = \Mockery::mock(DaemonServerRepository::class);
+        $this->instance(DaemonServerRepository::class, $mock);
 
-        $mock->expects('setServer->send')->andThrow(new ConnectionException());
+        $mock->expects('setServer->power')->andThrow(new ConnectionException());
 
         if (!$continueOnFailure) {
             $this->expectException(ConnectionException::class);
