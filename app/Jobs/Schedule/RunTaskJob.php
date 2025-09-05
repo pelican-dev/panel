@@ -5,11 +5,11 @@ namespace App\Jobs\Schedule;
 use App\Jobs\Job;
 use Carbon\CarbonImmutable;
 use App\Models\Task;
+use App\Repositories\Daemon\DaemonServerRepository;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Services\Backups\InitiateBackupService;
-use App\Repositories\Daemon\DaemonPowerRepository;
 use App\Services\Files\DeleteFilesService;
 use Exception;
 use Illuminate\Http\Client\ConnectionException;
@@ -31,7 +31,7 @@ class RunTaskJob extends Job implements ShouldQueue
      */
     public function handle(
         InitiateBackupService $backupService,
-        DaemonPowerRepository $powerRepository,
+        DaemonServerRepository $serverRepository,
         DeleteFilesService $deleteFilesService
     ): void {
         // Do not process a task that is not set to active, unless it's been manually triggered.
@@ -57,7 +57,7 @@ class RunTaskJob extends Job implements ShouldQueue
         try {
             switch ($this->task->action) {
                 case Task::ACTION_POWER:
-                    $powerRepository->setServer($server)->send($this->task->payload);
+                    $serverRepository->setServer($server)->power($this->task->payload);
                     break;
                 case Task::ACTION_COMMAND:
                     $server->send($this->task->payload);
