@@ -89,7 +89,7 @@ class UserResource extends Resource
                     ->icon('tabler-mail')
                     ->searchable(),
                 IconColumn::make('mfa_email_enabled')
-                    ->label('2FA')
+                    ->label(trans('profile.tabs.2fa'))
                     ->visibleFrom('lg')
                     ->icon(fn (User $user) => filled($user->mfa_app_secret) ? 'tabler-qrcode' : ($user->mfa_email_enabled ? 'tabler-mail' : 'tabler-lock-open-off'))
                     ->tooltip(fn (User $user) => filled($user->mfa_app_secret) ? 'App' : ($user->mfa_email_enabled ? 'E-Mail' : 'None')),

@@ -40,12 +40,12 @@ class ExportEggAction extends Action
 
         $this->modalFooterActions([ //TODO: Close modal after clicking ->close() does not allow action to preform before closing modal
             Action::make('json')
-                ->label(trans('admin/egg.export.as') . ' .json')
+                ->label(trans('admin/egg.export.as', ['format' => 'json']))
                 ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
                     echo $service->handle($egg->id, EggFormat::JSON);
                 }, 'egg-' . $egg->getKebabName() . '.json')),
             Action::make('yaml')
-                ->label(trans('admin/egg.export.as') . ' .yaml')
+                ->label(trans('admin/egg.export.as', ['format' => 'yaml']))
                 ->action(fn (EggExporterService $service, Egg $egg) => response()->streamDownload(function () use ($service, $egg) {
                     echo $service->handle($egg->id, EggFormat::YAML);
                 }, 'egg-' . $egg->getKebabName() . '.yaml')),

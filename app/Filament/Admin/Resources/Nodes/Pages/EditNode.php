@@ -86,7 +86,7 @@ class EditNode extends EditRecord
                                 ->schema([
                                     TextEntry::make('wings_version')
                                         ->label(trans('admin/node.wings_version'))
-                                        ->state(fn (Node $node, SoftwareVersionService $versionService) => ($node->systemInformation()['version'] ?? trans('admin/node.unknown')) . ' (' . trans('admin/node.latest') . ': ' . $versionService->latestWingsVersion() . ')'),
+                                        ->state(fn (Node $node, SoftwareVersionService $versionService) => ($node->systemInformation()['version'] ?? trans('admin/node.unknown')) . ' ' . trans('admin/node.latest', ['version' => $versionService->latestWingsVersion()])),
                                     TextEntry::make('cpu_threads')
                                         ->label(trans('admin/node.cpu_threads'))
                                         ->state(fn (Node $node) => $node->systemInformation()['cpu_count'] ?? 0),
@@ -114,7 +114,8 @@ class EditNode extends EditRecord
                             View::make('filament.components.node-storage-chart')
                                 ->columnSpanFull(),
                         ]),
-                    Tab::make(trans('admin/node.tabs.basic_settings'))
+                    Tab::make('basic_settings')
+                        ->label(trans('admin/node.tabs.basic_settings'))
                         ->icon('tabler-server')
                         ->schema([
                             TextInput::make('fqdn')
@@ -264,7 +265,7 @@ class EditNode extends EditRecord
                                 ->integer()
                                 ->visible(fn (Get $get) => $get('connection') === 'https_proxy'),
                         ]),
-                    Tab::make('adv')
+                    Tab::make('advanced_settings')
                         ->label(trans('admin/node.tabs.advanced_settings'))
                         ->columns([
                             'default' => 1,
@@ -540,7 +541,7 @@ class EditNode extends EditRecord
                                         ->suffix('%'),
                                 ]),
                         ]),
-                    Tab::make('Config')
+                    Tab::make('config_file')
                         ->label(trans('admin/node.tabs.config_file'))
                         ->icon('tabler-code')
                         ->schema([
@@ -569,7 +570,7 @@ class EditNode extends EditRecord
                                             ->modalFooterActionsAlignment(Alignment::Center)
                                             ->schema([
                                                 ToggleButtons::make('docker')
-                                                    ->label('Type')
+                                                    ->label(trans('admin/node.auto_label'))
                                                     ->live()
                                                     ->helperText(trans('admin/node.auto_question'))
                                                     ->inline()

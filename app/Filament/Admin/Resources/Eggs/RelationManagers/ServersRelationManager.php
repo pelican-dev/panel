@@ -22,7 +22,7 @@ class ServersRelationManager extends RelationManager
             ->heading(trans('admin/egg.servers'))
             ->columns([
                 TextColumn::make('user.username')
-                    ->label('Owner')
+                    ->label(trans('admin/server.owner'))
                     ->icon('tabler-user')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->sortable(),

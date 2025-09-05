@@ -31,8 +31,8 @@ class DaemonServerRepository extends DaemonRepository
 
             if ($requestBadGateway && $requestFromCloudflare && !$requestCachedFromCloudflare) {
                 Notification::make()
-                    ->title('Cloudflare Issue')
-                    ->body('Your Node is not accessible by Cloudflare')
+                    ->title(trans('admin/node.cloudflare_issue.title'))
+                    ->body(trans('admin/node.cloudflare_issue.body'))
                     ->danger()
                     ->send();
             }

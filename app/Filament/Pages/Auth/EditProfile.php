@@ -86,7 +86,8 @@ class EditProfile extends BaseEditProfile
             ->components([
                 Tabs::make()->persistTabInQueryString()
                     ->schema([
-                        Tab::make(trans('profile.tabs.account'))
+                        Tab::make('account')
+                            ->label(trans('profile.tabs.account'))
                             ->icon('tabler-user')
                             ->schema([
                                 TextInput::make('username')
@@ -159,7 +160,8 @@ class EditProfile extends BaseEditProfile
                                             ->action(fn () => $fileUpload->getDisk()->delete($path));
                                     }),
                             ]),
-                        Tab::make(trans('profile.tabs.oauth'))
+                        Tab::make('oauth')
+                            ->label(trans('profile.tabs.oauth'))
                             ->icon('tabler-brand-oauth')
                             ->visible(count($oauthSchemas) > 0)
                             ->schema(function () use ($oauthSchemas) {
@@ -197,7 +199,8 @@ class EditProfile extends BaseEditProfile
 
                                 return [Actions::make($actions)];
                             }),
-                        Tab::make(trans('profile.tabs.2fa'))
+                        Tab::make('2fa')
+                            ->label(trans('profile.tabs.2fa'))
                             ->icon('tabler-shield-lock')
                             ->visible(fn () => Filament::hasMultiFactorAuthentication())
                             ->schema(collect(Filament::getMultiFactorAuthenticationProviders())
@@ -205,7 +208,8 @@ class EditProfile extends BaseEditProfile
                                 ->map(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider) => Group::make($multiFactorAuthenticationProvider->getManagementSchemaComponents())
                                     ->statePath($multiFactorAuthenticationProvider->getId()))
                                 ->all()),
-                        Tab::make(trans('profile.tabs.api_keys'))
+                        Tab::make('api_keys')
+                            ->label(trans('profile.tabs.api_keys'))
                             ->icon('tabler-key')
                             ->schema([
                                 Grid::make(5)
@@ -291,7 +295,8 @@ class EditProfile extends BaseEditProfile
                                             ]),
                                     ]),
                             ]),
-                        Tab::make(trans('profile.tabs.ssh_keys'))
+                        Tab::make('ssh_keys')
+                            ->label(trans('profile.tabs.ssh_keys'))
                             ->icon('tabler-lock-code')
                             ->schema([
                                 Grid::make(5)->schema([
@@ -379,7 +384,8 @@ class EditProfile extends BaseEditProfile
                                         ]),
                                 ]),
                             ]),
-                        Tab::make(trans('profile.tabs.activity'))
+                        Tab::make('activity')
+                            ->label(trans('profile.tabs.activity'))
                             ->icon('tabler-history')
                             ->schema([
                                 Repeater::make('activity')
@@ -396,7 +402,8 @@ class EditProfile extends BaseEditProfile
                                             ->state(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
                                     ]),
                             ]),
-                        Tab::make(trans('profile.tabs.customization'))
+                        Tab::make('customization')
+                            ->label(trans('profile.tabs.customization'))
                             ->icon('tabler-adjustments')
                             ->schema([
                                 Section::make(trans('profile.dashboard'))

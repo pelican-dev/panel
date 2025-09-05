@@ -54,13 +54,13 @@ return [
     'schedule' => [
         'process' => [
             'no_tasks' => 'There are no scheduled tasks for servers that need to be run.',
-            'error_message' => 'An error was encountered while processing Schedule: ',
+            'error_message' => 'An error was encountered while processing Schedule: :schedules',
         ],
     ],
     'upgrade' => [
         'integrity' => 'This command does not verify the integrity of downloaded assets. Please ensure that you trust the download source before continuing. If you do not wish to download an archive, please indicate that using the --skip-download flag, or answering "no" to the question below.',
         'source_url' => 'Download Source (set with --url=):',
-        'php_version' => 'Cannot execute self-upgrade process. The minimum required PHP version required is 7.4.0, you have',
+        'php_version' => 'Cannot execute self-upgrade process. The minimum required PHP version required is 7.4.0, you have :current',
         'skipDownload' => 'Would you like to download and unpack the archive files for the latest version?',
         'webserver_user' => 'Your webserver user has been detected as <fg=blue>[{:user}]:</> is this correct?',
         'name_webserver' => 'Please enter the name of the user running your webserver process. This varies from system to system, but is generally "www-data", "nginx", or "apache".',

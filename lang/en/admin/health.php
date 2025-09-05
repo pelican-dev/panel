@@ -55,6 +55,6 @@ return [
     ],
     'checks' => [
         'successful' => 'Successful',
-        'failed' => 'Failed',
+        'failed' => 'Failed :checks',
     ],
 ];

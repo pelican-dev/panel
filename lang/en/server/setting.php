@@ -5,7 +5,8 @@ return [
     'server_info' => [
         'title' => 'Server Information',
         'information' => 'Information',
-        'server_name' => 'Server Name',
+        'name' => 'Server Name',
+        'server_name' => 'Server Name: :name',
         'notification_name' => 'Updated Server Name',
         'description' => 'Server Description',
         'notification_description' => 'Updated Server Description',
@@ -16,7 +17,7 @@ return [
         'limits' => [
             'title' => 'Limits',
             'unlimited' => 'Unlimited',
-            'of' => 'of',
+            'of' => 'of :max',
             'cpu' => 'CPU',
             'memory' => 'Memory',
             'disk' => 'Disk Space',

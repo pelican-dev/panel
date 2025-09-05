@@ -125,7 +125,7 @@ class Settings extends Page implements HasSchemas
                         ->label(trans('admin/setting.navigation.backup'))
                         ->icon('tabler-box')
                         ->schema($this->backupSettings()),
-                    Tab::make('OAuth')
+                    Tab::make('oauth')
                         ->label(trans('admin/setting.navigation.oauth'))
                         ->icon('tabler-brand-oauth')
                         ->schema($this->oauthSettings())
@@ -570,7 +570,7 @@ class Settings extends Page implements HasSchemas
                             ->label(trans('admin/setting.oauth.enable'))
                             ->color('success')
                             ->steps($schema->getSetupSteps())
-                            ->modalHeading(trans('admin/setting.oauth.enable') . ' ' . $schema->getName())
+                            ->modalHeading(trans('admin/setting.oauth.enable_schema', ['schema' => $schema->getName()]))
                             ->modalSubmitActionLabel(trans('admin/setting.oauth.enable'))
                             ->modalCancelAction(false)
                             ->action(function ($data, Set $set) use ($key) {

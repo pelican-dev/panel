@@ -29,6 +29,11 @@ return [
             'unlock' => 'Unlock',
         ],
         'download' => 'Download',
+        'rename' => [
+            'title' => 'Rename',
+            'new_name' => 'Backup Name',
+            'notification_success' => 'Backup Renamed Successfully',
+        ],
         'restore' => [
             'title' => 'Restore',
             'helper' => 'Your server will be stopped. You will not be able to control the power state, access the file manager, or create additional backups until this process is completed.',

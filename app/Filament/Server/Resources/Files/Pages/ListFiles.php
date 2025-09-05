@@ -111,14 +111,14 @@ class ListFiles extends ListRecords
             ])
             ->recordUrl(function (File $file) use ($server) {
                 if ($file->is_directory) {
-                    return self::getUrl(['path' => join_paths($this->path, $file->name)]);
+                    return self::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]);
                 }
 
                 if (!auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server)) {
                     return null;
                 }
 
-                return $file->canEdit() ? EditFiles::getUrl(['path' => join_paths($this->path, $file->name)]) : null;
+                return $file->canEdit() ? EditFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]) : null;
             })
             ->recordActions([
                 Action::make('view')
@@ -126,12 +126,12 @@ class ListFiles extends ListRecords
                     ->label(trans('server/file.actions.open'))
                     ->icon('tabler-eye')->iconSize(IconSize::Large)
                     ->visible(fn (File $file) => $file->is_directory)
-                    ->url(fn (File $file) => self::getUrl(['path' => join_paths($this->path, $file->name)])),
+                    ->url(fn (File $file) => self::getUrl(['path' => encode_path(join_paths($this->path, $file->name))])),
                 EditAction::make('edit')
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server))
                     ->icon('tabler-edit')
                     ->visible(fn (File $file) => $file->canEdit())
-                    ->url(fn (File $file) => EditFiles::getUrl(['path' => join_paths($this->path, $file->name)])),
+                    ->url(fn (File $file) => EditFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))])),
                 ActionGroup::make([
                     Action::make('rename')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
@@ -139,7 +139,7 @@ class ListFiles extends ListRecords
                         ->icon('tabler-forms')->iconSize(IconSize::Large)
                         ->schema([
                             TextInput::make('name')
-                                ->label(trans('server/file.actions.rename.name'))
+                                ->label(trans('server/file.actions.rename.file_name'))
                                 ->default(fn (File $file) => $file->name)
                                 ->required(),
                         ])
@@ -185,7 +185,7 @@ class ListFiles extends ListRecords
                         ->label(trans('server/file.actions.download'))
                         ->icon('tabler-download')->iconSize(IconSize::Large)
                         ->visible(fn (File $file) => $file->is_file)
-                        ->url(fn (File $file) => DownloadFiles::getUrl(['path' => join_paths($this->path, $file->name)]), true),
+                        ->url(fn (File $file) => DownloadFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]), true),
                     Action::make('move')
                         ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->label(trans('server/file.actions.move.title'))
@@ -437,7 +437,7 @@ class ListFiles extends ListRecords
                                 ->log();
                         } catch (FileExistsException) {
                             AlertBanner::make('file_already_exists')
-                                ->title('<code>' . $path . '</code> already exists!')
+                                ->title(trans('server/file.alerts.file_already_exists.title', ['name' => $path]))
                                 ->danger()
                                 ->closable()
                                 ->send();
@@ -467,7 +467,7 @@ class ListFiles extends ListRecords
                         } catch (FileExistsException) {
                             $path = join_paths($this->path, $data['name']);
                             AlertBanner::make('folder_already_exists')
-                                ->title('<code>' . $path . '</code> already exists!')
+                                ->title(trans('server/file.alerts.file_already_exists.title', ['name' => $path]))
                                 ->danger()
                                 ->closable()
                                 ->send();
@@ -505,53 +505,55 @@ class ListFiles extends ListRecords
                                 ->log();
                         }
 
-                        return redirect(ListFiles::getUrl(['path' => $this->path]));
-                    })
-                    ->schema([
-                        Tabs::make()
-                            ->contained(false)
-                            ->schema([
-                                Tab::make(trans('server/file.actions.upload.from_files'))
-                                    ->live()
-                                    ->schema([
-                                        FileUpload::make('files')
-                                            ->storeFiles(false)
-                                            ->previewable(false)
-                                            ->preserveFilenames()
-                                            ->maxSize((int) round($server->node->upload_size * (config('panel.use_binary_prefix') ? 1.048576 * 1024 : 1000)))
-                                            ->multiple(),
-                                    ]),
-                                Tab::make(trans('server/file.actions.upload.url'))
-                                    ->live()
-                                    ->disabled(fn (Get $get) => count($get('files')) > 0)
-                                    ->schema([
-                                        TextInput::make('url')
-                                            ->label(trans('server/file.actions.upload.url'))
-                                            ->url(),
-                                    ]),
-                            ]),
-                    ]),
-                Action::make('search')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
-                    ->tooltip(trans('server/file.actions.global_search.title'))
-                    ->color('primary')
-                    ->icon('tabler-world-search')
-                    ->modalHeading(trans('server/file.actions.global_search.title'))
-                    ->modalSubmitActionLabel(trans('server/file.actions.global_search.search'))
-                    ->schema([
-                        TextInput::make('searchTerm')
-                            ->label(trans('server/file.actions.global_search.search_term'))
-                            ->placeholder(trans('server/file.actions.global_search.search_term_placeholder'))
-                            ->required()
-                            ->regex('/^[^*]*\*?[^*]*$/')
-                            ->minValue(3),
-                    ])
-                    ->action(fn ($data) => redirect(SearchFiles::getUrl([
-                        'searchTerm' => $data['searchTerm'],
-                        'path' => $this->path,
-                    ]))),
-            ]);
+                    return redirect(ListFiles::getUrl(['path' => $this->path]));
+                })
+                ->form([
+                    Tabs::make()
+                        ->contained(false)
+                        ->schema([
+                            Tab::make('from_files')
+                                ->label(trans('server/file.actions.upload.from_files'))
+                                ->live()
+                                ->schema([
+                                    FileUpload::make('files')
+                                        ->storeFiles(false)
+                                        ->previewable(false)
+                                        ->preserveFilenames()
+                                        ->maxSize((int) round($server->node->upload_size * (config('panel.use_binary_prefix') ? 1.048576 * 1024 : 1000)))
+                                        ->multiple(),
+                                ]),
+                            Tab::make('url')
+                                ->label(trans('server/file.actions.upload.url'))
+                                ->live()
+                                ->disabled(fn (Get $get) => count($get('files')) > 0)
+                                ->schema([
+                                    TextInput::make('url')
+                                        ->label(trans('server/file.actions.upload.url'))
+                                        ->url(),
+                                ]),
+                        ]),
+                ]),
+            HeaderAction::make('search')
+                ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
+                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
+                ->tooltip(trans('server/file.actions.global_search.title'))
+                ->color('primary')
+                ->icon('tabler-world-search')
+                ->modalHeading(trans('server/file.actions.global_search.title'))
+                ->modalSubmitActionLabel(trans('server/file.actions.global_search.search'))
+                ->form([
+                    TextInput::make('searchTerm')
+                        ->label(trans('server/file.actions.global_search.search_term'))
+                        ->placeholder(trans('server/file.actions.global_search.search_term_placeholder'))
+                        ->required()
+                        ->regex('/^[^*]*\*?[^*]*$/')
+                        ->minValue(3),
+                ])
+                ->action(fn ($data) => redirect(SearchFiles::getUrl([
+                    'searchTerm' => $data['searchTerm'],
+                    'path' => $this->path,
+                ]))),
+        ];
     }
 
     /**

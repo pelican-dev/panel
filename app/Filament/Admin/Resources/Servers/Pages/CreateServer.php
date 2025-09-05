@@ -268,7 +268,7 @@ class CreateServer extends CreateRecord
                                         ->preload()
                                         ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                         ->prefixIcon('tabler-network')
-                                        ->label('Additional Allocations')
+                                        ->label(trans('admin/server.additional_allocations'))
                                         ->columnSpan(2)
                                         ->disabled(fn (Get $get) => $get('../../allocation_id') === null || $get('../../node_id') === null)
                                         ->searchable(['ip', 'port', 'ip_alias'])
@@ -763,7 +763,7 @@ class CreateServer extends CreateRecord
 
                                     KeyValue::make('docker_labels')
                                         ->live()
-                                        ->label('Container Labels')
+                                        ->label(trans('admin/server.container_labels'))
                                         ->keyLabel(trans('admin/server.title'))
                                         ->valueLabel(trans('admin/server.description'))
                                         ->columnSpanFull(),
@@ -779,7 +779,7 @@ class CreateServer extends CreateRecord
                                                 type="submit"
                                                 size="sm"
                                             >
-                                                Create Server
+                                                {{ trans('admin/server.create') }}
                                             </x-filament::button>
                                         BLADE))),
             ]);

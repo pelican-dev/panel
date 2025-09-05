@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Application API Keys',
-    'empty_table' => 'No API keys',
+    'empty' => 'No API keys',
     'whitelist' => 'Whitelisted IPv4 Addresses',
     'whitelist_help' => 'API keys can be restricted to only work from specific IPv4 addresses. Enter each address on a new line.',
     'whitelist_placeholder' => 'Example: 127.0.0.1 or 192.168.1.1',
