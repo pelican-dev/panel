@@ -26,8 +26,10 @@ class PreviewStartupAction extends Action
 
         $this->action(function (Get $get, Set $set, Server $server) {
             $active = $get('previewing');
+            $startup = $get('startup');
+
             $set('previewing', !$active);
-            $set('startup', $active ? $server->startup : fn (Server $server, StartupCommandService $service) => $service->handle($server));
+            $set('startup', $active ? $startup : fn (Server $server, StartupCommandService $service) => $service->handle($server, $startup));
         });
     }
 }
