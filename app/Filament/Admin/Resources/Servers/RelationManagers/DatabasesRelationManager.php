@@ -117,7 +117,7 @@ class DatabasesRelationManager extends RelationManager
                         Select::make('database_host_id')
                             ->label(trans('admin/databasehost.model_label'))
                             ->required()
-                            ->placeholder('Select Database Host')
+                            ->placeholder(trans('admin/databasehost.table.select_placeholder'))
                             ->options(fn () => DatabaseHost::query()
                                 ->whereHas('nodes', fn ($query) => $query->where('nodes.id', $this->getOwnerRecord()->node_id))
                                 ->pluck('name', 'id')

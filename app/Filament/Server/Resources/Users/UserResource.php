@@ -235,7 +235,7 @@ class UserResource extends Resource
                 CreateAction::make('invite')
                     ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->icon('tabler-user-plus')
-                    ->tooltip('Invite User')
+                    ->tooltip(trans('server/user.invite_user'))
                     ->createAnother(false)
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_CREATE, $server))
                     ->schema([
@@ -260,7 +260,7 @@ class UserResource extends Resource
                                     ->required(),
                                 Actions::make([
                                     Action::make('assignAll')
-                                        ->label('Assign All')
+                                        ->label(trans('server/user.assign_all'))
                                         ->action(function (Set $set, Get $get) use ($permissionsArray) {
                                             $permissions = $permissionsArray;
                                             foreach ($permissions as $key => $value) {
@@ -280,9 +280,9 @@ class UserResource extends Resource
                                     ->schema($tabs),
                             ]),
                     ])
-                    ->modalHeading('Invite User')
+                    ->modalHeading(trans('server/user.invite_user'))
                     ->modalIcon('tabler-user-plus')
-                    ->modalSubmitActionLabel('Invite')
+                    ->modalSubmitActionLabel(trans('server/user.action'))
                     ->successNotificationTitle(null)
                     ->failureNotificationTitle(null)
                     ->action(function (Action $action, array $data, SubuserCreationService $service) use ($server) {
@@ -306,12 +306,12 @@ class UserResource extends Resource
                                 ]);
 
                             Notification::make()
-                                ->title('User Invited!')
+                                ->title(trans('server/user.notification_add'))
                                 ->success()
                                 ->send();
                         } catch (Exception $exception) {
                             Notification::make()
-                                ->title('Failed')
+                                ->title(trans('server/user.notification_failed'))
                                 ->body($exception->getMessage())
                                 ->danger()
                                 ->send();

@@ -377,12 +377,12 @@ class ScheduleResource extends Resource
                     ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->icon('tabler-calendar-plus')
                     ->color('primary')
-                    ->tooltip('New Schedule'),
+                    ->tooltip(trans('server/schedule.new')),
                 ImportScheduleAction::make()
                     ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->icon('tabler-file-import')
                     ->color('success')
-                    ->tooltip('Import Schedule'),
+                    ->tooltip(trans('server/schedule.import')),
             ]);
     }
 

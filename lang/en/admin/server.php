@@ -140,4 +140,5 @@ return [
     ],
     'notes' => 'Notes',
     'no_notes' => 'No Notes',
+    'none' => 'None',
 ];

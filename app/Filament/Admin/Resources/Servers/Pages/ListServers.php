@@ -77,7 +77,7 @@ class ListServers extends ListRecords
                     ->disabled(fn (Server $server) => $server->allocations->count() <= 1)
                     ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
                     ->selectablePlaceholder(fn (Server $server) => $server->allocations->count() <= 1)
-                    ->placeholder('None')
+                    ->placeholder(trans('admin/server.none'))
                     ->sortable(),
                 TextColumn::make('allocation_id_readonly')
                     ->label(trans('admin/server.primary_allocation'))

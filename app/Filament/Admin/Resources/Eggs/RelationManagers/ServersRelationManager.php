@@ -40,7 +40,7 @@ class ServersRelationManager extends RelationManager
                     ->label(trans('admin/server.primary_allocation'))
                     ->disabled()
                     ->options(fn (Server $server) => $server->allocations->take(1)->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
-                    ->placeholder('None')
+                    ->placeholder(trans('admin/server.none'))
                     ->sortable(),
             ]);
     }
