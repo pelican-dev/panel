@@ -505,55 +505,55 @@ class ListFiles extends ListRecords
                                 ->log();
                         }
 
-                    return redirect(ListFiles::getUrl(['path' => $this->path]));
-                })
-                ->form([
-                    Tabs::make()
-                        ->contained(false)
-                        ->schema([
-                            Tab::make('from_files')
-                                ->label(trans('server/file.actions.upload.from_files'))
-                                ->live()
-                                ->schema([
-                                    FileUpload::make('files')
-                                        ->storeFiles(false)
-                                        ->previewable(false)
-                                        ->preserveFilenames()
-                                        ->maxSize((int) round($server->node->upload_size * (config('panel.use_binary_prefix') ? 1.048576 * 1024 : 1000)))
-                                        ->multiple(),
-                                ]),
-                            Tab::make('url')
-                                ->label(trans('server/file.actions.upload.url'))
-                                ->live()
-                                ->disabled(fn (Get $get) => count($get('files')) > 0)
-                                ->schema([
-                                    TextInput::make('url')
-                                        ->label(trans('server/file.actions.upload.url'))
-                                        ->url(),
-                                ]),
-                        ]),
-                ]),
-            HeaderAction::make('search')
-                ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
-                ->hiddenLabel()->iconButton()->iconSize(IconSize::Large)
-                ->tooltip(trans('server/file.actions.global_search.title'))
-                ->color('primary')
-                ->icon('tabler-world-search')
-                ->modalHeading(trans('server/file.actions.global_search.title'))
-                ->modalSubmitActionLabel(trans('server/file.actions.global_search.search'))
-                ->form([
-                    TextInput::make('searchTerm')
-                        ->label(trans('server/file.actions.global_search.search_term'))
-                        ->placeholder(trans('server/file.actions.global_search.search_term_placeholder'))
-                        ->required()
-                        ->regex('/^[^*]*\*?[^*]*$/')
-                        ->minValue(3),
-                ])
-                ->action(fn ($data) => redirect(SearchFiles::getUrl([
-                    'searchTerm' => $data['searchTerm'],
-                    'path' => $this->path,
-                ]))),
-        ];
+                        return redirect(ListFiles::getUrl(['path' => $this->path]));
+                    })
+                    ->schema([
+                        Tabs::make()
+                            ->contained(false)
+                            ->schema([
+                                Tab::make('files')
+                                    ->label(trans('server/file.actions.upload.from_files'))
+                                    ->live()
+                                    ->schema([
+                                        FileUpload::make('files')
+                                            ->storeFiles(false)
+                                            ->previewable(false)
+                                            ->preserveFilenames()
+                                            ->maxSize((int) round($server->node->upload_size * (config('panel.use_binary_prefix') ? 1.048576 * 1024 : 1000)))
+                                            ->multiple(),
+                                    ]),
+                                Tab::make('url')
+                                    ->label(trans('server/file.actions.upload.url'))
+                                    ->live()
+                                    ->disabled(fn (Get $get) => count($get('files')) > 0)
+                                    ->schema([
+                                        TextInput::make('url')
+                                            ->label(trans('server/file.actions.upload.url'))
+                                            ->url(),
+                                    ]),
+                            ]),
+                    ]),
+                Action::make('search')
+                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
+                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->tooltip(trans('server/file.actions.global_search.title'))
+                    ->color('primary')
+                    ->icon('tabler-world-search')
+                    ->modalHeading(trans('server/file.actions.global_search.title'))
+                    ->modalSubmitActionLabel(trans('server/file.actions.global_search.search'))
+                    ->schema([
+                        TextInput::make('searchTerm')
+                            ->label(trans('server/file.actions.global_search.search_term'))
+                            ->placeholder(trans('server/file.actions.global_search.search_term_placeholder'))
+                            ->required()
+                            ->regex('/^[^*]*\*?[^*]*$/')
+                            ->minValue(3),
+                    ])
+                    ->action(fn ($data) => redirect(SearchFiles::getUrl([
+                        'searchTerm' => $data['searchTerm'],
+                        'path' => $this->path,
+                    ]))),
+            ]);
     }
 
     /**
