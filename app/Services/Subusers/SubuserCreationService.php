@@ -4,7 +4,6 @@ namespace App\Services\Subusers;
 
 use App\Events\Server\SubUserAdded;
 use App\Models\User;
-use Illuminate\Support\Str;
 use App\Models\Server;
 use App\Models\Subuser;
 use Illuminate\Database\ConnectionInterface;
@@ -40,14 +39,8 @@ class SubuserCreationService
         return $this->connection->transaction(function () use ($server, $email, $permissions) {
             $user = User::query()->where('email', $email)->first();
             if (!$user) {
-                // Just cap the username generated at 64 characters at most and then append a random string
-                // to the end to make it "unique"...
-                [$beforeDomain] = explode('@', $email, 1);
-                $username = substr(preg_replace('/([^\w.-]+)/', '', $beforeDomain), 0, 64) . Str::random(3);
-
                 $user = $this->userCreationService->handle([
                     'email' => $email,
-                    'username' => $username,
                     'root_admin' => false,
                 ]);
             }

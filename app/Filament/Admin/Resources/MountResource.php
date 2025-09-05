@@ -4,6 +4,10 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\MountResource\Pages;
 use App\Models\Mount;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -11,6 +15,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -18,9 +23,15 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class MountResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
+
     protected static ?string $model = Mount::class;
 
     protected static ?string $navigationIcon = 'tabler-layers-linked';
@@ -44,7 +55,7 @@ class MountResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count() ?: null;
+        return (string) static::getEloquentQuery()->count() ?: null;
     }
 
     public static function getNavigationGroup(): ?string
@@ -52,7 +63,7 @@ class MountResource extends Resource
         return trans('admin/dashboard.advanced');
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([
@@ -75,7 +86,7 @@ class MountResource extends Resource
                     ->badge()
                     ->icon(fn ($state) => $state ? 'tabler-writing-off' : 'tabler-writing')
                     ->color(fn ($state) => $state ? 'success' : 'warning')
-                    ->formatStateUsing(fn ($state) => $state ? trans('admin/mount.toggles.read_only') : trans('admin/mount.toggles.writeable')),
+                    ->formatStateUsing(fn ($state) => $state ? trans('admin/mount.toggles.read_only') : trans('admin/mount.toggles.writable')),
             ])
             ->actions([
                 ViewAction::make()
@@ -93,7 +104,7 @@ class MountResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         return $form
             ->schema([
@@ -147,7 +158,7 @@ class MountResource extends Resource
                             ->preload(),
                         Select::make('nodes')->multiple()
                             ->label(trans('admin/mount.nodes'))
-                            ->relationship('nodes', 'name')
+                            ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id')))
                             ->searchable(['name', 'fqdn'])
                             ->preload(),
                     ]),
@@ -161,7 +172,8 @@ class MountResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListMounts::route('/'),
@@ -169,5 +181,16 @@ class MountResource extends Resource
             'view' => Pages\ViewMount::route('/{record}'),
             'edit' => Pages\EditMount::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        return $query->where(function (Builder $query) {
+            return $query->whereHas('nodes', function (Builder $query) {
+                $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'));
+            })->orDoesntHave('nodes');
+        });
     }
 }

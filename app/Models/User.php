@@ -4,9 +4,8 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Exceptions\DisplayException;
-use App\Extensions\Avatar\AvatarProvider;
+use App\Extensions\Avatar\AvatarService;
 use App\Rules\Username;
-use App\Facades\Activity;
 use App\Traits\HasValidation;
 use DateTimeZone;
 use Filament\Models\Contracts\FilamentUser;
@@ -18,6 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Auth\Authenticatable;
@@ -32,7 +32,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use Illuminate\Support\Facades\Storage;
 use ResourceBundle;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -265,8 +264,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function accessibleServers(): Builder
     {
-        if ($this->canned('viewList server')) {
-            return Server::query();
+        if ($this->canned('viewAny', Server::class)) {
+            return Server::select('servers.*')
+                ->leftJoin('subusers', 'subusers.server_id', '=', 'servers.id')
+                ->where(function (Builder $builder) {
+                    $builder->where('servers.owner_id', $this->id)->orWhere('subusers.user_id', $this->id)->orWhereIn('servers.node_id', $this->accessibleNodes()->pluck('id'));
+                })
+                ->distinct('servers.id');
         }
 
         return $this->directAccessibleServers();
@@ -278,12 +282,27 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function directAccessibleServers(): Builder
     {
-        return Server::query()
-            ->select('servers.*')
+        return Server::select('servers.*')
             ->leftJoin('subusers', 'subusers.server_id', '=', 'servers.id')
             ->where(function (Builder $builder) {
                 $builder->where('servers.owner_id', $this->id)->orWhere('subusers.user_id', $this->id);
             });
+    }
+
+    public function accessibleNodes(): Builder
+    {
+        // Root admins can access all nodes
+        if ($this->isRootAdmin()) {
+            return Node::query();
+        }
+
+        // Check if there are no restrictions from any role
+        $roleIds = $this->roles()->pluck('id');
+        if (!NodeRole::whereIn('role_id', $roleIds)->exists()) {
+            return Node::query();
+        }
+
+        return Node::whereHas('roles', fn (Builder $builder) => $builder->whereIn('roles.id', $roleIds));
     }
 
     public function subusers(): HasMany
@@ -298,12 +317,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     protected function checkPermission(Server $server, string $permission = ''): bool
     {
-        if ($this->canned('update server', $server) || $server->owner_id === $this->id) {
+        if ($this->canned('update', $server) || $server->owner_id === $this->id) {
             return true;
         }
 
         // If the user only has "view" permissions allow viewing the console
-        if ($permission === Permission::ACTION_WEBSOCKET_CONNECT && $this->canned('view server', $server)) {
+        if ($permission === Permission::ACTION_WEBSOCKET_CONNECT && $this->canned('view', $server)) {
             return true;
         }
 
@@ -377,26 +396,27 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function getFilamentAvatarUrl(): ?string
     {
-        if (config('panel.filament.uploadable-avatars')) {
-            $path = "avatars/$this->id.png";
-
-            if (Storage::disk('public')->exists($path)) {
-                return Storage::url($path);
-            }
-        }
-
-        $provider = AvatarProvider::getProvider(config('panel.filament.avatar-provider'));
-
-        return $provider?->get($this);
+        return App::call(fn (AvatarService $service) => $service->getAvatarUrl($this));
     }
 
-    public function canTarget(Model $user): bool
+    public function canTarget(Model $model): bool
     {
+        // Root admins can target everyone and everything
         if ($this->isRootAdmin()) {
             return true;
         }
 
-        return $user instanceof User && !$user->isRootAdmin();
+        // Make sure normal admins can't target root admins
+        if ($model instanceof User) {
+            return !$model->isRootAdmin();
+        }
+
+        // Make sure the user can only target accessible nodes
+        if ($model instanceof Node) {
+            return $this->accessibleNodes()->where('id', $model->id)->exists();
+        }
+
+        return false;
     }
 
     public function getTenants(Panel $panel): array|Collection
@@ -407,7 +427,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function canAccessTenant(Model $tenant): bool
     {
         if ($tenant instanceof Server) {
-            if ($this->canned('view server', $tenant) || $tenant->owner_id === $this->id) {
+            if ($this->canned('view', $tenant) || $tenant->owner_id === $this->id) {
                 return true;
             }
 

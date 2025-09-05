@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
-use Illuminate\Http\Request;
+use App\Enums\ContainerStatus;
+use App\Http\Requests\Api\Remote\ServerRequest;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
@@ -12,11 +13,11 @@ class ServerContainersController extends Controller
     /**
      * Updates the server container's status on the Panel
      */
-    public function status(Server $server, Request $request): JsonResponse
+    public function status(ServerRequest $request, Server $server): JsonResponse
     {
-        $status = fluent($request->json()->all())->get('data.new_state');
+        $status = ContainerStatus::tryFrom($request->json('data.new_state')) ?? ContainerStatus::Missing;
 
-        cache()->put("servers.$server->uuid.container.status", $status, now()->addHour());
+        cache()->put("servers.$server->uuid.status", $status, now()->addHour());
 
         return new JsonResponse([]);
     }

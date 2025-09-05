@@ -55,6 +55,7 @@ class StoreServerRequest extends ApplicationApiRequest
 
             // Automatic deployment rules
             'deploy' => 'sometimes|required|array',
+            // Locations are deprecated, use tags
             'deploy.locations' => 'sometimes|array',
             'deploy.locations.*' => 'required_with:deploy.locations|integer|min:1',
             'deploy.tags' => 'array',

@@ -89,6 +89,7 @@ return [
     ],
     'oauth' => [
         'enable' => 'Enable',
+        'enable_schema' => 'Enable :schema',
         'disable' => 'Disable',
         'client_id' => 'Client ID',
         'client_secret' => 'Client Secret',
@@ -97,6 +98,8 @@ return [
         'base_url' => 'Base URL',
         'display_name' => 'Display Name',
         'auth_url' => 'Authorization callback URL',
+        'create_missing_users' => 'Auto Create Missing Users?',
+        'link_missing_users' => 'Auto Link Missing Users?',
     ],
     'misc' => [
         'auto_allocation' => [
@@ -137,6 +140,8 @@ return [
             'title' => 'Servers',
             'helper' => 'Settings for Servers',
             'edit_server_desc' => 'Allow Users to edit Descriptions?',
+            'console_font_upload' => 'Console Font Upload',
+            'console_font_hint' => 'Only *.ttf fonts are supported. Mono fonts strongly recommended!',
         ],
         'webhook' => [
             'title' => 'Webhooks',

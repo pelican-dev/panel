@@ -2,17 +2,21 @@
 
 namespace App\Filament\Admin\Pages;
 
-use App\Extensions\Avatar\AvatarProvider;
-use App\Extensions\Captcha\Providers\CaptchaProvider;
-use App\Extensions\OAuth\Providers\OAuthProvider;
+use App\Extensions\Avatar\AvatarService;
+use App\Extensions\Captcha\CaptchaService;
+use App\Extensions\OAuth\OAuthService;
 use App\Models\Backup;
 use App\Notifications\MailTested;
 use App\Traits\EnvironmentWriterTrait;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
@@ -33,6 +37,7 @@ use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Http\Client\Factory;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\Str;
@@ -42,13 +47,22 @@ use Illuminate\Support\Str;
  */
 class Settings extends Page implements HasForms
 {
+    use CanCustomizeHeaderActions, InteractsWithHeaderActions {
+        CanCustomizeHeaderActions::getHeaderActions insteadof InteractsWithHeaderActions;
+    }
+    use CanCustomizeHeaderWidgets;
     use EnvironmentWriterTrait;
     use InteractsWithForms;
-    use InteractsWithHeaderActions;
 
     protected static ?string $navigationIcon = 'tabler-settings';
 
     protected static string $view = 'filament.pages.settings';
+
+    protected OAuthService $oauthService;
+
+    protected AvatarService $avatarService;
+
+    protected CaptchaService $captchaService;
 
     /** @var array<mixed>|null */
     public ?array $data = [];
@@ -56,6 +70,13 @@ class Settings extends Page implements HasForms
     public function mount(): void
     {
         $this->form->fill();
+    }
+
+    public function boot(OAuthService $oauthService, AvatarService $avatarService, CaptchaService $captchaService): void
+    {
+        $this->oauthService = $oauthService;
+        $this->avatarService = $avatarService;
+        $this->captchaService = $captchaService;
     }
 
     public static function canAccess(): bool
@@ -98,7 +119,7 @@ class Settings extends Page implements HasForms
                         ->label(trans('admin/setting.navigation.backup'))
                         ->icon('tabler-box')
                         ->schema($this->backupSettings()),
-                    Tab::make('OAuth')
+                    Tab::make('oauth')
                         ->label(trans('admin/setting.navigation.oauth'))
                         ->icon('tabler-brand-oauth')
                         ->schema($this->oauthSettings()),
@@ -136,8 +157,7 @@ class Settings extends Page implements HasForms
                         ->placeholder('/pelican.ico'),
                 ]),
             Group::make()
-                ->columnSpan(2)
-                ->columns(4)
+                ->columns(2)
                 ->schema([
                     Toggle::make('APP_DEBUG')
                         ->label(trans('admin/setting.general.debug_mode'))
@@ -149,20 +169,14 @@ class Settings extends Page implements HasForms
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('APP_DEBUG', (bool) $state))
                         ->default(env('APP_DEBUG', config('app.debug'))),
-                    ToggleButtons::make('FILAMENT_TOP_NAVIGATION')
-                        ->label(trans('admin/setting.general.navigation'))
-                        ->inline()
-                        ->options([
-                            false => trans('admin/setting.general.sidebar'),
-                            true => trans('admin/setting.general.topbar'),
-                        ])
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('FILAMENT_TOP_NAVIGATION', (bool) $state))
-                        ->default(env('FILAMENT_TOP_NAVIGATION', config('panel.filament.top-navigation'))),
+                ]),
+            Group::make()
+                ->columns(2)
+                ->schema([
                     Select::make('FILAMENT_AVATAR_PROVIDER')
                         ->label(trans('admin/setting.general.avatar_provider'))
                         ->native(false)
-                        ->options(collect(AvatarProvider::getAll())->mapWithKeys(fn ($provider) => [$provider->getId() => $provider->getName()]))
+                        ->options($this->avatarService->getMappings())
                         ->selectablePlaceholder(false)
                         ->default(env('FILAMENT_AVATAR_PROVIDER', config('panel.filament.avatar-provider'))),
                     Toggle::make('FILAMENT_UPLOADABLE_AVATARS')
@@ -197,12 +211,18 @@ class Settings extends Page implements HasForms
                 ->formatStateUsing(fn ($state): int => (int) $state)
                 ->afterStateUpdated(fn ($state, Set $set) => $set('APP_2FA_REQUIRED', (int) $state))
                 ->default(env('APP_2FA_REQUIRED', config('panel.auth.2fa_required'))),
+            Select::make('FILAMENT_WIDTH')
+                ->label(trans('admin/setting.general.display_width'))
+                ->native(false)
+                ->options(MaxWidth::class)
+                ->selectablePlaceholder(false)
+                ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
             TagsInput::make('TRUSTED_PROXIES')
                 ->label(trans('admin/setting.general.trusted_proxies'))
                 ->separator()
                 ->splitKeys(['Tab', ' '])
                 ->placeholder(trans('admin/setting.general.trusted_proxies_help'))
-                ->default(env('TRUSTED_PROXIES', implode(',', config('trustedproxy.proxies'))))
+                ->default(env('TRUSTED_PROXIES', implode(',', Arr::wrap(config('trustedproxy.proxies')))))
                 ->hintActions([
                     FormAction::make('clear')
                         ->label(trans('admin/setting.general.clear'))
@@ -237,12 +257,6 @@ class Settings extends Page implements HasForms
                             $set('TRUSTED_PROXIES', $ips->values()->all());
                         }),
                 ]),
-            Select::make('FILAMENT_WIDTH')
-                ->label(trans('admin/setting.general.display_width'))
-                ->native(false)
-                ->options(MaxWidth::class)
-                ->selectablePlaceholder(false)
-                ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
         ];
     }
 
@@ -253,15 +267,14 @@ class Settings extends Page implements HasForms
     {
         $formFields = [];
 
-        $captchaProviders = CaptchaProvider::get();
-        foreach ($captchaProviders as $captchaProvider) {
-            $id = Str::upper($captchaProvider->getId());
-            $name = Str::title($captchaProvider->getId());
+        $captchaSchemas = $this->captchaService->getAll();
+        foreach ($captchaSchemas as $schema) {
+            $id = Str::upper($schema->getId());
 
-            $formFields[] = Section::make($name)
+            $formFields[] = Section::make($schema->getName())
                 ->columns(5)
-                ->icon($captchaProvider->getIcon() ?? 'tabler-shield')
-                ->collapsed(fn () => !env("CAPTCHA_{$id}_ENABLED", false))
+                ->icon($schema->getIcon() ?? 'tabler-shield')
+                ->collapsed(fn () => !$schema->isEnabled())
                 ->collapsible()
                 ->schema([
                     Hidden::make("CAPTCHA_{$id}_ENABLED")
@@ -272,21 +285,14 @@ class Settings extends Page implements HasForms
                             ->visible(fn (Get $get) => $get("CAPTCHA_{$id}_ENABLED"))
                             ->label(trans('admin/setting.captcha.disable'))
                             ->color('danger')
-                            ->action(function (Set $set) use ($id) {
-                                $set("CAPTCHA_{$id}_ENABLED", false);
-                            }),
+                            ->action(fn (Set $set) => $set("CAPTCHA_{$id}_ENABLED", false)),
                         FormAction::make("enable_captcha_$id")
                             ->visible(fn (Get $get) => !$get("CAPTCHA_{$id}_ENABLED"))
                             ->label(trans('admin/setting.captcha.enable'))
                             ->color('success')
-                            ->action(function (Set $set) use ($id, $captchaProviders) {
-                                foreach ($captchaProviders as $captchaProvider) {
-                                    $loopId = Str::upper($captchaProvider->getId());
-                                    $set("CAPTCHA_{$loopId}_ENABLED", $loopId === $id);
-                                }
-                            }),
+                            ->action(fn (Set $set) => $set("CAPTCHA_{$id}_ENABLED", true)),
                     ])->columnSpan(1),
-                    Group::make($captchaProvider->getSettingsForm())
+                    Group::make($schema->getSettingsForm())
                         ->visible(fn (Get $get) => $get("CAPTCHA_{$id}_ENABLED"))
                         ->columns(4)
                         ->columnSpan(4),
@@ -522,39 +528,37 @@ class Settings extends Page implements HasForms
     {
         $formFields = [];
 
-        $oauthProviders = OAuthProvider::get();
-        foreach ($oauthProviders as $oauthProvider) {
-            $id = Str::upper($oauthProvider->getId());
-            $name = Str::title($oauthProvider->getId());
+        $oauthSchemas = $this->oauthService->getAll();
+        foreach ($oauthSchemas as $schema) {
+            $id = Str::upper($schema->getId());
+            $key = $schema->getConfigKey();
 
-            $formFields[] = Section::make($name)
+            $formFields[] = Section::make($schema->getName())
                 ->columns(5)
-                ->icon($oauthProvider->getIcon() ?? 'tabler-brand-oauth')
-                ->collapsed(fn () => !env("OAUTH_{$id}_ENABLED", false))
+                ->icon($schema->getIcon() ?? 'tabler-brand-oauth')
+                ->collapsed(fn () => !env($key, false))
                 ->collapsible()
                 ->schema([
-                    Hidden::make("OAUTH_{$id}_ENABLED")
+                    Hidden::make($key)
                         ->live()
-                        ->default(env("OAUTH_{$id}_ENABLED")),
+                        ->default(env($key)),
                     Actions::make([
                         FormAction::make("disable_oauth_$id")
-                            ->visible(fn (Get $get) => $get("OAUTH_{$id}_ENABLED"))
+                            ->visible(fn (Get $get) => $get($key))
                             ->label(trans('admin/setting.oauth.disable'))
                             ->color('danger')
-                            ->action(function (Set $set) use ($id) {
-                                $set("OAUTH_{$id}_ENABLED", false);
-                            }),
+                            ->action(fn (Set $set) => $set($key, false)),
                         FormAction::make("enable_oauth_$id")
-                            ->visible(fn (Get $get) => !$get("OAUTH_{$id}_ENABLED"))
+                            ->visible(fn (Get $get) => !$get($key))
                             ->label(trans('admin/setting.oauth.enable'))
                             ->color('success')
-                            ->steps($oauthProvider->getSetupSteps())
-                            ->modalHeading(trans('admin/setting.oauth.enable') . ' ' . $name)
+                            ->steps($schema->getSetupSteps())
+                            ->modalHeading(trans('admin/setting.oauth.enable_schema', ['schema' => $schema->getName()]))
                             ->modalSubmitActionLabel(trans('admin/setting.oauth.enable'))
                             ->modalCancelAction(false)
-                            ->action(function ($data, Set $set) use ($id) {
+                            ->action(function ($data, Set $set) use ($key) {
                                 $data = array_merge([
-                                    "OAUTH_{$id}_ENABLED" => 'true',
+                                    $key => 'true',
                                 ], $data);
 
                                 foreach ($data as $key => $value) {
@@ -562,8 +566,8 @@ class Settings extends Page implements HasForms
                                 }
                             }),
                     ])->columnSpan(1),
-                    Group::make($oauthProvider->getSettingsForm())
-                        ->visible(fn (Get $get) => $get("OAUTH_{$id}_ENABLED"))
+                    Group::make($schema->getSettingsForm())
+                        ->visible(fn (Get $get) => $get($key))
                         ->columns(4)
                         ->columnSpan(4),
                 ]);
@@ -625,7 +629,6 @@ class Settings extends Page implements HasForms
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->columnSpanFull()
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_INSTALL_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_INSTALL_NOTIFICATION', config('panel.email.send_install_notification'))),
@@ -636,7 +639,6 @@ class Settings extends Page implements HasForms
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->columnSpanFull()
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REINSTALL_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
@@ -724,10 +726,17 @@ class Settings extends Page implements HasForms
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->columnSpanFull()
+                        ->columnSpan(1)
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
                         ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
+                    FileUpload::make('ConsoleFonts')
+                        ->hint(trans('admin/setting.misc.server.console_font_hint'))
+                        ->label(trans('admin/setting.misc.server.console_font_upload'))
+                        ->directory('fonts')
+                        ->columnSpan(1)
+                        ->maxFiles(1)
+                        ->preserveFilenames(),
                 ]),
             Section::make(trans('admin/setting.misc.webhook.title'))
                 ->description(trans('admin/setting.misc.webhook.helper'))
@@ -756,6 +765,7 @@ class Settings extends Page implements HasForms
     {
         try {
             $data = $this->form->getState();
+            unset($data['ConsoleFonts']);
 
             // Convert bools to a string, so they are correctly written to the .env file
             $data = array_map(fn ($value) => is_bool($value) ? ($value ? 'true' : 'false') : $value, $data);
@@ -780,7 +790,8 @@ class Settings extends Page implements HasForms
         }
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             Action::make('save')

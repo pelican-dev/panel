@@ -1,12 +1,20 @@
 <x-filament::widget>
     @assets
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm/css/xterm.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm/lib/xterm.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit/lib/addon-fit.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-web-links/lib/addon-web-links.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-search/lib/addon-search.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-search-bar/lib/xterm-addon-search-bar.min.js"></script>
-    <link rel="stylesheet" href="{{ asset('/css/filament/server/console.css') }}">
+    @php
+        $userFont = auth()->user()->getCustomization()['console_font'] ?? 'monospace';
+        $userFontSize = auth()->user()->getCustomization()['console_font_size'] ?? 14;
+        $userRows =  auth()->user()->getCustomization()['console_rows'] ?? 30;
+    @endphp
+    @if($userFont !== "monospace")
+        <link rel="preload" href="{{ asset("storage/fonts/{$userFont}.ttf") }}" as="font" crossorigin>
+        <style>
+            @font-face {
+                font-family: '{{ $userFont }}';
+                src: url('{{ asset("storage/fonts/{$userFont}.ttf") }}');
+            }
+        </style>
+    @endif
+    @vite(['resources/js/console.js', 'resources/css/console.css'])
     @endassets
 
     <div id="terminal" wire:ignore></div>
@@ -22,8 +30,8 @@
                 class="w-full focus:outline-none focus:ring-0 border-none dark:bg-gray-900"
                 type="text"
                 :readonly="{{ $this->canSendCommand() ? 'false' : 'true' }}"
-                title="{{ $this->canSendCommand() ? '' : 'Can\'t send command when the server is Offline' }}"
-                placeholder="{{ $this->canSendCommand() ? 'Type a command...' : 'Server Offline...' }}"
+                title="{{ $this->canSendCommand() ? '' : trans('server/console.command_blocked_title') }}"
+                placeholder="{{ $this->canSendCommand() ? trans('server/console.command') : trans('server/console.command_blocked') }}"
                 wire:model="input"
                 wire:keydown.enter="enter"
                 wire:keydown.up.prevent="up"
@@ -57,23 +65,24 @@
         };
 
         let options = {
-            fontSize: {{ auth()->user()->getCustomization()['console_font_size'] ?? 14 }},
-            fontFamily: 'Comic Mono, monospace',
+            fontSize: {{ $userFontSize }},
+            fontFamily: '{{ $userFont }}, monospace',
             lineHeight: 1.2,
             disableStdin: true,
             cursorStyle: 'underline',
             cursorInactiveStyle: 'underline',
             allowTransparency: true,
-            rows: {{ auth()->user()->getCustomization()['console_rows'] ?? 30 }},
+            rows: {{ $userRows }},
             theme: theme
         };
 
-        const terminal = new Terminal(options);
-        const fitAddon = new FitAddon.FitAddon();
-        const webLinksAddon = new WebLinksAddon.WebLinksAddon();
-        const searchAddon = new SearchAddon.SearchAddon();
-        const searchAddonBar = new SearchBarAddon.SearchBarAddon({ searchAddon });
+        const { Terminal, FitAddon, WebLinksAddon, SearchAddon, SearchBarAddon } = window.Xterm;
 
+        const terminal = new Terminal(options);
+        const fitAddon = new FitAddon();
+        const webLinksAddon = new WebLinksAddon();
+        const searchAddon = new SearchAddon();
+        const searchAddonBar = new SearchBarAddon({ searchAddon });
         terminal.loadAddon(fitAddon);
         terminal.loadAddon(webLinksAddon);
         terminal.loadAddon(searchAddon);
@@ -81,7 +90,11 @@
 
         terminal.open(document.getElementById('terminal'));
 
-        fitAddon.fit(); //Fit on first load
+        fitAddon.fit(); // Fixes SPA issues.
+
+        window.addEventListener('load', () => {
+            fitAddon.fit();
+        });
 
         window.addEventListener('resize', () => {
             fitAddon.fit();

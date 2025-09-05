@@ -6,12 +6,11 @@ use App\Extensions\Filesystem\S3Filesystem;
 use Aws\S3\S3Client;
 use Illuminate\Http\Response;
 use App\Models\Backup;
-use GuzzleHttp\Exception\ClientException;
 use Illuminate\Database\ConnectionInterface;
 use App\Extensions\Backups\BackupManager;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Exceptions\Service\Backup\BackupLockedException;
-use Illuminate\Http\Client\ConnectionException;
+use Exception;
 
 class DeleteBackupService
 {
@@ -48,12 +47,10 @@ class DeleteBackupService
         $this->connection->transaction(function () use ($backup) {
             try {
                 $this->daemonBackupRepository->setServer($backup->server)->delete($backup);
-            } catch (ConnectionException $exception) {
-                $previous = $exception->getPrevious();
-
+            } catch (Exception $exception) {
                 // Don't fail the request if the Daemon responds with a 404, just assume the backup
                 // doesn't actually exist and remove its reference from the Panel as well.
-                if (!$previous instanceof ClientException || $previous->getResponse()->getStatusCode() !== Response::HTTP_NOT_FOUND) {
+                if ($exception->getCode() !== Response::HTTP_NOT_FOUND) {
                     throw $exception;
                 }
             }

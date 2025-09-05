@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
+use App\Http\Requests\Api\Remote\ServerRequest;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use App\Models\Allocation;
-use App\Models\ServerTransfer;
 use Illuminate\Database\ConnectionInterface;
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -28,14 +28,23 @@ class ServerTransferController extends Controller
      *
      * @throws \Throwable
      */
-    public function failure(Server $server): JsonResponse
+    public function failure(ServerRequest $request, Server $server): JsonResponse
     {
         $transfer = $server->transfer;
         if (is_null($transfer)) {
             throw new ConflictHttpException('Server is not being transferred.');
         }
 
-        return $this->processFailedTransfer($transfer);
+        $this->connection->transaction(function () use ($transfer) {
+            $transfer->forceFill(['successful' => false])->saveOrFail();
+
+            if ($transfer->new_allocation || $transfer->new_additional_allocations) {
+                $allocations = array_merge([$transfer->new_allocation], $transfer->new_additional_allocations);
+                Allocation::query()->whereIn('id', $allocations)->update(['server_id' => null]);
+            }
+        });
+
+        return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -43,24 +52,27 @@ class ServerTransferController extends Controller
      *
      * @throws \Throwable
      */
-    public function success(Server $server): JsonResponse
+    public function success(ServerRequest $request, Server $server): JsonResponse
     {
         $transfer = $server->transfer;
         if (is_null($transfer)) {
             throw new ConflictHttpException('Server is not being transferred.');
         }
 
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = $this->connection->transaction(function () use ($server, $transfer) {
-            $allocations = array_merge([$transfer->old_allocation], $transfer->old_additional_allocations);
+            $data = [];
 
-            // Remove the old allocations for the server and re-assign the server to the new
-            // primary allocation and node.
-            Allocation::query()->whereIn('id', $allocations)->update(['server_id' => null]);
-            $server->update([
-                'allocation_id' => $transfer->new_allocation,
-                'node_id' => $transfer->new_node,
-            ]);
+            if ($transfer->old_allocation || $transfer->old_additional_allocations) {
+                $allocations = array_merge([$transfer->old_allocation], $transfer->old_additional_allocations);
+                // Remove the old allocations for the server and re-assign the server to the new
+                // primary allocation and node.
+                Allocation::query()->whereIn('id', $allocations)->update(['server_id' => null]);
+                $data['allocation_id'] = $transfer->new_allocation;
+            }
+
+            $data['node_id'] = $transfer->new_node;
+            $server->update($data);
 
             $server = $server->fresh();
             $server->transfer->update(['successful' => true]);
@@ -78,24 +90,6 @@ class ServerTransferController extends Controller
         } catch (ConnectionException $exception) {
             logger()->warning($exception, ['transfer_id' => $server->transfer->id]);
         }
-
-        return new JsonResponse([], Response::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * Release all the reserved allocations for this transfer and mark it as failed in
-     * the database.
-     *
-     * @throws \Throwable
-     */
-    protected function processFailedTransfer(ServerTransfer $transfer): JsonResponse
-    {
-        $this->connection->transaction(function () use (&$transfer) {
-            $transfer->forceFill(['successful' => false])->saveOrFail();
-
-            $allocations = array_merge([$transfer->new_allocation], $transfer->new_additional_allocations);
-            Allocation::query()->whereIn('id', $allocations)->update(['server_id' => null]);
-        });
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }

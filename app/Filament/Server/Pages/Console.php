@@ -5,18 +5,20 @@ namespace App\Filament\Server\Pages;
 use App\Enums\ConsoleWidgetPosition;
 use App\Enums\ContainerStatus;
 use App\Exceptions\Http\Server\ServerStateConflictException;
-use App\Extensions\Features\FeatureProvider;
+use App\Extensions\Features\FeatureService;
 use App\Filament\Server\Widgets\ServerConsole;
 use App\Filament\Server\Widgets\ServerCpuChart;
 use App\Filament\Server\Widgets\ServerMemoryChart;
-// use App\Filament\Server\Widgets\ServerNetworkChart;
+use App\Filament\Server\Widgets\ServerNetworkChart;
 use App\Filament\Server\Widgets\ServerOverview;
 use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
+use App\Traits\Filament\CanCustomizeHeaderActions;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Facades\Filament;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Pages\Page;
 use Filament\Support\Enums\ActionSize;
 use Filament\Widgets\Widget;
@@ -25,6 +27,7 @@ use Livewire\Attributes\On;
 
 class Console extends Page
 {
+    use CanCustomizeHeaderActions;
     use InteractsWithActions;
 
     protected static ?string $navigationIcon = 'tabler-brand-tabler';
@@ -34,6 +37,8 @@ class Console extends Page
     protected static string $view = 'filament.server.pages.console';
 
     public ContainerStatus $status = ContainerStatus::Offline;
+
+    protected FeatureService $featureService;
 
     public function mount(): void
     {
@@ -51,12 +56,12 @@ class Console extends Page
         }
     }
 
-    public function boot(): void
+    public function boot(FeatureService $featureService): void
     {
+        $this->featureService = $featureService;
         /** @var Server $server */
         $server = Filament::getTenant();
-        /** @var FeatureProvider $feature */
-        foreach ($server->egg->features() as $feature) {
+        foreach ($featureService->getActiveSchemas($server->egg->features) as $feature) {
             $this->cacheAction($feature->getAction());
         }
     }
@@ -67,8 +72,8 @@ class Console extends Page
         $data = json_decode($data);
         $feature = data_get($data, 'key');
 
-        $feature = FeatureProvider::getProviders($feature);
-        if ($this->getMountedAction()) {
+        $feature = $this->featureService->get($feature);
+        if (!$feature || $this->getMountedAction()) {
             return;
         }
         $this->mountAction($feature->getId());
@@ -112,7 +117,7 @@ class Console extends Page
         $allWidgets = array_merge($allWidgets, [
             ServerCpuChart::class,
             ServerMemoryChart::class,
-            //ServerNetworkChart::class, TODO: convert units.
+            ServerNetworkChart::class,
         ]);
 
         $allWidgets = array_merge($allWidgets, static::$customWidgets[ConsoleWidgetPosition::Bottom->value] ?? []);
@@ -136,8 +141,12 @@ class Console extends Page
     #[On('console-status')]
     public function receivedConsoleUpdate(?string $state = null): void
     {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
         if ($state) {
             $this->status = ContainerStatus::from($state);
+            cache()->put("servers.$server->uuid.status", $this->status, now()->addSeconds(15));
         }
 
         $this->cachedHeaderActions = [];
@@ -145,13 +154,15 @@ class Console extends Page
         $this->cacheHeaderActions();
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         /** @var Server $server */
         $server = Filament::getTenant();
 
         return [
             Action::make('start')
+                ->label(trans('server/console.power_actions.start'))
                 ->color('primary')
                 ->size(ActionSize::ExtraLarge)
                 ->dispatch('setServerState', ['state' => 'start', 'uuid' => $server->uuid])
@@ -159,6 +170,7 @@ class Console extends Page
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isStartable())
                 ->icon('tabler-player-play-filled'),
             Action::make('restart')
+                ->label(trans('server/console.power_actions.restart'))
                 ->color('gray')
                 ->size(ActionSize::ExtraLarge)
                 ->dispatch('setServerState', ['state' => 'restart', 'uuid' => $server->uuid])
@@ -166,6 +178,7 @@ class Console extends Page
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isRestartable())
                 ->icon('tabler-reload'),
             Action::make('stop')
+                ->label(trans('server/console.power_actions.stop'))
                 ->color('danger')
                 ->size(ActionSize::ExtraLarge)
                 ->dispatch('setServerState', ['state' => 'stop', 'uuid' => $server->uuid])
@@ -174,13 +187,24 @@ class Console extends Page
                 ->disabled(fn () => $server->isInConflictState() || !$this->status->isStoppable())
                 ->icon('tabler-player-stop-filled'),
             Action::make('kill')
+                ->label(trans('server/console.power_actions.kill'))
                 ->color('danger')
-                ->tooltip('This can result in data corruption and/or data loss!')
+                ->tooltip(trans('server/console.power_actions.kill_tooltip'))
                 ->size(ActionSize::ExtraLarge)
                 ->dispatch('setServerState', ['state' => 'kill', 'uuid' => $server->uuid])
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->hidden(fn () => $server->isInConflictState() || !$this->status->isKillable())
                 ->icon('tabler-alert-square'),
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return trans('server/console.title');
+    }
+
+    public function getTitle(): string
+    {
+        return trans('server/console.title');
     }
 }

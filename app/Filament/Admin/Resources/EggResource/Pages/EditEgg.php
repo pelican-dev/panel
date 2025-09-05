@@ -4,12 +4,15 @@ namespace App\Filament\Admin\Resources\EggResource\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Filament\Admin\Resources\EggResource;
-use App\Filament\Admin\Resources\EggResource\RelationManagers\ServersRelationManager;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
 use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Models\Egg;
 use App\Models\EggVariable;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
@@ -31,6 +34,9 @@ use Illuminate\Validation\Rules\Unique;
 
 class EditEgg extends EditRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = EggResource::class;
 
     public function form(Form $form): Form
@@ -38,7 +44,8 @@ class EditEgg extends EditRecord
         return $form
             ->schema([
                 Tabs::make()->tabs([
-                    Tab::make(trans('admin/egg.tabs.configuration'))
+                    Tab::make('configuration')
+                        ->label(trans('admin/egg.tabs.configuration'))
                         ->columns(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 4])
                         ->icon('tabler-egg')
                         ->schema([
@@ -109,7 +116,8 @@ class EditEgg extends EditRecord
                                 ->valueLabel(trans('admin/egg.docker_uri'))
                                 ->helperText(trans('admin/egg.docker_help')),
                         ]),
-                    Tab::make(trans('admin/egg.tabs.process_management'))
+                    Tab::make('process_management')
+                        ->label(trans('admin/egg.tabs.process_management'))
                         ->columns()
                         ->icon('tabler-server-cog')
                         ->schema([
@@ -129,7 +137,8 @@ class EditEgg extends EditRecord
                                 ->label(trans('admin/egg.log_config'))
                                 ->helperText(trans('admin/egg.log_config_help')),
                         ]),
-                    Tab::make(trans('admin/egg.tabs.egg_variables'))
+                    Tab::make('egg_variables')
+                        ->label(trans('admin/egg.tabs.egg_variables'))
                         ->columnSpanFull()
                         ->icon('tabler-variable')
                         ->schema([
@@ -190,7 +199,7 @@ class EditEgg extends EditRecord
                                             '*' => trans('admin/egg.error_reserved'),
                                         ])
                                         ->required(),
-                                    TextInput::make('default_value')->label(trans('admin/egg.default_value'))->maxLength(255),
+                                    TextInput::make('default_value')->label(trans('admin/egg.default_value')),
                                     Fieldset::make(trans('admin/egg.user_permissions'))
                                         ->schema([
                                             Checkbox::make('user_viewable')->label(trans('admin/egg.viewable')),
@@ -222,7 +231,8 @@ class EditEgg extends EditRecord
                                         ]),
                                 ]),
                         ]),
-                    Tab::make(trans('admin/egg.tabs.install_script'))
+                    Tab::make('install_script')
+                        ->label(trans('admin/egg.tabs.install_script'))
                         ->columns(3)
                         ->icon('tabler-file-download')
                         ->schema([
@@ -237,7 +247,11 @@ class EditEgg extends EditRecord
                                 ->label(trans('admin/egg.script_entry'))
                                 ->native(false)
                                 ->selectablePlaceholder(false)
-                                ->options(['bash', 'ash', '/bin/bash'])
+                                ->options([
+                                    'bash' => 'bash',
+                                    'ash' => 'ash',
+                                    '/bin/bash' => '/bin/bash',
+                                ])
                                 ->required(),
                             MonacoEditor::make('script_install')
                                 ->label(trans('admin/egg.script_install'))
@@ -251,7 +265,8 @@ class EditEgg extends EditRecord
             ]);
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Action|ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             DeleteAction::make()
@@ -272,12 +287,5 @@ class EditEgg extends EditRecord
     protected function getFormActions(): array
     {
         return [];
-    }
-
-    public function getRelationManagers(): array
-    {
-        return [
-            ServersRelationManager::class,
-        ];
     }
 }

@@ -11,6 +11,8 @@ use App\Models\Filters\MultiFieldServerFilter;
 use App\Transformers\Api\Client\ServerTransformer;
 use App\Http\Requests\Api\Client\GetServersRequest;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 #[Group('Base')]
 class ClientController extends ClientApiController
@@ -36,10 +38,11 @@ class ClientController extends ClientApiController
         $user = $request->user();
         $transformer = $this->getTransformer(ServerTransformer::class);
 
+        /** @var Builder<Model> $query */
+        $query = Server::query()->with($this->getIncludesForTransformer($transformer, ['node']));
+
         // Start the query builder and ensure we eager load any requested relationships from the request.
-        $builder = QueryBuilder::for(
-            Server::query()->with($this->getIncludesForTransformer($transformer, ['node']))
-        )->allowedFilters([
+        $builder = QueryBuilder::for($query)->allowedFilters([
             'uuid',
             'name',
             'description',

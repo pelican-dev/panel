@@ -1,6 +1,7 @@
 {
     "name": "pelican-dev/panel",
     "description": "The free, open-source game management panel. Supporting Minecraft, Spigot, BungeeCord, and SRCDS servers.",
+    "license": "AGPL-3.0-only",
     "require": {
         "php": "^8.2 || ^8.3 || ^8.4",
         "ext-intl": "*",
@@ -9,20 +10,20 @@
         "ext-pdo": "*",
         "ext-zip": "*",
         "abdelhamiderrahmouni/filament-monaco-editor": "^0.2.5",
-        "aws/aws-sdk-php": "^3.342",
+        "aws/aws-sdk-php": "^3.351",
         "calebporzio/sushi": "^2.5",
         "chillerlan/php-qrcode": "^5.0.2",
         "dedoc/scramble": "^0.12.10",
         "doctrine/dbal": "~3.6.0",
         "filament/filament": "^3.3",
         "guzzlehttp/guzzle": "^7.9",
-        "laravel/framework": "^12.10",
+        "laravel/framework": "^12.23",
         "laravel/helpers": "^1.7",
-        "laravel/sanctum": "^4.0.2",
-        "laravel/socialite": "^5.19",
+        "laravel/sanctum": "^4.1",
+        "laravel/socialite": "^5.21",
         "laravel/tinker": "^2.10.1",
         "laravel/ui": "^4.6",
-        "lcobucci/jwt": "~4.3.0",
+        "lcobucci/jwt": "^5.5",
         "league/flysystem-aws-s3-v3": "^3.29",
         "league/flysystem-memory": "^3.29",
         "phpseclib/phpseclib": "~3.0.18",
@@ -33,10 +34,10 @@
         "socialiteproviders/authentik": "^5.2",
         "socialiteproviders/discord": "^4.2",
         "socialiteproviders/steam": "^4.3",
-        "spatie/laravel-data": "^4.14",
+        "spatie/laravel-data": "^4.17",
         "spatie/laravel-fractal": "^6.3",
         "spatie/laravel-health": "^1.34",
-        "spatie/laravel-permission": "^6.16",
+        "spatie/laravel-permission": "^6.20",
         "spatie/laravel-query-builder": "^6.3",
         "spatie/temporary-directory": "^2.3",
         "symfony/http-client": "^7.2",
@@ -47,9 +48,9 @@
         "webmozart/assert": "~1.11.0"
     },
     "require-dev": {
-        "barryvdh/laravel-ide-helper": "^3.5",
+        "barryvdh/laravel-ide-helper": "^3.6",
         "fakerphp/faker": "^1.23.1",
-        "larastan/larastan": "3.x-dev#5bd1c40edb43a727584081e74e9a1a2a201ea2ee",
+        "larastan/larastan": "^3.4",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.15.3",
         "laravel/sail": "^1.41",
@@ -76,18 +77,13 @@
         }
     },
     "scripts": {
-        "cs:fix": "php-cs-fixer fix",
-        "cs:check": "php-cs-fixer fix --dry-run --diff --verbose",
+        "pint": "pint",
         "phpstan": "phpstan --memory-limit=-1",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
         ],
         "post-install-cmd": [
             "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-        ],
-        "dev": [
-            "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
         ]
     },
     "config": {

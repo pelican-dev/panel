@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\ServerResource\Pages;
 
 use App\Filament\Admin\Resources\ServerResource;
+use App\Filament\Components\Forms\Fields\StartupVariable;
 use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
@@ -11,12 +12,11 @@ use App\Services\Allocations\AssignmentService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ServerCreationService;
 use App\Services\Users\UserCreationService;
-use Closure;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
@@ -40,12 +40,14 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\HtmlString;
 use LogicException;
 
 class CreateServer extends CreateRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = ServerResource::class;
 
     protected static bool $canCreateAnother = false;
@@ -109,21 +111,27 @@ class CreateServer extends CreateRecord
                                 ->disabledOn('edit')
                                 ->prefixIcon('tabler-server-2')
                                 ->selectablePlaceholder(false)
-                                ->default(fn () => ($this->node = Node::query()->latest()->first())?->id)
+                                ->default(function () {
+                                    /** @var ?Node $latestNode */
+                                    $latestNode = auth()->user()->accessibleNodes()->latest()->first();
+                                    $this->node = $latestNode;
+
+                                    return $this->node?->id;
+                                })
                                 ->columnSpan([
                                     'default' => 1,
                                     'sm' => 2,
                                     'md' => 2,
                                 ])
                                 ->live()
-                                ->relationship('node', 'name')
+                                ->relationship('node', 'name', fn (Builder $query) => $query->whereIn('id', auth()->user()->accessibleNodes()->pluck('id')))
                                 ->searchable()
+                                ->required()
                                 ->preload()
                                 ->afterStateUpdated(function (Set $set, $state) {
                                     $set('allocation_id', null);
                                     $this->node = Node::find($state);
-                                })
-                                ->required(),
+                                }),
 
                             Select::make('owner_id')
                                 ->preload()
@@ -139,6 +147,7 @@ class CreateServer extends CreateRecord
                                 ->relationship('user', 'username')
                                 ->searchable(['username', 'email'])
                                 ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->username ($user->email)")
+                                ->createOptionAction(fn (Action $action) => $action->authorize(fn () => auth()->user()->can('create', User::class)))
                                 ->createOptionForm([
                                     TextInput::make('username')
                                         ->label(trans('admin/user.username'))
@@ -183,10 +192,7 @@ class CreateServer extends CreateRecord
                                     $set('allocation_additional', null);
                                     $set('allocation_additional.needstobeastringhere.extra_allocations', null);
                                 })
-                                ->getOptionLabelFromRecordUsing(
-                                    fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
-                                        ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
-                                )
+                                ->getOptionLabelFromRecordUsing(fn (Allocation $allocation) => $allocation->address ?? '')
                                 ->placeholder(function (Get $get) {
                                     $node = Node::find($get('node_id'));
 
@@ -203,6 +209,7 @@ class CreateServer extends CreateRecord
                                         ->where('node_id', $get('node_id'))
                                         ->whereNull('server_id'),
                                 )
+                                ->createOptionAction(fn (Action $action) => $action->authorize(fn (Get $get) => auth()->user()->can('create', Node::find($get('node_id')))))
                                 ->createOptionForm(function (Get $get) {
                                     $getPage = $get;
 
@@ -212,7 +219,7 @@ class CreateServer extends CreateRecord
                                             ->label(trans('admin/server.ip_address'))->inlineLabel()
                                             ->helperText(trans('admin/server.ip_address_helper'))
                                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
-                                            ->ipv4()
+                                            ->ip()
                                             ->live()
                                             ->required(),
                                         TextInput::make('allocation_alias')
@@ -239,9 +246,7 @@ class CreateServer extends CreateRecord
                                     return collect(
                                         $assignmentService->handle(Node::find($get('node_id')), $data)
                                     )->first();
-                                })
-                                ->required(),
-
+                                }),
                             Repeater::make('allocation_additional')
                                 ->label(trans('admin/server.additional_allocations'))
                                 ->columnSpan([
@@ -259,14 +264,11 @@ class CreateServer extends CreateRecord
                                         ->preload()
                                         ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                         ->prefixIcon('tabler-network')
-                                        ->label('Additional Allocations')
+                                        ->label(trans('admin/server.additional_allocations'))
                                         ->columnSpan(2)
-                                        ->disabled(fn (Get $get) => $get('../../node_id') === null)
+                                        ->disabled(fn (Get $get) => $get('../../allocation_id') === null || $get('../../node_id') === null)
                                         ->searchable(['ip', 'port', 'ip_alias'])
-                                        ->getOptionLabelFromRecordUsing(
-                                            fn (Allocation $allocation) => "$allocation->ip:$allocation->port" .
-                                                ($allocation->ip_alias ? " ($allocation->ip_alias)" : '')
-                                        )
+                                        ->getOptionLabelFromRecordUsing(fn (Allocation $allocation) => $allocation->address)
                                         ->placeholder(trans('admin/server.select_additional'))
                                         ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                         ->relationship(
@@ -425,7 +427,7 @@ class CreateServer extends CreateRecord
                                         ),
 
                                     Repeater::make('server_variables')
-                                        ->label('')
+                                        ->hiddenLabel()
                                         ->relationship('serverVariables', fn (Builder $query) => $query->orderByPowerJoins('variable.sort'))
                                         ->saveRelationshipsBeforeChildrenUsing(null)
                                         ->saveRelationshipsUsing(null)
@@ -435,49 +437,15 @@ class CreateServer extends CreateRecord
                                         ->deletable(false)
                                         ->default([])
                                         ->hidden(fn ($state) => empty($state))
-                                        ->schema(function () {
-
-                                            $text = TextInput::make('variable_value')
-                                                ->hidden($this->shouldHideComponent(...))
-                                                ->required(fn (Get $get) => in_array('required', $get('rules')))
-                                                ->rules(
-                                                    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                                        $validator = Validator::make(['validatorkey' => $value], [
-                                                            'validatorkey' => $get('rules'),
-                                                        ]);
-
-                                                        if ($validator->fails()) {
-                                                            $message = str($validator->errors()->first())->replace('validatorkey', $get('name'))->toString();
-
-                                                            $fail($message);
-                                                        }
-                                                    },
-                                                );
-
-                                            $select = Select::make('variable_value')
-                                                ->hidden($this->shouldHideComponent(...))
-                                                ->options($this->getSelectOptionsFromRules(...))
-                                                ->selectablePlaceholder(false);
-
-                                            $components = [$text, $select];
-
-                                            foreach ($components as &$component) {
-                                                $component = $component
-                                                    ->live(onBlur: true)
-                                                    ->hintIcon('tabler-code')
-                                                    ->label(fn (Get $get) => $get('name'))
-                                                    ->hintIconTooltip(fn (Get $get) => implode('|', $get('rules')))
-                                                    ->prefix(fn (Get $get) => '{{' . $get('env_variable') . '}}')
-                                                    ->helperText(fn (Get $get) => empty($get('description')) ? '—' : $get('description'))
-                                                    ->afterStateUpdated(function (Set $set, Get $get, $state) {
-                                                        $environment = $get($envPath = '../../environment');
-                                                        $environment[$get('env_variable')] = $state;
-                                                        $set($envPath, $environment);
-                                                    });
-                                            }
-
-                                            return $components;
-                                        })
+                                        ->schema([
+                                            StartupVariable::make('variable_value')
+                                                ->fromForm()
+                                                ->afterStateUpdated(function (Set $set, Get $get, $state) {
+                                                    $environment = $get($envPath = '../../environment');
+                                                    $environment[$get('env_variable')] = $state;
+                                                    $set($envPath, $environment);
+                                                }),
+                                        ])
                                         ->columnSpan(2),
                                 ]),
                         ]),
@@ -744,7 +712,7 @@ class CreateServer extends CreateRecord
                                     'lg' => 4,
                                 ])
                                 ->columnSpan(6)
-                                ->schema([
+                                ->schema(fn (Get $get) => [
                                     Select::make('select_image')
                                         ->label(trans('admin/server.image_name'))
                                         ->live()
@@ -793,19 +761,12 @@ class CreateServer extends CreateRecord
 
                                     KeyValue::make('docker_labels')
                                         ->live()
-                                        ->label('Container Labels')
+                                        ->label(trans('admin/server.container_labels'))
                                         ->keyLabel(trans('admin/server.title'))
                                         ->valueLabel(trans('admin/server.description'))
                                         ->columnSpanFull(),
 
-                                    CheckboxList::make('mounts')
-                                        ->label('Mounts')
-                                        ->live()
-                                        ->relationship('mounts')
-                                        ->options(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]) ?? [])
-                                        ->descriptions(fn () => $this->node?->mounts->mapWithKeys(fn ($mount) => [$mount->id => "$mount->source -> $mount->target"]) ?? [])
-                                        ->helperText(fn () => $this->node?->mounts->isNotEmpty() ? '' : 'No Mounts exist for this Node')
-                                        ->columnSpanFull(),
+                                    ServerResource::getMountCheckboxList($get),
                                 ]),
                         ]),
                 ])
@@ -816,7 +777,7 @@ class CreateServer extends CreateRecord
                                                 type="submit"
                                                 size="sm"
                                             >
-                                                Create Server
+                                                {{ trans('admin/server.create') }}
                                             </x-filament::button>
                                         BLADE))),
             ]);
@@ -834,7 +795,9 @@ class CreateServer extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $data['allocation_additional'] = collect($data['allocation_additional'])->filter()->all();
+        if ($allocation_additional = array_get($data, 'allocation_additional')) {
+            $data['allocation_additional'] = collect($allocation_additional)->filter()->all();
+        }
 
         try {
             return $this->serverCreationService->handle($data);
@@ -848,40 +811,6 @@ class CreateServer extends CreateRecord
 
             throw new Halt();
         }
-    }
-
-    private function shouldHideComponent(Get $get, Component $component): bool
-    {
-        $containsRuleIn = collect($get('rules'))->reduce(
-            fn ($result, $value) => $result === true && !str($value)->startsWith('in:'), true
-        );
-
-        if ($component instanceof Select) {
-            return $containsRuleIn;
-        }
-
-        if ($component instanceof TextInput) {
-            return !$containsRuleIn;
-        }
-
-        throw new Exception('Component type not supported: ' . $component::class);
-    }
-
-    /**
-     * @return array<array-key, string>
-     */
-    private function getSelectOptionsFromRules(Get $get): array
-    {
-        $inRule = collect($get('rules'))->reduce(
-            fn ($result, $value) => str($value)->startsWith('in:') ? $value : $result, ''
-        );
-
-        return str($inRule)
-            ->after('in:')
-            ->explode(',')
-            ->each(fn ($value) => str($value)->trim())
-            ->mapWithKeys(fn ($value) => [$value => $value])
-            ->all();
     }
 
     /**

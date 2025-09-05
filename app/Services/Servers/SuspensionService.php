@@ -30,14 +30,14 @@ class SuspensionService
         // suspended in the database. Additionally, nothing needs to happen if the server
         // is not suspended, and we try to un-suspend the instance.
         if ($isSuspending === $server->isSuspended()) {
-            Notification::make()->danger()->title('Failed!')->body('Server is already suspended!')->send();
+            Notification::make()->danger()->title(trans('notifications.failed'))->body(trans('admin/server.notifications.server_already_suspended'))->send();
 
             return;
         }
 
         // Check if the server is currently being transferred.
         if (!is_null($server->transfer)) {
-            Notification::make()->danger()->title('Failed!')->body('Server is currently being transferred.')->send();
+            Notification::make()->danger()->title(trans('notifications.failed'))->body(trans('admin/server.notifications.already_transfering'))->send();
             throw new ConflictHttpException('Cannot toggle suspension status on a server that is currently being transferred.');
         }
 

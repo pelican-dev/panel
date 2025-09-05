@@ -12,6 +12,8 @@ use App\Livewire\AlertBanner;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
@@ -26,6 +28,8 @@ use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
@@ -35,6 +39,8 @@ use Livewire\Attributes\Locked;
  */
 class EditFiles extends Page
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
     use InteractsWithFormActions;
     use InteractsWithForms;
 
@@ -63,10 +69,10 @@ class EditFiles extends Page
 
         return $form
             ->schema([
-                Section::make('Editing: ' . $this->path)
+                Section::make(trans('server/file.actions.edit.title', ['file' => $this->path]))
                     ->footerActions([
                         Action::make('save_and_close')
-                            ->label('Save & Close')
+                            ->label(trans('server/file.actions.edit.save_close'))
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+shift+s')
@@ -79,14 +85,14 @@ class EditFiles extends Page
 
                                 Notification::make()
                                     ->success()
-                                    ->title('File saved')
+                                    ->title(trans('server/file.actions.edit.notification'))
                                     ->body(fn () => $this->path)
                                     ->send();
 
                                 $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                             }),
                         Action::make('save')
-                            ->label('Save')
+                            ->label(trans('server/file.actions.edit.save'))
                             ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
@@ -99,12 +105,12 @@ class EditFiles extends Page
 
                                 Notification::make()
                                     ->success()
-                                    ->title('File saved')
+                                    ->title(trans('server/file.actions.edit.notification'))
                                     ->body(fn () => $this->path)
                                     ->send();
                             }),
                         Action::make('cancel')
-                            ->label('Cancel')
+                            ->label(trans('server/file.actions.edit.cancel'))
                             ->color('danger')
                             ->icon('tabler-x')
                             ->url(fn () => ListFiles::getUrl(['path' => dirname($this->path)])),
@@ -112,7 +118,7 @@ class EditFiles extends Page
                     ->footerActionsAlignment(Alignment::End)
                     ->schema([
                         Select::make('lang')
-                            ->label('Syntax Highlighting')
+                            ->label(trans('server/file.actions.new_file.syntax'))
                             ->searchable()
                             ->native(false)
                             ->live()
@@ -127,32 +133,34 @@ class EditFiles extends Page
                                 try {
                                     return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
                                 } catch (FileSizeTooLargeException) {
-                                    AlertBanner::make()
-                                        ->title('File too large!')
-                                        ->body('<code>' . $this->path . '</code> Max is ' . convert_bytes_to_readable(config('panel.files.max_edit_size')))
+                                    AlertBanner::make('file_too_large')
+                                        ->title(trans('server/file.alerts.file_too_large.title', ['name' => basename($this->path)]))
+                                        ->body(trans('server/file.alerts.file_too_large.body', ['max' => convert_bytes_to_readable(config('panel.files.max_edit_size'))]))
                                         ->danger()
                                         ->closable()
                                         ->send();
 
-                                    $this->redirect(ListFiles::getUrl());
+                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 } catch (FileNotFoundException) {
-                                    AlertBanner::make()
-                                        ->title('File Not found!')
-                                        ->body('<code>' . $this->path . '</code>')
+                                    AlertBanner::make('file_not_found')
+                                        ->title(trans('server/file.alerts.file_not_found.title', ['name' => basename($this->path)]))
                                         ->danger()
                                         ->closable()
                                         ->send();
 
-                                    $this->redirect(ListFiles::getUrl());
+                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 } catch (FileNotEditableException) {
-                                    AlertBanner::make()
-                                        ->title('Could not edit directory!')
-                                        ->body('<code>' . $this->path . '</code>')
+                                    AlertBanner::make('file_is_directory')
+                                        ->title(trans('server/file.alerts.file_not_found.title', ['name' => basename($this->path)]))
                                         ->danger()
                                         ->closable()
                                         ->send();
 
-                                    $this->redirect(ListFiles::getUrl());
+                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                } catch (ConnectionException) {
+                                    // Alert banner for this one will be handled by ListFiles
+
+                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
                                 }
                             })
                             ->language(fn (Get $get) => $get('lang'))
@@ -171,8 +179,8 @@ class EditFiles extends Page
 
         if (str($path)->endsWith('.pelicanignore')) {
             AlertBanner::make('.pelicanignore_info')
-                ->title('You\'re editing a <code>.pelicanignore</code> file!')
-                ->body('Any files or directories listed in here will be excluded from backups. Wildcards are supported by using an asterisk (<code>*</code>).<br>You can negate a prior rule by prepending an exclamation point (<code>!</code>).')
+                ->title(trans('server/file.alerts.pelicanignore.title'))
+                ->body(trans('server/file.alerts.pelicanignore.body'))
                 ->info()
                 ->closable()
                 ->send();
@@ -228,6 +236,14 @@ class EditFiles extends Page
         $this->fileRepository ??= (new DaemonFileRepository())->setServer($server);
 
         return $this->fileRepository;
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
+    {
+        return parent::getUrl($parameters, $isAbsolute, $panel, $tenant) . '/';
     }
 
     public static function route(string $path): PageRegistration

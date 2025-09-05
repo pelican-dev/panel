@@ -18,6 +18,20 @@ if (!function_exists('is_ip')) {
     }
 }
 
+if (!function_exists('is_ipv4')) {
+    function is_ipv4(?string $address): bool
+    {
+        return $address !== null && filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false;
+    }
+}
+
+if (!function_exists('is_ipv6')) {
+    function is_ipv6(?string $address): bool
+    {
+        return $address !== null && filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false;
+    }
+}
+
 if (!function_exists('convert_bytes_to_readable')) {
     function convert_bytes_to_readable(int $bytes, int $decimals = 2, ?int $base = null): string
     {
@@ -31,7 +45,7 @@ if (!function_exists('convert_bytes_to_readable')) {
         $fromBase = log($bytes) / log($conversionUnit);
         $base ??= floor($fromBase);
 
-        return Number::format(pow($conversionUnit, $fromBase - $base), $decimals, locale: auth()->user()->language) . ' ' . $suffix[$base];
+        return format_number(pow($conversionUnit, $fromBase - $base), precision: $decimals) . ' ' . $suffix[$base];
     }
 }
 
@@ -65,5 +79,41 @@ if (!function_exists('resolve_path')) {
         }
 
         return implode('/', $absolutes);
+    }
+}
+
+if (!function_exists('get_ip_from_hostname')) {
+    function get_ip_from_hostname(string $hostname): string|bool
+    {
+        $validARecords = @dns_get_record($hostname, DNS_A);
+        if ($validARecords) {
+            return collect($validARecords)->first()['ip'];
+        }
+
+        $validAAAARecords = @dns_get_record($hostname, DNS_AAAA);
+        if ($validAAAARecords) {
+            return collect($validAAAARecords)->first()['ipv6'];
+        }
+
+        return false;
+    }
+}
+
+if (!function_exists('format_number')) {
+    function format_number(int|float $number, ?int $precision = null, ?int $maxPrecision = null): false|string
+    {
+        try {
+            return Number::format($number, $precision, $maxPrecision, auth()->user()->language ?? 'en');
+        } catch (Throwable) {
+            // User language is invalid, so default to english
+            return Number::format($number, $precision, $maxPrecision, 'en');
+        }
+    }
+}
+
+if (!function_exists('encode_path')) {
+    function encode_path(string $path): string
+    {
+        return implode('/', array_map('rawurlencode', explode('/', $path)));
     }
 }

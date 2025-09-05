@@ -30,7 +30,7 @@ class AccountCreated extends Notification implements ShouldQueue
             ->line('Email: ' . $notifiable->email);
 
         if (!is_null($this->token)) {
-            return $message->action('Setup Your Account', Filament::getResetPasswordUrl($this->token, $notifiable));
+            return $message->action('Setup Your Account', Filament::getPanel('app')->getResetPasswordUrl($this->token, $notifiable));
         }
 
         return $message;

@@ -1,0 +1,97 @@
+_comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
+meta:
+  version: PLCN_v2
+  update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/minecraft/egg-vanilla-minecraft.yaml'
+exported_at: '2025-08-05T20:59:51+00:00'
+name: 'Vanilla Minecraft'
+author: panel@example.com
+uuid: 9ac39f3d-0c34-4d93-8174-c52ab9e6c57b
+description: |-
+  Minecraft is a game about placing blocks and going on adventures. Explore randomly generated worlds
+  and build amazing things from the simplest of homes to the grandest of castles. Play in Creative
+  Mode with unlimited resources or mine deep in Survival Mode, crafting weapons and armor to fend off
+  dangerous mobs. Do all this alone or with friends.
+tags:
+  - minecraft
+features:
+  - eula
+  - java_version
+  - pid_limit
+docker_images:
+  'Java 21': 'ghcr.io/parkervcp/yolks:java_21'
+  'Java 17': 'ghcr.io/parkervcp/yolks:java_17'
+  'Java 16': 'ghcr.io/parkervcp/yolks:java_16'
+  'Java 11': 'ghcr.io/parkervcp/yolks:java_11'
+  'Java 8': 'ghcr.io/parkervcp/yolks:java_8'
+file_denylist: {  }
+startup: 'java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}'
+config:
+  files:
+    server.properties:
+      parser: properties
+      find:
+        server-ip: ''
+        server-port: '{{server.allocations.default.port}}'
+        query.port: '{{server.allocations.default.port}}'
+  startup:
+    done: ')! For help, type '
+  logs: {  }
+  stop: stop
+scripts:
+  installation:
+    script: |-
+      #!/bin/ash
+      # Vanilla MC Installation Script
+      #
+      # Server Files: /mnt/server
+      mkdir -p /mnt/server
+      cd /mnt/server
+
+      LATEST_VERSION=`curl https://launchermeta.mojang.com/mc/game/version_manifest.json | jq -r '.latest.release'`
+      LATEST_SNAPSHOT_VERSION=`curl https://launchermeta.mojang.com/mc/game/version_manifest.json | jq -r '.latest.snapshot'`
+
+      echo -e "latest version is $LATEST_VERSION"
+      echo -e "latest snapshot is $LATEST_SNAPSHOT_VERSION"
+
+      if [ -z "$VANILLA_VERSION" ] || [ "$VANILLA_VERSION" == "latest" ]; then
+        MANIFEST_URL=$(curl -sSL https://launchermeta.mojang.com/mc/game/version_manifest.json | jq --arg VERSION $LATEST_VERSION -r '.versions | .[] | select(.id== $VERSION )|.url')
+      elif [ "$VANILLA_VERSION" == "snapshot" ]; then
+        MANIFEST_URL=$(curl -sSL https://launchermeta.mojang.com/mc/game/version_manifest.json | jq --arg VERSION $LATEST_SNAPSHOT_VERSION -r '.versions | .[] | select(.id== $VERSION )|.url')
+      else
+        MANIFEST_URL=$(curl -sSL https://launchermeta.mojang.com/mc/game/version_manifest.json | jq --arg VERSION $VANILLA_VERSION -r '.versions | .[] | select(.id== $VERSION )|.url')
+      fi
+
+      DOWNLOAD_URL=$(curl ${MANIFEST_URL} | jq .downloads.server | jq -r '. | .url')
+
+      echo -e "running: curl -o ${SERVER_JARFILE} $DOWNLOAD_URL"
+      curl -o ${SERVER_JARFILE} $DOWNLOAD_URL
+
+      echo -e "Install Complete"
+    container: 'ghcr.io/parkervcp/installers:alpine'
+    entrypoint: ash
+variables:
+  -
+    name: 'Server Jar File'
+    description: 'The name of the server jarfile to run the server with.'
+    env_variable: SERVER_JARFILE
+    default_value: server.jar
+    user_viewable: true
+    user_editable: true
+    rules:
+      - required
+      - 'regex:/^([\w\d._-]+)(\.jar)$/'
+    sort: 1
+  -
+    name: 'Server Version'
+    description: |-
+      The version of Minecraft Vanilla to install. Use "latest" to install the latest version, or use
+      "snapshot" to install the latest snapshot. Go to Settings > Reinstall Server to apply.
+    env_variable: VANILLA_VERSION
+    default_value: latest
+    user_viewable: true
+    user_editable: true
+    rules:
+      - required
+      - string
+      - 'between:3,15'
+    sort: 2

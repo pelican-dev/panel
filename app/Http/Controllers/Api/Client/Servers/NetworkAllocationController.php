@@ -62,7 +62,7 @@ class NetworkAllocationController extends ClientApiController
         if ($original !== $allocation->notes) {
             Activity::event('server:allocation.notes')
                 ->subject($allocation)
-                ->property(['allocation' => $allocation->toString(), 'old' => $original, 'new' => $allocation->notes])
+                ->property(['allocation' => $allocation->address, 'old' => $original, 'new' => $allocation->notes])
                 ->log();
         }
 
@@ -87,7 +87,7 @@ class NetworkAllocationController extends ClientApiController
 
         Activity::event('server:allocation.primary')
             ->subject($allocation)
-            ->property('allocation', $allocation->toString())
+            ->property('allocation', $allocation->address)
             ->log();
 
         return $this->fractal->item($allocation)
@@ -114,7 +114,7 @@ class NetworkAllocationController extends ClientApiController
 
         Activity::event('server:allocation.create')
             ->subject($allocation)
-            ->property('allocation', $allocation->toString())
+            ->property('allocation', $allocation->address)
             ->log();
 
         return $this->fractal->item($allocation)
@@ -137,10 +137,6 @@ class NetworkAllocationController extends ClientApiController
             throw new DisplayException('You cannot delete allocations for this server: no allocation limit is set.');
         }
 
-        if ($allocation->id === $server->allocation_id) {
-            throw new DisplayException('You cannot delete the primary allocation for this server.');
-        }
-
         Allocation::query()->where('id', $allocation->id)->update([
             'notes' => null,
             'server_id' => null,
@@ -148,7 +144,7 @@ class NetworkAllocationController extends ClientApiController
 
         Activity::event('server:allocation.delete')
             ->subject($allocation)
-            ->property('allocation', $allocation->toString())
+            ->property('allocation', $allocation->address)
             ->log();
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);

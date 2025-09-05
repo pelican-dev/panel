@@ -138,15 +138,7 @@ class SubuserController extends ClientApiController
      */
     protected function getDefaultPermissions(Request $request): array
     {
-        $allowed = Permission::permissions()
-            ->map(function ($value, $prefix) {
-                return array_map(function ($value) use ($prefix) {
-                    return "$prefix.$value";
-                }, array_keys($value['keys']));
-            })
-            ->flatten()
-            ->all();
-
+        $allowed = Permission::permissionKeys()->all();
         $cleaned = array_intersect($request->input('permissions') ?? [], $allowed);
 
         return array_unique(array_merge($cleaned, [Permission::ACTION_WEBSOCKET_CONNECT]));

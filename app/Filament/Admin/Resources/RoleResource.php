@@ -4,15 +4,21 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\RoleResource\Pages;
 use App\Models\Role;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -25,6 +31,11 @@ use Spatie\Permission\Contracts\Permission;
 
 class RoleResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
+
     protected static ?string $model = Role::class;
 
     protected static ?string $navigationIcon = 'tabler-users-group';
@@ -48,7 +59,7 @@ class RoleResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return config('panel.filament.top-navigation', false) ? trans('admin/dashboard.advanced') : trans('admin/dashboard.user');
+        return !empty(auth()->user()->getCustomization()['top_navigation']) ? trans('admin/dashboard.advanced') : trans('admin/dashboard.user');
     }
 
     public static function getNavigationBadge(): ?string
@@ -56,7 +67,7 @@ class RoleResource extends Resource
         return static::getModel()::count() ?: null;
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([
@@ -69,6 +80,11 @@ class RoleResource extends Resource
                     ->badge()
                     ->counts('permissions')
                     ->formatStateUsing(fn (Role $role, $state) => $role->isRootAdmin() ? trans('admin/role.all') : $state),
+                TextColumn::make('nodes.name')
+                    ->icon('tabler-server-2')
+                    ->label(trans('admin/role.nodes'))
+                    ->badge()
+                    ->placeholder(trans('admin/role.all')),
                 TextColumn::make('users_count')
                     ->label(trans('admin/role.users'))
                     ->counts('users')
@@ -91,7 +107,7 @@ class RoleResource extends Resource
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         $permissionSections = [];
 
@@ -113,7 +129,6 @@ class RoleResource extends Resource
                     ->required()
                     ->disabled(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
                 TextInput::make('guard_name')
-                    ->label('Guard Name')
                     ->default(Role::DEFAULT_GUARD_NAME)
                     ->nullable()
                     ->hidden(),
@@ -125,6 +140,14 @@ class RoleResource extends Resource
                     ->label(trans('admin/role.permissions'))
                     ->content(trans('admin/role.root_admin', ['role' => Role::ROOT_ADMIN]))
                     ->visible(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
+                Select::make('nodes')
+                    ->label(trans('admin/role.nodes'))
+                    ->multiple()
+                    ->relationship('nodes', 'name')
+                    ->searchable(['name', 'fqdn'])
+                    ->preload()
+                    ->hint(trans('admin/role.nodes_hint'))
+                    ->hidden(fn (Get $get) => $get('name') === Role::ROOT_ADMIN),
             ]);
     }
 
@@ -133,6 +156,8 @@ class RoleResource extends Resource
      */
     private static function makeSection(string $model, array $options): Section
     {
+        $model = ucwords($model);
+
         $icon = null;
 
         if (class_exists('\App\Filament\Admin\Resources\\' . $model . 'Resource')) {
@@ -184,7 +209,8 @@ class RoleResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListRoles::route('/'),

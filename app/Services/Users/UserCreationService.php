@@ -3,19 +3,21 @@
 namespace App\Services\Users;
 
 use App\Models\Role;
+use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use App\Models\User;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Contracts\Auth\PasswordBroker;
 use App\Notifications\AccountCreated;
+use Filament\Facades\Filament;
+use Illuminate\Auth\Passwords\PasswordBroker;
+use Illuminate\Support\Facades\Password;
 
 class UserCreationService
 {
     public function __construct(
         private readonly ConnectionInterface $connection,
         private readonly Hasher $hasher,
-        private readonly PasswordBroker $passwordBroker,
     ) {}
 
     /**
@@ -41,6 +43,16 @@ class UserCreationService
         $isRootAdmin = array_key_exists('root_admin', $data) && $data['root_admin'];
         unset($data['root_admin']);
 
+        if (empty($data['username'])) {
+            $data['username'] = str($data['email'])->before('@')->toString() . Str::random(3);
+        }
+
+        $data['username'] = str($data['username'])
+            ->replace(['.', '-'], '')
+            ->ascii()
+            ->substr(0, 64)
+            ->toString();
+
         /** @var User $user */
         $user = User::query()->forceCreate(array_merge($data, [
             'uuid' => Uuid::uuid4()->toString(),
@@ -51,7 +63,9 @@ class UserCreationService
         }
 
         if (isset($generateResetToken)) {
-            $token = $this->passwordBroker->createToken($user);
+            /** @var PasswordBroker $broker */
+            $broker = Password::broker(Filament::getPanel('app')->getAuthPasswordBroker());
+            $token = $broker->createToken($user);
         }
 
         $this->connection->commit();

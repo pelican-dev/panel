@@ -18,26 +18,7 @@ class StoreNodeRequest extends ApplicationApiRequest
      */
     public function rules(?array $rules = null): array
     {
-        return collect($rules ?? Node::getRules())->only([
-            'public',
-            'name',
-            'description',
-            'fqdn',
-            'scheme',
-            'behind_proxy',
-            'maintenance_mode',
-            'memory',
-            'memory_overallocate',
-            'disk',
-            'disk_overallocate',
-            'cpu',
-            'cpu_overallocate',
-            'upload_size',
-            'daemon_listen',
-            'daemon_sftp',
-            'daemon_sftp_alias',
-            'daemon_base',
-        ])->mapWithKeys(function ($value, $key) {
+        return collect($rules ?? Node::getRules())->mapWithKeys(function ($value, $key) {
             return [snake_case($key) => $value];
         })->toArray();
     }

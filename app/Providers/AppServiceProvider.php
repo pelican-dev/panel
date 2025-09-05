@@ -10,21 +10,7 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
-use App\Extensions\Avatar\Providers\GravatarProvider;
-use App\Extensions\Avatar\Providers\UiAvatarsProvider;
-use App\Extensions\OAuth\Providers\GitlabProvider;
 use App\Models;
-use App\Extensions\Captcha\Providers\TurnstileProvider;
-use App\Extensions\Features\GSLToken;
-use App\Extensions\Features\JavaVersion;
-use App\Extensions\Features\MinecraftEula;
-use App\Extensions\Features\PIDLimit;
-use App\Extensions\Features\SteamDiskSpace;
-use App\Extensions\OAuth\Providers\AuthentikProvider;
-use App\Extensions\OAuth\Providers\CommonProvider;
-use App\Extensions\OAuth\Providers\DiscordProvider;
-use App\Extensions\OAuth\Providers\GithubProvider;
-use App\Extensions\OAuth\Providers\SteamProvider;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
@@ -81,6 +67,7 @@ class AppServiceProvider extends ServiceProvider
             'ssh_key' => Models\UserSSHKey::class,
             'task' => Models\Task::class,
             'user' => Models\User::class,
+            'node' => Models\Node::class,
         ]);
 
         Http::macro(
@@ -103,35 +90,6 @@ class AppServiceProvider extends ServiceProvider
         Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
 
-        // Default OAuth providers included with Socialite
-        CommonProvider::register($app, 'facebook', null, 'tabler-brand-facebook-f', '#1877f2');
-        CommonProvider::register($app, 'x', null, 'tabler-brand-x-f', '#1da1f2');
-        CommonProvider::register($app, 'linkedin', null, 'tabler-brand-linkedin-f', '#0a66c2');
-        CommonProvider::register($app, 'google', null, 'tabler-brand-google-f', '#4285f4');
-        GithubProvider::register($app);
-        GitlabProvider::register($app);
-        CommonProvider::register($app, 'bitbucket', null, 'tabler-brand-bitbucket-f', '#205081');
-        CommonProvider::register($app, 'slack', null, 'tabler-brand-slack', '#6ecadc');
-
-        // Additional OAuth providers from socialiteproviders.com
-        AuthentikProvider::register($app);
-        DiscordProvider::register($app);
-        SteamProvider::register($app);
-
-        // Default Captcha provider
-        TurnstileProvider::register($app);
-
-        // Default Avatar providers
-        GravatarProvider::register();
-        UiAvatarsProvider::register();
-
-        // Default Feature providers
-        GSLToken::register($app);
-        JavaVersion::register($app);
-        MinecraftEula::register($app);
-        PIDLimit::register($app);
-        SteamDiskSpace::register($app);
-
         FilamentColor::register([
             'danger' => Color::Red,
             'gray' => Color::Zinc,
@@ -139,12 +97,8 @@ class AppServiceProvider extends ServiceProvider
             'primary' => Color::Blue,
             'success' => Color::Green,
             'warning' => Color::Amber,
+            'blurple' => Color::hex('#5865F2'),
         ]);
-
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::HEAD_START,
-            fn () => Blade::render('filament.layouts.header')
-        );
 
         FilamentView::registerRenderHook(
             PanelsRenderHook::PAGE_START,
@@ -152,13 +106,18 @@ class AppServiceProvider extends ServiceProvider
         );
 
         FilamentView::registerRenderHook(
-            PanelsRenderHook::BODY_END,
-            fn () => Blade::render('filament.layouts.body-end'),
+            PanelsRenderHook::FOOTER,
+            fn () => Blade::render('filament.layouts.footer'),
         );
 
         FilamentView::registerRenderHook(
-            PanelsRenderHook::FOOTER,
-            fn () => Blade::render('filament.layouts.footer'),
+            PanelsRenderHook::STYLES_BEFORE,
+            fn () => Blade::render("@vite(['resources/css/app.css'])")
+        );
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::SCRIPTS_AFTER,
+            fn () => Blade::render("@vite(['resources/js/app.js'])"),
         );
 
         on('dehydrate', function (Component $component) {

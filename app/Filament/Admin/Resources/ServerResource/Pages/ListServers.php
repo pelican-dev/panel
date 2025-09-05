@@ -5,6 +5,8 @@ namespace App\Filament\Admin\Resources\ServerResource\Pages;
 use App\Filament\Server\Pages\Console;
 use App\Filament\Admin\Resources\ServerResource;
 use App\Models\Server;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\Action;
@@ -17,6 +19,9 @@ use Filament\Tables\Table;
 
 class ListServers extends ListRecords
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
+
     protected static string $resource = ServerResource::class;
 
     public function table(Table $table): Table
@@ -68,14 +73,17 @@ class ListServers extends ListRecords
                     ->searchable(),
                 SelectColumn::make('allocation_id')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->hidden(!auth()->user()->can('update server'))
+                    ->hidden(fn () => !auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
+                    ->disabled(fn (Server $server) => $server->allocations->count() <= 1)
                     ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
-                    ->selectablePlaceholder(false)
+                    ->selectablePlaceholder(fn (Server $server) => $server->allocations->count() <= 1)
+                    ->placeholder('None')
                     ->sortable(),
                 TextColumn::make('allocation_id_readonly')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->hidden(auth()->user()->can('update server'))
-                    ->state(fn (Server $server) => $server->allocation->address),
+                    ->hidden(fn () => auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
+                    ->disabled(fn (Server $server) => $server->allocations->count() <= 1)
+                    ->state(fn (Server $server) => $server->allocation->address ?? 'None'),
                 TextColumn::make('image')->hidden(),
                 TextColumn::make('backups_count')
                     ->counts('backups')
@@ -101,7 +109,8 @@ class ListServers extends ListRecords
             ]);
     }
 
-    protected function getHeaderActions(): array
+    /** @return array<Actions\Action|Actions\ActionGroup> */
+    protected function getDefaultHeaderActions(): array
     {
         return [
             Actions\CreateAction::make()

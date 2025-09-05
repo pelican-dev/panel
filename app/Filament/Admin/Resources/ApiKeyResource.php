@@ -6,11 +6,16 @@ use App\Filament\Admin\Resources\ApiKeyResource\Pages;
 use App\Filament\Admin\Resources\UserResource\Pages\EditUser;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\ApiKey;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use App\Traits\Filament\CanModifyForm;
+use App\Traits\Filament\CanModifyTable;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
@@ -20,6 +25,11 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ApiKeyResource extends Resource
 {
+    use CanCustomizePages;
+    use CanCustomizeRelations;
+    use CanModifyForm;
+    use CanModifyTable;
+
     protected static ?string $model = ApiKey::class;
 
     protected static ?string $navigationIcon = 'tabler-key';
@@ -56,7 +66,7 @@ class ApiKeyResource extends Resource
         return trans('admin/dashboard.advanced');
     }
 
-    public static function table(Table $table): Table
+    public static function defaultTable(Table $table): Table
     {
         return $table
             ->columns([
@@ -79,20 +89,20 @@ class ApiKeyResource extends Resource
                 TextColumn::make('user.username')
                     ->label(trans('admin/apikey.table.created_by'))
                     ->icon('tabler-user')
-                    ->url(fn (ApiKey $apiKey) => auth()->user()->can('update user', $apiKey->user) ? EditUser::getUrl(['record' => $apiKey->user]) : null),
+                    ->url(fn (ApiKey $apiKey) => auth()->user()->can('update', $apiKey->user) ? EditUser::getUrl(['record' => $apiKey->user]) : null),
             ])
             ->actions([
                 DeleteAction::make(),
             ])
             ->emptyStateIcon('tabler-key')
             ->emptyStateDescription('')
-            ->emptyStateHeading(trans('admin/apikey.empty_table'))
+            ->emptyStateHeading(trans('admin/apikey.empty'))
             ->emptyStateActions([
                 CreateAction::make(),
             ]);
     }
 
-    public static function form(Form $form): Form
+    public static function defaultForm(Form $form): Form
     {
         return $form
             ->schema([
@@ -142,7 +152,8 @@ class ApiKeyResource extends Resource
             ]);
     }
 
-    public static function getPages(): array
+    /** @return array<string, PageRegistration> */
+    public static function getDefaultPages(): array
     {
         return [
             'index' => Pages\ListApiKeys::route('/'),

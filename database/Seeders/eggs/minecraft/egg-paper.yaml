@@ -1,0 +1,142 @@
+_comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
+meta:
+  version: PLCN_v2
+  update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/minecraft/egg-paper.yaml'
+exported_at: '2025-08-05T21:00:17+00:00'
+name: Paper
+author: parker@example.com
+uuid: 5da37ef6-58da-4169-90a6-e683e1721247
+description: 'High performance Spigot fork that aims to fix gameplay and mechanics inconsistencies.'
+tags:
+  - minecraft
+features:
+  - eula
+  - java_version
+  - pid_limit
+docker_images:
+  'Java 21': 'ghcr.io/parkervcp/yolks:java_21'
+  'Java 17': 'ghcr.io/parkervcp/yolks:java_17'
+  'Java 16': 'ghcr.io/parkervcp/yolks:java_16'
+  'Java 11': 'ghcr.io/parkervcp/yolks:java_11'
+  'Java 8': 'ghcr.io/parkervcp/yolks:java_8'
+file_denylist: {  }
+startup: 'java -Xms128M -XX:MaxRAMPercentage=95.0 -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}}'
+config:
+  files:
+    server.properties:
+      parser: properties
+      find:
+        server-ip: ''
+        server-port: '{{server.allocations.default.port}}'
+        query.port: '{{server.allocations.default.port}}'
+  startup:
+    done: ')! For help, type '
+  logs: {  }
+  stop: stop
+scripts:
+  installation:
+    script: |-
+      #!/bin/ash
+      # Paper Installation Script
+      #
+      # Server Files: /mnt/server
+      PROJECT=paper
+
+      if [ -n "${DL_PATH}" ]; then
+      	echo -e "Using supplied download url: ${DL_PATH}"
+      	DOWNLOAD_URL=`eval echo $(echo ${DL_PATH} | sed -e 's/{{/${/g' -e 's/}}/}/g')`
+      else
+      	VER_EXISTS=`curl -s https://api.papermc.io/v2/projects/${PROJECT} | jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep -m1 true`
+      	LATEST_VERSION=`curl -s https://api.papermc.io/v2/projects/${PROJECT} | jq -r '.versions' | jq -r '.[-1]'`
+
+      	if [ "${VER_EXISTS}" == "true" ]; then
+      		echo -e "Version is valid. Using version ${MINECRAFT_VERSION}"
+      	else
+      		echo -e "Specified version not found. Defaulting to the latest ${PROJECT} version"
+      		MINECRAFT_VERSION=${LATEST_VERSION}
+      	fi
+
+      	BUILD_EXISTS=`curl -s https://api.papermc.io/v2/projects/${PROJECT}/versions/${MINECRAFT_VERSION} | jq -r --arg BUILD ${BUILD_NUMBER} '.builds[] | tostring | contains($BUILD)' | grep -m1 true`
+      	LATEST_BUILD=`curl -s https://api.papermc.io/v2/projects/${PROJECT}/versions/${MINECRAFT_VERSION} | jq -r '.builds' | jq -r '.[-1]'`
+
+      	if [ "${BUILD_EXISTS}" == "true" ]; then
+      		echo -e "Build is valid for version ${MINECRAFT_VERSION}. Using build ${BUILD_NUMBER}"
+      	else
+      		echo -e "Using the latest ${PROJECT} build for version ${MINECRAFT_VERSION}"
+      		BUILD_NUMBER=${LATEST_BUILD}
+      	fi
+
+      	JAR_NAME=${PROJECT}-${MINECRAFT_VERSION}-${BUILD_NUMBER}.jar
+
+      	echo "Version being downloaded"
+      	echo -e "MC Version: ${MINECRAFT_VERSION}"
+      	echo -e "Build: ${BUILD_NUMBER}"
+      	echo -e "JAR Name of Build: ${JAR_NAME}"
+      	DOWNLOAD_URL=https://api.papermc.io/v2/projects/${PROJECT}/versions/${MINECRAFT_VERSION}/builds/${BUILD_NUMBER}/downloads/${JAR_NAME}
+      fi
+
+      cd /mnt/server
+
+      echo -e "Running curl -o ${SERVER_JARFILE} ${DOWNLOAD_URL}"
+
+      if [ -f ${SERVER_JARFILE} ]; then
+      	mv ${SERVER_JARFILE} ${SERVER_JARFILE}.old
+      fi
+
+      curl -o ${SERVER_JARFILE} ${DOWNLOAD_URL}
+
+      if [ ! -f server.properties ]; then
+          echo -e "Downloading MC server.properties"
+          curl -o server.properties https://raw.githubusercontent.com/parkervcp/eggs/master/minecraft/java/server.properties
+      fi
+    container: 'ghcr.io/parkervcp/installers:alpine'
+    entrypoint: ash
+variables:
+  -
+    name: 'Build Number'
+    description: "The build number for the paper release.\r\n\r\nLeave at latest to always get the latest version. Invalid versions will default to latest."
+    env_variable: BUILD_NUMBER
+    default_value: latest
+    user_viewable: true
+    user_editable: true
+    rules:
+      - required
+      - string
+      - 'max:20'
+    sort: 4
+  -
+    name: 'Download Path'
+    description: |-
+      A URL to use to download a server.jar rather than the ones in the install script. This is not user
+      viewable.
+    env_variable: DL_PATH
+    default_value: ''
+    user_viewable: false
+    user_editable: false
+    rules:
+      - nullable
+      - string
+    sort: 3
+  -
+    name: 'Minecraft Version'
+    description: "The version of minecraft to download. \r\n\r\nLeave at latest to always get the latest version. Invalid versions will default to latest."
+    env_variable: MINECRAFT_VERSION
+    default_value: latest
+    user_viewable: true
+    user_editable: true
+    rules:
+      - nullable
+      - string
+      - 'max:20'
+    sort: 1
+  -
+    name: 'Server Jar File'
+    description: 'The name of the server jarfile to run the server with.'
+    env_variable: SERVER_JARFILE
+    default_value: server.jar
+    user_viewable: true
+    user_editable: true
+    rules:
+      - required
+      - 'regex:/^([\w\d._-]+)(\.jar)$/'
+    sort: 2

@@ -22,7 +22,7 @@ class ServersRelationManager extends RelationManager
             ->heading(trans('admin/egg.servers'))
             ->columns([
                 TextColumn::make('user.username')
-                    ->label('Owner')
+                    ->label(trans('admin/server.owner'))
                     ->icon('tabler-user')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->sortable(),
@@ -38,8 +38,9 @@ class ServersRelationManager extends RelationManager
                     ->label(trans('admin/server.docker_image')),
                 SelectColumn::make('allocation.id')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->options(fn (Server $server) => [$server->allocation->id => $server->allocation->address])
-                    ->selectablePlaceholder(false)
+                    ->disabled()
+                    ->options(fn (Server $server) => $server->allocations->take(1)->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
+                    ->placeholder('None')
                     ->sortable(),
             ]);
     }

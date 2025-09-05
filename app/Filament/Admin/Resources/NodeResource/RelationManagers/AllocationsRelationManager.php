@@ -12,8 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
-use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -32,18 +31,12 @@ class AllocationsRelationManager extends RelationManager
     public function setTitle(): string
     {
         return trans('admin/server.allocations');
-
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('ip')
-
-            // Non Primary Allocations
-            // ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->id !== $allocation->server?->allocation_id)
-
-            // All assigned allocations
+            ->recordTitleAttribute('address')
             ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->server_id === null)
             ->paginationPageOptions(['10', '20', '50', '100', '200', '500'])
             ->searchable()
@@ -65,21 +58,33 @@ class AllocationsRelationManager extends RelationManager
                 TextInputColumn::make('ip_alias')
                     ->searchable()
                     ->label(trans('admin/node.table.alias')),
+                TextInputColumn::make('notes')
+                    ->label(trans('admin/node.table.allocation_notes'))
+                    ->placeholder(trans('admin/node.table.no_notes')),
                 SelectColumn::make('ip')
-                    ->options(fn (Allocation $allocation) => collect($this->getOwnerRecord()->ipAddresses())->merge([$allocation->ip])->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                    ->options(function (Allocation $allocation) {
+                        $ips = Allocation::where('port', $allocation->port)->pluck('ip');
+
+                        return collect($this->getOwnerRecord()->ipAddresses())
+                            ->diff($ips)
+                            ->unshift($allocation->ip)
+                            ->unique()
+                            ->mapWithKeys(fn (string $ip) => [$ip => $ip])
+                            ->all();
+                    })
                     ->selectablePlaceholder(false)
                     ->searchable()
                     ->label(trans('admin/node.table.ip')),
             ])
             ->headerActions([
-                Tables\Actions\Action::make('create new allocation')
+                Action::make('create new allocation')
                     ->label(trans('admin/node.create_allocation'))
                     ->form(fn () => [
                         Select::make('allocation_ip')
                             ->options(collect($this->getOwnerRecord()->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                             ->label(trans('admin/node.ip_address'))
                             ->inlineLabel()
-                            ->ipv4()
+                            ->ip()
                             ->helperText(trans('admin/node.ip_help'))
                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                             ->live()
@@ -88,27 +93,22 @@ class AllocationsRelationManager extends RelationManager
                             ->label(trans('admin/node.table.alias'))
                             ->inlineLabel()
                             ->default(null)
-                            ->helperText(trans('admin/node.alias_help'))
-                            ->required(false),
+                            ->helperText(trans('admin/node.alias_help')),
                         TagsInput::make('allocation_ports')
                             ->placeholder('27015, 27017-27019')
                             ->label(trans('admin/node.ports'))
                             ->inlineLabel()
                             ->live()
                             ->disabled(fn (Get $get) => empty($get('allocation_ip')))
-                            ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports',
-                                CreateServer::retrieveValidPorts($this->getOwnerRecord(), $state, $get('allocation_ip')))
-                            )
+                            ->afterStateUpdated(fn ($state, Set $set, Get $get) => $set('allocation_ports', CreateServer::retrieveValidPorts($this->getOwnerRecord(), $state, $get('allocation_ip'))))
                             ->splitKeys(['Tab', ' ', ','])
                             ->required(),
                     ])
                     ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord(), $data)),
             ])
-            ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorize(fn () => auth()->user()->can('update node')),
-                ]),
+            ->groupedBulkActions([
+                DeleteBulkAction::make()
+                    ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),
             ]);
     }
 }

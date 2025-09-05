@@ -117,6 +117,7 @@ Route::prefix('/servers/{server:uuid}')->middleware([ServerSubject::class, Authe
         Route::post('/', [Client\Servers\BackupController::class, 'store']);
         Route::get('/{backup:uuid}', [Client\Servers\BackupController::class, 'view']);
         Route::get('/{backup:uuid}/download', [Client\Servers\BackupController::class, 'download']);
+        Route::put('/{backup:uuid}/rename', [Client\Servers\BackupController::class, 'rename']);
         Route::post('/{backup:uuid}/lock', [Client\Servers\BackupController::class, 'toggleLock']);
         Route::post('/{backup:uuid}/restore', [Client\Servers\BackupController::class, 'restore']);
         Route::delete('/{backup:uuid}', [Client\Servers\BackupController::class, 'delete']);
@@ -129,6 +130,7 @@ Route::prefix('/servers/{server:uuid}')->middleware([ServerSubject::class, Authe
 
     Route::prefix('/settings')->group(function () {
         Route::post('/rename', [Client\Servers\SettingsController::class, 'rename']);
+        Route::post('/description', [Client\Servers\SettingsController::class, 'description']);
         Route::post('/reinstall', [Client\Servers\SettingsController::class, 'reinstall']);
         Route::put('/docker-image', [Client\Servers\SettingsController::class, 'dockerImage']);
     });

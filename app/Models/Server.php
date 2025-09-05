@@ -12,13 +12,11 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Number;
 use Psr\Http\Message\ResponseInterface;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -47,7 +45,7 @@ use App\Services\Subusers\SubuserDeletionService;
  * @property int $cpu
  * @property string|null $threads
  * @property bool $oom_killer
- * @property int $allocation_id
+ * @property int|null $allocation_id
  * @property int $egg_id
  * @property string $startup
  * @property string $image
@@ -172,7 +170,7 @@ class Server extends Model implements Validatable
         'threads' => ['nullable', 'regex:/^[0-9-,]+$/'],
         'oom_killer' => ['sometimes', 'boolean'],
         'disk' => ['required', 'numeric', 'min:0'],
-        'allocation_id' => ['required', 'bail', 'unique:servers', 'exists:allocations,id'],
+        'allocation_id' => ['sometimes', 'nullable', 'unique:servers', 'exists:allocations,id'],
         'egg_id' => ['required', 'exists:eggs,id'],
         'startup' => ['required', 'string'],
         'skip_scripts' => ['sometimes', 'boolean'],
@@ -221,10 +219,14 @@ class Server extends Model implements Validatable
     /**
      * Returns the format for server allocations when communicating with the Daemon.
      *
-     * @return array<int>
+     * @return array<string, array<int>>
      */
     public function getAllocationMappings(): array
     {
+        if (!$this->allocation) {
+            return ['' => []];
+        }
+
         return $this->allocations->where('node_id', $this->node_id)->groupBy('ip')->map(function ($item) {
             return $item->pluck('port');
         })->toArray();
@@ -232,7 +234,12 @@ class Server extends Model implements Validatable
 
     public function isInstalled(): bool
     {
-        return $this->status !== ServerState::Installing && $this->status !== ServerState::InstallFailed;
+        return $this->status !== ServerState::Installing && !$this->isFailedInstall();
+    }
+
+    public function isFailedInstall(): bool
+    {
+        return $this->status === ServerState::InstallFailed || $this->status === ServerState::ReinstallFailed;
     }
 
     public function isSuspended(): bool
@@ -268,6 +275,8 @@ class Server extends Model implements Validatable
 
     /**
      * Gets all allocations associated with this server.
+     *
+     * @return HasMany<Allocation, $this>
      */
     public function allocations(): HasMany
     {
@@ -350,9 +359,9 @@ class Server extends Model implements Validatable
         return $this->hasMany(Backup::class);
     }
 
-    public function mounts(): BelongsToMany
+    public function mounts(): MorphToMany
     {
-        return $this->belongsToMany(Mount::class);
+        return $this->morphToMany(Mount::class, 'mountable');
     }
 
     /**
@@ -431,39 +440,36 @@ class Server extends Model implements Validatable
 
     public function retrieveStatus(): ContainerStatus
     {
-        $status = cache()->get("servers.$this->uuid.container.status");
+        return cache()->remember("servers.$this->uuid.status", now()->addSeconds(15), function () {
+            // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+            $details = app(DaemonServerRepository::class)->setServer($this)->getDetails();
 
-        if ($status === null) {
-            $this->node->serverStatuses();
-
-            $status = cache()->get("servers.$this->uuid.container.status");
-        }
-
-        return ContainerStatus::tryFrom($status) ?? ContainerStatus::Missing;
+            return ContainerStatus::tryFrom(Arr::get($details, 'state')) ?? ContainerStatus::Missing;
+        });
     }
 
     /**
      * @return array<mixed>
      */
-    public function resources(): array
+    public function retrieveResources(): array
     {
-        return cache()->remember("resources:$this->uuid", now()->addSeconds(15), function () {
+        return cache()->remember("servers.$this->uuid.resources", now()->addSeconds(15), function () {
             // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
-            return Arr::get(app(DaemonServerRepository::class)->setServer($this)->getDetails(), 'utilization', []);
+            $details = app(DaemonServerRepository::class)->setServer($this)->getDetails();
+
+            return Arr::get($details, 'utilization', []);
         });
     }
 
-    public function formatResource(string $resourceKey, bool $limit = false, ServerResourceType $type = ServerResourceType::Unit, int $precision = 2): string
+    public function formatResource(ServerResourceType $resourceType): string
     {
-        $resourceAmount = $this->{$resourceKey} ?? 0;
-        if (!$limit) {
-            $resourceAmount = $this->resources()[$resourceKey] ?? 0;
-        }
+        $resourceAmount = $resourceType->getResourceAmount($this);
 
-        if ($type === ServerResourceType::Time) {
-            if ($this->isSuspended()) {
-                return 'Suspended';
+        if ($resourceType->isTime()) {
+            if (!is_null($this->status)) {
+                return $this->status->getLabel();
             }
+
             if ($resourceAmount === 0) {
                 return ContainerStatus::Offline->getLabel();
             }
@@ -471,26 +477,22 @@ class Server extends Model implements Validatable
             return now()->subMillis($resourceAmount)->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true, parts: 4);
         }
 
-        if ($resourceAmount === 0 & $limit) {
+        if ($resourceAmount === 0 & $resourceType->isLimit()) {
+            // Unlimited symbol
             return "\u{221E}";
         }
 
-        if ($type === ServerResourceType::Percentage) {
-            return Number::format($resourceAmount, precision: $precision, locale: auth()->user()->language ?? 'en') . '%';
+        if ($resourceType->isPercentage()) {
+            return format_number($resourceAmount, precision: 2) . '%';
         }
 
-        // Our current limits are set in MB
-        if ($limit) {
-            $resourceAmount *= 2 ** 20;
-        }
-
-        return convert_bytes_to_readable($resourceAmount, decimals: $precision, base: 3);
+        return convert_bytes_to_readable($resourceAmount, base: 3);
     }
 
     public function condition(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->isSuspended() ? ServerState::Suspended : $this->status ?? $this->retrieveStatus(),
+            get: fn () => $this->status ?? $this->retrieveStatus(),
         );
     }
 }

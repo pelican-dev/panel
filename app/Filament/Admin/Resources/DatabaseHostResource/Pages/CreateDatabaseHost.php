@@ -4,6 +4,8 @@ namespace App\Filament\Admin\Resources\DatabaseHostResource\Pages;
 
 use App\Filament\Admin\Resources\DatabaseHostResource;
 use App\Services\Databases\Hosts\HostCreationService;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
@@ -17,6 +19,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
 use Filament\Support\Exceptions\Halt;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -25,6 +28,8 @@ use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class CreateDatabaseHost extends CreateRecord
 {
+    use CanCustomizeHeaderActions;
+    use CanCustomizeHeaderWidgets;
     use HasWizard;
 
     protected static string $resource = DatabaseHostResource::class;
@@ -145,7 +150,7 @@ class CreateDatabaseHost extends CreateRecord
                         ->preload()
                         ->helperText(trans('admin/databasehost.linked_nodes_help'))
                         ->label(trans('admin/databasehost.linked_nodes'))
-                        ->relationship('nodes', 'name'),
+                        ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'))),
                 ]),
         ];
     }

@@ -123,7 +123,7 @@ class Health extends Page
             return $carry;
         }, []);
 
-        return trans('admin/health.checks.failed') . implode(', ', $failedNames);
+        return trans('admin/health.checks.failed', ['checks' => implode(', ', $failedNames)]);
     }
 
     public static function getNavigationIcon(): string
