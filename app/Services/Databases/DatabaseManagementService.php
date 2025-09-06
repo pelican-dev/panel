@@ -10,6 +10,7 @@ use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\Repository\DuplicateDatabaseNameException;
 use App\Exceptions\Service\Database\TooManyDatabasesException;
 use App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException;
+use Illuminate\Support\Str;
 
 class DatabaseManagementService
 {
@@ -85,7 +86,7 @@ class DatabaseManagementService
 
         $data = array_merge($data, [
             'server_id' => $server->id,
-            'username' => sprintf('u%d_%s', $server->id, str_random(10)),
+            'username' => sprintf('u%d_%s', $server->id, Str::random(10)),
             'password' => Utilities::randomStringWithSpecialCharacters(24),
         ]);
 
