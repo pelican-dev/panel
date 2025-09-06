@@ -129,7 +129,7 @@ class DatabaseResource extends Resource
                             $service->delete($database);
                         } catch (Exception $exception) {
                             Notification::make()
-                                ->title(trans('admin/databasehost.delete_error'))
+                                ->title(trans('server/database.delete_notification_fail', ['database' => $database->database]))
                                 ->danger()
                                 ->send();
 
