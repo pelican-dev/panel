@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -51,7 +52,7 @@ return new class extends Migration
         DB::transaction(function () {
             DB::table('service_options')->select(['id', 'tag'])->get()->each(function ($option) {
                 DB::table('service_options')->where('id', $option->id)->update([
-                    'tag' => str_random(10),
+                    'tag' => Str::random(10),
                 ]);
             });
         });

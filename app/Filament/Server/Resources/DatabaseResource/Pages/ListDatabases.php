@@ -17,6 +17,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\IconSize;
+use Illuminate\Support\Str;
 
 class ListDatabases extends ListRecords
 {
@@ -63,7 +64,7 @@ class ListDatabases extends ListRecords
                 ])
                 ->action(function ($data, DatabaseManagementService $service) use ($server) {
                     if (empty($data['database'])) {
-                        $data['database'] = str_random(12);
+                        $data['database'] = Str::random(12);
                     }
                     $data['database'] = 's'. $server->id . '_' . $data['database'];
 
