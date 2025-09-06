@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use Carbon\Carbon;
 use Cron\CronExpression;
+use Illuminate\Support\Str;
 use Illuminate\Support\ViewErrorBag;
 
 class Utilities
@@ -14,7 +15,7 @@ class Utilities
      */
     public static function randomStringWithSpecialCharacters(int $length = 16): string
     {
-        $string = str_random($length);
+        $string = Str::random($length);
         // Given a random string of characters, randomly loop through the characters and replace some
         // with special characters to avoid issues with MySQL password requirements on some servers.
         try {

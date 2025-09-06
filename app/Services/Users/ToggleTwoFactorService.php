@@ -3,6 +3,7 @@
 namespace App\Services\Users;
 
 use App\Models\User;
+use Illuminate\Support\Str;
 use PragmaRX\Google2FA\Google2FA;
 use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\Service\User\TwoFactorAuthenticationTokenInvalid;
@@ -48,7 +49,7 @@ class ToggleTwoFactorService
             if ((!$toggleState && !$user->use_totp) || $toggleState) {
                 $user->recoveryTokens()->delete();
                 for ($i = 0; $i < 10; $i++) {
-                    $token = str_random(10);
+                    $token = Str::random(10);
                     $user->recoveryTokens()->forceCreate([
                         'token' => password_hash($token, PASSWORD_DEFAULT),
                     ]);
