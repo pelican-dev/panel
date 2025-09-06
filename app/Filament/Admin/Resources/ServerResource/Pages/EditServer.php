@@ -690,9 +690,14 @@ class EditServer extends EditRecord
                                                     ->action(function (DatabaseManagementService $service, $record) {
                                                         try {
                                                             $service->delete($record);
+
+                                                            Notification::make()
+                                                                ->title(trans('server/database.delete_notification', ['database' => $record->database]))
+                                                                ->success()
+                                                                ->send();
                                                         } catch (Exception $e) {
                                                             Notification::make()
-                                                                ->title(trans('admin/databasehost.delete_error'))
+                                                                ->title(trans('server/database.delete_notification_fail', ['database' => $record->database]))
                                                                 ->body($e->getMessage())
                                                                 ->danger()
                                                                 ->persistent()->send();
@@ -754,9 +759,14 @@ class EditServer extends EditRecord
 
                                             try {
                                                 $service->setValidateDatabaseLimit(false)->create($server, $data);
+
+                                                Notification::make()
+                                                    ->title(trans('server/database.create_notification', ['database' => $data['database']]))
+                                                    ->success()
+                                                    ->send();
                                             } catch (Exception $e) {
                                                 Notification::make()
-                                                    ->title(trans('admin/server.failed_to_create'))
+                                                    ->title(trans('server/database.create_notification_fail', ['database' => $data['database']]))
                                                     ->body($e->getMessage())
                                                     ->danger()
                                                     ->persistent()->send();
