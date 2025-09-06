@@ -15,9 +15,11 @@ use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use App\Traits\Filament\HasLimitBadge;
+use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\DeleteAction;
@@ -122,7 +124,23 @@ class DatabaseResource extends Resource
                 ViewAction::make()
                     ->modalHeading(fn (Database $database) => trans('server/database.viewing', ['database' => $database->database])),
                 DeleteAction::make()
-                    ->using(fn (Database $database, DatabaseManagementService $service) => $service->delete($database)),
+                    ->using(function (Database $database, DatabaseManagementService $service) {
+                        try {
+                            $service->delete($database);
+
+                            Notification::make()
+                                ->title(trans('server/database.delete_notification', ['database' => $database->database]))
+                                ->success()
+                                ->send();
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title(trans('server/database.delete_notification_fail', ['database' => $database->database]))
+                                ->danger()
+                                ->send();
+
+                            report($exception);
+                        }
+                    }),
             ]);
     }
 
