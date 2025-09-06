@@ -69,6 +69,11 @@ class ListDatabases extends ListRecords
 
                     try {
                         $service->create($server, $data);
+
+                        Notification::make()
+                            ->title(trans('server/database.create_notification', ['database' => $data['database']]))
+                            ->success()
+                            ->send();
                     } catch (Exception $exception) {
                         Notification::make()
                             ->title(trans('server/database.create_notification_fail', ['database' => $data['database']]))

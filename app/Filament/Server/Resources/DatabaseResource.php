@@ -127,6 +127,11 @@ class DatabaseResource extends Resource
                     ->using(function (Database $database, DatabaseManagementService $service) {
                         try {
                             $service->delete($database);
+
+                            Notification::make()
+                                ->title(trans('server/database.delete_notification', ['database' => $database->database]))
+                                ->success()
+                                ->send();
                         } catch (Exception $exception) {
                             Notification::make()
                                 ->title(trans('server/database.delete_notification_fail', ['database' => $database->database]))
