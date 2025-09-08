@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Servers;
 
+use App\Enums\CustomizationKey;
 use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
 use App\Filament\Admin\Resources\Servers\Pages\ListServers;
 use App\Filament\Admin\Resources\Servers\Pages\CreateServer;
@@ -46,7 +47,7 @@ class ServerResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return !empty(auth()->user()->getCustomization()['top_navigation']) ? false : trans('admin/dashboard.server');
+        return auth()->user()->getCustomization(CustomizationKey::TopNavigation) ? false : trans('admin/dashboard.server');
     }
 
     public static function getNavigationBadge(): ?string

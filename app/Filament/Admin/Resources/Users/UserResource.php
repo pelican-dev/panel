@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Users;
 
+use App\Enums\CustomizationKey;
 use App\Filament\Admin\Resources\Users\RelationManagers\ServersRelationManager;
 use App\Filament\Admin\Resources\Users\Pages\ListUsers;
 use App\Filament\Admin\Resources\Users\Pages\CreateUser;
@@ -60,7 +61,7 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return !empty(auth()->user()->getCustomization()['top_navigation']) ? false : trans('admin/dashboard.user');
+        return auth()->user()->getCustomization(CustomizationKey::TopNavigation) ? false : trans('admin/dashboard.user');
     }
 
     public static function getNavigationBadge(): ?string

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Nodes;
 
+use App\Enums\CustomizationKey;
 use App\Filament\Admin\Resources\Nodes\RelationManagers\AllocationsRelationManager;
 use App\Filament\Admin\Resources\Nodes\RelationManagers\NodesRelationManager;
 use App\Filament\Admin\Resources\Nodes\Pages\ListNodes;
@@ -43,8 +44,7 @@ class NodeResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return !empty(auth()->user()->getCustomization()['top_navigation']) ? false : trans('admin/dashboard.server');
-
+        return auth()->user()->getCustomization(CustomizationKey::TopNavigation) ? false : trans('admin/dashboard.server');
     }
 
     public static function getNavigationBadge(): ?string

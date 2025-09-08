@@ -8,6 +8,7 @@ use Illuminate\Notifications\DatabaseNotification;
 use Database\Factories\UserFactory;
 use BackedEnum;
 use App\Contracts\Validatable;
+use App\Enums\CustomizationKey;
 use App\Exceptions\DisplayException;
 use App\Extensions\Avatar\AvatarService;
 use App\Rules\Username;
@@ -318,11 +319,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->belongsToMany(Server::class, 'subusers');
     }
 
-    /** @return array<string, mixed> */
-    public function getCustomization(): array
+    /** @return ($key is null ? array<string, string|int|bool> : string|int|bool) */
+    public function getCustomization(?CustomizationKey $key = null): array|string|int|bool|null
     {
-        // TODO: remove json_decode
-        return (is_string($this->customization) ? json_decode($this->customization, true) : $this->customization) ?? [];
+        $customization = is_string($this->customization) ? json_decode($this->customization, true) : $this->customization;
+        $customization = array_merge(CustomizationKey::getDefaultCustomization(), $customization);
+
+        return !$key ? $customization : $customization[$key->value];
     }
 
     protected function checkPermission(Server $server, string $permission = ''): bool

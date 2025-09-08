@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Widgets;
 
+use App\Enums\CustomizationKey;
 use App\Models\Server;
 use Carbon\Carbon;
 use Filament\Facades\Filament;
@@ -26,7 +27,7 @@ class ServerCpuChart extends ChartWidget
 
     protected function getData(): array
     {
-        $period = auth()->user()->getCustomization()['console_graph_period'] ?? 30;
+        $period = (int) auth()->user()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $cpu = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))
             ->slice(-$period)
             ->map(fn ($value, $key) => [

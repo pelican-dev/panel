@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Enums\CustomizationKey;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\LanguageMiddleware;
@@ -32,7 +33,7 @@ abstract class PanelProvider extends BasePanelProvider
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
             ->favicon(config('app.favicon', '/pelican.ico'))
-            ->topNavigation(fn () => auth()->user()->getCustomization()['top_navigation'] ?? false)
+            ->topNavigation(fn () => auth()->user()->getCustomization(CustomizationKey::TopNavigation))
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->profile(EditProfile::class, false)
             ->userMenuItems([

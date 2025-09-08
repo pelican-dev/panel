@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Enums\CustomizationKey;
 use App\Extensions\OAuth\OAuthService;
 use App\Facades\Activity;
 use App\Models\ActivityLog;
@@ -542,7 +543,7 @@ class EditProfile extends BaseEditProfile
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $moarbetterdata = [
+        $customization = [
             'console_font' => $data['console_font'],
             'console_font_size' => $data['console_font_size'],
             'console_rows' => $data['console_rows'],
@@ -552,21 +553,20 @@ class EditProfile extends BaseEditProfile
         ];
 
         unset($data['console_font'],$data['console_font_size'], $data['console_rows'], $data['dashboard_layout'], $data['top_navigation']);
-        $data['customization'] = json_encode($moarbetterdata);
+
+        $data['customization'] = json_encode($customization);
 
         return $data;
     }
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $moarbetterdata = json_decode($data['customization'], true);
-
-        $data['console_font'] = $moarbetterdata['console_font'] ?? 'monospace';
-        $data['console_font_size'] = $moarbetterdata['console_font_size'] ?? 14;
-        $data['console_rows'] = $moarbetterdata['console_rows'] ?? 30;
-        $data['console_graph_period'] = $moarbetterdata['console_graph_period'] ?? 30;
-        $data['dashboard_layout'] = $moarbetterdata['dashboard_layout'] ?? 'grid';
-        $data['top_navigation'] = $moarbetterdata['top_navigation'] ?? false;
+        $data['console_font'] = $this->getUser()->getCustomization(CustomizationKey::ConsoleFont);
+        $data['console_font_size'] = $this->getUser()->getCustomization(CustomizationKey::ConsoleFontSize);
+        $data['console_rows'] = $this->getUser()->getCustomization(CustomizationKey::ConsoleRows);
+        $data['console_graph_period'] = $this->getUser()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
+        $data['dashboard_layout'] = $this->getUser()->getCustomization(CustomizationKey::DashboardLayout);
+        $data['top_navigation'] = $this->getUser()->getCustomization(CustomizationKey::TopNavigation);
 
         return $data;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\App\Resources\Servers\Pages;
 
+use App\Enums\CustomizationKey;
 use App\Enums\ServerResourceType;
 use App\Filament\App\Resources\Servers\ServerResource;
 use App\Filament\Components\Tables\Columns\ServerEntryColumn;
@@ -103,7 +104,7 @@ class ListServers extends ListRecords
     {
         $baseQuery = auth()->user()->accessibleServers();
 
-        $usingGrid = (auth()->user()->getCustomization()['dashboard_layout'] ?? 'grid') === 'grid';
+        $usingGrid = auth()->user()->getCustomization(CustomizationKey::DashboardLayout) === 'grid';
 
         return $table
             ->paginated(false)

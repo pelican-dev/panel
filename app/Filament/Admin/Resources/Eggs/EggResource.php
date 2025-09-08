@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Eggs;
 
+use App\Enums\CustomizationKey;
 use App\Filament\Admin\Resources\Eggs\RelationManagers\ServersRelationManager;
 use App\Filament\Admin\Resources\Eggs\Pages\ListEggs;
 use App\Filament\Admin\Resources\Eggs\Pages\CreateEgg;
@@ -31,7 +32,7 @@ class EggResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return !empty(auth()->user()->getCustomization()['top_navigation']) ? false : trans('admin/dashboard.server');
+        return auth()->user()->getCustomization(CustomizationKey::TopNavigation) ? false : trans('admin/dashboard.server');
     }
 
     public static function getNavigationLabel(): string

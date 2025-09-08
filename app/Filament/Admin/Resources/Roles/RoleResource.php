@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Roles;
 
+use App\Enums\CustomizationKey;
 use App\Filament\Admin\Resources\Roles\Pages\ListRoles;
 use App\Filament\Admin\Resources\Roles\Pages\CreateRole;
 use App\Filament\Admin\Resources\Roles\Pages\ViewRole;
@@ -64,7 +65,7 @@ class RoleResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return !empty(auth()->user()->getCustomization()['top_navigation']) ? trans('admin/dashboard.advanced') : trans('admin/dashboard.user');
+        return auth()->user()->getCustomization(CustomizationKey::TopNavigation) ? trans('admin/dashboard.advanced') : trans('admin/dashboard.user');
     }
 
     public static function getNavigationBadge(): ?string
