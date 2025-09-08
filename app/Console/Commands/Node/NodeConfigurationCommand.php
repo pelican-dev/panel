@@ -17,7 +17,7 @@ class NodeConfigurationCommand extends Command
     {
         $column = ctype_digit((string) $this->argument('node')) ? 'id' : 'uuid';
 
-        /** @var \App\Models\Node $node */
+        /** @var Node $node */
         $node = Node::query()->where($column, $this->argument('node'))->firstOr(function () {
             $this->error(trans('commands.node_config.error_not_exist'));
 

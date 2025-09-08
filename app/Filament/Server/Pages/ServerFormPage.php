@@ -8,12 +8,12 @@ use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Facades\Filament;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 abstract class ServerFormPage extends Page
 {
@@ -23,9 +23,9 @@ abstract class ServerFormPage extends Page
     use InteractsWithFormActions;
     use InteractsWithForms;
 
-    protected static string $view = 'filament.server.pages.server-form-page';
+    protected string $view = 'filament.server.pages.server-form-page';
 
-    /** @var ?array<mixed> */
+    /** @var array<string, mixed>|null */
     public ?array $data = [];
 
     public function mount(): void
@@ -35,32 +35,20 @@ abstract class ServerFormPage extends Page
         $this->fillForm();
     }
 
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->statePath('data')
+            ->model($this->getRecord());
+    }
+
     protected function authorizeAccess(): void {}
 
-    protected function fillForm(): void
+    protected function fillform(): void
     {
         $data = $this->getRecord()->attributesToArray();
+
         $this->form->fill($data);
-    }
-
-    /**
-     * @return array<int | string, string | Form>
-     */
-    protected function getForms(): array
-    {
-        return [
-            'form' => $this->form($this->makeForm()
-                ->model($this->getRecord())
-                ->statePath($this->getFormStatePath())
-                ->columns($this->hasInlineLabels() ? 1 : 2)
-                ->inlineLabel($this->hasInlineLabels()),
-            ),
-        ];
-    }
-
-    public function getFormStatePath(): ?string
-    {
-        return 'data';
     }
 
     public function getRecord(): Server
@@ -70,4 +58,6 @@ abstract class ServerFormPage extends Page
 
         return $server;
     }
+
+    public function save(): void {}
 }

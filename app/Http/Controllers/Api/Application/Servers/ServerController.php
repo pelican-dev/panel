@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers\Api\Application\Servers;
 
+use Throwable;
+use Illuminate\Validation\ValidationException;
+use App\Exceptions\DisplayException;
+use App\Exceptions\Model\DataValidationException;
+use App\Exceptions\Service\Deployment\NoViableAllocationException;
 use Illuminate\Http\Response;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
@@ -53,11 +58,11 @@ class ServerController extends ApplicationApiController
      *
      * Create a new server on the system.
      *
-     * @throws \Throwable
-     * @throws \Illuminate\Validation\ValidationException
-     * @throws \App\Exceptions\DisplayException
-     * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
+     * @throws Throwable
+     * @throws ValidationException
+     * @throws DisplayException
+     * @throws DataValidationException
+     * @throws NoViableAllocationException
      */
     public function store(StoreServerRequest $request): JsonResponse
     {
@@ -87,7 +92,7 @@ class ServerController extends ApplicationApiController
      *
      * Deletes a server.
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      */
     public function delete(ServerWriteRequest $request, Server $server, string $force = ''): Response
     {

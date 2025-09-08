@@ -2,6 +2,8 @@
 
 namespace App\Services\Eggs\Variables;
 
+use App\Exceptions\Model\DataValidationException;
+use App\Exceptions\Service\Egg\Variable\BadValidationRuleException;
 use App\Models\EggVariable;
 use App\Traits\Services\ValidatesValidationRules;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
@@ -36,9 +38,9 @@ class VariableCreationService
      *     rules?: string|string[],
      * } $data
      *
-     * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Service\Egg\Variable\BadValidationRuleException
-     * @throws \App\Exceptions\Service\Egg\Variable\ReservedVariableNameException
+     * @throws DataValidationException
+     * @throws BadValidationRuleException
+     * @throws ReservedVariableNameException
      */
     public function handle(int $egg, array $data): EggVariable
     {

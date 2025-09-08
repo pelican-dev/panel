@@ -1,5 +1,6 @@
 <x-filament-panels::page.simple>
-    <x-filament-panels::form wire:submit="submit">
+    <form wire:submit="submit">
         {{ $this->form }}
-    </x-filament-panels::form>
+    </form>
+    <x-filament-actions::modals />
 </x-filament-panels::page.simple>

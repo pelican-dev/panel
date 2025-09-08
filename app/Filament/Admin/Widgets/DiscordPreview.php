@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 
 class DiscordPreview extends Widget
 {
-    protected static string $view = 'filament.admin.widgets.discord-preview';
+    protected string $view = 'filament.admin.widgets.discord-preview';
 
     /** @var array<string, string> */
     protected $listeners = [

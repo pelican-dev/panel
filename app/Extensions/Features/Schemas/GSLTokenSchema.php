@@ -12,8 +12,8 @@ use Closure;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Blade;
@@ -36,6 +36,9 @@ class GSLTokenSchema implements FeatureSchemaInterface
         return 'gsl_token';
     }
 
+    /**
+     * @throws Exception
+     */
     public function getAction(): Action
     {
         /** @var Server $server */
@@ -51,9 +54,9 @@ class GSLTokenSchema implements FeatureSchemaInterface
             ->modalHeading('Invalid GSL token')
             ->modalDescription('It seems like your Gameserver Login Token (GSL token) is invalid or has expired.')
             ->modalSubmitActionLabel('Update GSL Token')
-            ->disabledForm(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
-            ->form([
-                Placeholder::make('info')
+            ->disabledSchema(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
+            ->schema([
+                TextEntry::make('info')
                     ->label(new HtmlString(Blade::render('You can either <x-filament::link href="https://steamcommunity.com/dev/managegameservers" target="_blank">generate a new one</x-filament::link> and enter it below or leave the field blank to remove it completely.'))),
                 TextInput::make('gsltoken')
                     ->label('GSL Token')

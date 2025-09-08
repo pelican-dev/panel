@@ -29,7 +29,7 @@ trait HasAccessTokens
      */
     public function createToken(?string $memo, ?array $ips): NewAccessToken
     {
-        /** @var \App\Models\ApiKey $token */
+        /** @var ApiKey $token */
         $token = $this->tokens()->forceCreate([
             'user_id' => $this->id,
             'key_type' => ApiKey::TYPE_ACCOUNT,

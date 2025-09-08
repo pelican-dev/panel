@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\Client\Account;
 
+use Exception;
 use IPTools\Range;
 use App\Models\ApiKey;
 use Illuminate\Validation\Validator;
@@ -35,7 +36,7 @@ class StoreApiKeyRequest extends ClientApiRequest
                 $valid = false;
                 try {
                     $valid = Range::parse($ip)->valid();
-                } catch (\Exception $exception) {
+                } catch (Exception $exception) {
                     if ($exception->getMessage() !== 'Invalid IP address format') {
                         throw $exception;
                     }

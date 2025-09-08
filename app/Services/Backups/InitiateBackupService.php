@@ -2,6 +2,7 @@
 
 namespace App\Services\Backups;
 
+use Throwable;
 use Ramsey\Uuid\Uuid;
 use Webmozart\Assert\Assert;
 use App\Models\Backup;
@@ -66,9 +67,9 @@ class InitiateBackupService
     /**
      * Initiates the backup process for a server on daemon.
      *
-     * @throws \Throwable
-     * @throws \App\Exceptions\Service\Backup\TooManyBackupsException
-     * @throws \Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException
+     * @throws Throwable
+     * @throws TooManyBackupsException
+     * @throws TooManyRequestsHttpException
      */
     public function handle(Server $server, ?string $name = null, bool $override = false): Backup
     {
@@ -110,7 +111,7 @@ class InitiateBackupService
         }
 
         return $this->connection->transaction(function () use ($server, $name) {
-            /** @var \App\Models\Backup $backup */
+            /** @var Backup $backup */
             $backup = Backup::query()->create([
                 'server_id' => $server->id,
                 'uuid' => Uuid::uuid4()->toString(),

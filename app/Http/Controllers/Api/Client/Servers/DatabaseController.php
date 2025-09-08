@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use Throwable;
+use App\Exceptions\Service\Database\TooManyDatabasesException;
+use App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException;
 use Illuminate\Http\Response;
 use App\Models\Server;
 use App\Models\Database;
@@ -50,9 +53,9 @@ class DatabaseController extends ClientApiController
      *
      * @return array<string, mixed>
      *
-     * @throws \Throwable
-     * @throws \App\Exceptions\Service\Database\TooManyDatabasesException
-     * @throws \App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException
+     * @throws Throwable
+     * @throws TooManyDatabasesException
+     * @throws DatabaseClientFeatureNotEnabledException
      */
     public function store(StoreDatabaseRequest $request, Server $server): array
     {
@@ -77,7 +80,7 @@ class DatabaseController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function rotatePassword(RotatePasswordRequest $request, Server $server, Database $database): array
     {

@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use Throwable;
 use Illuminate\Support\Arr;
 use App\Models\Server;
 use Illuminate\Database\ConnectionInterface;
@@ -28,7 +29,7 @@ class DetailsModificationService
      *     description?: ?string
      * } $data
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(Server $server, array $data): Server
     {

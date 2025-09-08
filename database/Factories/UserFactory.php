@@ -31,7 +31,6 @@ class UserFactory extends Factory
             'email' => Str::random(32) . '@example.com',
             'password' => $password ?: $password = bcrypt('password'),
             'language' => 'en',
-            'use_totp' => false,
             'oauth' => [],
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,10 +16,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $user_id
  * @property int $server_id
  * @property string[] $permissions
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\Models\User $user
- * @property \App\Models\Server $server
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property User $user
+ * @property Server $server
  */
 class Subuser extends Model implements Validatable
 {

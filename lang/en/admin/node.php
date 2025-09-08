@@ -98,6 +98,7 @@ return [
     'reset_help' => 'Resetting the daemon token will void any request coming from the old token. This token is used for all sensitive operations on the daemon including server creation and deletion. We suggest changing this token regularly for security.',
 
     'no_nodes' => 'No Nodes',
+    'none' => 'None',
     'cpu_chart' => 'CPU - :cpu% of :max%',
     'memory_chart' => 'Memory - :used of :total',
     'disk_chart' => 'Storage - :used of :total',
