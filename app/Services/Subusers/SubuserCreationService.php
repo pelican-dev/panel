@@ -67,7 +67,6 @@ class SubuserCreationService
                 'user_id' => $user->id,
                 'server_id' => $server->id,
             ], [
-
                 'permissions' => $cleanedPermissions,
             ]);
 
