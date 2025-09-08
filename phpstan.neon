@@ -14,8 +14,7 @@ parameters:
     ignoreErrors:
         - identifier: argument.templateType
         - identifier: missingType.generics
-        - '#Call to an undefined method Filament\\Forms\\Components\\TextInput::hintCopy\(\)#'
-        - '#Call to an undefined method Filament\\Forms\\Components\\Textarea::hintCopy\(\)#'
+        - '#Call to an undefined method Filament\\Forms\\Components\\(.+)::hintCopy\(\)#'
 
         # We are getting and setting environment variables directly
         -
