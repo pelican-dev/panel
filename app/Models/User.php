@@ -74,7 +74,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property int|null $tokens_count
  * @property \Illuminate\Database\Eloquent\Collection|Role[] $roles
  * @property int|null $roles_count
- * @property string|null $customization
+ * @property string|array<string, mixed>|null $customization
  *
  * @method static UserFactory factory(...$parameters)
  * @method static Builder|User newModelQuery()
@@ -167,6 +167,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'customization.console_rows' => ['integer', 'min:1'],
         'customization.console_font' => ['string'],
         'customization.console_font_size' => ['integer', 'min:1'],
+        'customization.console_graph_period' => ['integer', 'min:1'],
+        'customization.top_navigation' => ['boolean'],
+        'customization.dashboard_layout' => ['string', 'in:grid,table'],
     ];
 
     protected function casts(): array
@@ -315,10 +318,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->belongsToMany(Server::class, 'subusers');
     }
 
-    /** @return array<mixed> */
+    /** @return array<string, mixed> */
     public function getCustomization(): array
     {
-        return json_decode($this->customization, true) ?? [];
+        // TODO: remove json_decode
+        return (is_string($this->customization) ? json_decode($this->customization, true) : $this->customization) ?? [];
     }
 
     protected function checkPermission(Server $server, string $permission = ''): bool
