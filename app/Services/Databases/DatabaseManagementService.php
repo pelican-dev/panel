@@ -10,6 +10,7 @@ use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\Repository\DuplicateDatabaseNameException;
 use App\Exceptions\Service\Database\TooManyDatabasesException;
 use App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException;
+use Illuminate\Support\Str;
 
 class DatabaseManagementService
 {
@@ -85,22 +86,18 @@ class DatabaseManagementService
 
         $data = array_merge($data, [
             'server_id' => $server->id,
-            'username' => sprintf('u%d_%s', $server->id, str_random(10)),
+            'username' => sprintf('u%d_%s', $server->id, Str::random(10)),
             'password' => Utilities::randomStringWithSpecialCharacters(24),
         ]);
 
         return $this->connection->transaction(function () use ($data) {
             $database = $this->createModel($data);
 
-            $database->createDatabase($database->database);
-            $database->createUser(
-                $database->username,
-                $database->remote,
-                $database->password,
-                $database->max_connections
-            );
-            $database->assignUserToDatabase($database->database, $database->username, $database->remote);
-            $database->flush();
+            $database
+                ->createDatabase()
+                ->createUser()
+                ->assignUserToDatabase()
+                ->flushPrivileges();
 
             Activity::event('server:database.create')
                 ->subject($database)
@@ -114,14 +111,15 @@ class DatabaseManagementService
     /**
      * Delete a database from the given host server.
      *
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function delete(Database $database): ?bool
     {
         return $this->connection->transaction(function () use ($database) {
-            $database->dropDatabase($database->database);
-            $database->dropUser($database->username, $database->remote);
-            $database->flush();
+            $database
+                ->dropDatabase()
+                ->dropUser()
+                ->flushPrivileges();
 
             Activity::event('server:database.delete')
                 ->subject($database)
@@ -129,6 +127,28 @@ class DatabaseManagementService
                 ->log();
 
             return $database->delete();
+        });
+    }
+
+    /**
+     * Updates a password for a given database.
+     *
+     * @throws \Exception
+     */
+    public function rotatePassword(Database $database): void
+    {
+        $password = Utilities::randomStringWithSpecialCharacters(24);
+
+        $this->connection->transaction(function () use ($database, $password) {
+            $database->update([
+                'password' => $password,
+            ]);
+
+            $database
+                ->dropUser()
+                ->createUser()
+                ->assignUserToDatabase()
+                ->flushPrivileges();
         });
     }
 
