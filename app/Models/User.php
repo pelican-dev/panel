@@ -322,7 +322,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     /** @return ($key is null ? array<string, string|int|bool> : string|int|bool) */
     public function getCustomization(?CustomizationKey $key = null): array|string|int|bool|null
     {
-        $customization = is_string($this->customization) ? json_decode($this->customization, true) : $this->customization;
+        $customization = (is_string($this->customization) ? json_decode($this->customization, true) : $this->customization) ?? [];
         $customization = array_merge(CustomizationKey::getDefaultCustomization(), $customization);
 
         return !$key ? $customization : $customization[$key->value];
