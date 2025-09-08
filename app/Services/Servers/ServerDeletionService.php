@@ -2,13 +2,15 @@
 
 namespace App\Services\Servers;
 
+use App\Exceptions\DisplayException;
 use Exception;
-use Illuminate\Http\Response;
 use App\Models\Server;
 use Illuminate\Database\ConnectionInterface;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Databases\DatabaseManagementService;
 use Illuminate\Http\Client\ConnectionException;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Throwable;
 
 class ServerDeletionService
 {
@@ -18,9 +20,9 @@ class ServerDeletionService
      * ServerDeletionService constructor.
      */
     public function __construct(
-        private ConnectionInterface $connection,
-        private DaemonServerRepository $daemonServerRepository,
-        private DatabaseManagementService $databaseManagementService
+        private readonly ConnectionInterface $connection,
+        private readonly DaemonServerRepository $daemonServerRepository,
+        private readonly DatabaseManagementService $databaseManagementService
     ) {}
 
     /**
@@ -34,10 +36,10 @@ class ServerDeletionService
     }
 
     /**
-     * Delete a server from the panel and remove any associated databases from hosts.
+     * Delete a server from the panel, removes any associated databases from hosts and deletes all it's backups.
      *
-     * @throws \Throwable
-     * @throws \App\Exceptions\DisplayException
+     * @throws Throwable
+     * @throws DisplayException
      */
     public function handle(Server $server): void
     {
@@ -48,7 +50,7 @@ class ServerDeletionService
             // go ahead and bail out. We specifically ignore a 404 since that can be assumed
             // to be a safe error, meaning the server doesn't exist at all on daemon so there
             // is no reason we need to bail out from that.
-            if (!$this->force && $exception->getCode() !== Response::HTTP_NOT_FOUND) {
+            if (!$this->force && $exception->getCode() !== ResponseAlias::HTTP_NOT_FOUND) {
                 throw $exception;
             }
 

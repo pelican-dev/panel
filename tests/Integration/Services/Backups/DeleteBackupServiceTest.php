@@ -2,10 +2,10 @@
 
 namespace App\Tests\Integration\Services\Backups;
 
+use App\Extensions\Backups\Adapter\S3BackupAdapter;
 use GuzzleHttp\Psr7\Response;
 use App\Models\Backup;
 use App\Extensions\Backups\BackupManager;
-use App\Extensions\Filesystem\S3Filesystem;
 use App\Services\Backups\DeleteBackupService;
 use App\Tests\Integration\IntegrationTestCase;
 use App\Repositories\Daemon\DaemonBackupRepository;
@@ -87,7 +87,7 @@ class DeleteBackupServiceTest extends IntegrationTestCase
         ]);
 
         $manager = $this->mock(BackupManager::class);
-        $adapter = $this->mock(S3Filesystem::class);
+        $adapter = $this->mock(S3BackupAdapter::class);
 
         $manager->expects('adapter')->with(Backup::ADAPTER_AWS_S3)->andReturn($adapter);
 
