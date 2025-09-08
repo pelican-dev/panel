@@ -7,7 +7,6 @@ use Illuminate\Http\Response;
 use App\Models\Server;
 use App\Models\Database;
 use Illuminate\Http\JsonResponse;
-use App\Services\Databases\DatabasePasswordService;
 use App\Services\Databases\DatabaseManagementService;
 use App\Transformers\Api\Application\ServerDatabaseTransformer;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
@@ -25,7 +24,6 @@ class DatabaseController extends ApplicationApiController
      */
     public function __construct(
         private DatabaseManagementService $databaseManagementService,
-        private DatabasePasswordService $databasePasswordService
     ) {
         parent::__construct();
     }
@@ -67,7 +65,7 @@ class DatabaseController extends ApplicationApiController
      */
     public function resetPassword(ServerDatabaseWriteRequest $request, Server $server, Database $database): JsonResponse
     {
-        $this->databasePasswordService->handle($database);
+        $this->databaseManagementService->rotatePassword($database);
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
     }

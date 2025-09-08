@@ -83,7 +83,24 @@ class DatabasesRelationManager extends RelationManager
             ->recordActions([
                 ViewAction::make()
                     ->color('primary'),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->using(function (Database $database, DatabaseManagementService $service) {
+                        try {
+                            $service->delete($database);
+
+                            Notification::make()
+                                ->title(trans('server/database.delete_notification', ['database' => $database->database]))
+                                ->success()
+                                ->send();
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title(trans('server/database.delete_notification_fail', ['database' => $database->database]))
+                                ->danger()
+                                ->send();
+
+                            report($exception);
+                        }
+                    }),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -92,12 +109,8 @@ class DatabasesRelationManager extends RelationManager
                     ->color(fn () => DatabaseHost::count() < 1 ? 'danger' : 'primary')
                     ->createAnother(false)
                     ->action(function (array $data, DatabaseManagementService $service, RandomWordService $randomWordService) {
-                        if (empty($data['database'])) {
-                            $data['database'] = $randomWordService->word() . random_int(1, 420);
-                        }
-                        if (empty($data['remote'])) {
-                            $data['remote'] = '%';
-                        }
+                        $data['database'] ??= $randomWordService->word() . random_int(1, 420);
+                        $data['remote'] ??= '%';
 
                         $data['database'] = $service->generateUniqueDatabaseName($data['database'], $this->getOwnerRecord()->id);
 

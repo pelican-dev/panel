@@ -23,6 +23,7 @@ use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
@@ -31,6 +32,7 @@ use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class DatabaseResource extends Resource
 {
@@ -136,7 +138,23 @@ class DatabaseResource extends Resource
                 ViewAction::make()
                     ->modalHeading(fn (Database $database) => trans('server/database.viewing', ['database' => $database->database])),
                 DeleteAction::make()
-                    ->using(fn (Database $database, DatabaseManagementService $service) => $service->delete($database)),
+                    ->using(function (Database $database, DatabaseManagementService $service) {
+                        try {
+                            $service->delete($database);
+
+                            Notification::make()
+                                ->title(trans('server/database.delete_notification', ['database' => $database->database]))
+                                ->success()
+                                ->send();
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title(trans('server/database.delete_notification_fail', ['database' => $database->database]))
+                                ->danger()
+                                ->send();
+
+                            report($exception);
+                        }
+                    }),
             ])
             ->toolbarActions([
                 CreateAction::make('new')
@@ -169,12 +187,24 @@ class DatabaseResource extends Resource
                             ]),
                     ])
                     ->action(function ($data, DatabaseManagementService $service) use ($server) {
-                        if (empty($data['database'])) {
-                            $data['database'] = str_random(12);
-                        }
-                        $data['database'] = 's'. $server->id . '_' . $data['database'];
+                        $data['database'] ??= Str::random(12);
+                        $data['database'] = $service->generateUniqueDatabaseName($data['database'], $server->id);
 
-                        $service->create($server, $data);
+                        try {
+                            $service->create($server, $data);
+
+                            Notification::make()
+                                ->title(trans('server/database.create_notification', ['database' => $data['database']]))
+                                ->success()
+                                ->send();
+                        } catch (Exception $exception) {
+                            Notification::make()
+                                ->title(trans('server/database.create_notification_fail', ['database' => $data['database']]))
+                                ->danger()
+                                ->send();
+
+                            report($exception);
+                        }
                     }),
             ]);
     }

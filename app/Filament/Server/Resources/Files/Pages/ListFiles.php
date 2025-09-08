@@ -197,10 +197,10 @@ class ListFiles extends ListRecords
                                 ->required()
                                 ->live(),
                             TextEntry::make('new_location')
-                                ->state(fn (Get $get, File $file) => resolve_path('./' . join_paths($this->path, $get('location') ?? '/', $file->name))),
+                                ->state(fn (Get $get, File $file) => resolve_path(join_paths($this->path, $get('location') ?? '/', $file->name))),
                         ])
                         ->action(function ($data, File $file) {
-                            $location = rtrim($data['location'], '/');
+                            $location = $data['location'];
                             $files = [['to' => join_paths($location, $file->name), 'from' => $file->name]];
 
                             $this->getDaemonFileRepository()->renameFiles($this->path, $files);
@@ -361,7 +361,7 @@ class ListFiles extends ListRecords
                                 ->state(fn (Get $get) => resolve_path('./' . join_paths($this->path, $get('location') ?? ''))),
                         ])
                         ->action(function (Collection $files, $data) {
-                            $location = rtrim($data['location'], '/');
+                            $location = $data['location'];
 
                             $files = $files->map(fn ($file) => ['to' => join_paths($location, $file['name']), 'from' => $file['name']])->toArray();
                             $this->getDaemonFileRepository()->renameFiles($this->path, $files);

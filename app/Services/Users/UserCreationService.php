@@ -39,7 +39,7 @@ class UserCreationService
         $this->connection->beginTransaction();
         if (empty($data['password'])) {
             $generateResetToken = true;
-            $data['password'] = $this->hasher->make(str_random(30));
+            $data['password'] = $this->hasher->make(Str::random(30));
         }
 
         $isRootAdmin = array_key_exists('root_admin', $data) && $data['root_admin'];

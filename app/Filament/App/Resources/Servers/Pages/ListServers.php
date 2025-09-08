@@ -8,7 +8,7 @@ use App\Filament\Components\Tables\Columns\ServerEntryColumn;
 use App\Filament\Server\Pages\Console;
 use App\Models\Permission;
 use App\Models\Server;
-use App\Repositories\Daemon\DaemonPowerRepository;
+use App\Repositories\Daemon\DaemonServerRepository;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
@@ -38,11 +38,11 @@ class ListServers extends ListRecords
 
     public const WARNING_THRESHOLD = 0.7;
 
-    private DaemonPowerRepository $daemonPowerRepository;
+    private DaemonServerRepository $daemonServerRepository;
 
     public function boot(): void
     {
-        $this->daemonPowerRepository = new DaemonPowerRepository();
+        $this->daemonServerRepository = new DaemonServerRepository();
     }
 
     /** @return Stack[]
@@ -205,7 +205,7 @@ class ListServers extends ListRecords
     public function powerAction(Server $server, string $action): void
     {
         try {
-            $this->daemonPowerRepository->setServer($server)->send($action);
+            $this->daemonServerRepository->setServer($server)->power($action);
 
             Notification::make()
                 ->title(trans('server/dashboard.power_actions'))

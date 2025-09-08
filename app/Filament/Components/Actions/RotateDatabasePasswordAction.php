@@ -4,9 +4,10 @@ namespace App\Filament\Components\Actions;
 
 use App\Facades\Activity;
 use App\Models\Database;
-use App\Services\Databases\DatabasePasswordService;
+use App\Services\Databases\DatabaseManagementService;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 
@@ -35,10 +36,9 @@ class RotateDatabasePasswordAction extends Action
 
         $this->requiresConfirmation();
 
-        $this->action(function (DatabasePasswordService $service, Database $database, Set $set) {
+        $this->action(function (DatabaseManagementService $service, Database $database, Set $set) {
             try {
-                $service->handle($database);
-
+                $service->rotatePassword($database);
                 $database->refresh();
 
                 $set('password', $database->password);
@@ -56,7 +56,7 @@ class RotateDatabasePasswordAction extends Action
             } catch (Exception $exception) {
                 Notification::make()
                     ->title(trans('admin/databasehost.rotate_error'))
-                    ->body($exception->getMessage())
+                    ->body(fn () => auth()->user()->canAccessPanel(Filament::getPanel('admin')) ? $exception->getMessage() : null)
                     ->danger()
                     ->send();
 

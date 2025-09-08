@@ -10,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class CreateApiKey extends CreateRecord
 {
@@ -36,7 +37,7 @@ class CreateApiKey extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         $data['identifier'] = ApiKey::generateTokenIdentifier(ApiKey::TYPE_APPLICATION);
-        $data['token'] = str_random(ApiKey::KEY_LENGTH);
+        $data['token'] = Str::random(ApiKey::KEY_LENGTH);
         $data['user_id'] = auth()->user()->id;
         $data['key_type'] = ApiKey::TYPE_APPLICATION;
 

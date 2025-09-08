@@ -9,7 +9,6 @@ use Illuminate\Http\Response;
 use App\Models\Server;
 use App\Models\Database;
 use App\Facades\Activity;
-use App\Services\Databases\DatabasePasswordService;
 use App\Transformers\Api\Client\DatabaseTransformer;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DeployServerDatabaseService;
@@ -29,7 +28,6 @@ class DatabaseController extends ClientApiController
     public function __construct(
         private DeployServerDatabaseService $deployDatabaseService,
         private DatabaseManagementService $managementService,
-        private DatabasePasswordService $passwordService
     ) {
         parent::__construct();
     }
@@ -86,7 +84,7 @@ class DatabaseController extends ClientApiController
      */
     public function rotatePassword(RotatePasswordRequest $request, Server $server, Database $database): array
     {
-        $this->passwordService->handle($database);
+        $this->managementService->rotatePassword($database);
         $database->refresh();
 
         Activity::event('server:database.rotate-password')
