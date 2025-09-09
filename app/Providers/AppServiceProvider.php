@@ -63,7 +63,18 @@ class AppServiceProvider extends ServiceProvider
         // If the APP_URL value is set with https:// make sure we force it here. Theoretically
         // this should just work with the proxy logic, but there are a lot of cases where it
         // doesn't, and it triggers a lot of support requests, so lets just head it off here.
-        URL::forceHttps(Str::startsWith(config('app.url') ?? '', 'https://'));
+        //
+        // Additionally, check if we're behind a proxy that's forwarding HTTPS requests
+        if (Str::startsWith(config('app.url') ?? '', 'https://')) {
+            URL::forceScheme('https');
+        } elseif (!$app->runningInConsole() && $app->environment('production')) {
+            // In production, if request is forwarded as HTTPS, force HTTPS scheme
+            if (request()->server->get('HTTP_X_FORWARDED_PROTO') === 'https' || 
+                request()->server->get('HTTP_X_FORWARDED_SSL') === 'on' ||
+                request()->isSecure()) {
+                URL::forceScheme('https');
+            }
+        }
 
         if ($app->runningInConsole() && empty(config('app.key'))) {
             $config->set('app.key', '');
