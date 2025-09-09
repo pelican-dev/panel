@@ -143,7 +143,7 @@ class ImportEggAction extends Action
                                     }
                                 }),
                             Repeater::make('urls')
-                                ->label('')
+                                ->hiddenLabel()
                                 ->itemLabel(fn (array $state) => str($state['url'])->afterLast('/egg-')->beforeLast('.')->headline())
                                 ->hint(trans('admin/egg.import.url_help'))
                                 ->addActionLabel(trans('admin/egg.import.add_url'))

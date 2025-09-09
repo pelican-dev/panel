@@ -156,7 +156,7 @@ class ScheduleResource extends Resource
                                                     && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
                                 ->schema([
                                     TextInput::make('x')
-                                        ->label('')
+                                        ->hiddenLabel()
                                         ->numeric()
                                         ->minValue(1)
                                         ->maxValue(60)
@@ -178,7 +178,7 @@ class ScheduleResource extends Resource
                                                     && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
                                 ->schema([
                                     TextInput::make('x')
-                                        ->label('')
+                                        ->hiddenLabel()
                                         ->numeric()
                                         ->minValue(1)
                                         ->maxValue(24)
@@ -200,7 +200,7 @@ class ScheduleResource extends Resource
                                                     && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
                                 ->schema([
                                     TextInput::make('x')
-                                        ->label('')
+                                        ->hiddenLabel()
                                         ->numeric()
                                         ->minValue(1)
                                         ->maxValue(24)
@@ -222,7 +222,7 @@ class ScheduleResource extends Resource
                                                     && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
                                 ->schema([
                                     TextInput::make('x')
-                                        ->label('')
+                                        ->hiddenLabel()
                                         ->numeric()
                                         ->minValue(1)
                                         ->maxValue(24)
@@ -244,7 +244,7 @@ class ScheduleResource extends Resource
                                                     && $get('cron_day_of_week') != '*' ? 'success' : 'primary')
                                 ->schema([
                                     Select::make('x')
-                                        ->label('')
+                                        ->hiddenLabel()
                                         ->prefix(trans('server/schedule.time.every'))
                                         ->options([
                                             '1' => trans('server/schedule.time.monday'),
