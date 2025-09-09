@@ -566,10 +566,10 @@ class EditServer extends EditRecord
                                         Action::make('change_egg')
                                             ->label(trans('admin/server.change_egg'))
                                             ->action(function (array $data, Server $server, EggChangerService $service) {
-                                                $service->handle($server, $data['egg_id'], $data['keepOldVariables']);
+                                                $service->handle($server, $data['egg_id'], $data['keep_old_variables']);
 
                                                 // Use redirect instead of fillForm to prevent server variables from duplicating
-                                                $this->redirect($this->getUrl(['record' => $server, 'tab' => '-egg-tab']), true);
+                                                $this->redirect($this->getUrl(['record' => $server, 'tab' => 'egg::data::tab']), true);
                                             })
                                             ->schema(fn (Server $server) => [
                                                 Select::make('egg_id')
@@ -579,7 +579,7 @@ class EditServer extends EditRecord
                                                     ->searchable()
                                                     ->preload()
                                                     ->required(),
-                                                Toggle::make('keepOldVariables')
+                                                Toggle::make('keep_old_variables')
                                                     ->label(trans('admin/server.keep_old_variables'))
                                                     ->default(true),
                                             ])
