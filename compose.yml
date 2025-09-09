@@ -1,58 +1,21 @@
-x-common:
-  panel:
-    &panel-environment
-    APP_URL: "https://localhost" # can be set to 'http://localhost' on port 80 only
-    ADMIN_EMAIL: "USEYOUROWNEMAILHERE@example.com"
-
-    APP_DEBUG: "false"
-    APP_ENV: "production"
-
-  mail:
-    &mail-environment
-    MAIL_DRIVER: "log"
-    # MAIL_HOST: ""
-    # MAIL_PORT: ""
-    # MAIL_FROM: ""
-    # MAIL_USERNAME: ""
-    # MAIL_PASSWORD: ""
-    # MAIL_SCHEME: ""
-
-#
-# ------------------------------------------------------------------------------------------
-# DANGER ZONE BELOW
-#
-# The remainder of this file likely does not need to be changed. Please only make modifications
-# below if you understand what you are doing.
-#
-
 services:
-  panel:
-    image: ghcr.io/pelican-dev/panel:latest
-    build: .
-    restart: always
-    networks:
-      - default
-    ports:
-      - "80:80"
-      - "443:443"
-      # - "9000:9000" # enable when not using caddy to be able to reach php-fpm
-    extra_hosts:
-      - "host.docker.internal:host-gateway" # shows the panel on the internal docker network as well. usually '172.17.0.1'
-    volumes:
-      - pelican-data:/pelican-data
-      - pelican-logs:/var/www/html/storage/logs
+  postgres:
+    image: postgres:17-alpine
+    container_name: pelican-postgres
+    restart: unless-stopped
     environment:
-      <<: [*panel-environment, *mail-environment]
-      XDG_DATA_HOME: /pelican-data
-      # SKIP_CADDY: true # enable when not using caddy.
-      TRUSTED_PROXIES:
+      POSTGRES_DB: ${POSTGRES_DB:-pelican}
+      POSTGRES_USER: ${POSTGRES_USER:-pelican}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pelican}
+    ports:
+      - "${PGPORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  pelican-data:
-  pelican-logs:
-
-networks:
-  default:
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
+  postgres_data:

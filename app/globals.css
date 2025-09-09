@@ -1,0 +1,141 @@
+@import "tailwindcss";
+/* Forms-only styles extracted from the original project */
+@import "../filament_forms.css";
+
+@theme {
+  /* Map tokens to original RGB palette using rgb(var(--...)) */
+  --color-background: rgb(var(--gray-950));
+  --color-foreground: rgb(var(--gray-100));
+
+  --color-card: rgb(var(--gray-900));
+  --color-card-foreground: rgb(var(--gray-100));
+
+  --color-popover: rgb(var(--gray-900));
+  --color-popover-foreground: rgb(var(--gray-100));
+
+  --color-primary: rgb(var(--primary-500));
+  --color-primary-foreground: rgb(248, 250, 252); /* near-white */
+
+  --color-secondary: rgb(var(--gray-800));
+  --color-secondary-foreground: rgb(var(--gray-100));
+
+  --color-muted: rgb(var(--gray-800));
+  --color-muted-foreground: rgb(var(--gray-400));
+
+  --color-accent: rgb(var(--gray-800));
+  --color-accent-foreground: rgb(var(--gray-100));
+
+  --color-destructive: rgb(var(--danger-500));
+  --color-destructive-foreground: rgb(248, 250, 252);
+
+  --color-success: rgb(var(--success-500));
+  --color-warning: rgb(var(--warning-500));
+  --color-info: rgb(var(--info-500));
+
+  --color-border: rgb(var(--gray-800));
+  --color-input: rgb(var(--gray-800));
+  --color-ring: rgb(var(--primary-400));
+
+  --radius: var(--radius);
+}
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+    --sidebar-width: 20rem;
+    --danger-50:254, 242, 242;  --danger-100:254, 226, 226;  --danger-200:254, 202, 202;  --danger-300:252, 165, 165;  --danger-400:248, 113, 113;  --danger-500:239, 68, 68;  --danger-600:220, 38, 38;  --danger-700:185, 28, 28;  --danger-800:153, 27, 27;  --danger-900:127, 29, 29;  --danger-950:69, 10, 10;  --gray-50:250, 250, 250;  --gray-100:244, 244, 245;  --gray-200:228, 228, 231;  --gray-300:212, 212, 216;  --gray-400:161, 161, 170;  --gray-500:113, 113, 122;  --gray-600:82, 82, 91;  --gray-700:63, 63, 70;  --gray-800:39, 39, 42;  --gray-900:24, 24, 27;  --gray-950:9, 9, 11;  --info-50:240, 249, 255;  --info-100:224, 242, 254;  --info-200:186, 230, 253;  --info-300:125, 211, 252;  --info-400:56, 189, 248;  --info-500:14, 165, 233;  --info-600:2, 132, 199;  --info-700:3, 105, 161;  --info-800:7, 89, 133;  --info-900:12, 74, 110;  --info-950:8, 47, 73;  --primary-50:239, 246, 255;  --primary-100:219, 234, 254;  --primary-200:191, 219, 254;  --primary-300:147, 197, 253;  --primary-400:96, 165, 250;  --primary-500:59, 130, 246;  --primary-600:37, 99, 235;  --primary-700:29, 78, 216;  --primary-800:30, 64, 175;  --primary-900:30, 58, 138;  --primary-950:23, 37, 84;  --success-50:240, 253, 244;  --success-100:220, 252, 231;  --success-200:187, 247, 208;  --success-300:134, 239, 172;  --success-400:74, 222, 128;  --success-500:34, 197, 94;  --success-600:22, 163, 74;  --success-700:21, 128, 61;  --success-800:22, 101, 52;  --success-900:20, 83, 45;  --success-950:5, 46, 22;  --warning-50:255, 251, 235;  --warning-100:254, 243, 199;  --warning-200:253, 230, 138;  --warning-300:252, 211, 77;  --warning-400:251, 191, 36;  --warning-500:245, 158, 11;  --warning-600:217, 119, 6;  --warning-700:180, 83, 9;  --warning-800:146, 64, 14;  --warning-900:120, 53, 15;  --warning-950:69, 26, 3;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 221.2 83.2% 53.3%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+  
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  /* Sheet animations */
+  @keyframes slide-in-from-right {
+    from { 
+      transform: translateX(100%); 
+      opacity: 0;
+    }
+    to { 
+      transform: translateX(0); 
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-out-to-right {
+    from { transform: translateX(0); }
+    to { transform: translateX(100%); }
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  .animate-slide-in-from-right {
+    animation: slide-in-from-right 0.3s ease-out;
+  }
+
+  .animate-slide-out-to-right {
+    animation: slide-out-to-right 0.3s ease-in;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-in-out;
+  }
+
+  .animate-fade-out {
+    animation: fade-out 0.3s ease-in-out;
+  }
+}
