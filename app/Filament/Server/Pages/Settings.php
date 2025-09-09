@@ -50,7 +50,7 @@ class Settings extends ServerFormPage
                             ])
                             ->schema([
                                 TextInput::make('name')
-                                    ->label(trans('server/setting.server_info.server_name'))
+                                    ->label(trans('server/setting.server_info.name'))
                                     ->disabled(fn (Server $server) => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
                                     ->required()
                                     ->columnSpan([
