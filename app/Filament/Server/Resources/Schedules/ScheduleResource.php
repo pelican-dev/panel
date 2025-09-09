@@ -116,8 +116,8 @@ class ScheduleResource extends Resource
                     ->required()
                     ->default(1),
                 ToggleButtons::make('Status')
-                    ->formatStateUsing(fn (?Schedule $schedule) => !$schedule?->is_active ? 'inactive' : ($schedule?->is_processing ? 'processing' : 'active'))
-                    ->options(fn (?Schedule $schedule) => !$schedule?->is_active ? ['inactive' => trans('server/schedule.inactive')] : ($schedule?->is_processing ? ['processing' => trans('server/schedule.processing')] : ['active' => trans('server/schedule.active')]))
+                    ->formatStateUsing(fn (?Schedule $schedule) => !$schedule?->is_active ? 'inactive' : ($schedule->is_processing ? 'processing' : 'active'))
+                    ->options(fn (?Schedule $schedule) => !$schedule?->is_active ? ['inactive' => trans('server/schedule.inactive')] : ($schedule->is_processing ? ['processing' => trans('server/schedule.processing')] : ['active' => trans('server/schedule.active')]))
                     ->colors([
                         'new' => 'primary',
                         'inactive' => 'danger',
