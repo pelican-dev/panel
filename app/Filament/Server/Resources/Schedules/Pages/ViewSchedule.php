@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\Schedules\Pages;
 
+use App\Enums\ScheduleStatus;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\Schedules\ScheduleResource;
 use App\Models\Permission;
@@ -27,11 +28,11 @@ class ViewSchedule extends ViewRecord
     protected function getDefaultHeaderActions(): array
     {
         return [
-            Action::make('runNow')
+            Action::make('run_now')
                 ->authorize(fn () => auth()->user()->can(Permission::ACTION_SCHEDULE_UPDATE, Filament::getTenant()))
-                ->label(fn (Schedule $schedule) => $schedule->tasks->count() === 0 ? trans('server/schedule.no_tasks') : ($schedule->is_processing ? trans('server/schedule.processing') : trans('server/schedule.run_now')))
-                ->color(fn (Schedule $schedule) => $schedule->tasks->count() === 0 || $schedule->is_processing ? 'warning' : 'primary')
-                ->disabled(fn (Schedule $schedule) => $schedule->tasks->count() === 0 || $schedule->is_processing)
+                ->label(fn (Schedule $schedule) => $schedule->tasks->count() === 0 ? trans('server/schedule.no_tasks') : ($schedule->status === ScheduleStatus::Processing ? ScheduleStatus::Processing->getLabel() : trans('server/schedule.run_now')))
+                ->color(fn (Schedule $schedule) => $schedule->tasks->count() === 0 || $schedule->status === ScheduleStatus::Processing ? 'warning' : 'primary')
+                ->disabled(fn (Schedule $schedule) => $schedule->tasks->count() === 0 || $schedule->status === ScheduleStatus::Processing)
                 ->action(function (ProcessScheduleService $service, Schedule $schedule) {
                     $service->handle($schedule, true);
 
