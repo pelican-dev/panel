@@ -216,7 +216,7 @@ class ListServers extends ListRecords
 
             cache()->forget("servers.$server->uuid.status");
 
-            $this->redirect(self::getUrl(['activeTab' => $this->activeTab]));
+            $this->redirect(self::getUrl(['tab' => $this->activeTab]));
         } catch (ConnectionException) {
             Notification::make()
                 ->title(trans('exceptions.node.error_connecting', ['node' => $server->node->name]))
