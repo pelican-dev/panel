@@ -176,7 +176,7 @@ class EditProfile extends BaseEditProfile
                                     $unlink = array_key_exists($id, $this->getUser()->oauth ?? []);
 
                                     $actions[] = Action::make("oauth_$id")
-                                        ->label(($unlink ? trans('profile.unlink') : trans('profile.link')) . $name)
+                                        ->label(trans('profile.' . ($unlink ? 'unlink' : 'link'), ['name' => $name]))
                                         ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
                                         ->color(Color::generateV3Palette($schema->getHexColor()))
                                         ->action(function (UserUpdateService $updateService) use ($id, $name, $unlink) {
