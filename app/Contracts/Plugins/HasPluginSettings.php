@@ -2,7 +2,7 @@
 
 namespace App\Contracts\Plugins;
 
-use Filament\Forms\Components\Component;
+use Filament\Schemas\Components\Component;
 
 interface HasPluginSettings
 {

@@ -6,7 +6,7 @@ use App\Contracts\Plugins\HasPluginSettings;
 use App\Enums\PluginCategory;
 use App\Enums\PluginStatus;
 use Exception;
-use Filament\Forms\Components\Component;
+use Filament\Schemas\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

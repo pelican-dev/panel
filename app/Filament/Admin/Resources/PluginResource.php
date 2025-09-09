@@ -4,20 +4,20 @@ namespace App\Filament\Admin\Resources;
 
 use App\Enums\PluginCategory;
 use App\Facades\Plugins;
-use App\Filament\Admin\Resources\PluginResource\Pages\ListPlugins;
+use App\Filament\Admin\Resources\Plugins\Pages\ListPlugins;
 use App\Models\Plugin;
 use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\CreateAction;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Http\UploadedFile;
@@ -27,7 +27,7 @@ class PluginResource extends Resource
 {
     protected static ?string $model = Plugin::class;
 
-    protected static ?string $navigationIcon = 'tabler-packages';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-packages';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -48,7 +48,7 @@ class PluginResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count() ?: null;
+        return (string) static::getEloquentQuery()->count() ?: null;
     }
 
     public static function table(Table $table): Table
@@ -82,7 +82,7 @@ class PluginResource extends Resource
                     ->tooltip(fn (Plugin $plugin) => $plugin->status_message)
                     ->sortable(),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('view')
                     ->label(trans('filament-actions::view.single.label'))
                     ->icon('tabler-eye-share')
@@ -95,7 +95,7 @@ class PluginResource extends Resource
                     ->icon('tabler-settings')
                     ->color('primary')
                     ->visible(fn (Plugin $plugin) => $plugin->isEnabled() && $plugin->hasSettings())
-                    ->form(fn (Plugin $plugin) => $plugin->getSettingsForm())
+                    ->schema(fn (Plugin $plugin) => $plugin->getSettingsForm())
                     ->action(fn (array $data, Plugin $plugin) => $plugin->saveSettings($data))
                     ->slideOver(),
                 Action::make('install')
@@ -198,13 +198,14 @@ class PluginResource extends Resource
                     }),
                 Action::make('import')
                     ->label(trans('admin/plugin.import'))
-                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('create', $plugin))
+                    ->authorize(fn () => auth()->user()->can('create', Plugin::class))
                     ->icon('tabler-download')
-                    ->form([
+                    ->schema([
                         Tabs::make('Tabs')
                             ->contained(false)
                             ->tabs([
-                                Tab::make(trans('admin/plugin.from_file'))
+                                Tab::make('from_file')
+                                    ->label(trans('admin/plugin.from_file'))
                                     ->icon('tabler-file-upload')
                                     ->schema([
                                         FileUpload::make('file')
@@ -213,7 +214,8 @@ class PluginResource extends Resource
                                             ->previewable(false)
                                             ->storeFiles(false),
                                     ]),
-                                Tab::make(trans('admin/plugin.from_url'))
+                                Tab::make('from_url')
+                                    ->label(trans('admin/plugin.from_url'))
                                     ->icon('tabler-world-upload')
                                     ->schema([
                                         TextInput::make('url')
@@ -254,9 +256,9 @@ class PluginResource extends Resource
             ->emptyStateHeading(trans('admin/plugin.no_plugins'));
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 TextInput::make('name')
                     ->required(),
