@@ -226,7 +226,7 @@ class CreateNode extends CreateRecord
                                 ->label(trans('admin/node.maintenance_mode'))->inline()
                                 ->columnSpan(1)
                                 ->default(false)
-                                ->hinticon('tabler-question-mark', trans('admin/node.maintenance_mode_help'))
+                                ->hintIcon('tabler-question-mark', trans('admin/node.maintenance_mode_help'))
                                 ->options([
                                     true => trans('admin/node.enabled'),
                                     false => trans('admin/node.disabled'),
