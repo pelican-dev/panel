@@ -134,9 +134,7 @@ class DatabasesRelationManager extends RelationManager
                             ->options(fn () => DatabaseHost::query()
                                 ->whereHas('nodes', fn ($query) => $query->where('nodes.id', $this->getOwnerRecord()->node_id))
                                 ->pluck('name', 'id')
-                            )
-                            ->default(fn () => (DatabaseHost::query()->first())?->id)
-                            ->selectablePlaceholder(false),
+                            ),
                         TextInput::make('database')
                             ->label(trans('admin/server.name'))
                             ->alphaDash()
