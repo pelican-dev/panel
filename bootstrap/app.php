@@ -12,6 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->redirectGuestsTo(fn () => route('filament.app.auth.login'));
 
+        $middleware->trustProxies(at: \App\Http\Middleware\TrustProxies::class);
+        
         $middleware->web(\App\Http\Middleware\LanguageMiddleware::class);
 
         $middleware->api([
