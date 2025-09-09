@@ -141,15 +141,13 @@ class DatabasesRelationManager extends RelationManager
                             ->label(trans('admin/server.name'))
                             ->alphaDash()
                             ->prefix(fn () => 's' . $this->getOwnerRecord()->id . '_')
-                            ->hintIcon('tabler-question-mark')
-                            ->hintIconTooltip(trans('admin/databasehost.table.name_helper')),
+                            ->hintIcon('tabler-question-mark', trans('admin/databasehost.table.name_helper')),
                         TextInput::make('remote')
                             ->columnSpan(1)
                             ->regex('/^[\w\-\/.%:]+$/')
                             ->label(trans('admin/databasehost.table.remote'))
                             ->default('%')
-                            ->hintIcon('tabler-question-mark')
-                            ->hintIconTooltip(trans('admin/databasehost.table.remote_helper')),
+                            ->hintIcon('tabler-question-mark', trans('admin/databasehost.table.remote_helper')),
                     ]),
             ]);
     }

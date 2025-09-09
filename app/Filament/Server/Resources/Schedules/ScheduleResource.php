@@ -103,15 +103,13 @@ class ScheduleResource extends Resource
                     ->required(),
                 Toggle::make('only_when_online')
                     ->label(trans('server/schedule.only_online'))
-                    ->hintIconTooltip(trans('server/schedule.only_online_hint'))
-                    ->hintIcon('tabler-question-mark')
+                    ->hintIcon('tabler-question-mark', trans('server/schedule.only_online_hint'))
                     ->inline(false)
                     ->required()
                     ->default(1),
                 Toggle::make('is_active')
                     ->label(trans('server/schedule.enabled'))
-                    ->hintIconTooltip(trans('server/schedule.enabled_hint'))
-                    ->hintIcon('tabler-question-mark')
+                    ->hintIcon('tabler-question-mark', trans('server/schedule.enabled_hint'))
                     ->inline(false)
                     ->hiddenOn('view')
                     ->required()

@@ -46,9 +46,7 @@ class StartupVariable extends Field
 
         $this->prefix(fn (StartupVariable $component) => '{{' . $component->getVariableEnv() . '}}');
 
-        $this->hintIcon('tabler-code');
-
-        $this->hintIconTooltip(fn (StartupVariable $component) => implode('|', $component->getVariableRules()));
+        $this->hintIcon('tabler-code', fn (StartupVariable $component) => implode('|', $component->getVariableRules()));
 
         $this->helperText(fn (StartupVariable $component) => !$component->getVariableDesc() ? '—' : $component->getVariableDesc());
 

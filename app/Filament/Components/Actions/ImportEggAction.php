@@ -130,8 +130,7 @@ class ImportEggAction extends Action
                                 ->searchable()
                                 ->preload()
                                 ->live()
-                                ->hintIcon('tabler-refresh')
-                                ->hintIconTooltip(trans('admin/egg.import.refresh'))
+                                ->hintIcon('tabler-refresh', trans('admin/egg.import.refresh'))
                                 ->hintAction(function () {
                                     Artisan::call(UpdateEggIndexCommand::class);
                                 })
