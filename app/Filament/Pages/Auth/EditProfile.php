@@ -27,6 +27,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
@@ -422,11 +423,11 @@ class EditProfile extends BaseEditProfile
                                         ToggleButtons::make('top_navigation')
                                             ->label(trans('profile.navigation'))
                                             ->inline()
-                                            ->required()
                                             ->options([
-                                                true => trans('profile.top'),
-                                                false => trans('profile.side'),
-                                            ]),
+                                                1 => trans('profile.top'),
+                                                0 => trans('profile.side'),
+                                            ])
+                                            ->stateCast(new BooleanStateCast(false, true)),
                                     ]),
                                 Section::make(trans('profile.console'))
                                     ->collapsible()
@@ -561,11 +562,11 @@ class EditProfile extends BaseEditProfile
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $data['console_font'] = $this->getUser()->getCustomization(CustomizationKey::ConsoleFont);
-        $data['console_font_size'] = $this->getUser()->getCustomization(CustomizationKey::ConsoleFontSize);
-        $data['console_rows'] = $this->getUser()->getCustomization(CustomizationKey::ConsoleRows);
-        $data['console_graph_period'] = $this->getUser()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
+        $data['console_font_size'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleFontSize);
+        $data['console_rows'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleRows);
+        $data['console_graph_period'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $data['dashboard_layout'] = $this->getUser()->getCustomization(CustomizationKey::DashboardLayout);
-        $data['top_navigation'] = $this->getUser()->getCustomization(CustomizationKey::TopNavigation);
+        $data['top_navigation'] = (bool) $this->getUser()->getCustomization(CustomizationKey::TopNavigation);
 
         return $data;
     }
