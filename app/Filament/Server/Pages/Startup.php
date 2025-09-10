@@ -15,10 +15,9 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
@@ -51,7 +50,7 @@ class Startup extends ServerFormPage
                     ->label(trans('server/startup.command'))
                     ->live()
                     ->visible(fn (Server $server) => in_array($server->startup, $server->egg->startup_commands))
-                    ->disabled(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
+                    ->disabled(fn (Server $server) => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
                     ->formatStateUsing(fn (Server $server) => $server->startup)
                     ->afterStateUpdated(function ($state, Server $server, Set $set) {
                         $original = $server->startup;
