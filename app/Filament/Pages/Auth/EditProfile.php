@@ -151,6 +151,7 @@ class EditProfile extends BaseEditProfile
                                     ->avatar()
                                     ->acceptedFileTypes(['image/png'])
                                     ->directory('avatars')
+                                    ->disk('public')
                                     ->getUploadedFileNameForStorageUsing(fn () => $this->getUser()->id . '.png')
                                     ->hintAction(function (FileUpload $fileUpload) {
                                         $path = $fileUpload->getDirectory() . '/' . $this->getUser()->id . '.png';
