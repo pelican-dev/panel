@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\Application\Roles;
 
+use Throwable;
+use Exception;
 use App\Exceptions\PanelException;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
@@ -55,7 +57,7 @@ class RoleController extends ApplicationApiController
      * Store a new role on the Panel and return an HTTP/201 response code with the
      * new role attached.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function store(StoreRoleRequest $request): JsonResponse
     {
@@ -78,7 +80,7 @@ class RoleController extends ApplicationApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function update(UpdateRoleRequest $request, Role $role): array
     {
@@ -98,7 +100,7 @@ class RoleController extends ApplicationApiController
      *
      * Delete a role from the Panel.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(DeleteRoleRequest $request, Role $role): Response
     {

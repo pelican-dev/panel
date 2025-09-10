@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Application\Servers;
 
+use Throwable;
 use Illuminate\Http\Response;
 use App\Models\Server;
 use App\Models\Database;
@@ -60,7 +61,7 @@ class DatabaseController extends ApplicationApiController
      *
      * Reset the password for a specific server database.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function resetPassword(ServerDatabaseWriteRequest $request, Server $server, Database $database): JsonResponse
     {
@@ -74,7 +75,7 @@ class DatabaseController extends ApplicationApiController
      *
      * Create a new database on the Panel for a given server.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function store(StoreServerDatabaseRequest $request, Server $server): JsonResponse
     {

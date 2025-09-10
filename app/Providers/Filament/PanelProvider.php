@@ -2,10 +2,14 @@
 
 namespace App\Providers\Filament;
 
+use App\Enums\CustomizationKey;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\LanguageMiddleware;
-use App\Http\Middleware\RequireTwoFactorAuthentication;
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -30,11 +34,43 @@ abstract class PanelProvider extends BasePanelProvider
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
             ->favicon(config('app.favicon', '/pelican.ico'))
-            ->topNavigation(fn () => auth()->user()->getCustomization()['top_navigation'] ?? false)
+            ->topNavigation(fn () => auth()->user()->getCustomization(CustomizationKey::TopNavigation))
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->profile(EditProfile::class, false)
+            ->userMenuItems([
+                'profile' => fn (Action $action) => $action
+                    ->url(fn () => EditProfile::getUrl(panel: 'app')),
+            ])
             ->login(Login::class)
             ->passwordReset()
+            ->multiFactorAuthentication([
+                AppAuthentication::make()->recoverable(),
+                EmailAuthentication::make(),
+            ])
+            ->requiresMultiFactorAuthentication(function () {
+                /** @var ?User $user */
+                $user = auth()->user(); // TODO: get user, see https://github.com/filamentphp/filament/discussions/17695
+                if ($user) {
+                    $level = (int) config('panel.auth.2fa_required');
+
+                    // Not required
+                    if ($level === 0) {
+                        return false;
+                    }
+
+                    // Only admins
+                    if ($level === 1) {
+                        return $user->isAdmin();
+                    }
+
+                    // All users
+                    if ($level === 2) {
+                        return true;
+                    }
+                }
+
+                return false;
+            })
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -46,7 +82,6 @@ abstract class PanelProvider extends BasePanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 LanguageMiddleware::class,
-                RequireTwoFactorAuthentication::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

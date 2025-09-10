@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use Exception;
 use Carbon\Carbon;
 use Cron\CronExpression;
 use Illuminate\Support\Str;
@@ -24,7 +25,7 @@ class Utilities
 
                 $string = substr_replace($string, $character, random_int(0, $length - 1), 1);
             }
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             // Just log the error and hope for the best at this point.
             logger()->error($exception);
         }
@@ -35,7 +36,7 @@ class Utilities
     /**
      * Converts schedule cron data into a carbon object.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getScheduleNextRunDate(string $minute, string $hour, string $dayOfMonth, string $month, string $dayOfWeek): Carbon
     {

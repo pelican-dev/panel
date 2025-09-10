@@ -1,13 +1,10 @@
 <x-filament-panels::page>
     @if (count($checkResults?->storedCheckResults ?? []))
-        <x-filament::grid default="1" sm="2" class="gap-6 mb-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-5">
             @foreach ($checkResults->storedCheckResults as $result)
-                <div
-                    class="flex items-start px-4 py-5 space-x-2 md:space-x-3 overflow-hidden shadow-lg rounded-xl bg-white dark:bg-gray-900 ring-1 ring-gray-950/5 dark:ring-white/10 sm:p-6">
-                    <div
-                        class="flex justify-center items-center rounded-full p-2 mr-2 {{ $this->backgroundColor($result->status) }}">
-                        <x-filament::icon icon="{{ $this->icon($result->status) }}"
-                                          class="h-6 w-6 {{ $this->iconColor($result->status) }}" />
+                <div class="flex items-start px-4 py-5 space-x-2 md:space-x-3 overflow-hidden shadow-lg rounded-xl bg-white dark:bg-gray-900 ring-1 ring-gray-950/5 dark:ring-white/10 sm:p-6">
+                    <div class="flex justify-center items-center rounded-full p-2 mr-2 {{ $this->backgroundColor($result->status) }}">
+                        <x-filament::icon icon="{{ $this->icon($result->status) }}" class="h-6 w-6 {{ $this->iconColor($result->status) }}" />
                     </div>
                     <div>
                         <dd class="-mt-1 font-bold md:mt-1 md:text-xl text-gray-900 dark:text-white">
@@ -23,12 +20,11 @@
                     </div>
                 </div>
             @endforeach
-        </x-filament::grid>
+        </div>
     @endif
 
     @if ($lastRanAt)
-        <div
-            class="text-md text-center font-medium {{ $lastRanAt->diffInMinutes() > 5 ? 'text-red-500 dark:text-red-400' : 'text-gray-400 dark:text-gray-200' }}">
+        <div class="text-md text-center font-medium {{ $lastRanAt->diffInMinutes() > 5 ? 'text-red-500 dark:text-red-400' : 'text-gray-400 dark:text-gray-200' }}">
             {{ trans('admin/health.checked', ['time' => $lastRanAt->diffForHumans()]) }}
         </div>
     @endif

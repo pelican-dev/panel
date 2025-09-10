@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware\Api\Client\Server;
 
+use Closure;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Server;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -26,9 +28,9 @@ class AuthenticateServerAccess
     /**
      * Authenticate that this server exists and is not suspended or marked as installing.
      */
-    public function handle(Request $request, \Closure $next): mixed
+    public function handle(Request $request, Closure $next): mixed
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = $request->user();
         $server = $request->route()->parameter('server');
 

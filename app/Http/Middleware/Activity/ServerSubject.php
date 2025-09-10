@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\Activity;
 
+use Closure;
 use App\Models\Server;
 use App\Facades\LogTarget;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class ServerSubject
      * If no server is found this is a no-op as the activity log service can always
      * set the user based on the authmanager response.
      */
-    public function handle(Request $request, \Closure $next): Response
+    public function handle(Request $request, Closure $next): Response
     {
         $server = $request->route()->parameter('server');
 

@@ -19,7 +19,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth:sanctum',
             \App\Http\Middleware\Api\IsValidJson::class,
             \App\Http\Middleware\Activity\TrackAPIKey::class,
-            \App\Http\Middleware\RequireTwoFactorAuthentication::class,
             \App\Http\Middleware\Api\AuthenticateIPAccess::class,
         ]);
 

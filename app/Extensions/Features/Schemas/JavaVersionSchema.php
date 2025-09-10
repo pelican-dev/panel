@@ -10,8 +10,8 @@ use App\Repositories\Daemon\DaemonServerRepository;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 
 class JavaVersionSchema implements FeatureSchemaInterface
@@ -44,9 +44,9 @@ class JavaVersionSchema implements FeatureSchemaInterface
             ->modalHeading('Unsupported Java Version')
             ->modalDescription('This server is currently running an unsupported version of Java and cannot be started.')
             ->modalSubmitActionLabel('Update Docker Image')
-            ->disabledForm(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
-            ->form([
-                Placeholder::make('java')
+            ->disabledSchema(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
+            ->schema([
+                TextEntry::make('java')
                     ->label('Please select a supported version from the list below to continue starting the server.'),
                 Select::make('image')
                     ->label('Docker Image')

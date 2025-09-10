@@ -3,10 +3,11 @@
 namespace App\Filament\Admin\Widgets;
 
 use App\Services\Helpers\SoftwareVersionService;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class UpdateWidget extends FormWidget
 {
@@ -19,26 +20,30 @@ class UpdateWidget extends FormWidget
         $this->softwareVersionService = $softwareVersionService;
     }
 
-    public function form(Form $form): Form
+    /**
+     * @throws Exception
+     */
+    public function form(Schema $schema): Schema
     {
         $isLatest = $this->softwareVersionService->isLatestPanel();
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 $isLatest
                 ? Section::make(trans('admin/dashboard.sections.intro-no-update.heading'))
                     ->icon('tabler-checkbox')
                     ->iconColor('success')
                     ->schema([
-                        Placeholder::make('')
-                            ->content(trans('admin/dashboard.sections.intro-no-update.content', ['version' => $this->softwareVersionService->currentPanelVersion()])),
+                        TextEntry::make('info')
+                            ->hiddenLabel()
+                            ->state(trans('admin/dashboard.sections.intro-no-update.content', ['version' => $this->softwareVersionService->currentPanelVersion()])),
                     ])
                 : Section::make(trans('admin/dashboard.sections.intro-update-available.heading'))
                     ->icon('tabler-info-circle')
                     ->iconColor('warning')
                     ->schema([
-                        Placeholder::make('')
-                            ->content(trans('admin/dashboard.sections.intro-update-available.content', ['latestVersion' => $this->softwareVersionService->latestPanelVersion()])),
+                        TextEntry::make('info')
+                            ->state(trans('admin/dashboard.sections.intro-update-available.content', ['latestVersion' => $this->softwareVersionService->latestPanelVersion()])),
                     ])
                     ->headerActions([
                         Action::make('update')

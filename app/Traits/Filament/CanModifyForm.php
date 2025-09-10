@@ -3,7 +3,7 @@
 namespace App\Traits\Filament;
 
 use Closure;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 
 trait CanModifyForm
 {
@@ -15,19 +15,19 @@ trait CanModifyForm
         static::$customFormModifications[] = $closure;
     }
 
-    public static function defaultForm(Form $form): Form
+    public static function defaultForm(Schema $schema): Schema
     {
-        return $form;
+        return $schema;
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        $form = static::defaultForm($form);
+        $schema = static::defaultForm($schema);
 
         foreach (static::$customFormModifications as $closure) {
-            $form = $closure($form);
+            $schema = $closure($schema);
         }
 
-        return $form;
+        return $schema;
     }
 }

@@ -38,7 +38,7 @@ class ExternalUserControllerTest extends ApplicationApiIntegrationTestCase
                 'email' => $user->email,
                 'language' => $user->language,
                 'root_admin' => (bool) $user->isRootAdmin(),
-                '2fa' => (bool) $user->totp_enabled,
+                '2fa' => filled($user->mfa_app_secret),
                 'created_at' => $this->formatTimestamp($user->created_at),
                 'updated_at' => $this->formatTimestamp($user->updated_at),
             ],

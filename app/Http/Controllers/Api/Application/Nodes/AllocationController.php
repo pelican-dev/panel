@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers\Api\Application\Nodes;
 
+use App\Exceptions\DisplayException;
+use App\Exceptions\Service\Allocation\CidrOutOfRangeException;
+use App\Exceptions\Service\Allocation\InvalidPortMappingException;
+use App\Exceptions\Service\Allocation\PortOutOfRangeException;
+use App\Exceptions\Service\Allocation\TooManyPortsInRangeException;
 use App\Models\Node;
 use Illuminate\Http\JsonResponse;
 use App\Models\Allocation;
@@ -62,11 +67,11 @@ class AllocationController extends ApplicationApiController
      *
      * Store new allocations for a given node.
      *
-     * @throws \App\Exceptions\DisplayException
-     * @throws \App\Exceptions\Service\Allocation\CidrOutOfRangeException
-     * @throws \App\Exceptions\Service\Allocation\InvalidPortMappingException
-     * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
-     * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
+     * @throws DisplayException
+     * @throws CidrOutOfRangeException
+     * @throws InvalidPortMappingException
+     * @throws PortOutOfRangeException
+     * @throws TooManyPortsInRangeException
      */
     public function store(StoreAllocationRequest $request, Node $node): JsonResponse
     {

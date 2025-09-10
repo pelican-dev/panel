@@ -30,7 +30,7 @@ class ServerTransformer extends BaseClientTransformer
      */
     public function transform($server): array
     {
-        /** @var \App\Services\Servers\StartupCommandService $service */
+        /** @var StartupCommandService $service */
         $service = Container::getInstance()->make(StartupCommandService::class);
 
         $user = $this->request->user();

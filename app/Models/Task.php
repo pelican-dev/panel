@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,10 +19,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $time_offset
  * @property bool $is_queued
  * @property bool $continue_on_failure
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\Models\Schedule $schedule
- * @property \App\Models\Server $server
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Schedule $schedule
+ * @property Server $server
  */
 class Task extends Model implements Validatable
 {
