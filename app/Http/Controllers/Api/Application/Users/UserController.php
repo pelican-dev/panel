@@ -103,8 +103,9 @@ class UserController extends ApplicationApiController
     public function assignRoles(AssignUserRolesRequest $request, User $user): array
     {
         if (!$user->isRootAdmin()) {
+            $rootAdminId = Role::getRootAdmin()->id;
             foreach ($request->input('roles') as $role) {
-                if ($role === Role::getRootAdmin()->id) {
+                if ($role === $rootAdminId) {
                     continue;
                 }
 
@@ -128,8 +129,9 @@ class UserController extends ApplicationApiController
     public function removeRoles(AssignUserRolesRequest $request, User $user): array
     {
         if (!$user->isRootAdmin()) {
+            $rootAdminId = Role::getRootAdmin()->id;
             foreach ($request->input('roles') as $role) {
-                if ($role === Role::getRootAdmin()->id) {
+                if ($role === $rootAdminId) {
                     continue;
                 }
 
