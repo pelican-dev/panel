@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->group('application-api', [
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\Api\Application\AuthenticateApplicationUser::class,
+            \App\Http\Middleware\Api\Application\RequireApplicationApiKey::class,
         ]);
 
         $middleware->group('client-api', [
