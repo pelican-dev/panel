@@ -16,6 +16,14 @@ class ServerRequest extends FormRequest
         /** @var ?Server $server */
         $server = $this->route()->parameter('server');
 
-        return $server && $server->node_id === $node->id;
+        if ($server) {
+            if ($server->transfer) {
+                return $server->transfer->old_node === $node->id || $server->transfer->new_node === $node->id;
+            }
+
+            return $server->node_id === $node->id;
+        }
+
+        return false;
     }
 }
