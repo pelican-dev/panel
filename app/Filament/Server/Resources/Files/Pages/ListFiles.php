@@ -86,7 +86,7 @@ class ListFiles extends ListRecords
         $files = File::get($server, $this->path);
 
         return $table
-            ->paginated(['25', '50', '100', '150', '200'])
+            ->paginated([25, 50, 100, 150, 200])
             ->paginationMode(PaginationMode::Simple)
             ->defaultPaginationPageOption(50)
             ->deferLoading()
