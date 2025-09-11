@@ -68,7 +68,7 @@ class EditWebhookConfiguration extends EditRecord
             $data['payload'] = $tmp;
         }
 
-        if (($data['type'] ?? null) === WebhookType::Regular->value && isset($data['headers'])) {
+        if (($data['type'] ?? null) === WebhookType::Regular && isset($data['headers'])) {
             $newHeaders = [];
             foreach ($data['headers'] as $key => $value) {
                 $newKey = str_replace(' ', '-', $key);
@@ -82,7 +82,7 @@ class EditWebhookConfiguration extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        if (($data['type'] ?? null) === WebhookType::Discord->value) {
+        if (($data['type'] ?? null) === WebhookType::Discord) {
             $embeds = data_get($data, 'payload.embeds', []);
             foreach ($embeds as &$embed) {
                 $embed['color'] = '#' . dechex(data_get($embed, 'color'));
@@ -111,7 +111,7 @@ class EditWebhookConfiguration extends EditRecord
             $data = array_merge($data, $tmp);
         }
 
-        if (($data['type'] ?? null) === WebhookType::Regular) {
+        if (($data['type'] ?? null) === WebhookType::Regular->value) {
             $data['headers'] = $data['headers'] ?? [];
         }
 
