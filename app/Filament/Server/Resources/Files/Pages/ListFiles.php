@@ -434,7 +434,7 @@ class ListFiles extends ListRecords
                             $this->getDaemonFileRepository()->putContent($path, $data['editor'] ?? '');
 
                             Activity::event('server:file.write')
-                                ->property('file', join_paths($path, $data['name']))
+                                ->property('file', $path)
                                 ->log();
                         } catch (FileExistsException) {
                             AlertBanner::make('file_already_exists')
