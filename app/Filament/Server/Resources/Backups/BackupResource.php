@@ -227,7 +227,7 @@ class BackupResource extends Resource
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     DeleteAction::make('delete')
                         ->iconSize(IconSize::Large)
-                        ->disabled(fn (Backup $backup) => $backup->is_locked)
+                        ->disabled(fn (Backup $backup) => $backup->is_locked && $backup->status !== BackupStatus::Failed)
                         ->modalDescription(fn (Backup $backup) => trans('server/backup.actions.delete.description', ['backup' => $backup->name]))
                         ->modalSubmitActionLabel(trans('server/backup.actions.delete.title'))
                         ->action(function (Backup $backup, DeleteBackupService $deleteBackupService) {
