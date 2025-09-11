@@ -144,7 +144,6 @@ class WebhookResource extends Resource
                     ->afterStateUpdated(fn (string $state, Set $set) => $set('type', str($state)->contains('discord.com') ? WebhookType::Discord : WebhookType::Regular)),
                 Section::make(trans('admin/webhook.regular'))
                     ->hidden(fn (Get $get) => $get('type') === WebhookType::Discord)
-                    ->dehydratedWhenHidden()
                     ->schema(fn () => self::getRegularFields())
                     ->headerActions([
                         Action::make('reset_headers')
@@ -158,7 +157,6 @@ class WebhookResource extends Resource
                     ->formBefore(),
                 Section::make(trans('admin/webhook.discord'))
                     ->hidden(fn (Get $get) => $get('type') === WebhookType::Regular)
-                    ->dehydratedWhenHidden()
                     ->afterStateUpdated(fn (Livewire $livewire) => $livewire->dispatch('refresh-widget'))
                     ->schema(fn () => self::getDiscordFields())
                     ->view('filament.components.webhooksection')
@@ -340,6 +338,7 @@ class WebhookResource extends Resource
             ->info()
             ->send();
     }
+ 
 
     /** @return array<string, PageRegistration> */
     public static function getDefaultPages(): array
