@@ -35,7 +35,8 @@ class Login extends BaseLogin
         ];
 
         if ($captchaComponent = $this->getCaptchaComponent()) {
-            $components[] = $captchaComponent;
+            $components[] = $captchaComponent
+                ->hidden(fn () => filled($this->userUndertakingMultiFactorAuthentication));
         }
 
         return $schema
