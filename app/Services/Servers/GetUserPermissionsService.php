@@ -20,7 +20,7 @@ class GetUserPermissionsService
         if ($user->id === $server->owner_id) {
             return ['*'];
         }
-        
+
         if ($user->isAdmin() && ($user->can('view', $server) || $user->can('update', $server))) {
             $permissions = $user->can('update', $server) ? ['*'] : ['websocket.connect', 'backup.read'];
 
