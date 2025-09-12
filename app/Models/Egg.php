@@ -111,7 +111,7 @@ class Egg extends Model implements Validatable
         'docker_images' => ['required', 'array', 'min:1'],
         'docker_images.*' => ['required', 'string'],
         'startup_commands' => ['required', 'array', 'min:1'],
-        'startup_commands.*' => ['required', 'string'],
+        'startup_commands.*' => ['required', 'string', 'distinct'],
         'config_from' => ['sometimes', 'bail', 'nullable', 'numeric', 'exists:eggs,id'],
         'config_stop' => ['required_without:config_from', 'nullable', 'string', 'max:255'],
         'config_startup' => ['required_without:config_from', 'nullable', 'json'],
