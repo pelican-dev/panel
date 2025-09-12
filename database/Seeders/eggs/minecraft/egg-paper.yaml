@@ -1,8 +1,8 @@
 _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
-  version: PLCN_v2
+  version: PLCN_v3
   update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/minecraft/egg-paper.yaml'
-exported_at: '2025-08-05T21:00:17+00:00'
+exported_at: '2025-09-05T08:54:10+00:00'
 name: Paper
 author: parker@example.com
 uuid: 5da37ef6-58da-4169-90a6-e683e1721247
@@ -20,7 +20,8 @@ docker_images:
   'Java 11': 'ghcr.io/parkervcp/yolks:java_11'
   'Java 8': 'ghcr.io/parkervcp/yolks:java_8'
 file_denylist: {  }
-startup: 'java -Xms128M -XX:MaxRAMPercentage=95.0 -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}}'
+startup_commands:
+  Default: 'java -Xms128M -XX:MaxRAMPercentage=95.0 -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}}'
 config:
   files:
     server.properties:

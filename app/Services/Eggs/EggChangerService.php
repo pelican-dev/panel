@@ -5,6 +5,7 @@ namespace App\Services\Eggs;
 use App\Models\Egg;
 use App\Models\Server;
 use App\Models\ServerVariable;
+use Illuminate\Support\Arr;
 
 class EggChangerService
 {
@@ -21,8 +22,8 @@ class EggChangerService
         // Change egg id, default image and startup command
         $server->forceFill([
             'egg_id' => $newEgg->id,
-            'image' => array_values($newEgg->docker_images)[0],
-            'startup' => $newEgg->startup,
+            'image' => Arr::first($newEgg->docker_images),
+            'startup' => Arr::first($newEgg->startup_commands),
         ])->saveOrFail();
 
         $oldVariables = [];

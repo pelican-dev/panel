@@ -1,8 +1,8 @@
 _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
-  version: PLCN_v2
+  version: PLCN_v3
   update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/source-engine/egg-garrys-mod.yaml'
-exported_at: '2025-07-25T13:30:30+00:00'
+exported_at: '2025-09-05T08:54:21+00:00'
 name: 'Garrys Mod'
 author: panel@example.com
 uuid: 60ef81d4-30a2-4d98-ab64-f59c69e2f915
@@ -16,9 +16,10 @@ features:
   - gsl_token
   - steam_disk_space
 docker_images:
-  'ghcr.io/parkervcp/games:source': 'ghcr.io/parkervcp/games:source'
+  Source: 'ghcr.io/parkervcp/games:source'
 file_denylist: {  }
-startup: './srcds_run -game garrysmod -console -port {{SERVER_PORT}} +ip 0.0.0.0 +host_workshop_collection {{WORKSHOP_ID}} +map {{SRCDS_MAP}} +gamemode {{GAMEMODE}} -strictportbind -norestart +sv_setsteamaccount {{STEAM_ACC}} +maxplayers {{MAX_PLAYERS}}  -tickrate {{TICKRATE}}  $( [ "$LUA_REFRESH" == "1" ] || printf %s ''-disableluarefresh'' )'
+startup_commands:
+  Default: './srcds_run -game garrysmod -console -port {{SERVER_PORT}} +ip 0.0.0.0 +host_workshop_collection {{WORKSHOP_ID}} +map {{SRCDS_MAP}} +gamemode {{GAMEMODE}} -strictportbind -norestart +sv_setsteamaccount {{STEAM_ACC}} +maxplayers {{MAX_PLAYERS}}  -tickrate {{TICKRATE}}  $( [ "$LUA_REFRESH" == "1" ] || printf %s ''-disableluarefresh'' )'
 config:
   files: {  }
   startup:

@@ -1,8 +1,8 @@
 _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
-  version: PLCN_v2
+  version: PLCN_v3
   update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/voice-servers/egg-teamspeak3-server.yaml'
-exported_at: '2025-07-25T13:30:53+00:00'
+exported_at: '2025-09-05T08:56:06+00:00'
 name: 'Teamspeak3 Server'
 author: panel@example.com
 uuid: 983b1fac-d322-4d5f-a636-436127326b37
@@ -15,7 +15,8 @@ features: {  }
 docker_images:
   Debian: 'ghcr.io/parkervcp/yolks:debian'
 file_denylist: {  }
-startup: './ts3server default_voice_port={{SERVER_PORT}} query_port={{QUERY_PORT}} filetransfer_ip=0.0.0.0 filetransfer_port={{FILE_TRANSFER}} query_http_port={{QUERY_HTTP}} query_ssh_port={{QUERY_SSH}} query_protocols={{QUERY_PROTOCOLS_VAR}} license_accepted=1'
+startup_commands:
+  Default: './ts3server default_voice_port={{SERVER_PORT}} query_port={{QUERY_PORT}} filetransfer_ip=0.0.0.0 filetransfer_port={{FILE_TRANSFER}} query_http_port={{QUERY_HTTP}} query_ssh_port={{QUERY_SSH}} query_protocols={{QUERY_PROTOCOLS_VAR}} license_accepted=1'
 config:
   files: {  }
   startup:

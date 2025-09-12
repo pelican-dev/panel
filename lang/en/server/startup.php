@@ -3,6 +3,8 @@
 return [
     'title' => 'Startup',
     'command' => 'Startup Command',
+    'notification_startup' => 'Startup Command Updated',
+    'notification_startup_body' => 'Restart the server to use the new startup command.',
     'preview' => 'Preview',
     'docker_image' => 'Docker Image',
     'notification_docker' => 'Docker Image Updated',
