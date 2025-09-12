@@ -226,8 +226,7 @@ class CreateNode extends CreateRecord
                                 ->label(trans('admin/node.maintenance_mode'))->inline()
                                 ->columnSpan(1)
                                 ->default(false)
-                                ->hinticon('tabler-question-mark')
-                                ->hintIconTooltip(trans('admin/node.maintenance_mode_help'))
+                                ->hintIcon('tabler-question-mark', trans('admin/node.maintenance_mode_help'))
                                 ->options([
                                     true => trans('admin/node.enabled'),
                                     false => trans('admin/node.disabled'),
@@ -254,8 +253,7 @@ class CreateNode extends CreateRecord
                             TextInput::make('upload_size')
                                 ->label(trans('admin/node.upload_limit'))
                                 ->helperText(trans('admin/node.upload_limit_help.0'))
-                                ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip(trans('admin/node.upload_limit_help.1'))
+                                ->hintIcon('tabler-question-mark', trans('admin/node.upload_limit_help.1'))
                                 ->columnSpan(1)
                                 ->numeric()->required()
                                 ->default(256)
@@ -417,7 +415,7 @@ class CreateNode extends CreateRecord
     protected function getRedirectUrlParameters(): array
     {
         return [
-            'tab' => '-configuration-file-tab',
+            'tab' => 'configuration-file::data::tab',
         ];
     }
 

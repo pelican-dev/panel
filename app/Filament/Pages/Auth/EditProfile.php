@@ -27,6 +27,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
@@ -150,6 +151,7 @@ class EditProfile extends BaseEditProfile
                                     ->avatar()
                                     ->acceptedFileTypes(['image/png'])
                                     ->directory('avatars')
+                                    ->disk('public')
                                     ->getUploadedFileNameForStorageUsing(fn () => $this->getUser()->id . '.png')
                                     ->hintAction(function (FileUpload $fileUpload) {
                                         $path = $fileUpload->getDirectory() . '/' . $this->getUser()->id . '.png';
@@ -176,9 +178,9 @@ class EditProfile extends BaseEditProfile
                                     $unlink = array_key_exists($id, $this->getUser()->oauth ?? []);
 
                                     $actions[] = Action::make("oauth_$id")
-                                        ->label(($unlink ? trans('profile.unlink') : trans('profile.link')) . $name)
+                                        ->label(trans('profile.' . ($unlink ? 'unlink' : 'link'), ['name' => $name]))
                                         ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
-                                        ->color(Color::generateV3Palette($schema->getHexColor()))
+                                        ->color(Color::hex($schema->getHexColor()))
                                         ->action(function (UserUpdateService $updateService) use ($id, $name, $unlink) {
                                             if ($unlink) {
                                                 $oauth = auth()->user()->oauth;
@@ -232,7 +234,7 @@ class EditProfile extends BaseEditProfile
                                                 Action::make('create')
                                                     ->label(trans('filament-actions::create.single.modal.actions.create.label'))
                                                     ->disabled(fn (Get $get) => empty($get('description')))
-                                                    ->successRedirectUrl(self::getUrl(['tab' => '-api-keys-tab'], panel: 'app'))
+                                                    ->successRedirectUrl(self::getUrl(['tab' => 'api-keys::data::tab'], panel: 'app'))
                                                     ->action(function (Get $get, Action $action, User $user) {
                                                         $token = $user->createToken(
                                                             $get('description'),
@@ -315,7 +317,7 @@ class EditProfile extends BaseEditProfile
                                             Action::make('create')
                                                 ->label(trans('filament-actions::create.single.modal.actions.create.label'))
                                                 ->disabled(fn (Get $get) => empty($get('name')) || empty($get('public_key')))
-                                                ->successRedirectUrl(self::getUrl(['tab' => '-ssh-keys-tab'], panel: 'app'))
+                                                ->successRedirectUrl(self::getUrl(['tab' => 'ssh-keys::data::tab'], panel: 'app'))
                                                 ->action(function (Get $get, Action $action, User $user, KeyCreationService $service) {
                                                     try {
                                                         $sshKey = $service->handle($user, $get('name'), $get('public_key'));
@@ -422,11 +424,11 @@ class EditProfile extends BaseEditProfile
                                         ToggleButtons::make('top_navigation')
                                             ->label(trans('profile.navigation'))
                                             ->inline()
-                                            ->required()
                                             ->options([
-                                                true => trans('profile.top'),
-                                                false => trans('profile.side'),
-                                            ]),
+                                                1 => trans('profile.top'),
+                                                0 => trans('profile.side'),
+                                            ])
+                                            ->stateCast(new BooleanStateCast(false, true)),
                                     ]),
                                 Section::make(trans('profile.console'))
                                     ->collapsible()
@@ -501,8 +503,7 @@ class EditProfile extends BaseEditProfile
                                         TextInput::make('console_graph_period')
                                             ->label(trans('profile.graph_period'))
                                             ->suffix(trans('profile.seconds'))
-                                            ->hintIcon('tabler-question-mark')
-                                            ->hintIconTooltip(trans('profile.graph_period_helper'))
+                                            ->hintIcon('tabler-question-mark', trans('profile.graph_period_helper'))
                                             ->columnSpan(2)
                                             ->numeric()
                                             ->default(30)
@@ -562,11 +563,11 @@ class EditProfile extends BaseEditProfile
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $data['console_font'] = $this->getUser()->getCustomization(CustomizationKey::ConsoleFont);
-        $data['console_font_size'] = $this->getUser()->getCustomization(CustomizationKey::ConsoleFontSize);
-        $data['console_rows'] = $this->getUser()->getCustomization(CustomizationKey::ConsoleRows);
-        $data['console_graph_period'] = $this->getUser()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
+        $data['console_font_size'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleFontSize);
+        $data['console_rows'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleRows);
+        $data['console_graph_period'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $data['dashboard_layout'] = $this->getUser()->getCustomization(CustomizationKey::DashboardLayout);
-        $data['top_navigation'] = $this->getUser()->getCustomization(CustomizationKey::TopNavigation);
+        $data['top_navigation'] = (bool) $this->getUser()->getCustomization(CustomizationKey::TopNavigation);
 
         return $data;
     }

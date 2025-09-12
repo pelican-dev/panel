@@ -169,8 +169,7 @@ class CreateServer extends CreateRecord
 
                                     TextInput::make('password')
                                         ->label(trans('admin/user.password'))
-                                        ->hintIcon('tabler-question-mark')
-                                        ->hintIconTooltip(trans('admin/user.password_help'))
+                                        ->hintIcon('tabler-question-mark', trans('admin/user.password_help'))
                                         ->password(),
                                 ])
                                 ->createOptionUsing(function ($data, UserCreationService $service) {
@@ -521,8 +520,7 @@ class CreateServer extends CreateRecord
                                                 ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                                 ->label(trans('admin/server.memory_limit'))->inlineLabel()
                                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
-                                                ->hintIcon('tabler-question-mark')
-                                                ->hintIconToolTip(trans('admin/server.memory_helper'))
+                                                ->hintIcon('tabler-question-mark', trans('admin/server.memory_helper'))
                                                 ->default(0)
                                                 ->required()
                                                 ->columnSpan(2)

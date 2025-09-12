@@ -216,7 +216,7 @@ class ListServers extends ListRecords
 
             cache()->forget("servers.$server->uuid.status");
 
-            $this->redirect(self::getUrl(['activeTab' => $this->activeTab]));
+            $this->redirect(self::getUrl(['tab' => $this->activeTab]));
         } catch (ConnectionException) {
             Notification::make()
                 ->title(trans('exceptions.node.error_connecting', ['node' => $server->node->name]))
@@ -233,26 +233,26 @@ class ListServers extends ListRecords
                 ->color('primary')
                 ->icon('tabler-player-play-filled')
                 ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
-                ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isStartable())
+                ->visible(fn (Server $server) => !$server->isInConflictState() && $server->retrieveStatus()->isStartable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'start']),
             Action::make('restart')
                 ->color('gray')
                 ->icon('tabler-reload')
                 ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
-                ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isRestartable())
+                ->visible(fn (Server $server) => !$server->isInConflictState() && $server->retrieveStatus()->isRestartable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'restart']),
             Action::make('stop')
                 ->color('danger')
                 ->icon('tabler-player-stop-filled')
                 ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
-                ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isStoppable())
+                ->visible(fn (Server $server) => !$server->isInConflictState() && $server->retrieveStatus()->isStoppable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'stop']),
             Action::make('kill')
                 ->color('danger')
                 ->icon('tabler-alert-square')
                 ->tooltip('This can result in data corruption and/or data loss!')
                 ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
-                ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isKillable())
+                ->visible(fn (Server $server) => !$server->isInConflictState() && $server->retrieveStatus()->isKillable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'kill']),
         ];
 

@@ -17,14 +17,12 @@ class EnvironmentStep
             ->schema([
                 TextInput::make('env_general.APP_NAME')
                     ->label(trans('installer.environment.fields.app_name'))
-                    ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip(trans('installer.environment.fields.app_name_help'))
+                    ->hintIcon('tabler-question-mark', trans('installer.environment.fields.app_name_help'))
                     ->required()
                     ->default(config('app.name')),
                 TextInput::make('env_general.APP_URL')
                     ->label(trans('installer.environment.fields.app_url'))
-                    ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip(trans('installer.environment.fields.app_url_help'))
+                    ->hintIcon('tabler-question-mark', trans('installer.environment.fields.app_url_help'))
                     ->required()
                     ->default(url('')),
                 Fieldset::make('admin_user')

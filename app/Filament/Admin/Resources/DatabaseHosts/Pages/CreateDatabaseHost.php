@@ -143,7 +143,7 @@ class CreateDatabaseHost extends CreateRecord
                         ->maxValue(65535),
                     TextInput::make('max_databases')
                         ->label(trans('admin/databasehost.max_database'))
-                        ->helpertext(trans('admin/databasehost.max_databases_help'))
+                        ->helperText(trans('admin/databasehost.max_databases_help'))
                         ->placeholder(trans('admin/databasehost.unlimited'))
                         ->numeric(),
                     TextInput::make('name')

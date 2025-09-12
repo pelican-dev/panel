@@ -58,7 +58,7 @@ class OAuthController extends Controller
         if ($request->user()) {
             $this->linkUser($request->user(), $driver, $oauthUser);
 
-            return redirect(EditProfile::getUrl(['tab' => '-oauth-tab'], panel: 'app'));
+            return redirect(EditProfile::getUrl(['tab' => 'oauth::data::tab'], panel: 'app'));
         }
 
         $user = User::whereJsonContains('oauth->'. $driver->getId(), $oauthUser->getId())->first();

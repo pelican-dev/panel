@@ -109,7 +109,7 @@ class UserResource extends Resource
                         ->icon($data['icon'])
                         ->schema([
                             CheckboxList::make($data['name'])
-                                ->label('')
+                                ->hiddenLabel()
                                 ->bulkToggleable()
                                 ->columns(2)
                                 ->options($options)

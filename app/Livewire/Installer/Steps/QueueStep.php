@@ -30,8 +30,7 @@ class QueueStep
             ->schema([
                 ToggleButtons::make('env_queue.QUEUE_CONNECTION')
                     ->label(trans('installer.queue.driver'))
-                    ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip(trans('installer.queue.driver_help'))
+                    ->hintIcon('tabler-question-mark', trans('installer.queue.driver_help'))
                     ->required()
                     ->inline()
                     ->options(self::QUEUE_DRIVERS)
