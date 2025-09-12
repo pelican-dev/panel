@@ -17,6 +17,10 @@ class GetUserPermissionsService
      */
     public function handle(Server $server, User $user): array
     {
+        if ($user->id === $server->owner_id) {
+            return ['*'];
+        }
+
         if ($user->isAdmin() && ($user->can('view', $server) || $user->can('update', $server))) {
             $permissions = $user->can('update', $server) ? ['*'] : ['websocket.connect', 'backup.read'];
 
@@ -25,10 +29,6 @@ class GetUserPermissionsService
             $permissions[] = 'admin.websocket.transfer';
 
             return $permissions;
-        }
-
-        if ($user->id === $server->owner_id) {
-            return ['*'];
         }
 
         /** @var Subuser|null $subuserPermissions */
