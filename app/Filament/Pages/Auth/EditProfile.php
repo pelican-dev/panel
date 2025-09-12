@@ -180,7 +180,7 @@ class EditProfile extends BaseEditProfile
                                     $actions[] = Action::make("oauth_$id")
                                         ->label(trans('profile.' . ($unlink ? 'unlink' : 'link'), ['name' => $name]))
                                         ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
-                                        ->color(Color::generateV3Palette($schema->getHexColor()))
+                                        ->color(Color::hex($schema->getHexColor()))
                                         ->action(function (UserUpdateService $updateService) use ($id, $name, $unlink) {
                                             if ($unlink) {
                                                 $oauth = auth()->user()->oauth;
