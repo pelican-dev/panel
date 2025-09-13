@@ -338,7 +338,6 @@ class WebhookResource extends Resource
             ->info()
             ->send();
     }
- 
 
     /** @return array<string, PageRegistration> */
     public static function getDefaultPages(): array
