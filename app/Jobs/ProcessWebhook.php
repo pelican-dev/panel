@@ -12,6 +12,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use App\Enums\WebhookType;
+use Illuminate\Support\Arr;
 
 class ProcessWebhook implements ShouldQueue
 {
@@ -32,7 +33,8 @@ class ProcessWebhook implements ShouldQueue
         if (count($data) === 1) {
             $data = reset($data);
         }
-        $data = is_array($data) ? $data : (json_decode($data, true) ?? []);
+
+        $data = Arr::wrap(json_decode($data, true) ?? []);
         $data['event'] = $this->webhookConfiguration->transformClassName($this->eventName);
 
         if ($this->webhookConfiguration->type === WebhookType::Discord) {
