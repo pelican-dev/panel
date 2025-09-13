@@ -203,7 +203,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
                     $value = str_replace('//', '/', '/' . trim($value, '/') . '/');
                 }
 
-                return [$key => $value];
+                return [$key => strip_tags($value)];
             }
 
             $first = array_first($value);
@@ -213,7 +213,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
                 return ["{$key}_count" => count($value)];
             }
 
-            return [$key => $first, "{$key}_count" => count($value)];
+            return [$key => strip_tags($first), "{$key}_count" => count($value)];
         });
 
         $keys = $properties->keys()->filter(fn ($key) => Str::endsWith($key, '_count'))->values();
