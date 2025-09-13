@@ -133,7 +133,7 @@ class WebhookResource extends Resource
                     ->live()
                     ->inline()
                     ->options(WebhookType::class)
-                    ->default(WebhookType::Regular->value),
+                    ->default(WebhookType::Regular),
                 TextInput::make('description')
                     ->label(trans('admin/webhook.description'))
                     ->required(),
@@ -338,6 +338,7 @@ class WebhookResource extends Resource
             ->info()
             ->send();
     }
+ 
 
     /** @return array<string, PageRegistration> */
     public static function getDefaultPages(): array
