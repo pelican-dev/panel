@@ -82,7 +82,7 @@ class EditWebhookConfiguration extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        if (($data['type'] ?? null) === WebhookType::Discord) {
+        if (($data['type'] ?? null) === WebhookType::Discord->value) {
             $embeds = data_get($data, 'payload.embeds', []);
             foreach ($embeds as &$embed) {
                 $embed['color'] = '#' . dechex(data_get($embed, 'color'));
