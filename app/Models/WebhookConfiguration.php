@@ -207,7 +207,7 @@ class WebhookConfiguration extends Model
             'node_id' => 1,
             'name' => 'Example Server',
             'owner_id' => 1,
-            'memory' => 6411,
+            'memory' => 6144,
             'swap' => 0,
             'disk' => 20480,
             'io' => 500,
