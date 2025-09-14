@@ -2,13 +2,12 @@
 
 namespace App\Services\Servers;
 
-use Throwable;
 use App\Exceptions\DisplayException;
-use Exception;
 use App\Models\Server;
-use Illuminate\Database\ConnectionInterface;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Databases\DatabaseManagementService;
+use Exception;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\Client\ConnectionException;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Throwable;

@@ -2,20 +2,16 @@
 
 namespace App\Http\Controllers\Api\Remote\Backups;
 
-use Exception;
-use Throwable;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Exceptions\Http\HttpForbiddenException;
+use App\Extensions\Backups\BackupManager;
+use App\Http\Controllers\Controller;
+use App\Models\Backup;
 use App\Models\Node;
 use App\Models\Server;
-use App\Models\Node;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
-use App\Models\Backup;
 use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use App\Extensions\Backups\BackupManager;
-use App\Exceptions\Http\HttpForbiddenException;
+use Illuminate\Http\Request;
 use Throwable;
 
 class BackupRemoteUploadController extends Controller
@@ -49,6 +45,7 @@ class BackupRemoteUploadController extends Controller
             $model = Backup::query()
                 ->where('uuid', $backup)
                 ->firstOrFail();
+        }
 
         // Check that the backup is "owned" by the node making the request. This avoids other nodes
         // from messing with backups that they don't own.

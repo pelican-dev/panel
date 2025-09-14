@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
-use Carbon\CarbonImmutable;
-use Illuminate\Database\Query\Builder;
 use App\Contracts\Validatable;
-use App\Traits\HasValidation;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Eloquent\BackupQueryBuilder;
 use App\Enums\BackupStatus;
+use App\Traits\HasValidation;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
 
 /**
  * @property int $id

@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers\Api\Remote\Backups;
 
-use Throwable;
+use App\Exceptions\DisplayException;
+use App\Exceptions\Http\HttpForbiddenException;
+use App\Extensions\Backups\Adapter\S3BackupAdapter;
+use App\Extensions\Backups\BackupManager;
+use App\Facades\Activity;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Remote\ReportBackupCompleteRequest;
+use App\Models\Backup;
 use App\Models\Node;
 use App\Models\Server;
-use Exception;
-use App\Extensions\Backups\Adapter\S3BackupAdapter;
 use Carbon\CarbonImmutable;
-use Illuminate\Http\Request;
-use App\Models\Backup;
+use Exception;
 use Illuminate\Http\JsonResponse;
-use App\Facades\Activity;
-use App\Exceptions\DisplayException;
-use App\Http\Controllers\Controller;
-use App\Extensions\Backups\BackupManager;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use App\Http\Requests\Api\Remote\ReportBackupCompleteRequest;
-use App\Exceptions\Http\HttpForbiddenException;
+use Throwable;
 
 class BackupStatusController extends Controller
 {

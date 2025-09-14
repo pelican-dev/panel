@@ -34,6 +34,8 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Arr;
@@ -41,8 +43,6 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Filament\Schemas\Contracts\HasSchemas;
-use Filament\Schemas\Schema;
 
 /**
  * @property Schema $form
