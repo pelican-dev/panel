@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Widgets;
 
+use App\Enums\CustomizationKey;
 use App\Models\Server;
 use Carbon\Carbon;
 use Filament\Facades\Filament;
@@ -10,9 +11,9 @@ use Filament\Widgets\ChartWidget;
 
 class ServerMemoryChart extends ChartWidget
 {
-    protected static ?string $pollingInterval = '1s';
+    protected ?string $pollingInterval = '1s';
 
-    protected static ?string $maxHeight = '200px';
+    protected ?string $maxHeight = '200px';
 
     public ?Server $server = null;
 
@@ -26,7 +27,7 @@ class ServerMemoryChart extends ChartWidget
 
     protected function getData(): array
     {
-        $period = auth()->user()->getCustomization()['console_graph_period'] ?? 30;
+        $period = (int) auth()->user()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $memUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))
             ->slice(-$period)
             ->map(fn ($value, $key) => [

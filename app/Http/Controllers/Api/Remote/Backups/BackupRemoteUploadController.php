@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers\Api\Remote\Backups;
 
+use Exception;
+use Throwable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\Node;
+use App\Models\Server;
 use App\Models\Node;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -45,12 +50,18 @@ class BackupRemoteUploadController extends Controller
                 ->where('uuid', $backup)
                 ->firstOrFail();
 
-            // Check that the backup is "owned" by the node making the request. This avoids other nodes
-            // from messing with backups that they don't own.
-            $server = $model->server;
-            if ($server->node_id !== $node->id) {
-                throw new HttpForbiddenException('You do not have permission to access that backup.');
-            }
+        // Check that the backup is "owned" by the node making the request. This avoids other nodes
+        // from messing with backups that they don't own.
+        /** @var Server $server */
+        $server = $model->server;
+        if ($server->node_id !== $node->id) {
+            throw new HttpForbiddenException('You do not have permission to access that backup.');
+        }
+
+        // Prevent backups that have already been completed from trying to
+        // be uploaded again.
+        if (!is_null($model->completed_at)) {
+            throw new ConflictHttpException('This backup is already in a completed state.');
         }
 
         return $this->backupManager

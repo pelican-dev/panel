@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Node;
 
+use App\Exceptions\Model\DataValidationException;
 use App\Models\Node;
 use Illuminate\Console\Command;
 
@@ -34,7 +35,7 @@ class MakeNodeCommand extends Command
     /**
      * Handle the command execution process.
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function handle(): void
     {

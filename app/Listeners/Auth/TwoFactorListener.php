@@ -7,6 +7,7 @@ use App\Events\Auth\ProvidedAuthenticationToken;
 
 class TwoFactorListener
 {
+    // TODO: add event to filament
     public function handle(ProvidedAuthenticationToken $event): void
     {
         Activity::event($event->recovery ? 'auth:recovery-token' : 'auth:token')

@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\RolePermissionModels;
-use App\Filament\Admin\Resources\EggResource\Pages\ListEggs;
+use App\Filament\Admin\Resources\Eggs\Pages\ListEggs;
 use App\Models\Egg;
 use App\Models\Permission;
 use App\Models\Role;

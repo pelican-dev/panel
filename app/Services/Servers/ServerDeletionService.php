@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use Throwable;
 use App\Exceptions\DisplayException;
 use Exception;
 use App\Models\Server;

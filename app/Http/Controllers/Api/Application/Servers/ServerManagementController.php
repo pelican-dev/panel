@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Api\Application\Servers;
 
+use Throwable;
+use App\Exceptions\DisplayException;
+use App\Exceptions\Model\DataValidationException;
 use App\Enums\SuspendAction;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Servers\ServerWriteRequest;
@@ -35,7 +38,7 @@ class ServerManagementController extends ApplicationApiController
      *
      * Suspend a server on the Panel.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function suspend(ServerWriteRequest $request, Server $server): Response
     {
@@ -49,7 +52,7 @@ class ServerManagementController extends ApplicationApiController
      *
      * Unsuspend a server on the Panel.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function unsuspend(ServerWriteRequest $request, Server $server): Response
     {
@@ -63,8 +66,8 @@ class ServerManagementController extends ApplicationApiController
      *
      * Mark a server as needing to be reinstalled.
      *
-     * @throws \App\Exceptions\DisplayException
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DisplayException
+     * @throws DataValidationException
      */
     public function reinstall(ServerWriteRequest $request, Server $server): Response
     {

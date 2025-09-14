@@ -22,11 +22,9 @@
             </h2>
             <div class="end-0" x-on:click.stop>
                 <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1">
-                    <x-filament-tables::actions
-                        :actions="\App\Filament\App\Resources\ServerResource\Pages\ListServers::getPowerActions(view: 'grid')"
-                        :alignment="\Filament\Support\Enums\Alignment::Center"
-                        :record="$server"
-                    />
+                    @foreach (\App\Filament\App\Resources\Servers\Pages\ListServers::getPowerActions(view: 'grid') as $action)
+                        {{ $action->record($server) }}
+                    @endforeach
                 </div>
             </div>
         </div>

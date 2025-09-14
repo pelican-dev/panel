@@ -2,14 +2,14 @@
 
 namespace App\Livewire\Installer\Steps;
 
+use Exception;
+use Filament\Schemas\Components\Wizard\Step;
 use App\Livewire\Installer\PanelInstaller;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\HtmlString;
-use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class QueueStep
 {
@@ -19,6 +19,9 @@ class QueueStep
         'sync' => 'Sync',
     ];
 
+    /**
+     * @throws Exception
+     */
     public static function make(PanelInstaller $installer): Step
     {
         return Step::make('queue')
@@ -45,14 +48,14 @@ class QueueStep
                 TextInput::make('crontab')
                     ->label(new HtmlString(trans('installer.queue.fields.crontab')))
                     ->disabled()
-                    ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                    ->hintCopy()
                     ->default('(crontab -l -u www-data 2>/dev/null; echo "* * * * * php ' . base_path() . '/artisan schedule:run >> /dev/null 2>&1") | crontab -u www-data -')
                     ->hidden(fn () => @file_exists('/.dockerenv'))
                     ->columnSpanFull(),
                 TextInput::make('queueService')
                     ->label(new HtmlString(trans('installer.queue.fields.service')))
                     ->disabled()
-                    ->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                    ->hintCopy()
                     ->default('sudo php ' . base_path() . '/artisan p:environment:queue-service')
                     ->hidden(fn () => @file_exists('/.dockerenv'))
                     ->columnSpanFull(),

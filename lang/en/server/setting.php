@@ -13,6 +13,7 @@ return [
         'failed' => 'Failed',
         'uuid' => 'Server UUID',
         'id' => 'Server ID',
+        'node_name' => 'Node Name',
         'limits' => [
             'title' => 'Limits',
             'unlimited' => 'Unlimited',
@@ -25,10 +26,6 @@ return [
             'allocations' => 'Allocations',
             'no_allocations' => 'No Additional Allocations',
         ],
-    ],
-    'node_info' => [
-        'title' => 'Node Information',
-        'name' => 'Node Name',
         'sftp' => [
             'title' => 'SFTP Information',
             'connection' => 'Connection',

@@ -6,12 +6,12 @@ use App\Extensions\Features\FeatureSchemaInterface;
 use App\Facades\Activity;
 use App\Models\Permission;
 use App\Models\Server;
-use App\Repositories\Daemon\DaemonPowerRepository;
+use App\Repositories\Daemon\DaemonServerRepository;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 
 class JavaVersionSchema implements FeatureSchemaInterface
@@ -44,9 +44,9 @@ class JavaVersionSchema implements FeatureSchemaInterface
             ->modalHeading('Unsupported Java Version')
             ->modalDescription('This server is currently running an unsupported version of Java and cannot be started.')
             ->modalSubmitActionLabel('Update Docker Image')
-            ->disabledForm(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
-            ->form([
-                Placeholder::make('java')
+            ->disabledSchema(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
+            ->schema([
+                TextEntry::make('java')
                     ->label('Please select a supported version from the list below to continue starting the server.'),
                 Select::make('image')
                     ->label('Docker Image')
@@ -59,7 +59,7 @@ class JavaVersionSchema implements FeatureSchemaInterface
                     ->preload()
                     ->native(false),
             ])
-            ->action(function (array $data, DaemonPowerRepository $powerRepository) use ($server) {
+            ->action(function (array $data, DaemonServerRepository $serverRepository) use ($server) {
                 try {
                     $new = $data['image'];
                     $original = $server->image;
@@ -71,7 +71,7 @@ class JavaVersionSchema implements FeatureSchemaInterface
                             ->log();
                     }
 
-                    $powerRepository->setServer($server)->send('restart');
+                    $serverRepository->setServer($server)->power('restart');
 
                     Notification::make()
                         ->title('Docker image updated')

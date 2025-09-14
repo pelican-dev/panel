@@ -18,7 +18,7 @@ class ServerEntry extends Component
     public function placeholder(): string
     {
         return <<<'HTML'
-        <div class="relative">
+        <div class="relative cursor-pointer" x-on:click="window.location.href = '{{ \App\Filament\Server\Pages\Console::getUrl(panel: 'server', tenant: $server) }}'">
             <div
                 class="absolute left-0 top-1 bottom-0 w-1 rounded-lg"
                 style="background-color: #D97706;">

@@ -2,6 +2,7 @@
 
 namespace App\Extensions\Backups;
 
+use InvalidArgumentException;
 use App\Extensions\Backups\Adapter\ResticBackupAdapter;
 use App\Extensions\Backups\Adapter\S3BackupAdapter;
 use App\Extensions\Backups\Adapter\WingsBackupAdapter;
@@ -65,7 +66,7 @@ class BackupManager
         $config = $this->getConfig($name);
 
         if (empty($config['adapter'])) {
-            throw new \InvalidArgumentException("Backup disk [$name] does not have a configured adapter.");
+            throw new InvalidArgumentException("Backup disk [$name] does not have a configured adapter.");
         }
 
         $adapter = $config['adapter'];
@@ -89,7 +90,7 @@ class BackupManager
             return $instance;
         }
 
-        throw new \InvalidArgumentException("Adapter [$adapter] is not supported.");
+        throw new InvalidArgumentException("Adapter [$adapter] is not supported.");
     }
 
     /**

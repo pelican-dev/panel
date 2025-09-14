@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\CarbonImmutable;
+use Illuminate\Database\Query\Builder;
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,12 +26,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $checksum
  * @property int $bytes
  * @property string|null $upload_id
- * @property \Carbon\CarbonImmutable|null $completed_at
+ * @property CarbonImmutable|null $completed_at
  * @property BackupStatus $status
- * @property \Carbon\CarbonImmutable $created_at
- * @property \Carbon\CarbonImmutable $updated_at
- * @property \Carbon\CarbonImmutable|null $deleted_at
- * @property \App\Models\Server $server
+ * @property CarbonImmutable $created_at
+ * @property CarbonImmutable $updated_at
+ * @property CarbonImmutable|null $deleted_at
+ * @property Server $server
  */
 class Backup extends Model implements Validatable
 {
@@ -97,8 +99,8 @@ class Backup extends Model implements Validatable
     }
 
     /**
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return BackupQueryBuilder<\Illuminate\Database\Eloquent\Model>
+     * @param  Builder  $query
+     * @return BackupQueryBuilder<Model>
      */
     public function newEloquentBuilder($query): BackupQueryBuilder
     {

@@ -9,13 +9,11 @@
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "ext-zip": "*",
-        "abdelhamiderrahmouni/filament-monaco-editor": "^0.2.5",
         "aws/aws-sdk-php": "^3.351",
         "calebporzio/sushi": "^2.5",
-        "chillerlan/php-qrcode": "^5.0.2",
         "dedoc/scramble": "^0.12.10",
         "doctrine/dbal": "~3.6.0",
-        "filament/filament": "^3.3",
+        "filament/filament": "~4.0",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^12.23",
         "laravel/helpers": "^1.7",
@@ -27,7 +25,6 @@
         "league/flysystem-aws-s3-v3": "^3.29",
         "league/flysystem-memory": "^3.29",
         "phpseclib/phpseclib": "~3.0.18",
-        "pragmarx/google2fa": "~8.0.0",
         "predis/predis": "^2.3",
         "s1lentium/iptools": "~1.2.0",
         "secondnetwork/blade-tabler-icons": "^3.26",
@@ -44,7 +41,6 @@
         "symfony/mailgun-mailer": "^7.2",
         "symfony/postmark-mailer": "^7.2",
         "symfony/yaml": "^7.2",
-        "webbingbrasil/filament-copyactions": "^3.0.1",
         "webmozart/assert": "~1.11.0"
     },
     "require-dev": {
@@ -80,7 +76,8 @@
         "pint": "pint",
         "phpstan": "phpstan --memory-limit=-1",
         "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan filament:upgrade"
         ],
         "post-install-cmd": [
             "php -r \"file_exists('.env') || copy('.env.example', '.env');\""

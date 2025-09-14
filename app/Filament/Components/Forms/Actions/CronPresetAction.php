@@ -2,9 +2,9 @@
 
 namespace App\Filament\Components\Forms\Actions;
 
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 
 class CronPresetAction extends Action
 {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\Activity;
 
+use Closure;
 use Illuminate\Http\Request;
 use App\Models\ApiKey;
 use App\Facades\LogTarget;
@@ -14,7 +15,7 @@ class TrackAPIKey
      * request singleton so that all tracked activity log events are properly associated
      * with the given API key.
      */
-    public function handle(Request $request, \Closure $next): mixed
+    public function handle(Request $request, Closure $next): mixed
     {
         if ($request->user()) {
             $token = $request->user()->currentAccessToken();
