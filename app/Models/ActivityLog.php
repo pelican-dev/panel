@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 /**
@@ -173,13 +174,14 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         }
 
         $avatarUrl = Filament::getUserAvatarUrl($user);
+        $username = str($user->username)->stripTags();
 
         return "
             <div style='display: flex; align-items: center;'>
                 <img width='50px' height='50px' src='{$avatarUrl}' style='margin-right: 15px' />
 
                 <div>
-                    <p>$user->username — $this->event</p>
+                    <p>$username — $this->event</p>
                     <p>{$this->getLabel()}</p>
                     <p>$this->ip — <span title='{$this->timestamp->format('M j, Y g:ia')}'>{$this->timestamp->diffForHumans()}</span></p>
                 </div>
@@ -203,17 +205,17 @@ class ActivityLog extends Model implements HasIcon, HasLabel
                     $value = str_replace('//', '/', '/' . trim($value, '/') . '/');
                 }
 
-                return [$key => $value];
+                return [$key => str($value)->stripTags()->toString()];
             }
 
-            $first = array_first($value);
+            $first = Arr::first($value);
 
             // Backwards compatibility for old logs
             if (is_array($first)) {
                 return ["{$key}_count" => count($value)];
             }
 
-            return [$key => $first, "{$key}_count" => count($value)];
+            return [$key => str($first)->stripTags()->toString(), "{$key}_count" => count($value)];
         });
 
         $keys = $properties->keys()->filter(fn ($key) => Str::endsWith($key, '_count'))->values();
