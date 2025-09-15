@@ -174,13 +174,14 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         }
 
         $avatarUrl = Filament::getUserAvatarUrl($user);
+        $username = str($user->username)->stripTags();
 
         return "
             <div style='display: flex; align-items: center;'>
                 <img width='50px' height='50px' src='{$avatarUrl}' style='margin-right: 15px' />
 
                 <div>
-                    <p>$user->username — $this->event</p>
+                    <p>$username — $this->event</p>
                     <p>{$this->getLabel()}</p>
                     <p>$this->ip — <span title='{$this->timestamp->format('M j, Y g:ia')}'>{$this->timestamp->diffForHumans()}</span></p>
                 </div>
