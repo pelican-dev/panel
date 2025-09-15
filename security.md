@@ -7,6 +7,12 @@ While Pelican is in beta, we only provide security fixes for the most recent bet
 
 ## Reporting a Vulnerability
 
-Please report any vulnerabilities [via github by creating a security advisory](https://github.com/pelican-dev/panel/security/advisories/new), via e-mail to team@pelican.dev or via Discord by sending a DM to one of the core members. (`Admins` Role) 
+Please report any vulnerabilities via _one_ of the following methods:
+- [Create a security advisory on Github](https://github.com/pelican-dev/panel/security/advisories/new)
+- Send an e-mail to team@pelican.dev
+- Send a Discord DM to one of the core members (`Admins` Role)
 
-We will respond within 72 hours with a timeline of when to expect a resolution.
+Include steps to reproduce, affected versions, impact, and a proof of concept if available.
+
+You can expect a response within 72 hours.  
+Please do not disclose vulnerabilities publicly until we have released a fix. We will acknowledge receipt and can credit researchers upon request.
