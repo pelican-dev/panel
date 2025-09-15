@@ -112,7 +112,7 @@ class ListServers extends ListRecords
             ->poll('15s')
             ->columns($usingGrid ? $this->gridColumns() : $this->tableColumns())
             ->recordUrl(!$usingGrid ? (fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)) : null)
-            ->recordActions(!$usingGrid ? ActionGroup::make(static::getPowerActions(view: 'table')) : [])
+            ->recordActions(!$usingGrid ? static::getPowerActionGroup() : [])
             ->recordActionsAlignment(Alignment::Center->value)
             ->contentGrid($usingGrid ? ['default' => 1, 'md' => 2] : null)
             ->emptyStateIcon('tabler-brand-docker')
@@ -225,10 +225,9 @@ class ListServers extends ListRecords
         }
     }
 
-    /** @return Action[]|ActionGroup[] */
-    public static function getPowerActions(string $view): array
+    public static function getPowerActionGroup(): ActionGroup
     {
-        $actions = [
+        return ActionGroup::make([
             Action::make('start')
                 ->color('primary')
                 ->icon('tabler-player-play-filled')
@@ -254,18 +253,10 @@ class ListServers extends ListRecords
                 ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->visible(fn (Server $server) => !$server->isInConflictState() & $server->retrieveStatus()->isKillable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'kill']),
-        ];
-
-        if ($view === 'table') {
-            return $actions;
-        } else {
-            return [
-                ActionGroup::make($actions)
-                    ->icon('tabler-power')
-                    ->color('primary')
-                    ->tooltip('Power Actions')
-                    ->iconSize(IconSize::Large),
-            ];
-        }
+        ])
+            ->icon('tabler-power')
+            ->color('primary')
+            ->tooltip(trans('server/dashboard.power_actions'))
+            ->iconSize(IconSize::Large);
     }
 }
