@@ -77,6 +77,7 @@ class ApiKeyResource extends Resource
             ->columns([
                 TextColumn::make('key')
                     ->label(trans('admin/apikey.table.key'))
+                    ->icon('tabler-clipboard-text')
                     ->state(fn (ApiKey $key) => $key->identifier . $key->token)
                     ->copyable(fn () => request()->isSecure()),
                 TextColumn::make('memo')
