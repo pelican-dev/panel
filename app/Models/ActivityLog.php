@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 /**
@@ -203,17 +204,17 @@ class ActivityLog extends Model implements HasIcon, HasLabel
                     $value = str_replace('//', '/', '/' . trim($value, '/') . '/');
                 }
 
-                return [$key => strip_tags($value)];
+                return [$key => str($value)->stripTags()->toString()];
             }
 
-            $first = array_first($value);
+            $first = Arr::first($value);
 
             // Backwards compatibility for old logs
             if (is_array($first)) {
                 return ["{$key}_count" => count($value)];
             }
 
-            return [$key => strip_tags($first), "{$key}_count" => count($value)];
+            return [$key => str($first)->stripTags()->toString(), "{$key}_count" => count($value)];
         });
 
         $keys = $properties->keys()->filter(fn ($key) => Str::endsWith($key, '_count'))->values();
