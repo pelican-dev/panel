@@ -2,7 +2,8 @@
 
 ## Supported Versions
 
-While Pelican is still in beta we only support the latest beta release.
+While Pelican is in beta, we only provide security fixes for the most recent beta release. Older beta releases are unsupported.  
+![](https://img.shields.io/github/v/release/pelican-dev/panel?label=latest-release)
 
 ## Reporting a Vulnerability
 
