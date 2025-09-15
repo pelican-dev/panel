@@ -46,9 +46,7 @@ class StartupVariable extends Field
 
         $this->prefix(fn (StartupVariable $component) => '{{' . $component->getVariableEnv() . '}}');
 
-        $this->hintIcon('tabler-code');
-
-        $this->hintIconTooltip(fn (StartupVariable $component) => implode('|', $component->getVariableRules()));
+        $this->hintIcon('tabler-code', fn (StartupVariable $component) => implode('|', $component->getVariableRules()));
 
         $this->helperText(fn (StartupVariable $component) => !$component->getVariableDesc() ? '—' : $component->getVariableDesc());
 
@@ -90,11 +88,11 @@ class StartupVariable extends Field
 
     public function fromRecord(): static
     {
-        $this->variableName(fn (ServerVariable $record) => $record->variable->name);
-        $this->variableDesc(fn (ServerVariable $record) => $record->variable->description);
-        $this->variableEnv(fn (ServerVariable $record) => $record->variable->env_variable);
-        $this->variableDefault(fn (ServerVariable $record) => $record->variable->default_value);
-        $this->variableRules(fn (ServerVariable $record) => $record->variable->rules);
+        $this->variableName(fn (?ServerVariable $record) => $record?->variable->name);
+        $this->variableDesc(fn (?ServerVariable $record) => $record?->variable->description);
+        $this->variableEnv(fn (?ServerVariable $record) => $record?->variable->env_variable);
+        $this->variableDefault(fn (?ServerVariable $record) => $record?->variable->default_value);
+        $this->variableRules(fn (?ServerVariable $record) => $record?->variable->rules);
 
         return $this;
     }

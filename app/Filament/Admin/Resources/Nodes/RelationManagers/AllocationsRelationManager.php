@@ -42,7 +42,7 @@ class AllocationsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('address')
             ->checkIfRecordIsSelectableUsing(fn (Allocation $allocation) => $allocation->server_id === null)
-            ->paginationPageOptions(['10', '20', '50', '100', '200', '500'])
+            ->paginationPageOptions([10, 20, 50, 100, 200, 500])
             ->searchable()
             ->heading('')
             ->selectCurrentPageOnly() //Prevent people from trying to nuke 30,000 ports at once.... -,-

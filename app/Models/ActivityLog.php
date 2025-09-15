@@ -92,7 +92,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
 
     public function actor(): MorphTo
     {
-        return $this->morphTo()->withTrashed();
+        return $this->morphTo()->withTrashed()->withoutGlobalScopes();
     }
 
     /**

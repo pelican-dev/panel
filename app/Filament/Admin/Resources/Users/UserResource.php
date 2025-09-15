@@ -140,8 +140,7 @@ class UserResource extends Resource
                     ->maxLength(255),
                 TextInput::make('password')
                     ->label(trans('admin/user.password'))
-                    ->hintIcon(fn ($operation) => $operation === 'create' ? 'tabler-question-mark' : null)
-                    ->hintIconTooltip(fn ($operation) => $operation === 'create' ? trans('admin/user.password_help') : null)
+                    ->hintIcon(fn ($operation) => $operation === 'create' ? 'tabler-question-mark' : null, fn ($operation) => $operation === 'create' ? trans('admin/user.password_help') : null)
                     ->password(),
                 CheckboxList::make('roles')
                     ->hidden(fn (?User $user) => $user && $user->isRootAdmin())

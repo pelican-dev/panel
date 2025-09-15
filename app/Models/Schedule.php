@@ -6,8 +6,10 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Exception;
 use App\Contracts\Validatable;
+use App\Enums\ScheduleStatus;
 use App\Helpers\Utilities;
 use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -27,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $only_when_online
  * @property Carbon|null $last_run_at
  * @property Carbon|null $next_run_at
+ * @property ScheduleStatus $status
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Server $server
@@ -105,6 +108,13 @@ class Schedule extends Model implements Validatable
             'last_run_at' => 'datetime',
             'next_run_at' => 'datetime',
         ];
+    }
+
+    protected function status(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => !$this->is_active ? ScheduleStatus::Inactive : ($this->is_processing ? ScheduleStatus::Processing : ScheduleStatus::Active),
+        );
     }
 
     /**
