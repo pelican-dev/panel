@@ -89,14 +89,12 @@ class RoleResource extends Resource
                     ->counts('permissions')
                     ->formatStateUsing(fn (Role $role, $state) => $role->isRootAdmin() ? trans('admin/role.all') : $state),
                 TextColumn::make('nodes.name')
-                    ->icon('tabler-server-2')
                     ->label(trans('admin/role.nodes'))
                     ->badge()
                     ->placeholder(trans('admin/role.all')),
                 TextColumn::make('users_count')
                     ->label(trans('admin/role.users'))
-                    ->counts('users')
-                    ->icon('tabler-users'),
+                    ->counts('users'),
             ])
             ->recordActions([
                 ViewAction::make()

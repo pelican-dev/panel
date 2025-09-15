@@ -52,16 +52,13 @@ class DatabasesRelationManager extends RelationManager
             ->recordTitleAttribute('database')
             ->heading('')
             ->columns([
-                TextColumn::make('database')
-                    ->icon('tabler-database'),
+                TextColumn::make('database'),
                 TextColumn::make('username')
-                    ->label(trans('admin/databasehost.table.username'))
-                    ->icon('tabler-user'),
+                    ->label(trans('admin/databasehost.table.username')),
                 TextColumn::make('remote')
                     ->label(trans('admin/databasehost.table.remote'))
                     ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? trans('admin/databasehost.anywhere'). ' ( % )' : $record->remote),
                 TextColumn::make('server.name')
-                    ->icon('tabler-brand-docker')
                     ->url(fn (Database $database) => route('filament.admin.resources.servers.edit', ['record' => $database->server_id])),
                 TextColumn::make('max_connections')
                     ->label(trans('admin/databasehost.table.max_connections'))

@@ -27,18 +27,15 @@ class NodesRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('user.username')
                     ->label(trans('admin/node.table.owner'))
-                    ->icon('tabler-user')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->searchable(),
                 TextColumn::make('name')
                     ->label(trans('admin/node.table.name'))
-                    ->icon('tabler-brand-docker')
                     ->url(fn (Server $server): string => route('filament.admin.resources.servers.edit', ['record' => $server]))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('egg.name')
                     ->label(trans('admin/node.table.egg'))
-                    ->icon('tabler-egg')
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->user]))
                     ->sortable(),
                 SelectColumn::make('allocation.id')
@@ -48,18 +45,16 @@ class NodesRelationManager extends RelationManager
                     ->selectablePlaceholder(fn (SelectColumn $select) => !$select->isDisabled())
                     ->placeholder(trans('admin/node.none'))
                     ->sortable(),
-                TextColumn::make('memory')->label(trans('admin/node.memory'))->icon('tabler-device-desktop-analytics'),
-                TextColumn::make('cpu')->label(trans('admin/node.cpu'))->icon('tabler-cpu'),
+                TextColumn::make('memory')->label(trans('admin/node.memory')),
+                TextColumn::make('cpu')->label(trans('admin/node.cpu')),
                 TextColumn::make('databases_count')
                     ->counts('databases')
                     ->label(trans('admin/node.databases'))
-                    ->icon('tabler-database')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('backups_count')
                     ->counts('backups')
                     ->label(trans('admin/node.backups'))
-                    ->icon('tabler-file-download')
                     ->numeric()
                     ->sortable(),
             ]);

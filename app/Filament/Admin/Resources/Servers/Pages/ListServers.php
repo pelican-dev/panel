@@ -47,25 +47,21 @@ class ListServers extends ListRecords
                     ->searchable(),
                 TextColumn::make('name')
                     ->label(trans('admin/server.name'))
-                    ->icon('tabler-brand-docker')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('node.name')
                     ->label(trans('admin/server.node'))
-                    ->icon('tabler-server-2')
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'node.name')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('egg.name')
-                    ->icon('tabler-egg')
                     ->label(trans('admin/server.egg'))
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'egg.name')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('user.username')
-                    ->icon('tabler-user')
                     ->label(trans('admin/user.username'))
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'user.username')
@@ -88,14 +84,12 @@ class ListServers extends ListRecords
                 TextColumn::make('backups_count')
                     ->counts('backups')
                     ->label(trans('admin/server.backups'))
-                    ->icon('tabler-file-download')
                     ->numeric()
                     ->sortable(),
             ])
             ->recordActions([
                 Action::make('View')
                     ->label(trans('admin/server.view'))
-                    ->icon('tabler-terminal')
                     ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
                     ->authorize(fn (Server $server) => auth()->user()->canAccessTenant($server)),
                 EditAction::make(),

@@ -84,10 +84,8 @@ class DatabaseHostResource extends Resource
                     ->label(trans('admin/databasehost.table.username')),
                 TextColumn::make('databases_count')
                     ->counts('databases')
-                    ->icon('tabler-database')
                     ->label(trans('admin/databasehost.databases')),
                 TextColumn::make('nodes.name')
-                    ->icon('tabler-server-2')
                     ->badge()
                     ->placeholder(trans('admin/databasehost.no_nodes')),
             ])

@@ -79,12 +79,10 @@ class MountResource extends Resource
                     ->description(fn (Mount $mount) => "$mount->source -> $mount->target")
                     ->sortable(),
                 TextColumn::make('eggs.name')
-                    ->icon('tabler-eggs')
                     ->label(trans('admin/mount.eggs'))
                     ->badge()
                     ->placeholder(trans('admin/mount.table.all_eggs')),
                 TextColumn::make('nodes.name')
-                    ->icon('tabler-server-2')
                     ->label(trans('admin/mount.nodes'))
                     ->badge()
                     ->placeholder(trans('admin/mount.table.all_nodes')),
