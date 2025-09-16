@@ -100,10 +100,10 @@ class PluginResource extends Resource
                     ->icon('tabler-terminal')
                     ->color('success')
                     ->hidden(fn (Plugin $plugin) => $plugin->isInstalled())
-                    ->action(function (Plugin $plugin) {
+                    ->action(function (Plugin $plugin, $livewire) {
                         Plugins::installPlugin($plugin, !$plugin->isTheme() || !Plugins::hasThemePluginEnabled());
 
-                        redirect(ListPlugins::getUrl());
+                        redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
                         Notification::make()
                             ->success()
@@ -116,10 +116,10 @@ class PluginResource extends Resource
                     ->icon('tabler-download')
                     ->color('success')
                     ->visible(fn (Plugin $plugin) => $plugin->isUpdateAvailable())
-                    ->action(function (Plugin $plugin) {
+                    ->action(function (Plugin $plugin, $livewire) {
                         Plugins::updatePlugin($plugin);
 
-                        redirect(ListPlugins::getUrl());
+                        redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
                         Notification::make()
                             ->success()
@@ -135,10 +135,10 @@ class PluginResource extends Resource
                     ->requiresConfirmation(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled())
                     ->modalHeading(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled() ? trans('admin/plugin.enable_theme_modal.heading') : null)
                     ->modalDescription(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled() ? trans('admin/plugin.enable_theme_modal.description') : null)
-                    ->action(function (Plugin $plugin) {
+                    ->action(function (Plugin $plugin, $livewire) {
                         Plugins::enablePlugin($plugin);
 
-                        redirect(ListPlugins::getUrl());
+                        redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
                         Notification::make()
                             ->success()
@@ -151,10 +151,10 @@ class PluginResource extends Resource
                     ->icon('tabler-x')
                     ->color('danger')
                     ->visible(fn (Plugin $plugin) => $plugin->canDisable())
-                    ->action(function (Plugin $plugin) {
+                    ->action(function (Plugin $plugin, $livewire) {
                         Plugins::disablePlugin($plugin);
 
-                        redirect(ListPlugins::getUrl());
+                        redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
                         Notification::make()
                             ->success()
@@ -191,7 +191,7 @@ class PluginResource extends Resource
                                     ]),
                             ]),
                     ])
-                    ->action(function ($data) {
+                    ->action(function ($data, $livewire) {
                         try {
                             if ($data['file'] instanceof UploadedFile) {
                                 Plugins::downloadPluginFromFile($data['file']);
@@ -201,7 +201,7 @@ class PluginResource extends Resource
                                 Plugins::downloadPluginFromUrl($data['url']);
                             }
 
-                            redirect(ListPlugins::getUrl());
+                            redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
                             Notification::make()
                                 ->success()
