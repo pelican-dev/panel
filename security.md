@@ -2,15 +2,16 @@
 
 ## Supported Versions
 
-We currently only support these versions:
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 3.x     | :white_check_mark: |
-| < 3.x   | :x:                |
+While Pelican is in beta, we only provide security fixes for the most recent beta release. Older beta releases are unsupported.  
+![](https://img.shields.io/github/v/release/pelican-dev/panel?label=latest-release)
 
 ## Reporting a Vulnerability
 
-Please report any vulnerabilities directly to team@pelican.dev
+Please report any vulnerabilities via _one_ of the following methods:
+- [Create a security advisory on Github](https://github.com/pelican-dev/panel/security/advisories/new)
+- Send an e-mail to team@pelican.dev
 
-We will respond within 72 hours with a timeline of when to expect a resolution.
+Include steps to reproduce, affected versions, impact, and a proof of concept if available.
+
+You can expect a response within 72 hours.  
+Please do not disclose vulnerabilities publicly until we have released a fix. We will acknowledge receipt and can credit researchers upon request.

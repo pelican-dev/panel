@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\Schedules;
 
+use App\Enums\ScheduleStatus;
 use App\Filament\Components\Actions\ImportScheduleAction;
 use App\Filament\Server\Resources\Schedules\Pages\ListSchedules;
 use App\Filament\Server\Resources\Schedules\Pages\CreateSchedule;
@@ -102,28 +103,21 @@ class ScheduleResource extends Resource
                     ->required(),
                 Toggle::make('only_when_online')
                     ->label(trans('server/schedule.only_online'))
-                    ->hintIconTooltip(trans('server/schedule.only_online_hint'))
-                    ->hintIcon('tabler-question-mark')
+                    ->hintIcon('tabler-question-mark', trans('server/schedule.only_online_hint'))
                     ->inline(false)
                     ->required()
                     ->default(1),
                 Toggle::make('is_active')
                     ->label(trans('server/schedule.enabled'))
-                    ->hintIconTooltip(trans('server/schedule.enabled_hint'))
-                    ->hintIcon('tabler-question-mark')
+                    ->hintIcon('tabler-question-mark', trans('server/schedule.enabled_hint'))
                     ->inline(false)
                     ->hiddenOn('view')
                     ->required()
                     ->default(1),
-                ToggleButtons::make('Status')
-                    ->formatStateUsing(fn (Schedule $schedule) => !$schedule->is_active ? 'inactive' : ($schedule->is_processing ? 'processing' : 'active'))
-                    ->options(fn (Schedule $schedule) => !$schedule->is_active ? ['inactive' => trans('server/schedule.inactive')] : ($schedule->is_processing ? ['processing' => trans('server/schedule.processing')] : ['active' => trans('server/schedule.active')]))
-                    ->colors([
-                        'new' => 'primary',
-                        'inactive' => 'danger',
-                        'processing' => 'warning',
-                        'active' => 'success',
-                    ])
+                ToggleButtons::make('status')
+                    ->enum(ScheduleStatus::class)
+                    ->formatStateUsing(fn (?Schedule $schedule) => $schedule?->status->value ?? 'new')
+                    ->options(fn (?Schedule $schedule) => [$schedule?->status->value ?? 'new' => $schedule?->status->getLabel() ?? 'New'])
                     ->visibleOn('view'),
                 Section::make('Cron')
                     ->label(trans('server/schedule.cron'))
@@ -162,7 +156,7 @@ class ScheduleResource extends Resource
                                                     && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
                                 ->schema([
                                     TextInput::make('x')
-                                        ->label('')
+                                        ->hiddenLabel()
                                         ->numeric()
                                         ->minValue(1)
                                         ->maxValue(60)
@@ -184,7 +178,7 @@ class ScheduleResource extends Resource
                                                     && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
                                 ->schema([
                                     TextInput::make('x')
-                                        ->label('')
+                                        ->hiddenLabel()
                                         ->numeric()
                                         ->minValue(1)
                                         ->maxValue(24)
@@ -206,7 +200,7 @@ class ScheduleResource extends Resource
                                                     && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
                                 ->schema([
                                     TextInput::make('x')
-                                        ->label('')
+                                        ->hiddenLabel()
                                         ->numeric()
                                         ->minValue(1)
                                         ->maxValue(24)
@@ -228,7 +222,7 @@ class ScheduleResource extends Resource
                                                     && $get('cron_day_of_week') == '*' ? 'success' : 'primary')
                                 ->schema([
                                     TextInput::make('x')
-                                        ->label('')
+                                        ->hiddenLabel()
                                         ->numeric()
                                         ->minValue(1)
                                         ->maxValue(24)
@@ -250,7 +244,7 @@ class ScheduleResource extends Resource
                                                     && $get('cron_day_of_week') != '*' ? 'success' : 'primary')
                                 ->schema([
                                     Select::make('x')
-                                        ->label('')
+                                        ->hiddenLabel()
                                         ->prefix(trans('server/schedule.time.every'))
                                         ->options([
                                             '1' => trans('server/schedule.time.monday'),
@@ -344,7 +338,9 @@ class ScheduleResource extends Resource
                     ->state(fn (Schedule $schedule) => $schedule->cron_minute . ' ' . $schedule->cron_hour . ' ' . $schedule->cron_day_of_month . ' ' . $schedule->cron_month . ' ' . $schedule->cron_day_of_week),
                 TextColumn::make('status')
                     ->label(trans('server/schedule.status'))
-                    ->state(fn (Schedule $schedule) => !$schedule->is_active ? trans('server/schedule.inactive') : ($schedule->is_processing ? trans('server/schedule.processing') : trans('server/schedule.active'))),
+                    ->state(fn (Schedule $schedule) => $schedule->status->getLabel())
+                    ->color(fn (Schedule $schedule) => $schedule->status->getColor())
+                    ->badge(),
                 IconColumn::make('only_when_online')
                     ->label(trans('server/schedule.online_only'))
                     ->boolean()
@@ -359,7 +355,7 @@ class ScheduleResource extends Resource
                     ->placeholder(trans('server/schedule.never'))
                     ->since()
                     ->sortable()
-                    ->state(fn (Schedule $schedule) => $schedule->is_active ? $schedule->next_run_at : null),
+                    ->state(fn (Schedule $schedule) => $schedule->status === ScheduleStatus::Active ? $schedule->next_run_at : null),
             ])
             ->recordActions([
                 ViewAction::make(),

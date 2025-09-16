@@ -86,10 +86,11 @@ class ListFiles extends ListRecords
         $files = File::get($server, $this->path);
 
         return $table
-            ->paginated()
+            ->paginated([25, 50, 100, 150, 200])
             ->paginationMode(PaginationMode::Simple)
+            ->defaultPaginationPageOption(50)
+            ->deferLoading()
             ->searchable()
-            ->defaultPaginationPageOption(25)
             ->query(fn () => $files->orderByDesc('is_directory'))
             ->defaultSort('name')
             ->columns([
@@ -333,7 +334,7 @@ class ListFiles extends ListRecords
                 ])->iconSize(IconSize::Large),
                 DeleteAction::make()
                     ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_DELETE, $server))
-                    ->label('')
+                    ->hiddenLabel()
                     ->icon('tabler-trash')->iconSize(IconSize::Large)
                     ->requiresConfirmation()
                     ->modalHeading(fn (File $file) => trans('filament-actions::delete.single.modal.heading', ['label' => $file->name . ' ' . ($file->is_directory ? 'folder' : 'file')]))
@@ -433,7 +434,7 @@ class ListFiles extends ListRecords
                             $this->getDaemonFileRepository()->putContent($path, $data['editor'] ?? '');
 
                             Activity::event('server:file.write')
-                                ->property('file', join_paths($path, $data['name']))
+                                ->property('file', $path)
                                 ->log();
                         } catch (FileExistsException) {
                             AlertBanner::make('file_already_exists')

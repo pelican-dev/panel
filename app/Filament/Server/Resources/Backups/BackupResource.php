@@ -86,7 +86,7 @@ class BackupResource extends Resource
                 TextInput::make('name')
                     ->label(trans('server/backup.actions.create.name'))
                     ->columnSpanFull(),
-                TextArea::make('ignored')
+                Textarea::make('ignored')
                     ->label(trans('server/backup.actions.create.ignored'))
                     ->columnSpanFull(),
                 Toggle::make('is_locked')

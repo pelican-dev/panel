@@ -193,7 +193,7 @@ class RoleResource extends Resource
             ])
             ->schema([
                 CheckboxList::make(strtolower($model) . '_list')
-                    ->label('')
+                    ->hiddenLabel()
                     ->options($options)
                     ->columns()
                     ->gridDirection('row')

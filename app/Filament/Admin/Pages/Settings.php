@@ -153,14 +153,12 @@ class Settings extends Page implements HasSchemas
                 ->schema([
                     TextInput::make('APP_LOGO')
                         ->label(trans('admin/setting.general.app_logo'))
-                        ->hintIcon('tabler-question-mark')
-                        ->hintIconTooltip(trans('admin/setting.general.app_logo_help'))
+                        ->hintIcon('tabler-question-mark', trans('admin/setting.general.app_logo_help'))
                         ->default(env('APP_LOGO'))
                         ->placeholder('/pelican.svg'),
                     TextInput::make('APP_FAVICON')
                         ->label(trans('admin/setting.general.app_favicon'))
-                        ->hintIcon('tabler-question-mark')
-                        ->hintIconTooltip(trans('admin/setting.general.app_favicon_help'))
+                        ->hintIcon('tabler-question-mark', trans('admin/setting.general.app_favicon_help'))
                         ->required()
                         ->default(env('APP_FAVICON', '/pelican.ico'))
                         ->placeholder('/pelican.ico'),
