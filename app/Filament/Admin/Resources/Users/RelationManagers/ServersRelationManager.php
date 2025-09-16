@@ -53,19 +53,16 @@ class ServersRelationManager extends RelationManager
                     ->label('UUID')
                     ->searchable(),
                 TextColumn::make('name')
-                    ->icon('tabler-brand-docker')
                     ->label(trans('admin/server.name'))
                     ->url(fn (Server $server): string => route('filament.admin.resources.servers.edit', ['record' => $server]))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('node.name')
                     ->label(trans('admin/server.node'))
-                    ->icon('tabler-server-2')
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->sortable(),
                 TextColumn::make('egg.name')
                     ->label(trans('admin/server.egg'))
-                    ->icon('tabler-egg')
                     ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
                     ->sortable(),
                 SelectColumn::make('allocation.id')
@@ -78,13 +75,11 @@ class ServersRelationManager extends RelationManager
                 TextColumn::make('databases_count')
                     ->counts('databases')
                     ->label(trans('admin/server.databases'))
-                    ->icon('tabler-database')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('backups_count')
                     ->counts('backups')
                     ->label(trans('admin/server.backups'))
-                    ->icon('tabler-file-download')
                     ->numeric()
                     ->sortable(),
             ]);

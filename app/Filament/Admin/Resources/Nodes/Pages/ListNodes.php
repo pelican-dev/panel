@@ -37,13 +37,11 @@ class ListNodes extends ListRecords
                 NodeHealthColumn::make('health'),
                 TextColumn::make('name')
                     ->label(trans('admin/node.table.name'))
-                    ->icon('tabler-server-2')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('fqdn')
                     ->visibleFrom('md')
                     ->label(trans('admin/node.table.address'))
-                    ->icon('tabler-network')
                     ->sortable()
                     ->searchable(),
                 IconColumn::make('scheme')
@@ -61,8 +59,7 @@ class ListNodes extends ListRecords
                     ->visibleFrom('sm')
                     ->counts('servers')
                     ->label(trans('admin/node.table.servers'))
-                    ->sortable()
-                    ->icon('tabler-brand-docker'),
+                    ->sortable(),
             ])
             ->recordActions([
                 EditAction::make(),
