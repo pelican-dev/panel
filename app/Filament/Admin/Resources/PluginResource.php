@@ -137,8 +137,8 @@ class PluginResource extends Resource
                     ->color('success')
                     ->visible(fn (Plugin $plugin) => $plugin->canEnable())
                     ->requiresConfirmation(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled())
-                    ->modalHeading(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled() ? 'Theme already enabled' : null)
-                    ->modalDescription(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled() ? 'You already have a theme enabled. Enabling multiple themes can result in visual bugs. Do you want to continue?' : null)
+                    ->modalHeading(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled() ? trans('admin/plugin.enable_theme_modal.heading') : null)
+                    ->modalDescription(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled() ? trans('admin/plugin.enable_theme_modal.description') : null)
                     ->action(function (Plugin $plugin) {
                         Plugins::enablePlugin($plugin);
 
@@ -162,7 +162,7 @@ class PluginResource extends Resource
 
                         Notification::make()
                             ->success()
-                            ->title(trans('admin/plugin.notifications.updated'))
+                            ->title(trans('admin/plugin.notifications.disabled'))
                             ->send();
                     }),
             ])
