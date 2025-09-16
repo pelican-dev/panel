@@ -25,8 +25,10 @@
                 </span>
             </h2>
             @if ($actiongroup->isVisible())
-                <div class="end-0 flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1" x-on:click.stop>
-                    {{ $actiongroup }}
+                <div class="end-0">
+                    <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1" x-on:click.stop>
+                        {{ $actiongroup }}
+                    </div>
                 </div>
             @endif
         </div>
