@@ -298,8 +298,7 @@ class PluginService
     /** @param array<string, mixed> $data */
     private function setMetaData(string|Plugin $plugin, array $data): void
     {
-        $plugin = $plugin instanceof Plugin ? $plugin->id : $plugin;
-        $path = plugin_path($plugin, 'plugin.json');
+        $path = plugin_path($plugin instanceof Plugin ? $plugin->id : $plugin, 'plugin.json');
 
         if (File::exists($path)) {
             $pluginData = File::json($path, JSON_THROW_ON_ERROR);
@@ -307,6 +306,12 @@ class PluginService
             $pluginData['meta'] = $metaData;
 
             File::put($path, json_encode($pluginData, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+            if (!$this->isDevModeActive()) {
+                // Update model to rebuild sushi cache
+                $plugin = !$plugin instanceof Plugin ? Plugin::findOrFail($plugin) : $plugin;
+                $plugin->update($metaData);
+            }
         }
     }
 

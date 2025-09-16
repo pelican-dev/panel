@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\Plugins\HasPluginSettings;
 use App\Enums\PluginCategory;
 use App\Enums\PluginStatus;
+use App\Facades\Plugins;
 use Exception;
 use Filament\Schemas\Components\Component;
 use Illuminate\Database\Eloquent\Model;
@@ -41,6 +42,12 @@ class Plugin extends Model implements HasPluginSettings
     protected $keyType = 'string';
 
     public $incrementing = false;
+
+    protected $fillable = [
+        'status',
+        'status_message',
+        'load_order',
+    ];
 
     /**
      * @return string[]
@@ -137,12 +144,16 @@ class Plugin extends Model implements HasPluginSettings
 
                 $plugins[] = $data;
             } catch (Exception $exception) {
+                if (Plugins::isDevModeActive()) {
+                    throw ($exception);
+                }
+
                 report($exception);
 
                 if (!$exception instanceof JsonException) {
                     $plugins[] = [
                         'id' => $data['id'] ?? Str::uuid(),
-                        'name' => $data['name'] ?? 'Invalid Plugin',
+                        'name' => $data['name'] ?? $plugin,
                         'author' => $data['author'] ?? 'Unknown',
                         'version' => '0.0.0',
                         'description' => 'Plugin.json is invalid!',
@@ -168,7 +179,7 @@ class Plugin extends Model implements HasPluginSettings
 
     protected function sushiShouldCache(): bool
     {
-        return false;
+        return !Plugins::isDevModeActive();
     }
 
     protected function casts(): array
@@ -353,13 +364,14 @@ class Plugin extends Model implements HasPluginSettings
      */
     public function saveSettings(array $data): void
     {
-        $class = $this->fullClass();
-        if (class_exists($class)) {
+        try {
             $pluginObject = filament($this->id);
 
             if ($pluginObject instanceof HasPluginSettings) {
                 $pluginObject->saveSettings($data);
             }
+        } catch (Exception) {
+            // Plugin is not loaded on the current panel, so no settings
         }
     }
 
