@@ -8,6 +8,7 @@ use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManag
 use App\Filament\Admin\Resources\Servers\ServerResource;
 use App\Filament\Components\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Fields\StartupVariable;
+use App\Filament\Components\StateCasts\ServerConditionStateCast;
 use App\Filament\Server\Pages\Console;
 use App\Models\Allocation;
 use App\Models\Egg;
@@ -135,6 +136,7 @@ class EditServer extends EditRecord
                                     ->options(fn ($state) => [$state->value => $state->getLabel()])
                                     ->colors(fn ($state) => [$state->value => $state->getColor()])
                                     ->icons(fn ($state) => [$state->value => $state->getIcon()])
+                                    ->stateCast(new ServerConditionStateCast())
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
