@@ -218,6 +218,10 @@ class PluginService
 
             if ($enable) {
                 $this->enablePlugin($plugin);
+            } else {
+                if (!$plugin->isInstalled()) {
+                    $this->disablePlugin($plugin);
+                }
             }
         } catch (Exception $exception) {
             if ($this->isDevModeActive()) {

@@ -101,7 +101,7 @@ class PluginResource extends Resource
                     ->color('success')
                     ->hidden(fn (Plugin $plugin) => $plugin->isInstalled())
                     ->action(function (Plugin $plugin) {
-                        Plugins::installPlugin($plugin);
+                        Plugins::installPlugin($plugin, !$plugin->isTheme() || !Plugins::hasThemePluginEnabled());
 
                         redirect(ListPlugins::getUrl());
 
