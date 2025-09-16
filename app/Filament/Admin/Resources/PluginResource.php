@@ -49,7 +49,9 @@ class PluginResource extends Resource
     {
         return $table
             ->openRecordUrlInNewTab()
-            ->reorderable('load_order', fn () => auth()->user()->can('update plugin'))
+            ->reorderable('load_order')
+            ->authorizeReorder(fn () => auth()->user()->can('update plugin'))
+            ->reorderRecordsTriggerAction(fn (Action $action, bool $isReordering) => $action->label($isReordering ? trans('admin/plugin.apply_load_order') : trans('admin/plugin.change_load_order')))
             ->defaultSort('load_order')
             ->columns([
                 TextColumn::make('name')

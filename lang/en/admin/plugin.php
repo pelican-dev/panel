@@ -21,6 +21,8 @@ return [
     'from_file' => 'From File',
     'from_url' => 'From URL',
     'all' => 'All',
+    'change_load_order' => 'Change load order',
+    'apply_load_order' => 'Apply load order',
 
     'enable_theme_modal' => [
         'heading' => 'Theme already enabled',
