@@ -112,7 +112,7 @@ class ListServers extends ListRecords
             ->poll('15s')
             ->columns($usingGrid ? $this->gridColumns() : $this->tableColumns())
             ->recordUrl(!$usingGrid ? (fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)) : null)
-            ->recordActions(!$usingGrid ? ActionGroup::make(static::getPowerActions(view: 'table')) : [])
+            ->recordActions(!$usingGrid ? static::getPowerActionGroup() : [])
             ->recordActionsAlignment(Alignment::Center->value)
             ->contentGrid($usingGrid ? ['default' => 1, 'md' => 2] : null)
             ->emptyStateIcon('tabler-brand-docker')
@@ -225,47 +225,43 @@ class ListServers extends ListRecords
         }
     }
 
-    /** @return Action[]|ActionGroup[] */
-    public static function getPowerActions(string $view): array
+    public static function getPowerActionGroup(): ActionGroup
     {
-        $actions = [
+        return ActionGroup::make([
             Action::make('start')
+                ->label(trans('server/console.power_actions.start'))
                 ->color('primary')
                 ->icon('tabler-player-play-filled')
                 ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
-                ->visible(fn (Server $server) => !$server->isInConflictState() && $server->retrieveStatus()->isStartable())
+                ->visible(fn (Server $server) => $server->retrieveStatus()->isStartable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'start']),
             Action::make('restart')
+                ->label(trans('server/console.power_actions.restart'))
                 ->color('gray')
                 ->icon('tabler-reload')
                 ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
-                ->visible(fn (Server $server) => !$server->isInConflictState() && $server->retrieveStatus()->isRestartable())
+                ->visible(fn (Server $server) => $server->retrieveStatus()->isRestartable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'restart']),
             Action::make('stop')
+                ->label(trans('server/console.power_actions.stop'))
                 ->color('danger')
                 ->icon('tabler-player-stop-filled')
                 ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
-                ->visible(fn (Server $server) => !$server->isInConflictState() && $server->retrieveStatus()->isStoppable())
+                ->visible(fn (Server $server) => $server->retrieveStatus()->isStoppable() && !$server->retrieveStatus()->isKillable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'stop']),
             Action::make('kill')
+                ->label(trans('server/console.power_actions.kill'))
                 ->color('danger')
                 ->icon('tabler-alert-square')
-                ->tooltip('This can result in data corruption and/or data loss!')
+                ->tooltip(trans('server/console.power_actions.kill_tooltip'))
                 ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
-                ->visible(fn (Server $server) => !$server->isInConflictState() && $server->retrieveStatus()->isKillable())
+                ->visible(fn (Server $server) => $server->retrieveStatus()->isKillable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'kill']),
-        ];
-
-        if ($view === 'table') {
-            return $actions;
-        } else {
-            return [
-                ActionGroup::make($actions)
-                    ->icon('tabler-power')
-                    ->color('primary')
-                    ->tooltip('Power Actions')
-                    ->iconSize(IconSize::Large),
-            ];
-        }
+        ])
+            ->icon('tabler-power')
+            ->color('primary')
+            ->tooltip(trans('server/dashboard.power_actions'))
+            ->hidden(fn (Server $server) => $server->isInConflictState())
+            ->iconSize(IconSize::Large);
     }
 }
