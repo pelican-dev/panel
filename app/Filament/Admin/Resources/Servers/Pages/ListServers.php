@@ -51,19 +51,19 @@ class ListServers extends ListRecords
                     ->sortable(),
                 TextColumn::make('node.name')
                     ->label(trans('admin/server.node'))
-                    ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
+                    ->url(fn (Server $server) => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'node.name')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('egg.name')
                     ->label(trans('admin/server.egg'))
-                    ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
+                    ->url(fn (Server $server) => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'egg.name')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('user.username')
                     ->label(trans('admin/user.username'))
-                    ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
+                    ->url(fn (Server $server) => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->hidden(fn (Table $table) => $table->getGrouping()?->getId() === 'user.username')
                     ->sortable()
                     ->searchable(),
