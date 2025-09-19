@@ -14,7 +14,7 @@
         "dedoc/scramble": "^0.12.10",
         "filament/filament": "~4.0",
         "guzzlehttp/guzzle": "^7.9",
-        "laravel/framework": "^12.23",
+        "laravel/framework": "^12.30",
         "laravel/helpers": "^1.7",
         "laravel/sanctum": "^4.1",
         "laravel/socialite": "^5.21",
