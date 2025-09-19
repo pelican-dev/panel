@@ -35,7 +35,7 @@ class DeleteUserCommand extends Command
         if ($this->input->isInteractive()) {
             $tableValues = [];
             foreach ($results as $user) {
-                $tableValues[] = [$user->id, $user->email, $user->name];
+                $tableValues[] = [$user->id, $user->email, $user->username];
             }
 
             $this->table(['User ID', 'Email', 'Name'], $tableValues);

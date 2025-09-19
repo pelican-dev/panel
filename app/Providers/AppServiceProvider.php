@@ -33,6 +33,7 @@ use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Config\Repository;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Console\AboutCommand;
@@ -182,6 +183,9 @@ class AppServiceProvider extends ServiceProvider
         AboutCommand::add('Drivers', 'Backups', config('backups.default'));
 
         AboutCommand::add('Environment', 'Installation Directory', base_path());
+
+        Model::shouldBeStrict();
+        Model::automaticallyEagerLoadRelationships();
     }
 
     /**
