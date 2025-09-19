@@ -54,24 +54,29 @@ class ServersRelationManager extends RelationManager
                     ->searchable(),
                 TextColumn::make('name')
                     ->label(trans('admin/server.name'))
-                    ->url(fn (Server $server): string => route('filament.admin.resources.servers.edit', ['record' => $server]))
+                    ->url(fn (Server $server) => route('filament.admin.resources.servers.edit', ['record' => $server]))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('node.name')
                     ->label(trans('admin/server.node'))
-                    ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
+                    ->url(fn (Server $server) => route('filament.admin.resources.nodes.edit', ['record' => $server->node]))
                     ->sortable(),
                 TextColumn::make('egg.name')
                     ->label(trans('admin/server.egg'))
-                    ->url(fn (Server $server): string => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
+                    ->url(fn (Server $server) => route('filament.admin.resources.eggs.edit', ['record' => $server->egg]))
                     ->sortable(),
-                SelectColumn::make('allocation.id')
+                SelectColumn::make('allocation_id')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->disabled()
-                    ->options(fn (Server $server) => $server->allocations->take(1)->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
+                    ->hidden(fn () => !auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
+                    ->disabled(fn (Server $server) => $server->allocations->count() <= 1)
+                    ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
+                    ->selectablePlaceholder(fn (Server $server) => $server->allocations->count() <= 1)
                     ->placeholder(trans('admin/server.none'))
                     ->sortable(),
-                TextColumn::make('image')->hidden(),
+                TextColumn::make('allocation_id_readonly')
+                    ->label(trans('admin/server.primary_allocation'))
+                    ->hidden(fn () => auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
+                    ->state(fn (Server $server) => $server->allocation->address ?? trans('admin/server.none')),
                 TextColumn::make('databases_count')
                     ->counts('databases')
                     ->label(trans('admin/server.databases'))
