@@ -152,7 +152,7 @@ class AppServiceProvider extends ServiceProvider
 
         Field::macro('hintCopy', function () {
             /** @var Field $this */
-            return $this->hintAction(fn () => request()->isSecure() ? CopyAction::make() : null); // @phpstan-ignore varTag.nativeType
+            return $this->hintAction(CopyAction::make()); // @phpstan-ignore varTag.nativeType
         });
 
         // Don't run any health checks during tests
