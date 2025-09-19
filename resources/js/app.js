@@ -1,19 +1,17 @@
-const originalWriteText = navigator.clipboard?.writeText?.bind(navigator.clipboard);
-if (originalWriteText) {
-  navigator.clipboard.writeText = async text => originalWriteText(text);
-} else {
-  navigator.clipboard = {};
-  navigator.clipboard.writeText = async text => {
-    return new Promise((resolve, reject) => {
-      const t = document.createElement('textarea');
-      t.value = text;
-      t.style.position = 'fixed';
-      t.style.opacity = '0';
-      document.body.appendChild(t);
-      t.select();
+(() => {
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') return;
+  navigator.clipboard = navigator.clipboard || {};
+  navigator.clipboard.writeText = async (text) =>
+    new Promise((resolve, reject) => {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
       const success = document.execCommand('copy');
-      document.body.removeChild(t);
-      success ? resolve() : reject(new Error('Fallback copy failed'));
+      document.body.removeChild(textarea);
+      success ? resolve() : reject('Fallback copy failed');
     });
-  }
-}
+})();
