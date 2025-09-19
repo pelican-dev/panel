@@ -610,26 +610,48 @@ class EditServer extends EditRecord
                                         1 => 'tabler-code-off',
                                     ])
                                     ->required(),
+
                                 Hidden::make('previewing')
                                     ->default(false),
-                                Textarea::make('startup')
+
+                                Select::make('select_startup')
                                     ->label(trans('admin/server.startup_cmd'))
-                                    ->required()
-                                    ->columnSpan(6)
-                                    ->autosize()
+                                    ->live()
+                                    ->afterStateUpdated(fn (Set $set, $state) => $set('startup', $state))
+                                    ->options(function ($state, Get $get, Set $set) {
+                                        $egg = Egg::query()->find($get('egg_id'));
+                                        $startups = $egg->startup_commands ?? [];
+
+                                        $currentStartup = $get('startup');
+                                        if (!$currentStartup && $startups) {
+                                            $currentStartup = collect($startups)->first();
+                                            $set('startup', $currentStartup);
+                                            $set('select_startup', $currentStartup);
+                                        }
+
+                                        return array_flip($startups) + ['' => 'Custom Startup'];
+                                    })
+                                    ->selectablePlaceholder(false)
+                                    ->columnSpanFull()
                                     ->hintAction(PreviewStartupAction::make('preview')),
 
-                                Textarea::make('defaultStartup')
-                                    ->hintCopy()
-                                    ->label(trans('admin/server.default_startup'))
-                                    ->disabled()
+                                Textarea::make('startup')
+                                    ->hiddenLabel()
+                                    ->required()
+                                    ->live()
                                     ->autosize()
-                                    ->columnSpan(6)
-                                    ->formatStateUsing(function ($state, Get $get) {
+                                    ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                         $egg = Egg::query()->find($get('egg_id'));
+                                        $startups = $egg->startup_commands ?? [];
 
-                                        return $egg->startup;
-                                    }),
+                                        if (in_array($state, $startups)) {
+                                            $set('select_startup', $state);
+                                        } else {
+                                            $set('select_startup', '');
+                                        }
+                                    })
+                                    ->placeholder(trans('admin/server.startup_placeholder'))
+                                    ->columnSpanFull(),
 
                                 Repeater::make('server_variables')
                                     ->hiddenLabel()

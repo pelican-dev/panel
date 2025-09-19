@@ -133,8 +133,9 @@ class EggImporterService
         $version = $parsed['meta']['version'] ?? '';
 
         $parsed = match ($version) {
-            'PTDL_v1' => $this->convertToV2($parsed),
-            'PTDL_v2', 'PLCN_v1', 'PLCN_v2' => $parsed,
+            'PTDL_v1' => $this->convertToV3($this->convertLegacy($parsed)),
+            'PTDL_v2', 'PLCN_v1', 'PLCN_v2' => $this->convertToV3($parsed),
+            Egg::EXPORT_VERSION => $parsed,
             default => throw new InvalidFileUploadException('The file format is not recognized.'),
         };
 
@@ -180,9 +181,9 @@ class EggImporterService
         if ($forbidden->count()) {
             $parsed['variables'] = $allowed->merge($updatedVariables)->all();
 
-            if (!empty($parsed['startup'])) {
+            foreach ($parsed['startup_commands'] ?? [] as $name => $startup) {
                 $pattern = '/\b(' . collect($forbidden)->map(fn ($variable) => preg_quote($variable['env_variable']))->join('|') . ')\b/';
-                $parsed['startup'] = preg_replace($pattern, 'SERVER_$1', $parsed['startup']) ?? $parsed['startup'];
+                $parsed['startup_commands'][$name] = preg_replace($pattern, 'SERVER_$1', $startup) ?? $startup;
             }
         }
 
@@ -206,7 +207,7 @@ class EggImporterService
             'config_startup' => json_encode(json_decode(Arr::get($parsed, 'config.startup')), JSON_PRETTY_PRINT),
             'config_logs' => json_encode(json_decode(Arr::get($parsed, 'config.logs')), JSON_PRETTY_PRINT),
             'config_stop' => Arr::get($parsed, 'config.stop'),
-            'startup' => Arr::get($parsed, 'startup'),
+            'startup_commands' => Arr::get($parsed, 'startup_commands'),
             'script_install' => Arr::get($parsed, 'scripts.installation.script'),
             'script_entry' => Arr::get($parsed, 'scripts.installation.entrypoint'),
             'script_container' => Arr::get($parsed, 'scripts.installation.container'),
@@ -217,7 +218,7 @@ class EggImporterService
      * @param  array<string, mixed>  $parsed
      * @return array<string, mixed>
      */
-    protected function convertToV2(array $parsed): array
+    protected function convertLegacy(array $parsed): array
     {
         if (!isset($parsed['images'])) {
             $images = [Arr::get($parsed, 'image') ?? 'nil'];
@@ -231,6 +232,23 @@ class EggImporterService
         foreach ($images as $image) {
             $parsed['docker_images'][$image] = $image;
         }
+
+        return $parsed;
+    }
+
+    /**
+     * @param  array<string, mixed>  $parsed
+     * @return array<string, mixed>
+     */
+    protected function convertToV3(array $parsed): array
+    {
+        $startup = $parsed['startup'];
+
+        unset($parsed['startup']);
+
+        $parsed['startup_commands'] = [
+            'Default' => $startup,
+        ];
 
         return $parsed;
     }

@@ -319,7 +319,7 @@ class CreateServer extends CreateRecord
                                 ->live()
                                 ->afterStateUpdated(function ($state, Set $set, Get $get, $old) {
                                     $egg = Egg::query()->find($state);
-                                    $set('startup', $egg->startup ?? '');
+                                    $set('startup', '');
                                     $set('image', '');
 
                                     $variables = $egg->variables ?? [];
@@ -393,24 +393,45 @@ class CreateServer extends CreateRecord
                                 ])
                                 ->inline(),
 
-                            Textarea::make('startup')
-                                ->hintIcon('tabler-code')
+                            Select::make('select_startup')
                                 ->label(trans('admin/server.startup_cmd'))
+                                ->hidden(fn (Get $get) => $get('egg_id') === null)
+                                ->live()
+                                ->afterStateUpdated(fn (Set $set, $state) => $set('startup', $state))
+                                ->options(function ($state, Get $get, Set $set) {
+                                    $egg = Egg::query()->find($get('egg_id'));
+                                    $startups = $egg->startup_commands ?? [];
+
+                                    $currentStartup = $get('startup');
+                                    if (!$currentStartup && $startups) {
+                                        $currentStartup = collect($startups)->first();
+                                        $set('startup', $currentStartup);
+                                        $set('select_startup', $currentStartup);
+                                    }
+
+                                    return array_flip($startups) + ['' => 'Custom Startup'];
+                                })
+                                ->selectablePlaceholder(false)
+                                ->columnSpanFull(),
+
+                            Textarea::make('startup')
+                                ->hiddenLabel()
                                 ->hidden(fn (Get $get) => $get('egg_id') === null)
                                 ->required()
                                 ->live()
-                                ->rows(function ($state) {
-                                    return str($state)->explode("\n")->reduce(
-                                        fn (int $carry, $line) => $carry + floor(strlen($line) / 125),
-                                        1
-                                    );
+                                ->autosize()
+                                ->afterStateUpdated(function ($state, Get $get, Set $set) {
+                                    $egg = Egg::query()->find($get('egg_id'));
+                                    $startups = $egg->startup_commands ?? [];
+
+                                    if (in_array($state, $startups)) {
+                                        $set('select_startup', $state);
+                                    } else {
+                                        $set('select_startup', '');
+                                    }
                                 })
-                                ->columnSpan([
-                                    'default' => 1,
-                                    'sm' => 4,
-                                    'md' => 4,
-                                    'lg' => 6,
-                                ]),
+                                ->placeholder(trans('admin/server.startup_placeholder'))
+                                ->columnSpanFull(),
 
                             Hidden::make('environment')->default([]),
 
