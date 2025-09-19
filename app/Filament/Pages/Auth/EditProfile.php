@@ -90,16 +90,14 @@ class EditProfile extends BaseEditProfile
                     ->schema([
                         Tab::make('account')
                             ->label(trans('profile.tabs.account'))
-                            ->icon('tabler-user')
+                            ->icon('tabler-user-cog')
                             ->schema([
                                 TextInput::make('username')
+                                    ->prefixIcon('tabler-user')
                                     ->label(trans('profile.username'))
-                                    ->disabled()
-                                    ->readOnly()
-                                    ->dehydrated(false)
+                                    ->required()
                                     ->maxLength(255)
-                                    ->unique()
-                                    ->autofocus(),
+                                    ->unique(),
                                 TextInput::make('email')
                                     ->prefixIcon('tabler-mail')
                                     ->label(trans('profile.email'))
@@ -114,8 +112,8 @@ class EditProfile extends BaseEditProfile
                                     ->revealable(filament()->arePasswordsRevealable())
                                     ->rule(Password::default())
                                     ->autocomplete('new-password')
-                                    ->dehydrated(fn ($state): bool => filled($state))
-                                    ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
+                                    ->dehydrated(fn ($state) => filled($state))
+                                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                                     ->live(debounce: 500)
                                     ->same('passwordConfirmation'),
                                 TextInput::make('passwordConfirmation')
@@ -124,7 +122,7 @@ class EditProfile extends BaseEditProfile
                                     ->prefixIcon('tabler-password-fingerprint')
                                     ->revealable(filament()->arePasswordsRevealable())
                                     ->required()
-                                    ->visible(fn (Get $get): bool => filled($get('password')))
+                                    ->visible(fn (Get $get) => filled($get('password')))
                                     ->dehydrated(false),
                                 Select::make('timezone')
                                     ->label(trans('profile.timezone'))
