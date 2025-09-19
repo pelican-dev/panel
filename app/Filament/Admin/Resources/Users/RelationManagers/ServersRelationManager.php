@@ -76,8 +76,7 @@ class ServersRelationManager extends RelationManager
                 TextColumn::make('allocation_id_readonly')
                     ->label(trans('admin/server.primary_allocation'))
                     ->hidden(fn () => auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
-                    ->disabled(fn (Server $server) => $server->allocations->count() <= 1)
-                    ->state(fn (Server $server) => $server->allocation->address ?? 'None'),
+                    ->state(fn (Server $server) => $server->allocation->address ?? trans('admin/server.none')),
                 TextColumn::make('databases_count')
                     ->counts('databases')
                     ->label(trans('admin/server.databases'))
