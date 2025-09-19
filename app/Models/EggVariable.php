@@ -52,6 +52,8 @@ class EggVariable extends Model implements Validatable
      */
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
+    public ?string $server_value;
+
     /** @var array<string, string[]> */
     public static array $validationRules = [
         'egg_id' => ['exists:eggs,id'],

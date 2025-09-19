@@ -19,6 +19,9 @@ class AllocationTransformer extends BaseClientTransformer
      */
     public function transform($model): array
     {
+        $model->loadMissing('server');
+        $model->server->loadMissing('allocation');
+
         return [
             'id' => $model->id,
             'ip' => $model->ip,
