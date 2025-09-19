@@ -97,14 +97,14 @@ class CreateDatabaseHost extends CreateRecord
                                 ->default(fn (Get $get) => "CREATE USER '{$get('username')}'@'{$get('panel_ip')}' IDENTIFIED BY '{$get('password')}';")
                                 ->disabled()
                                 ->dehydrated(false)
-                                ->copyable(fn () => request()->isSecure())
+                                ->copyable()
                                 ->columnSpanFull(),
                             TextInput::make('assign_permissions')
                                 ->label(trans('admin/databasehost.setup.command_assign_permissions'))
                                 ->default(fn (Get $get) => "GRANT ALL PRIVILEGES ON *.* TO '{$get('username')}'@'{$get('panel_ip')}' WITH GRANT OPTION;")
                                 ->disabled()
                                 ->dehydrated(false)
-                                ->copyable(fn () => request()->isSecure())
+                                ->copyable()
                                 ->columnSpanFull(),
                             TextEntry::make('cli_exit')
                                 ->hiddenLabel()
