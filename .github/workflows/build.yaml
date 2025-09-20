@@ -11,7 +11,7 @@ jobs:
     name: UI
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         node-version: [20, 22]
     steps:

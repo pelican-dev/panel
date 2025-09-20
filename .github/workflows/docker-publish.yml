@@ -66,8 +66,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    strategy:
-      fail-fast: false
     # Start a temp local registry because workflow can not pull from localy loaded images
     services:
       registry:
