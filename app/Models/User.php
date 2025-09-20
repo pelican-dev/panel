@@ -11,7 +11,6 @@ use App\Contracts\Validatable;
 use App\Enums\CustomizationKey;
 use App\Exceptions\DisplayException;
 use App\Extensions\Avatar\AvatarService;
-use App\Rules\Username;
 use App\Traits\HasValidation;
 use DateTimeZone;
 use Filament\Models\Contracts\FilamentUser;
@@ -213,7 +212,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
         $rules['language'][] = new In(array_values(array_filter(ResourceBundle::getLocales(''), fn ($lang) => preg_match('/^[a-z]{2}$/', $lang))));
         $rules['timezone'][] = new In(DateTimeZone::listIdentifiers());
-        $rules['username'][] = new Username();
 
         return $rules;
     }

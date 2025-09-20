@@ -123,10 +123,8 @@ class UserResource extends Resource
             ->components([
                 TextInput::make('username')
                     ->label(trans('admin/user.username'))
-                    ->alphaNum()
                     ->required()
                     ->unique()
-                    ->minLength(3)
                     ->maxLength(255),
                 TextInput::make('email')
                     ->label(trans('admin/user.email'))
