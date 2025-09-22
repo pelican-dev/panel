@@ -174,13 +174,13 @@ class Settings extends ServerFormPage
                                             ->url(function (Server $server) {
                                                 $fqdn = $server->node->daemon_sftp_alias ?? $server->node->fqdn;
 
-                                                return 'sftp://' . auth()->user()->username . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
+                                                return 'sftp://' . rawurlencode(auth()->user()->username) . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
                                             }),
                                     )
                                     ->formatStateUsing(function (Server $server) {
                                         $fqdn = $server->node->daemon_sftp_alias ?? $server->node->fqdn;
 
-                                        return 'sftp://' . auth()->user()->username . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
+                                        return 'sftp://' . rawurlencode(auth()->user()->username) . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
                                     }),
                                 TextInput::make('username')
                                     ->label(trans('server/setting.server_info.sftp.username'))
@@ -191,7 +191,7 @@ class Settings extends ServerFormPage
                                 TextEntry::make('password')
                                     ->label(trans('server/setting.server_info.sftp.password'))
                                     ->columnSpan(1)
-                                    ->label(trans('server/setting.server_info.sftp.password_body')),
+                                    ->state(trans('server/setting.server_info.sftp.password_body')),
                             ]),
                     ]),
                 Section::make(trans('server/setting.reinstall.title'))

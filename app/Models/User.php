@@ -219,14 +219,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function username(): Attribute
     {
         return Attribute::make(
-            set: fn (string $value) => mb_strtolower($value),
+            set: fn (string $value) => str($value)->lower()->trim()->toString(),
         );
     }
 
     public function email(): Attribute
     {
         return Attribute::make(
-            set: fn (string $value) => mb_strtolower($value),
+            set: fn (string $value) => str($value)->lower()->trim()->toString(),
         );
     }
 
