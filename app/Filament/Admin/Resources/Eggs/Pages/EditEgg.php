@@ -100,8 +100,7 @@ class EditEgg extends EditRecord
                             Toggle::make('force_outgoing_ip')
                                 ->inline(false)
                                 ->label(trans('admin/egg.force_ip'))
-                                ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip(trans('admin/egg.force_ip_help')),
+                                ->hintIcon('tabler-question-mark', trans('admin/egg.force_ip_help')),
                             Hidden::make('script_is_privileged')
                                 ->helperText('The docker images available to servers using this egg.'),
                             TagsInput::make('tags')
@@ -110,8 +109,7 @@ class EditEgg extends EditRecord
                             TextInput::make('update_url')
                                 ->label(trans('admin/egg.update_url'))
                                 ->url()
-                                ->hintIcon('tabler-question-mark')
-                                ->hintIconTooltip(trans('admin/egg.update_url_help'))
+                                ->hintIcon('tabler-question-mark', trans('admin/egg.update_url_help'))
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                             KeyValue::make('docker_images')
                                 ->label(trans('admin/egg.docker_images'))
@@ -195,8 +193,7 @@ class EditEgg extends EditRecord
                                         ->maxLength(255)
                                         ->prefix('{{')
                                         ->suffix('}}')
-                                        ->hintIcon('tabler-code')
-                                        ->hintIconTooltip(fn ($state) => "{{{$state}}}")
+                                        ->hintIcon('tabler-code', fn ($state) => "{{{$state}}}")
                                         ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
                                         ->rules(EggVariable::getRulesForField('env_variable'))
                                         ->validationMessages([

@@ -23,16 +23,13 @@ class ServersRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('user.username')
                     ->label(trans('admin/server.owner'))
-                    ->icon('tabler-user')
                     ->url(fn (Server $server): string => route('filament.admin.resources.users.edit', ['record' => $server->user]))
                     ->sortable(),
                 TextColumn::make('name')
                     ->label(trans('admin/server.name'))
-                    ->icon('tabler-brand-docker')
                     ->url(fn (Server $server): string => route('filament.admin.resources.servers.edit', ['record' => $server]))
                     ->sortable(),
                 TextColumn::make('node.name')
-                    ->icon('tabler-server-2')
                     ->url(fn (Server $server): string => route('filament.admin.resources.nodes.edit', ['record' => $server->node])),
                 TextColumn::make('image')
                     ->label(trans('admin/server.docker_image')),

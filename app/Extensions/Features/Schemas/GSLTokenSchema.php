@@ -73,9 +73,8 @@ class GSLTokenSchema implements FeatureSchemaInterface
                             }
                         },
                     ])
-                    ->hintIcon('tabler-code')
+                    ->hintIcon('tabler-code', fn () => implode('|', $serverVariable->variable->rules))
                     ->label(fn () => $serverVariable->variable->name)
-                    ->hintIconTooltip(fn () => implode('|', $serverVariable->variable->rules))
                     ->prefix(fn () => '{{' . $serverVariable->variable->env_variable . '}}')
                     ->helperText(fn () => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description),
             ])

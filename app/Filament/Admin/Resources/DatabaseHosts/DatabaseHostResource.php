@@ -84,10 +84,8 @@ class DatabaseHostResource extends Resource
                     ->label(trans('admin/databasehost.table.username')),
                 TextColumn::make('databases_count')
                     ->counts('databases')
-                    ->icon('tabler-database')
                     ->label(trans('admin/databasehost.databases')),
                 TextColumn::make('nodes.name')
-                    ->icon('tabler-server-2')
                     ->badge()
                     ->placeholder(trans('admin/databasehost.no_nodes')),
             ])
@@ -143,7 +141,7 @@ class DatabaseHostResource extends Resource
                             ->maxValue(65535),
                         TextInput::make('max_databases')
                             ->label(trans('admin/databasehost.max_database'))
-                            ->helpertext(trans('admin/databasehost.max_databases_help'))
+                            ->helperText(trans('admin/databasehost.max_databases_help'))
                             ->numeric(),
                         TextInput::make('name')
                             ->label(trans('admin/databasehost.display_name'))

@@ -63,16 +63,13 @@ class DatabasesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('database')
             ->columns([
-                TextColumn::make('database')
-                    ->icon('tabler-database'),
+                TextColumn::make('database'),
                 TextColumn::make('username')
-                    ->label(trans('admin/databasehost.table.username'))
-                    ->icon('tabler-user'),
+                    ->label(trans('admin/databasehost.table.username')),
                 TextColumn::make('remote')
                     ->label(trans('admin/databasehost.table.remote'))
                     ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? trans('admin/databasehost.anywhere'). ' ( % )' : $record->remote),
                 TextColumn::make('server.name')
-                    ->icon('tabler-brand-docker')
                     ->url(fn (Database $database) => route('filament.admin.resources.servers.edit', ['record' => $database->server_id])),
                 TextColumn::make('max_connections')
                     ->label(trans('admin/databasehost.table.max_connections'))
@@ -130,26 +127,23 @@ class DatabasesRelationManager extends RelationManager
                         Select::make('database_host_id')
                             ->label(trans('admin/databasehost.model_label'))
                             ->required()
-                            ->placeholder(trans('admin/databasehost.table.select_placeholder'))
                             ->options(fn () => DatabaseHost::query()
                                 ->whereHas('nodes', fn ($query) => $query->where('nodes.id', $this->getOwnerRecord()->node_id))
                                 ->pluck('name', 'id')
                             )
-                            ->default(fn () => (DatabaseHost::query()->first())?->id)
-                            ->selectablePlaceholder(false),
+                            ->selectablePlaceholder(false)
+                            ->default(fn () => (DatabaseHost::query()->first())?->id),
                         TextInput::make('database')
                             ->label(trans('admin/server.name'))
                             ->alphaDash()
                             ->prefix(fn () => 's' . $this->getOwnerRecord()->id . '_')
-                            ->hintIcon('tabler-question-mark')
-                            ->hintIconTooltip(trans('admin/databasehost.table.name_helper')),
+                            ->hintIcon('tabler-question-mark', trans('admin/databasehost.table.name_helper')),
                         TextInput::make('remote')
                             ->columnSpan(1)
                             ->regex('/^[\w\-\/.%:]+$/')
                             ->label(trans('admin/databasehost.table.remote'))
                             ->default('%')
-                            ->hintIcon('tabler-question-mark')
-                            ->hintIconTooltip(trans('admin/databasehost.table.remote_helper')),
+                            ->hintIcon('tabler-question-mark', trans('admin/databasehost.table.remote_helper')),
                     ]),
             ]);
     }

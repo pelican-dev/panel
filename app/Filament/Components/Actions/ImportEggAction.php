@@ -130,8 +130,7 @@ class ImportEggAction extends Action
                                 ->searchable()
                                 ->preload()
                                 ->live()
-                                ->hintIcon('tabler-refresh')
-                                ->hintIconTooltip(trans('admin/egg.import.refresh'))
+                                ->hintIcon('tabler-refresh', trans('admin/egg.import.refresh'))
                                 ->hintAction(function () {
                                     Artisan::call(UpdateEggIndexCommand::class);
                                 })
@@ -144,7 +143,7 @@ class ImportEggAction extends Action
                                     }
                                 }),
                             Repeater::make('urls')
-                                ->label('')
+                                ->hiddenLabel()
                                 ->itemLabel(fn (array $state) => str($state['url'])->afterLast('/egg-')->beforeLast('.')->headline())
                                 ->hint(trans('admin/egg.import.url_help'))
                                 ->addActionLabel(trans('admin/egg.import.add_url'))

@@ -50,7 +50,7 @@ class Settings extends ServerFormPage
                             ])
                             ->schema([
                                 TextInput::make('name')
-                                    ->label(trans('server/setting.server_info.server_name'))
+                                    ->label(trans('server/setting.server_info.name'))
                                     ->disabled(fn (Server $server) => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
                                     ->required()
                                     ->columnSpan([
@@ -109,42 +109,42 @@ class Settings extends ServerFormPage
                             ])
                             ->schema([
                                 TextInput::make('cpu')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.cpu'))
                                     ->prefixIcon('tabler-cpu')
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : format_number($server->cpu) . '%'),
                                 TextInput::make('memory')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.memory'))
                                     ->prefixIcon('tabler-device-desktop-analytics')
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : convert_bytes_to_readable($server->memory * 2 ** 20)),
                                 TextInput::make('disk')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.disk'))
                                     ->prefixIcon('tabler-device-sd-card')
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : convert_bytes_to_readable($server->disk * 2 ** 20)),
                                 TextInput::make('backup_limit')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.backups'))
                                     ->prefixIcon('tabler-file-zip')
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/backup.empty') : $server->backups->count() . ' ' .trans('server/setting.server_info.limits.of', ['max' => $state])),
                                 TextInput::make('database_limit')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.databases'))
                                     ->prefixIcon('tabler-database')
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/database.empty') : $server->databases->count() . ' ' . trans('server/setting.server_info.limits.of', ['max' => $state])),
                                 TextInput::make('allocation_limit')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.allocations'))
                                     ->prefixIcon('tabler-network')
                                     ->columnSpan(1)
@@ -174,13 +174,13 @@ class Settings extends ServerFormPage
                                             ->url(function (Server $server) {
                                                 $fqdn = $server->node->daemon_sftp_alias ?? $server->node->fqdn;
 
-                                                return 'sftp://' . auth()->user()->username . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
+                                                return 'sftp://' . rawurlencode(auth()->user()->username) . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
                                             }),
                                     )
                                     ->formatStateUsing(function (Server $server) {
                                         $fqdn = $server->node->daemon_sftp_alias ?? $server->node->fqdn;
 
-                                        return 'sftp://' . auth()->user()->username . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
+                                        return 'sftp://' . rawurlencode(auth()->user()->username) . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
                                     }),
                                 TextInput::make('username')
                                     ->label(trans('server/setting.server_info.sftp.username'))
@@ -191,7 +191,7 @@ class Settings extends ServerFormPage
                                 TextEntry::make('password')
                                     ->label(trans('server/setting.server_info.sftp.password'))
                                     ->columnSpan(1)
-                                    ->label(trans('server/setting.server_info.sftp.password_body')),
+                                    ->state(trans('server/setting.server_info.sftp.password_body')),
                             ]),
                     ]),
                 Section::make(trans('server/setting.reinstall.title'))

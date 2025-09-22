@@ -25,6 +25,7 @@ use Filament\Panel;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -155,6 +156,7 @@ class EditFiles extends Page
                             }),
                         CodeEditor::make('editor')
                             ->hiddenLabel()
+                            ->language(fn (Get $get) => $get('lang'))
                             ->default(function () {
                                 try {
                                     return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));

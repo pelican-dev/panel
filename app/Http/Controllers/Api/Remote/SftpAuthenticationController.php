@@ -99,7 +99,7 @@ class SftpAuthenticationController extends Controller
      */
     protected function getUser(Request $request, string $username): User
     {
-        return User::query()->where('username', $username)->firstOr(function () use ($request) {
+        return User::where('username', str($username)->lower()->trim())->firstOr(function () use ($request) {
             $this->reject($request);
         });
     }
