@@ -311,6 +311,7 @@ class Server extends Model implements Validatable
     {
         return $this->hasMany(EggVariable::class, 'egg_id', 'egg_id')
             ->select(['egg_variables.*', 'server_variables.variable_value as server_value'])
+            // TODO: somehow the auto eager loading breaks this join and "server_value" is always null
             ->leftJoin('server_variables', function (JoinClause $join) {
                 // Don't forget to join against the server ID as well since the way we're using this relationship
                 // would actually return all the variables and their values for _all_ servers using that egg,
