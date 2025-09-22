@@ -87,7 +87,6 @@ class UserResource extends Resource
                     ->searchable(),
                 TextColumn::make('email')
                     ->label(trans('admin/user.email'))
-                    ->icon('tabler-mail')
                     ->searchable(),
                 IconColumn::make('mfa_email_enabled')
                     ->label(trans('profile.tabs.2fa'))
@@ -97,17 +96,14 @@ class UserResource extends Resource
                 TextColumn::make('roles.name')
                     ->label(trans('admin/user.roles'))
                     ->badge()
-                    ->icon('tabler-users-group')
                     ->placeholder(trans('admin/user.no_roles')),
                 TextColumn::make('servers_count')
                     ->counts('servers')
-                    ->icon('tabler-server')
                     ->label(trans('admin/user.servers')),
                 TextColumn::make('subusers_count')
                     ->visibleFrom('sm')
                     ->label(trans('admin/user.subusers'))
-                    ->counts('subusers')
-                    ->icon('tabler-users'),
+                    ->counts('subusers'),
             ])
             ->recordActions([
                 ViewAction::make()
@@ -127,10 +123,8 @@ class UserResource extends Resource
             ->components([
                 TextInput::make('username')
                     ->label(trans('admin/user.username'))
-                    ->alphaNum()
                     ->required()
                     ->unique()
-                    ->minLength(3)
                     ->maxLength(255),
                 TextInput::make('email')
                     ->label(trans('admin/user.email'))
@@ -140,8 +134,7 @@ class UserResource extends Resource
                     ->maxLength(255),
                 TextInput::make('password')
                     ->label(trans('admin/user.password'))
-                    ->hintIcon(fn ($operation) => $operation === 'create' ? 'tabler-question-mark' : null)
-                    ->hintIconTooltip(fn ($operation) => $operation === 'create' ? trans('admin/user.password_help') : null)
+                    ->hintIcon(fn ($operation) => $operation === 'create' ? 'tabler-question-mark' : null, fn ($operation) => $operation === 'create' ? trans('admin/user.password_help') : null)
                     ->password(),
                 CheckboxList::make('roles')
                     ->hidden(fn (?User $user) => $user && $user->isRootAdmin())

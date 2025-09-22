@@ -102,12 +102,15 @@ class UserController extends ApplicationApiController
      */
     public function assignRoles(AssignUserRolesRequest $request, User $user): array
     {
-        foreach ($request->input('roles') as $role) {
-            if ($role === Role::getRootAdmin()->id) {
-                continue;
-            }
+        if (!$user->isRootAdmin()) {
+            $rootAdminId = Role::getRootAdmin()->id;
+            foreach ($request->input('roles') as $role) {
+                if ($role === $rootAdminId) {
+                    continue;
+                }
 
-            $user->assignRole($role);
+                $user->assignRole($role);
+            }
         }
 
         $response = $this->fractal->item($user)
@@ -125,12 +128,15 @@ class UserController extends ApplicationApiController
      */
     public function removeRoles(AssignUserRolesRequest $request, User $user): array
     {
-        foreach ($request->input('roles') as $role) {
-            if ($role === Role::getRootAdmin()->id) {
-                continue;
-            }
+        if (!$user->isRootAdmin()) {
+            $rootAdminId = Role::getRootAdmin()->id;
+            foreach ($request->input('roles') as $role) {
+                if ($role === $rootAdminId) {
+                    continue;
+                }
 
-            $user->removeRole($role);
+                $user->removeRole($role);
+            }
         }
 
         $response = $this->fractal->item($user)
@@ -169,8 +175,12 @@ class UserController extends ApplicationApiController
      */
     public function delete(DeleteUserRequest $request, User $user): JsonResponse
     {
-        $user->delete();
+        if (!$user->isRootAdmin()) {
+            $user->delete();
 
-        return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
+            return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
+        }
+
+        return new JsonResponse([], JsonResponse::HTTP_FORBIDDEN);
     }
 }

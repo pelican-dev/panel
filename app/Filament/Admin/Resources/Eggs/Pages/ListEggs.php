@@ -44,14 +44,12 @@ class ListEggs extends ListRecords
                     ->hidden(),
                 TextColumn::make('name')
                     ->label(trans('admin/egg.name'))
-                    ->icon('tabler-egg')
                     ->description(fn ($record): ?string => (strlen($record->description) > 120) ? substr($record->description, 0, 120).'...' : $record->description)
                     ->wrap()
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('servers_count')
                     ->counts('servers')
-                    ->icon('tabler-server')
                     ->label(trans('admin/egg.servers')),
             ])
             ->recordActions([

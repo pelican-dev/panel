@@ -41,7 +41,7 @@ class EditWebhookConfiguration extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        if (($data['type'] ?? null) === WebhookType::Discord->value) {
+        if (($data['type'] ?? null) === WebhookType::Discord) {
             $embeds = data_get($data, 'embeds', []);
 
             foreach ($embeds as &$embed) {
@@ -68,7 +68,7 @@ class EditWebhookConfiguration extends EditRecord
             $data['payload'] = $tmp;
         }
 
-        if (($data['type'] ?? null) === WebhookType::Regular->value && isset($data['headers']) && is_array($data['headers'])) {
+        if (($data['type'] ?? null) === WebhookType::Regular && isset($data['headers'])) {
             $newHeaders = [];
             foreach ($data['headers'] as $key => $value) {
                 $newKey = str_replace(' ', '-', $key);
@@ -84,7 +84,6 @@ class EditWebhookConfiguration extends EditRecord
     {
         if (($data['type'] ?? null) === WebhookType::Discord->value) {
             $embeds = data_get($data, 'payload.embeds', []);
-
             foreach ($embeds as &$embed) {
                 $embed['color'] = '#' . dechex(data_get($embed, 'color'));
                 $embed = collect($embed)->filter(fn ($key) => is_array($key) ? array_filter($key, fn ($arr_key) => !empty($arr_key)) : !empty($key))->all();

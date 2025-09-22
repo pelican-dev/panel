@@ -5,7 +5,6 @@ return [
     'model_label' => 'Database Host',
     'model_label_plural' => 'Database Hosts',
     'table' => [
-        'select_placeholder' => 'Select Database Host',
         'database' => 'Database',
         'name' => 'Name',
         'host' => 'Host',

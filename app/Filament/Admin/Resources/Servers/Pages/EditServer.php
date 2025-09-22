@@ -8,6 +8,7 @@ use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManag
 use App\Filament\Admin\Resources\Servers\ServerResource;
 use App\Filament\Components\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Fields\StartupVariable;
+use App\Filament\Components\StateCasts\ServerConditionStateCast;
 use App\Filament\Server\Pages\Console;
 use App\Models\Allocation;
 use App\Models\Egg;
@@ -135,6 +136,7 @@ class EditServer extends EditRecord
                                     ->options(fn ($state) => [$state->value => $state->getLabel()])
                                     ->colors(fn ($state) => [$state->value => $state->getColor()])
                                     ->icons(fn ($state) => [$state->value => $state->getIcon()])
+                                    ->stateCast(new ServerConditionStateCast())
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -288,8 +290,7 @@ class EditServer extends EditRecord
                                                     ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                                     ->label(trans('admin/server.memory_limit'))->inlineLabel()
                                                     ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
-                                                    ->hintIcon('tabler-question-mark')
-                                                    ->hintIconToolTip(trans('admin/server.memory_helper'))
+                                                    ->hintIcon('tabler-question-mark', trans('admin/server.memory_helper'))
                                                     ->required()
                                                     ->columnSpan(2)
                                                     ->numeric()
@@ -567,10 +568,10 @@ class EditServer extends EditRecord
                                         Action::make('change_egg')
                                             ->label(trans('admin/server.change_egg'))
                                             ->action(function (array $data, Server $server, EggChangerService $service) {
-                                                $service->handle($server, $data['egg_id'], $data['keepOldVariables']);
+                                                $service->handle($server, $data['egg_id'], $data['keep_old_variables']);
 
                                                 // Use redirect instead of fillForm to prevent server variables from duplicating
-                                                $this->redirect($this->getUrl(['record' => $server, 'tab' => '-egg-tab']), true);
+                                                $this->redirect($this->getUrl(['record' => $server, 'tab' => 'egg::data::tab']), true);
                                             })
                                             ->schema(fn (Server $server) => [
                                                 Select::make('egg_id')
@@ -580,7 +581,7 @@ class EditServer extends EditRecord
                                                     ->searchable()
                                                     ->preload()
                                                     ->required(),
-                                                Toggle::make('keepOldVariables')
+                                                Toggle::make('keep_old_variables')
                                                     ->label(trans('admin/server.keep_old_variables'))
                                                     ->default(true),
                                             ])
@@ -793,7 +794,7 @@ class EditServer extends EditRecord
                                                     Action::make('transfer')
                                                         ->label(trans('admin/server.transfer'))
                                                         ->disabled(fn (Server $server) => Node::count() <= 1 || $server->isInConflictState())
-                                                        ->modalheading(trans('admin/server.transfer'))
+                                                        ->modalHeading(trans('admin/server.transfer'))
                                                         ->schema($this->transferServer())
                                                         ->action(function (TransferServerService $transfer, Server $server, $data) {
                                                             try {

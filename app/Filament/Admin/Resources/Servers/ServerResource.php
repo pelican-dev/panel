@@ -71,7 +71,7 @@ class ServerResource extends Resource
         }
 
         return CheckboxList::make('mounts')
-            ->label('')
+            ->hiddenLabel()
             ->relationship('mounts')
             ->live()
             ->options(fn () => $allowedMounts->mapWithKeys(fn ($mount) => [$mount->id => $mount->name]))

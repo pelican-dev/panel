@@ -184,9 +184,15 @@ class ServerCreationService
             $records = array_merge($records, $data['allocation_additional']);
         }
 
-        Allocation::query()->whereIn('id', $records)->update([
-            'server_id' => $server->id,
-        ]);
+        Allocation::query()
+            ->whereIn('id', array_values(array_unique($records)))
+            ->whereNull('server_id')
+            ->lockForUpdate()
+            ->get()
+            ->each(function (Allocation $allocation) use ($server) {
+                $allocation->server_id = $server->id;
+                $allocation->save();
+            });
     }
 
     /**

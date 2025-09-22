@@ -52,7 +52,7 @@ if (!function_exists('convert_bytes_to_readable')) {
 if (!function_exists('join_paths')) {
     function join_paths(string $base, string ...$paths): string
     {
-        $base = trim($base, '/');
+        $base = rtrim($base, '/');
 
         $paths = array_map(fn (string $path) => trim($path, '/'), $paths);
         $paths = array_filter($paths, fn (string $path) => strlen($path) > 0);

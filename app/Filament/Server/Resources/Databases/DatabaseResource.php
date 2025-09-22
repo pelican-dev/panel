@@ -178,8 +178,7 @@ class DatabaseResource extends Resource
                                     ->label(trans('server/database.name'))
                                     ->columnSpan(1)
                                     ->prefix('s'. $server->id . '_')
-                                    ->hintIcon('tabler-question-mark')
-                                    ->hintIconTooltip(trans('server/database.name_hint')),
+                                    ->hintIcon('tabler-question-mark', trans('server/database.name_hint')),
                                 TextInput::make('remote')
                                     ->label(trans('server/database.connections_from'))
                                     ->columnSpan(1)
