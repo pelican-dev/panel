@@ -381,7 +381,7 @@ class Server extends Model implements Validatable
     public function resolveRouteBinding($value, $field = null): ?self
     {
         return match ($field) {
-            'uuid' => $this->where('uuid_short', $value)->orWhere('uuid', $value)->firstOrFail(),
+            'uuid', 'uuid_short' => $this->where('uuid_short', $value)->orWhere('uuid', $value)->firstOrFail(),
             default => $this->where('id', $value)->firstOrFail(),
         };
     }
