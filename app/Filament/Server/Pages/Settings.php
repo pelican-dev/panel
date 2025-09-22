@@ -191,7 +191,7 @@ class Settings extends ServerFormPage
                                 TextEntry::make('password')
                                     ->label(trans('server/setting.server_info.sftp.password'))
                                     ->columnSpan(1)
-                                    ->label(trans('server/setting.server_info.sftp.password_body')),
+                                    ->state(trans('server/setting.server_info.sftp.password_body')),
                             ]),
                     ]),
                 Section::make(trans('server/setting.reinstall.title'))
