@@ -33,7 +33,7 @@ jobs:
     name: PHPStan
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         php: [ 8.2, 8.3, 8.4 ]
     steps:
