@@ -102,7 +102,7 @@
 
         terminal.attachCustomKeyEventHandler((event) => {
             if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
-                document.execCommand('copy'); // navigator.clipboard.writeText() only works on ssl..
+                navigator.clipboard.writeText(terminal.getSelection())
                 return false;
             } else if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
                 event.preventDefault();

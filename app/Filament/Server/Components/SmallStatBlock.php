@@ -2,28 +2,12 @@
 
 namespace App\Filament\Server\Components;
 
-use Closure;
+use Filament\Support\Concerns\CanBeCopied;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Contracts\View\View;
 
 class SmallStatBlock extends Stat
 {
-    protected bool|Closure $copyOnClick = false;
+    use CanBeCopied;
 
-    public function copyOnClick(bool|Closure $copyOnClick = true): static
-    {
-        $this->copyOnClick = $copyOnClick;
-
-        return $this;
-    }
-
-    public function shouldCopyOnClick(): bool
-    {
-        return $this->evaluate($this->copyOnClick);
-    }
-
-    public function render(): View
-    {
-        return view('filament.components.server-small-data-block', array_merge($this->getViewData(), $this->extractPublicMethods()));
-    }
+    protected string $view = 'filament.components.server-small-data-block';
 }
