@@ -86,7 +86,7 @@ class AllocationsRelationManager extends RelationManager
                                 Action::make('refresh')
                                     ->iconButton()
                                     ->icon('tabler-refresh')
-                                    ->tooltip(trans('admin/admin/node.refresh'))
+                                    ->tooltip(trans('admin/node.refresh'))
                                     ->action(function () {
                                         cache()->forget("nodes.{$this->getOwnerRecord()->node->id}.ips");
                                     })

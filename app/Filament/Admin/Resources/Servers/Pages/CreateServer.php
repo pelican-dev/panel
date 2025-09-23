@@ -228,7 +228,7 @@ class CreateServer extends CreateRecord
                                                 Action::make('refresh')
                                                     ->iconButton()
                                                     ->icon('tabler-refresh')
-                                                    ->tooltip(trans('admin/admin/node.refresh'))
+                                                    ->tooltip(trans('admin/node.refresh'))
                                                     ->action(function () use ($get) {
                                                         cache()->forget("nodes.{$get('node_id')}.ips");
                                                     })
