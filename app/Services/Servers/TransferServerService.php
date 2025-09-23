@@ -62,13 +62,15 @@ class TransferServerService
 
         $server->validateTransferState();
 
-        $this->connection->transaction(function () use ($server, $node_id, $allocation_id, $additional_allocations) {
+        /** @var ServerTransfer $transfer */
+        $transfer = $this->connection->transaction(function () use ($server, $node_id, $allocation_id, $additional_allocations) {
             // Create a new ServerTransfer entry.
-            $transfer = new ServerTransfer();
+            $transfer = ServerTransfer::create([
+                'server_id' => $server->id,
+                'old_node' => $server->node_id,
+                'new_node' => $node_id,
+            ]);
 
-            $transfer->server_id = $server->id;
-            $transfer->old_node = $server->node_id;
-            $transfer->new_node = $node_id;
             if ($server->allocation_id) {
                 $transfer->old_allocation = $server->allocation_id;
                 $transfer->new_allocation = $allocation_id;
@@ -81,17 +83,17 @@ class TransferServerService
 
             $transfer->save();
 
-            // Generate a token for the destination node that the source node can use to authenticate with.
-            $token = $this->nodeJWTService
-                ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
-                ->setSubject($server->uuid)
-                ->handle($transfer->newNode, $server->uuid, 'sha256');
-
-            // Notify the source node of the pending outgoing transfer.
-            $this->notify($transfer, $token);
-
             return $transfer;
         });
+
+        // Generate a token for the destination node that the source node can use to authenticate with.
+        $token = $this->nodeJWTService
+            ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
+            ->setSubject($server->uuid)
+            ->handle($transfer->newNode, $server->uuid, 'sha256');
+
+        // Notify the source node of the pending outgoing transfer.
+        $this->notify($transfer, $token);
 
         return true;
     }
@@ -106,7 +108,7 @@ class TransferServerService
         $allocations = $additional_allocations;
         $allocations[] = $allocation_id;
 
-        $node = Node::query()->findOrFail($node_id);
+        $node = Node::findOrFail($node_id);
         $unassigned = $node->allocations()
             ->whereNull('server_id')
             ->pluck('id')
@@ -122,7 +124,7 @@ class TransferServerService
         }
 
         if (!empty($updateIds)) {
-            Allocation::query()->whereIn('id', $updateIds)->update(['server_id' => $server->id]);
+            Allocation::whereIn('id', $updateIds)->update(['server_id' => $server->id]);
         }
     }
 }
