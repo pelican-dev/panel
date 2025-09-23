@@ -77,11 +77,20 @@ class AllocationsRelationManager extends RelationManager
                     ->createAnother(false)
                     ->schema(fn () => [
                         Select::make('allocation_ip')
-                            ->options(collect($this->getOwnerRecord()->node->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                            ->options(fn () => collect($this->getOwnerRecord()->node->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                             ->label(trans('admin/server.ip_address'))
                             ->inlineLabel()
                             ->ip()
                             ->live()
+                            ->hintAction(
+                                Action::make('refresh')
+                                    ->iconButton()
+                                    ->icon('tabler-refresh')
+                                    ->tooltip(trans('admin/node.refresh'))
+                                    ->action(function () {
+                                        cache()->forget("nodes.{$this->getOwnerRecord()->node->id}.ips");
+                                    })
+                            )
                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                             ->required(),
                         TextInput::make('allocation_alias')

@@ -218,12 +218,21 @@ class CreateServer extends CreateRecord
 
                                     return [
                                         Select::make('allocation_ip')
-                                            ->options(collect(Node::find($get('node_id'))?->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                                            ->options(fn () => collect(Node::find($get('node_id'))?->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                                             ->label(trans('admin/server.ip_address'))->inlineLabel()
                                             ->helperText(trans('admin/server.ip_address_helper'))
                                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                                             ->ip()
                                             ->live()
+                                            ->hintAction(
+                                                Action::make('refresh')
+                                                    ->iconButton()
+                                                    ->icon('tabler-refresh')
+                                                    ->tooltip(trans('admin/node.refresh'))
+                                                    ->action(function () use ($get) {
+                                                        cache()->forget("nodes.{$get('node_id')}.ips");
+                                                    })
+                                            )
                                             ->required(),
                                         TextInput::make('allocation_alias')
                                             ->label(trans('admin/server.alias'))->inlineLabel()
