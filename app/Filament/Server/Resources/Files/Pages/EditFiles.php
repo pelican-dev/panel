@@ -28,11 +28,13 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
+use Illuminate\Support\Js;
 use Livewire\Attributes\Locked;
 
 /**
@@ -53,6 +55,8 @@ class EditFiles extends Page
 
     #[Locked]
     public string $path;
+
+    public ?string $previousUrl = null;
 
     private DaemonFileRepository $fileRepository;
 
@@ -117,7 +121,13 @@ class EditFiles extends Page
                             ->label(trans('server/file.actions.edit.cancel'))
                             ->color('danger')
                             ->icon('tabler-x')
-                            ->url(fn () => ListFiles::getUrl(['path' => dirname($this->path)])),
+                            ->alpineClickHandler(function () {
+                                $url = $this->previousUrl ?? ListFiles::getUrl(['path' => dirname($this->path)]);
+
+                                return FilamentView::hasSpaMode($url)
+                                    ? 'document.referrer ? window.history.back() : Livewire.navigate(' . Js::from($url) . ')'
+                                    : 'document.referrer ? window.history.back() : (window.location.href = ' . Js::from($url) . ')';
+                            }),
                     ])
                     ->footerActionsAlignment(Alignment::End)
                     ->schema([
@@ -203,6 +213,8 @@ class EditFiles extends Page
         $this->path = $path;
 
         $this->form->fill();
+
+        $this->previousUrl = url()->previous();
 
         if (str($path)->endsWith('.pelicanignore')) {
             AlertBanner::make('.pelicanignore_info')
