@@ -97,7 +97,8 @@ class EditFiles extends Page
                                     ->body(fn () => $this->path)
                                     ->send();
 
-                                $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                $url = ListFiles::getUrl(['path' => dirname($this->path)]);
+                                $this->redirect($url, FilamentView::hasSpaMode($url));
                             }),
                         Action::make('save')
                             ->label(trans('server/file.actions.edit.save'))
@@ -178,7 +179,8 @@ class EditFiles extends Page
                                         ->closable()
                                         ->send();
 
-                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                    $url = ListFiles::getUrl(['path' => dirname($this->path)]);
+                                    $this->redirect($url, FilamentView::hasSpaMode($url));
                                 } catch (FileNotFoundException) {
                                     AlertBanner::make('file_not_found')
                                         ->title(trans('server/file.alerts.file_not_found.title', ['name' => basename($this->path)]))
@@ -186,7 +188,8 @@ class EditFiles extends Page
                                         ->closable()
                                         ->send();
 
-                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                    $url = ListFiles::getUrl(['path' => dirname($this->path)]);
+                                    $this->redirect($url, FilamentView::hasSpaMode($url));
                                 } catch (FileNotEditableException) {
                                     AlertBanner::make('file_is_directory')
                                         ->title(trans('server/file.alerts.file_not_found.title', ['name' => basename($this->path)]))
@@ -194,11 +197,13 @@ class EditFiles extends Page
                                         ->closable()
                                         ->send();
 
-                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                    $url = ListFiles::getUrl(['path' => dirname($this->path)]);
+                                    $this->redirect($url, FilamentView::hasSpaMode($url));
                                 } catch (ConnectionException) {
                                     // Alert banner for this one will be handled by ListFiles
 
-                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                    $url = ListFiles::getUrl(['path' => dirname($this->path)]);
+                                    $this->redirect($url, FilamentView::hasSpaMode($url));
                                 }
                             }),
                     ])
