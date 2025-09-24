@@ -2,9 +2,9 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Schedule;
 
-use App\Models\Task;
-use App\Models\Schedule;
 use App\Models\Permission;
+use App\Models\Schedule;
+use App\Models\Task;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 

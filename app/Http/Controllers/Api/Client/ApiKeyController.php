@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\Client;
 
-use App\Models\ApiKey;
-use Illuminate\Http\JsonResponse;
-use App\Facades\Activity;
 use App\Exceptions\DisplayException;
-use App\Http\Requests\Api\Client\ClientApiRequest;
-use App\Transformers\Api\Client\ApiKeyTransformer;
+use App\Facades\Activity;
 use App\Http\Requests\Api\Client\Account\StoreApiKeyRequest;
+use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Models\ApiKey;
+use App\Transformers\Api\Client\ApiKeyTransformer;
+use Illuminate\Http\JsonResponse;
 
 class ApiKeyController extends ClientApiController
 {

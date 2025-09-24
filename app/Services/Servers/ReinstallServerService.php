@@ -2,11 +2,11 @@
 
 namespace App\Services\Servers;
 
-use Throwable;
 use App\Enums\ServerState;
 use App\Models\Server;
-use Illuminate\Database\ConnectionInterface;
 use App\Repositories\Daemon\DaemonServerRepository;
+use Illuminate\Database\ConnectionInterface;
+use Throwable;
 
 class ReinstallServerService
 {

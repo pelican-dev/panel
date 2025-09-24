@@ -2,9 +2,9 @@
 
 namespace App\Services\Databases\Hosts;
 
-use Throwable;
 use App\Models\DatabaseHost;
 use Illuminate\Database\ConnectionInterface;
+use Throwable;
 
 class HostUpdateService
 {

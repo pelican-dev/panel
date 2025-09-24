@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Collection;
-use Spatie\Permission\Models\Permission;
 use App\Enums\RolePermissionModels;
 use App\Enums\RolePermissionPrefixes;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role as BaseRole;
 
 /**

@@ -2,15 +2,15 @@
 
 namespace App\Tests\Integration\Api\Client\Server;
 
+use App\Models\Permission;
+use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Response;
 use Lcobucci\JWT\Configuration;
-use App\Models\Permission;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
-use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 
 class WebsocketControllerTest extends ClientApiIntegrationTestCase
 {

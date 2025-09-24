@@ -2,14 +2,14 @@
 
 namespace App\Transformers\Api\Application;
 
+use App\Models\ApiKey;
+use App\Services\Acl\Api\AdminAcl;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
-use Illuminate\Http\Request;
-use Webmozart\Assert\Assert;
-use App\Models\ApiKey;
 use Illuminate\Container\Container;
+use Illuminate\Http\Request;
 use League\Fractal\TransformerAbstract;
-use App\Services\Acl\Api\AdminAcl;
+use Webmozart\Assert\Assert;
 
 abstract class BaseTransformer extends TransformerAbstract
 {

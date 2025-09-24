@@ -2,10 +2,10 @@
 
 namespace App\Transformers\Api\Application;
 
-use Illuminate\Support\Arr;
 use App\Models\Egg;
-use App\Models\Server;
 use App\Models\EggVariable;
+use App\Models\Server;
+use Illuminate\Support\Arr;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
 

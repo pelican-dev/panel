@@ -2,16 +2,16 @@
 
 namespace App\Tests\Integration;
 
-use Carbon\CarbonImmutable;
-use Carbon\CarbonInterface;
-use App\Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseTruncation;
-use Illuminate\Support\Facades\Event;
 use App\Events\ActivityLogged;
 use App\Tests\Assertions\AssertsActivityLogged;
+use App\Tests\TestCase;
 use App\Tests\Traits\Integration\CreatesTestModels;
 use App\Transformers\Api\Application\BaseTransformer;
+use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
+use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 
 abstract class IntegrationTestCase extends TestCase
 {

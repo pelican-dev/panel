@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Installer\Steps;
 
-use Filament\Schemas\Components\Wizard\Step;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Exceptions\Halt;
 
 class RequirementsStep

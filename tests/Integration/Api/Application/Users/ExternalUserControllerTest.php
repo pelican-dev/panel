@@ -2,11 +2,11 @@
 
 namespace App\Tests\Integration\Api\Application\Users;
 
-use Illuminate\Support\Str;
 use App\Models\User;
 use App\Services\Acl\Api\AdminAcl;
-use Illuminate\Http\Response;
 use App\Tests\Integration\Api\Application\ApplicationApiIntegrationTestCase;
+use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 
 class ExternalUserControllerTest extends ApplicationApiIntegrationTestCase
 {

@@ -2,7 +2,6 @@
 
 namespace App\Services\Servers;
 
-use Throwable;
 use App\Models\Allocation;
 use App\Models\Node;
 use App\Models\Server;
@@ -12,6 +11,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\Http;
 use Lcobucci\JWT\UnencryptedToken;
+use Throwable;
 
 class TransferServerService
 {

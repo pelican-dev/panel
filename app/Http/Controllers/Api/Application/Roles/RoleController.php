@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers\Api\Application\Roles;
 
-use Throwable;
-use Exception;
 use App\Exceptions\PanelException;
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
-use App\Models\Role;
-use Spatie\QueryBuilder\QueryBuilder;
-use App\Transformers\Api\Application\RoleTransformer;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
+use App\Http\Requests\Api\Application\Roles\DeleteRoleRequest;
 use App\Http\Requests\Api\Application\Roles\GetRoleRequest;
 use App\Http\Requests\Api\Application\Roles\StoreRoleRequest;
-use App\Http\Requests\Api\Application\Roles\DeleteRoleRequest;
 use App\Http\Requests\Api\Application\Roles\UpdateRoleRequest;
+use App\Models\Role;
+use App\Transformers\Api\Application\RoleTransformer;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Spatie\QueryBuilder\QueryBuilder;
+use Throwable;
 
 class RoleController extends ApplicationApiController
 {

@@ -6,9 +6,9 @@ use App\Filament\Server\Pages\Console;
 use App\Models\Server;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class AddedToServer extends Notification implements ShouldQueue
 {

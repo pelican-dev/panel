@@ -2,8 +2,8 @@
 
 namespace App\Transformers\Api\Client;
 
-use BadMethodCallException;
 use App\Models\EggVariable;
+use BadMethodCallException;
 
 class EggVariableTransformer extends BaseClientTransformer
 {

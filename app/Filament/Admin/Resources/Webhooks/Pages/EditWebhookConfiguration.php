@@ -2,15 +2,15 @@
 
 namespace App\Filament\Admin\Resources\Webhooks\Pages;
 
+use App\Enums\WebhookType;
 use App\Filament\Admin\Resources\Webhooks\WebhookResource;
+use App\Models\WebhookConfiguration;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use App\Models\WebhookConfiguration;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
-use App\Enums\WebhookType;
 
 class EditWebhookConfiguration extends EditRecord
 {

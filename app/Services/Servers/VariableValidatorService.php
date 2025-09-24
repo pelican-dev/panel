@@ -2,12 +2,12 @@
 
 namespace App\Services\Servers;
 
-use App\Models\User;
-use Illuminate\Support\Collection;
 use App\Models\EggVariable;
-use Illuminate\Validation\ValidationException;
+use App\Models\User;
 use App\Traits\Services\HasUserLevels;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 
 class VariableValidatorService
 {

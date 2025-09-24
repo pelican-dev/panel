@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Api\Application\Users;
 
+use App\Http\Requests\Api\Application\ApplicationApiRequest;
 use App\Models\User;
 use App\Services\Acl\Api\AdminAcl;
-use App\Http\Requests\Api\Application\ApplicationApiRequest;
 
 class StoreUserRequest extends ApplicationApiRequest
 {

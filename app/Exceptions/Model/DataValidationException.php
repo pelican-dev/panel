@@ -2,11 +2,11 @@
 
 namespace App\Exceptions\Model;
 
-use Illuminate\Support\MessageBag;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Validation\Validator;
 use App\Exceptions\PanelException;
 use Illuminate\Contracts\Support\MessageProvider;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\MessageBag;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 class DataValidationException extends PanelException implements HttpExceptionInterface, MessageProvider

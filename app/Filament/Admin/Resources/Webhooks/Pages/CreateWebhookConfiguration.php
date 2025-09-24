@@ -2,13 +2,13 @@
 
 namespace App\Filament\Admin\Resources\Webhooks\Pages;
 
+use App\Enums\WebhookType;
 use App\Filament\Admin\Resources\Webhooks\WebhookResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\CreateRecord;
-use App\Enums\WebhookType;
 
 class CreateWebhookConfiguration extends CreateRecord
 {

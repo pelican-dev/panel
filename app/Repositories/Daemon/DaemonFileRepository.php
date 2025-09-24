@@ -2,12 +2,12 @@
 
 namespace App\Repositories\Daemon;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Http\Client\Response;
 use App\Exceptions\Http\Server\FileSizeTooLargeException;
 use App\Exceptions\Repository\FileExistsException;
 use App\Exceptions\Repository\FileNotEditableException;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Response;
 
 class DaemonFileRepository extends DaemonRepository
 {

@@ -2,14 +2,14 @@
 
 namespace App\Livewire\Installer\Steps;
 
-use Filament\Schemas\Components\Wizard\Step;
 use App\Livewire\Installer\PanelInstaller;
 use Exception;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Facades\DB;
 

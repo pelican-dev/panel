@@ -3,12 +3,12 @@
 namespace App\Notifications;
 
 use App\Filament\Server\Pages\Console;
+use App\Models\Server;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use App\Models\Server;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class ServerInstalled extends Notification implements ShouldQueue
 {

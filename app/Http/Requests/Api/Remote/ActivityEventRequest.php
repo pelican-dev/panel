@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Api\Remote;
 
-use Illuminate\Support\Collection;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Collection;
 
 class ActivityEventRequest extends FormRequest
 {

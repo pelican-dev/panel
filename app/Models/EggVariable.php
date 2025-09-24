@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Carbon\CarbonImmutable;
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id

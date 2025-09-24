@@ -2,16 +2,16 @@
 
 namespace App\Transformers\Api\Application;
 
-use App\Models\Server;
-use App\Models\Node;
-use App\Models\User;
-use App\Models\Egg;
-use App\Models\Database;
 use App\Models\Allocation;
-use League\Fractal\Resource\Item;
-use League\Fractal\Resource\Collection;
-use League\Fractal\Resource\NullResource;
+use App\Models\Database;
+use App\Models\Egg;
+use App\Models\Node;
+use App\Models\Server;
+use App\Models\User;
 use App\Services\Servers\EnvironmentService;
+use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Item;
+use League\Fractal\Resource\NullResource;
 
 class ServerTransformer extends BaseTransformer
 {

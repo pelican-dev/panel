@@ -2,28 +2,28 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use Spatie\Fractalistic\Exceptions\InvalidTransformation;
-use Spatie\Fractalistic\Exceptions\NoTransformerSpecified;
-use Throwable;
 use App\Enums\ServerState;
-use Illuminate\Http\Request;
-use App\Models\Backup;
-use App\Models\Server;
-use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
+use App\Http\Controllers\Api\Client\ClientApiController;
+use App\Http\Requests\Api\Client\Servers\Backups\RenameBackupRequest;
+use App\Http\Requests\Api\Client\Servers\Backups\RestoreBackupRequest;
+use App\Http\Requests\Api\Client\Servers\Backups\StoreBackupRequest;
+use App\Models\Backup;
 use App\Models\Permission;
-use Illuminate\Auth\Access\AuthorizationException;
+use App\Models\Server;
+use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Services\Backups\DeleteBackupService;
 use App\Services\Backups\DownloadLinkService;
 use App\Services\Backups\InitiateBackupService;
-use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Transformers\Api\Client\BackupTransformer;
-use App\Http\Controllers\Api\Client\ClientApiController;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use App\Http\Requests\Api\Client\Servers\Backups\StoreBackupRequest;
-use App\Http\Requests\Api\Client\Servers\Backups\RestoreBackupRequest;
-use App\Http\Requests\Api\Client\Servers\Backups\RenameBackupRequest;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Spatie\Fractalistic\Exceptions\InvalidTransformation;
+use Spatie\Fractalistic\Exceptions\NoTransformerSpecified;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Throwable;
 
 #[Group('Server - Backup')]
 class BackupController extends ClientApiController

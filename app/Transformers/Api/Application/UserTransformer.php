@@ -3,8 +3,8 @@
 namespace App\Transformers\Api\Application;
 
 use App\Models\Role;
-use App\Models\User;
 use App\Models\Server;
+use App\Models\User;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
 

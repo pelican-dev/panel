@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Remote;
+use Illuminate\Support\Facades\Route;
 
 // Routes for the daemon.
 Route::post('/sftp/auth', Remote\SftpAuthenticationController::class);

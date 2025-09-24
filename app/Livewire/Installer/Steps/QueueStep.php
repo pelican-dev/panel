@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Installer\Steps;
 
-use Exception;
-use Filament\Schemas\Components\Wizard\Step;
 use App\Livewire\Installer\PanelInstaller;
+use Exception;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Wizard\Step;
 use Illuminate\Support\HtmlString;
 
 class QueueStep

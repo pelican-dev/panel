@@ -2,13 +2,13 @@
 
 namespace App\Services\Nodes;
 
-use Throwable;
-use Illuminate\Support\Str;
-use App\Models\Node;
-use Illuminate\Database\ConnectionInterface;
-use App\Repositories\Daemon\DaemonConfigurationRepository;
 use App\Exceptions\Service\Node\ConfigurationNotPersistedException;
+use App\Models\Node;
+use App\Repositories\Daemon\DaemonConfigurationRepository;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Str;
+use Throwable;
 
 class NodeUpdateService
 {

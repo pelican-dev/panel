@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use Illuminate\Validation\ValidationException;
 use App\Exceptions\Model\DataValidationException;
-use App\Models\Server;
 use App\Facades\Activity;
+use App\Http\Controllers\Api\Client\ClientApiController;
+use App\Http\Requests\Api\Client\Servers\Startup\GetStartupRequest;
+use App\Http\Requests\Api\Client\Servers\Startup\UpdateStartupVariableRequest;
+use App\Models\Server;
 use App\Models\ServerVariable;
 use App\Services\Servers\StartupCommandService;
 use App\Transformers\Api\Client\EggVariableTransformer;
-use App\Http\Controllers\Api\Client\ClientApiController;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use App\Http\Requests\Api\Client\Servers\Startup\GetStartupRequest;
-use App\Http\Requests\Api\Client\Servers\Startup\UpdateStartupVariableRequest;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 #[Group('Server - Startup')]
 class StartupController extends ClientApiController

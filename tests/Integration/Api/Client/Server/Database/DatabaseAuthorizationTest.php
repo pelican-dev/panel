@@ -2,9 +2,9 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Database;
 
-use App\Models\Subuser;
 use App\Models\Database;
 use App\Models\DatabaseHost;
+use App\Models\Subuser;
 use App\Services\Databases\DatabaseManagementService;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;

@@ -2,10 +2,10 @@
 
 namespace App\Listeners\Server;
 
-use Filament\Actions\Action;
 use App\Events\Server\SubUserAdded;
 use App\Filament\Server\Pages\Console;
 use App\Notifications\AddedToServer;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
 class SubUserAddedListener

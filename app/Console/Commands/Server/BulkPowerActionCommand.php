@@ -4,11 +4,11 @@ namespace App\Console\Commands\Server;
 
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Factory as ValidatorFactory;
-use Exception;
+use Illuminate\Validation\ValidationException;
 
 class BulkPowerActionCommand extends Command
 {

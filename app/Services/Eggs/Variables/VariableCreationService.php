@@ -4,10 +4,10 @@ namespace App\Services\Eggs\Variables;
 
 use App\Exceptions\Model\DataValidationException;
 use App\Exceptions\Service\Egg\Variable\BadValidationRuleException;
+use App\Exceptions\Service\Egg\Variable\ReservedVariableNameException;
 use App\Models\EggVariable;
 use App\Traits\Services\ValidatesValidationRules;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
-use App\Exceptions\Service\Egg\Variable\ReservedVariableNameException;
 
 class VariableCreationService
 {

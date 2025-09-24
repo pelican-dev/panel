@@ -2,19 +2,19 @@
 
 namespace App\Tests\Integration\Services\Servers;
 
-use Illuminate\Http\Client\ConnectionException;
-use Mockery\MockInterface;
+use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
-use App\Models\User;
-use App\Models\Server;
-use App\Models\Allocation;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Validation\ValidationException;
 use App\Models\Objects\DeploymentObject;
-use App\Tests\Integration\IntegrationTestCase;
-use App\Services\Servers\ServerCreationService;
+use App\Models\Server;
+use App\Models\User;
 use App\Repositories\Daemon\DaemonServerRepository;
+use App\Services\Servers\ServerCreationService;
+use App\Tests\Integration\IntegrationTestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Validation\ValidationException;
+use Mockery\MockInterface;
 
 class ServerCreationServiceTest extends IntegrationTestCase
 {

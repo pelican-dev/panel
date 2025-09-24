@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id
