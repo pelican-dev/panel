@@ -48,10 +48,7 @@ class EggTransformer extends BaseTransformer
             'description' => $model->description,
             'features' => $model->features,
             'tags' => $model->tags,
-            // "docker_image" is deprecated, but left here to avoid breaking too many things at once
-            // in external software. We'll remove it down the road once things have gotten the chance
-            // to upgrade to using "docker_images".
-            'docker_image' => count($model->docker_images) > 0 ? Arr::first($model->docker_images) : '',
+            'docker_image' => Arr::first($model->docker_images, default: ''), // docker_images, use startup_commands
             'docker_images' => $model->docker_images,
             'config' => [
                 'files' => $files,
@@ -61,7 +58,8 @@ class EggTransformer extends BaseTransformer
                 'file_denylist' => $model->inherit_file_denylist,
                 'extends' => $model->config_from,
             ],
-            'startup' => $model->startup,
+            'startup' => Arr::first($model->startup_commands, default: ''), // deprecated, use startup_commands
+            'startup_commands' => $model->startup_commands,
             'script' => [
                 'privileged' => $model->script_is_privileged,
                 'install' => $model->copy_script_install,

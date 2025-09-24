@@ -33,7 +33,7 @@ class EggExporterService
             'features' => $egg->features,
             'docker_images' => $egg->docker_images,
             'file_denylist' => Collection::make($egg->inherit_file_denylist)->filter(fn ($v) => !empty($v))->values(),
-            'startup' => $egg->startup,
+            'startup_commands' => $egg->startup_commands,
             'config' => [
                 'files' => $egg->inherit_config_files,
                 'startup' => $egg->inherit_config_startup,
