@@ -27,11 +27,13 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
+use Illuminate\Support\Js;
 use Livewire\Attributes\Locked;
 use Throwable;
 
@@ -53,6 +55,8 @@ class EditFiles extends Page
 
     #[Locked]
     public string $path;
+
+    public ?string $previousUrl = null;
 
     private DaemonFileRepository $fileRepository;
 
@@ -93,7 +97,8 @@ class EditFiles extends Page
                                     ->body(fn () => $this->path)
                                     ->send();
 
-                                $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                $url = ListFiles::getUrl(['path' => dirname($this->path)]);
+                                $this->redirect($url, FilamentView::hasSpaMode($url));
                             }),
                         Action::make('save')
                             ->label(trans('server/file.actions.edit.save'))
@@ -117,7 +122,13 @@ class EditFiles extends Page
                             ->label(trans('server/file.actions.edit.cancel'))
                             ->color('danger')
                             ->icon('tabler-x')
-                            ->url(fn () => ListFiles::getUrl(['path' => dirname($this->path)])),
+                            ->alpineClickHandler(function () {
+                                $url = $this->previousUrl ?? ListFiles::getUrl(['path' => dirname($this->path)]);
+
+                                return FilamentView::hasSpaMode($url)
+                                    ? 'document.referrer ? window.history.back() : Livewire.navigate(' . Js::from($url) . ')'
+                                    : 'document.referrer ? window.history.back() : (window.location.href = ' . Js::from($url) . ')';
+                            }),
                     ])
                     ->footerActionsAlignment(Alignment::End)
                     ->schema([
@@ -168,7 +179,8 @@ class EditFiles extends Page
                                         ->closable()
                                         ->send();
 
-                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                    $url = ListFiles::getUrl(['path' => dirname($this->path)]);
+                                    $this->redirect($url, FilamentView::hasSpaMode($url));
                                 } catch (FileNotFoundException) {
                                     AlertBanner::make('file_not_found')
                                         ->title(trans('server/file.alerts.file_not_found.title', ['name' => basename($this->path)]))
@@ -176,7 +188,8 @@ class EditFiles extends Page
                                         ->closable()
                                         ->send();
 
-                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                    $url = ListFiles::getUrl(['path' => dirname($this->path)]);
+                                    $this->redirect($url, FilamentView::hasSpaMode($url));
                                 } catch (FileNotEditableException) {
                                     AlertBanner::make('file_is_directory')
                                         ->title(trans('server/file.alerts.file_not_found.title', ['name' => basename($this->path)]))
@@ -184,11 +197,13 @@ class EditFiles extends Page
                                         ->closable()
                                         ->send();
 
-                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                    $url = ListFiles::getUrl(['path' => dirname($this->path)]);
+                                    $this->redirect($url, FilamentView::hasSpaMode($url));
                                 } catch (ConnectionException) {
                                     // Alert banner for this one will be handled by ListFiles
 
-                                    $this->redirect(ListFiles::getUrl(['path' => dirname($this->path)]));
+                                    $url = ListFiles::getUrl(['path' => dirname($this->path)]);
+                                    $this->redirect($url, FilamentView::hasSpaMode($url));
                                 }
                             }),
                     ])
@@ -203,6 +218,8 @@ class EditFiles extends Page
         $this->path = $path;
 
         $this->form->fill();
+
+        $this->previousUrl = url()->previous();
 
         if (str($path)->endsWith('.pelicanignore')) {
             AlertBanner::make('.pelicanignore_info')
