@@ -3,10 +3,10 @@
 namespace App\Facades;
 
 use App\Models\Plugin;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Facade;
 use App\Services\Helpers\PluginService;
 use Filament\Panel;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static void loadPlugins()
