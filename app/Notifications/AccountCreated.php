@@ -24,7 +24,7 @@ class AccountCreated extends Notification implements ShouldQueue
     public function toMail(User $notifiable): MailMessage
     {
         $message = (new MailMessage())
-            ->greeting('Hello ' . $notifiable->name . '!')
+            ->greeting('Hello ' . $notifiable->username . '!')
             ->line('You are receiving this email because an account has been created for you on ' . config('app.name') . '.')
             ->line('Username: ' . $notifiable->username)
             ->line('Email: ' . $notifiable->email);

@@ -55,7 +55,8 @@ class StartupModificationServiceTest extends IntegrationTestCase
                     'BUNGEE_VERSION' => '1234',
                     'SERVER_JARFILE' => 'test.jar',
                 ],
-            ]);
+            ])
+            ->loadMissing('variables');
 
         $this->assertInstanceOf(Server::class, $result);
         $this->assertCount(2, $result->variables);
