@@ -12,7 +12,7 @@ return [
         'notification_description' => 'Updated Server Description',
         'failed' => 'Failed',
         'uuid' => 'Server UUID',
-        'id' => 'Server ID',
+        'uuid_short' => 'Server ID',
         'node_name' => 'Node Name',
         'limits' => [
             'title' => 'Limits',

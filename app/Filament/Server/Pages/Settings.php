@@ -83,8 +83,8 @@ class Settings extends ServerFormPage
                                         'lg' => 4,
                                     ])
                                     ->disabled(),
-                                TextInput::make('id')
-                                    ->label(trans('server/setting.server_info.id'))
+                                TextInput::make('uuid_short')
+                                    ->label(trans('server/setting.server_info.uuid_short'))
                                     ->disabled()
                                     ->columnSpan(1),
                                 TextInput::make('node.name')
