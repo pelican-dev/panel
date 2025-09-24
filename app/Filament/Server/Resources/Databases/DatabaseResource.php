@@ -3,8 +3,8 @@
 namespace App\Filament\Server\Resources\Databases;
 
 use App\Filament\Components\Actions\RotateDatabasePasswordAction;
-use App\Filament\Server\Resources\Databases\Pages\ListDatabases;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
+use App\Filament\Server\Resources\Databases\Pages\ListDatabases;
 use App\Models\Database;
 use App\Models\DatabaseHost;
 use App\Models\Permission;

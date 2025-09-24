@@ -2,10 +2,10 @@
 
 namespace App\Services\Eggs;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use App\Models\Server;
 use App\Services\Servers\ServerConfigurationStructureService;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class EggConfigurationService
 {

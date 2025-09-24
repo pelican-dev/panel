@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Files;
 
-use App\Models\Permission;
 use App\Contracts\Http\ClientPermissionsRequest;
 use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Models\Permission;
 
 class DeleteFileRequest extends ClientApiRequest implements ClientPermissionsRequest
 {

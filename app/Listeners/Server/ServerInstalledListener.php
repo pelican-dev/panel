@@ -2,10 +2,10 @@
 
 namespace App\Listeners\Server;
 
-use Filament\Actions\Action;
 use App\Events\Server\Installed;
 use App\Filament\Server\Pages\Console;
 use App\Notifications\ServerInstalled;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
 class ServerInstalledListener

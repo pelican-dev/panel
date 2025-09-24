@@ -2,18 +2,18 @@
 
 namespace App\Services\Databases;
 
+use App\Exceptions\Repository\DuplicateDatabaseNameException;
+use App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException;
+use App\Exceptions\Service\Database\TooManyDatabasesException;
+use App\Facades\Activity;
+use App\Helpers\Utilities;
+use App\Models\Database;
+use App\Models\Server;
+use Exception;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Throwable;
-use Exception;
-use App\Facades\Activity;
-use App\Models\Server;
-use App\Models\Database;
-use App\Helpers\Utilities;
-use Illuminate\Database\ConnectionInterface;
-use App\Exceptions\Repository\DuplicateDatabaseNameException;
-use App\Exceptions\Service\Database\TooManyDatabasesException;
-use App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException;
-use Illuminate\Support\Str;
 
 class DatabaseManagementService
 {

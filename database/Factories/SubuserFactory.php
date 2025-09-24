@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Subuser;
 use App\Models\Permission;
+use App\Models\Subuser;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SubuserFactory extends Factory

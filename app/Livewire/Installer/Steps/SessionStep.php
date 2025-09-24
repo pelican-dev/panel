@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Installer\Steps;
 
-use Filament\Schemas\Components\Wizard\Step;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Wizard\Step;
 
 class SessionStep
 {

@@ -2,13 +2,13 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Schedule;
 
-use App\Models\Task;
-use Illuminate\Http\Response;
-use App\Models\Schedule;
-use App\Models\Permission;
-use Illuminate\Support\Facades\Bus;
 use App\Jobs\Schedule\RunTaskJob;
+use App\Models\Permission;
+use App\Models\Schedule;
+use App\Models\Task;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Bus;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class ExecuteScheduleTest extends ClientApiIntegrationTestCase

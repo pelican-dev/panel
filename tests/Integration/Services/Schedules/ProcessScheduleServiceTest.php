@@ -2,16 +2,16 @@
 
 namespace App\Tests\Integration\Services\Schedules;
 
-use Exception;
-use Carbon\CarbonImmutable;
-use App\Models\Task;
-use App\Models\Schedule;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Contracts\Bus\Dispatcher;
-use App\Jobs\Schedule\RunTaskJob;
 use App\Exceptions\DisplayException;
-use App\Tests\Integration\IntegrationTestCase;
+use App\Jobs\Schedule\RunTaskJob;
+use App\Models\Schedule;
+use App\Models\Task;
 use App\Services\Schedules\ProcessScheduleService;
+use App\Tests\Integration\IntegrationTestCase;
+use Carbon\CarbonImmutable;
+use Exception;
+use Illuminate\Contracts\Bus\Dispatcher;
+use Illuminate\Support\Facades\Bus;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class ProcessScheduleServiceTest extends IntegrationTestCase

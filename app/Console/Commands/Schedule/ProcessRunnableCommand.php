@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands\Schedule;
 
-use Illuminate\Console\Command;
 use App\Models\Schedule;
-use Illuminate\Database\Eloquent\Builder;
 use App\Services\Schedules\ProcessScheduleService;
+use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Builder;
 use Throwable;
 
 class ProcessRunnableCommand extends Command

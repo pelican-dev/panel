@@ -2,7 +2,6 @@
 
 namespace App\Filament\Server\Resources\Files\Pages;
 
-use Throwable;
 use App\Exceptions\Http\Server\FileSizeTooLargeException;
 use App\Exceptions\Repository\FileNotEditableException;
 use App\Facades\Activity;
@@ -13,8 +12,8 @@ use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Filament\Facades\Filament;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\CodeEditor\Enums\Language;
 use Filament\Forms\Components\Select;
@@ -34,6 +33,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
+use Throwable;
 
 /**
  * @property Schema $form

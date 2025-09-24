@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests\Api\Client\Account;
 
-use Exception;
-use IPTools\Range;
-use App\Models\ApiKey;
-use Illuminate\Validation\Validator;
 use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Models\ApiKey;
+use Exception;
+use Illuminate\Validation\Validator;
+use IPTools\Range;
 
 class StoreApiKeyRequest extends ClientApiRequest
 {

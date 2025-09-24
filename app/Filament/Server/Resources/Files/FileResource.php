@@ -2,10 +2,10 @@
 
 namespace App\Filament\Server\Resources\Files;
 
-use App\Filament\Server\Resources\Files\Pages\EditFiles;
-use App\Filament\Server\Resources\Files\Pages\SearchFiles;
 use App\Filament\Server\Resources\Files\Pages\DownloadFiles;
+use App\Filament\Server\Resources\Files\Pages\EditFiles;
 use App\Filament\Server\Resources\Files\Pages\ListFiles;
+use App\Filament\Server\Resources\Files\Pages\SearchFiles;
 use App\Models\File;
 use App\Models\Permission;
 use App\Traits\Filament\BlockAccessInConflict;

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Application;
 
+use App\Extensions\Spatie\Fractalistic\Fractal;
+use App\Http\Controllers\Controller;
+use App\Transformers\Api\Application\BaseTransformer;
+use Illuminate\Container\Container;
 use Illuminate\Http\Request;
-use Webmozart\Assert\Assert;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
-use Illuminate\Container\Container;
-use App\Http\Controllers\Controller;
-use App\Extensions\Spatie\Fractalistic\Fractal;
-use App\Transformers\Api\Application\BaseTransformer;
+use Webmozart\Assert\Assert;
 
 abstract class ApplicationApiController extends Controller
 {

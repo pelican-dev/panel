@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use Throwable;
 use App\Facades\Activity;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\Settings\DescriptionServerRequest;
@@ -15,6 +14,7 @@ use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Throwable;
 
 #[Group('Server - Settings')]
 class SettingsController extends ClientApiController

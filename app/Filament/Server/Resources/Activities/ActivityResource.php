@@ -2,10 +2,9 @@
 
 namespace App\Filament\Server\Resources\Activities;
 
-use App\Filament\Server\Resources\Activities\Pages\ListActivities;
-use Exception;
 use App\Filament\Admin\Resources\Users\Pages\EditUser;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
+use App\Filament\Server\Resources\Activities\Pages\ListActivities;
 use App\Models\ActivityLog;
 use App\Models\Permission;
 use App\Models\Role;
@@ -14,6 +13,7 @@ use App\Models\User;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyTable;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;

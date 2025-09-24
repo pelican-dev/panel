@@ -2,15 +2,15 @@
 
 namespace App\Services\Servers;
 
-use Throwable;
 use App\Exceptions\DisplayException;
-use Exception;
-use Illuminate\Http\Response;
 use App\Models\Server;
-use Illuminate\Database\ConnectionInterface;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Databases\DatabaseManagementService;
+use Exception;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Response;
+use Throwable;
 
 class ServerDeletionService
 {

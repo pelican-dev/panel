@@ -3,11 +3,11 @@
 namespace App\Filament\Admin\Resources\Nodes;
 
 use App\Enums\CustomizationKey;
-use App\Filament\Admin\Resources\Nodes\RelationManagers\AllocationsRelationManager;
-use App\Filament\Admin\Resources\Nodes\RelationManagers\NodesRelationManager;
-use App\Filament\Admin\Resources\Nodes\Pages\ListNodes;
 use App\Filament\Admin\Resources\Nodes\Pages\CreateNode;
 use App\Filament\Admin\Resources\Nodes\Pages\EditNode;
+use App\Filament\Admin\Resources\Nodes\Pages\ListNodes;
+use App\Filament\Admin\Resources\Nodes\RelationManagers\AllocationsRelationManager;
+use App\Filament\Admin\Resources\Nodes\RelationManagers\NodesRelationManager;
 use App\Models\Node;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;

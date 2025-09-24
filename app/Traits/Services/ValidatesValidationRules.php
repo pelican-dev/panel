@@ -2,11 +2,11 @@
 
 namespace App\Traits\Services;
 
+use App\Exceptions\Service\Egg\Variable\BadValidationRuleException;
 use BadMethodCallException;
+use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Str;
-use Illuminate\Contracts\Validation\Factory as ValidationFactory;
-use App\Exceptions\Service\Egg\Variable\BadValidationRuleException;
 
 trait ValidatesValidationRules
 {

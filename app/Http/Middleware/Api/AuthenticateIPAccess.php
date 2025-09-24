@@ -2,13 +2,13 @@
 
 namespace App\Http\Middleware\Api;
 
+use App\Facades\Activity;
+use App\Models\ApiKey;
 use Closure;
 use Exception;
-use App\Models\ApiKey;
+use Illuminate\Http\Request;
 use IPTools\IP;
 use IPTools\Range;
-use Illuminate\Http\Request;
-use App\Facades\Activity;
 use Laravel\Sanctum\TransientToken;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 

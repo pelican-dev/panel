@@ -2,9 +2,9 @@
 
 namespace App\Services\Servers;
 
+use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\User;
-use App\Models\Server;
 
 class GetUserPermissionsService
 {

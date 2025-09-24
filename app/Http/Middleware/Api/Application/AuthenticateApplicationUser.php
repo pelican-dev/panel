@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware\Api\Application;
 
-use Closure;
 use App\Models\User;
+use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 

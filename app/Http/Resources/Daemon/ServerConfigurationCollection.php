@@ -3,10 +3,10 @@
 namespace App\Http\Resources\Daemon;
 
 use App\Models\Server;
-use Illuminate\Container\Container;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 use App\Services\Eggs\EggConfigurationService;
 use App\Services\Servers\ServerConfigurationStructureService;
+use Illuminate\Container\Container;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ServerConfigurationCollection extends ResourceCollection
 {

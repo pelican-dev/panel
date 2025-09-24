@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Api\Application\Servers;
 
-use App\Services\Acl\Api\AdminAcl;
 use App\Http\Requests\Api\Application\ApplicationApiRequest;
 use App\Models\Server;
+use App\Services\Acl\Api\AdminAcl;
 
 class ServerWriteRequest extends ApplicationApiRequest
 {

@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers\Api\Application\Servers;
 
-use Throwable;
-use Illuminate\Validation\ValidationException;
 use App\Exceptions\DisplayException;
 use App\Exceptions\Model\DataValidationException;
 use App\Exceptions\Service\Deployment\NoViableAllocationException;
-use Illuminate\Http\Response;
-use App\Models\Server;
-use Illuminate\Http\JsonResponse;
-use Spatie\QueryBuilder\QueryBuilder;
-use App\Services\Servers\ServerCreationService;
-use App\Services\Servers\ServerDeletionService;
-use App\Transformers\Api\Application\ServerTransformer;
+use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Servers\GetServerRequest;
 use App\Http\Requests\Api\Application\Servers\GetServersRequest;
 use App\Http\Requests\Api\Application\Servers\ServerWriteRequest;
 use App\Http\Requests\Api\Application\Servers\StoreServerRequest;
-use App\Http\Controllers\Api\Application\ApplicationApiController;
+use App\Models\Server;
+use App\Services\Servers\ServerCreationService;
+use App\Services\Servers\ServerDeletionService;
+use App\Transformers\Api\Application\ServerTransformer;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
+use Spatie\QueryBuilder\QueryBuilder;
+use Throwable;
 
 #[Group('Server', weight: 0)]
 class ServerController extends ApplicationApiController

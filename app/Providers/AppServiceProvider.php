@@ -2,18 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\Allocation;
-use App\Models\ApiKey;
-use App\Models\Backup;
-use App\Models\Database;
-use App\Models\Egg;
-use App\Models\EggVariable;
-use App\Models\Schedule;
-use App\Models\Server;
-use App\Models\UserSSHKey;
-use App\Models\Task;
-use App\Models\User;
-use App\Models\Node;
 use App\Checks\CacheCheck;
 use App\Checks\DatabaseCheck;
 use App\Checks\DebugModeCheck;
@@ -22,6 +10,18 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
+use App\Models\Allocation;
+use App\Models\ApiKey;
+use App\Models\Backup;
+use App\Models\Database;
+use App\Models\Egg;
+use App\Models\EggVariable;
+use App\Models\Node;
+use App\Models\Schedule;
+use App\Models\Server;
+use App\Models\Task;
+use App\Models\User;
+use App\Models\UserSSHKey;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;

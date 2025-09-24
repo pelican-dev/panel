@@ -3,8 +3,8 @@
 namespace App\Http\Middleware\Api;
 
 use Closure;
-use JsonException;
 use Illuminate\Http\Request;
+use JsonException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class IsValidJson

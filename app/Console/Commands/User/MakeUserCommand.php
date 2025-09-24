@@ -3,9 +3,9 @@
 namespace App\Console\Commands\User;
 
 use App\Exceptions\Model\DataValidationException;
+use App\Services\Users\UserCreationService;
 use Exception;
 use Illuminate\Console\Command;
-use App\Services\Users\UserCreationService;
 use Illuminate\Support\Facades\DB;
 
 class MakeUserCommand extends Command

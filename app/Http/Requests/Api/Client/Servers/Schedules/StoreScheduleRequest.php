@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Schedules;
 
-use App\Models\Schedule;
 use App\Models\Permission;
+use App\Models\Schedule;
 
 class StoreScheduleRequest extends ViewScheduleRequest
 {

@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Api\Remote;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Remote\ActivityEventRequest;
+use App\Models\ActivityLog;
 use App\Models\Node;
+use App\Models\Server;
+use App\Models\User;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Exception;
 use Illuminate\Support\Str;
-use App\Models\User;
-use App\Models\Server;
-use App\Models\ActivityLog;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Remote\ActivityEventRequest;
 
 class ActivityProcessingController extends Controller
 {

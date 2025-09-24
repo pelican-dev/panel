@@ -2,10 +2,10 @@
 
 namespace App\Transformers\Api\Application;
 
+use App\Models\Allocation;
 use App\Models\Node;
 use App\Models\Server;
 use League\Fractal\Resource\Item;
-use App\Models\Allocation;
 use League\Fractal\Resource\NullResource;
 
 class AllocationTransformer extends BaseTransformer

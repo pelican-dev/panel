@@ -3,16 +3,16 @@
 namespace App\Tests\Integration\Jobs\Schedule;
 
 use App\Enums\ServerState;
-use Carbon\Carbon;
-use Carbon\CarbonImmutable;
-use App\Models\Task;
-use App\Models\Server;
-use App\Models\Schedule;
-use Illuminate\Support\Facades\Bus;
 use App\Jobs\Schedule\RunTaskJob;
+use App\Models\Schedule;
+use App\Models\Server;
+use App\Models\Task;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Tests\Integration\IntegrationTestCase;
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Bus;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class RunTaskJobTest extends IntegrationTestCase

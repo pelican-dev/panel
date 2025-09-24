@@ -2,8 +2,8 @@
 
 namespace App\Services\Nodes;
 
-use App\Models\Node;
 use App\Exceptions\Service\HasActiveServersException;
+use App\Models\Node;
 
 class NodeDeletionService
 {

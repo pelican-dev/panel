@@ -3,11 +3,11 @@
 namespace App\Tests\Integration\Api\Client\Server;
 
 use App\Enums\ServerState;
-use Illuminate\Http\Response;
-use App\Models\Server;
 use App\Models\Permission;
+use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class SettingsControllerTest extends ClientApiIntegrationTestCase

@@ -2,12 +2,12 @@
 
 namespace App\Filament\Admin\Resources\Eggs\Pages;
 
-use Exception;
 use App\Filament\Admin\Resources\Eggs\EggResource;
 use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Models\EggVariable;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Checkbox;
@@ -26,10 +26,10 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
-use Filament\Schemas\Schema;
 
 class CreateEgg extends CreateRecord
 {

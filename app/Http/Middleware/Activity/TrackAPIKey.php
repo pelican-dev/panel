@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware\Activity;
 
+use App\Facades\LogTarget;
+use App\Models\ApiKey;
 use Closure;
 use Illuminate\Http\Request;
-use App\Models\ApiKey;
-use App\Facades\LogTarget;
 
 class TrackAPIKey
 {

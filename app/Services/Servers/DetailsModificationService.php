@@ -2,13 +2,13 @@
 
 namespace App\Services\Servers;
 
-use Throwable;
-use Illuminate\Support\Arr;
 use App\Models\Server;
-use Illuminate\Database\ConnectionInterface;
-use App\Traits\Services\ReturnsUpdatedModels;
 use App\Repositories\Daemon\DaemonServerRepository;
+use App\Traits\Services\ReturnsUpdatedModels;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Arr;
+use Throwable;
 
 class DetailsModificationService
 {

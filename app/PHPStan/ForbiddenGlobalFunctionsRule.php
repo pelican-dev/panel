@@ -2,9 +2,9 @@
 
 namespace App\PHPStan;
 
-use PhpParser\Node\Name;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;

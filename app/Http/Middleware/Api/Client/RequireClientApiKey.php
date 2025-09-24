@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware\Api\Client;
 
+use App\Models\ApiKey;
 use Closure;
 use Illuminate\Http\Request;
-use App\Models\ApiKey;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class RequireClientApiKey

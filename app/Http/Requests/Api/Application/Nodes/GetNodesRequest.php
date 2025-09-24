@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Api\Application\Nodes;
 
-use App\Services\Acl\Api\AdminAcl;
 use App\Http\Requests\Api\Application\ApplicationApiRequest;
 use App\Models\Node;
+use App\Services\Acl\Api\AdminAcl;
 
 class GetNodesRequest extends ApplicationApiRequest
 {

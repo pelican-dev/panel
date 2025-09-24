@@ -3,8 +3,8 @@
 namespace App\Console\Commands\User;
 
 use App\Models\User;
-use Webmozart\Assert\Assert;
 use Illuminate\Console\Command;
+use Webmozart\Assert\Assert;
 
 class DeleteUserCommand extends Command
 {

@@ -2,16 +2,16 @@
 
 namespace App\Exceptions;
 
-use Throwable;
 use Exception;
 use Filament\Notifications\Notification;
+use Illuminate\Container\Container;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Psr\Log\LoggerInterface;
 use Illuminate\Http\Response;
-use Illuminate\Container\Container;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Throwable;
 
 /**
  * @deprecated

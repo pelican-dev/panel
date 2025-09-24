@@ -2,15 +2,15 @@
 
 namespace App\Tests\Integration\Api\Client;
 
-use App\Models\Task;
-use App\Models\Backup;
-use App\Models\Server;
-use App\Models\Schedule;
-use Illuminate\Support\Collection;
 use App\Models\Allocation;
+use App\Models\Backup;
+use App\Models\Schedule;
+use App\Models\Server;
+use App\Models\Task;
 use App\Tests\Integration\IntegrationTestCase;
-use Illuminate\Database\Eloquent\Model;
 use App\Transformers\Api\Client\BaseClientTransformer;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
 {

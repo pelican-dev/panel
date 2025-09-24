@@ -2,11 +2,11 @@
 
 namespace App\Extensions\Captcha\Schemas\Turnstile;
 
-use App\Extensions\Captcha\Schemas\CaptchaSchemaInterface;
 use App\Extensions\Captcha\Schemas\BaseSchema;
+use App\Extensions\Captcha\Schemas\CaptchaSchemaInterface;
 use Exception;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\TextEntry;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\HtmlString;
 

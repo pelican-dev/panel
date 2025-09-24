@@ -3,8 +3,8 @@
 namespace App\Providers\Filament;
 
 use App\Enums\CustomizationKey;
-use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\EditProfile;
+use App\Filament\Pages\Auth\Login;
 use App\Http\Middleware\LanguageMiddleware;
 use App\Models\User;
 use Filament\Actions\Action;

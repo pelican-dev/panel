@@ -2,8 +2,8 @@
 
 namespace App\Exceptions\Service;
 
-use Illuminate\Http\Response;
 use App\Exceptions\DisplayException;
+use Illuminate\Http\Response;
 
 class HasActiveServersException extends DisplayException
 {

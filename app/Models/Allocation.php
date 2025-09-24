@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
+use App\Exceptions\Service\Allocation\ServerUsingAllocationException;
+use App\Traits\HasValidation;
 use Carbon\Carbon;
 use Database\Factories\AllocationFactory;
 use Illuminate\Database\Eloquent\Builder;
-use App\Exceptions\Service\Allocation\ServerUsingAllocationException;
-use App\Traits\HasValidation;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

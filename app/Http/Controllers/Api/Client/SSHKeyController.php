@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Client;
 
-use App\Models\UserSSHKey;
-use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
-use App\Http\Requests\Api\Client\ClientApiRequest;
-use App\Transformers\Api\Client\UserSSHKeyTransformer;
 use App\Http\Requests\Api\Client\Account\StoreSSHKeyRequest;
+use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Models\UserSSHKey;
+use App\Transformers\Api\Client\UserSSHKeyTransformer;
+use Illuminate\Http\JsonResponse;
 
 class SSHKeyController extends ClientApiController
 {

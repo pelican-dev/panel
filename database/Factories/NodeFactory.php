@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
-use Ramsey\Uuid\Uuid;
-use Illuminate\Support\Str;
 use App\Models\Node;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 
 class NodeFactory extends Factory
 {

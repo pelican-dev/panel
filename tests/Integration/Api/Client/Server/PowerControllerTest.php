@@ -2,10 +2,10 @@
 
 namespace App\Tests\Integration\Api\Client\Server;
 
-use Illuminate\Http\Response;
 use App\Models\Permission;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class PowerControllerTest extends ClientApiIntegrationTestCase

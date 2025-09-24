@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use Illuminate\Support\Facades\Gate;
-use App\Models\User;
-use App\Models\Server;
-use App\Models\Permission;
+use App\Http\Controllers\Api\Client\ClientApiController;
+use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Models\ActivityLog;
-use Spatie\QueryBuilder\QueryBuilder;
-use Spatie\QueryBuilder\AllowedFilter;
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\Server;
+use App\Models\User;
+use App\Transformers\Api\Client\ActivityLogTransformer;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
-use App\Http\Requests\Api\Client\ClientApiRequest;
-use App\Transformers\Api\Client\ActivityLogTransformer;
-use App\Http\Controllers\Api\Client\ClientApiController;
-use App\Models\Role;
-use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Support\Facades\Gate;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 #[Group('Server - Activity log')]
 class ActivityLogController extends ClientApiController

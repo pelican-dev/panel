@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use App\Models\Server;
-use Illuminate\Http\Request;
+use Closure;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\Request;
 
 class MaintenanceMiddleware
 {

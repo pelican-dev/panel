@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use Carbon\CarbonImmutable;
-use App\Models\Server;
-use Illuminate\Http\JsonResponse;
-use App\Models\Permission;
-use App\Services\Nodes\NodeJWTService;
 use App\Exceptions\Http\HttpForbiddenException;
-use App\Http\Requests\Api\Client\ClientApiRequest;
-use App\Services\Servers\GetUserPermissionsService;
 use App\Http\Controllers\Api\Client\ClientApiController;
+use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Models\Permission;
+use App\Models\Server;
+use App\Services\Nodes\NodeJWTService;
+use App\Services\Servers\GetUserPermissionsService;
+use Carbon\CarbonImmutable;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Http\JsonResponse;
 
 #[Group('Server - Websocket')]
 class WebsocketController extends ClientApiController

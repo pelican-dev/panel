@@ -2,16 +2,16 @@
 
 namespace App\Services\Backups;
 
-use Throwable;
-use App\Extensions\Filesystem\S3Filesystem;
-use Aws\S3\S3Client;
-use Illuminate\Http\Response;
-use App\Models\Backup;
-use Illuminate\Database\ConnectionInterface;
-use App\Extensions\Backups\BackupManager;
-use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Exceptions\Service\Backup\BackupLockedException;
+use App\Extensions\Backups\BackupManager;
+use App\Extensions\Filesystem\S3Filesystem;
+use App\Models\Backup;
+use App\Repositories\Daemon\DaemonBackupRepository;
+use Aws\S3\S3Client;
 use Exception;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Http\Response;
+use Throwable;
 
 class DeleteBackupService
 {

@@ -2,8 +2,8 @@
 
 namespace App\Listeners\Auth;
 
-use App\Facades\Activity;
 use App\Events\Auth\ProvidedAuthenticationToken;
+use App\Facades\Activity;
 
 class TwoFactorListener
 {

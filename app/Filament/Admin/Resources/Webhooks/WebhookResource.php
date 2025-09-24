@@ -2,20 +2,21 @@
 
 namespace App\Filament\Admin\Resources\Webhooks;
 
+use App\Enums\WebhookType;
 use App\Filament\Admin\Resources\Webhooks\Pages\CreateWebhookConfiguration;
 use App\Filament\Admin\Resources\Webhooks\Pages\EditWebhookConfiguration;
 use App\Filament\Admin\Resources\Webhooks\Pages\ListWebhookConfigurations;
 use App\Filament\Admin\Resources\Webhooks\Pages\ViewWebhookConfiguration;
 use App\Livewire\AlertBanner;
 use App\Models\WebhookConfiguration;
-use Exception;
-use Filament\Actions\Action;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\ViewAction;
@@ -32,14 +33,13 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Filament\Schemas\Schema;
 use Livewire\Component as Livewire;
-use App\Enums\WebhookType;
 use Livewire\Features\SupportEvents\HandlesEvents;
 
 class WebhookResource extends Resource
