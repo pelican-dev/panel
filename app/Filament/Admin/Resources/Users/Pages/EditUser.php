@@ -2,7 +2,6 @@
 
 namespace App\Filament\Admin\Resources\Users\Pages;
 
-use App\Enums\CustomizationKey;
 use App\Filament\Admin\Resources\Users\UserResource;
 use App\Models\User;
 use App\Services\Users\UserUpdateService;
@@ -52,35 +51,5 @@ class EditUser extends EditRecord
         unset($data['roles']);
 
         return $this->service->handle($record, $data);
-    }
-
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        $customization = [
-            'console_font' => $data['console_font'],
-            'console_font_size' => $data['console_font_size'],
-            'console_rows' => $data['console_rows'],
-            'console_graph_period' => $data['console_graph_period'],
-            'dashboard_layout' => $data['dashboard_layout'],
-            'top_navigation' => $data['top_navigation'],
-        ];
-
-        unset($data['console_font'],$data['console_font_size'], $data['console_rows'], $data['dashboard_layout'], $data['top_navigation']);
-
-        $data['customization'] = json_encode($customization);
-
-        return $data;
-    }
-
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-//        $data['console_font'] = $this->getUser()->getCustomization(CustomizationKey::ConsoleFont);
-//        $data['console_font_size'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleFontSize);
-//        $data['console_rows'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleRows);
-//        $data['console_graph_period'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
-//        $data['dashboard_layout'] = $this->getUser()->getCustomization(CustomizationKey::DashboardLayout);
-//        $data['top_navigation'] = (bool) $this->getUser()->getCustomization(CustomizationKey::TopNavigation);
-
-        return $data;
     }
 }

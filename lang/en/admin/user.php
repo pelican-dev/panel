@@ -9,6 +9,7 @@ return [
     'email' => 'Email',
     'username' => 'Username',
     'password' => 'Password',
+    'external_id' => 'External ID',
     'password_help' => 'Providing a user password is optional. New user email will prompt users to create a password the first time they login.',
     'admin_roles' => 'Admin Roles',
     'roles' => 'Roles',

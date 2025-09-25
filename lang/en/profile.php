@@ -8,6 +8,7 @@ return [
         'activity' => 'Activity',
         'api_keys' => 'API Keys',
         'ssh_keys' => 'SSH Keys',
+        'keys' => 'Keys',
         '2fa' => '2FA',
         'customization' => 'Customization',
     ],
