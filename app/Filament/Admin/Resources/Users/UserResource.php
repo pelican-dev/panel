@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Users;
 
 use App\Enums\CustomizationKey;
+use App\Extensions\OAuth\OAuthService;
 use App\Facades\Activity;
 use App\Filament\Admin\Resources\Users\Pages\CreateUser;
 use App\Filament\Admin\Resources\Users\Pages\EditUser;
@@ -15,6 +16,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\UserSSHKey;
 use App\Services\Helpers\LanguageService;
+use App\Services\Users\UserUpdateService;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
@@ -25,32 +27,32 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
+use Laravel\Socialite\Facades\Socialite;
 
 class UserResource extends Resource
 {
@@ -60,6 +62,8 @@ class UserResource extends Resource
     use CanModifyTable;
 
     protected static ?string $model = User::class;
+
+    protected OAuthService $oauthService;
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-users';
 
@@ -238,6 +242,52 @@ class UserResource extends Resource
                                             ->hidden(fn () => !$fileUpload->getDisk()->exists($path))
                                             ->action(fn () => $fileUpload->getDisk()->delete($path));
                                     }),
+                                //                                Section::make(trans('profile.tabs.oauth')) // TODO: Make work with record user, not logged in user.
+                                //                                    ->collapsible()->collapsed()
+                                //                                    ->columnSpanFull()
+                                //                                    ->schema(function () use ($oauthSchemas) {
+                                //                                        $actions = [];
+                                //
+                                //                                        foreach ($oauthSchemas as $schema) {
+                                //
+                                //                                            $id = $schema->getId();
+                                //                                            $name = $schema->getName();
+                                //
+                                //                                            $unlink = array_key_exists($id, $this->getUser()->oauth ?? []);
+                                //
+                                //                                            $actions[] = Action::make("oauth_$id")
+                                //                                                ->label(trans('profile.' . ($unlink ? 'unlink' : 'link'), ['name' => $name]))
+                                //                                                ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
+                                //                                                ->color(Color::hex($schema->getHexColor()))
+                                //                                                ->action(function (UserUpdateService $updateService) use ($id, $name, $unlink) {
+                                //                                                    if ($unlink) {
+                                //                                                        $oauth = auth()->user()->oauth;
+                                //                                                        unset($oauth[$id]);
+                                //
+                                //                                                        $updateService->handle(auth()->user(), ['oauth' => $oauth]);
+                                //
+                                //                                                        $this->fillForm();
+                                //
+                                //                                                        Notification::make()
+                                //                                                            ->title(trans('profile.unlinked', ['name' => $name]))
+                                //                                                            ->success()
+                                //                                                            ->send();
+                                //                                                    } else {
+                                //                                                        redirect(Socialite::with($id)->redirect()->getTargetUrl());
+                                //                                                    }
+                                //                                                });
+                                //                                        }
+                                //
+                                //                                        return [Actions::make($actions)];
+                                //                                    }),
+                                Section::make(trans('profile.tabs.2fa')) //TODO: Use the record, not the logged in user.
+                                    ->collapsible()->collapsed()
+                                    ->columnSpanFull()
+                                    ->schema(collect(Filament::getMultiFactorAuthenticationProviders())
+                                        ->sort(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider) => $multiFactorAuthenticationProvider->isEnabled(Filament::auth()->user()) ? 0 : 1)
+                                        ->map(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider) => Group::make($multiFactorAuthenticationProvider->getManagementSchemaComponents())
+                                            ->statePath($multiFactorAuthenticationProvider->getId()))
+                                        ->all()),
                             ]),
                         Tab::make('roles')
                             ->label(trans('admin/user.roles'))
@@ -286,8 +336,7 @@ class UserResource extends Resource
                                                     if ($apiKey->exists()) {
                                                         $apiKey->delete();
 
-                                                        Activity::event('user:api-key.delete')
-                                                            ->actor($user)
+                                                        Activity::event('user:api-key.delete') //TODO: Make this follow hidden admin activities, or just hide the username/ip to the end user, but keep the event.
                                                             ->subject($user)
                                                             ->subject($apiKey)
                                                             ->property('identifier', $apiKey->identifier)
@@ -324,8 +373,7 @@ class UserResource extends Resource
                                                     if ($sshKey->exists()) {
                                                         $sshKey->delete();
 
-                                                        Activity::event('user:ssh-key.delete')
-                                                            ->actor($user)
+                                                        Activity::event('user:ssh-key.delete') //TODO: Make this follow hidden admin activities, or just hide the username/ip to the end user, but keep the event.
                                                             ->subject($user)
                                                             ->subject($sshKey)
                                                             ->property('fingerprint', $sshKey->fingerprint)
@@ -346,7 +394,7 @@ class UserResource extends Resource
                                             ]),
                                     ]),
                             ]),
-                        Tab::make('activity') //TODO: Make it work.
+                        Tab::make('activity')
                             ->label(trans('profile.tabs.activity'))
                             ->icon('tabler-history')
                             ->schema([
@@ -364,122 +412,6 @@ class UserResource extends Resource
                                             ->state(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
                                     ]),
                             ]),
-                        //                        Tab::make('customization')
-                        //                            ->label(trans('profile.tabs.customization'))
-                        //                            ->icon('tabler-adjustments')
-                        //                            ->schema([
-                        //                                Section::make(trans('profile.dashboard'))
-                        //                                    ->collapsible()
-                        //                                    ->icon('tabler-dashboard')
-                        //                                    ->columns()
-                        //                                    ->schema([
-                        //                                        ToggleButtons::make('dashboard_layout')
-                        //                                            ->label(trans('profile.dashboard_layout'))
-                        //                                            ->inline()
-                        //                                            ->default('grid')
-                        //                                            ->options([
-                        //                                                'grid' => trans('profile.grid'),
-                        //                                                'table' => trans('profile.table'),
-                        //                                            ]),
-                        //                                        ToggleButtons::make('top_navigation')
-                        //                                            ->label(trans('profile.navigation'))
-                        //                                            ->inline()
-                        //                                            ->options([
-                        //                                                1 => trans('profile.top'),
-                        //                                                0 => trans('profile.side'),
-                        //                                            ])
-                        //                                            ->stateCast(new BooleanStateCast(false, true)),
-                        //                                    ]),
-                        //                                Section::make(trans('profile.console'))
-                        //                                    ->collapsible()
-                        //                                    ->icon('tabler-brand-tabler')
-                        //                                    ->columns(4)
-                        //                                    ->schema([
-                        //                                        TextInput::make('console_font_size')
-                        //                                            ->label(trans('profile.font_size'))
-                        //                                            ->columnSpan(1)
-                        //                                            ->minValue(1)
-                        //                                            ->numeric()
-                        //                                            ->required()
-                        //                                            ->default(14),
-                        //                                        Select::make('console_font')
-                        //                                            ->label(trans('profile.font'))
-                        //                                            ->required()
-                        //                                            ->default('sans-serif')
-                        //                                            ->options(function () {
-                        //                                                $fonts = [
-                        //                                                    'monospace' => 'monospace', //default
-                        //                                                ];
-                        //
-                        //                                                if (!Storage::disk('public')->exists('fonts')) {
-                        //                                                    Storage::disk('public')->makeDirectory('fonts');
-                        //                                                    $this->fillForm();
-                        //                                                }
-                        //
-                        //                                                foreach (Storage::disk('public')->allFiles('fonts') as $file) {
-                        //                                                    $fileInfo = pathinfo($file);
-                        //
-                        //                                                    if ($fileInfo['extension'] === 'ttf') {
-                        //                                                        $fonts[$fileInfo['filename']] = $fileInfo['filename'];
-                        //                                                    }
-                        //                                                }
-                        //
-                        //                                                return $fonts;
-                        //                                            })
-                        //                                            ->reactive()
-                        //                                            ->default('monospace')
-                        //                                            ->afterStateUpdated(fn ($state, Set $set) => $set('font_preview', $state)),
-                        //                                        TextEntry::make('font_preview')
-                        //                                            ->label(trans('profile.font_preview'))
-                        //                                            ->columnSpan(2)
-                        //                                            ->state(function (Get $get) {
-                        //                                                $fontName = $get('console_font') ?? 'monospace';
-                        //                                                $fontSize = $get('console_font_size') . 'px';
-                        //                                                $style = <<<CSS
-                        //                                                            .preview-text {
-                        //                                                                font-family: $fontName;
-                        //                                                                font-size: $fontSize;
-                        //                                                                margin-top: 10px;
-                        //                                                                display: block;
-                        //                                                            }
-                        //                                                        CSS;
-                        //                                                if ($fontName !== 'monospace') {
-                        //                                                    $fontUrl = asset("storage/fonts/$fontName.ttf");
-                        //                                                    $style = <<<CSS
-                        //                                                                @font-face {
-                        //                                                                    font-family: $fontName;
-                        //                                                                    src: url("$fontUrl");
-                        //                                                                }
-                        //                                                                $style
-                        //                                                            CSS;
-                        //                                                }
-                        //
-                        //                                                return new HtmlString(<<<HTML
-                        //                                                            <style>
-                        //                                                            {$style}
-                        //                                                            </style>
-                        //                                                            <span class="preview-text">The quick blue pelican jumps over the lazy pterodactyl. :)</span>
-                        //                                                        HTML);
-                        //                                            }),
-                        //                                        TextInput::make('console_graph_period')
-                        //                                            ->label(trans('profile.graph_period'))
-                        //                                            ->suffix(trans('profile.seconds'))
-                        //                                            ->hintIcon('tabler-question-mark', trans('profile.graph_period_helper'))
-                        //                                            ->columnSpan(2)
-                        //                                            ->numeric()
-                        //                                            ->default(30)
-                        //                                            ->minValue(10)
-                        //                                            ->maxValue(120)
-                        //                                            ->required(),
-                        //                                        TextInput::make('console_rows')
-                        //                                            ->label(trans('profile.rows'))
-                        //                                            ->minValue(1)
-                        //                                            ->numeric()
-                        //                                            ->required()
-                        //                                            ->columnSpan(2)
-                        //                                            ->default(30),
-                        //                                    ]),
-                        //                            ]),
                     ])->columnSpanFull(),
             ]);
     }
