@@ -29,8 +29,8 @@ class ExportScheduleAction extends Action
 
         $this->action(fn (ScheduleExporterService $service, Schedule $schedule) => response()->streamDownload(function () use ($service, $schedule) {
             echo $service->handle($schedule);
-        }, 'schedule-' . str($schedule->name)->kebab()->lower()->trim() . '.json'), [
+        }, 'schedule-' . str($schedule->name)->kebab()->lower()->trim() . '.json', [
             'Content-Type' => 'application/json',
-        ]);
+        ]));
     }
 }
