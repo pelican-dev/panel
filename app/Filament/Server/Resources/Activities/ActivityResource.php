@@ -79,7 +79,7 @@ class ActivityResource extends Resource
 
                         return $user;
                     })
-                    ->tooltip(fn (ActivityLog $activityLog) => auth()->user()->can('seeIps activityLog') ? $activityLog->ip : '')
+                    ->tooltip(fn (ActivityLog $activityLog) => $activityLog->getIp())
                     ->url(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User && auth()->user()->can('update', $activityLog->actor) ? EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin') : '')
                     ->grow(false),
                 DateTimeColumn::make('timestamp')

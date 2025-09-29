@@ -163,6 +163,11 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         return trans_choice('activity.'.str($this->event)->replace(':', '.'), array_key_exists('count', $properties) ? $properties['count'] : 1, $properties);
     }
 
+    public function getIp(): ?string
+    {
+        return auth()->user()->can('seeIps activityLog') ? $this->ip : null;
+    }
+
     public function htmlable(): string
     {
         $user = $this->actor;
@@ -175,6 +180,8 @@ class ActivityLog extends Model implements HasIcon, HasLabel
 
         $avatarUrl = Filament::getUserAvatarUrl($user);
         $username = str($user->username)->stripTags();
+        $ip = $this->getIp();
+        $ip = $ip ? $ip . ' — ' : '';
 
         return "
             <div style='display: flex; align-items: center;'>
@@ -183,7 +190,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
                 <div>
                     <p>$username — $this->event</p>
                     <p>{$this->getLabel()}</p>
-                    <p>$this->ip — <span title='{$this->timestamp->format('M j, Y g:ia')}'>{$this->timestamp->diffForHumans()}</span></p>
+                    <p>$ip<span title='{$this->timestamp->format('M j, Y g:ia')}'>{$this->timestamp->diffForHumans()}</span></p>
                 </div>
             </div>
         ";

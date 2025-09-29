@@ -16,7 +16,6 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\UserSSHKey;
 use App\Services\Helpers\LanguageService;
-use App\Services\Users\UserUpdateService;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
@@ -52,7 +51,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
-use Laravel\Socialite\Facades\Socialite;
 
 class UserResource extends Resource
 {
@@ -62,8 +60,6 @@ class UserResource extends Resource
     use CanModifyTable;
 
     protected static ?string $model = User::class;
-
-    protected OAuthService $oauthService;
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-users';
 
@@ -226,68 +222,56 @@ class UserResource extends Resource
                                     ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
                                     ->native(false),
                                 FileUpload::make('avatar')
-                                    ->visible(fn () => config('panel.filament.uploadable-avatars'))
+                                    ->visible(fn (FileUpload $fileUpload, User $user) => $fileUpload->getDisk()->exists($fileUpload->getDirectory() . '/' . $user->id . '.png'))
                                     ->avatar()
                                     ->disabled()
                                     ->acceptedFileTypes(['image/png'])
                                     ->directory('avatars')
                                     ->disk('public')
                                     ->getUploadedFileNameForStorageUsing(fn (User $user) => $user->id . '.png')
-                                    ->hintAction(function (FileUpload $fileUpload, User $user) {
-                                        $path = $fileUpload->getDirectory() . '/' . $user->id . '.png';
-
-                                        return Action::make('remove_avatar')
-                                            ->icon('tabler-photo-minus')
-                                            ->iconButton()
-                                            ->hidden(fn () => !$fileUpload->getDisk()->exists($path))
-                                            ->action(fn () => $fileUpload->getDisk()->delete($path));
-                                    }),
-                                //                                Section::make(trans('profile.tabs.oauth')) // TODO: Make work with record user, not logged in user.
-                                //                                    ->collapsible()->collapsed()
-                                //                                    ->columnSpanFull()
-                                //                                    ->schema(function () use ($oauthSchemas) {
-                                //                                        $actions = [];
-                                //
-                                //                                        foreach ($oauthSchemas as $schema) {
-                                //
-                                //                                            $id = $schema->getId();
-                                //                                            $name = $schema->getName();
-                                //
-                                //                                            $unlink = array_key_exists($id, $this->getUser()->oauth ?? []);
-                                //
-                                //                                            $actions[] = Action::make("oauth_$id")
-                                //                                                ->label(trans('profile.' . ($unlink ? 'unlink' : 'link'), ['name' => $name]))
-                                //                                                ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
-                                //                                                ->color(Color::hex($schema->getHexColor()))
-                                //                                                ->action(function (UserUpdateService $updateService) use ($id, $name, $unlink) {
-                                //                                                    if ($unlink) {
-                                //                                                        $oauth = auth()->user()->oauth;
-                                //                                                        unset($oauth[$id]);
-                                //
-                                //                                                        $updateService->handle(auth()->user(), ['oauth' => $oauth]);
-                                //
-                                //                                                        $this->fillForm();
-                                //
-                                //                                                        Notification::make()
-                                //                                                            ->title(trans('profile.unlinked', ['name' => $name]))
-                                //                                                            ->success()
-                                //                                                            ->send();
-                                //                                                    } else {
-                                //                                                        redirect(Socialite::with($id)->redirect()->getTargetUrl());
-                                //                                                    }
-                                //                                                });
-                                //                                        }
-                                //
-                                //                                        return [Actions::make($actions)];
-                                //                                    }),
-                                Section::make(trans('profile.tabs.2fa')) //TODO: Use the record, not the logged in user.
+                                    ->hintAction(fn (FileUpload $fileUpload, User $user, $operation) => Action::make('remove_avatar')
+                                        ->icon('tabler-photo-minus')
+                                        ->iconButton()
+                                        ->disabled(fn () => $operation === 'view')
+                                        ->action(fn () => $fileUpload->getDisk()->delete($fileUpload->getDirectory() . '/' . $user->id . '.png'))),
+                                Section::make(trans('profile.tabs.oauth'))
+                                    ->visible(fn (User $user) => filled($user->oauth))
                                     ->collapsible()->collapsed()
                                     ->columnSpanFull()
-                                    ->schema(collect(Filament::getMultiFactorAuthenticationProviders())
-                                        ->sort(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider) => $multiFactorAuthenticationProvider->isEnabled(Filament::auth()->user()) ? 0 : 1)
-                                        ->map(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider) => Group::make($multiFactorAuthenticationProvider->getManagementSchemaComponents())
-                                            ->statePath($multiFactorAuthenticationProvider->getId()))
-                                        ->all()),
+                                    ->schema(function (OAuthService $oauthService, User $user) {
+                                        $actions = [];
+                                        foreach ($user->oauth as $schema => $_) {
+                                            $schema = $oauthService->get($schema);
+                                            if (!$schema) {
+                                                return;
+                                            }
+
+                                            $id = $schema->getId();
+                                            $name = $schema->getName();
+                                            $actions[] = Action::make("oauth_$id")
+                                                ->label(trans('profile.unlink', ['name' => $name]))
+                                                ->icon('tabler-unlink')
+                                                ->color(Color::hex($schema->getHexColor()))
+                                                ->action(function ($livewire) use ($oauthService, $user, $name, $schema) {
+                                                    $oauthService->unlinkUser($user, $schema);
+                                                    $livewire->form->fill($user->attributesToArray());
+                                                    Notification::make()
+                                                        ->title(trans('profile.unlinked', ['name' => $name]))
+                                                        ->success()
+                                                        ->send();
+                                                });
+                                        }
+
+                                        return [Actions::make($actions)];
+                                    }),
+                                // Section::make(trans('profile.tabs.2fa')) //TODO: Use the record, not the logged in user.
+                                //     ->collapsible()->collapsed()
+                                //     ->columnSpanFull()
+                                //     ->schema(collect(Filament::getMultiFactorAuthenticationProviders())
+                                //         ->sort(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider) => $multiFactorAuthenticationProvider->isEnabled(Filament::auth()->user()) ? 0 : 1)
+                                //         ->map(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider) => Group::make($multiFactorAuthenticationProvider->getManagementSchemaComponents())
+                                //             ->statePath($multiFactorAuthenticationProvider->getId()))
+                                //         ->all()),
                             ]),
                         Tab::make('roles')
                             ->label(trans('admin/user.roles'))
@@ -336,7 +320,8 @@ class UserResource extends Resource
                                                     if ($apiKey->exists()) {
                                                         $apiKey->delete();
 
-                                                        Activity::event('user:api-key.delete') //TODO: Make this follow hidden admin activities, or just hide the username/ip to the end user, but keep the event.
+                                                        Activity::event('user:api-key.delete')
+                                                            ->actor(auth()->user())
                                                             ->subject($user)
                                                             ->subject($apiKey)
                                                             ->property('identifier', $apiKey->identifier)
@@ -373,7 +358,8 @@ class UserResource extends Resource
                                                     if ($sshKey->exists()) {
                                                         $sshKey->delete();
 
-                                                        Activity::event('user:ssh-key.delete') //TODO: Make this follow hidden admin activities, or just hide the username/ip to the end user, but keep the event.
+                                                        Activity::event('user:ssh-key.delete')
+                                                            ->actor(auth()->user())
                                                             ->subject($user)
                                                             ->subject($sshKey)
                                                             ->property('fingerprint', $sshKey->fingerprint)
