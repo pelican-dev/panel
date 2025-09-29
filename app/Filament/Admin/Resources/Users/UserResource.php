@@ -229,6 +229,8 @@ class UserResource extends Resource
                                     ->directory('avatars')
                                     ->disk('public')
                                     ->getUploadedFileNameForStorageUsing(fn (User $user) => $user->id . '.png')
+                                    ->previewable()
+                                    ->deletable(false)
                                     ->hintAction(fn (FileUpload $fileUpload, User $user, $operation) => Action::make('remove_avatar')
                                         ->icon('tabler-photo-minus')
                                         ->iconButton()

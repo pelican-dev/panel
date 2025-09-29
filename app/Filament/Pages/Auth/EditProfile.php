@@ -150,6 +150,8 @@ class EditProfile extends BaseEditProfile
                                     ->directory('avatars')
                                     ->disk('public')
                                     ->getUploadedFileNameForStorageUsing(fn () => $this->getUser()->id . '.png')
+                                    ->previewable()
+                                    ->deletable(false)
                                     ->hintAction(function (FileUpload $fileUpload) {
                                         $path = $fileUpload->getDirectory() . '/' . $this->getUser()->id . '.png';
 
@@ -562,6 +564,11 @@ class EditProfile extends BaseEditProfile
         $data['console_graph_period'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $data['dashboard_layout'] = $this->getUser()->getCustomization(CustomizationKey::DashboardLayout);
         $data['top_navigation'] = (bool) $this->getUser()->getCustomization(CustomizationKey::TopNavigation);
+
+        $avatarPath = 'avatars/' . $this->getUser()->id . '.png';
+        if (Storage::disk('public')->exists($avatarPath)) {
+            $data['avatar'] = $avatarPath;
+        }
 
         return $data;
     }
