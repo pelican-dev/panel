@@ -51,6 +51,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class UserResource extends Resource
 {
@@ -224,18 +225,23 @@ class UserResource extends Resource
                                 FileUpload::make('avatar')
                                     ->visible(fn (FileUpload $fileUpload, User $user) => $fileUpload->getDisk()->exists($fileUpload->getDirectory() . '/' . $user->id . '.png'))
                                     ->avatar()
-                                    ->disabled()
-                                    ->acceptedFileTypes(['image/png'])
                                     ->directory('avatars')
                                     ->disk('public')
-                                    ->getUploadedFileNameForStorageUsing(fn (User $user) => $user->id . '.png')
-                                    ->previewable()
-                                    ->deletable(false)
-                                    ->hintAction(fn (FileUpload $fileUpload, User $user, $operation) => Action::make('remove_avatar')
-                                        ->icon('tabler-photo-minus')
-                                        ->iconButton()
-                                        ->disabled(fn () => $operation === 'view')
-                                        ->action(fn () => $fileUpload->getDisk()->delete($fileUpload->getDirectory() . '/' . $user->id . '.png'))),
+                                    ->formatStateUsing(function (FileUpload $fileUpload, User $user) {
+                                        $path = $fileUpload->getDirectory() . '/' . $user->id . '.png';
+                                        if ($fileUpload->getDisk()->exists($path)) {
+                                            return $path;
+                                        }
+                                    })
+                                    ->deleteUploadedFileUsing(function (FileUpload $fileUpload, $file) {
+                                        if ($file instanceof TemporaryUploadedFile) {
+                                            return $file->delete();
+                                        }
+
+                                        if ($fileUpload->getDisk()->exists($file)) {
+                                            return $fileUpload->getDisk()->delete($file);
+                                        }
+                                    }),
                                 Section::make(trans('profile.tabs.oauth'))
                                     ->visible(fn (User $user) => filled($user->oauth))
                                     ->collapsible()->collapsed()

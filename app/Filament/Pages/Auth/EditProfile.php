@@ -47,6 +47,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Socialite\Facades\Socialite;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 /**
  * @method User getUser()
@@ -150,16 +151,20 @@ class EditProfile extends BaseEditProfile
                                     ->directory('avatars')
                                     ->disk('public')
                                     ->getUploadedFileNameForStorageUsing(fn () => $this->getUser()->id . '.png')
-                                    ->previewable()
-                                    ->deletable(false)
-                                    ->hintAction(function (FileUpload $fileUpload) {
+                                    ->formatStateUsing(function (FileUpload $fileUpload) {
                                         $path = $fileUpload->getDirectory() . '/' . $this->getUser()->id . '.png';
+                                        if ($fileUpload->getDisk()->exists($path)) {
+                                            return $path;
+                                        }
+                                    })
+                                    ->deleteUploadedFileUsing(function (FileUpload $fileUpload, $file) {
+                                        if ($file instanceof TemporaryUploadedFile) {
+                                            return $file->delete();
+                                        }
 
-                                        return Action::make('remove_avatar')
-                                            ->icon('tabler-photo-minus')
-                                            ->iconButton()
-                                            ->hidden(fn () => !$fileUpload->getDisk()->exists($path))
-                                            ->action(fn () => $fileUpload->getDisk()->delete($path));
+                                        if ($fileUpload->getDisk()->exists($file)) {
+                                            return $fileUpload->getDisk()->delete($file);
+                                        }
                                     }),
                             ]),
                         Tab::make('oauth')
@@ -564,11 +569,6 @@ class EditProfile extends BaseEditProfile
         $data['console_graph_period'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $data['dashboard_layout'] = $this->getUser()->getCustomization(CustomizationKey::DashboardLayout);
         $data['top_navigation'] = (bool) $this->getUser()->getCustomization(CustomizationKey::TopNavigation);
-
-        $avatarPath = 'avatars/' . $this->getUser()->id . '.png';
-        if (Storage::disk('public')->exists($avatarPath)) {
-            $data['avatar'] = $avatarPath;
-        }
 
         return $data;
     }

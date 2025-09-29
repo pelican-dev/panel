@@ -12,7 +12,6 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class EditUser extends EditRecord
 {
@@ -42,18 +41,6 @@ class EditUser extends EditRecord
     protected function getFormActions(): array
     {
         return [];
-    }
-
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-        /** @var User $user */
-        $user = $this->getRecord();
-        $avatarPath = 'avatars/' . $user->id . '.png';
-        if (Storage::disk('public')->exists($avatarPath)) {
-            $data['avatar'] = $avatarPath;
-        }
-
-        return $data;
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
