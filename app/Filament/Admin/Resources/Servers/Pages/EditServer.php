@@ -636,7 +636,7 @@ class EditServer extends EditRecord
                                         /** @var Server $server */
                                         $server = $this->getRecord();
 
-                                        $server->ensureServerVariablesExist();
+                                        $server->ensureVariablesExist();
 
                                         return $query->orderByPowerJoins('variable.sort');
                                     })

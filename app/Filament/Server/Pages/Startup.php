@@ -103,7 +103,7 @@ class Startup extends ServerFormPage
                         Repeater::make('server_variables')
                             ->hiddenLabel()
                             ->relationship('serverVariables', function (Builder $query, Server $server) {
-                                $server->ensureServerVariablesExist();
+                                $server->ensureVariablesExist();
 
                                 return $query->where('egg_variables.user_viewable', true)->orderByPowerJoins('variable.sort');
                             })
