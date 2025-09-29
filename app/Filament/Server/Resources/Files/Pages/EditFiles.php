@@ -97,8 +97,7 @@ class EditFiles extends Page
                                     ->body(fn () => $this->path)
                                     ->send();
 
-                                $url = ListFiles::getUrl(['path' => dirname($this->path)]);
-                                $this->redirect($url, FilamentView::hasSpaMode($url));
+                                $this->redirectToList();
                             }),
                         Action::make('save')
                             ->label(trans('server/file.actions.edit.save'))
@@ -178,37 +177,32 @@ class EditFiles extends Page
                                         ->danger()
                                         ->closable()
                                         ->send();
-
-                                    $url = ListFiles::getUrl(['path' => dirname($this->path)]);
-                                    $this->redirect($url, FilamentView::hasSpaMode($url));
                                 } catch (FileNotFoundException) {
                                     AlertBanner::make('file_not_found')
                                         ->title(trans('server/file.alerts.file_not_found.title', ['name' => basename($this->path)]))
                                         ->danger()
                                         ->closable()
                                         ->send();
-
-                                    $url = ListFiles::getUrl(['path' => dirname($this->path)]);
-                                    $this->redirect($url, FilamentView::hasSpaMode($url));
                                 } catch (FileNotEditableException) {
                                     AlertBanner::make('file_is_directory')
                                         ->title(trans('server/file.alerts.file_not_found.title', ['name' => basename($this->path)]))
                                         ->danger()
                                         ->closable()
                                         ->send();
-
-                                    $url = ListFiles::getUrl(['path' => dirname($this->path)]);
-                                    $this->redirect($url, FilamentView::hasSpaMode($url));
                                 } catch (ConnectionException) {
                                     // Alert banner for this one will be handled by ListFiles
-
-                                    $url = ListFiles::getUrl(['path' => dirname($this->path)]);
-                                    $this->redirect($url, FilamentView::hasSpaMode($url));
                                 }
+                                $this->redirectToList();
                             }),
                     ])
                     ->columnSpanFull(),
             ]);
+    }
+
+    private function redirectToList(): void
+    {
+        $url = ListFiles::getUrl(['path' => dirname($this->path)]);
+        $this->redirect($url, FilamentView::hasSpaMode($url));
     }
 
     public function mount(string $path): void
