@@ -325,6 +325,18 @@ class Server extends Model implements Validatable
         return $this->hasMany(ServerVariable::class);
     }
 
+    public function ensureVariablesExist(): void
+    {
+        foreach ($this->eggVariables as $variable) {
+            ServerVariable::firstOrCreate([
+                'server_id' => $this->id,
+                'variable_id' => $variable->id,
+            ], [
+                'variable_value' => $variable->default_value,
+            ]);
+        }
+    }
+
     /**
      * Gets information for the node associated with this server.
      */

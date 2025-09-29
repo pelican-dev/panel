@@ -14,7 +14,6 @@ use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;
-use App\Models\ServerVariable;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Eggs\EggChangerService;
@@ -637,14 +636,7 @@ class EditServer extends EditRecord
                                         /** @var Server $server */
                                         $server = $this->getRecord();
 
-                                        foreach ($server->variables as $variable) {
-                                            ServerVariable::query()->firstOrCreate([
-                                                'server_id' => $server->id,
-                                                'variable_id' => $variable->id,
-                                            ], [
-                                                'variable_value' => $variable->server_value ?? '',
-                                            ]);
-                                        }
+                                        $server->ensureVariablesExist();
 
                                         return $query->orderByPowerJoins('variable.sort');
                                     })
