@@ -450,15 +450,17 @@ class ListFiles extends ListRecords
                             Activity::event('server:file.write')
                                 ->property('file', $path)
                                 ->log();
+
+                            $this->refreshPage();
                         } catch (FileExistsException) {
                             AlertBanner::make('file_already_exists')
                                 ->title(trans('server/file.alerts.file_already_exists.title', ['name' => $path]))
                                 ->danger()
                                 ->closable()
                                 ->send();
-                        }
 
-                        $this->refreshPage();
+                            $this->refreshPage(true);
+                        }
                     })
                     ->schema([
                         TextInput::make('name')
@@ -479,16 +481,19 @@ class ListFiles extends ListRecords
                             Activity::event('server:file.create-directory')
                                 ->property(['directory' => $this->path, 'name' => $data['name']])
                                 ->log();
+
+                            $this->refreshPage();
                         } catch (FileExistsException) {
                             $path = join_paths($this->path, $data['name']);
+
                             AlertBanner::make('folder_already_exists')
                                 ->title(trans('server/file.alerts.file_already_exists.title', ['name' => $path]))
                                 ->danger()
                                 ->closable()
                                 ->send();
-                        }
 
-                        $this->refreshPage();
+                            $this->refreshPage(true);
+                        }
                     })
                     ->schema([
                         TextInput::make('name')
@@ -571,9 +576,9 @@ class ListFiles extends ListRecords
             ]);
     }
 
-    private function refreshPage(): void
+    private function refreshPage(bool $oneBack = false): void
     {
-        $url = self::getUrl(['path' => dirname($this->path)]);
+        $url = self::getUrl(['path' => $oneBack ? dirname($this->path) : $this->path]);
         $this->redirect($url, FilamentView::hasSpaMode($url));
     }
 
