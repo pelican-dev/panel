@@ -325,6 +325,18 @@ class Server extends Model implements Validatable
         return $this->hasMany(ServerVariable::class);
     }
 
+    public function ensureVariablesExist(): void
+    {
+        foreach ($this->eggVariables as $variable) {
+            ServerVariable::firstOrCreate([
+                'server_id' => $this->id,
+                'variable_id' => $variable->id,
+            ], [
+                'variable_value' => $variable->default_value,
+            ]);
+        }
+    }
+
     /**
      * Gets information for the node associated with this server.
      */
@@ -381,7 +393,7 @@ class Server extends Model implements Validatable
     public function resolveRouteBinding($value, $field = null): ?self
     {
         return match ($field) {
-            'uuid' => $this->where('uuid_short', $value)->orWhere('uuid', $value)->firstOrFail(),
+            'uuid', 'uuid_short' => $this->where('uuid_short', $value)->orWhere('uuid', $value)->firstOrFail(),
             default => $this->where('id', $value)->firstOrFail(),
         };
     }

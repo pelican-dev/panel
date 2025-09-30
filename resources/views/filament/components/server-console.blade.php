@@ -76,17 +76,19 @@
             theme: theme
         };
 
-        const { Terminal, FitAddon, WebLinksAddon, SearchAddon, SearchBarAddon } = window.Xterm;
+        const { Terminal, FitAddon, WebLinksAddon, SearchAddon, SearchBarAddon, CanvasAddon } = window.Xterm;
 
         const terminal = new Terminal(options);
         const fitAddon = new FitAddon();
         const webLinksAddon = new WebLinksAddon();
         const searchAddon = new SearchAddon();
         const searchAddonBar = new SearchBarAddon({ searchAddon });
+        const canvasAddon = new CanvasAddon();
         terminal.loadAddon(fitAddon);
         terminal.loadAddon(webLinksAddon);
         terminal.loadAddon(searchAddon);
         terminal.loadAddon(searchAddonBar);
+        terminal.loadAddon(canvasAddon);
 
         terminal.open(document.getElementById('terminal'));
 
@@ -102,7 +104,7 @@
 
         terminal.attachCustomKeyEventHandler((event) => {
             if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
-                navigator.clipboard.writeText(terminal.getSelection())
+                navigator.clipboard.writeText(terminal.getSelection());
                 return false;
             } else if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
                 event.preventDefault();
