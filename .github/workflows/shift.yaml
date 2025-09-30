@@ -8,10 +8,12 @@ on:
 jobs:
   shift:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Shift
         run: |
-          curl -sf -X POST https://laravelshift.com/api/run \
+          curl -X POST -s -retry 5 -m 60 --fail-with-body \
+            https://laravelshift.com/api/run \
             -H "Accept: application/json" \
             -d "api_token=${{ secrets.SHIFT_TOKEN }}" \
             -d "code=${{ secrets.SHIFT_CODE }}" \
