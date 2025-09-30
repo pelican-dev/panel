@@ -1,0 +1,18 @@
+name: Shift
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 5"
+
+jobs:
+  shift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Shift
+        run: |
+          curl -sf -X POST https://laravelshift.com/api/run \
+            -H "Accept: application/json" \
+            -d "api_token=${{ secrets.SHIFT_TOKEN }}" \
+            -d "code=${{ secrets.SHIFT_CODE }}" \
+            -d "scs=github:${{ github.repository }}:${{ github.ref_name }}"
