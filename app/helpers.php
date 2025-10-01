@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 if (!function_exists('is_digit')) {
     /**
      * Deal with normal (and irritating) PHP behavior to determine if
@@ -108,7 +110,7 @@ if (!function_exists('format_number')) {
     function format_number(int|float $number, ?int $precision = null, ?int $maxPrecision = null): false|string
     {
         try {
-            return Number::format($number, $precision, $maxPrecision, auth()->user()->language ?? 'en');
+            return Number::format($number, $precision, $maxPrecision, user()->language ?? 'en');
         } catch (Throwable) {
             // User language is invalid, so default to english
             return Number::format($number, $precision, $maxPrecision, 'en');
@@ -120,5 +122,12 @@ if (!function_exists('encode_path')) {
     function encode_path(string $path): string
     {
         return implode('/', array_map('rawurlencode', explode('/', $path)));
+    }
+}
+
+if (!function_exists('user')) {
+    function user(): ?User
+    {
+        return auth(config('auth.defaults.guard', 'web'))->user();
     }
 }

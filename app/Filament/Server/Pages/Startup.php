@@ -68,7 +68,7 @@ class Startup extends ServerFormPage
                     ->label(trans('server/startup.docker_image'))
                     ->live()
                     ->visible(fn (Server $server) => in_array($server->image, $server->egg->docker_images))
-                    ->disabled(fn (Server $server) => !auth()->user()->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
+                    ->disabled(fn (Server $server) => !user()->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
                     ->afterStateUpdated(function ($state, Server $server) {
                         $original = $server->image;
                         $server->forceFill(['image' => $state])->saveOrFail();
@@ -108,7 +108,7 @@ class Startup extends ServerFormPage
                                 return $query->where('egg_variables.user_viewable', true)->orderByPowerJoins('variable.sort');
                             })
                             ->grid()
-                            ->disabled(fn (Server $server) => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
+                            ->disabled(fn (Server $server) => !user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
                             ->reorderable(false)->addable(false)->deletable(false)
                             ->schema([
                                 StartupVariable::make('variable_value')
@@ -124,12 +124,12 @@ class Startup extends ServerFormPage
 
     protected function authorizeAccess(): void
     {
-        abort_unless(auth()->user()->can(Permission::ACTION_STARTUP_READ, Filament::getTenant()), 403);
+        abort_unless(user()->can(Permission::ACTION_STARTUP_READ, Filament::getTenant()), 403);
     }
 
     public static function canAccess(): bool
     {
-        return parent::canAccess() && auth()->user()->can(Permission::ACTION_STARTUP_READ, Filament::getTenant());
+        return parent::canAccess() && user()->can(Permission::ACTION_STARTUP_READ, Filament::getTenant());
     }
 
     public function update(?string $state, ServerVariable $serverVariable): null

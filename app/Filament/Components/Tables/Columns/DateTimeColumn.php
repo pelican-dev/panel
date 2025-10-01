@@ -24,6 +24,6 @@ class DateTimeColumn extends TextColumn
 
     public function getTimezone(): string
     {
-        return auth()->user()->timezone ?? config('app.timezone', 'UTC');
+        return user()->timezone ?? config('app.timezone', 'UTC');
     }
 }
