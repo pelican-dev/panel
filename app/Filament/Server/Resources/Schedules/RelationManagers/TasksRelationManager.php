@@ -37,7 +37,17 @@ class TasksRelationManager extends RelationManager
             Task::ACTION_DELETE_FILES => $full ? trans('server/schedule.tasks.actions.delete.title') : trans('server/schedule.tasks.actions.delete.files_to_delete'),
         ];
     }
-
+    private function removeOffsetFirst(): void
+    {
+        /** @var Schedule $schedule */
+        $schedule = $this->getOwnerRecord();
+        
+        $firstTask = $schedule->tasks()->orderBy('sequence_id')->first();
+        
+        if ($firstTask) {
+            $firstTask->update(['time_offset' => 0]);
+        }
+    }
     /**
      * @return array<Field>
      *
@@ -72,7 +82,19 @@ class TasksRelationManager extends RelationManager
                 ->default('restart'),
             TextInput::make('time_offset')
                 ->label(trans('server/schedule.tasks.time_offset'))
-                ->hidden(fn (Get $get) => config('queue.default') === 'sync' || $get('sequence_id') === 1)
+                ->hidden(function (Get $get) use ($schedule) {
+                    if (config('queue.default') === 'sync') {
+                        return true;
+                    }
+                    $firstTaskId = $schedule->tasks()->orderBy('sequence_id')->first()?->id;
+                    $currentTaskId = $get('id');
+                    
+                    if (!$currentTaskId) {
+                        return ($schedule->tasks()->orderByDesc('sequence_id')->first()->sequence_id ?? 0) + 1 === 1;
+                    }
+                    
+                    return $currentTaskId === $firstTaskId;
+                })
                 ->default(0)
                 ->numeric()
                 ->minValue(0)
@@ -94,6 +116,7 @@ class TasksRelationManager extends RelationManager
         return $table
             ->reorderable('sequence_id')
             ->defaultSort('sequence_id')
+            ->reorderRecordsTriggerAction(fn() => $this->removeOffsetFirst())
             ->columns([
                 TextColumn::make('action')
                     ->label(trans('server/schedule.tasks.actions.title'))
@@ -136,6 +159,7 @@ class TasksRelationManager extends RelationManager
                         /** @var Schedule $schedule */
                         $schedule = $this->getOwnerRecord();
                         $task->delete();
+                        $this->removeOffsetFirst();
 
                         Activity::event('server:task.delete')
                             ->subject($schedule)
@@ -166,6 +190,6 @@ class TasksRelationManager extends RelationManager
                             ->property(['name' => $schedule->name, 'action' => $task->action, 'payload' => $task->payload])
                             ->log();
                     }),
-            ]);
+                ]);
     }
 }
