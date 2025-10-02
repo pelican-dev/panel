@@ -69,7 +69,7 @@ class ListServers extends ListRecords
                     ->searchable(),
                 SelectColumn::make('allocation_id')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->hidden(fn () => !user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
+                    ->hidden(fn () => !user()?->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
                     ->disabled(fn (Server $server) => $server->allocations->count() <= 1)
                     ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
                     ->selectablePlaceholder(fn (Server $server) => $server->allocations->count() <= 1)

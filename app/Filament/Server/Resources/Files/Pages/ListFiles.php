@@ -119,7 +119,7 @@ class ListFiles extends ListRecords
                     return self::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]);
                 }
 
-                if (!user()->can(Permission::ACTION_FILE_READ_CONTENT, $server)) {
+                if (!user()?->can(Permission::ACTION_FILE_READ_CONTENT, $server)) {
                     return null;
                 }
 

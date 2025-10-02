@@ -141,7 +141,7 @@ class CreateServer extends CreateRecord
                                 ->preload()
                                 ->prefixIcon('tabler-user')
                                 ->selectablePlaceholder(false)
-                                ->default(user()->id)
+                                ->default(user()?->id)
                                 ->label(trans('admin/server.owner'))
                                 ->columnSpan([
                                     'default' => 1,

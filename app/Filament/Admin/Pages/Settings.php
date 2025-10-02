@@ -106,7 +106,7 @@ class Settings extends Page implements HasSchemas
             Tabs::make('Tabs')
                 ->columns()
                 ->persistTabInQueryString()
-                ->disabled(fn () => !user()->can('update settings'))
+                ->disabled(fn () => !user()?->can('update settings'))
                 ->tabs([
                     Tab::make('general')
                         ->label(trans('admin/setting.navigation.general'))

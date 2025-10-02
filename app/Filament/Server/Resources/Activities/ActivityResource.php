@@ -73,7 +73,7 @@ class ActivityResource extends Resource
                         $user = $activityLog->actor->username;
 
                         // Only show the email if the actor is the server owner/ a subuser or if the viewing user is an admin
-                        if (user()->isAdmin() || $server->owner_id === $activityLog->actor->id || $server->subusers->where('user_id', $activityLog->actor->id)->first()) {
+                        if (user()?->isAdmin() || $server->owner_id === $activityLog->actor->id || $server->subusers->where('user_id', $activityLog->actor->id)->first()) {
                             $user .= " ({$activityLog->actor->email})";
                         }
 
@@ -106,11 +106,11 @@ class ActivityResource extends Resource
                                 $user = $activityLog->actor->username;
 
                                 // Only show the email if the actor is the server owner/ a subuser or if the viewing user is an admin
-                                if (user()->isAdmin() || $server->owner_id === $activityLog->actor->id || $server->subusers->where('user_id', $activityLog->actor->id)->first()) {
+                                if (user()?->isAdmin() || $server->owner_id === $activityLog->actor->id || $server->subusers->where('user_id', $activityLog->actor->id)->first()) {
                                     $user .= " ({$activityLog->actor->email})";
                                 }
 
-                                if (user()->can('seeIps activityLog')) {
+                                if (user()?->can('seeIps activityLog')) {
                                     $user .= " - $activityLog->ip";
                                 }
 

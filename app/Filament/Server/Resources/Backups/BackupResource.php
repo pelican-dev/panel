@@ -268,7 +268,7 @@ class BackupResource extends Resource
                     ->action(function (InitiateBackupService $initiateBackupService, $data) use ($server) {
                         $action = $initiateBackupService->setIgnoredFiles(explode(PHP_EOL, $data['ignored'] ?? ''));
 
-                        if (user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {
+                        if (user()?->can(Permission::ACTION_BACKUP_DELETE, $server)) {
                             $action->setIsLocked((bool) $data['is_locked']);
                         }
 

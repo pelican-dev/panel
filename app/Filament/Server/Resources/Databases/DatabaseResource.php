@@ -88,7 +88,7 @@ class DatabaseResource extends Resource
                 TextInput::make('password')
                     ->label(trans('server/database.password'))
                     ->password()->revealable()
-                    ->hidden(fn () => !user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
+                    ->hidden(fn () => !user()?->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
                     ->hintAction(
                         RotateDatabasePasswordAction::make()
                             ->authorize(fn () => user()?->can(Permission::ACTION_DATABASE_UPDATE, $server))
@@ -103,7 +103,7 @@ class DatabaseResource extends Resource
                 TextInput::make('jdbc')
                     ->label(trans('server/database.jdbc'))
                     ->password()->revealable()
-                    ->hidden(!user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
+                    ->hidden(!user()?->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
                     ->copyable()
                     ->columnSpanFull()
                     ->formatStateUsing(fn (Database $database) => $database->jdbc),

@@ -58,7 +58,7 @@ class AllocationResource extends Resource
                 TextInputColumn::make('notes')
                     ->label(trans('server/network.notes'))
                     ->visibleFrom('sm')
-                    ->disabled(fn () => !user()->can(Permission::ACTION_ALLOCATION_UPDATE, $server))
+                    ->disabled(fn () => !user()?->can(Permission::ACTION_ALLOCATION_UPDATE, $server))
                     ->placeholder(trans('server/network.no_notes')),
                 IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
