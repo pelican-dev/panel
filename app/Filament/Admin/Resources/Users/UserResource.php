@@ -44,7 +44,6 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\IconColumn;
@@ -153,15 +152,15 @@ class UserResource extends Resource
                             ->icon('tabler-user-cog')
                             ->columns([
                                 'default' => 1,
-                                'md' => 4,
-                                'lg' => 4,
+                                'md' => 3,
+                                'lg' => 3,
                             ])
                             ->schema([
                                 TextInput::make('username')
                                     ->label(trans('admin/user.username'))
                                     ->columnSpan([
                                         'default' => 1,
-                                        'md' => 2,
+                                        'md' => 1,
                                         'lg' => 1,
                                     ])
                                     ->required()
@@ -171,7 +170,7 @@ class UserResource extends Resource
                                     ->label(trans('admin/user.email'))
                                     ->columnSpan([
                                         'default' => 1,
-                                        'md' => 2,
+                                        'md' => 1,
                                         'lg' => 1,
                                     ])
                                     ->email()
@@ -205,24 +204,44 @@ class UserResource extends Resource
                                     ->label(trans('admin/user.password'))
                                     ->columnSpan([
                                         'default' => 1,
-                                        'md' => 2,
+                                        'md' => 1,
                                         'lg' => 1,
                                     ])
                                     ->hintIcon(fn ($operation) => $operation === 'create' ? 'tabler-question-mark' : null, fn ($operation) => $operation === 'create' ? trans('admin/user.password_help') : null)
-                                    ->password(),
+                                    ->password()
+                                    ->hintAction(
+                                        Action::make('password_reset')
+                                            ->label(trans('admin/user.password_reset'))
+                                            ->icon('tabler-send')
+                                            ->action(function (User $user) {
+                                                try {
+                                                    //TODO Logic to send password reset email.
+                                                    Notification::make()
+                                                        ->title(trans('admin/user.password_reset_sent'))
+                                                        ->success()
+                                                        ->send();
+                                                } catch (Exception $exception) {
+                                                    Notification::make()
+                                                        ->title(trans('admin/user.password_reset_failed'))
+                                                        ->body($exception->getMessage())
+                                                        ->danger()
+                                                        ->send();
+                                                }
+                                            })
+                                    ),
                                 TextInput::make('external_id')
                                     ->label(trans('admin/user.external_id'))
                                     ->columnSpan([
                                         'default' => 1,
-                                        'md' => 2,
+                                        'md' => 1,
                                         'lg' => 1,
                                     ]),
                                 Select::make('timezone')
                                     ->label(trans('profile.timezone'))
                                     ->columnSpan([
                                         'default' => 1,
-                                        'md' => 2,
-                                        'lg' => 2,
+                                        'md' => 1,
+                                        'lg' => 1,
                                     ])
                                     ->required()
                                     ->prefixIcon('tabler-clock-pin')
@@ -235,8 +254,8 @@ class UserResource extends Resource
                                     ->label(trans('profile.language'))
                                     ->columnSpan([
                                         'default' => 1,
-                                        'md' => 2,
-                                        'lg' => 2,
+                                        'md' => 1,
+                                        'lg' => 1,
                                     ])
                                     ->required()
                                     ->prefixIcon('tabler-flag')

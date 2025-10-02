@@ -16,4 +16,7 @@ return [
     'no_roles' => 'No Roles',
     'servers' => 'Servers',
     'subusers' => 'Subusers',
+    'password_reset' => 'Reset Password',
+    'password_reset_sent' => 'Password Reset E-Mail Sent',
+    'password_reset_failed' => 'Failed to Send Password Reset E-Mail',
 ];
