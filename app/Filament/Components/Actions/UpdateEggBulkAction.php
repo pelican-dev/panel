@@ -73,7 +73,7 @@ class UpdateEggBulkAction extends BulkAction
                 ->send();
         });
 
-        $this->authorize(fn () => auth()->user()->can('import egg'));
+        $this->authorize(fn () => user()?->can('import egg'));
 
         $this->deselectRecordsAfterCompletion();
     }

@@ -29,7 +29,7 @@ class ServerNetworkChart extends ChartWidget
     {
         $previous = null;
 
-        $period = (int) auth()->user()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
+        $period = (int) user()?->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $net = collect(cache()->get("servers.{$this->server->id}.network"))
             ->slice(-$period)
             ->map(function ($current, $timestamp) use (&$previous) {
@@ -39,7 +39,7 @@ class ServerNetworkChart extends ChartWidget
                     $net = [
                         'rx' => max(0, $current->rx_bytes - $previous->rx_bytes),
                         'tx' => max(0, $current->tx_bytes - $previous->tx_bytes),
-                        'timestamp' => Carbon::createFromTimestamp($timestamp, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
+                        'timestamp' => Carbon::createFromTimestamp($timestamp, user()->timezone ?? 'UTC')->format('H:i:s'),
                     ];
                 }
 

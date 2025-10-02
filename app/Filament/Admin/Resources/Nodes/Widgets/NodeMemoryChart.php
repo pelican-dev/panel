@@ -34,7 +34,7 @@ class NodeMemoryChart extends ChartWidget
             'memory' => round(config('panel.use_binary_prefix')
                 ? $data['memory_used'] / 1024 / 1024 / 1024
                 : $data['memory_used'] / 1000 / 1000 / 1000, 2),
-            'timestamp' => now(auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
+            'timestamp' => now(user()->timezone ?? 'UTC')->format('H:i:s'),
         ];
 
         $this->memoryHistory = array_slice($this->memoryHistory, -60);
@@ -52,7 +52,7 @@ class NodeMemoryChart extends ChartWidget
                 ],
             ],
             'labels' => array_column($this->memoryHistory, 'timestamp'),
-            'locale' => auth()->user()->language ?? 'en',
+            'locale' => user()->language ?? 'en',
         ];
     }
 

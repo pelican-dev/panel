@@ -22,7 +22,7 @@ class SubuserUpdateService
     {
         $cleanedPermissions = collect($permissions)
             ->unique()
-            ->filter(fn ($permission) => $permission === Permission::ACTION_WEBSOCKET_CONNECT || auth()->user()->can($permission, $server))
+            ->filter(fn ($permission) => $permission === Permission::ACTION_WEBSOCKET_CONNECT || user()?->can($permission, $server))
             ->sort()
             ->values()
             ->all();

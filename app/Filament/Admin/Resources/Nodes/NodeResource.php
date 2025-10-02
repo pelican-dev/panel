@@ -44,7 +44,7 @@ class NodeResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return auth()->user()->getCustomization(CustomizationKey::TopNavigation) ? false : trans('admin/dashboard.server');
+        return user()?->getCustomization(CustomizationKey::TopNavigation) ? false : trans('admin/dashboard.server');
     }
 
     public static function getNavigationBadge(): ?string
@@ -75,6 +75,6 @@ class NodeResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        return $query->whereIn('id', auth()->user()->accessibleNodes()->pluck('id'));
+        return $query->whereIn('id', user()?->accessibleNodes()->pluck('id'));
     }
 }

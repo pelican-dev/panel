@@ -32,7 +32,7 @@ class NodeCpuChart extends ChartWidget
         $this->cpuHistory = session("{$sessionKey}.cpu_history", []);
         $this->cpuHistory[] = [
             'cpu' => round($data['cpu_percent'] * $this->threads, 2),
-            'timestamp' => now(auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
+            'timestamp' => now(user()->timezone ?? 'UTC')->format('H:i:s'),
         ];
 
         $this->cpuHistory = array_slice($this->cpuHistory, -60);
@@ -50,7 +50,7 @@ class NodeCpuChart extends ChartWidget
                 ],
             ],
             'labels' => array_column($this->cpuHistory, 'timestamp'),
-            'locale' => auth()->user()->language ?? 'en',
+            'locale' => user()->language ?? 'en',
         ];
     }
 

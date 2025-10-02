@@ -93,7 +93,7 @@ class ApiKeyResource extends Resource
                     ->sortable(),
                 TextColumn::make('user.username')
                     ->label(trans('admin/apikey.table.created_by'))
-                    ->url(fn (ApiKey $apiKey) => auth()->user()->can('update', $apiKey->user) ? EditUser::getUrl(['record' => $apiKey->user]) : null),
+                    ->url(fn (ApiKey $apiKey) => user()?->can('update', $apiKey->user) ? EditUser::getUrl(['record' => $apiKey->user]) : null),
             ])
             ->recordActions([
                 DeleteAction::make(),

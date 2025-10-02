@@ -20,7 +20,7 @@ class AppPanelProvider extends PanelProvider
                     ->label(trans('profile.admin'))
                     ->url(fn () => Filament::getPanel('admin')->getUrl())
                     ->icon('tabler-arrow-forward')
-                    ->visible(fn () => auth()->user()->canAccessPanel(Filament::getPanel('admin'))),
+                    ->visible(fn () => user()?->canAccessPanel(Filament::getPanel('admin'))),
             ])
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources');
     }

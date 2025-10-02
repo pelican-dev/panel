@@ -32,22 +32,22 @@ class FileResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->can(Permission::ACTION_FILE_READ, Filament::getTenant());
+        return user()?->can(Permission::ACTION_FILE_READ, Filament::getTenant());
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()->can(Permission::ACTION_FILE_CREATE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_FILE_CREATE, Filament::getTenant());
     }
 
     public static function canEdit(Model $record): bool
     {
-        return auth()->user()->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant());
     }
 
     public static function canDelete(Model $record): bool
     {
-        return auth()->user()->can(Permission::ACTION_FILE_DELETE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_FILE_DELETE, Filament::getTenant());
     }
 
     /** @return array<string, PageRegistration> */

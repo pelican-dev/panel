@@ -61,7 +61,7 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return auth()->user()->getCustomization(CustomizationKey::TopNavigation) ? false : trans('admin/dashboard.user');
+        return user()?->getCustomization(CustomizationKey::TopNavigation) ? false : trans('admin/dashboard.user');
     }
 
     public static function getNavigationBadge(): ?string
@@ -110,7 +110,7 @@ class UserResource extends Resource
                     ->hidden(fn ($record) => static::canEdit($record)),
                 EditAction::make(),
             ])
-            ->checkIfRecordIsSelectableUsing(fn (User $user) => auth()->user()->id !== $user->id && !$user->servers_count)
+            ->checkIfRecordIsSelectableUsing(fn (User $user) => user()?->id !== $user->id && !$user->servers_count)
             ->groupedBulkActions([
                 DeleteBulkAction::make(),
             ]);

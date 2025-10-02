@@ -73,14 +73,14 @@ class ActivityResource extends Resource
                         $user = $activityLog->actor->username;
 
                         // Only show the email if the actor is the server owner/ a subuser or if the viewing user is an admin
-                        if (auth()->user()->isAdmin() || $server->owner_id === $activityLog->actor->id || $server->subusers->where('user_id', $activityLog->actor->id)->first()) {
+                        if (user()?->isAdmin() || $server->owner_id === $activityLog->actor->id || $server->subusers->where('user_id', $activityLog->actor->id)->first()) {
                             $user .= " ({$activityLog->actor->email})";
                         }
 
                         return $user;
                     })
-                    ->tooltip(fn (ActivityLog $activityLog) => auth()->user()->can('seeIps activityLog') ? $activityLog->ip : '')
-                    ->url(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User && auth()->user()->can('update', $activityLog->actor) ? EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin') : '')
+                    ->tooltip(fn (ActivityLog $activityLog) => user()?->can('seeIps activityLog') ? $activityLog->ip : '')
+                    ->url(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User && user()?->can('update', $activityLog->actor) ? EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin') : '')
                     ->grow(false),
                 DateTimeColumn::make('timestamp')
                     ->label(trans('server/activity.timestamp'))
@@ -106,11 +106,11 @@ class ActivityResource extends Resource
                                 $user = $activityLog->actor->username;
 
                                 // Only show the email if the actor is the server owner/ a subuser or if the viewing user is an admin
-                                if (auth()->user()->isAdmin() || $server->owner_id === $activityLog->actor->id || $server->subusers->where('user_id', $activityLog->actor->id)->first()) {
+                                if (user()?->isAdmin() || $server->owner_id === $activityLog->actor->id || $server->subusers->where('user_id', $activityLog->actor->id)->first()) {
                                     $user .= " ({$activityLog->actor->email})";
                                 }
 
-                                if (auth()->user()->can('seeIps activityLog')) {
+                                if (user()?->can('seeIps activityLog')) {
                                     $user .= " - $activityLog->ip";
                                 }
 
@@ -120,7 +120,7 @@ class ActivityResource extends Resource
                                 Action::make('edit')
                                     ->label(trans('filament-actions::edit.single.label'))
                                     ->icon('tabler-edit')
-                                    ->visible(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User && auth()->user()->can('update', $activityLog->actor))
+                                    ->visible(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User && user()?->can('update', $activityLog->actor))
                                     ->url(fn (ActivityLog $activityLog) => EditUser::getUrl(['record' => $activityLog->actor], panel: 'admin'))
                             ),
                         DateTimePicker::make('timestamp')
@@ -166,7 +166,7 @@ class ActivityResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->can(Permission::ACTION_ACTIVITY_READ, Filament::getTenant());
+        return user()?->can(Permission::ACTION_ACTIVITY_READ, Filament::getTenant());
     }
 
     /** @return array<string, PageRegistration> */

@@ -32,9 +32,9 @@ class PIDLimitSchema implements FeatureSchemaInterface
         return Action::make($this->getId())
             ->requiresConfirmation()
             ->icon('tabler-alert-triangle')
-            ->modalHeading(fn () => auth()->user()->isAdmin() ? 'Memory or process limit reached...' : 'Possible resource limit reached...')
+            ->modalHeading(fn () => user()?->isAdmin() ? 'Memory or process limit reached...' : 'Possible resource limit reached...')
             ->modalDescription(new HtmlString(Blade::render(
-                auth()->user()->isAdmin() ? <<<'HTML'
+                user()?->isAdmin() ? <<<'HTML'
                     <p>
                         This server has reached the maximum process or memory limit.
                     </p>

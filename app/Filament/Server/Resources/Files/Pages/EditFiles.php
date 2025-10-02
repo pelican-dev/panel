@@ -81,7 +81,7 @@ class EditFiles extends Page
                     ->footerActions([
                         Action::make('save_and_close')
                             ->label(trans('server/file.actions.edit.save_close'))
-                            ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                            ->authorize(fn () => user()?->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+shift+s')
                             ->action(function () {
@@ -101,7 +101,7 @@ class EditFiles extends Page
                             }),
                         Action::make('save')
                             ->label(trans('server/file.actions.edit.save'))
-                            ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                            ->authorize(fn () => user()?->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
                             ->action(function () {
@@ -227,7 +227,7 @@ class EditFiles extends Page
 
     protected function authorizeAccess(): void
     {
-        abort_unless(auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()), 403);
+        abort_unless(user()?->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()), 403);
     }
 
     /**

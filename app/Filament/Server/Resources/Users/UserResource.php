@@ -65,22 +65,22 @@ class UserResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->can(Permission::ACTION_USER_READ, Filament::getTenant());
+        return user()?->can(Permission::ACTION_USER_READ, Filament::getTenant());
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()->can(Permission::ACTION_USER_CREATE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_USER_CREATE, Filament::getTenant());
     }
 
     public static function canEdit(Model $record): bool
     {
-        return auth()->user()->can(Permission::ACTION_USER_UPDATE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_USER_UPDATE, Filament::getTenant());
     }
 
     public static function canDelete(Model $record): bool
     {
-        return auth()->user()->can(Permission::ACTION_USER_DELETE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_USER_DELETE, Filament::getTenant());
     }
 
     public static function defaultTable(Table $table): Table
@@ -139,7 +139,7 @@ class UserResource extends Resource
             ->recordActions([
                 DeleteAction::make()
                     ->label(trans('server/user.delete'))
-                    ->hidden(fn (User $user) => auth()->user()->id === $user->id)
+                    ->hidden(fn (User $user) => user()?->id === $user->id)
                     ->action(function (User $user, SubuserDeletionService $subuserDeletionService) use ($server) {
                         $subuser = $server->subusers->where('user_id', $user->id)->first();
                         $subuserDeletionService->handle($subuser, $server);
@@ -151,8 +151,8 @@ class UserResource extends Resource
                     }),
                 EditAction::make()
                     ->label(trans('server/user.edit'))
-                    ->hidden(fn (User $user) => auth()->user()->id === $user->id)
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_UPDATE, $server))
+                    ->hidden(fn (User $user) => user()?->id === $user->id)
+                    ->authorize(fn () => user()?->can(Permission::ACTION_USER_UPDATE, $server))
                     ->modalHeading(fn (User $user) => trans('server/user.editing', ['user' => $user->email]))
                     ->action(function (array $data, SubuserUpdateService $subuserUpdateService, User $user) use ($server) {
                         $subuser = $server->subusers->where('user_id', $user->id)->first();
@@ -237,7 +237,7 @@ class UserResource extends Resource
                     ->icon('tabler-user-plus')
                     ->tooltip(trans('server/user.invite_user'))
                     ->createAnother(false)
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_USER_CREATE, $server))
+                    ->authorize(fn () => user()?->can(Permission::ACTION_USER_CREATE, $server))
                     ->schema([
                         Grid::make()
                             ->columnSpanFull()

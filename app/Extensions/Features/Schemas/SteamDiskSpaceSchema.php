@@ -29,7 +29,7 @@ class SteamDiskSpaceSchema implements FeatureSchemaInterface
             ->requiresConfirmation()
             ->modalHeading('Out of available disk space...')
             ->modalDescription(new HtmlString(Blade::render(
-                auth()->user()->isAdmin() ? <<<'HTML'
+                user()?->isAdmin() ? <<<'HTML'
                     <p>
                         This server has run out of available disk space and cannot complete the install or update
                         process.

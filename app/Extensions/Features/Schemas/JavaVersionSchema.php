@@ -44,7 +44,7 @@ class JavaVersionSchema implements FeatureSchemaInterface
             ->modalHeading('Unsupported Java Version')
             ->modalDescription('This server is currently running an unsupported version of Java and cannot be started.')
             ->modalSubmitActionLabel('Update Docker Image')
-            ->disabledSchema(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
+            ->disabledSchema(fn () => !user()?->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
             ->schema([
                 TextEntry::make('java')
                     ->label('Please select a supported version from the list below to continue starting the server.'),

@@ -1,9 +1,9 @@
 <x-filament::widget>
     @assets
     @php
-        $userFont = (string) auth()->user()->getCustomization(\App\Enums\CustomizationKey::ConsoleFont);
-        $userFontSize = (int) auth()->user()->getCustomization(\App\Enums\CustomizationKey::ConsoleFontSize);
-        $userRows = (int) auth()->user()->getCustomization(\App\Enums\CustomizationKey::ConsoleRows);
+        $userFont = (string) user()?->getCustomization(\App\Enums\CustomizationKey::ConsoleFont);
+        $userFontSize = (int) user()?->getCustomization(\App\Enums\CustomizationKey::ConsoleFontSize);
+        $userRows = (int) user()?->getCustomization(\App\Enums\CustomizationKey::ConsoleRows);
     @endphp
     @if($userFont !== "monospace")
         <link rel="preload" href="{{ asset("storage/fonts/{$userFont}.ttf") }}" as="font" crossorigin>

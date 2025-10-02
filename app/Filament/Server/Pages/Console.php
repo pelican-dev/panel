@@ -87,7 +87,7 @@ class Console extends Page
     {
         return [
             'server' => Filament::getTenant(),
-            'user' => auth()->user(),
+            'user' => user(),
         ];
     }
 
@@ -164,7 +164,7 @@ class Console extends Page
                     ->label(trans('server/console.power_actions.start'))
                     ->color('primary')
                     ->icon('tabler-player-play-filled')
-                    ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
+                    ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_START, $server))
                     ->disabled(fn (Server $server) => $server->isInConflictState() || !$this->status->isStartable())
                     ->action(fn (Server $server) => $this->dispatch('setServerState', uuid: $server->uuid, state: 'start'))
                     ->size(Size::ExtraLarge),
@@ -172,7 +172,7 @@ class Console extends Page
                     ->label(trans('server/console.power_actions.restart'))
                     ->color('gray')
                     ->icon('tabler-reload')
-                    ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
+                    ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_RESTART, $server))
                     ->disabled(fn (Server $server) => $server->isInConflictState() || !$this->status->isRestartable())
                     ->action(fn (Server $server) => $this->dispatch('setServerState', uuid: $server->uuid, state: 'restart'))
                     ->size(Size::ExtraLarge),
@@ -180,7 +180,7 @@ class Console extends Page
                     ->label(trans('server/console.power_actions.stop'))
                     ->color('danger')
                     ->icon('tabler-player-stop-filled')
-                    ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
+                    ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_STOP, $server))
                     ->visible(fn () => !$this->status->isKillable())
                     ->disabled(fn (Server $server) => $server->isInConflictState() || !$this->status->isStoppable())
                     ->action(fn (Server $server) => $this->dispatch('setServerState', uuid: $server->uuid, state: 'stop'))
@@ -191,7 +191,7 @@ class Console extends Page
                     ->icon('tabler-alert-square')
                     ->tooltip(trans('server/console.power_actions.kill_tooltip'))
                     ->requiresConfirmation()
-                    ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
+                    ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_STOP, $server))
                     ->visible(fn () => $this->status->isKillable())
                     ->disabled(fn (Server $server) => $server->isInConflictState() || !$this->status->isKillable())
                     ->action(fn (Server $server) => $this->dispatch('setServerState', uuid: $server->uuid, state: 'kill'))
