@@ -15,6 +15,7 @@ use App\Models\ApiKey;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserSSHKey;
+use App\Notifications\MailTested;
 use App\Services\Helpers\LanguageService;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
@@ -43,6 +44,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\IconColumn;
@@ -50,6 +52,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\HtmlString;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -174,7 +177,30 @@ class UserResource extends Resource
                                     ->email()
                                     ->required()
                                     ->unique()
-                                    ->maxLength(255),
+                                    ->maxLength(255)
+                                    ->hintAction(
+                                        Action::make('test')
+                                            ->label(trans('admin/setting.mail.test_mail'))
+                                            ->icon('tabler-send')
+                                            ->hidden(fn () => env('MAIL_MAILER') === 'log')
+                                            ->action(function (User $user) {
+                                                try {
+                                                    MailNotification::route('mail', $user->email)
+                                                        ->notify(new MailTested($user));
+
+                                                    Notification::make()
+                                                        ->title(trans('admin/setting.mail.test_mail_sent'))
+                                                        ->success()
+                                                        ->send();
+                                                } catch (Exception $exception) {
+                                                    Notification::make()
+                                                        ->title(trans('admin/setting.mail.test_mail_failed'))
+                                                        ->body($exception->getMessage())
+                                                        ->danger()
+                                                        ->send();
+                                                }
+                                            })
+                                    ),
                                 TextInput::make('password')
                                     ->label(trans('admin/user.password'))
                                     ->columnSpan([
