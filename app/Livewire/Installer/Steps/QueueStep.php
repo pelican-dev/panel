@@ -48,7 +48,7 @@ class QueueStep
                     ->label(new HtmlString(trans('installer.queue.fields.crontab')))
                     ->disabled()
                     ->hintCopy()
-                    ->default('(crontab -l -u www-data 2>/dev/null; echo "* * * * * php ' . base_path() . '/artisan schedule:run >> /dev/null 2>&1") | crontab -u www-data -')
+                    ->default('(sudo crontab -l -u www-data 2>/dev/null; echo "* * * * * php ' . base_path() . '/artisan schedule:run >> /dev/null 2>&1") | sudo crontab -u www-data -')
                     ->hidden(fn () => @file_exists('/.dockerenv'))
                     ->columnSpanFull(),
                 TextInput::make('queueService')
