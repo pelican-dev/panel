@@ -117,7 +117,7 @@ class CreateServer extends CreateRecord
                                 ->selectablePlaceholder(false)
                                 ->default(function () {
                                     /** @var ?Node $latestNode */
-                                    $latestNode = user()->accessibleNodes()->latest()->first();
+                                    $latestNode = user()?->accessibleNodes()->latest()->first();
                                     $this->node = $latestNode;
 
                                     return $this->node?->id;
@@ -128,7 +128,7 @@ class CreateServer extends CreateRecord
                                     'md' => 2,
                                 ])
                                 ->live()
-                                ->relationship('node', 'name', fn (Builder $query) => $query->whereIn('id', user()->accessibleNodes()->pluck('id')))
+                                ->relationship('node', 'name', fn (Builder $query) => $query->whereIn('id', user()?->accessibleNodes()->pluck('id')))
                                 ->searchable()
                                 ->required()
                                 ->preload()
@@ -151,7 +151,7 @@ class CreateServer extends CreateRecord
                                 ->relationship('user', 'username')
                                 ->searchable(['username', 'email'])
                                 ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->username ($user->email)")
-                                ->createOptionAction(fn (Action $action) => $action->authorize(fn () => user()->can('create', User::class)))
+                                ->createOptionAction(fn (Action $action) => $action->authorize(fn () => user()?->can('create', User::class)))
                                 ->createOptionForm([
                                     TextInput::make('username')
                                         ->label(trans('admin/user.username'))
@@ -212,7 +212,7 @@ class CreateServer extends CreateRecord
                                         ->where('node_id', $get('node_id'))
                                         ->whereNull('server_id'),
                                 )
-                                ->createOptionAction(fn (Action $action) => $action->authorize(fn (Get $get) => user()->can('create', Node::find($get('node_id')))))
+                                ->createOptionAction(fn (Action $action) => $action->authorize(fn (Get $get) => user()?->can('create', Node::find($get('node_id')))))
                                 ->createOptionForm(function (Get $get) {
                                     $getPage = $get;
 

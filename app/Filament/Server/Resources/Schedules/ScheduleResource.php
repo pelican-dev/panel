@@ -66,22 +66,22 @@ class ScheduleResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return user()->can(Permission::ACTION_SCHEDULE_READ, Filament::getTenant());
+        return user()?->can(Permission::ACTION_SCHEDULE_READ, Filament::getTenant());
     }
 
     public static function canCreate(): bool
     {
-        return user()->can(Permission::ACTION_SCHEDULE_CREATE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_SCHEDULE_CREATE, Filament::getTenant());
     }
 
     public static function canEdit(Model $record): bool
     {
-        return user()->can(Permission::ACTION_SCHEDULE_UPDATE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_SCHEDULE_UPDATE, Filament::getTenant());
     }
 
     public static function canDelete(Model $record): bool
     {
-        return user()->can(Permission::ACTION_SCHEDULE_DELETE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_SCHEDULE_DELETE, Filament::getTenant());
     }
 
     /**
@@ -128,7 +128,7 @@ class ScheduleResource extends Resource
                             $nextRun = trans('server/schedule.invalid');
                         }
 
-                        return new HtmlString(trans('server/schedule.cron_body') . '<br>' . trans('server/schedule.cron_timezone', ['timezone' => user()->timezone, 'next_run' => $nextRun]));
+                        return new HtmlString(trans('server/schedule.cron_body') . '<br>' . trans('server/schedule.cron_timezone', ['timezone' => user()?->timezone, 'next_run' => $nextRun]));
                     })
                     ->schema([
                         Actions::make([

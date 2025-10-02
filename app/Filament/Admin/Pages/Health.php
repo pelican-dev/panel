@@ -39,7 +39,7 @@ class Health extends Page
 
     public static function canAccess(): bool
     {
-        return user()->can('view health');
+        return user()?->can('view health');
     }
 
     protected function getActions(): array

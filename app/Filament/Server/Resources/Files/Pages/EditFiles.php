@@ -81,7 +81,7 @@ class EditFiles extends Page
                     ->footerActions([
                         Action::make('save_and_close')
                             ->label(trans('server/file.actions.edit.save_close'))
-                            ->authorize(fn () => user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                            ->authorize(fn () => user()?->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+shift+s')
                             ->action(function () {
@@ -101,7 +101,7 @@ class EditFiles extends Page
                             }),
                         Action::make('save')
                             ->label(trans('server/file.actions.edit.save'))
-                            ->authorize(fn () => user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                            ->authorize(fn () => user()?->can(Permission::ACTION_FILE_UPDATE, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
                             ->action(function () {

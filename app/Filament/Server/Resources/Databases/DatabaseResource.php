@@ -91,7 +91,7 @@ class DatabaseResource extends Resource
                     ->hidden(fn () => !user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
                     ->hintAction(
                         RotateDatabasePasswordAction::make()
-                            ->authorize(fn () => user()->can(Permission::ACTION_DATABASE_UPDATE, $server))
+                            ->authorize(fn () => user()?->can(Permission::ACTION_DATABASE_UPDATE, $server))
                     )
                     ->copyable()
                     ->formatStateUsing(fn (Database $database) => $database->password),
@@ -210,27 +210,27 @@ class DatabaseResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return user()->can(Permission::ACTION_DATABASE_READ, Filament::getTenant());
+        return user()?->can(Permission::ACTION_DATABASE_READ, Filament::getTenant());
     }
 
     public static function canView(Model $record): bool
     {
-        return user()->can(Permission::ACTION_DATABASE_READ, Filament::getTenant());
+        return user()?->can(Permission::ACTION_DATABASE_READ, Filament::getTenant());
     }
 
     public static function canCreate(): bool
     {
-        return user()->can(Permission::ACTION_DATABASE_CREATE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_DATABASE_CREATE, Filament::getTenant());
     }
 
     public static function canEdit(Model $record): bool
     {
-        return user()->can(Permission::ACTION_DATABASE_UPDATE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_DATABASE_UPDATE, Filament::getTenant());
     }
 
     public static function canDelete(Model $record): bool
     {
-        return user()->can(Permission::ACTION_DATABASE_DELETE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_DATABASE_DELETE, Filament::getTenant());
     }
 
     /** @return array<string, PageRegistration> */

@@ -129,7 +129,7 @@ class Startup extends ServerFormPage
 
     public static function canAccess(): bool
     {
-        return parent::canAccess() && user()->can(Permission::ACTION_STARTUP_READ, Filament::getTenant());
+        return parent::canAccess() && user()?->can(Permission::ACTION_STARTUP_READ, Filament::getTenant());
     }
 
     public function update(?string $state, ServerVariable $serverVariable): null

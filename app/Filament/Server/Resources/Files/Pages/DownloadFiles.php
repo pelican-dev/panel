@@ -44,7 +44,7 @@ class DownloadFiles extends Page
                 'file_path' => rawurldecode($path),
                 'server_uuid' => $server->uuid,
             ])
-            ->handle($server->node, user()->id . $server->uuid);
+            ->handle($server->node, user()?->id . $server->uuid);
 
         Activity::event('server:file.download')
             ->property('file', $path)

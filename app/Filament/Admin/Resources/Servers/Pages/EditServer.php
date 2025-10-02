@@ -210,7 +210,7 @@ class EditServer extends EditRecord
                                     ->maxLength(255),
                                 Select::make('node_id')
                                     ->label(trans('admin/server.node'))
-                                    ->relationship('node', 'name', fn (Builder $query) => $query->whereIn('id', user()->accessibleNodes()->pluck('id')))
+                                    ->relationship('node', 'name', fn (Builder $query) => $query->whereIn('id', user()?->accessibleNodes()->pluck('id')))
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -916,7 +916,7 @@ class EditServer extends EditRecord
                     }
                 })
                 ->hidden(fn () => $canForceDelete)
-                ->authorize(fn (Server $server) => user()->can('delete server', $server)),
+                ->authorize(fn (Server $server) => user()?->can('delete server', $server)),
             Action::make('ForceDelete')
                 ->color('danger')
                 ->label(trans('filament-actions::force-delete.single.label'))
@@ -933,7 +933,7 @@ class EditServer extends EditRecord
                     }
                 })
                 ->visible(fn () => $canForceDelete)
-                ->authorize(fn (Server $server) => user()->can('delete server', $server)),
+                ->authorize(fn (Server $server) => user()?->can('delete server', $server)),
             Action::make('console')
                 ->label(trans('admin/server.console'))
                 ->icon('tabler-terminal')

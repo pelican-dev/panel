@@ -27,7 +27,7 @@ class ServerMemoryChart extends ChartWidget
 
     protected function getData(): array
     {
-        $period = (int) user()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
+        $period = (int) user()?->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $memUsed = collect(cache()->get("servers.{$this->server->id}.memory_bytes"))
             ->slice(-$period)
             ->map(fn ($value, $key) => [

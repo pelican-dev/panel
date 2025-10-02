@@ -27,7 +27,7 @@ class ServerCpuChart extends ChartWidget
 
     protected function getData(): array
     {
-        $period = (int) user()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
+        $period = (int) user()?->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $cpu = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))
             ->slice(-$period)
             ->map(fn ($value, $key) => [

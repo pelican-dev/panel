@@ -129,7 +129,7 @@ class BackupResource extends Resource
                 ActionGroup::make([
                     Action::make('rename')
                         ->icon('tabler-pencil')
-                        ->authorize(fn () => user()->can(Permission::ACTION_BACKUP_DELETE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_DELETE, $server))
                         ->label(trans('server/backup.actions.rename.title'))
                         ->schema([
                             TextInput::make('name')
@@ -160,7 +160,7 @@ class BackupResource extends Resource
                     Action::make('lock')
                         ->iconSize(IconSize::Large)
                         ->icon(fn (Backup $backup) => !$backup->is_locked ? 'tabler-lock' : 'tabler-lock-open')
-                        ->authorize(fn () => user()->can(Permission::ACTION_BACKUP_DELETE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_DELETE, $server))
                         ->label(fn (Backup $backup) => !$backup->is_locked ? trans('server/backup.actions.lock.lock') : trans('server/backup.actions.lock.unlock'))
                         ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->toggleLock($request, $server, $backup))
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
@@ -169,7 +169,7 @@ class BackupResource extends Resource
                         ->iconSize(IconSize::Large)
                         ->color('primary')
                         ->icon('tabler-download')
-                        ->authorize(fn () => user()->can(Permission::ACTION_BACKUP_DOWNLOAD, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_DOWNLOAD, $server))
                         ->url(fn (DownloadLinkService $downloadLinkService, Backup $backup, Request $request) => $downloadLinkService->handle($backup, $request->user()), true)
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     Action::make('restore')
@@ -177,7 +177,7 @@ class BackupResource extends Resource
                         ->iconSize(IconSize::Large)
                         ->color('success')
                         ->icon('tabler-folder-up')
-                        ->authorize(fn () => user()->can(Permission::ACTION_BACKUP_RESTORE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_RESTORE, $server))
                         ->schema([
                             TextEntry::make('stop_info')
                                 ->hiddenLabel()
@@ -258,7 +258,7 @@ class BackupResource extends Resource
             ])
             ->toolbarActions([
                 CreateAction::make()
-                    ->authorize(fn () => user()->can(Permission::ACTION_BACKUP_CREATE, $server))
+                    ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_CREATE, $server))
                     ->icon('tabler-file-zip')
                     ->tooltip(fn () => $server->backups()->count() >= $server->backup_limit ? trans('server/backup.actions.create.limit') : trans('server/backup.actions.create.title'))
                     ->disabled(fn () => $server->backups()->count() >= $server->backup_limit)
@@ -298,17 +298,17 @@ class BackupResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return user()->can(Permission::ACTION_BACKUP_READ, Filament::getTenant());
+        return user()?->can(Permission::ACTION_BACKUP_READ, Filament::getTenant());
     }
 
     public static function canCreate(): bool
     {
-        return user()->can(Permission::ACTION_BACKUP_CREATE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_BACKUP_CREATE, Filament::getTenant());
     }
 
     public static function canDelete(Model $record): bool
     {
-        return user()->can(Permission::ACTION_BACKUP_DELETE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_BACKUP_DELETE, Filament::getTenant());
     }
 
     /** @return array<string, PageRegistration> */

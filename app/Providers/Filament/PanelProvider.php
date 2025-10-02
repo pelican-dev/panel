@@ -48,7 +48,7 @@ abstract class PanelProvider extends BasePanelProvider
                 EmailAuthentication::make(),
             ])
             ->requiresMultiFactorAuthentication(function () {
-                $user = auth('web')->user(); // TODO: get user, see https://github.com/filamentphp/filament/discussions/17695
+                $user = user(); // TODO: get user, see https://github.com/filamentphp/filament/discussions/17695
                 if ($user) {
                     $level = (int) config('panel.auth.2fa_required');
 

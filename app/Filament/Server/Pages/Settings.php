@@ -187,7 +187,7 @@ class Settings extends ServerFormPage
                                     ->columnSpan(1)
                                     ->copyable()
                                     ->disabled()
-                                    ->formatStateUsing(fn (Server $server) => user()->username . '.' . $server->uuid_short),
+                                    ->formatStateUsing(fn (Server $server) => user()?->username . '.' . $server->uuid_short),
                                 TextEntry::make('password')
                                     ->label(trans('server/setting.server_info.sftp.password'))
                                     ->columnSpan(1)

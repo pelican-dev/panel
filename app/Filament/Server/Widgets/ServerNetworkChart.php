@@ -29,7 +29,7 @@ class ServerNetworkChart extends ChartWidget
     {
         $previous = null;
 
-        $period = (int) user()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
+        $period = (int) user()?->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $net = collect(cache()->get("servers.{$this->server->id}.network"))
             ->slice(-$period)
             ->map(function ($current, $timestamp) use (&$previous) {
