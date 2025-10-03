@@ -77,7 +77,8 @@ return [
         'action' => 'Action',
         'payload' => 'Payload',
         'time_offset' => 'Time Offset',
-        'seconds' => 'Seconds',
+        'first_task' => 'First Task',
+        'seconds' => 'Second|Seconds',
         'continue_on_failure' => 'Continue On Failure',
 
         'actions' => [
