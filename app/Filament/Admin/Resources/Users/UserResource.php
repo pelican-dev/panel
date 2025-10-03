@@ -28,6 +28,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
+use Filament\Auth\Notifications\ResetPassword;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
@@ -54,6 +55,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\HtmlString;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Password;
 
 class UserResource extends Resource
 {
@@ -212,23 +214,39 @@ class UserResource extends Resource
                                     ->hintAction(
                                         Action::make('password_reset')
                                             ->label(trans('admin/user.password_reset'))
+                                            //->hidden(fn () => env('MAIL_MAILER') === 'log')
                                             ->icon('tabler-send')
                                             ->action(function (User $user) {
                                                 try {
-                                                    //TODO Logic to send password reset email.
-                                                    Notification::make()
-                                                        ->title(trans('admin/user.password_reset_sent'))
-                                                        ->success()
-                                                        ->send();
+                                                    ResetPassword::createUrlUsing(function ($user, string $token) {
+                                                        return url(route('filament.app.auth.password-reset.reset', [
+                                                            'token' => $token,
+                                                            'email' => $user->email,
+                                                        ], false));
+                                                    });
+
+                                                    $status = Password::broker()->sendResetLink([
+                                                        'email' => $user->email,
+                                                    ]);
+
+                                                    if ($status === Password::RESET_LINK_SENT) {
+                                                        Notification::make()
+                                                            ->title(trans('admin/user.password_reset_sent'))
+                                                            ->success()
+                                                            ->send();
+                                                    } else {
+                                                        throw new Exception(__($status));
+                                                    }
                                                 } catch (Exception $exception) {
                                                     Notification::make()
                                                         ->title(trans('admin/user.password_reset_failed'))
                                                         ->body($exception->getMessage())
                                                         ->danger()
                                                         ->send();
+                                                } finally {
+                                                    ResetPassword::createUrlUsing(null);
                                                 }
-                                            })
-                                    ),
+                                            })),
                                 TextInput::make('external_id')
                                     ->label(trans('admin/user.external_id'))
                                     ->columnSpan([
