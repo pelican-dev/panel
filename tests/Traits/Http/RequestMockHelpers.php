@@ -35,10 +35,11 @@ trait RequestMockHelpers
     /**
      * Generates a new request user model and also returns the generated model.
      */
-    public function generateRequestUserModel(bool $isRootAdmin, array $args = []): void
+    public function generateRequestUserModel(bool $isAdmin, bool $isRootAdmin, array $args = []): void
     {
         $user = User::factory()->make($args);
         $user = m::mock($user)->makePartial();
+        $user->shouldReceive('isAdmin')->andReturn($isAdmin);
         $user->shouldReceive('isRootAdmin')->andReturn($isRootAdmin);
 
         /** @var User|Mock $user */
