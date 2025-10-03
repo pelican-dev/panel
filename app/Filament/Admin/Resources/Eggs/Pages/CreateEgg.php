@@ -83,14 +83,16 @@ class CreateEgg extends CreateRecord
                                 ->rows(2)
                                 ->columnSpanFull()
                                 ->helperText(trans('admin/egg.description_help')),
-                            Textarea::make('startup')
-                                ->label(trans('admin/egg.startup'))
-                                ->rows(3)
+                            KeyValue::make('startup_commands')
+                                ->label(trans('admin/egg.startup_commands'))
+                                ->live()
                                 ->columnSpanFull()
                                 ->required()
-                                ->placeholder(implode("\n", [
-                                    'java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}',
-                                ]))
+                                ->addActionLabel(trans('admin/egg.add_startup'))
+                                ->keyLabel(trans('admin/egg.startup_name'))
+                                ->keyPlaceholder('Default')
+                                ->valueLabel(trans('admin/egg.startup_command'))
+                                ->valuePlaceholder('java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}')
                                 ->helperText(trans('admin/egg.startup_help')),
                             TagsInput::make('file_denylist')
                                 ->label(trans('admin/egg.file_denylist'))
