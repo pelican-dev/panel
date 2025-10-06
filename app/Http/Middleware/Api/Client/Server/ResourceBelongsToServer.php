@@ -2,18 +2,18 @@
 
 namespace App\Http\Middleware\Api\Client\Server;
 
-use Closure;
-use InvalidArgumentException;
-use Illuminate\Http\Request;
-use App\Models\Task;
-use App\Models\User;
+use App\Models\Allocation;
 use App\Models\Backup;
-use App\Models\Server;
-use App\Models\Subuser;
 use App\Models\Database;
 use App\Models\Schedule;
-use App\Models\Allocation;
+use App\Models\Server;
+use App\Models\Subuser;
+use App\Models\Task;
+use App\Models\User;
+use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use InvalidArgumentException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ResourceBelongsToServer

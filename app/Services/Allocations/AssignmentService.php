@@ -2,17 +2,17 @@
 
 namespace App\Services\Allocations;
 
-use Exception;
-use App\Models\Allocation;
-use IPTools\Network;
-use App\Models\Node;
-use App\Models\Server;
-use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\DisplayException;
 use App\Exceptions\Service\Allocation\CidrOutOfRangeException;
-use App\Exceptions\Service\Allocation\PortOutOfRangeException;
 use App\Exceptions\Service\Allocation\InvalidPortMappingException;
+use App\Exceptions\Service\Allocation\PortOutOfRangeException;
 use App\Exceptions\Service\Allocation\TooManyPortsInRangeException;
+use App\Models\Allocation;
+use App\Models\Node;
+use App\Models\Server;
+use Exception;
+use Illuminate\Database\ConnectionInterface;
+use IPTools\Network;
 
 class AssignmentService
 {

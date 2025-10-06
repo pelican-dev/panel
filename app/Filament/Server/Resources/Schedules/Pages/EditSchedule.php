@@ -6,11 +6,11 @@ use App\Facades\Activity;
 use App\Filament\Components\Actions\ExportScheduleAction;
 use App\Filament\Server\Resources\Schedules\ScheduleResource;
 use App\Models\Schedule;
+use App\Traits\Filament\CanCustomizeHeaderActions;
+use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
-use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use App\Traits\Filament\CanCustomizeHeaderActions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconSize;
 

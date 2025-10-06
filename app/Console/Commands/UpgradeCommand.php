@@ -2,13 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Kernel;
 use Closure;
 use Exception;
-use Illuminate\Foundation\Application;
 use Illuminate\Console\Command;
-use App\Console\Kernel;
-use Symfony\Component\Process\Process;
+use Illuminate\Foundation\Application;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Process\Process;
 
 class UpgradeCommand extends Command
 {

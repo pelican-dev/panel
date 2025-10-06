@@ -2,9 +2,9 @@
 
 namespace App\Exceptions\Http;
 
-use Throwable;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Throwable;
 
 class HttpForbiddenException extends HttpException
 {

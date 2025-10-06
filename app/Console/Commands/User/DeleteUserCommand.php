@@ -3,8 +3,8 @@
 namespace App\Console\Commands\User;
 
 use App\Models\User;
-use Webmozart\Assert\Assert;
 use Illuminate\Console\Command;
+use Webmozart\Assert\Assert;
 
 class DeleteUserCommand extends Command
 {
@@ -35,7 +35,7 @@ class DeleteUserCommand extends Command
         if ($this->input->isInteractive()) {
             $tableValues = [];
             foreach ($results as $user) {
-                $tableValues[] = [$user->id, $user->email, $user->name];
+                $tableValues[] = [$user->id, $user->email, $user->username];
             }
 
             $this->table(['User ID', 'Email', 'Name'], $tableValues);

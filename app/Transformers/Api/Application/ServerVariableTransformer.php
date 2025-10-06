@@ -2,9 +2,9 @@
 
 namespace App\Transformers\Api\Application;
 
-use League\Fractal\Resource\Item;
-use App\Models\EggVariable;
 use App\Models\Egg;
+use App\Models\EggVariable;
+use League\Fractal\Resource\Item;
 use League\Fractal\Resource\NullResource;
 
 class ServerVariableTransformer extends BaseTransformer

@@ -5,10 +5,10 @@ namespace App\Filament\Admin\Resources\Users\Pages;
 use App\Filament\Admin\Resources\Users\UserResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
 
 class ListUsers extends ListRecords
 {

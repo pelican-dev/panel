@@ -5,24 +5,24 @@ namespace App\Http\Controllers\Api\Client\Servers;
 use App\Exceptions\Model\DataValidationException;
 use App\Exceptions\Service\Subuser\ServerSubuserExistsException;
 use App\Exceptions\Service\Subuser\UserIsServerOwnerException;
-use Throwable;
-use App\Models\Subuser;
-use App\Models\User;
-use App\Services\Subusers\SubuserDeletionService;
-use App\Services\Subusers\SubuserUpdateService;
-use Illuminate\Http\Request;
-use App\Models\Server;
-use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
-use App\Models\Permission;
-use App\Services\Subusers\SubuserCreationService;
-use App\Transformers\Api\Client\SubuserTransformer;
 use App\Http\Controllers\Api\Client\ClientApiController;
+use App\Http\Requests\Api\Client\Servers\Subusers\DeleteSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\GetSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\StoreSubuserRequest;
-use App\Http\Requests\Api\Client\Servers\Subusers\DeleteSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\UpdateSubuserRequest;
+use App\Models\Permission;
+use App\Models\Server;
+use App\Models\Subuser;
+use App\Models\User;
+use App\Services\Subusers\SubuserCreationService;
+use App\Services\Subusers\SubuserDeletionService;
+use App\Services\Subusers\SubuserUpdateService;
+use App\Transformers\Api\Client\SubuserTransformer;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Throwable;
 
 #[Group('Server - Subuser')]
 class SubuserController extends ClientApiController

@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands\Environment;
 
-use PDOException;
 use App\Traits\EnvironmentWriterTrait;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\DatabaseManager;
+use PDOException;
 
 class DatabaseSettingsCommand extends Command
 {

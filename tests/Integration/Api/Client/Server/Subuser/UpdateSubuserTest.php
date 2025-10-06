@@ -2,9 +2,9 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Subuser;
 
-use App\Models\User;
-use App\Models\Subuser;
 use App\Models\Permission;
+use App\Models\Subuser;
+use App\Models\User;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Illuminate\Support\Facades\Http;
 

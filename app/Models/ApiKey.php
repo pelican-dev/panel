@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Carbon;
-use Database\Factories\ApiKeyFactory;
-use Illuminate\Database\Eloquent\Builder;
 use App\Services\Acl\Api\AdminAcl;
 use App\Traits\HasValidation;
+use Database\Factories\ApiKeyFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\PersonalAccessToken;
 use Webmozart\Assert\Assert;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * App\Models\ApiKey.

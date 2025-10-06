@@ -77,7 +77,7 @@ class ListServers extends ListRecords
                 ->label('')
                 ->badge()
                 ->visibleFrom('md')
-                ->copyable(request()->isSecure())
+                ->copyable()
                 ->state(fn (Server $server) => $server->allocation->address ?? 'None'),
             TextColumn::make('cpuUsage')
                 ->label(trans('server/dashboard.resources'))

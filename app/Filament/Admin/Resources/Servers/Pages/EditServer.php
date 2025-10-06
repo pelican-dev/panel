@@ -14,7 +14,6 @@ use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;
-use App\Models\ServerVariable;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Eggs\EggChangerService;
@@ -34,29 +33,29 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use LogicException;
-use Filament\Schemas\Schema;
 use Random\RandomException;
 
 class EditServer extends EditRecord
@@ -179,7 +178,7 @@ class EditServer extends EditRecord
 
                                 TextInput::make('uuid')
                                     ->label(trans('admin/server.uuid'))
-                                    ->copyable(fn () => request()->isSecure())
+                                    ->copyable()
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -190,7 +189,7 @@ class EditServer extends EditRecord
                                     ->dehydrated(false),
                                 TextInput::make('uuid_short')
                                     ->label(trans('admin/server.short_uuid'))
-                                    ->copyable(fn () => request()->isSecure())
+                                    ->copyable()
                                     ->columnSpan([
                                         'default' => 2,
                                         'sm' => 1,
@@ -659,14 +658,7 @@ class EditServer extends EditRecord
                                         /** @var Server $server */
                                         $server = $this->getRecord();
 
-                                        foreach ($server->variables as $variable) {
-                                            ServerVariable::query()->firstOrCreate([
-                                                'server_id' => $server->id,
-                                                'variable_id' => $variable->id,
-                                            ], [
-                                                'variable_value' => $variable->server_value ?? '',
-                                            ]);
-                                        }
+                                        $server->ensureVariablesExist();
 
                                         return $query->orderByPowerJoins('variable.sort');
                                     })

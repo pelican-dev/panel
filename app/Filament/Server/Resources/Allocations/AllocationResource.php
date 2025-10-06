@@ -2,8 +2,8 @@
 
 namespace App\Filament\Server\Resources\Allocations;
 
-use App\Filament\Server\Resources\Allocations\Pages\ListAllocations;
 use App\Facades\Activity;
+use App\Filament\Server\Resources\Allocations\Pages\ListAllocations;
 use App\Models\Allocation;
 use App\Models\Permission;
 use App\Models\Server;

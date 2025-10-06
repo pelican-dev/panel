@@ -2,18 +2,18 @@
 
 namespace App\Services\Users;
 
-use Exception;
 use App\Exceptions\Model\DataValidationException;
 use App\Models\Role;
-use Illuminate\Support\Str;
-use Ramsey\Uuid\Uuid;
 use App\Models\User;
-use Illuminate\Contracts\Hashing\Hasher;
-use Illuminate\Database\ConnectionInterface;
 use App\Notifications\AccountCreated;
+use Exception;
 use Filament\Facades\Filament;
 use Illuminate\Auth\Passwords\PasswordBroker;
+use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 
 class UserCreationService
 {

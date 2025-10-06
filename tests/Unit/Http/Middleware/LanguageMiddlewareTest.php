@@ -2,11 +2,11 @@
 
 namespace App\Tests\Unit\Http\Middleware;
 
-use Mockery as m;
-use Mockery\MockInterface;
+use App\Http\Middleware\LanguageMiddleware;
 use App\Models\User;
 use Illuminate\Foundation\Application;
-use App\Http\Middleware\LanguageMiddleware;
+use Mockery as m;
+use Mockery\MockInterface;
 
 class LanguageMiddlewareTest extends MiddlewareTestCase
 {

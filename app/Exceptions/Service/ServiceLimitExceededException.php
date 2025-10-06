@@ -2,8 +2,8 @@
 
 namespace App\Exceptions\Service;
 
-use Throwable;
 use App\Exceptions\DisplayException;
+use Throwable;
 
 class ServiceLimitExceededException extends DisplayException
 {

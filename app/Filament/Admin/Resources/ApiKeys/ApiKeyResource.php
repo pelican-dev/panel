@@ -2,9 +2,8 @@
 
 namespace App\Filament\Admin\Resources\ApiKeys;
 
-use Filament\Schemas\Schema;
-use App\Filament\Admin\Resources\ApiKeys\Pages\ListApiKeys;
 use App\Filament\Admin\Resources\ApiKeys\Pages\CreateApiKey;
+use App\Filament\Admin\Resources\ApiKeys\Pages\ListApiKeys;
 use App\Filament\Admin\Resources\Users\Pages\EditUser;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\ApiKey;
@@ -21,6 +20,7 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -79,7 +79,7 @@ class ApiKeyResource extends Resource
                     ->label(trans('admin/apikey.table.key'))
                     ->icon('tabler-clipboard-text')
                     ->state(fn (ApiKey $key) => $key->identifier . $key->token)
-                    ->copyable(fn () => request()->isSecure()),
+                    ->copyable(),
                 TextColumn::make('memo')
                     ->label(trans('admin/apikey.table.description'))
                     ->wrap()

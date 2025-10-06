@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Schedules;
 
-use App\Models\Task;
-use App\Models\Server;
-use App\Models\Schedule;
-use App\Models\Permission;
 use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Models\Permission;
+use App\Models\Schedule;
+use App\Models\Server;
+use App\Models\Task;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ViewScheduleRequest extends ClientApiRequest

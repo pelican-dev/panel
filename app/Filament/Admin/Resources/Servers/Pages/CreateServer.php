@@ -16,31 +16,31 @@ use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Notifications\Notification;
-use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use LogicException;
-use Filament\Schemas\Schema;
 use Random\RandomException;
 
 class CreateServer extends CreateRecord
@@ -218,12 +218,21 @@ class CreateServer extends CreateRecord
 
                                     return [
                                         Select::make('allocation_ip')
-                                            ->options(collect(Node::find($get('node_id'))?->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                                            ->options(fn () => collect(Node::find($get('node_id'))?->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                                             ->label(trans('admin/server.ip_address'))->inlineLabel()
                                             ->helperText(trans('admin/server.ip_address_helper'))
                                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                                             ->ip()
                                             ->live()
+                                            ->hintAction(
+                                                Action::make('refresh')
+                                                    ->iconButton()
+                                                    ->icon('tabler-refresh')
+                                                    ->tooltip(trans('admin/node.refresh'))
+                                                    ->action(function () use ($get) {
+                                                        cache()->forget("nodes.{$get('node_id')}.ips");
+                                                    })
+                                            )
                                             ->required(),
                                         TextInput::make('allocation_alias')
                                             ->label(trans('admin/server.alias'))->inlineLabel()

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use Carbon\CarbonImmutable;
-use App\Models\User;
-use App\Models\Server;
-use Illuminate\Http\JsonResponse;
-use App\Services\Nodes\NodeJWTService;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\Files\UploadFileRequest;
+use App\Models\Server;
+use App\Models\User;
+use App\Services\Nodes\NodeJWTService;
+use Carbon\CarbonImmutable;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Http\JsonResponse;
 
 #[Group('Server - File', weight: 1)]
 class FileUploadController extends ClientApiController

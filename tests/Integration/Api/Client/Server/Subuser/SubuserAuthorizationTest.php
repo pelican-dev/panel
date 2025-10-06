@@ -2,8 +2,8 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Subuser;
 
-use App\Models\User;
 use App\Models\Subuser;
+use App\Models\User;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;

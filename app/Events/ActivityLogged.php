@@ -2,9 +2,9 @@
 
 namespace App\Events;
 
-use Illuminate\Support\Str;
 use App\Models\ActivityLog;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class ActivityLogged extends Event
 {

@@ -2,19 +2,19 @@
 
 namespace App\Services\Eggs\Sharing;
 
-use JsonException;
-use Throwable;
 use App\Exceptions\Service\InvalidFileUploadException;
-use Ramsey\Uuid\Uuid;
-use Illuminate\Support\Arr;
 use App\Models\Egg;
-use Illuminate\Http\UploadedFile;
 use App\Models\EggVariable;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use JsonException;
+use Ramsey\Uuid\Uuid;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use stdClass;
 use Symfony\Component\Yaml\Yaml;
+use Throwable;
 
 class EggImporterService
 {

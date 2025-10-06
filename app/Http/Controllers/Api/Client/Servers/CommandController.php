@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use Illuminate\Http\Response;
-use App\Models\Server;
 use App\Facades\Activity;
-use GuzzleHttp\Exception\BadResponseException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\SendCommandRequest;
+use App\Models\Server;
 use Dedoc\Scramble\Attributes\Group;
 use Exception;
+use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 #[Group('Server', weight: 1)]
 class CommandController extends ClientApiController

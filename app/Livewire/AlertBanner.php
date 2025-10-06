@@ -2,12 +2,12 @@
 
 namespace App\Livewire;
 
+use Closure;
 use Filament\Notifications\Concerns\HasBody;
 use Filament\Notifications\Concerns\HasIcon;
 use Filament\Notifications\Concerns\HasId;
 use Filament\Notifications\Concerns\HasStatus;
 use Filament\Notifications\Concerns\HasTitle;
-use Closure;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Contracts\Support\Arrayable;
 

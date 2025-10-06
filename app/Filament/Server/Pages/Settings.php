@@ -8,12 +8,12 @@ use App\Models\Server;
 use App\Services\Servers\ReinstallServerService;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Schemas\Components\Fieldset;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 
@@ -83,8 +83,8 @@ class Settings extends ServerFormPage
                                         'lg' => 4,
                                     ])
                                     ->disabled(),
-                                TextInput::make('id')
-                                    ->label(trans('server/setting.server_info.id'))
+                                TextInput::make('uuid_short')
+                                    ->label(trans('server/setting.server_info.uuid_short'))
                                     ->disabled()
                                     ->columnSpan(1),
                                 TextInput::make('node.name')
@@ -165,7 +165,7 @@ class Settings extends ServerFormPage
                                     ->label(trans('server/setting.server_info.sftp.connection'))
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->copyable(fn () => request()->isSecure())
+                                    ->copyable()
                                     ->hintAction(
                                         Action::make('connect_sftp')
                                             ->label(trans('server/setting.server_info.sftp.action'))
@@ -185,7 +185,7 @@ class Settings extends ServerFormPage
                                 TextInput::make('username')
                                     ->label(trans('server/setting.server_info.sftp.username'))
                                     ->columnSpan(1)
-                                    ->copyable(fn () => request()->isSecure())
+                                    ->copyable()
                                     ->disabled()
                                     ->formatStateUsing(fn (Server $server) => auth()->user()->username . '.' . $server->uuid_short),
                                 TextEntry::make('password')

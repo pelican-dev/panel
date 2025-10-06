@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Api\Client;
 
-use Throwable;
-use Illuminate\Auth\SessionGuard;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Auth\AuthManager;
-use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
-use App\Services\Users\UserUpdateService;
 use App\Http\Requests\Api\Client\Account\UpdateEmailRequest;
 use App\Http\Requests\Api\Client\Account\UpdatePasswordRequest;
+use App\Services\Users\UserUpdateService;
 use App\Transformers\Api\Client\UserTransformer;
+use Illuminate\Auth\AuthManager;
+use Illuminate\Auth\SessionGuard;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Throwable;
 
 class AccountController extends ClientApiController
 {

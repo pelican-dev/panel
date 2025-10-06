@@ -2,19 +2,19 @@
 
 namespace App\Services\Activity;
 
-use Closure;
+use App\Models\ActivityLog;
+use App\Models\Server;
 use App\Models\User;
+use Closure;
+use Filament\Facades\Filament;
+use Illuminate\Contracts\Auth\Factory as AuthFactory;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Request;
 use Throwable;
 use Webmozart\Assert\Assert;
-use Illuminate\Support\Collection;
-use App\Models\ActivityLog;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Request;
-use App\Models\Server;
-use Filament\Facades\Filament;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Contracts\Auth\Factory as AuthFactory;
 
 class ActivityLogService
 {

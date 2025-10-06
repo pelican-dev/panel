@@ -2,17 +2,17 @@
 
 namespace App\Services\Subusers;
 
-use App\Exceptions\Model\DataValidationException;
-use Throwable;
 use App\Events\Server\SubUserAdded;
-use App\Models\User;
+use App\Exceptions\Model\DataValidationException;
+use App\Exceptions\Service\Subuser\ServerSubuserExistsException;
+use App\Exceptions\Service\Subuser\UserIsServerOwnerException;
+use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
-use Illuminate\Database\ConnectionInterface;
+use App\Models\User;
 use App\Services\Users\UserCreationService;
-use App\Exceptions\Service\Subuser\UserIsServerOwnerException;
-use App\Exceptions\Service\Subuser\ServerSubuserExistsException;
-use App\Models\Permission;
+use Illuminate\Database\ConnectionInterface;
+use Throwable;
 
 class SubuserCreationService
 {

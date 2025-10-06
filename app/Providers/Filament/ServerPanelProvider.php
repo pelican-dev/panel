@@ -2,8 +2,8 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\App\Resources\Servers\Pages\ListServers;
 use App\Filament\Admin\Resources\Servers\Pages\EditServer;
+use App\Filament\App\Resources\Servers\Pages\ListServers;
 use App\Http\Middleware\Activity\ServerSubject;
 use App\Models\Server;
 use Filament\Actions\Action;
@@ -19,7 +19,7 @@ class ServerPanelProvider extends PanelProvider
             ->id('server')
             ->path('server')
             ->homeUrl(fn () => Filament::getPanel('app')->getUrl())
-            ->tenant(Server::class)
+            ->tenant(Server::class, 'uuid_short')
             ->userMenuItems([
                 Action::make('to_serverList')
                     ->label(trans('profile.server_list'))

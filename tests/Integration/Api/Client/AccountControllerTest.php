@@ -2,10 +2,10 @@
 
 namespace App\Tests\Integration\Api\Client;
 
-use Illuminate\Support\Str;
 use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AccountControllerTest extends ClientApiIntegrationTestCase
 {

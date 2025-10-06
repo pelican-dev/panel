@@ -2,12 +2,12 @@
 
 namespace App\Http\Middleware\Api\Daemon;
 
-use Closure;
 use App\Models\Node;
+use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DaemonAuthenticate
 {

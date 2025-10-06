@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Api\Application\Servers;
 
-use Throwable;
+use App\Enums\SuspendAction;
 use App\Exceptions\DisplayException;
 use App\Exceptions\Model\DataValidationException;
-use App\Enums\SuspendAction;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Servers\ServerWriteRequest;
 use App\Models\Server;
@@ -17,6 +16,7 @@ use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
+use Throwable;
 
 #[Group('Server', weight: 4)]
 class ServerManagementController extends ApplicationApiController

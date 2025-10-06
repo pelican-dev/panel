@@ -2,11 +2,11 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHosts;
 
-use App\Filament\Admin\Resources\DatabaseHosts\RelationManagers\DatabasesRelationManager;
-use App\Filament\Admin\Resources\DatabaseHosts\Pages\ListDatabaseHosts;
 use App\Filament\Admin\Resources\DatabaseHosts\Pages\CreateDatabaseHost;
-use App\Filament\Admin\Resources\DatabaseHosts\Pages\ViewDatabaseHost;
 use App\Filament\Admin\Resources\DatabaseHosts\Pages\EditDatabaseHost;
+use App\Filament\Admin\Resources\DatabaseHosts\Pages\ListDatabaseHosts;
+use App\Filament\Admin\Resources\DatabaseHosts\Pages\ViewDatabaseHost;
+use App\Filament\Admin\Resources\DatabaseHosts\RelationManagers\DatabasesRelationManager;
 use App\Models\DatabaseHost;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;

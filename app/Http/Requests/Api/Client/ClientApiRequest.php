@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Api\Client;
 
-use App\Models\Server;
 use App\Contracts\Http\ClientPermissionsRequest;
 use App\Http\Requests\Api\Application\ApplicationApiRequest;
+use App\Models\Server;
 
 class ClientApiRequest extends ApplicationApiRequest
 {

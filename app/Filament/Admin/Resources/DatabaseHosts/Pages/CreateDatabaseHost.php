@@ -8,16 +8,16 @@ use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Forms\Components\Hidden;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
@@ -97,14 +97,14 @@ class CreateDatabaseHost extends CreateRecord
                                 ->default(fn (Get $get) => "CREATE USER '{$get('username')}'@'{$get('panel_ip')}' IDENTIFIED BY '{$get('password')}';")
                                 ->disabled()
                                 ->dehydrated(false)
-                                ->copyable(fn () => request()->isSecure())
+                                ->copyable()
                                 ->columnSpanFull(),
                             TextInput::make('assign_permissions')
                                 ->label(trans('admin/databasehost.setup.command_assign_permissions'))
                                 ->default(fn (Get $get) => "GRANT ALL PRIVILEGES ON *.* TO '{$get('username')}'@'{$get('panel_ip')}' WITH GRANT OPTION;")
                                 ->disabled()
                                 ->dehydrated(false)
-                                ->copyable(fn () => request()->isSecure())
+                                ->copyable()
                                 ->columnSpanFull(),
                             TextEntry::make('cli_exit')
                                 ->hiddenLabel()

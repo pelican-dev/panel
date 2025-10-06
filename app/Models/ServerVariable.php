@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Carbon\CarbonImmutable;
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

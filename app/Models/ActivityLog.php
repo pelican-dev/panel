@@ -2,23 +2,23 @@
 
 namespace App\Models;
 
-use LogicException;
-use Illuminate\Support\Collection;
+use App\Events\ActivityLogged;
 use App\Traits\HasValidation;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Event;
-use App\Events\ActivityLogged;
 use Filament\Facades\Filament;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
+use LogicException;
 
 /**
  * \App\Models\ActivityLog.

@@ -2,27 +2,27 @@
 
 namespace App\Services\Servers;
 
-use Throwable;
-use App\Exceptions\DisplayException;
-use Illuminate\Validation\ValidationException;
-use App\Exceptions\Service\Deployment\NoViableAllocationException;
-use App\Exceptions\Model\DataValidationException;
 use App\Enums\ServerState;
+use App\Exceptions\DisplayException;
+use App\Exceptions\Model\DataValidationException;
+use App\Exceptions\Service\Deployment\NoViableAllocationException;
 use App\Exceptions\Service\Deployment\NoViableNodeException;
-use Illuminate\Http\Client\ConnectionException;
-use Ramsey\Uuid\Uuid;
-use Illuminate\Support\Arr;
-use App\Models\User;
-use Webmozart\Assert\Assert;
-use App\Models\Server;
-use Illuminate\Support\Collection;
 use App\Models\Allocation;
-use Illuminate\Database\ConnectionInterface;
-use App\Models\Objects\DeploymentObject;
-use App\Repositories\Daemon\DaemonServerRepository;
-use App\Services\Deployment\FindViableNodesService;
-use App\Services\Deployment\AllocationSelectionService;
 use App\Models\Egg;
+use App\Models\Objects\DeploymentObject;
+use App\Models\Server;
+use App\Models\User;
+use App\Repositories\Daemon\DaemonServerRepository;
+use App\Services\Deployment\AllocationSelectionService;
+use App\Services\Deployment\FindViableNodesService;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
+use Ramsey\Uuid\Uuid;
+use Throwable;
+use Webmozart\Assert\Assert;
 
 class ServerCreationService
 {

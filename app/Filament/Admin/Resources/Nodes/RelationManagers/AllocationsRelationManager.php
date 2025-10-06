@@ -8,13 +8,13 @@ use App\Models\Node;
 use App\Services\Allocations\AssignmentService;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -85,13 +85,22 @@ class AllocationsRelationManager extends RelationManager
                     ->label(trans('admin/node.create_allocation'))
                     ->schema(fn () => [
                         Select::make('allocation_ip')
-                            ->options(collect($this->getOwnerRecord()->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                            ->options(fn () => collect($this->getOwnerRecord()->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                             ->label(trans('admin/node.ip_address'))
                             ->inlineLabel()
                             ->ip()
                             ->helperText(trans('admin/node.ip_help'))
                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                             ->live()
+                            ->hintAction(
+                                Action::make('refresh')
+                                    ->iconButton()
+                                    ->icon('tabler-refresh')
+                                    ->tooltip(trans('admin/node.refresh'))
+                                    ->action(function () {
+                                        cache()->forget("nodes.{$this->getOwnerRecord()->id}.ips");
+                                    })
+                            )
                             ->required(),
                         TextInput::make('allocation_alias')
                             ->label(trans('admin/node.table.alias'))

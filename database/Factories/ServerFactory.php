@@ -5,12 +5,12 @@ namespace Database\Factories;
 use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
+use App\Models\Server;
 use App\Models\User;
 use Carbon\Carbon;
-use Ramsey\Uuid\Uuid;
-use Illuminate\Support\Str;
-use App\Models\Server;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 
 class ServerFactory extends Factory
 {

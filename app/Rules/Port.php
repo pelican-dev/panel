@@ -2,9 +2,9 @@
 
 namespace App\Rules;
 
-use Illuminate\Translation\PotentiallyTranslatedString;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 class Port implements ValidationRule
 {

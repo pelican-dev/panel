@@ -3,8 +3,8 @@
 namespace App\Transformers\Api\Client;
 
 use App\Models\Database;
-use League\Fractal\Resource\Item;
 use App\Models\Permission;
+use League\Fractal\Resource\Item;
 use League\Fractal\Resource\NullResource;
 
 class DatabaseTransformer extends BaseClientTransformer

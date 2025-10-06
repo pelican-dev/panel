@@ -2,34 +2,34 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Carbon;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Notifications\DatabaseNotificationCollection;
-use Illuminate\Notifications\DatabaseNotification;
-use Database\Factories\ServerFactory;
-use Illuminate\Database\Eloquent\Builder;
 use App\Contracts\Validatable;
 use App\Enums\ContainerStatus;
 use App\Enums\ServerResourceType;
 use App\Enums\ServerState;
+use App\Exceptions\Http\Server\ServerStateConflictException;
 use App\Repositories\Daemon\DaemonServerRepository;
+use App\Services\Subusers\SubuserDeletionService;
 use App\Traits\HasValidation;
 use Carbon\CarbonInterface;
+use Database\Factories\ServerFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\DatabaseNotificationCollection;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Psr\Http\Message\ResponseInterface;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use App\Exceptions\Http\Server\ServerStateConflictException;
-use App\Services\Subusers\SubuserDeletionService;
 
 /**
  * \App\Models\Server.
@@ -325,6 +325,18 @@ class Server extends Model implements Validatable
         return $this->hasMany(ServerVariable::class);
     }
 
+    public function ensureVariablesExist(): void
+    {
+        foreach ($this->eggVariables as $variable) {
+            ServerVariable::firstOrCreate([
+                'server_id' => $this->id,
+                'variable_id' => $variable->id,
+            ], [
+                'variable_value' => $variable->default_value,
+            ]);
+        }
+    }
+
     /**
      * Gets information for the node associated with this server.
      */
@@ -381,7 +393,7 @@ class Server extends Model implements Validatable
     public function resolveRouteBinding($value, $field = null): ?self
     {
         return match ($field) {
-            'uuid' => $this->where('uuid_short', $value)->orWhere('uuid', $value)->firstOrFail(),
+            'uuid', 'uuid_short' => $this->where('uuid_short', $value)->orWhere('uuid', $value)->firstOrFail(),
             default => $this->where('id', $value)->firstOrFail(),
         };
     }

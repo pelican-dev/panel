@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\Client;
 
-use App\Models\ActivityLog;
-use Spatie\QueryBuilder\QueryBuilder;
-use Spatie\QueryBuilder\AllowedFilter;
 use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Models\ActivityLog;
 use App\Transformers\Api\Client\ActivityLogTransformer;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ActivityLogController extends ClientApiController
 {

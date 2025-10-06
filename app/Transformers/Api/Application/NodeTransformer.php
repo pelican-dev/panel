@@ -2,9 +2,9 @@
 
 namespace App\Transformers\Api\Application;
 
+use App\Models\Allocation;
 use App\Models\Node;
 use App\Models\Server;
-use App\Models\Allocation;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
 

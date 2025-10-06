@@ -2,11 +2,11 @@
 
 namespace App\Tests\Assertions;
 
-use PHPUnit\Framework\Assert;
-use Illuminate\Support\Facades\Event;
 use App\Events\ActivityLogged;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\ActivityLogSubject;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Assert;
 
 trait AssertsActivityLogged
 {

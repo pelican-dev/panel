@@ -3,10 +3,10 @@
 namespace App\Models\Filters;
 
 use BadMethodCallException;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Spatie\QueryBuilder\Filters\Filter;
-use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @template-implements Filter<Model>

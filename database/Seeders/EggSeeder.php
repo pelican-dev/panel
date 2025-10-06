@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Egg;
+use App\Services\Eggs\Sharing\EggImporterService;
 use DirectoryIterator;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\UploadedFile;
-use App\Services\Eggs\Sharing\EggImporterService;
 use Symfony\Component\Yaml\Yaml;
 use Throwable;
 

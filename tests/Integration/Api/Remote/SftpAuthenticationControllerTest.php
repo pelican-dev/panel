@@ -4,10 +4,10 @@ namespace App\Tests\Integration\Api\Remote;
 
 use App\Enums\ServerState;
 use App\Models\Node;
-use App\Models\User;
-use App\Models\Server;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Server;
+use App\Models\User;
 use App\Models\UserSSHKey;
 use App\Tests\Integration\IntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;

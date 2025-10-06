@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Installer\Steps;
 
-use Filament\Schemas\Components\Wizard\Step;
 use App\Livewire\Installer\PanelInstaller;
-use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Wizard\Step;
 
 class EnvironmentStep
 {

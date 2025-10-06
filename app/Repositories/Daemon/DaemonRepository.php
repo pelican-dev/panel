@@ -3,12 +3,12 @@
 namespace App\Repositories\Daemon;
 
 use App\Models\Node;
-use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Facades\Http;
-use Webmozart\Assert\Assert;
 use App\Models\Server;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Http;
+use Webmozart\Assert\Assert;
 
 abstract class DaemonRepository
 {

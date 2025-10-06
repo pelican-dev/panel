@@ -6,17 +6,17 @@ use App\Filament\Admin\Resources\Servers\Pages\CreateServer;
 use App\Models\Allocation;
 use App\Models\Server;
 use App\Services\Allocations\AssignmentService;
+use Filament\Actions\Action;
+use Filament\Actions\AssociateAction;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DissociateAction;
+use Filament\Actions\DissociateBulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Actions\DissociateBulkAction;
-use Filament\Actions\CreateAction;
-use Filament\Actions\AssociateAction;
-use Filament\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -77,11 +77,20 @@ class AllocationsRelationManager extends RelationManager
                     ->createAnother(false)
                     ->schema(fn () => [
                         Select::make('allocation_ip')
-                            ->options(collect($this->getOwnerRecord()->node->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                            ->options(fn () => collect($this->getOwnerRecord()->node->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                             ->label(trans('admin/server.ip_address'))
                             ->inlineLabel()
                             ->ip()
                             ->live()
+                            ->hintAction(
+                                Action::make('refresh')
+                                    ->iconButton()
+                                    ->icon('tabler-refresh')
+                                    ->tooltip(trans('admin/node.refresh'))
+                                    ->action(function () {
+                                        cache()->forget("nodes.{$this->getOwnerRecord()->node->id}.ips");
+                                    })
+                            )
                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                             ->required(),
                         TextInput::make('allocation_alias')

@@ -2,9 +2,9 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Startup;
 
-use App\Models\User;
-use App\Models\Permission;
 use App\Models\EggVariable;
+use App\Models\Permission;
+use App\Models\User;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 

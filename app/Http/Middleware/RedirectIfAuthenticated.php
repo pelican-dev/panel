@@ -3,8 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Http\Request;
 
 readonly class RedirectIfAuthenticated
 {

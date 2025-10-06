@@ -125,15 +125,20 @@ class ImportEggAction extends Action
                         ->schema([
                             Select::make('github')
                                 ->label(trans('admin/egg.import.github'))
-                                ->options(cache('eggs.index'))
+                                ->options(fn () => cache('eggs.index'))
                                 ->selectablePlaceholder(false)
                                 ->searchable()
                                 ->preload()
                                 ->live()
-                                ->hintIcon('tabler-refresh', trans('admin/egg.import.refresh'))
-                                ->hintAction(function () {
-                                    Artisan::call(UpdateEggIndexCommand::class);
-                                })
+                                ->hintAction(
+                                    Action::make('refresh')
+                                        ->iconButton()
+                                        ->icon('tabler-refresh')
+                                        ->tooltip(trans('admin/egg.import.refresh'))
+                                        ->action(function () {
+                                            Artisan::call(UpdateEggIndexCommand::class);
+                                        })
+                                )
                                 ->afterStateUpdated(function ($state, Set $set, Get $get) use ($isMultiple) {
                                     if ($state) {
                                         $urls = $isMultiple ? $get('urls') : [];
