@@ -26,10 +26,7 @@ class AppPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')
             ->plugins([
                 FilamentLogViewer::make()
-                    ->authorize(fn () => auth()->user()->canAccessPanel(Filament::getPanel('admin')))
-                    ->navigationGroup('Advanced')
-                    ->navigationLabel('Panel Logs')
-                    ->navigationIcon('tabler-file-info'),
+                    ->authorize(fn () => auth()->user()->canAccessPanel(Filament::getPanel('admin'))),
             ]);
     }
 }
