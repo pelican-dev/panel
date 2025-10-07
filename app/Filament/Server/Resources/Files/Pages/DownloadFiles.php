@@ -39,12 +39,12 @@ class DownloadFiles extends Page
 
         $token = $this->nodeJWTService
             ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
-            ->setUser(auth()->user())
+            ->setUser(user())
             ->setClaims([
                 'file_path' => rawurldecode($path),
                 'server_uuid' => $server->uuid,
             ])
-            ->handle($server->node, auth()->user()->id . $server->uuid);
+            ->handle($server->node, user()?->id . $server->uuid);
 
         Activity::event('server:file.download')
             ->property('file', $path)
@@ -55,7 +55,7 @@ class DownloadFiles extends Page
 
     protected function authorizeAccess(): void
     {
-        abort_unless(auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()), 403);
+        abort_unless(user()?->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()), 403);
     }
 
     public static function route(string $path): PageRegistration

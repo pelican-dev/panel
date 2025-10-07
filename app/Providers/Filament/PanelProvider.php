@@ -34,7 +34,7 @@ abstract class PanelProvider extends BasePanelProvider
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
             ->favicon(config('app.favicon', '/pelican.ico'))
-            ->topNavigation(fn () => auth()->user()->getCustomization(CustomizationKey::TopNavigation))
+            ->topNavigation(fn () => user()?->getCustomization(CustomizationKey::TopNavigation))
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->profile(EditProfile::class, false)
             ->userMenuItems([
@@ -48,8 +48,7 @@ abstract class PanelProvider extends BasePanelProvider
                 EmailAuthentication::make(),
             ])
             ->requiresMultiFactorAuthentication(function () {
-                /** @var ?User $user */
-                $user = auth()->user(); // TODO: get user, see https://github.com/filamentphp/filament/discussions/17695
+                $user = user(); // TODO: get user, see https://github.com/filamentphp/filament/discussions/17695
                 if ($user) {
                     $level = (int) config('panel.auth.2fa_required');
 

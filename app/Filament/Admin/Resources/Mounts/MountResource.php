@@ -166,7 +166,7 @@ class MountResource extends Resource
                             ->preload(),
                         Select::make('nodes')->multiple()
                             ->label(trans('admin/mount.nodes'))
-                            ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id')))
+                            ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', user()?->accessibleNodes()->pluck('id')))
                             ->searchable(['name', 'fqdn'])
                             ->preload(),
                     ]),
@@ -197,7 +197,7 @@ class MountResource extends Resource
 
         return $query->where(function (Builder $query) {
             return $query->whereHas('nodes', function (Builder $query) {
-                $query->whereIn('nodes.id', auth()->user()->accessibleNodes()->pluck('id'));
+                $query->whereIn('nodes.id', user()?->accessibleNodes()->pluck('id'));
             })->orDoesntHave('nodes');
         });
     }

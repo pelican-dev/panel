@@ -129,7 +129,7 @@ class BackupResource extends Resource
                 ActionGroup::make([
                     Action::make('rename')
                         ->icon('tabler-pencil')
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DELETE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_DELETE, $server))
                         ->label(trans('server/backup.actions.rename.title'))
                         ->schema([
                             TextInput::make('name')
@@ -160,7 +160,7 @@ class BackupResource extends Resource
                     Action::make('lock')
                         ->iconSize(IconSize::Large)
                         ->icon(fn (Backup $backup) => !$backup->is_locked ? 'tabler-lock' : 'tabler-lock-open')
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DELETE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_DELETE, $server))
                         ->label(fn (Backup $backup) => !$backup->is_locked ? trans('server/backup.actions.lock.lock') : trans('server/backup.actions.lock.unlock'))
                         ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->toggleLock($request, $server, $backup))
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
@@ -169,7 +169,7 @@ class BackupResource extends Resource
                         ->iconSize(IconSize::Large)
                         ->color('primary')
                         ->icon('tabler-download')
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_DOWNLOAD, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_DOWNLOAD, $server))
                         ->url(fn (DownloadLinkService $downloadLinkService, Backup $backup, Request $request) => $downloadLinkService->handle($backup, $request->user()), true)
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     Action::make('restore')
@@ -177,7 +177,7 @@ class BackupResource extends Resource
                         ->iconSize(IconSize::Large)
                         ->color('success')
                         ->icon('tabler-folder-up')
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_RESTORE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_RESTORE, $server))
                         ->schema([
                             TextEntry::make('stop_info')
                                 ->hiddenLabel()
@@ -210,7 +210,7 @@ class BackupResource extends Resource
                                 // If the backup is for an S3 file we need to generate a unique Download link for
                                 // it that will allow daemon to actually access the file.
                                 if ($backup->disk === Backup::ADAPTER_AWS_S3) {
-                                    $url = $downloadLinkService->handle($backup, auth()->user());
+                                    $url = $downloadLinkService->handle($backup, user());
                                 }
 
                                 // Update the status right away for the server so that we know not to allow certain
@@ -258,7 +258,7 @@ class BackupResource extends Resource
             ])
             ->toolbarActions([
                 CreateAction::make()
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_BACKUP_CREATE, $server))
+                    ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_CREATE, $server))
                     ->icon('tabler-file-zip')
                     ->tooltip(fn () => $server->backups()->count() >= $server->backup_limit ? trans('server/backup.actions.create.limit') : trans('server/backup.actions.create.title'))
                     ->disabled(fn () => $server->backups()->count() >= $server->backup_limit)
@@ -268,7 +268,7 @@ class BackupResource extends Resource
                     ->action(function (InitiateBackupService $initiateBackupService, $data) use ($server) {
                         $action = $initiateBackupService->setIgnoredFiles(explode(PHP_EOL, $data['ignored'] ?? ''));
 
-                        if (auth()->user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {
+                        if (user()?->can(Permission::ACTION_BACKUP_DELETE, $server)) {
                             $action->setIsLocked((bool) $data['is_locked']);
                         }
 
@@ -298,17 +298,17 @@ class BackupResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->can(Permission::ACTION_BACKUP_READ, Filament::getTenant());
+        return user()?->can(Permission::ACTION_BACKUP_READ, Filament::getTenant());
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()->can(Permission::ACTION_BACKUP_CREATE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_BACKUP_CREATE, Filament::getTenant());
     }
 
     public static function canDelete(Model $record): bool
     {
-        return auth()->user()->can(Permission::ACTION_BACKUP_DELETE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_BACKUP_DELETE, Filament::getTenant());
     }
 
     /** @return array<string, PageRegistration> */
