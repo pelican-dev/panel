@@ -48,7 +48,7 @@ class OAuthService
 
     public function linkUser(User $user, OAuthSchemaInterface $schema, OAuthUser $oauthUser): User
     {
-        $oauth = $user->oauth;
+        $oauth = $user->oauth ?? [];
         $oauth[$schema->getId()] = $oauthUser->getId();
 
         $user->update(['oauth' => $oauth]);
@@ -58,7 +58,7 @@ class OAuthService
 
     public function unlinkUser(User $user, OAuthSchemaInterface $schema): User
     {
-        $oauth = $user->oauth;
+        $oauth = $user->oauth ?? [];
         if (!isset($oauth[$schema->getId()])) {
             return $user;
         }
