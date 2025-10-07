@@ -85,8 +85,8 @@ class StartupModificationService
             ]);
 
             // Fill missing fields from egg
-            $data['docker_image'] = $data['docker_image'] ?? collect($egg->docker_images)->first();
-            $data['startup'] = $data['startup'] ?? $egg->startup;
+            $data['docker_image'] ??= Arr::first($egg->docker_images);
+            $data['startup'] ??= Arr::first($egg->startup_commands);
         }
 
         $server->fill([

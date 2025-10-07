@@ -80,11 +80,14 @@ class EditEgg extends EditRecord
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                                 ->helperText(trans('admin/egg.author_help_edit')),
-                            Textarea::make('startup')
-                                ->label(trans('admin/egg.startup'))
-                                ->rows(3)
+                            KeyValue::make('startup_commands')
+                                ->label(trans('admin/egg.startup_commands'))
+                                ->live()
                                 ->columnSpanFull()
                                 ->required()
+                                ->addActionLabel(trans('admin/egg.add_startup'))
+                                ->keyLabel(trans('admin/egg.startup_name'))
+                                ->valueLabel(trans('admin/egg.startup_command'))
                                 ->helperText(trans('admin/egg.startup_help')),
                             TagsInput::make('file_denylist')
                                 ->label(trans('admin/egg.file_denylist'))
