@@ -32,7 +32,7 @@ class EggResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return auth()->user()->getCustomization(CustomizationKey::TopNavigation) ? false : trans('admin/dashboard.server');
+        return user()?->getCustomization(CustomizationKey::TopNavigation) ? false : trans('admin/dashboard.server');
     }
 
     public static function getNavigationLabel(): string
