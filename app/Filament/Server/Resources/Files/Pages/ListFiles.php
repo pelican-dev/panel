@@ -119,7 +119,7 @@ class ListFiles extends ListRecords
                     return self::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]);
                 }
 
-                if (!auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server)) {
+                if (!user()?->can(Permission::ACTION_FILE_READ_CONTENT, $server)) {
                     return null;
                 }
 
@@ -127,19 +127,19 @@ class ListFiles extends ListRecords
             })
             ->recordActions([
                 Action::make('view')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
+                    ->authorize(fn () => user()?->can(Permission::ACTION_FILE_READ, $server))
                     ->label(trans('server/file.actions.open'))
                     ->icon('tabler-eye')->iconSize(IconSize::Large)
                     ->visible(fn (File $file) => $file->is_directory)
                     ->url(fn (File $file) => self::getUrl(['path' => encode_path(join_paths($this->path, $file->name))])),
                 EditAction::make('edit')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server))
+                    ->authorize(fn () => user()?->can(Permission::ACTION_FILE_READ_CONTENT, $server))
                     ->icon('tabler-edit')
                     ->visible(fn (File $file) => $file->canEdit())
                     ->url(fn (File $file) => EditFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))])),
                 ActionGroup::make([
                     Action::make('rename')
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->label(trans('server/file.actions.rename.title'))
                         ->icon('tabler-forms')->iconSize(IconSize::Large)
                         ->schema([
@@ -169,7 +169,7 @@ class ListFiles extends ListRecords
                             $this->refreshPage();
                         }),
                     Action::make('copy')
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_FILE_CREATE, $server))
                         ->label(trans('server/file.actions.copy.title'))
                         ->icon('tabler-copy')->iconSize(IconSize::Large)
                         ->visible(fn (File $file) => $file->is_file)
@@ -188,13 +188,13 @@ class ListFiles extends ListRecords
                             $this->refreshPage();
                         }),
                     Action::make('download')
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ_CONTENT, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_FILE_READ_CONTENT, $server))
                         ->label(trans('server/file.actions.download'))
                         ->icon('tabler-download')->iconSize(IconSize::Large)
                         ->visible(fn (File $file) => $file->is_file)
                         ->url(fn (File $file) => DownloadFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]), true),
                     Action::make('move')
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->label(trans('server/file.actions.move.title'))
                         ->icon('tabler-replace')->iconSize(IconSize::Large)
                         ->schema([
@@ -231,7 +231,7 @@ class ListFiles extends ListRecords
                             $this->refreshPage();
                         }),
                     Action::make('permissions')
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->label(trans('server/file.actions.permissions.title'))
                         ->icon('tabler-license')->iconSize(IconSize::Large)
                         ->schema([
@@ -293,7 +293,7 @@ class ListFiles extends ListRecords
                                 ->send();
                         }),
                     Action::make('archive')
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_FILE_ARCHIVE, $server))
                         ->label(trans('server/file.actions.archive.title'))
                         ->icon('tabler-archive')->iconSize(IconSize::Large)
                         ->schema([
@@ -320,7 +320,7 @@ class ListFiles extends ListRecords
                             $this->refreshPage();
                         }),
                     Action::make('unarchive')
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_FILE_ARCHIVE, $server))
                         ->label(trans('server/file.actions.unarchive.title'))
                         ->icon('tabler-archive')->iconSize(IconSize::Large)
                         ->visible(fn (File $file) => $file->isArchive())
@@ -341,7 +341,7 @@ class ListFiles extends ListRecords
                         }),
                 ])->iconSize(IconSize::Large),
                 DeleteAction::make()
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_DELETE, $server))
+                    ->authorize(fn () => user()?->can(Permission::ACTION_FILE_DELETE, $server))
                     ->hiddenLabel()
                     ->icon('tabler-trash')->iconSize(IconSize::Large)
                     ->requiresConfirmation()
@@ -361,7 +361,7 @@ class ListFiles extends ListRecords
             ->toolbarActions([
                 BulkActionGroup::make([
                     BulkAction::make('move')
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_UPDATE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_FILE_UPDATE, $server))
                         ->schema([
                             TextInput::make('location')
                                 ->label(trans('server/file.actions.move.directory'))
@@ -390,7 +390,7 @@ class ListFiles extends ListRecords
                             $this->refreshPage();
                         }),
                     BulkAction::make('archive')
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_ARCHIVE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_FILE_ARCHIVE, $server))
                         ->schema([
                             TextInput::make('name')
                                 ->label(trans('server/file.actions.archive.archive_name'))
@@ -417,7 +417,7 @@ class ListFiles extends ListRecords
                             $this->refreshPage();
                         }),
                     DeleteBulkAction::make()
-                        ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_DELETE, $server))
+                        ->authorize(fn () => user()?->can(Permission::ACTION_FILE_DELETE, $server))
                         ->action(function (Collection $files) {
                             $files = $files->map(fn ($file) => $file['name'])->toArray();
                             $this->getDaemonFileRepository()->deleteFiles($this->path, $files);
@@ -437,7 +437,7 @@ class ListFiles extends ListRecords
                 ]),
 
                 Action::make('new_file')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
+                    ->authorize(fn () => user()?->can(Permission::ACTION_FILE_CREATE, $server))
                     ->tooltip(trans('server/file.actions.new_file.title'))
                     ->hiddenLabel()->icon('tabler-file-plus')->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->color('primary')
@@ -470,7 +470,7 @@ class ListFiles extends ListRecords
                             ->hiddenLabel(),
                     ]),
                 Action::make('new_folder')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
+                    ->authorize(fn () => user()?->can(Permission::ACTION_FILE_CREATE, $server))
                     ->hiddenLabel()->icon('tabler-folder-plus')->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->tooltip(trans('server/file.actions.new_folder.title'))
                     ->color('primary')
@@ -501,7 +501,7 @@ class ListFiles extends ListRecords
                             ->required(),
                     ]),
                 Action::make('upload')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_CREATE, $server))
+                    ->authorize(fn () => user()?->can(Permission::ACTION_FILE_CREATE, $server))
                     ->hiddenLabel()->icon('tabler-upload')->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->tooltip(trans('server/file.actions.upload.title'))
                     ->color('success')
@@ -554,7 +554,7 @@ class ListFiles extends ListRecords
                             ]),
                     ]),
                 Action::make('search')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_FILE_READ, $server))
+                    ->authorize(fn () => user()?->can(Permission::ACTION_FILE_READ, $server))
                     ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->tooltip(trans('server/file.actions.global_search.title'))
                     ->color('primary')

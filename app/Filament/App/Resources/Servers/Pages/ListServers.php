@@ -102,9 +102,9 @@ class ListServers extends ListRecords
 
     public function table(Table $table): Table
     {
-        $baseQuery = auth()->user()->accessibleServers();
+        $baseQuery = user()?->accessibleServers();
 
-        $usingGrid = auth()->user()->getCustomization(CustomizationKey::DashboardLayout) === 'grid';
+        $usingGrid = user()?->getCustomization(CustomizationKey::DashboardLayout) === 'grid';
 
         return $table
             ->paginated(false)
@@ -139,9 +139,9 @@ class ListServers extends ListRecords
 
     public function getTabs(): array
     {
-        $all = auth()->user()->accessibleServers();
-        $my = (clone $all)->where('owner_id', auth()->user()->id);
-        $other = (clone $all)->whereNot('owner_id', auth()->user()->id);
+        $all = user()?->accessibleServers();
+        $my = (clone $all)->where('owner_id', user()?->id);
+        $other = (clone $all)->whereNot('owner_id', user()?->id);
 
         return [
             'my' => Tab::make('my')
@@ -232,21 +232,21 @@ class ListServers extends ListRecords
                 ->label(trans('server/console.power_actions.start'))
                 ->color('primary')
                 ->icon('tabler-player-play-filled')
-                ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_START, $server))
+                ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_START, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isStartable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'start']),
             Action::make('restart')
                 ->label(trans('server/console.power_actions.restart'))
                 ->color('gray')
                 ->icon('tabler-reload')
-                ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_RESTART, $server))
+                ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_RESTART, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isRestartable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'restart']),
             Action::make('stop')
                 ->label(trans('server/console.power_actions.stop'))
                 ->color('danger')
                 ->icon('tabler-player-stop-filled')
-                ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
+                ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isStoppable() && !$server->retrieveStatus()->isKillable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'stop']),
             Action::make('kill')
@@ -254,7 +254,7 @@ class ListServers extends ListRecords
                 ->color('danger')
                 ->icon('tabler-alert-square')
                 ->tooltip(trans('server/console.power_actions.kill_tooltip'))
-                ->authorize(fn (Server $server) => auth()->user()->can(Permission::ACTION_CONTROL_STOP, $server))
+                ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_STOP, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isKillable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'kill']),
         ])

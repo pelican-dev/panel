@@ -35,7 +35,7 @@ class ImportEggAction extends Action
 
         $this->label(trans('filament-actions::import.modal.actions.import.label'));
 
-        $this->authorize(fn () => auth()->user()->can('import egg'));
+        $this->authorize(fn () => user()?->can('import egg'));
 
         $this->action(function (array $data, EggImporterService $eggImportService): void {
             $eggs = array_merge(collect($data['urls'])->flatten()->whereNotNull()->unique()->all(), Arr::wrap($data['files']));

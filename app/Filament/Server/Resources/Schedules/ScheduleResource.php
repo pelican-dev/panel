@@ -66,22 +66,22 @@ class ScheduleResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->can(Permission::ACTION_SCHEDULE_READ, Filament::getTenant());
+        return user()?->can(Permission::ACTION_SCHEDULE_READ, Filament::getTenant());
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()->can(Permission::ACTION_SCHEDULE_CREATE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_SCHEDULE_CREATE, Filament::getTenant());
     }
 
     public static function canEdit(Model $record): bool
     {
-        return auth()->user()->can(Permission::ACTION_SCHEDULE_UPDATE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_SCHEDULE_UPDATE, Filament::getTenant());
     }
 
     public static function canDelete(Model $record): bool
     {
-        return auth()->user()->can(Permission::ACTION_SCHEDULE_DELETE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_SCHEDULE_DELETE, Filament::getTenant());
     }
 
     /**
@@ -123,12 +123,12 @@ class ScheduleResource extends Resource
                     ->label(trans('server/schedule.cron'))
                     ->description(function (Get $get) {
                         try {
-                            $nextRun = Utilities::getScheduleNextRunDate($get('cron_minute'), $get('cron_hour'), $get('cron_day_of_month'), $get('cron_month'), $get('cron_day_of_week'))->timezone(auth()->user()->timezone);
+                            $nextRun = Utilities::getScheduleNextRunDate($get('cron_minute'), $get('cron_hour'), $get('cron_day_of_month'), $get('cron_month'), $get('cron_day_of_week'))->timezone(user()->timezone ?? 'UTC');
                         } catch (Exception) {
                             $nextRun = trans('server/schedule.invalid');
                         }
 
-                        return new HtmlString(trans('server/schedule.cron_body') . '<br>' . trans('server/schedule.cron_timezone', ['timezone' => auth()->user()->timezone, 'next_run' => $nextRun]));
+                        return new HtmlString(trans('server/schedule.cron_body') . '<br>' . trans('server/schedule.cron_timezone', ['timezone' => user()->timezone ?? 'UTC', 'next_run' => $nextRun]));
                     })
                     ->schema([
                         Actions::make([

@@ -33,7 +33,7 @@ class ImportScheduleAction extends Action
 
         $this->label(trans('filament-actions::import.modal.actions.import.label'));
 
-        $this->authorize(fn () => auth()->user()->can(Permission::ACTION_SCHEDULE_CREATE, $server));
+        $this->authorize(fn () => user()?->can(Permission::ACTION_SCHEDULE_CREATE, $server));
 
         $this->schema([
             Tabs::make('Tabs')

@@ -69,7 +69,7 @@ class ListServers extends ListRecords
                     ->searchable(),
                 SelectColumn::make('allocation_id')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->hidden(fn () => !auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
+                    ->hidden(fn () => !user()?->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
                     ->disabled(fn (Server $server) => $server->allocations->count() <= 1)
                     ->options(fn (Server $server) => $server->allocations->mapWithKeys(fn ($allocation) => [$allocation->id => $allocation->address]))
                     ->selectablePlaceholder(fn (Server $server) => $server->allocations->count() <= 1)
@@ -77,7 +77,7 @@ class ListServers extends ListRecords
                     ->sortable(),
                 TextColumn::make('allocation_id_readonly')
                     ->label(trans('admin/server.primary_allocation'))
-                    ->hidden(fn () => auth()->user()->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
+                    ->hidden(fn () => user()?->can('update server')) // TODO: update to policy check (fn (Server $server) --> $server is empty)
                     ->state(fn (Server $server) => $server->allocation->address ?? trans('admin/server.none')),
                 TextColumn::make('image')->hidden(),
                 TextColumn::make('backups_count')
@@ -90,7 +90,7 @@ class ListServers extends ListRecords
                 Action::make('View')
                     ->label(trans('admin/server.view'))
                     ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
-                    ->authorize(fn (Server $server) => auth()->user()->canAccessTenant($server)),
+                    ->authorize(fn (Server $server) => user()?->canAccessTenant($server)),
                 EditAction::make(),
             ])
             ->emptyStateIcon('tabler-brand-docker')

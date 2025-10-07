@@ -59,7 +59,7 @@ class UpdateEggAction extends Action
                 ->send();
         });
 
-        $this->authorize(fn () => auth()->user()->can('import egg'));
+        $this->authorize(fn () => user()?->can('import egg'));
 
         $this->visible(fn (Egg $egg) => cache()->get("eggs.$egg->uuid.update", false));
     }

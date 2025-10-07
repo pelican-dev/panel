@@ -38,7 +38,7 @@ class CreateApiKey extends CreateRecord
     {
         $data['identifier'] = ApiKey::generateTokenIdentifier(ApiKey::TYPE_APPLICATION);
         $data['token'] = Str::random(ApiKey::KEY_LENGTH);
-        $data['user_id'] = auth()->user()->id;
+        $data['user_id'] = user()?->id;
         $data['key_type'] = ApiKey::TYPE_APPLICATION;
 
         $permissions = [];

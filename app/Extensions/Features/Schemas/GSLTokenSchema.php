@@ -54,7 +54,7 @@ class GSLTokenSchema implements FeatureSchemaInterface
             ->modalHeading('Invalid GSL token')
             ->modalDescription('It seems like your Gameserver Login Token (GSL token) is invalid or has expired.')
             ->modalSubmitActionLabel('Update GSL Token')
-            ->disabledSchema(fn () => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
+            ->disabledSchema(fn () => !user()?->can(Permission::ACTION_STARTUP_UPDATE, $server))
             ->schema([
                 TextEntry::make('info')
                     ->label(new HtmlString(Blade::render('You can either <x-filament::link href="https://steamcommunity.com/dev/managegameservers" target="_blank">generate a new one</x-filament::link> and enter it below or leave the field blank to remove it completely.'))),

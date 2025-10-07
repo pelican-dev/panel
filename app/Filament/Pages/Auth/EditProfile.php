@@ -187,7 +187,10 @@ class EditProfile extends BaseEditProfile
                                         ->color(Color::hex($schema->getHexColor()))
                                         ->action(function () use ($id, $name, $schema, $unlink) {
                                             if ($unlink) {
-                                                $this->oauthService->unlinkUser(auth()->user(), $schema);
+                                                $oauth = user()?->oauth;
+                                                unset($oauth[$id]);
+
+                                                $updateService->handle(user(), ['oauth' => $oauth]);
 
                                                 $this->fillForm();
 

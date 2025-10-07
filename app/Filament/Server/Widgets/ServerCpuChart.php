@@ -27,12 +27,12 @@ class ServerCpuChart extends ChartWidget
 
     protected function getData(): array
     {
-        $period = (int) auth()->user()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
+        $period = (int) user()?->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $cpu = collect(cache()->get("servers.{$this->server->id}.cpu_absolute"))
             ->slice(-$period)
             ->map(fn ($value, $key) => [
                 'cpu' => round($value, 2),
-                'timestamp' => Carbon::createFromTimestamp($key, auth()->user()->timezone ?? 'UTC')->format('H:i:s'),
+                'timestamp' => Carbon::createFromTimestamp($key, user()->timezone ?? 'UTC')->format('H:i:s'),
             ])
             ->all();
 
@@ -48,7 +48,7 @@ class ServerCpuChart extends ChartWidget
                 ],
             ],
             'labels' => array_column($cpu, 'timestamp'),
-            'locale' => auth()->user()->language ?? 'en',
+            'locale' => user()->language ?? 'en',
         ];
     }
 

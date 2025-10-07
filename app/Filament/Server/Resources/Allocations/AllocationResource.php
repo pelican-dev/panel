@@ -58,7 +58,7 @@ class AllocationResource extends Resource
                 TextInputColumn::make('notes')
                     ->label(trans('server/network.notes'))
                     ->visibleFrom('sm')
-                    ->disabled(fn () => !auth()->user()->can(Permission::ACTION_ALLOCATION_UPDATE, $server))
+                    ->disabled(fn () => !user()?->can(Permission::ACTION_ALLOCATION_UPDATE, $server))
                     ->placeholder(trans('server/network.no_notes')),
                 IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
@@ -70,13 +70,13 @@ class AllocationResource extends Resource
                         default => 'gray',
                     })
                     ->tooltip(fn (Allocation $allocation) => $allocation->id === $server->allocation_id ? trans('server/network.primary') : trans('server/network.make_primary'))
-                    ->action(fn (Allocation $allocation) => auth()->user()->can(PERMISSION::ACTION_ALLOCATION_UPDATE, $server) && $server->update(['allocation_id' => $allocation->id]))
+                    ->action(fn (Allocation $allocation) => user()?->can(PERMISSION::ACTION_ALLOCATION_UPDATE, $server) && $server->update(['allocation_id' => $allocation->id]))
                     ->default(fn (Allocation $allocation) => $allocation->id === $server->allocation_id)
                     ->label(trans('server/network.primary')),
             ])
             ->recordActions([
                 DetachAction::make()
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_ALLOCATION_DELETE, $server))
+                    ->authorize(fn () => user()?->can(Permission::ACTION_ALLOCATION_DELETE, $server))
                     ->label(trans('server/network.delete'))
                     ->icon('tabler-trash')
                     ->action(function (Allocation $allocation) {
@@ -96,7 +96,7 @@ class AllocationResource extends Resource
                 Action::make('addAllocation')
                     ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->icon(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'tabler-network-off' : 'tabler-network')
-                    ->authorize(fn () => auth()->user()->can(Permission::ACTION_ALLOCATION_CREATE, $server))
+                    ->authorize(fn () => user()?->can(Permission::ACTION_ALLOCATION_CREATE, $server))
                     ->tooltip(fn () => $server->allocations()->count() >= $server->allocation_limit ? trans('server/network.limit') : trans('server/network.add'))
                     ->hidden(fn () => !config('panel.client_features.allocations.enabled'))
                     ->disabled(fn () => $server->allocations()->count() >= $server->allocation_limit)
@@ -118,22 +118,22 @@ class AllocationResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->can(Permission::ACTION_ALLOCATION_READ, Filament::getTenant());
+        return user()?->can(Permission::ACTION_ALLOCATION_READ, Filament::getTenant());
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()->can(Permission::ACTION_ALLOCATION_CREATE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_ALLOCATION_CREATE, Filament::getTenant());
     }
 
     public static function canEdit(Model $record): bool
     {
-        return auth()->user()->can(Permission::ACTION_ALLOCATION_UPDATE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_ALLOCATION_UPDATE, Filament::getTenant());
     }
 
     public static function canDelete(Model $record): bool
     {
-        return auth()->user()->can(Permission::ACTION_ALLOCATION_DELETE, Filament::getTenant());
+        return user()?->can(Permission::ACTION_ALLOCATION_DELETE, Filament::getTenant());
     }
 
     /** @return array<string, PageRegistration> */
