@@ -51,11 +51,12 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Auth\Events\PasswordResetLinkSent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Notification as MailNotification;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\HtmlString;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use Password;
 
 class UserResource extends Resource
 {
@@ -217,34 +218,30 @@ class UserResource extends Resource
                                             //->hidden(fn () => env('MAIL_MAILER') === 'log')
                                             ->icon('tabler-send')
                                             ->action(function (User $user) {
-                                                try {
-                                                    ResetPassword::createUrlUsing(function ($user, string $token) {
-                                                        return url(route('filament.app.auth.password-reset.reset', [
-                                                            'token' => $token,
-                                                            'email' => $user->email,
-                                                        ], false));
-                                                    });
+                                                $status = Password::broker(Filament::getPanel('app')->getAuthPasswordBroker())->sendResetLink([
+                                                    'email' => $user->email,
+                                                ],
+                                                    function (User $user, string $token) {
+                                                        $notification = new ResetPassword($token);
+                                                        $notification->url = Filament::getPanel('app')->getResetPasswordUrl($token, $user);
 
-                                                    $status = Password::broker()->sendResetLink([
-                                                        'email' => $user->email,
-                                                    ]);
+                                                        $user->notify($notification);
 
-                                                    if ($status === Password::RESET_LINK_SENT) {
-                                                        Notification::make()
-                                                            ->title(trans('admin/user.password_reset_sent'))
-                                                            ->success()
-                                                            ->send();
-                                                    } else {
-                                                        throw new Exception(__($status));
-                                                    }
-                                                } catch (Exception $exception) {
+                                                        event(new PasswordResetLinkSent($user));
+                                                    },
+                                                );
+
+                                                if ($status === Password::RESET_LINK_SENT) {
+                                                    Notification::make()
+                                                        ->title(trans('admin/user.password_reset_sent'))
+                                                        ->success()
+                                                        ->send();
+                                                } else {
                                                     Notification::make()
                                                         ->title(trans('admin/user.password_reset_failed'))
-                                                        ->body($exception->getMessage())
+                                                        ->body($status)
                                                         ->danger()
                                                         ->send();
-                                                } finally {
-                                                    ResetPassword::createUrlUsing(null);
                                                 }
                                             })),
                                 TextInput::make('external_id')
