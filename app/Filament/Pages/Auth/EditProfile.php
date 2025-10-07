@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\UserSSHKey;
 use App\Services\Helpers\LanguageService;
 use App\Services\Ssh\KeyCreationService;
+use App\Services\Users\UserUpdateService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use DateTimeZone;
@@ -185,7 +186,7 @@ class EditProfile extends BaseEditProfile
                                         ->label(trans('profile.' . ($unlink ? 'unlink' : 'link'), ['name' => $name]))
                                         ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
                                         ->color(Color::hex($schema->getHexColor()))
-                                        ->action(function () use ($id, $name, $schema, $unlink) {
+                                        ->action(function (UserUpdateService $updateService) use ($id, $name, $unlink) {
                                             if ($unlink) {
                                                 $oauth = user()?->oauth;
                                                 unset($oauth[$id]);
