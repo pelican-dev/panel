@@ -31,18 +31,20 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('eggs', function (Blueprint $table) {
-            $table->text('startup')->after('startup_commands');
-        });
+        DB::transaction(function () {
+            Schema::table('eggs', function (Blueprint $table) {
+                $table->text('startup')->after('startup_commands');
+            });
 
-        DB::table('eggs')->select(['id', 'startup_commands'])->cursor()->each(function ($egg) {
-            DB::table('eggs')->where('id', $egg->id)->update([
-                'startup' => Arr::first(json_decode($egg->startup_commands, true, 512, JSON_THROW_ON_ERROR)),
-            ]);
-        });
+            DB::table('eggs')->select(['id', 'startup_commands'])->cursor()->each(function ($egg) {
+                DB::table('eggs')->where('id', $egg->id)->update([
+                    'startup' => Arr::first(json_decode($egg->startup_commands, true, 512, JSON_THROW_ON_ERROR)),
+                ]);
+            });
 
-        Schema::table('eggs', function (Blueprint $table) {
-            $table->dropColumn('startup_commands');
+            Schema::table('eggs', function (Blueprint $table) {
+                $table->dropColumn('startup_commands');
+            });
         });
     }
 };
