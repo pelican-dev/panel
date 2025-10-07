@@ -45,7 +45,8 @@ class Startup extends ServerFormPage
                     ->label(trans('server/startup.command'))
                     ->readOnly()
                     ->visible(fn (Server $server) => !in_array($server->startup, $server->egg->startup_commands))
-                    ->formatStateUsing(fn () => 'Custom Startup'),
+                    ->formatStateUsing(fn () => 'Custom Startup')
+                    ->hintAction(PreviewStartupAction::make()),
                 Select::make('startup_select')
                     ->label(trans('server/startup.command'))
                     ->live()
@@ -57,6 +58,7 @@ class Startup extends ServerFormPage
                         $server->forceFill(['startup' => $state])->saveOrFail();
 
                         $set('startup', $state);
+                        $set('previewing', false);
 
                         if ($original !== $server->startup) {
                             $startups = array_flip($server->egg->startup_commands);
@@ -72,7 +74,8 @@ class Startup extends ServerFormPage
                             ->send();
                     })
                     ->options(fn (Server $server) => array_flip($server->egg->startup_commands))
-                    ->selectablePlaceholder(false),
+                    ->selectablePlaceholder(false)
+                    ->hintAction(PreviewStartupAction::make()),
                 TextInput::make('custom_image')
                     ->label(trans('server/startup.docker_image'))
                     ->readOnly()
@@ -108,7 +111,6 @@ class Startup extends ServerFormPage
                     ->hiddenLabel()
                     ->columnSpanFull()
                     ->autosize()
-                    ->hintAction(PreviewStartupAction::make())
                     ->readOnly(),
                 Section::make(trans('server/startup.variables'))
                     ->columnSpanFull()

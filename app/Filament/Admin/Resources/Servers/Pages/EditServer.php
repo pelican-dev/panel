@@ -616,9 +616,12 @@ class EditServer extends EditRecord
                                 Select::make('select_startup')
                                     ->label(trans('admin/server.startup_cmd'))
                                     ->live()
-                                    ->afterStateUpdated(fn (Set $set, $state) => $set('startup', $state))
+                                    ->afterStateUpdated(function (Set $set, $state) {
+                                        $set('startup', $state);
+                                        $set('previewing', false);
+                                    })
                                     ->options(function ($state, Get $get, Set $set) {
-                                        $egg = Egg::query()->find($get('egg_id'));
+                                        $egg = Egg::find($get('egg_id'));
                                         $startups = $egg->startup_commands ?? [];
 
                                         $currentStartup = $get('startup');
@@ -640,7 +643,7 @@ class EditServer extends EditRecord
                                     ->live()
                                     ->autosize()
                                     ->afterStateUpdated(function ($state, Get $get, Set $set) {
-                                        $egg = Egg::query()->find($get('egg_id'));
+                                        $egg = Egg::find($get('egg_id'));
                                         $startups = $egg->startup_commands ?? [];
 
                                         if (in_array($state, $startups)) {
