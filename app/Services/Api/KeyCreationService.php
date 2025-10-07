@@ -2,7 +2,9 @@
 
 namespace App\Services\Api;
 
+use App\Exceptions\Model\DataValidationException;
 use App\Models\ApiKey;
+use Illuminate\Support\Str;
 
 class KeyCreationService
 {
@@ -26,14 +28,14 @@ class KeyCreationService
      *
      * @param  array<mixed>  $data
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function handle(array $data): ApiKey
     {
         $data = array_merge($data, [
             'key_type' => $this->keyType,
             'identifier' => ApiKey::generateTokenIdentifier($this->keyType),
-            'token' => str_random(ApiKey::KEY_LENGTH),
+            'token' => Str::random(ApiKey::KEY_LENGTH),
         ]);
 
         if ($this->keyType !== ApiKey::TYPE_APPLICATION) {

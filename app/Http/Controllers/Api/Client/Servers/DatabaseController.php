@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use Illuminate\Http\Response;
-use App\Models\Server;
-use App\Models\Database;
+use App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException;
+use App\Exceptions\Service\Database\TooManyDatabasesException;
 use App\Facades\Activity;
-use App\Services\Databases\DatabasePasswordService;
-use App\Transformers\Api\Client\DatabaseTransformer;
+use App\Http\Controllers\Api\Client\ClientApiController;
+use App\Http\Requests\Api\Client\Servers\Databases\DeleteDatabaseRequest;
+use App\Http\Requests\Api\Client\Servers\Databases\GetDatabasesRequest;
+use App\Http\Requests\Api\Client\Servers\Databases\RotatePasswordRequest;
+use App\Http\Requests\Api\Client\Servers\Databases\StoreDatabaseRequest;
+use App\Models\Database;
+use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DeployServerDatabaseService;
-use App\Http\Controllers\Api\Client\ClientApiController;
-use App\Http\Requests\Api\Client\Servers\Databases\GetDatabasesRequest;
-use App\Http\Requests\Api\Client\Servers\Databases\StoreDatabaseRequest;
-use App\Http\Requests\Api\Client\Servers\Databases\DeleteDatabaseRequest;
-use App\Http\Requests\Api\Client\Servers\Databases\RotatePasswordRequest;
+use App\Transformers\Api\Client\DatabaseTransformer;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Http\Response;
+use Throwable;
 
 #[Group('Server - Database')]
 class DatabaseController extends ClientApiController
@@ -26,7 +28,6 @@ class DatabaseController extends ClientApiController
     public function __construct(
         private DeployServerDatabaseService $deployDatabaseService,
         private DatabaseManagementService $managementService,
-        private DatabasePasswordService $passwordService
     ) {
         parent::__construct();
     }
@@ -52,9 +53,9 @@ class DatabaseController extends ClientApiController
      *
      * @return array<string, mixed>
      *
-     * @throws \Throwable
-     * @throws \App\Exceptions\Service\Database\TooManyDatabasesException
-     * @throws \App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException
+     * @throws Throwable
+     * @throws TooManyDatabasesException
+     * @throws DatabaseClientFeatureNotEnabledException
      */
     public function store(StoreDatabaseRequest $request, Server $server): array
     {
@@ -79,11 +80,11 @@ class DatabaseController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function rotatePassword(RotatePasswordRequest $request, Server $server, Database $database): array
     {
-        $this->passwordService->handle($database);
+        $this->managementService->rotatePassword($database);
         $database->refresh();
 
         Activity::event('server:database.rotate-password')

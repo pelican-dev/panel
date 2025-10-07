@@ -2,12 +2,12 @@
 
 namespace App\Tests\Integration\Api\Client;
 
-use App\Models\User;
-use App\Models\Server;
-use App\Models\Subuser;
 use App\Models\Allocation;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Server;
+use App\Models\Subuser;
+use App\Models\User;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class ClientControllerTest extends ClientApiIntegrationTestCase

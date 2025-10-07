@@ -2,9 +2,9 @@
 
 namespace App\Repositories\Daemon;
 
-use Illuminate\Http\Client\Response;
 use App\Models\Backup;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Response;
 
 class DaemonBackupRepository extends DaemonRepository
 {

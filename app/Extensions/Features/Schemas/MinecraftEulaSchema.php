@@ -5,7 +5,7 @@ namespace App\Extensions\Features\Schemas;
 use App\Extensions\Features\FeatureSchemaInterface;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
-use App\Repositories\Daemon\DaemonPowerRepository;
+use App\Repositories\Daemon\DaemonServerRepository;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -35,14 +35,14 @@ class MinecraftEulaSchema implements FeatureSchemaInterface
             ->modalHeading('Minecraft EULA')
             ->modalDescription(new HtmlString(Blade::render('By pressing "I Accept" below you are indicating your agreement to the <x-filament::link href="https://minecraft.net/eula" target="_blank">Minecraft EULA </x-filament::link>.')))
             ->modalSubmitActionLabel('I Accept')
-            ->action(function (DaemonFileRepository $fileRepository, DaemonPowerRepository $powerRepository) {
+            ->action(function (DaemonFileRepository $fileRepository, DaemonServerRepository $serverRepository) {
                 try {
                     /** @var Server $server */
                     $server = Filament::getTenant();
 
                     $fileRepository->setServer($server)->putContent('eula.txt', 'eula=true');
 
-                    $powerRepository->setServer($server)->send('restart');
+                    $serverRepository->setServer($server)->power('restart');
 
                     Notification::make()
                         ->title('Minecraft EULA accepted')

@@ -2,14 +2,14 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Backup;
 
-use Mockery\MockInterface;
-use Illuminate\Http\Response;
+use App\Events\ActivityLogged;
 use App\Models\Backup;
 use App\Models\Permission;
-use Illuminate\Support\Facades\Event;
-use App\Events\ActivityLogged;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Event;
+use Mockery\MockInterface;
 
 class DeleteBackupTest extends ClientApiIntegrationTestCase
 {

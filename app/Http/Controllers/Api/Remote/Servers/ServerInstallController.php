@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Api\Remote\Servers;
 
 use App\Enums\ServerState;
+use App\Events\Server\Installed as ServerInstalled;
+use App\Exceptions\Model\DataValidationException;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Remote\InstallationDataRequest;
 use App\Http\Requests\Api\Remote\ServerRequest;
-use Illuminate\Http\Response;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
-use App\Events\Server\Installed as ServerInstalled;
-use App\Http\Requests\Api\Remote\InstallationDataRequest;
+use Illuminate\Http\Response;
 
 class ServerInstallController extends Controller
 {
@@ -28,7 +29,7 @@ class ServerInstallController extends Controller
     /**
      * Updates the installation state of a server.
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function store(InstallationDataRequest $request, Server $server): JsonResponse
     {

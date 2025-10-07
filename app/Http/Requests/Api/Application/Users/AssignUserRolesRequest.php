@@ -8,8 +8,8 @@ class AssignUserRolesRequest extends StoreUserRequest
     public function rules(?array $rules = null): array
     {
         return [
-            'roles' => 'array',
-            'roles.*' => 'int',
+            'roles' => 'required|array',
+            'roles.*' => 'integer|exists:roles,id',
         ];
     }
 }

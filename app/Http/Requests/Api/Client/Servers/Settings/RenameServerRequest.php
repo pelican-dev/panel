@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Settings;
 
-use App\Models\Server;
-use App\Models\Permission;
 use App\Contracts\Http\ClientPermissionsRequest;
 use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Models\Permission;
+use App\Models\Server;
 
 class RenameServerRequest extends ClientApiRequest implements ClientPermissionsRequest
 {

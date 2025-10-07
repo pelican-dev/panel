@@ -37,6 +37,7 @@ return [
     'ip_address' => 'IP Address',
     'ip_help' => 'Usually your machine\'s public IP unless you are port forwarding.',
     'alias_help' => 'Optional display name to help you remember what these are.',
+    'refresh' => 'Refresh',
     'domain' => 'Domain Name',
     'ssl_ip' => 'You cannot connect to an IP Address over SSL',
     'error' => 'This is the domain name that points to your node\'s IP Address. If you\'ve already set up this, you can verify it by checking the next field!',
@@ -98,6 +99,7 @@ return [
     'reset_help' => 'Resetting the daemon token will void any request coming from the old token. This token is used for all sensitive operations on the daemon including server creation and deletion. We suggest changing this token regularly for security.',
 
     'no_nodes' => 'No Nodes',
+    'none' => 'None',
     'cpu_chart' => 'CPU - :cpu% of :max%',
     'memory_chart' => 'Memory - :used of :total',
     'disk_chart' => 'Storage - :used of :total',

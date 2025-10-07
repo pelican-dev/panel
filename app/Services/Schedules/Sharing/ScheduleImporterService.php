@@ -4,12 +4,13 @@ namespace App\Services\Schedules\Sharing;
 
 use App\Exceptions\Service\InvalidFileUploadException;
 use App\Helpers\Utilities;
-use Illuminate\Support\Arr;
-use Illuminate\Http\UploadedFile;
 use App\Models\Schedule;
 use App\Models\Server;
 use App\Models\Task;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
+use JsonException;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class ScheduleImporterService
@@ -24,7 +25,7 @@ class ScheduleImporterService
 
         try {
             $parsed = json_decode($file->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException $exception) {
+        } catch (JsonException $exception) {
             throw new InvalidFileUploadException('Could not read JSON file: ' . $exception->getMessage());
         }
 

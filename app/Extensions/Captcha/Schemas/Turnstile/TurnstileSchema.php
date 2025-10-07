@@ -2,12 +2,11 @@
 
 namespace App\Extensions\Captcha\Schemas\Turnstile;
 
-use App\Extensions\Captcha\Schemas\CaptchaSchemaInterface;
 use App\Extensions\Captcha\Schemas\BaseSchema;
+use App\Extensions\Captcha\Schemas\CaptchaSchemaInterface;
 use Exception;
-use Filament\Forms\Components\Component as BaseComponent;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\TextEntry;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\HtmlString;
 
@@ -23,7 +22,7 @@ class TurnstileSchema extends BaseSchema implements CaptchaSchemaInterface
         return env('CAPTCHA_TURNSTILE_ENABLED', false);
     }
 
-    public function getFormComponent(): BaseComponent
+    public function getFormComponent(): Component
     {
         return Component::make('turnstile');
     }
@@ -39,7 +38,9 @@ class TurnstileSchema extends BaseSchema implements CaptchaSchemaInterface
     }
 
     /**
-     * @return BaseComponent[]
+     * @return \Filament\Support\Components\Component[]
+     *
+     * @throws Exception
      */
     public function getSettingsForm(): array
     {
@@ -53,10 +54,10 @@ class TurnstileSchema extends BaseSchema implements CaptchaSchemaInterface
                 ->onColor('success')
                 ->offColor('danger')
                 ->default(env('CAPTCHA_TURNSTILE_VERIFY_DOMAIN', true)),
-            Placeholder::make('info')
+            TextEntry::make('info')
                 ->label(trans('admin/setting.captcha.info_label'))
                 ->columnSpan(2)
-                ->content(new HtmlString(trans('admin/setting.captcha.info'))),
+                ->state(new HtmlString(trans('admin/setting.captcha.info'))),
         ]);
     }
 

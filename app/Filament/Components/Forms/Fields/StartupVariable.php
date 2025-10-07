@@ -9,7 +9,10 @@ use Filament\Forms\Components\Concerns\HasAffixes;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\StateCasts\NumberStateCast;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -43,9 +46,7 @@ class StartupVariable extends Field
 
         $this->prefix(fn (StartupVariable $component) => '{{' . $component->getVariableEnv() . '}}');
 
-        $this->hintIcon('tabler-code');
-
-        $this->hintIconTooltip(fn (StartupVariable $component) => implode('|', $component->getVariableRules()));
+        $this->hintIcon('tabler-code', fn (StartupVariable $component) => implode('|', $component->getVariableRules()));
 
         $this->helperText(fn (StartupVariable $component) => !$component->getVariableDesc() ? '—' : $component->getVariableDesc());
 
@@ -54,6 +55,24 @@ class StartupVariable extends Field
         $this->placeholder(fn (StartupVariable $component) => $component->getVariableDefault());
 
         $this->live(onBlur: true);
+    }
+
+    /**
+     * @return StateCast[]
+     */
+    public function getDefaultStateCasts(): array
+    {
+        return match ($this->getType()) {
+            StartupVariableType::Number => [
+                ...parent::getDefaultStateCasts(),
+                new NumberStateCast(false),
+            ],
+            StartupVariableType::Toggle => [
+                ...parent::getDefaultStateCasts(),
+                new BooleanStateCast(false),
+            ],
+            default => parent::getDefaultStateCasts()
+        };
     }
 
     public function fromForm(): static
@@ -69,11 +88,11 @@ class StartupVariable extends Field
 
     public function fromRecord(): static
     {
-        $this->variableName(fn (ServerVariable $record) => $record->variable->name);
-        $this->variableDesc(fn (ServerVariable $record) => $record->variable->description);
-        $this->variableEnv(fn (ServerVariable $record) => $record->variable->env_variable);
-        $this->variableDefault(fn (ServerVariable $record) => $record->variable->default_value);
-        $this->variableRules(fn (ServerVariable $record) => $record->variable->rules);
+        $this->variableName(fn (?ServerVariable $record) => $record?->variable->name);
+        $this->variableDesc(fn (?ServerVariable $record) => $record?->variable->description);
+        $this->variableEnv(fn (?ServerVariable $record) => $record?->variable->env_variable);
+        $this->variableDefault(fn (?ServerVariable $record) => $record?->variable->default_value);
+        $this->variableRules(fn (?ServerVariable $record) => $record?->variable->rules);
 
         return $this;
     }
@@ -147,6 +166,36 @@ class StartupVariable extends Field
         return in_array('required', $rules);
     }
 
+    public function getMinValue(): ?int
+    {
+        $rules = $this->getVariableRules();
+
+        $minRule = Arr::first($rules, fn ($value) => str($value)->startsWith('min:'));
+        if ($minRule) {
+            return str($minRule)
+                ->after('min:')
+                ->trim()
+                ->toInteger();
+        }
+
+        return null;
+    }
+
+    public function getMaxValue(): ?int
+    {
+        $rules = $this->getVariableRules();
+
+        $maxRule = Arr::first($rules, fn ($value) => str($value)->startsWith('max:'));
+        if ($maxRule) {
+            return str($maxRule)
+                ->after('max:')
+                ->trim()
+                ->toInteger();
+        }
+
+        return null;
+    }
+
     public function getType(): StartupVariableType
     {
         $rules = $this->getVariableRules();
@@ -157,6 +206,10 @@ class StartupVariable extends Field
 
         if (in_array('boolean', $rules)) {
             return StartupVariableType::Toggle;
+        }
+
+        if (in_array('numeric', $rules) || in_array('integer', $rules)) {
+            return StartupVariableType::Number;
         }
 
         return StartupVariableType::Text;

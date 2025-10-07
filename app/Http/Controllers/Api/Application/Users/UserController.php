@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers\Api\Application\Users;
 
-use App\Models\User;
-use Illuminate\Http\JsonResponse;
-use Spatie\QueryBuilder\QueryBuilder;
-use App\Services\Users\UserUpdateService;
-use App\Services\Users\UserCreationService;
-use App\Transformers\Api\Application\UserTransformer;
-use App\Http\Requests\Api\Application\Users\GetUsersRequest;
-use App\Http\Requests\Api\Application\Users\StoreUserRequest;
-use App\Http\Requests\Api\Application\Users\DeleteUserRequest;
-use App\Http\Requests\Api\Application\Users\UpdateUserRequest;
+use App\Exceptions\Model\DataValidationException;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Users\AssignUserRolesRequest;
+use App\Http\Requests\Api\Application\Users\DeleteUserRequest;
+use App\Http\Requests\Api\Application\Users\GetUsersRequest;
+use App\Http\Requests\Api\Application\Users\StoreUserRequest;
+use App\Http\Requests\Api\Application\Users\UpdateUserRequest;
 use App\Models\Role;
+use App\Models\User;
+use App\Services\Users\UserCreationService;
+use App\Services\Users\UserUpdateService;
+use App\Transformers\Api\Application\UserTransformer;
 use Dedoc\Scramble\Attributes\Group;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Spatie\QueryBuilder\QueryBuilder;
 
 #[Group('User', weight: 0)]
 class UserController extends ApplicationApiController
@@ -78,7 +80,7 @@ class UserController extends ApplicationApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function update(UpdateUserRequest $request, User $user): array
     {
@@ -100,12 +102,15 @@ class UserController extends ApplicationApiController
      */
     public function assignRoles(AssignUserRolesRequest $request, User $user): array
     {
-        foreach ($request->input('roles') as $role) {
-            if ($role === Role::getRootAdmin()->id) {
-                continue;
-            }
+        if (!$user->isRootAdmin()) {
+            $rootAdminId = Role::getRootAdmin()->id;
+            foreach ($request->input('roles') as $role) {
+                if ($role === $rootAdminId) {
+                    continue;
+                }
 
-            $user->assignRole($role);
+                $user->assignRole($role);
+            }
         }
 
         $response = $this->fractal->item($user)
@@ -123,12 +128,15 @@ class UserController extends ApplicationApiController
      */
     public function removeRoles(AssignUserRolesRequest $request, User $user): array
     {
-        foreach ($request->input('roles') as $role) {
-            if ($role === Role::getRootAdmin()->id) {
-                continue;
-            }
+        if (!$user->isRootAdmin()) {
+            $rootAdminId = Role::getRootAdmin()->id;
+            foreach ($request->input('roles') as $role) {
+                if ($role === $rootAdminId) {
+                    continue;
+                }
 
-            $user->removeRole($role);
+                $user->removeRole($role);
+            }
         }
 
         $response = $this->fractal->item($user)
@@ -143,8 +151,8 @@ class UserController extends ApplicationApiController
      * Store a new user on the system. Returns the created user and an HTTP/201
      * header on successful creation.
      *
-     * @throws \Exception
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws Exception
+     * @throws DataValidationException
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
@@ -167,8 +175,12 @@ class UserController extends ApplicationApiController
      */
     public function delete(DeleteUserRequest $request, User $user): JsonResponse
     {
-        $user->delete();
+        if (!$user->isRootAdmin()) {
+            $user->delete();
 
-        return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
+            return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
+        }
+
+        return new JsonResponse([], JsonResponse::HTTP_FORBIDDEN);
     }
 }

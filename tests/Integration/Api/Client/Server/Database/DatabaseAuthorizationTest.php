@@ -2,10 +2,9 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Database;
 
-use App\Models\Subuser;
 use App\Models\Database;
 use App\Models\DatabaseHost;
-use App\Services\Databases\DatabasePasswordService;
+use App\Models\Subuser;
 use App\Services\Databases\DatabaseManagementService;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -33,8 +32,8 @@ class DatabaseAuthorizationTest extends ClientApiIntegrationTestCase
         $database3 = Database::factory()->create(['server_id' => $server3->id, 'database_host_id' => $host->id]);
 
         $this
-            ->mock($method === 'POST' ? DatabasePasswordService::class : DatabaseManagementService::class)
-            ->expects($method === 'POST' ? 'handle' : 'delete')
+            ->mock(DatabaseManagementService::class)
+            ->expects($method === 'POST' ? 'rotatePassword' : 'delete')
             ->andReturn($method === 'POST' ? 'foo' : null);
 
         // This is the only valid call for this test, accessing the database for the same

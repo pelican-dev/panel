@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -12,10 +13,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $server_id
  * @property int $variable_id
  * @property string $variable_value
- * @property \Carbon\CarbonImmutable|null $created_at
- * @property \Carbon\CarbonImmutable|null $updated_at
- * @property \App\Models\EggVariable $variable
- * @property \App\Models\Server $server
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property EggVariable $variable
+ * @property Server $server
  */
 class ServerVariable extends Model implements Validatable
 {

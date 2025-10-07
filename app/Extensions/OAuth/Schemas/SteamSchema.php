@@ -2,9 +2,9 @@
 
 namespace App\Extensions\OAuth\Schemas;
 
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard\Step;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Wizard\Step;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use SocialiteProviders\Steam\Provider;
@@ -52,8 +52,9 @@ final class SteamSchema extends OAuthSchema
         return array_merge([
             Step::make('Create API Key')
                 ->schema([
-                    Placeholder::make('')
-                        ->content(new HtmlString(Blade::render('Visit <x-filament::link href="https://steamcommunity.com/dev/apikey" target="_blank">https://steamcommunity.com/dev/apikey</x-filament::link> to generate an API key.'))),
+                    TextEntry::make('create_api_key')
+                        ->hiddenLabel()
+                        ->state(new HtmlString(Blade::render('Visit <x-filament::link href="https://steamcommunity.com/dev/apikey" target="_blank">https://steamcommunity.com/dev/apikey</x-filament::link> to generate an API key.'))),
                 ]),
         ], parent::getSetupSteps());
     }

@@ -2,11 +2,11 @@
 
 namespace App\Tests\Integration\Api\Application\Users;
 
-use Illuminate\Support\Str;
 use App\Models\User;
 use App\Services\Acl\Api\AdminAcl;
-use Illuminate\Http\Response;
 use App\Tests\Integration\Api\Application\ApplicationApiIntegrationTestCase;
+use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 
 class ExternalUserControllerTest extends ApplicationApiIntegrationTestCase
 {
@@ -38,7 +38,7 @@ class ExternalUserControllerTest extends ApplicationApiIntegrationTestCase
                 'email' => $user->email,
                 'language' => $user->language,
                 'root_admin' => (bool) $user->isRootAdmin(),
-                '2fa' => (bool) $user->totp_enabled,
+                '2fa' => filled($user->mfa_app_secret),
                 'created_at' => $this->formatTimestamp($user->created_at),
                 'updated_at' => $this->formatTimestamp($user->updated_at),
             ],

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Files;
 
-use App\Models\Permission;
 use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Models\Permission;
 
 class CreateFolderRequest extends ClientApiRequest
 {

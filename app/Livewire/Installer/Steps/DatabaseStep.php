@@ -6,10 +6,10 @@ use App\Livewire\Installer\PanelInstaller;
 use Exception;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Facades\DB;
 
@@ -30,8 +30,7 @@ class DatabaseStep
             ->schema([
                 ToggleButtons::make('env_database.DB_CONNECTION')
                     ->label(trans('installer.database.driver'))
-                    ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip(trans('installer.database.driver_help'))
+                    ->hintIcon('tabler-question-mark', trans('installer.database.driver_help'))
                     ->required()
                     ->inline()
                     ->options(self::DATABASE_DRIVERS)
@@ -63,22 +62,19 @@ class DatabaseStep
                 TextInput::make('env_database.DB_DATABASE')
                     ->label(fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite' ? trans('installer.database.fields.path') : trans('installer.database.fields.name'))
                     ->placeholder(fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite' ? 'database.sqlite' : 'panel')
-                    ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip(fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite' ? trans('installer.database.fields.path_help') : trans('installer.database.fields.name_help'))
+                    ->hintIcon('tabler-question-mark', fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite' ? trans('installer.database.fields.path_help') : trans('installer.database.fields.name_help'))
                     ->required()
                     ->default('database.sqlite'),
                 TextInput::make('env_database.DB_HOST')
                     ->label(trans('installer.database.fields.host'))
                     ->placeholder('127.0.0.1')
-                    ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip(trans('installer.database.fields.host_help'))
+                    ->hintIcon('tabler-question-mark', trans('installer.database.fields.host_help'))
                     ->required(fn (Get $get) => $get('env_database.DB_CONNECTION') !== 'sqlite')
                     ->hidden(fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite'),
                 TextInput::make('env_database.DB_PORT')
                     ->label(trans('installer.database.fields.port'))
                     ->placeholder('3306')
-                    ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip(trans('installer.database.fields.port_help'))
+                    ->hintIcon('tabler-question-mark', trans('installer.database.fields.port_help'))
                     ->numeric()
                     ->minValue(1)
                     ->maxValue(65535)
@@ -87,14 +83,12 @@ class DatabaseStep
                 TextInput::make('env_database.DB_USERNAME')
                     ->label(trans('installer.database.fields.username'))
                     ->placeholder('pelican')
-                    ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip(trans('installer.database.fields.username_help'))
+                    ->hintIcon('tabler-question-mark', trans('installer.database.fields.username_help'))
                     ->required(fn (Get $get) => $get('env_database.DB_CONNECTION') !== 'sqlite')
                     ->hidden(fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite'),
                 TextInput::make('env_database.DB_PASSWORD')
                     ->label(trans('installer.database.fields.password'))
-                    ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip(trans('installer.database.fields.password_help'))
+                    ->hintIcon('tabler-question-mark', trans('installer.database.fields.password_help'))
                     ->password()
                     ->revealable()
                     ->hidden(fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite'),

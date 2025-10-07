@@ -4,10 +4,11 @@ namespace App\Services\Servers;
 
 use App\Enums\ServerState;
 use App\Enums\SuspendAction;
-use Filament\Notifications\Notification;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
+use Filament\Notifications\Notification;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Throwable;
 
 class SuspensionService
 {
@@ -21,7 +22,7 @@ class SuspensionService
     /**
      * Suspends a server on the system.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(Server $server, SuspendAction $action): void
     {

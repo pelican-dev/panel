@@ -3,10 +3,10 @@
 namespace App\Services\Eggs\Sharing;
 
 use App\Enums\EggFormat;
-use Carbon\Carbon;
 use App\Models\Egg;
-use Illuminate\Support\Collection;
 use App\Models\EggVariable;
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Symfony\Component\Yaml\Yaml;
 
 class EggExporterService

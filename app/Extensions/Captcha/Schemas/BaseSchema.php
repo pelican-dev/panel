@@ -2,8 +2,8 @@
 
 namespace App\Extensions\Captcha\Schemas;
 
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Component;
 use Illuminate\Support\Str;
 
 abstract class BaseSchema

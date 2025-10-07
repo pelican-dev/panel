@@ -6,13 +6,11 @@ use App\Enums\ContainerStatus;
 use App\Filament\Server\Components\SmallStatBlock;
 use App\Models\Server;
 use Carbon\CarbonInterface;
-use Filament\Notifications\Notification;
 use Filament\Widgets\StatsOverviewWidget;
-use Livewire\Attributes\On;
 
 class ServerOverview extends StatsOverviewWidget
 {
-    protected static ?string $pollingInterval = '1s';
+    protected ?string $pollingInterval = '1s';
 
     public ?Server $server = null;
 
@@ -20,10 +18,10 @@ class ServerOverview extends StatsOverviewWidget
     {
         return [
             SmallStatBlock::make(trans('server/console.labels.name'), $this->server->name)
-                ->copyOnClick(fn () => request()->isSecure()),
+                ->copyable(),
             SmallStatBlock::make(trans('server/console.labels.status'), $this->status()),
             SmallStatBlock::make(trans('server/console.labels.address'), $this->server?->allocation->address ?? 'None')
-                ->copyOnClick(fn () => request()->isSecure()),
+                ->copyable(),
             SmallStatBlock::make(trans('server/console.labels.cpu'), $this->cpuUsage()),
             SmallStatBlock::make(trans('server/console.labels.memory'), $this->memoryUsage()),
             SmallStatBlock::make(trans('server/console.labels.disk'), $this->diskUsage()),
@@ -89,17 +87,5 @@ class ServerOverview extends StatsOverviewWidget
         $total = convert_bytes_to_readable($totalBytes);
 
         return $used . ($this->server->disk > 0 ? ' / ' . $total : ' / ∞');
-    }
-
-    #[On('copyClick')]
-    public function copyClick(string $value): void
-    {
-        $this->js("window.navigator.clipboard.writeText('{$value}');");
-
-        Notification::make()
-            ->title(trans('server/dashboard.copied'))
-            ->body($value)
-            ->success()
-            ->send();
     }
 }

@@ -3,13 +3,13 @@
 namespace App\Tests\Integration\Services\Servers;
 
 use App\Models\Egg;
-use App\Models\User;
 use App\Models\Server;
 use App\Models\ServerVariable;
-use Illuminate\Validation\ValidationException;
+use App\Models\User;
+use App\Services\Servers\StartupModificationService;
 use App\Tests\Integration\IntegrationTestCase;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Services\Servers\StartupModificationService;
+use Illuminate\Validation\ValidationException;
 
 class StartupModificationServiceTest extends IntegrationTestCase
 {

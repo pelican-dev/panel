@@ -2,12 +2,14 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Subusers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Subuser;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Models\Server;
+use App\Models\Subuser;
+use App\Models\User;
 use App\Services\Servers\GetUserPermissionsService;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Http\Request;
 
 abstract class SubuserRequest extends ClientApiRequest
 {
@@ -16,7 +18,7 @@ abstract class SubuserRequest extends ClientApiRequest
     /**
      * Authorize the request and ensure that a user is not trying to modify themselves.
      *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws BindingResolutionException
      */
     public function authorize(): bool
     {
@@ -49,12 +51,12 @@ abstract class SubuserRequest extends ClientApiRequest
      *
      * @param  string[]  $permissions
      *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws BindingResolutionException
      */
     protected function validatePermissionsCanBeAssigned(array $permissions): void
     {
         $user = $this->user();
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = $this->route()->parameter('server');
 
         // If we are an admin or the server owner, no need to perform these checks.
@@ -65,7 +67,7 @@ abstract class SubuserRequest extends ClientApiRequest
         // Otherwise, get the current subuser's permission set, and ensure that the
         // permissions they are trying to assign are not _more_ than the ones they
         // already have.
-        /** @var \App\Services\Servers\GetUserPermissionsService $service */
+        /** @var GetUserPermissionsService $service */
         $service = $this->container->make(GetUserPermissionsService::class);
 
         if (count(array_diff($permissions, $service->handle($server, $user))) > 0) {

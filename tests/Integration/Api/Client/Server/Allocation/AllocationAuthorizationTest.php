@@ -2,8 +2,8 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Allocation;
 
-use App\Models\Subuser;
 use App\Models\Allocation;
+use App\Models\Subuser;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 

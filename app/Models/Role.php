@@ -4,19 +4,21 @@ namespace App\Models;
 
 use App\Enums\RolePermissionModels;
 use App\Enums\RolePermissionPrefixes;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role as BaseRole;
 
 /**
  * @property int $id
  * @property string $name
  * @property string $guard_name
- * @property \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
+ * @property Collection|Permission[] $permissions
  * @property int|null $permissions_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
+ * @property Collection|User[] $users
  * @property int|null $users_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Node[] $nodes
+ * @property Collection|Node[] $nodes
  * @property int|null $nodes_count
  */
 class Role extends BaseRole

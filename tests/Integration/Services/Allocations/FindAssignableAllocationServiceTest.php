@@ -2,11 +2,11 @@
 
 namespace App\Tests\Integration\Services\Allocations;
 
-use App\Models\Allocation;
-use App\Tests\Integration\IntegrationTestCase;
-use App\Services\Allocations\FindAssignableAllocationService;
 use App\Exceptions\Service\Allocation\AutoAllocationNotEnabledException;
 use App\Exceptions\Service\Allocation\NoAutoAllocationSpaceAvailableException;
+use App\Models\Allocation;
+use App\Services\Allocations\FindAssignableAllocationService;
+use App\Tests\Integration\IntegrationTestCase;
 
 class FindAssignableAllocationServiceTest extends IntegrationTestCase
 {

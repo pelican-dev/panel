@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Api\Client;
 
-use App\Models\Server;
-use App\Models\Permission;
-use Illuminate\Support\Collection;
-use Spatie\QueryBuilder\QueryBuilder;
-use Spatie\QueryBuilder\AllowedFilter;
-use App\Models\Filters\MultiFieldServerFilter;
-use App\Transformers\Api\Client\ServerTransformer;
 use App\Http\Requests\Api\Client\GetServersRequest;
+use App\Models\Filters\MultiFieldServerFilter;
+use App\Models\Permission;
+use App\Models\Server;
+use App\Transformers\Api\Client\ServerTransformer;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 #[Group('Base')]
 class ClientController extends ClientApiController

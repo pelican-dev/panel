@@ -11,12 +11,12 @@ use App\Services\Nodes\NodeJWTService;
 use App\Services\Servers\GetUserPermissionsService;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Arr;
-use Livewire\Attributes\Session;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Session;
 
 class ServerConsole extends Widget
 {
-    protected static string $view = 'filament.components.server-console';
+    protected string $view = 'filament.components.server-console';
 
     protected int|string|array $columnSpan = 'full';
 

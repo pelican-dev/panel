@@ -3,16 +3,18 @@
 namespace App\Jobs\Schedule;
 
 use App\Jobs\Job;
-use Carbon\CarbonImmutable;
 use App\Models\Task;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Backups\InitiateBackupService;
-use App\Repositories\Daemon\DaemonPowerRepository;
 use App\Services\Files\DeleteFilesService;
+use Carbon\CarbonImmutable;
 use Exception;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use InvalidArgumentException;
+use Throwable;
 
 class RunTaskJob extends Job implements ShouldQueue
 {
@@ -27,11 +29,11 @@ class RunTaskJob extends Job implements ShouldQueue
     /**
      * Run the job and send actions to the daemon running the server.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(
         InitiateBackupService $backupService,
-        DaemonPowerRepository $powerRepository,
+        DaemonServerRepository $serverRepository,
         DeleteFilesService $deleteFilesService
     ): void {
         // Do not process a task that is not set to active, unless it's been manually triggered.
@@ -57,7 +59,7 @@ class RunTaskJob extends Job implements ShouldQueue
         try {
             switch ($this->task->action) {
                 case Task::ACTION_POWER:
-                    $powerRepository->setServer($server)->send($this->task->payload);
+                    $serverRepository->setServer($server)->power($this->task->payload);
                     break;
                 case Task::ACTION_COMMAND:
                     $server->send($this->task->payload);
@@ -69,7 +71,7 @@ class RunTaskJob extends Job implements ShouldQueue
                     $deleteFilesService->handle($server, explode(PHP_EOL, $this->task->payload));
                     break;
                 default:
-                    throw new \InvalidArgumentException('Invalid task action provided: ' . $this->task->action);
+                    throw new InvalidArgumentException('Invalid task action provided: ' . $this->task->action);
             }
         } catch (Exception $exception) {
             // If this isn't a ConnectionException on a task that allows for failures
@@ -97,7 +99,7 @@ class RunTaskJob extends Job implements ShouldQueue
      */
     private function queueNextTask(): void
     {
-        /** @var \App\Models\Task|null $nextTask */
+        /** @var Task|null $nextTask */
         $nextTask = Task::query()->where('schedule_id', $this->task->schedule_id)
             ->orderBy('sequence_id', 'asc')
             ->where('sequence_id', '>', $this->task->sequence_id)

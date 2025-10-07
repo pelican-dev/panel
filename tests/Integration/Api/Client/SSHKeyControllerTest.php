@@ -2,9 +2,9 @@
 
 namespace App\Tests\Integration\Api\Client;
 
-use phpseclib3\Crypt\EC;
 use App\Models\User;
 use App\Models\UserSSHKey;
+use phpseclib3\Crypt\EC;
 
 class SSHKeyControllerTest extends ClientApiIntegrationTestCase
 {

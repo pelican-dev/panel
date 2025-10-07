@@ -2,12 +2,11 @@
 
 namespace App\Extensions\OAuth\Schemas;
 
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard\Step;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Wizard\Step;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
-use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 final class GitlabSchema extends OAuthSchema
 {
@@ -41,13 +40,14 @@ final class GitlabSchema extends OAuthSchema
         return array_merge([
             Step::make('Register new Gitlab OAuth App')
                 ->schema([
-                    Placeholder::make('')
-                        ->content(new HtmlString(Blade::render('Check out the <x-filament::link href="https://docs.gitlab.com/integration/oauth_provider/" target="_blank">Gitlab docs</x-filament::link> on how to create the oauth app.'))),
+                    TextEntry::make('register_application')
+                        ->hiddenLabel()
+                        ->state(new HtmlString(Blade::render('Check out the <x-filament::link href="https://docs.gitlab.com/integration/oauth_provider/" target="_blank">Gitlab docs</x-filament::link> on how to create the oauth app.'))),
                     TextInput::make('_noenv_callback')
                         ->label('Redirect URI')
                         ->dehydrated()
                         ->disabled()
-                        ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                        ->hintCopy()
                         ->default(fn () => url('/auth/oauth/callback/gitlab')),
                 ]),
         ], parent::getSetupSteps());

@@ -5,7 +5,7 @@ namespace App\Listeners\Server;
 use App\Events\Server\Installed;
 use App\Filament\Server\Pages\Console;
 use App\Notifications\ServerInstalled;
-use Filament\Notifications\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
 class ServerInstalledListener

@@ -2,22 +2,24 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use App\Models\Task;
-use Illuminate\Http\Response;
-use App\Models\Server;
-use App\Models\Schedule;
-use Illuminate\Http\JsonResponse;
-use App\Facades\Activity;
-use App\Models\Permission;
-use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\Http\HttpForbiddenException;
-use App\Transformers\Api\Client\TaskTransformer;
-use App\Http\Requests\Api\Client\ClientApiRequest;
-use App\Http\Controllers\Api\Client\ClientApiController;
+use App\Exceptions\Model\DataValidationException;
 use App\Exceptions\Service\ServiceLimitExceededException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Facades\Activity;
+use App\Http\Controllers\Api\Client\ClientApiController;
+use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Http\Requests\Api\Client\Servers\Schedules\StoreTaskRequest;
+use App\Models\Permission;
+use App\Models\Schedule;
+use App\Models\Server;
+use App\Models\Task;
+use App\Transformers\Api\Client\TaskTransformer;
 use Dedoc\Scramble\Attributes\Group;
+use Exception;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 #[Group('Server - Schedule', weight: 1)]
 class ScheduleTaskController extends ClientApiController
@@ -38,8 +40,8 @@ class ScheduleTaskController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\Model\DataValidationException
-     * @throws \App\Exceptions\Service\ServiceLimitExceededException
+     * @throws DataValidationException
+     * @throws ServiceLimitExceededException
      */
     public function store(StoreTaskRequest $request, Server $server, Schedule $schedule): array
     {
@@ -52,10 +54,10 @@ class ScheduleTaskController extends ClientApiController
             throw new HttpForbiddenException("A backup task cannot be created when the server's backup limit is set to 0.");
         }
 
-        /** @var \App\Models\Task|null $lastTask */
+        /** @var Task|null $lastTask */
         $lastTask = $schedule->tasks()->orderByDesc('sequence_id')->first();
 
-        /** @var \App\Models\Task $task */
+        /** @var Task $task */
         $task = $this->connection->transaction(function () use ($request, $schedule, $lastTask) {
             $sequenceId = ($lastTask->sequence_id ?? 0) + 1;
             $requestSequenceId = $request->integer('sequence_id', $sequenceId);
@@ -103,7 +105,7 @@ class ScheduleTaskController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function update(StoreTaskRequest $request, Server $server, Schedule $schedule, Task $task): array
     {
@@ -160,7 +162,7 @@ class ScheduleTaskController extends ClientApiController
      * Delete a given task for a schedule. If there are subsequent tasks stored in the database
      * for this schedule their sequence IDs are decremented properly.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(ClientApiRequest $request, Server $server, Schedule $schedule, Task $task): JsonResponse
     {

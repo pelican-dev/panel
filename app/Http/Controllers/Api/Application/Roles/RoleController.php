@@ -3,16 +3,18 @@
 namespace App\Http\Controllers\Api\Application\Roles;
 
 use App\Exceptions\PanelException;
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
-use App\Models\Role;
-use Spatie\QueryBuilder\QueryBuilder;
-use App\Transformers\Api\Application\RoleTransformer;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
+use App\Http\Requests\Api\Application\Roles\DeleteRoleRequest;
 use App\Http\Requests\Api\Application\Roles\GetRoleRequest;
 use App\Http\Requests\Api\Application\Roles\StoreRoleRequest;
-use App\Http\Requests\Api\Application\Roles\DeleteRoleRequest;
 use App\Http\Requests\Api\Application\Roles\UpdateRoleRequest;
+use App\Models\Role;
+use App\Transformers\Api\Application\RoleTransformer;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Spatie\QueryBuilder\QueryBuilder;
+use Throwable;
 
 class RoleController extends ApplicationApiController
 {
@@ -55,7 +57,7 @@ class RoleController extends ApplicationApiController
      * Store a new role on the Panel and return an HTTP/201 response code with the
      * new role attached.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function store(StoreRoleRequest $request): JsonResponse
     {
@@ -78,7 +80,7 @@ class RoleController extends ApplicationApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function update(UpdateRoleRequest $request, Role $role): array
     {
@@ -98,7 +100,7 @@ class RoleController extends ApplicationApiController
      *
      * Delete a role from the Panel.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(DeleteRoleRequest $request, Role $role): Response
     {

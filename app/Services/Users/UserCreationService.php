@@ -2,16 +2,18 @@
 
 namespace App\Services\Users;
 
+use App\Exceptions\Model\DataValidationException;
 use App\Models\Role;
-use Illuminate\Support\Str;
-use Ramsey\Uuid\Uuid;
 use App\Models\User;
-use Illuminate\Contracts\Hashing\Hasher;
-use Illuminate\Database\ConnectionInterface;
 use App\Notifications\AccountCreated;
+use Exception;
 use Filament\Facades\Filament;
 use Illuminate\Auth\Passwords\PasswordBroker;
+use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 
 class UserCreationService
 {
@@ -25,8 +27,8 @@ class UserCreationService
      *
      * @param  array<array-key, mixed>  $data
      *
-     * @throws \Exception
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws Exception
+     * @throws DataValidationException
      */
     public function handle(array $data): User
     {
@@ -37,7 +39,7 @@ class UserCreationService
         $this->connection->beginTransaction();
         if (empty($data['password'])) {
             $generateResetToken = true;
-            $data['password'] = $this->hasher->make(str_random(30));
+            $data['password'] = $this->hasher->make(Str::random(30));
         }
 
         $isRootAdmin = array_key_exists('root_admin', $data) && $data['root_admin'];

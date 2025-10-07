@@ -3,10 +3,11 @@
 namespace App\Http\Middleware\Api\Daemon;
 
 use App\Models\Node;
+use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DaemonAuthenticate
 {
@@ -22,9 +23,9 @@ class DaemonAuthenticate
     /**
      * Check if a request from the daemon can be properly attributed back to a single node instance.
      *
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     * @throws HttpException
      */
-    public function handle(Request $request, \Closure $next): mixed
+    public function handle(Request $request, Closure $next): mixed
     {
         if (in_array($request->route()->getName(), $this->except)) {
             return $next($request);

@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
-use Carbon\Carbon;
-use Illuminate\Support\Str;
 use App\Models\ApiKey;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class ApiKeyFactory extends Factory
 {

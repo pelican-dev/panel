@@ -3,8 +3,9 @@
 namespace App\Services\Users;
 
 use App\Models\User;
-use Illuminate\Contracts\Hashing\Hasher;
 use App\Traits\Services\HasUserLevels;
+use Illuminate\Contracts\Hashing\Hasher;
+use Throwable;
 
 class UserUpdateService
 {
@@ -17,7 +18,7 @@ class UserUpdateService
      *
      * @param  array<array-key, mixed>  $data
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(User $user, array $data): User
     {

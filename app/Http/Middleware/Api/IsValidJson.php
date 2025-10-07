@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware\Api;
 
+use Closure;
 use Illuminate\Http\Request;
+use JsonException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class IsValidJson
@@ -12,12 +14,12 @@ class IsValidJson
      * parsing the data. This avoids confusing validation errors where every field is flagged and
      * it is not immediately clear that there is an issue with the JSON being passed.
      */
-    public function handle(Request $request, \Closure $next): mixed
+    public function handle(Request $request, Closure $next): mixed
     {
         if ($request->isJson() && !empty($request->getContent())) {
             try {
                 json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
-            } catch (\JsonException $exception) {
+            } catch (JsonException $exception) {
                 throw new BadRequestHttpException('The JSON data passed in the request appears to be malformed: ' . $exception->getMessage());
             }
         }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
@@ -16,9 +17,9 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property string $target
  * @property bool $read_only
  * @property bool $user_mountable
- * @property \App\Models\Egg[]|\Illuminate\Database\Eloquent\Collection $eggs
- * @property \App\Models\Node[]|\Illuminate\Database\Eloquent\Collection $nodes
- * @property \App\Models\Server[]|\Illuminate\Database\Eloquent\Collection $servers
+ * @property Egg[]|Collection $eggs
+ * @property Node[]|Collection $nodes
+ * @property Server[]|Collection $servers
  */
 class Mount extends Model implements Validatable
 {

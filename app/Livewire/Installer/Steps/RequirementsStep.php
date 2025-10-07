@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Installer\Steps;
 
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Wizard\Step;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Exceptions\Halt;
 
 class RequirementsStep
@@ -23,8 +23,9 @@ class RequirementsStep
                 ->icon($correctPhpVersion ? 'tabler-check' : 'tabler-x')
                 ->iconColor($correctPhpVersion ? 'success' : 'danger')
                 ->schema([
-                    Placeholder::make('')
-                        ->content(trans('installer.requirements.sections.version.content', ['version' => PHP_VERSION])),
+                    TextEntry::make('php_version')
+                        ->hiddenLabel()
+                        ->state(trans('installer.requirements.sections.version.content', ['version' => PHP_VERSION])),
                 ]),
         ];
 
@@ -46,11 +47,13 @@ class RequirementsStep
             ->icon($allExtensionsInstalled ? 'tabler-check' : 'tabler-x')
             ->iconColor($allExtensionsInstalled ? 'success' : 'danger')
             ->schema([
-                Placeholder::make('')
-                    ->content(trans('installer.requirements.sections.extensions.good'))
+                TextEntry::make('all_extensions_installed')
+                    ->hiddenLabel()
+                    ->state(trans('installer.requirements.sections.extensions.good'))
                     ->visible($allExtensionsInstalled),
-                Placeholder::make('')
-                    ->content(trans('installer.requirements.sections.extensions.bad', ['extensions' => implode(', ', array_keys($phpExtensions, false))]))
+                TextEntry::make('extensions_missing')
+                    ->hiddenLabel()
+                    ->state(trans('installer.requirements.sections.extensions.bad', ['extensions' => implode(', ', array_keys($phpExtensions, false))]))
                     ->visible(!$allExtensionsInstalled),
             ]);
 
@@ -65,11 +68,13 @@ class RequirementsStep
             ->icon($correctFolderPermissions ? 'tabler-check' : 'tabler-x')
             ->iconColor($correctFolderPermissions ? 'success' : 'danger')
             ->schema([
-                Placeholder::make('')
-                    ->content(trans('installer.requirements.sections.permissions.good'))
+                TextEntry::make('correct_folder_permissions')
+                    ->hiddenLabel()
+                    ->state(trans('installer.requirements.sections.permissions.good'))
                     ->visible($correctFolderPermissions),
-                Placeholder::make('')
-                    ->content(trans('installer.requirements.sections.permissions.bad', ['folders' => implode(', ', array_keys($folderPermissions, false))]))
+                TextEntry::make('wrong_folder_permissions')
+                    ->hiddenLabel()
+                    ->state(trans('installer.requirements.sections.permissions.bad', ['folders' => implode(', ', array_keys($folderPermissions, false))]))
                     ->visible(!$correctFolderPermissions),
             ]);
 

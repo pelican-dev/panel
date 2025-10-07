@@ -2,11 +2,11 @@
 
 namespace App\Services\Deployment;
 
-use App\Models\Allocation;
 use App\Exceptions\DisplayException;
+use App\Exceptions\Service\Deployment\NoViableAllocationException;
+use App\Models\Allocation;
 use App\Models\Node;
 use App\Services\Allocations\AssignmentService;
-use App\Exceptions\Service\Deployment\NoViableAllocationException;
 
 class AllocationSelectionService
 {
@@ -50,7 +50,7 @@ class AllocationSelectionService
      *
      * @param  array<string|int>  $ports
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      */
     public function setPorts(array $ports): self
     {
@@ -79,7 +79,7 @@ class AllocationSelectionService
     /**
      * Return a single allocation that should be used as the default allocation for a server.
      *
-     * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
+     * @throws NoViableAllocationException
      */
     public function handle(): Allocation
     {

@@ -2,8 +2,8 @@
 
 namespace App\Facades;
 
-use Illuminate\Support\Facades\Facade;
 use App\Services\Activity\ActivityLogService;
+use Illuminate\Support\Facades\Facade;
 
 class Activity extends Facade
 {

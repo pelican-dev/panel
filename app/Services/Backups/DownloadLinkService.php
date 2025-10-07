@@ -2,11 +2,12 @@
 
 namespace App\Services\Backups;
 
-use Carbon\CarbonImmutable;
-use App\Models\User;
-use App\Models\Backup;
-use App\Services\Nodes\NodeJWTService;
 use App\Extensions\Backups\BackupManager;
+use App\Extensions\Filesystem\S3Filesystem;
+use App\Models\Backup;
+use App\Models\User;
+use App\Services\Nodes\NodeJWTService;
+use Carbon\CarbonImmutable;
 
 class DownloadLinkService
 {
@@ -43,7 +44,7 @@ class DownloadLinkService
      */
     protected function getS3BackupUrl(Backup $backup): string
     {
-        /** @var \App\Extensions\Filesystem\S3Filesystem $adapter */
+        /** @var S3Filesystem $adapter */
         $adapter = $this->backupManager->adapter(Backup::ADAPTER_AWS_S3);
 
         $request = $adapter->getClient()->createPresignedRequest(

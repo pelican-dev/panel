@@ -2,18 +2,19 @@
 
 namespace App\Services\Activity;
 
+use App\Models\ActivityLog;
+use App\Models\Server;
 use App\Models\User;
+use Closure;
+use Filament\Facades\Filament;
+use Illuminate\Contracts\Auth\Factory as AuthFactory;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Request;
 use Throwable;
 use Webmozart\Assert\Assert;
-use Illuminate\Support\Collection;
-use App\Models\ActivityLog;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Request;
-use App\Models\Server;
-use Filament\Facades\Filament;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Contracts\Auth\Factory as AuthFactory;
 
 class ActivityLogService
 {
@@ -167,9 +168,9 @@ class ActivityLogService
      * and will only save the activity log entry if everything else successfully
      * settles.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
-    public function transaction(\Closure $callback): mixed
+    public function transaction(Closure $callback): mixed
     {
         return $this->connection->transaction(function () use ($callback) {
             $response = $callback($this);
@@ -224,7 +225,7 @@ class ActivityLogService
     /**
      * Saves the activity log instance and attaches all the subject models.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function save(): ActivityLog
     {

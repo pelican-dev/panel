@@ -2,8 +2,8 @@
 
 namespace App\Transformers\Api\Client;
 
-use App\Models\User;
 use App\Models\ActivityLog;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use League\Fractal\Resource\ResourceAbstract;
 

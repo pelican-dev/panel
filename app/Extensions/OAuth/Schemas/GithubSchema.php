@@ -2,12 +2,11 @@
 
 namespace App\Extensions\OAuth\Schemas;
 
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard\Step;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Wizard\Step;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
-use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 final class GithubSchema extends OAuthSchema
 {
@@ -21,21 +20,24 @@ final class GithubSchema extends OAuthSchema
         return array_merge([
             Step::make('Register new Github OAuth App')
                 ->schema([
-                    Placeholder::make('')
-                        ->content(new HtmlString(Blade::render('<p>Visit the <x-filament::link href="https://github.com/settings/developers" target="_blank">Github Developer Dashboard</x-filament::link>, go to <b>OAuth Apps</b> and click on <b>New OAuth App</b>.</p><p>Enter an <b>Application name</b> (e.g. your panel name), set <b>Homepage URL</b> to your panel url and enter the below url as <b>Authorization callback URL</b>.</p>'))),
+                    TextEntry::make('create_application')
+                        ->hiddenLabel()
+                        ->state(new HtmlString(Blade::render('<p>Visit the <x-filament::link href="https://github.com/settings/developers" target="_blank">Github Developer Dashboard</x-filament::link>, go to <b>OAuth Apps</b> and click on <b>New OAuth App</b>.</p><p>Enter an <b>Application name</b> (e.g. your panel name), set <b>Homepage URL</b> to your panel url and enter the below url as <b>Authorization callback URL</b>.</p>'))),
                     TextInput::make('_noenv_callback')
                         ->label('Authorization callback URL')
                         ->dehydrated()
                         ->disabled()
-                        ->hintAction(fn (string $state) => request()->isSecure() ? CopyAction::make()->copyable($state) : null)
+                        ->hintCopy()
                         ->default(fn () => url('/auth/oauth/callback/github')),
-                    Placeholder::make('')
-                        ->content(new HtmlString('<p>When you filled all fields click on <b>Register application</b>.</p>')),
+                    TextEntry::make('register_application')
+                        ->hiddenLabel()
+                        ->state(new HtmlString('<p>When you filled all fields click on <b>Register application</b>.</p>')),
                 ]),
             Step::make('Create Client Secret')
                 ->schema([
-                    Placeholder::make('')
-                        ->content(new HtmlString('<p>Once you registered your app, generate a new <b>Client Secret</b>.</p><p>You will also need the <b>Client ID</b>.</p>')),
+                    TextEntry::make('create_client_secret')
+                        ->hiddenLabel()
+                        ->state(new HtmlString('<p>Once you registered your app, generate a new <b>Client Secret</b>.</p><p>You will also need the <b>Client ID</b>.</p>')),
                 ]),
         ], parent::getSetupSteps());
     }

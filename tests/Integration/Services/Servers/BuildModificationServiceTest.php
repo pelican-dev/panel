@@ -2,14 +2,14 @@
 
 namespace App\Tests\Integration\Services\Servers;
 
-use Mockery\MockInterface;
-use App\Models\Server;
-use App\Models\Allocation;
 use App\Exceptions\DisplayException;
-use App\Tests\Integration\IntegrationTestCase;
+use App\Models\Allocation;
+use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Servers\BuildModificationService;
+use App\Tests\Integration\IntegrationTestCase;
 use Illuminate\Http\Client\ConnectionException;
+use Mockery\MockInterface;
 
 class BuildModificationServiceTest extends IntegrationTestCase
 {

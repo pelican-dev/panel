@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers\Api\Remote\Backups;
 
-use Carbon\CarbonImmutable;
-use Illuminate\Http\Request;
-use App\Models\Backup;
-use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
+use App\Exceptions\Http\HttpForbiddenException;
 use App\Extensions\Backups\BackupManager;
 use App\Extensions\Filesystem\S3Filesystem;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use App\Http\Controllers\Controller;
+use App\Models\Backup;
+use App\Models\Node;
+use App\Models\Server;
+use Carbon\CarbonImmutable;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use App\Exceptions\Http\HttpForbiddenException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Throwable;
 
 class BackupRemoteUploadController extends Controller
 {
@@ -25,14 +30,14 @@ class BackupRemoteUploadController extends Controller
     /**
      * Returns the required presigned urls to upload a backup to S3 cloud storage.
      *
-     * @throws \Exception
-     * @throws \Throwable
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws Exception
+     * @throws Throwable
+     * @throws ModelNotFoundException
      */
     public function __invoke(Request $request, string $backup): JsonResponse
     {
         // Get the node associated with the request.
-        /** @var \App\Models\Node $node */
+        /** @var Node $node */
         $node = $request->attributes->get('node');
 
         // Get the size query parameter.
@@ -41,14 +46,14 @@ class BackupRemoteUploadController extends Controller
             throw new BadRequestHttpException('A non-empty "size" query parameter must be provided.');
         }
 
-        /** @var \App\Models\Backup $model */
+        /** @var Backup $model */
         $model = Backup::query()
             ->where('uuid', $backup)
             ->firstOrFail();
 
         // Check that the backup is "owned" by the node making the request. This avoids other nodes
         // from messing with backups that they don't own.
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = $model->server;
         if ($server->node_id !== $node->id) {
             throw new HttpForbiddenException('You do not have permission to access that backup.');

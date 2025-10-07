@@ -2,13 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Http\Request;
-use Illuminate\Foundation\Http\Middleware\TrimStrings;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Support\Facades\RateLimiter;
-use App\Http\Middleware\RequireTwoFactorAuthentication;
+use Illuminate\Foundation\Http\Middleware\TrimStrings;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -29,17 +28,17 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->routes(function () {
             Route::middleware('web')->group(function () {
-                Route::middleware(['auth.session', RequireTwoFactorAuthentication::class])
+                Route::middleware(['auth.session'])
                     ->prefix('docs')
                     ->group(base_path('routes/docs.php'));
 
-                Route::middleware(['auth.session', RequireTwoFactorAuthentication::class])
+                Route::middleware(['auth.session'])
                     ->group(base_path('routes/base.php'));
 
                 Route::middleware('guest')->prefix('/auth')->group(base_path('routes/auth.php'));
             });
 
-            Route::middleware(['api', RequireTwoFactorAuthentication::class])->group(function () {
+            Route::middleware(['api'])->group(function () {
                 Route::middleware(['application-api', 'throttle:api.application'])
                     ->prefix('/api/application')
                     ->scopeBindings()

@@ -2,8 +2,8 @@
 
 namespace App\Transformers\Api\Client;
 
-use Illuminate\Support\Str;
 use App\Models\User;
+use Illuminate\Support\Str;
 
 class UserTransformer extends BaseClientTransformer
 {
@@ -30,7 +30,7 @@ class UserTransformer extends BaseClientTransformer
             'image' => 'https://gravatar.com/avatar/' . md5(Str::lower($user->email)), // deprecated
             'admin' => $user->isRootAdmin(), // deprecated, use "root_admin"
             'root_admin' => $user->isRootAdmin(),
-            '2fa_enabled' => (bool) $user->use_totp,
+            '2fa_enabled' => filled($user->mfa_app_secret),
             'created_at' => $this->formatTimestamp($user->created_at),
             'updated_at' => $this->formatTimestamp($user->updated_at),
         ];

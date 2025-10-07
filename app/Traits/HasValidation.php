@@ -82,7 +82,7 @@ trait HasValidation
     /**
      * Determines if the model is in a valid state or not.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function validate(): void
     {

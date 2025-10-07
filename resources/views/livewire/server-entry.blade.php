@@ -1,3 +1,7 @@
+@php
+    $actiongroup = \App\Filament\App\Resources\Servers\Pages\ListServers::getPowerActionGroup()->record($server);
+@endphp
+
 <div wire:poll.15s
      class="relative cursor-pointer"
      x-on:click="window.location.href = '{{ \App\Filament\Server\Pages\Console::getUrl(panel: 'server', tenant: $server) }}'">
@@ -20,15 +24,13 @@
                     ({{ $server->formatResource(\App\Enums\ServerResourceType::Uptime) }})
                 </span>
             </h2>
-            <div class="end-0" x-on:click.stop>
-                <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1">
-                    <x-filament-tables::actions
-                        :actions="\App\Filament\App\Resources\ServerResource\Pages\ListServers::getPowerActions(view: 'grid')"
-                        :alignment="\Filament\Support\Enums\Alignment::Center"
-                        :record="$server"
-                    />
+            @if ($actiongroup->isVisible())
+                <div class="end-0">
+                    <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1" x-on:click.stop>
+                        {{ $actiongroup }}
+                    </div>
                 </div>
-            </div>
+            @endif
         </div>
 
         <div class="flex justify-between text-center items-center gap-4">

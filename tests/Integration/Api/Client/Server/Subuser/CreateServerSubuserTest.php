@@ -2,13 +2,13 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Subuser;
 
-use Illuminate\Support\Str;
-use App\Models\User;
-use Illuminate\Http\Response;
-use App\Models\Subuser;
 use App\Models\Permission;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\Subuser;
+use App\Models\User;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class CreateServerSubuserTest extends ClientApiIntegrationTestCase

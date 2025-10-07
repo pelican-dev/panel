@@ -4,11 +4,14 @@ namespace App\Models;
 
 use App\Services\Acl\Api\AdminAcl;
 use App\Traits\HasValidation;
+use Database\Factories\ApiKeyFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\PersonalAccessToken;
 use Webmozart\Assert\Assert;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * App\Models\ApiKey.
@@ -21,34 +24,34 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string[]|null $permissions
  * @property string[]|null $allowed_ips
  * @property string|null $memo
- * @property \Illuminate\Support\Carbon|null $last_used_at
- * @property \Illuminate\Support\Carbon|null $expires_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \App\Models\User $tokenable
- * @property \App\Models\User $user
+ * @property Carbon|null $last_used_at
+ * @property Carbon|null $expires_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property User $tokenable
+ * @property User $user
  *
- * @method static \Database\Factories\ApiKeyFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey query()
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereAllowedIps($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereIdentifier($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereKeyType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereLastUsedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereMemo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRAllocations($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRDatabaseHosts($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereREggs($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRNodes($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRServerDatabases($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRServers($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereRUsers($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ApiKey whereUserId($value)
+ * @method static ApiKeyFactory factory(...$parameters)
+ * @method static Builder|ApiKey newModelQuery()
+ * @method static Builder|ApiKey newQuery()
+ * @method static Builder|ApiKey query()
+ * @method static Builder|ApiKey whereAllowedIps($value)
+ * @method static Builder|ApiKey whereCreatedAt($value)
+ * @method static Builder|ApiKey whereId($value)
+ * @method static Builder|ApiKey whereIdentifier($value)
+ * @method static Builder|ApiKey whereKeyType($value)
+ * @method static Builder|ApiKey whereLastUsedAt($value)
+ * @method static Builder|ApiKey whereMemo($value)
+ * @method static Builder|ApiKey whereRAllocations($value)
+ * @method static Builder|ApiKey whereRDatabaseHosts($value)
+ * @method static Builder|ApiKey whereREggs($value)
+ * @method static Builder|ApiKey whereRNodes($value)
+ * @method static Builder|ApiKey whereRServerDatabases($value)
+ * @method static Builder|ApiKey whereRServers($value)
+ * @method static Builder|ApiKey whereRUsers($value)
+ * @method static Builder|ApiKey whereToken($value)
+ * @method static Builder|ApiKey whereUpdatedAt($value)
+ * @method static Builder|ApiKey whereUserId($value)
  */
 class ApiKey extends PersonalAccessToken
 {

@@ -4,13 +4,14 @@ namespace App\Exceptions;
 
 use Exception;
 use Filament\Notifications\Notification;
+use Illuminate\Container\Container;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Psr\Log\LoggerInterface;
 use Illuminate\Http\Response;
-use Illuminate\Container\Container;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Throwable;
 
 /**
  * @deprecated
@@ -28,7 +29,7 @@ class DisplayException extends PanelException implements HttpExceptionInterface
     /**
      * DisplayException constructor.
      */
-    public function __construct(string $message, ?\Throwable $previous = null, protected string $level = self::LEVEL_ERROR, int $code = 0)
+    public function __construct(string $message, ?Throwable $previous = null, protected string $level = self::LEVEL_ERROR, int $code = 0)
     {
         parent::__construct($message, $code, $previous);
     }
@@ -79,11 +80,11 @@ class DisplayException extends PanelException implements HttpExceptionInterface
      * Log the exception to the logs using the defined error level only if the previous
      * exception is set.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function report(): void
     {
-        if (!$this->getPrevious() instanceof \Exception || !Handler::isReportable($this->getPrevious())) {
+        if (!$this->getPrevious() instanceof Exception || !Handler::isReportable($this->getPrevious())) {
             return;
         }
 

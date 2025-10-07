@@ -6,9 +6,11 @@ use App\Contracts\Validatable;
 use App\Exceptions\Service\HasActiveServersException;
 use App\Repositories\Daemon\DaemonConfigurationRepository;
 use App\Traits\HasValidation;
+use Carbon\Carbon;
 use Exception;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -43,15 +45,15 @@ use Symfony\Component\Yaml\Yaml;
  * @property string|null $daemon_sftp_alias
  * @property string $daemon_base
  * @property string[] $tags
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\Models\Mount[]|\Illuminate\Database\Eloquent\Collection $mounts
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Mount[]|Collection $mounts
  * @property int|null $mounts_count
- * @property \App\Models\Server[]|\Illuminate\Database\Eloquent\Collection $servers
+ * @property Server[]|Collection $servers
  * @property int|null $servers_count
- * @property \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations
+ * @property Allocation[]|Collection $allocations
  * @property int|null $allocations_count
- * @property \App\Models\Role[]|\Illuminate\Database\Eloquent\Collection $roles
+ * @property Role[]|Collection $roles
  * @property int|null $roles_count
  */
 class Node extends Model implements Validatable

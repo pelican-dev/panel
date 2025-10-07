@@ -2,13 +2,14 @@
 
 namespace App\Services\Servers;
 
-use Illuminate\Support\Arr;
-use App\Models\Server;
-use App\Models\Allocation;
-use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\DisplayException;
+use App\Models\Allocation;
+use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Arr;
+use Throwable;
 
 class BuildModificationService
 {
@@ -26,12 +27,12 @@ class BuildModificationService
      *
      * @param  array<string, mixed>  $data
      *
-     * @throws \Throwable
-     * @throws \App\Exceptions\DisplayException
+     * @throws Throwable
+     * @throws DisplayException
      */
     public function handle(Server $server, array $data): Server
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = $this->connection->transaction(function () use ($server, $data) {
             $this->processAllocations($server, $data);
 
@@ -84,6 +85,8 @@ class BuildModificationService
      *     oom_killer?: bool,
      *     oom_disabled?: bool,
      * } $data
+     *
+     * @throws DisplayException
      */
     private function processAllocations(Server $server, array &$data): void
     {

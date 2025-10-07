@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use App\Models\Server;
-use Illuminate\Http\JsonResponse;
-use App\Facades\Activity;
-use App\Models\Allocation;
 use App\Exceptions\DisplayException;
-use App\Transformers\Api\Client\AllocationTransformer;
+use App\Exceptions\Model\DataValidationException;
+use App\Facades\Activity;
 use App\Http\Controllers\Api\Client\ClientApiController;
-use App\Services\Allocations\FindAssignableAllocationService;
+use App\Http\Requests\Api\Client\Servers\Network\DeleteAllocationRequest;
 use App\Http\Requests\Api\Client\Servers\Network\GetNetworkRequest;
 use App\Http\Requests\Api\Client\Servers\Network\NewAllocationRequest;
-use App\Http\Requests\Api\Client\Servers\Network\DeleteAllocationRequest;
-use App\Http\Requests\Api\Client\Servers\Network\UpdateAllocationRequest;
 use App\Http\Requests\Api\Client\Servers\Network\SetPrimaryAllocationRequest;
+use App\Http\Requests\Api\Client\Servers\Network\UpdateAllocationRequest;
+use App\Models\Allocation;
+use App\Models\Server;
+use App\Services\Allocations\FindAssignableAllocationService;
+use App\Transformers\Api\Client\AllocationTransformer;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Http\JsonResponse;
 
 #[Group('Server - Allocation')]
 class NetworkAllocationController extends ClientApiController
@@ -51,7 +52,7 @@ class NetworkAllocationController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function update(UpdateAllocationRequest $request, Server $server, Allocation $allocation): array
     {
@@ -78,7 +79,7 @@ class NetworkAllocationController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function setPrimary(SetPrimaryAllocationRequest $request, Server $server, Allocation $allocation): array
     {
@@ -102,7 +103,7 @@ class NetworkAllocationController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      */
     public function store(NewAllocationRequest $request, Server $server): array
     {
@@ -127,7 +128,7 @@ class NetworkAllocationController extends ClientApiController
      *
      * Delete an allocation from a server.
      *
-     * @throws \App\Exceptions\DisplayException
+     * @throws DisplayException
      */
     public function delete(DeleteAllocationRequest $request, Server $server, Allocation $allocation): JsonResponse
     {

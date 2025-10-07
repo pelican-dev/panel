@@ -4,6 +4,7 @@ namespace App\Services\Databases\Hosts;
 
 use App\Models\DatabaseHost;
 use Illuminate\Database\ConnectionInterface;
+use Throwable;
 
 class HostCreationService
 {
@@ -27,7 +28,7 @@ class HostCreationService
      *     node_ids?: array<int>
      * } $data
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(array $data): DatabaseHost
     {

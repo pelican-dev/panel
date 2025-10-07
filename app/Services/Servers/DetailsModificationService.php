@@ -2,12 +2,13 @@
 
 namespace App\Services\Servers;
 
-use Illuminate\Support\Arr;
 use App\Models\Server;
-use Illuminate\Database\ConnectionInterface;
-use App\Traits\Services\ReturnsUpdatedModels;
 use App\Repositories\Daemon\DaemonServerRepository;
+use App\Traits\Services\ReturnsUpdatedModels;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Arr;
+use Throwable;
 
 class DetailsModificationService
 {
@@ -28,7 +29,7 @@ class DetailsModificationService
      *     description?: ?string
      * } $data
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(Server $server, array $data): Server
     {

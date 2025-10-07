@@ -6,11 +6,13 @@ use App\Contracts\Validatable;
 use App\Exceptions\Service\Egg\HasChildrenException;
 use App\Exceptions\Service\HasActiveServersException;
 use App\Traits\HasValidation;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Str;
 
 /**
@@ -36,8 +38,8 @@ use Illuminate\Support\Str;
  * @property string $script_entry
  * @property string $script_container
  * @property int|null $copy_script_from
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property string|null $copy_script_install
  * @property string $copy_script_entry
  * @property string $copy_script_container
@@ -48,9 +50,9 @@ use Illuminate\Support\Str;
  * @property string $inherit_file_denylist
  * @property string[]|null $inherit_features
  * @property string[] $tags
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Server[] $servers
+ * @property Collection|Server[] $servers
  * @property int|null $servers_count
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\EggVariable[] $variables
+ * @property Collection|EggVariable[] $variables
  * @property int|null $variables_count
  * @property \App\Models\Egg|null $scriptFrom
  * @property \App\Models\Egg|null $configFrom

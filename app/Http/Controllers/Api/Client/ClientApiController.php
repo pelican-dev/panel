@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api\Client;
 
-use Webmozart\Assert\Assert;
-use App\Transformers\Api\Client\BaseClientTransformer;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
+use App\Transformers\Api\Client\BaseClientTransformer;
+use Webmozart\Assert\Assert;
 
 abstract class ClientApiController extends ApplicationApiController
 {

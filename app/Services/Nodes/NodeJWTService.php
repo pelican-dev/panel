@@ -3,11 +3,11 @@
 namespace App\Services\Nodes;
 
 use App\Extensions\Lcobucci\JWT\Encoding\TimestampDates;
+use App\Models\Node;
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use DateTimeImmutable;
 use Illuminate\Support\Str;
-use App\Models\Node;
-use App\Models\User;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;

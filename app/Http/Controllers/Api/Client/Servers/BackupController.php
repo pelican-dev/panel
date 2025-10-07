@@ -3,24 +3,27 @@
 namespace App\Http\Controllers\Api\Client\Servers;
 
 use App\Enums\ServerState;
-use Illuminate\Http\Request;
-use App\Models\Backup;
-use App\Models\Server;
-use Illuminate\Http\JsonResponse;
 use App\Facades\Activity;
+use App\Http\Controllers\Api\Client\ClientApiController;
+use App\Http\Requests\Api\Client\Servers\Backups\RenameBackupRequest;
+use App\Http\Requests\Api\Client\Servers\Backups\RestoreBackupRequest;
+use App\Http\Requests\Api\Client\Servers\Backups\StoreBackupRequest;
+use App\Models\Backup;
 use App\Models\Permission;
-use Illuminate\Auth\Access\AuthorizationException;
+use App\Models\Server;
+use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Services\Backups\DeleteBackupService;
 use App\Services\Backups\DownloadLinkService;
 use App\Services\Backups\InitiateBackupService;
-use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Transformers\Api\Client\BackupTransformer;
-use App\Http\Controllers\Api\Client\ClientApiController;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use App\Http\Requests\Api\Client\Servers\Backups\StoreBackupRequest;
-use App\Http\Requests\Api\Client\Servers\Backups\RestoreBackupRequest;
-use App\Http\Requests\Api\Client\Servers\Backups\RenameBackupRequest;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Spatie\Fractalistic\Exceptions\InvalidTransformation;
+use Spatie\Fractalistic\Exceptions\NoTransformerSpecified;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Throwable;
 
 #[Group('Server - Backup')]
 class BackupController extends ClientApiController
@@ -66,9 +69,9 @@ class BackupController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \Spatie\Fractalistic\Exceptions\InvalidTransformation
-     * @throws \Spatie\Fractalistic\Exceptions\NoTransformerSpecified
-     * @throws \Throwable
+     * @throws InvalidTransformation
+     * @throws NoTransformerSpecified
+     * @throws Throwable
      */
     public function store(StoreBackupRequest $request, Server $server): array
     {
@@ -102,8 +105,8 @@ class BackupController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \Throwable
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws Throwable
+     * @throws AuthorizationException
      */
     public function toggleLock(Request $request, Server $server, Backup $backup): array
     {
@@ -129,7 +132,7 @@ class BackupController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function view(Request $request, Server $server, Backup $backup): array
     {
@@ -148,7 +151,7 @@ class BackupController extends ClientApiController
      * Deletes a backup from the panel as well as the remote source where it is currently
      * being stored.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function delete(Request $request, Server $server, Backup $backup): JsonResponse
     {
@@ -173,8 +176,8 @@ class BackupController extends ClientApiController
      * will be streamed back through the Panel. For AWS S3 files, a signed URL will be generated
      * which the user is redirected to.
      *
-     * @throws \Throwable
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws Throwable
+     * @throws AuthorizationException
      */
     public function download(Request $request, Server $server, Backup $backup): JsonResponse
     {
@@ -203,8 +206,8 @@ class BackupController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws \Throwable
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws Throwable
+     * @throws AuthorizationException
      */
     public function rename(RenameBackupRequest $request, Server $server, Backup $backup): array
     {
@@ -236,7 +239,7 @@ class BackupController extends ClientApiController
      * files that currently exist on the server will be deleted before restoring.
      * Otherwise, the archive will simply be unpacked over the existing files.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function restore(RestoreBackupRequest $request, Server $server, Backup $backup): JsonResponse
     {

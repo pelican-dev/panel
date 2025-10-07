@@ -2,9 +2,9 @@
 
 namespace App\Tests\Traits;
 
+use GuzzleHttp\Exception\RequestException;
 use Mockery\Mock;
 use Mockery\MockInterface;
-use GuzzleHttp\Exception\RequestException;
 
 trait MocksRequestException
 {

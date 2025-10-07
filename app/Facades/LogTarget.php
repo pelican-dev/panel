@@ -2,8 +2,8 @@
 
 namespace App\Facades;
 
-use Illuminate\Support\Facades\Facade;
 use App\Services\Activity\ActivityLogTargetableService;
+use Illuminate\Support\Facades\Facade;
 
 class LogTarget extends Facade
 {

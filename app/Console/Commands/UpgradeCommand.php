@@ -2,10 +2,13 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Console\Kernel;
-use Symfony\Component\Process\Process;
+use Closure;
+use Exception;
+use Illuminate\Console\Command;
+use Illuminate\Foundation\Application;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Process\Process;
 
 class UpgradeCommand extends Command
 {
@@ -28,7 +31,7 @@ class UpgradeCommand extends Command
      * This places the application in maintenance mode as well while the commands
      * are being executed.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function handle(): void
     {
@@ -129,9 +132,9 @@ class UpgradeCommand extends Command
             });
         });
 
-        /** @var \Illuminate\Foundation\Application $app */
+        /** @var Application $app */
         $app = require __DIR__ . '/../../../bootstrap/app.php';
-        /** @var \App\Console\Kernel $kernel */
+        /** @var Kernel $kernel */
         $kernel = $app->make(Kernel::class);
         $kernel->bootstrap();
         $this->setLaravel($app);
@@ -174,7 +177,7 @@ class UpgradeCommand extends Command
         $this->info(trans('commands.upgrade.success'));
     }
 
-    protected function withProgress(ProgressBar $bar, \Closure $callback): void
+    protected function withProgress(ProgressBar $bar, Closure $callback): void
     {
         $bar->clear();
         $callback();

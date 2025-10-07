@@ -14,6 +14,7 @@ use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Throwable;
 
 #[Group('Server - Settings')]
 class SettingsController extends ClientApiController
@@ -75,7 +76,7 @@ class SettingsController extends ClientApiController
      *
      * Reinstalls the server on the daemon.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function reinstall(ReinstallServerRequest $request, Server $server): JsonResponse
     {
@@ -91,7 +92,7 @@ class SettingsController extends ClientApiController
      *
      * Changes the Docker image in use by the server.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function dockerImage(SetDockerImageRequest $request, Server $server): JsonResponse
     {

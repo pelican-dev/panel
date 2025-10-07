@@ -3,21 +3,26 @@
 namespace App\Services\Servers;
 
 use App\Enums\ServerState;
+use App\Exceptions\DisplayException;
+use App\Exceptions\Model\DataValidationException;
+use App\Exceptions\Service\Deployment\NoViableAllocationException;
 use App\Exceptions\Service\Deployment\NoViableNodeException;
-use Illuminate\Http\Client\ConnectionException;
-use Ramsey\Uuid\Uuid;
-use Illuminate\Support\Arr;
-use App\Models\User;
-use Webmozart\Assert\Assert;
-use App\Models\Server;
-use Illuminate\Support\Collection;
 use App\Models\Allocation;
-use Illuminate\Database\ConnectionInterface;
-use App\Models\Objects\DeploymentObject;
-use App\Repositories\Daemon\DaemonServerRepository;
-use App\Services\Deployment\FindViableNodesService;
-use App\Services\Deployment\AllocationSelectionService;
 use App\Models\Egg;
+use App\Models\Objects\DeploymentObject;
+use App\Models\Server;
+use App\Models\User;
+use App\Repositories\Daemon\DaemonServerRepository;
+use App\Services\Deployment\AllocationSelectionService;
+use App\Services\Deployment\FindViableNodesService;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
+use Ramsey\Uuid\Uuid;
+use Throwable;
+use Webmozart\Assert\Assert;
 
 class ServerCreationService
 {
@@ -41,10 +46,10 @@ class ServerCreationService
      *
      * @param  array<mixed, mixed>  $data
      *
-     * @throws \Throwable
-     * @throws \App\Exceptions\DisplayException
-     * @throws \Illuminate\Validation\ValidationException
-     * @throws \App\Exceptions\Service\Deployment\NoViableAllocationException
+     * @throws Throwable
+     * @throws DisplayException
+     * @throws ValidationException
+     * @throws NoViableAllocationException
      */
     public function handle(array $data, ?DeploymentObject $deployment = null): Server
     {
@@ -101,7 +106,7 @@ class ServerCreationService
         //
         // If that connection fails out we will attempt to perform a cleanup by just
         // deleting the server itself from the system.
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = $this->connection->transaction(function () use ($data, $eggVariableData) {
             // Create the server and assign any additional allocations to it.
             $server = $this->createModel($data);
@@ -133,7 +138,7 @@ class ServerCreationService
      *
      * @param  array<array-key, mixed>  $data
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     private function createModel(array $data): Server
     {
@@ -179,9 +184,15 @@ class ServerCreationService
             $records = array_merge($records, $data['allocation_additional']);
         }
 
-        Allocation::query()->whereIn('id', $records)->update([
-            'server_id' => $server->id,
-        ]);
+        Allocation::query()
+            ->whereIn('id', array_values(array_unique($records)))
+            ->whereNull('server_id')
+            ->lockForUpdate()
+            ->get()
+            ->each(function (Allocation $allocation) use ($server) {
+                $allocation->server_id = $server->id;
+                $allocation->save();
+            });
     }
 
     /**

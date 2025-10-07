@@ -4,8 +4,9 @@ namespace App\Services\Servers;
 
 use App\Enums\ServerState;
 use App\Models\Server;
-use Illuminate\Database\ConnectionInterface;
 use App\Repositories\Daemon\DaemonServerRepository;
+use Illuminate\Database\ConnectionInterface;
+use Throwable;
 
 class ReinstallServerService
 {
@@ -20,7 +21,7 @@ class ReinstallServerService
     /**
      * Reinstall a server on the remote daemon.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(Server $server): Server
     {

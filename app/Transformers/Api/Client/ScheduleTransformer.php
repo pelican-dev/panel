@@ -2,8 +2,8 @@
 
 namespace App\Transformers\Api\Client;
 
-use App\Models\Task;
 use App\Models\Schedule;
+use App\Models\Task;
 use League\Fractal\Resource\Collection;
 
 class ScheduleTransformer extends BaseClientTransformer

@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use PDOException;
 
 /**
  * @property int $id
@@ -19,10 +21,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $password
  * @property int $max_connections
  * @property string $jdbc
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\Models\Server $server
- * @property \App\Models\DatabaseHost $host
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Server $server
+ * @property DatabaseHost $host
  */
 class Database extends Model implements Validatable
 {
@@ -97,71 +99,97 @@ class Database extends Model implements Validatable
     }
 
     /**
+     * @throws PDOException
+     *
      * Run the provided statement against the database on a given connection.
      */
-    private function run(string $statement): bool
+    private function run(string $statement): void
     {
-        return $this->host->buildConnection()->statement($statement);
+        $this->host->buildConnection()->statement($statement);
     }
 
     /**
+     * @throws PDOException
+     *
      * Create a new database on a given connection.
      */
-    public function createDatabase(string $database): bool
+    public function createDatabase(): self
     {
-        return $this->run(sprintf('CREATE DATABASE IF NOT EXISTS `%s`', $database));
+        $this->run(sprintf('CREATE DATABASE IF NOT EXISTS `%s`', $this->database));
+
+        return $this;
     }
 
     /**
+     * @throws PDOException
+     *
      * Create a new database user on a given connection.
      */
-    public function createUser(string $username, string $remote, string $password, ?int $max_connections): bool
+    public function createUser(): self
     {
-        $args = [$username, $remote, $password];
+        $args = [$this->username, $this->remote, $this->password];
         $command = 'CREATE USER `%s`@`%s` IDENTIFIED BY \'%s\'';
 
-        if (!empty($max_connections)) {
-            $args[] = $max_connections;
+        if (!empty($this->max_connections)) {
+            $args[] = $this->max_connections;
             $command .= ' WITH MAX_USER_CONNECTIONS %s';
         }
 
-        return $this->run(sprintf($command, ...$args));
+        $this->run(sprintf($command, ...$args));
+
+        return $this;
     }
 
     /**
+     * @throws PDOException
+     *
      * Give a specific user access to a given database.
      */
-    public function assignUserToDatabase(string $database, string $username, string $remote): bool
+    public function assignUserToDatabase(): self
     {
-        return $this->run(sprintf(
+        $this->run(sprintf(
             'GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, REFERENCES, INDEX, LOCK TABLES, CREATE ROUTINE, ALTER ROUTINE, EXECUTE, CREATE TEMPORARY TABLES, CREATE VIEW, SHOW VIEW, EVENT, TRIGGER ON `%s`.* TO `%s`@`%s`',
-            $database,
-            $username,
-            $remote
+            $this->database,
+            $this->username,
+            $this->remote
         ));
+
+        return $this;
     }
 
     /**
+     * @throws PDOException
+     *
      * Flush the privileges for a given connection.
      */
-    public function flush(): bool
+    public function flushPrivileges(): self
     {
-        return $this->run('FLUSH PRIVILEGES');
+        $this->run('FLUSH PRIVILEGES');
+
+        return $this;
     }
 
     /**
+     * @throws PDOException
+     *
      * Drop a given database on a specific connection.
      */
-    public function dropDatabase(string $database): bool
+    public function dropDatabase(): self
     {
-        return $this->run(sprintf('DROP DATABASE IF EXISTS `%s`', $database));
+        $this->run(sprintf('DROP DATABASE IF EXISTS `%s`', $this->database));
+
+        return $this;
     }
 
     /**
+     * @throws PDOException
+     *
      * Drop a given user on a specific connection.
      */
-    public function dropUser(string $username, string $remote): bool
+    public function dropUser(): self
     {
-        return $this->run(sprintf('DROP USER IF EXISTS `%s`@`%s`', $username, $remote));
+        $this->run(sprintf('DROP USER IF EXISTS `%s`@`%s`', $this->username, $this->remote));
+
+        return $this;
     }
 }

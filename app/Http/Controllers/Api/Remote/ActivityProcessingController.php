@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Api\Remote;
 
-use App\Models\Node;
-use Carbon\Carbon;
-use Illuminate\Support\Str;
-use App\Models\User;
-use App\Models\Server;
-use App\Models\ActivityLog;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Remote\ActivityEventRequest;
+use App\Models\ActivityLog;
+use App\Models\Node;
+use App\Models\Server;
+use App\Models\User;
+use Carbon\Carbon;
+use DateTimeInterface;
+use Exception;
+use Illuminate\Support\Str;
 
 class ActivityProcessingController extends Controller
 {
@@ -31,11 +33,11 @@ class ActivityProcessingController extends Controller
 
             try {
                 $when = Carbon::createFromFormat(
-                    \DateTimeInterface::RFC3339,
+                    DateTimeInterface::RFC3339,
                     preg_replace('/(\.\d+)Z$/', 'Z', $datum['timestamp']),
                     'UTC'
                 );
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 logger()->warning($exception, ['timestamp' => $datum['timestamp']]);
 
                 // If we cannot parse the value for some reason don't blow up this request, just go ahead

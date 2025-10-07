@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers\Api\Application\DatabaseHosts;
 
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
-use App\Models\DatabaseHost;
-use Spatie\QueryBuilder\QueryBuilder;
-use App\Services\Databases\Hosts\HostUpdateService;
-use App\Services\Databases\Hosts\HostCreationService;
-use App\Transformers\Api\Application\DatabaseHostTransformer;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
+use App\Http\Requests\Api\Application\DatabaseHosts\DeleteDatabaseHostRequest;
 use App\Http\Requests\Api\Application\DatabaseHosts\GetDatabaseHostRequest;
 use App\Http\Requests\Api\Application\DatabaseHosts\StoreDatabaseHostRequest;
-use App\Http\Requests\Api\Application\DatabaseHosts\DeleteDatabaseHostRequest;
 use App\Http\Requests\Api\Application\DatabaseHosts\UpdateDatabaseHostRequest;
+use App\Models\DatabaseHost;
+use App\Services\Databases\Hosts\HostCreationService;
+use App\Services\Databases\Hosts\HostUpdateService;
+use App\Transformers\Api\Application\DatabaseHostTransformer;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Spatie\QueryBuilder\QueryBuilder;
+use Throwable;
 
 class DatabaseHostController extends ApplicationApiController
 {
@@ -66,7 +68,7 @@ class DatabaseHostController extends ApplicationApiController
      * Store a new database host on the Panel and return an HTTP/201 response code with the
      * new database host attached.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function store(StoreDatabaseHostRequest $request): JsonResponse
     {
@@ -89,7 +91,7 @@ class DatabaseHostController extends ApplicationApiController
      *
      * @return array<mixed>
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function update(UpdateDatabaseHostRequest $request, DatabaseHost $databaseHost): array
     {
@@ -105,7 +107,7 @@ class DatabaseHostController extends ApplicationApiController
      *
      * Delete a database host from the Panel.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(DeleteDatabaseHostRequest $request, DatabaseHost $databaseHost): Response
     {

@@ -7,38 +7,32 @@ use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Servers\ReinstallServerService;
 use Exception;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
-use Webbingbrasil\FilamentCopyActions\Forms\Actions\CopyAction;
 
 class Settings extends ServerFormPage
 {
-    protected static ?string $navigationIcon = 'tabler-settings';
+    protected static string|\BackedEnum|null $navigationIcon = 'tabler-settings';
 
     protected static ?int $navigationSort = 10;
 
-    public function form(Form $form): Form
+    /**
+     * @throws Exception
+     */
+    public function form(Schema $schema): Schema
     {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        return $form
-            ->columns([
-                'default' => 1,
-                'sm' => 2,
-                'md' => 4,
-                'lg' => 6,
-            ])
-            ->schema([
+        return parent::form($schema)
+            ->columns(4)
+            ->components([
                 Section::make(trans('server/setting.server_info.title'))
+                    ->columnSpanFull()
                     ->columns([
                         'default' => 1,
                         'sm' => 2,
@@ -48,15 +42,21 @@ class Settings extends ServerFormPage
                     ->schema([
                         Fieldset::make()
                             ->label(trans('server/setting.server_info.information'))
+                            ->columnSpan([
+                                'default' => 1,
+                                'sm' => 2,
+                                'md' => 2,
+                                'lg' => 6,
+                            ])
                             ->schema([
                                 TextInput::make('name')
                                     ->label(trans('server/setting.server_info.name'))
-                                    ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
+                                    ->disabled(fn (Server $server) => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
                                     ->required()
                                     ->columnSpan([
                                         'default' => 1,
                                         'sm' => 2,
-                                        'md' => 4,
+                                        'md' => 2,
                                         'lg' => 6,
                                     ])
                                     ->live(onBlur: true)
@@ -64,11 +64,11 @@ class Settings extends ServerFormPage
                                 Textarea::make('description')
                                     ->label(trans('server/setting.server_info.description'))
                                     ->hidden(!config('panel.editable_server_descriptions'))
-                                    ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
+                                    ->disabled(fn (Server $server) => !auth()->user()->can(Permission::ACTION_SETTINGS_RENAME, $server))
                                     ->columnSpan([
                                         'default' => 1,
                                         'sm' => 2,
-                                        'md' => 4,
+                                        'md' => 2,
                                         'lg' => 6,
                                     ])
                                     ->autosize()
@@ -79,76 +79,81 @@ class Settings extends ServerFormPage
                                     ->columnSpan([
                                         'default' => 1,
                                         'sm' => 1,
-                                        'md' => 3,
-                                        'lg' => 5,
+                                        'md' => 2,
+                                        'lg' => 4,
                                     ])
                                     ->disabled(),
-                                TextInput::make('id')
-                                    ->label(trans('server/setting.server_info.id'))
+                                TextInput::make('uuid_short')
+                                    ->label(trans('server/setting.server_info.uuid_short'))
+                                    ->disabled()
+                                    ->columnSpan(1),
+                                TextInput::make('node.name')
+                                    ->label(trans('server/setting.server_info.node_name'))
+                                    ->formatStateUsing(fn (Server $server) => $server->node->name)
                                     ->disabled()
                                     ->columnSpan(1),
                             ]),
                         Fieldset::make()
                             ->label(trans('server/setting.server_info.limits.title'))
+                            ->columnSpan([
+                                'default' => 1,
+                                'sm' => 2,
+                                'md' => 2,
+                                'lg' => 6,
+                            ])
                             ->columns([
                                 'default' => 1,
                                 'sm' => 1,
-                                'md' => 3,
+                                'md' => 1,
                                 'lg' => 3,
                             ])
                             ->schema([
                                 TextInput::make('cpu')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.cpu'))
                                     ->prefixIcon('tabler-cpu')
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : format_number($server->cpu) . '%'),
                                 TextInput::make('memory')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.memory'))
                                     ->prefixIcon('tabler-device-desktop-analytics')
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : convert_bytes_to_readable($server->memory * 2 ** 20)),
                                 TextInput::make('disk')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.disk'))
                                     ->prefixIcon('tabler-device-sd-card')
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : convert_bytes_to_readable($server->disk * 2 ** 20)),
                                 TextInput::make('backup_limit')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.backups'))
                                     ->prefixIcon('tabler-file-zip')
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/backup.empty') : $server->backups->count() . ' ' .trans('server/setting.server_info.limits.of', ['max' => $state])),
                                 TextInput::make('database_limit')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.databases'))
                                     ->prefixIcon('tabler-database')
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/database.empty') : $server->databases->count() . ' ' . trans('server/setting.server_info.limits.of', ['max' => $state])),
                                 TextInput::make('allocation_limit')
-                                    ->label('')
+                                    ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.allocations'))
                                     ->prefixIcon('tabler-network')
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.no_allocations') : $server->allocations->count() . ' ' .trans('server/setting.server_info.limits.of', ['max' => $state])),
                             ]),
-                    ]),
-                Section::make(trans('server/setting.node_info.title'))
-                    ->schema([
-                        TextInput::make('node.name')
-                            ->label(trans('server/setting.node_info.name'))
-                            ->formatStateUsing(fn (Server $server) => $server->node->name)
-                            ->disabled(),
-                        Fieldset::make(trans('server/setting.node_info.sftp.title'))
-                            ->hidden(fn () => !auth()->user()->can(Permission::ACTION_FILE_SFTP, $server))
+                        Fieldset::make(trans('server/setting.server_info.sftp.title'))
+                            ->columnSpanFull()
+                            ->hidden(fn (Server $server) => !auth()->user()->can(Permission::ACTION_FILE_SFTP, $server))
                             ->columns([
                                 'default' => 1,
                                 'sm' => 1,
@@ -157,46 +162,46 @@ class Settings extends ServerFormPage
                             ])
                             ->schema([
                                 TextInput::make('connection')
-                                    ->label(trans('server/setting.node_info.sftp.connection'))
+                                    ->label(trans('server/setting.server_info.sftp.connection'))
                                     ->columnSpan(1)
                                     ->disabled()
-                                    ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                                    ->copyable()
                                     ->hintAction(
                                         Action::make('connect_sftp')
-                                            ->label(trans('server/setting.node_info.sftp.action'))
+                                            ->label(trans('server/setting.server_info.sftp.action'))
                                             ->color('success')
                                             ->icon('tabler-plug')
                                             ->url(function (Server $server) {
                                                 $fqdn = $server->node->daemon_sftp_alias ?? $server->node->fqdn;
 
-                                                return 'sftp://' . auth()->user()->username . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
+                                                return 'sftp://' . rawurlencode(auth()->user()->username) . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
                                             }),
                                     )
                                     ->formatStateUsing(function (Server $server) {
                                         $fqdn = $server->node->daemon_sftp_alias ?? $server->node->fqdn;
 
-                                        return 'sftp://' . auth()->user()->username . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
+                                        return 'sftp://' . rawurlencode(auth()->user()->username) . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
                                     }),
                                 TextInput::make('username')
-                                    ->label(trans('server/setting.node_info.sftp.username'))
+                                    ->label(trans('server/setting.server_info.sftp.username'))
                                     ->columnSpan(1)
-                                    ->suffixAction(fn () => request()->isSecure() ? CopyAction::make() : null)
+                                    ->copyable()
                                     ->disabled()
                                     ->formatStateUsing(fn (Server $server) => auth()->user()->username . '.' . $server->uuid_short),
-                                Placeholder::make('password')
-                                    ->label(trans('server/setting.node_info.sftp.password'))
+                                TextEntry::make('password')
+                                    ->label(trans('server/setting.server_info.sftp.password'))
                                     ->columnSpan(1)
-                                    ->content(trans('server/setting.node_info.sftp.password_body')),
+                                    ->state(trans('server/setting.server_info.sftp.password_body')),
                             ]),
                     ]),
                 Section::make(trans('server/setting.reinstall.title'))
-                    ->hidden(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
-                    ->collapsible()
+                    ->hidden(fn (Server $server) => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
+                    ->columnSpanFull()
                     ->footerActions([
                         Action::make('reinstall')
                             ->label(trans('server/setting.reinstall.action'))
                             ->color('danger')
-                            ->disabled(fn () => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
+                            ->disabled(fn (Server $server) => !auth()->user()->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
                             ->requiresConfirmation()
                             ->modalHeading(trans('server/setting.reinstall.modal'))
                             ->modalDescription(trans('server/setting.reinstall.modal_description'))
@@ -231,9 +236,9 @@ class Settings extends ServerFormPage
                     ])
                     ->footerActionsAlignment(Alignment::Right)
                     ->schema([
-                        Placeholder::make('')
+                        TextEntry::make('stop_info')
                             ->label(trans('server/setting.reinstall.body')),
-                        Placeholder::make('')
+                        TextEntry::make('files_info')
                             ->label(trans('server/setting.reinstall.body2')),
                     ]),
             ]);

@@ -2,12 +2,13 @@
 
 namespace App\Services\Nodes;
 
-use Illuminate\Support\Str;
-use App\Models\Node;
-use Illuminate\Database\ConnectionInterface;
-use App\Repositories\Daemon\DaemonConfigurationRepository;
 use App\Exceptions\Service\Node\ConfigurationNotPersistedException;
+use App\Models\Node;
+use App\Repositories\Daemon\DaemonConfigurationRepository;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Str;
+use Throwable;
 
 class NodeUpdateService
 {
@@ -24,7 +25,7 @@ class NodeUpdateService
      *
      * @param  array<string, mixed>  $data
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(Node $node, array $data, bool $resetToken = false): Node
     {
@@ -36,7 +37,7 @@ class NodeUpdateService
         }
 
         [$updated, $exception] = $this->connection->transaction(function () use ($data, $node) {
-            /** @var \App\Models\Node $updated */
+            /** @var Node $updated */
             $updated = $node->replicate();
             $updated->exists = true;
             $updated->forceFill($data)->save();

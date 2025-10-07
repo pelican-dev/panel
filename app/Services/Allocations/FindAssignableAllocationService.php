@@ -2,11 +2,16 @@
 
 namespace App\Services\Allocations;
 
-use Webmozart\Assert\Assert;
-use App\Models\Server;
-use App\Models\Allocation;
+use App\Exceptions\DisplayException;
 use App\Exceptions\Service\Allocation\AutoAllocationNotEnabledException;
+use App\Exceptions\Service\Allocation\CidrOutOfRangeException;
+use App\Exceptions\Service\Allocation\InvalidPortMappingException;
 use App\Exceptions\Service\Allocation\NoAutoAllocationSpaceAvailableException;
+use App\Exceptions\Service\Allocation\PortOutOfRangeException;
+use App\Exceptions\Service\Allocation\TooManyPortsInRangeException;
+use App\Models\Allocation;
+use App\Models\Server;
+use Webmozart\Assert\Assert;
 
 class FindAssignableAllocationService
 {
@@ -20,11 +25,11 @@ class FindAssignableAllocationService
      * no allocation can be found, a new one will be created with a random port between the defined
      * range from the configuration.
      *
-     * @throws \App\Exceptions\DisplayException
-     * @throws \App\Exceptions\Service\Allocation\CidrOutOfRangeException
-     * @throws \App\Exceptions\Service\Allocation\InvalidPortMappingException
-     * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
-     * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
+     * @throws DisplayException
+     * @throws CidrOutOfRangeException
+     * @throws InvalidPortMappingException
+     * @throws PortOutOfRangeException
+     * @throws TooManyPortsInRangeException
      */
     public function handle(Server $server): Allocation
     {
@@ -35,7 +40,7 @@ class FindAssignableAllocationService
         // Attempt to find a given available allocation for a server. If one cannot be found
         // we will fall back to attempting to create a new allocation that can be used for the
         // server.
-        /** @var \App\Models\Allocation|null $allocation */
+        /** @var Allocation|null $allocation */
         $allocation = $server->node->allocations()
             ->when($server->allocation, function ($query) use ($server) {
                 $query->where('ip', $server->allocation->ip);
@@ -56,11 +61,11 @@ class FindAssignableAllocationService
      * in the settings. If there are no matches in that range, or something is wrong with the
      * range information provided an exception will be raised.
      *
-     * @throws \App\Exceptions\DisplayException
-     * @throws \App\Exceptions\Service\Allocation\CidrOutOfRangeException
-     * @throws \App\Exceptions\Service\Allocation\InvalidPortMappingException
-     * @throws \App\Exceptions\Service\Allocation\PortOutOfRangeException
-     * @throws \App\Exceptions\Service\Allocation\TooManyPortsInRangeException
+     * @throws DisplayException
+     * @throws CidrOutOfRangeException
+     * @throws InvalidPortMappingException
+     * @throws PortOutOfRangeException
+     * @throws TooManyPortsInRangeException
      */
     protected function createNewAllocation(Server $server): Allocation
     {
@@ -100,7 +105,7 @@ class FindAssignableAllocationService
             'allocation_ports' => [$port],
         ]);
 
-        /** @var \App\Models\Allocation $allocation */
+        /** @var Allocation $allocation */
         $allocation = $server->node->allocations()
             ->where('ip', $server->allocation->ip)
             ->where('port', $port)

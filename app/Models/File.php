@@ -147,6 +147,10 @@ class File extends Model
      */
     public function getRows(): array
     {
+        if (!isset(self::$server)) {
+            return [];
+        }
+
         try {
             $fileRepository = (new DaemonFileRepository())->setServer(self::$server);
 
@@ -171,7 +175,7 @@ class File extends Model
                     'is_directory' => $file['directory'],
                     'is_file' => $file['file'],
                     'is_symlink' => $file['symlink'],
-                    'mime_type' => $file['mime'],
+                    'mime_type' => $file['file'] && str($file['name'])->lower()->endsWith('.jar') && in_array($file['mime'], self::ARCHIVE_MIMES) ? 'application/jar' : $file['mime'],
                 ];
             }, $contents);
 

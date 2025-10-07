@@ -2,12 +2,14 @@
 
 namespace App\Models\Filters;
 
+use BadMethodCallException;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Spatie\QueryBuilder\Filters\Filter;
-use Illuminate\Database\Eloquent\Builder;
 
 /**
- * @template-implements Filter<\Illuminate\Database\Eloquent\Model>
+ * @template-implements Filter<Model>
  */
 class MultiFieldServerFilter implements Filter
 {
@@ -27,7 +29,7 @@ class MultiFieldServerFilter implements Filter
     public function __invoke(Builder $query, $value, string $property): void
     {
         if ($query->getQuery()->from !== 'servers') {
-            throw new \BadMethodCallException('Cannot use the MultiFieldServerFilter against a non-server model.');
+            throw new BadMethodCallException('Cannot use the MultiFieldServerFilter against a non-server model.');
         }
 
         if (preg_match(self::IPV4_REGEX, $value) || preg_match('/^:\d{1,5}$/', $value)) {

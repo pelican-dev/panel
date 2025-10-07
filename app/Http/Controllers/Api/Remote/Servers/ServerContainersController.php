@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\Remote\Servers;
 
 use App\Enums\ContainerStatus;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Remote\ServerRequest;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
 
 class ServerContainersController extends Controller
 {

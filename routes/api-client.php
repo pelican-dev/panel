@@ -1,12 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Client;
-use App\Http\Middleware\Activity\ServerSubject;
 use App\Http\Middleware\Activity\AccountSubject;
-use App\Http\Middleware\RequireTwoFactorAuthentication;
-use App\Http\Middleware\Api\Client\Server\ResourceBelongsToServer;
+use App\Http\Middleware\Activity\ServerSubject;
 use App\Http\Middleware\Api\Client\Server\AuthenticateServerAccess;
+use App\Http\Middleware\Api\Client\Server\ResourceBelongsToServer;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,12 +19,7 @@ Route::get('/', [Client\ClientController::class, 'index'])->name('api:client.ind
 Route::get('/permissions', [Client\ClientController::class, 'permissions']);
 
 Route::prefix('/account')->middleware(AccountSubject::class)->group(function () {
-    Route::prefix('/')->withoutMiddleware(RequireTwoFactorAuthentication::class)->group(function () {
-        Route::get('/', [Client\AccountController::class, 'index'])->name('api:client.account');
-        Route::get('/two-factor', [Client\TwoFactorController::class, 'index']);
-        Route::post('/two-factor', [Client\TwoFactorController::class, 'store']);
-        Route::delete('/two-factor', [Client\TwoFactorController::class, 'delete']);
-    });
+    Route::get('/', [Client\AccountController::class, 'index'])->name('api:client.account');
 
     Route::put('/email', [Client\AccountController::class, 'updateEmail'])->name('api:client.account.update-email');
     Route::put('/password', [Client\AccountController::class, 'updatePassword'])->name('api:client.account.update-password');

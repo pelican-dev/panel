@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Settings;
 
-use Webmozart\Assert\Assert;
-use App\Models\Server;
-use Illuminate\Validation\Rule;
-use App\Models\Permission;
 use App\Contracts\Http\ClientPermissionsRequest;
 use App\Http\Requests\Api\Client\ClientApiRequest;
+use App\Models\Permission;
+use App\Models\Server;
+use Illuminate\Validation\Rule;
+use Webmozart\Assert\Assert;
 
 class SetDockerImageRequest extends ClientApiRequest implements ClientPermissionsRequest
 {
@@ -18,7 +18,7 @@ class SetDockerImageRequest extends ClientApiRequest implements ClientPermission
 
     public function rules(): array
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = $this->route()->parameter('server');
 
         Assert::isInstanceOf($server, Server::class);

@@ -3,9 +3,9 @@
 namespace App\Livewire\Installer\Steps;
 
 use App\Livewire\Installer\PanelInstaller;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard\Step;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Wizard\Step;
 
 class EnvironmentStep
 {
@@ -17,19 +17,18 @@ class EnvironmentStep
             ->schema([
                 TextInput::make('env_general.APP_NAME')
                     ->label(trans('installer.environment.fields.app_name'))
-                    ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip(trans('installer.environment.fields.app_name_help'))
+                    ->hintIcon('tabler-question-mark', trans('installer.environment.fields.app_name_help'))
                     ->required()
                     ->default(config('app.name')),
                 TextInput::make('env_general.APP_URL')
                     ->label(trans('installer.environment.fields.app_url'))
-                    ->hintIcon('tabler-question-mark')
-                    ->hintIconTooltip(trans('installer.environment.fields.app_url_help'))
+                    ->hintIcon('tabler-question-mark', trans('installer.environment.fields.app_url_help'))
                     ->required()
                     ->default(url('')),
                 Fieldset::make('admin_user')
                     ->label(trans('installer.environment.fields.account.section'))
                     ->columns(3)
+                    ->columnSpanFull()
                     ->schema([
                         TextInput::make('user.email')
                             ->label(trans('installer.environment.fields.account.email'))

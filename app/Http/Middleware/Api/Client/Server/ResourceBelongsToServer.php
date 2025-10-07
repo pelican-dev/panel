@@ -2,16 +2,18 @@
 
 namespace App\Http\Middleware\Api\Client\Server;
 
-use Illuminate\Http\Request;
-use App\Models\Task;
-use App\Models\User;
+use App\Models\Allocation;
 use App\Models\Backup;
-use App\Models\Server;
-use App\Models\Subuser;
 use App\Models\Database;
 use App\Models\Schedule;
-use App\Models\Allocation;
+use App\Models\Server;
+use App\Models\Subuser;
+use App\Models\Task;
+use App\Models\User;
+use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use InvalidArgumentException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ResourceBelongsToServer
@@ -24,16 +26,16 @@ class ResourceBelongsToServer
      * server that is expected, and that we're not accessing a resource completely
      * unrelated to the server provided in the request.
      */
-    public function handle(Request $request, \Closure $next): mixed
+    public function handle(Request $request, Closure $next): mixed
     {
         $params = $request->route()->parameters();
 
         $server = $params['server'] ?? null;
         if (!$server instanceof Server) {
-            throw new \InvalidArgumentException('This middleware cannot be used in a context that is missing a server in the parameters.');
+            throw new InvalidArgumentException('This middleware cannot be used in a context that is missing a server in the parameters.');
         }
 
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = $request->route()->parameter('server');
         $exception = new NotFoundHttpException('The requested resource was not found for this server.');
         foreach ($params as $key => $model) {
@@ -80,7 +82,7 @@ class ResourceBelongsToServer
                 default:
                     // Don't return a 404 here since we want to make sure no one relies
                     // on this middleware in a context in which it will not work. Fail safe.
-                    throw new \InvalidArgumentException('There is no handler configured for a resource of this type: ' . get_class($model));
+                    throw new InvalidArgumentException('There is no handler configured for a resource of this type: ' . get_class($model));
             }
         }
 

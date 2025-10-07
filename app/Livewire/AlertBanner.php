@@ -3,17 +3,21 @@
 namespace App\Livewire;
 
 use Closure;
-use Filament\Notifications\Concerns;
+use Filament\Notifications\Concerns\HasBody;
+use Filament\Notifications\Concerns\HasIcon;
+use Filament\Notifications\Concerns\HasId;
+use Filament\Notifications\Concerns\HasStatus;
+use Filament\Notifications\Concerns\HasTitle;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Contracts\Support\Arrayable;
 
 final class AlertBanner extends ViewComponent implements Arrayable
 {
-    use Concerns\HasBody;
-    use Concerns\HasIcon;
-    use Concerns\HasId;
-    use Concerns\HasStatus;
-    use Concerns\HasTitle;
+    use HasBody;
+    use HasIcon;
+    use HasId;
+    use HasStatus;
+    use HasTitle;
 
     protected bool|Closure $closable = false;
 

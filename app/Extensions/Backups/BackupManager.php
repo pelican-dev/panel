@@ -2,15 +2,16 @@
 
 namespace App\Extensions\Backups;
 
-use Closure;
+use App\Extensions\Filesystem\S3Filesystem;
 use Aws\S3\S3Client;
+use Closure;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Webmozart\Assert\Assert;
-use Illuminate\Foundation\Application;
+use InvalidArgumentException;
 use League\Flysystem\FilesystemAdapter;
-use App\Extensions\Filesystem\S3Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use Webmozart\Assert\Assert;
 
 class BackupManager
 {
@@ -64,7 +65,7 @@ class BackupManager
         $config = $this->getConfig($name);
 
         if (empty($config['adapter'])) {
-            throw new \InvalidArgumentException("Backup disk [$name] does not have a configured adapter.");
+            throw new InvalidArgumentException("Backup disk [$name] does not have a configured adapter.");
         }
 
         $adapter = $config['adapter'];
@@ -82,7 +83,7 @@ class BackupManager
             return $instance;
         }
 
-        throw new \InvalidArgumentException("Adapter [$adapter] is not supported.");
+        throw new InvalidArgumentException("Adapter [$adapter] is not supported.");
     }
 
     /**

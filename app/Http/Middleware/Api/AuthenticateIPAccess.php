@@ -2,10 +2,13 @@
 
 namespace App\Http\Middleware\Api;
 
+use App\Facades\Activity;
+use App\Models\ApiKey;
+use Closure;
+use Exception;
+use Illuminate\Http\Request;
 use IPTools\IP;
 use IPTools\Range;
-use Illuminate\Http\Request;
-use App\Facades\Activity;
 use Laravel\Sanctum\TransientToken;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -14,12 +17,12 @@ class AuthenticateIPAccess
     /**
      * Determine if a request IP has permission to access the API.
      *
-     * @throws \Exception
-     * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+     * @throws Exception
+     * @throws AccessDeniedHttpException
      */
-    public function handle(Request $request, \Closure $next): mixed
+    public function handle(Request $request, Closure $next): mixed
     {
-        /** @var \Laravel\Sanctum\TransientToken|\App\Models\ApiKey $token */
+        /** @var TransientToken|ApiKey $token */
         $token = $request->user()->currentAccessToken();
 
         // If this is a stateful request just push the request through to the next

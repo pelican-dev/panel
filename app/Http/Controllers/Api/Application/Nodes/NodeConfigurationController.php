@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\Application\Nodes;
 
-use App\Models\Node;
-use Illuminate\Http\JsonResponse;
-use App\Http\Requests\Api\Application\Nodes\GetNodeRequest;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
+use App\Http\Requests\Api\Application\Nodes\GetNodeRequest;
+use App\Models\Node;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Http\JsonResponse;
 
 #[Group('Node', weight: 1)]
 class NodeConfigurationController extends ApplicationApiController

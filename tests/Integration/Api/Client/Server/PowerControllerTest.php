@@ -2,10 +2,10 @@
 
 namespace App\Tests\Integration\Api\Client\Server;
 
-use Illuminate\Http\Response;
 use App\Models\Permission;
-use App\Repositories\Daemon\DaemonPowerRepository;
+use App\Repositories\Daemon\DaemonServerRepository;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class PowerControllerTest extends ClientApiIntegrationTestCase
@@ -49,8 +49,8 @@ class PowerControllerTest extends ClientApiIntegrationTestCase
     #[DataProvider('validPowerActionDataProvider')]
     public function test_action_can_be_sent_to_server(string $action, string $permission): void
     {
-        $service = \Mockery::mock(DaemonPowerRepository::class);
-        $this->app->instance(DaemonPowerRepository::class, $service);
+        $service = \Mockery::mock(DaemonServerRepository::class);
+        $this->app->instance(DaemonServerRepository::class, $service);
 
         [$user, $server] = $this->generateTestAccount([$permission]);
 
@@ -60,7 +60,7 @@ class PowerControllerTest extends ClientApiIntegrationTestCase
             }))
             ->andReturnSelf()
             ->getMock()
-            ->expects('send')
+            ->expects('power')
             ->with(trim($action));
 
         $this->actingAs($user)

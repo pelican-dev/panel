@@ -2,14 +2,14 @@
 
 namespace App\Tests\Integration\Services\Servers;
 
-use Mockery\MockInterface;
 use App\Models\Database;
 use App\Models\DatabaseHost;
-use App\Tests\Integration\IntegrationTestCase;
-use App\Services\Servers\ServerDeletionService;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Databases\DatabaseManagementService;
+use App\Services\Servers\ServerDeletionService;
+use App\Tests\Integration\IntegrationTestCase;
 use Illuminate\Http\Client\ConnectionException;
+use Mockery\MockInterface;
 
 class ServerDeletionServiceTest extends IntegrationTestCase
 {

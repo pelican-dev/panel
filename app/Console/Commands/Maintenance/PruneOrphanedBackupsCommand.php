@@ -5,6 +5,7 @@ namespace App\Console\Commands\Maintenance;
 use App\Models\Backup;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
+use InvalidArgumentException;
 
 class PruneOrphanedBackupsCommand extends Command
 {
@@ -16,7 +17,7 @@ class PruneOrphanedBackupsCommand extends Command
     {
         $since = $this->option('prune-age') ?? config('backups.prune_age', 360);
         if (!$since || !is_digit($since)) {
-            throw new \InvalidArgumentException('The "--prune-age" argument must be a value greater than 0.');
+            throw new InvalidArgumentException('The "--prune-age" argument must be a value greater than 0.');
         }
 
         $query = Backup::query()

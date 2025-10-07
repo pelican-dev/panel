@@ -2,16 +2,16 @@
 
 namespace App\Http\Requests\Api\Client\Account;
 
+use App\Exceptions\Http\Base\InvalidPasswordProvidedException;
+use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Models\User;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Hashing\Hasher;
-use App\Http\Requests\Api\Client\ClientApiRequest;
-use App\Exceptions\Http\Base\InvalidPasswordProvidedException;
 
 class UpdateEmailRequest extends ClientApiRequest
 {
     /**
-     * @throws \App\Exceptions\Http\Base\InvalidPasswordProvidedException
+     * @throws InvalidPasswordProvidedException
      */
     public function authorize(): bool
     {

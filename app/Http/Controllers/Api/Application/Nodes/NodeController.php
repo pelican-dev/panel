@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers\Api\Application\Nodes;
 
-use App\Models\Node;
-use Illuminate\Http\JsonResponse;
-use Spatie\QueryBuilder\QueryBuilder;
-use App\Services\Nodes\NodeUpdateService;
-use App\Services\Nodes\NodeDeletionService;
-use App\Transformers\Api\Application\NodeTransformer;
+use App\Exceptions\Model\DataValidationException;
+use App\Exceptions\Service\HasActiveServersException;
+use App\Http\Controllers\Api\Application\ApplicationApiController;
+use App\Http\Requests\Api\Application\Nodes\DeleteNodeRequest;
 use App\Http\Requests\Api\Application\Nodes\GetNodeRequest;
 use App\Http\Requests\Api\Application\Nodes\GetNodesRequest;
 use App\Http\Requests\Api\Application\Nodes\StoreNodeRequest;
-use App\Http\Requests\Api\Application\Nodes\DeleteNodeRequest;
 use App\Http\Requests\Api\Application\Nodes\UpdateNodeRequest;
-use App\Http\Controllers\Api\Application\ApplicationApiController;
+use App\Models\Node;
+use App\Services\Nodes\NodeDeletionService;
+use App\Services\Nodes\NodeUpdateService;
+use App\Transformers\Api\Application\NodeTransformer;
 use Dedoc\Scramble\Attributes\Group;
 use Exception;
+use Illuminate\Http\JsonResponse;
+use Spatie\QueryBuilder\QueryBuilder;
+use Throwable;
 
 #[Group('Node', weight: 0)]
 class NodeController extends ApplicationApiController
@@ -69,7 +72,7 @@ class NodeController extends ApplicationApiController
      * Create a new node on the Panel. Returns the created node and an HTTP/201
      * status response on success.
      *
-     * @throws \App\Exceptions\Model\DataValidationException
+     * @throws DataValidationException
      */
     public function store(StoreNodeRequest $request): JsonResponse
     {
@@ -92,7 +95,7 @@ class NodeController extends ApplicationApiController
      *
      * @return array<mixed>
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function update(UpdateNodeRequest $request, Node $node): array
     {
@@ -117,7 +120,7 @@ class NodeController extends ApplicationApiController
      * Deletes a given node from the Panel as long as there are no servers
      * currently attached to it.
      *
-     * @throws \App\Exceptions\Service\HasActiveServersException
+     * @throws HasActiveServersException
      */
     public function delete(DeleteNodeRequest $request, Node $node): JsonResponse
     {

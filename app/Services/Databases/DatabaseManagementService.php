@@ -2,14 +2,18 @@
 
 namespace App\Services\Databases;
 
-use App\Facades\Activity;
-use App\Models\Server;
-use App\Models\Database;
-use App\Helpers\Utilities;
-use Illuminate\Database\ConnectionInterface;
 use App\Exceptions\Repository\DuplicateDatabaseNameException;
-use App\Exceptions\Service\Database\TooManyDatabasesException;
 use App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException;
+use App\Exceptions\Service\Database\TooManyDatabasesException;
+use App\Facades\Activity;
+use App\Helpers\Utilities;
+use App\Models\Database;
+use App\Models\Server;
+use Exception;
+use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
+use Throwable;
 
 class DatabaseManagementService
 {
@@ -60,9 +64,9 @@ class DatabaseManagementService
      *
      * @param  array{database?: string, database_host_id: int}  $data
      *
-     * @throws \Throwable
-     * @throws \App\Exceptions\Service\Database\TooManyDatabasesException
-     * @throws \App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException
+     * @throws Throwable
+     * @throws TooManyDatabasesException
+     * @throws DatabaseClientFeatureNotEnabledException
      */
     public function create(Server $server, array $data): Database
     {
@@ -80,27 +84,23 @@ class DatabaseManagementService
 
         // Protect against developer mistakes...
         if (empty($data['database']) || !preg_match(self::MATCH_NAME_REGEX, $data['database'])) {
-            throw new \InvalidArgumentException('The database name passed to DatabaseManagementService::handle MUST be prefixed with "s{server_id}_".');
+            throw new InvalidArgumentException('The database name passed to DatabaseManagementService::handle MUST be prefixed with "s{server_id}_".');
         }
 
         $data = array_merge($data, [
             'server_id' => $server->id,
-            'username' => sprintf('u%d_%s', $server->id, str_random(10)),
+            'username' => sprintf('u%d_%s', $server->id, Str::random(10)),
             'password' => Utilities::randomStringWithSpecialCharacters(24),
         ]);
 
         return $this->connection->transaction(function () use ($data) {
             $database = $this->createModel($data);
 
-            $database->createDatabase($database->database);
-            $database->createUser(
-                $database->username,
-                $database->remote,
-                $database->password,
-                $database->max_connections
-            );
-            $database->assignUserToDatabase($database->database, $database->username, $database->remote);
-            $database->flush();
+            $database
+                ->createDatabase()
+                ->createUser()
+                ->assignUserToDatabase()
+                ->flushPrivileges();
 
             Activity::event('server:database.create')
                 ->subject($database)
@@ -114,14 +114,15 @@ class DatabaseManagementService
     /**
      * Delete a database from the given host server.
      *
-     * @throws \Exception
+     * @throws Throwable
      */
     public function delete(Database $database): ?bool
     {
         return $this->connection->transaction(function () use ($database) {
-            $database->dropDatabase($database->database);
-            $database->dropUser($database->username, $database->remote);
-            $database->flush();
+            $database
+                ->dropDatabase()
+                ->dropUser()
+                ->flushPrivileges();
 
             Activity::event('server:database.delete')
                 ->subject($database)
@@ -133,14 +134,36 @@ class DatabaseManagementService
     }
 
     /**
+     * Updates a password for a given database.
+     *
+     * @throws \Exception
+     */
+    public function rotatePassword(Database $database): void
+    {
+        $password = Utilities::randomStringWithSpecialCharacters(24);
+
+        $this->connection->transaction(function () use ($database, $password) {
+            $database->update([
+                'password' => $password,
+            ]);
+
+            $database
+                ->dropUser()
+                ->createUser()
+                ->assignUserToDatabase()
+                ->flushPrivileges();
+        });
+    }
+
+    /**
      * Create the database if there is not an identical match in the DB. While you can technically
      * have the same name across multiple hosts, for the sake of keeping this logic easy to understand
      * and avoiding user confusion we will ignore the specific host and just look across all hosts.
      *
      * @param  array{server_id: int, database: string}  $data
      *
-     * @throws \App\Exceptions\Repository\DuplicateDatabaseNameException
-     * @throws \Throwable
+     * @throws DuplicateDatabaseNameException
+     * @throws Throwable
      */
     protected function createModel(array $data): Database
     {

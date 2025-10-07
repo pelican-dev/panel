@@ -2,8 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Http\Request;
+use Closure;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 
 class LanguageMiddleware
 {
@@ -15,7 +16,7 @@ class LanguageMiddleware
     /**
      * Handle an incoming request and set the user's preferred language.
      */
-    public function handle(Request $request, \Closure $next): mixed
+    public function handle(Request $request, Closure $next): mixed
     {
         $this->app->setLocale($request->user()->language ?? config('app.locale', 'en'));
 

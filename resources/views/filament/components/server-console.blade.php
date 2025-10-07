@@ -1,9 +1,9 @@
 <x-filament::widget>
     @assets
     @php
-        $userFont = auth()->user()->getCustomization()['console_font'] ?? 'monospace';
-        $userFontSize = auth()->user()->getCustomization()['console_font_size'] ?? 14;
-        $userRows =  auth()->user()->getCustomization()['console_rows'] ?? 30;
+        $userFont = (string) auth()->user()->getCustomization(\App\Enums\CustomizationKey::ConsoleFont);
+        $userFontSize = (int) auth()->user()->getCustomization(\App\Enums\CustomizationKey::ConsoleFontSize);
+        $userRows = (int) auth()->user()->getCustomization(\App\Enums\CustomizationKey::ConsoleRows);
     @endphp
     @if($userFont !== "monospace")
         <link rel="preload" href="{{ asset("storage/fonts/{$userFont}.ttf") }}" as="font" crossorigin>
@@ -27,7 +27,7 @@
             />
             <input
                 id="send-command"
-                class="w-full focus:outline-none focus:ring-0 border-none dark:bg-gray-900"
+                class="w-full focus:outline-none focus:ring-0 border-none dark:bg-gray-900 p-1"
                 type="text"
                 :readonly="{{ $this->canSendCommand() ? 'false' : 'true' }}"
                 title="{{ $this->canSendCommand() ? '' : trans('server/console.command_blocked_title') }}"
@@ -76,17 +76,19 @@
             theme: theme
         };
 
-        const { Terminal, FitAddon, WebLinksAddon, SearchAddon, SearchBarAddon } = window.Xterm;
+        const { Terminal, FitAddon, WebLinksAddon, SearchAddon, SearchBarAddon, CanvasAddon } = window.Xterm;
 
         const terminal = new Terminal(options);
         const fitAddon = new FitAddon();
         const webLinksAddon = new WebLinksAddon();
         const searchAddon = new SearchAddon();
         const searchAddonBar = new SearchBarAddon({ searchAddon });
+        const canvasAddon = new CanvasAddon();
         terminal.loadAddon(fitAddon);
         terminal.loadAddon(webLinksAddon);
         terminal.loadAddon(searchAddon);
         terminal.loadAddon(searchAddonBar);
+        terminal.loadAddon(canvasAddon);
 
         terminal.open(document.getElementById('terminal'));
 
@@ -102,7 +104,7 @@
 
         terminal.attachCustomKeyEventHandler((event) => {
             if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
-                document.execCommand('copy'); // navigator.clipboard.writeText() only works on ssl..
+                navigator.clipboard.writeText(terminal.getSelection());
                 return false;
             } else if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
                 event.preventDefault();

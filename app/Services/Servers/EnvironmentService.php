@@ -2,8 +2,8 @@
 
 namespace App\Services\Servers;
 
-use App\Models\Server;
 use App\Models\EggVariable;
+use App\Models\Server;
 
 class EnvironmentService
 {

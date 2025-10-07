@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use App\Models\Server;
-use App\Transformers\Api\Client\ServerTransformer;
-use App\Services\Servers\GetUserPermissionsService;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\GetServerRequest;
+use App\Models\Server;
+use App\Services\Servers\GetUserPermissionsService;
+use App\Transformers\Api\Client\ServerTransformer;
 use Dedoc\Scramble\Attributes\Group;
 
 #[Group('Server', weight: 0)]

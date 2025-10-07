@@ -2,12 +2,12 @@
 
 namespace App\Services\Servers;
 
-use App\Models\User;
-use Illuminate\Support\Collection;
 use App\Models\EggVariable;
-use Illuminate\Validation\ValidationException;
+use App\Models\User;
 use App\Traits\Services\HasUserLevels;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 
 class VariableValidatorService
 {
@@ -20,7 +20,7 @@ class VariableValidatorService
      *
      * @param  array<array-key, ?string>  $fields
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function handle(int $egg, array $fields = []): Collection
     {
@@ -31,7 +31,7 @@ class VariableValidatorService
             $query = $query->where('user_editable', true)->where('user_viewable', true);
         }
 
-        /** @var \App\Models\EggVariable[] $variables */
+        /** @var EggVariable[] $variables */
         $variables = $query->get();
 
         $data = $rules = $customAttributes = [];

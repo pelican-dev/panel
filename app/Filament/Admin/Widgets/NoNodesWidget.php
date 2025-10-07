@@ -2,12 +2,13 @@
 
 namespace App\Filament\Admin\Widgets;
 
-use App\Filament\Admin\Resources\NodeResource\Pages\CreateNode;
+use App\Filament\Admin\Resources\Nodes\Pages\CreateNode;
 use App\Models\Node;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class NoNodesWidget extends FormWidget
 {
@@ -18,18 +19,22 @@ class NoNodesWidget extends FormWidget
         return Node::count() <= 0;
     }
 
-    public function form(Form $form): Form
+    /**
+     * @throws Exception
+     */
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make(trans('admin/dashboard.sections.intro-first-node.heading'))
                     ->icon('tabler-server-2')
                     ->iconColor('primary')
                     ->collapsible()
                     ->persistCollapsed()
                     ->schema([
-                        Placeholder::make('')
-                            ->content(trans('admin/dashboard.sections.intro-first-node.content')),
+                        TextEntry::make('info')
+                            ->hiddenLabel()
+                            ->state(trans('admin/dashboard.sections.intro-first-node.content')),
                     ])
                     ->headerActions([
                         Action::make('create-node')

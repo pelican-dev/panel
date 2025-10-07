@@ -2,24 +2,27 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Collection;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Container\Container;
 use Illuminate\Database\Connection;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Foundation\Application;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Session\TokenMismatchException;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\Mailer\Exception\TransportException;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use PDOException;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\Mailer\Exception\TransportException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -79,7 +82,7 @@ class Handler extends ExceptionHandler
             $this->dontReport = [];
         }
 
-        $this->reportable(function (\PDOException $ex) {
+        $this->reportable(function (PDOException $ex) {
             $ex = $this->generateCleanedExceptionStack($ex);
         });
 
@@ -88,7 +91,7 @@ class Handler extends ExceptionHandler
         });
     }
 
-    private function generateCleanedExceptionStack(\Throwable $exception): string
+    private function generateCleanedExceptionStack(Throwable $exception): string
     {
         $cleanedStack = '';
         foreach ($exception->getTrace() as $index => $item) {
@@ -117,11 +120,11 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
-    public function render($request, \Throwable $e): Response
+    public function render($request, Throwable $e): Response
     {
         $connections = $this->container->make(Connection::class);
 
@@ -143,7 +146,7 @@ class Handler extends ExceptionHandler
      * Transform a validation exception into a consistent format to be returned for
      * calls to the API.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      */
     public function invalidJson($request, ValidationException $exception): JsonResponse
     {
@@ -249,7 +252,7 @@ class Handler extends ExceptionHandler
     /**
      * Return an array of exceptions that should not be reported.
      */
-    public static function isReportable(\Exception $exception): bool
+    public static function isReportable(Exception $exception): bool
     {
         return (new self(Container::getInstance()))->shouldReport($exception);
     }
@@ -257,7 +260,7 @@ class Handler extends ExceptionHandler
     /**
      * Convert an authentication exception into an unauthenticated response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      */
     protected function unauthenticated($request, AuthenticationException $exception): JsonResponse|RedirectResponse
     {
@@ -291,7 +294,7 @@ class Handler extends ExceptionHandler
      *
      * @return array<mixed>
      */
-    public static function toArray(\Throwable $e): array
+    public static function toArray(Throwable $e): array
     {
         return self::exceptionToArray($e);
     }

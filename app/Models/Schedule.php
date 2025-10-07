@@ -3,12 +3,17 @@
 namespace App\Models;
 
 use App\Contracts\Validatable;
+use App\Enums\ScheduleStatus;
 use App\Helpers\Utilities;
 use App\Traits\HasValidation;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * @property int $id
@@ -22,12 +27,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $is_active
  * @property bool $is_processing
  * @property bool $only_when_online
- * @property \Carbon\Carbon|null $last_run_at
- * @property \Carbon\Carbon|null $next_run_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \App\Models\Server $server
- * @property \App\Models\Task[]|\Illuminate\Support\Collection $tasks
+ * @property Carbon|null $last_run_at
+ * @property Carbon|null $next_run_at
+ * @property ScheduleStatus $status
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Server $server
+ * @property Task[]|Collection $tasks
  */
 class Schedule extends Model implements Validatable
 {
@@ -104,10 +110,17 @@ class Schedule extends Model implements Validatable
         ];
     }
 
+    protected function status(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => !$this->is_active ? ScheduleStatus::Inactive : ($this->is_processing ? ScheduleStatus::Processing : ScheduleStatus::Active),
+        );
+    }
+
     /**
      * Returns the schedule's execution crontab entry as a string.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getNextRunDate(): string
     {

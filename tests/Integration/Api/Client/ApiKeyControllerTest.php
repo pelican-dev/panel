@@ -2,11 +2,11 @@
 
 namespace App\Tests\Integration\Api\Client;
 
+use App\Events\ActivityLogged;
+use App\Models\ApiKey;
 use App\Models\User;
 use Illuminate\Http\Response;
-use App\Models\ApiKey;
 use Illuminate\Support\Facades\Event;
-use App\Events\ActivityLogged;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class ApiKeyControllerTest extends ClientApiIntegrationTestCase

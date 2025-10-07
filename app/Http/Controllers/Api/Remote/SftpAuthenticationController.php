@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers\Api\Remote;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Server;
-use Illuminate\Http\JsonResponse;
-use App\Facades\Activity;
-use App\Models\Permission;
-use phpseclib3\Crypt\PublicKeyLoader;
-use App\Http\Controllers\Controller;
-use phpseclib3\Exception\NoKeyLoadedException;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
 use App\Exceptions\Http\HttpForbiddenException;
-use App\Services\Servers\GetUserPermissionsService;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use App\Facades\Activity;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Remote\SftpAuthenticationFormRequest;
+use App\Models\Permission;
+use App\Models\Server;
+use App\Models\User;
+use App\Services\Servers\GetUserPermissionsService;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use phpseclib3\Crypt\PublicKeyLoader;
+use phpseclib3\Exception\NoKeyLoadedException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 
 class SftpAuthenticationController extends Controller
@@ -99,7 +99,7 @@ class SftpAuthenticationController extends Controller
      */
     protected function getUser(Request $request, string $username): User
     {
-        return User::query()->where('username', $username)->firstOr(function () use ($request) {
+        return User::where('username', str($username)->lower()->trim())->firstOr(function () use ($request) {
             $this->reject($request);
         });
     }

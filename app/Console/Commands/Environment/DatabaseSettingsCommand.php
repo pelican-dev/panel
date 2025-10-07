@@ -6,6 +6,7 @@ use App\Traits\EnvironmentWriterTrait;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\DatabaseManager;
+use PDOException;
 
 class DatabaseSettingsCommand extends Command
 {
@@ -105,7 +106,7 @@ class DatabaseSettingsCommand extends Command
                 ]);
 
                 $this->database->connection('_panel_command_test')->getPdo();
-            } catch (\PDOException $exception) {
+            } catch (PDOException $exception) {
                 $this->output->error(sprintf('Unable to connect to the MySQL server using the provided credentials. The error returned was "%s".', $exception->getMessage()));
                 $this->output->error(trans('commands.database_settings.DB_error_2'));
 
@@ -165,7 +166,7 @@ class DatabaseSettingsCommand extends Command
                 ]);
 
                 $this->database->connection('_panel_command_test')->getPdo();
-            } catch (\PDOException $exception) {
+            } catch (PDOException $exception) {
                 $this->output->error(sprintf('Unable to connect to the MariaDB server using the provided credentials. The error returned was "%s".', $exception->getMessage()));
                 $this->output->error(trans('commands.database_settings.DB_error_2'));
 

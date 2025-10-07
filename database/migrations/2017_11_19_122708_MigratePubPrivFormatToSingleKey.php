@@ -1,11 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 return new class extends Migration
 {
@@ -19,7 +20,7 @@ return new class extends Migration
                 try {
                     $decrypted = Crypt::decrypt($item->secret);
                 } catch (DecryptException $exception) {
-                    $decrypted = str_random(32);
+                    $decrypted = Str::random(32);
                 } finally {
                     DB::table('api_keys')->where('id', $item->id)->update([
                         'secret' => $decrypted,
@@ -66,7 +67,7 @@ return new class extends Migration
         DB::transaction(function () {
             DB::table('api_keys')->get()->each(function ($item) {
                 DB::table('api_keys')->where('id', $item->id)->update([
-                    'public' => str_random(16),
+                    'public' => Str::random(16),
                     'secret' => Crypt::encrypt($item->secret),
                 ]);
             });

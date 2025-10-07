@@ -3,12 +3,12 @@
 namespace App\Console\Commands\Server;
 
 use App\Models\Server;
+use App\Repositories\Daemon\DaemonServerRepository;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Factory as ValidatorFactory;
-use App\Repositories\Daemon\DaemonPowerRepository;
-use Exception;
+use Illuminate\Validation\ValidationException;
 
 class BulkPowerActionCommand extends Command
 {
@@ -19,7 +19,7 @@ class BulkPowerActionCommand extends Command
 
     protected $description = 'Perform bulk power management on large groupings of servers or nodes at once.';
 
-    public function handle(DaemonPowerRepository $powerRepository, ValidatorFactory $validator): void
+    public function handle(DaemonServerRepository $serverRepository, ValidatorFactory $validator): void
     {
         $action = $this->argument('action');
         $nodes = empty($this->option('nodes')) ? [] : explode(',', $this->option('nodes'));
@@ -52,7 +52,7 @@ class BulkPowerActionCommand extends Command
 
         $bar = $this->output->createProgressBar($count);
 
-        $this->getQueryBuilder($servers, $nodes)->get()->each(function ($server, int $index) use ($action, $powerRepository, &$bar): mixed {
+        $this->getQueryBuilder($servers, $nodes)->get()->each(function ($server, int $index) use ($action, $serverRepository, &$bar): mixed {
             $bar->clear();
 
             if (!$server instanceof Server) {
@@ -60,7 +60,7 @@ class BulkPowerActionCommand extends Command
             }
 
             try {
-                $powerRepository->setServer($server)->send($action);
+                $serverRepository->setServer($server)->power($action);
             } catch (Exception $exception) {
                 $this->output->error(trans('command/messages.server.power.action_failed', [
                     'name' => $server->name,

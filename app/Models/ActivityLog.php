@@ -2,20 +2,23 @@
 
 namespace App\Models;
 
+use App\Events\ActivityLogged;
 use App\Traits\HasValidation;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Event;
-use App\Events\ActivityLogged;
 use Filament\Facades\Filament;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
+use LogicException;
 
 /**
  * \App\Models\ActivityLog.
@@ -27,12 +30,12 @@ use Illuminate\Support\Str;
  * @property string|null $actor_type
  * @property int|null $actor_id
  * @property int|null $api_key_id
- * @property \Illuminate\Support\Collection|null $properties
+ * @property Collection|null $properties
  * @property \Carbon\Carbon $timestamp
  * @property Model|\Eloquent $actor
- * @property \Illuminate\Database\Eloquent\Collection|\App\Models\ActivityLogSubject[] $subjects
+ * @property \Illuminate\Database\Eloquent\Collection|ActivityLogSubject[] $subjects
  * @property int|null $subjects_count
- * @property \App\Models\ApiKey|null $apiKey
+ * @property ApiKey|null $apiKey
  *
  * @method static Builder|ActivityLog forActor(Model $actor)
  * @method static Builder|ActivityLog forEvent(string $action)
@@ -89,7 +92,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
 
     public function actor(): MorphTo
     {
-        return $this->morphTo()->withTrashed();
+        return $this->morphTo()->withTrashed()->withoutGlobalScopes();
     }
 
     /**
@@ -121,7 +124,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
     public function prunable(): Builder
     {
         if (is_null(config('activity.prune_days'))) {
-            throw new \LogicException('Cannot prune activity logs: no "prune_days" configuration value is set.');
+            throw new LogicException('Cannot prune activity logs: no "prune_days" configuration value is set.');
         }
 
         return static::where('timestamp', '<=', Carbon::now()->subDays(config('activity.prune_days')));
@@ -171,13 +174,14 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         }
 
         $avatarUrl = Filament::getUserAvatarUrl($user);
+        $username = str($user->username)->stripTags();
 
         return "
             <div style='display: flex; align-items: center;'>
                 <img width='50px' height='50px' src='{$avatarUrl}' style='margin-right: 15px' />
 
                 <div>
-                    <p>$user->username — $this->event</p>
+                    <p>$username — $this->event</p>
                     <p>{$this->getLabel()}</p>
                     <p>$this->ip — <span title='{$this->timestamp->format('M j, Y g:ia')}'>{$this->timestamp->diffForHumans()}</span></p>
                 </div>
@@ -201,17 +205,17 @@ class ActivityLog extends Model implements HasIcon, HasLabel
                     $value = str_replace('//', '/', '/' . trim($value, '/') . '/');
                 }
 
-                return [$key => $value];
+                return [$key => str($value)->stripTags()->toString()];
             }
 
-            $first = array_first($value);
+            $first = Arr::first($value);
 
             // Backwards compatibility for old logs
             if (is_array($first)) {
                 return ["{$key}_count" => count($value)];
             }
 
-            return [$key => $first, "{$key}_count" => count($value)];
+            return [$key => str($first)->stripTags()->toString(), "{$key}_count" => count($value)];
         });
 
         $keys = $properties->keys()->filter(fn ($key) => Str::endsWith($key, '_count'))->values();
