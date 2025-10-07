@@ -36,7 +36,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
             ->plugins([
                 FilamentLogViewer::make()
-                    ->authorize(fn () => auth()->user()->can('view panellog'))
+                    ->authorize(fn () => user()->can('view panellog'))
                     ->navigationUrl('/logs')
                     ->navigationGroup(fn () => trans('admin/dashboard.advanced'))
                     ->navigationIcon('tabler-file-info'),

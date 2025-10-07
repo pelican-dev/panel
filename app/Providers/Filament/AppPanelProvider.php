@@ -26,7 +26,7 @@ class AppPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')
             ->plugins([
                 FilamentLogViewer::make()
-                    ->authorize(fn () => auth()->user()->can('view panellog')),
+                    ->authorize(fn () => user()->can('view panellog')),
             ]);
     }
 }
