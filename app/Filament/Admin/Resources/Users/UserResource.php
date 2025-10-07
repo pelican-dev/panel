@@ -27,7 +27,6 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
 use Filament\Auth\Notifications\ResetPassword;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
@@ -41,7 +40,6 @@ use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -278,8 +276,6 @@ class UserResource extends Resource
                                     ->default('en')
                                     ->searchable()
                                     ->selectablePlaceholder(false)
-                                    ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? ''
-                                        : trans('profile.language_help', ['state' => $state]) . ' <u><a href="https://crowdin.com/project/pelican-dev/">Update On Crowdin</a></u>'))
                                     ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
                                     ->native(false),
                                 FileUpload::make('avatar')
@@ -319,6 +315,7 @@ class UserResource extends Resource
                                             $actions[] = Action::make("oauth_$id")
                                                 ->label(trans('profile.unlink', ['name' => $name]))
                                                 ->icon('tabler-unlink')
+                                                ->requiresConfirmation()
                                                 ->color(Color::hex($schema->getHexColor()))
                                                 ->action(function ($livewire) use ($oauthService, $user, $name, $schema) {
                                                     $oauthService->unlinkUser($user, $schema);
@@ -332,14 +329,6 @@ class UserResource extends Resource
 
                                         return [Actions::make($actions)];
                                     }),
-                                // Section::make(trans('profile.tabs.2fa')) //TODO: Use the record, not the logged in user.
-                                //     ->collapsible()->collapsed()
-                                //     ->columnSpanFull()
-                                //     ->schema(collect(Filament::getMultiFactorAuthenticationProviders())
-                                //         ->sort(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider) => $multiFactorAuthenticationProvider->isEnabled(Filament::auth()->user()) ? 0 : 1)
-                                //         ->map(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider) => Group::make($multiFactorAuthenticationProvider->getManagementSchemaComponents())
-                                //             ->statePath($multiFactorAuthenticationProvider->getId()))
-                                //         ->all()),
                             ]),
                         Tab::make('roles')
                             ->label(trans('admin/user.roles'))
