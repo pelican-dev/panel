@@ -184,7 +184,7 @@ class UserResource extends Resource
                                         Action::make('test')
                                             ->label(trans('admin/setting.mail.test_mail'))
                                             ->icon('tabler-send')
-                                            ->hidden(fn () => env('MAIL_MAILER') === 'log')
+                                            ->hidden(fn () => config('MAIL_MAILER') === 'log')
                                             ->action(function (User $user) {
                                                 try {
                                                     MailNotification::route('mail', $user->email)
@@ -215,7 +215,7 @@ class UserResource extends Resource
                                     ->hintAction(
                                         Action::make('password_reset')
                                             ->label(trans('admin/user.password_reset'))
-                                            //->hidden(fn () => env('MAIL_MAILER') === 'log')
+                                            ->hidden(fn () => config('MAIL_MAILER') === 'log')
                                             ->icon('tabler-send')
                                             ->action(function (User $user) {
                                                 $status = Password::broker(Filament::getPanel('app')->getAuthPasswordBroker())->sendResetLink([
