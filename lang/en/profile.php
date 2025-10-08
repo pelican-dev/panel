@@ -8,6 +8,7 @@ return [
         'activity' => 'Activity',
         'api_keys' => 'API Keys',
         'ssh_keys' => 'SSH Keys',
+        'keys' => 'Keys',
         '2fa' => '2FA',
         'customization' => 'Customization',
     ],
@@ -62,4 +63,7 @@ return [
     'navigation' => 'Navigation Type',
     'top' => 'Topbar',
     'side' => 'Sidebar',
+    'no_oauth' => 'No Accounts Linked',
+    'no_api_keys' => 'No API Keys',
+    'no_ssh_keys' => 'No SSH Keys',
 ];

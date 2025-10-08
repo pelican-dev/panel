@@ -15,19 +15,17 @@ class PreviewStartupAction extends Action
         return 'preview';
     }
 
-    public function getLabel(): string
-    {
-        return trans('server/startup.preview');
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->label(fn (Get $get) => $get('previewing') ? trans('server/startup.disable_preview') : trans('server/startup.enable_preview'));
+
         $this->action(function (Get $get, Set $set, Server $server) {
-            $active = $get('previewing');
-            $set('previewing', !$active);
-            $set('startup', $active ? $server->startup : fn (Server $server, StartupCommandService $service) => $service->handle($server));
+            $previewing = !$get('previewing');
+
+            $set('previewing', $previewing);
+            $set('startup', !$previewing ? $server->startup : fn (Server $server, StartupCommandService $service) => $service->handle($server, $server->startup));
         });
     }
 }

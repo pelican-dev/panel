@@ -48,6 +48,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Socialite\Facades\Socialite;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 /**
  * @method User getUser()
@@ -128,7 +129,7 @@ class EditProfile extends BaseEditProfile
                                     ->label(trans('profile.timezone'))
                                     ->required()
                                     ->prefixIcon('tabler-clock-pin')
-                                    ->default('UTC')
+                                    ->default(config('app.timezone', 'UTC'))
                                     ->selectablePlaceholder(false)
                                     ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
                                     ->searchable()
@@ -151,14 +152,20 @@ class EditProfile extends BaseEditProfile
                                     ->directory('avatars')
                                     ->disk('public')
                                     ->getUploadedFileNameForStorageUsing(fn () => $this->getUser()->id . '.png')
-                                    ->hintAction(function (FileUpload $fileUpload) {
+                                    ->formatStateUsing(function (FileUpload $fileUpload) {
                                         $path = $fileUpload->getDirectory() . '/' . $this->getUser()->id . '.png';
+                                        if ($fileUpload->getDisk()->exists($path)) {
+                                            return $path;
+                                        }
+                                    })
+                                    ->deleteUploadedFileUsing(function (FileUpload $fileUpload, $file) {
+                                        if ($file instanceof TemporaryUploadedFile) {
+                                            return $file->delete();
+                                        }
 
-                                        return Action::make('remove_avatar')
-                                            ->icon('tabler-photo-minus')
-                                            ->iconButton()
-                                            ->hidden(fn () => !$fileUpload->getDisk()->exists($path))
-                                            ->action(fn () => $fileUpload->getDisk()->delete($path));
+                                        if ($fileUpload->getDisk()->exists($file)) {
+                                            return $fileUpload->getDisk()->delete($file);
+                                        }
                                     }),
                             ]),
                         Tab::make('oauth')
@@ -292,7 +299,13 @@ class EditProfile extends BaseEditProfile
                                                         TextEntry::make('memo')
                                                             ->hiddenLabel()
                                                             ->state(fn (ApiKey $key) => $key->memo),
-                                                    ]),
+                                                    ])
+                                                    ->visible(fn (User $user) => $user->apiKeys()->exists()),
+
+                                                TextEntry::make('no_api_keys')
+                                                    ->state(trans('profile.no_api_keys'))
+                                                    ->hiddenLabel()
+                                                    ->visible(fn (User $user) => !$user->apiKeys()->exists()),
                                             ]),
                                     ]),
                             ]),
@@ -381,7 +394,13 @@ class EditProfile extends BaseEditProfile
                                                     TextEntry::make('fingerprint')
                                                         ->hiddenLabel()
                                                         ->state(fn (UserSSHKey $key) => "SHA256:{$key->fingerprint}"),
-                                                ]),
+                                                ])
+                                                ->visible(fn (User $user) => $user->sshKeys()->exists()),
+
+                                            TextEntry::make('no_ssh_keys')
+                                                ->state(trans('profile.no_ssh_keys'))
+                                                ->hiddenLabel()
+                                                ->visible(fn (User $user) => !$user->sshKeys()->exists()),
                                         ]),
                                 ]),
                             ]),

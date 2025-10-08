@@ -1,8 +1,8 @@
 _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
-  version: PLCN_v2
+  version: PLCN_v3
   update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/minecraft/egg-forge-minecraft.yaml'
-exported_at: '2025-08-05T21:00:17+00:00'
+exported_at: '2025-09-05T08:54:45+00:00'
 name: 'Forge Minecraft'
 author: panel@example.com
 uuid: ed072427-f209-4603-875c-f540c6dd5a65
@@ -22,7 +22,8 @@ docker_images:
   'Java 11': 'ghcr.io/parkervcp/yolks:java_11'
   'Java 8': 'ghcr.io/parkervcp/yolks:java_8'
 file_denylist: {  }
-startup: 'java -Xms128M -XX:MaxRAMPercentage=95.0 -Dterminal.jline=false -Dterminal.ansi=true $( [[  ! -f unix_args.txt ]] && printf %s "-jar {{SERVER_JARFILE}}" || printf %s "@unix_args.txt" )'
+startup_commands:
+  Default: 'java -Xms128M -XX:MaxRAMPercentage=95.0 -Dterminal.jline=false -Dterminal.ansi=true $( [[  ! -f unix_args.txt ]] && printf %s "-jar {{SERVER_JARFILE}}" || printf %s "@unix_args.txt" )'
 config:
   files:
     server.properties:

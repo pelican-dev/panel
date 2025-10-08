@@ -41,10 +41,14 @@ abstract class ApplicationApiRequest extends FormRequest
         $token = $this->user()->currentAccessToken();
 
         if ($token instanceof TransientToken) {
-            return true;
+            return match ($this->permission) {
+                default => false,
+                AdminAcl::READ => $this->user()->can('viewList ' . $this->resource) && $this->user()->can('view ' . $this->resource),
+                AdminAcl::WRITE => $this->user()->can('update ' . $this->resource),
+            };
         }
 
-        if ($token->key_type === ApiKey::TYPE_ACCOUNT) {
+        if ($this->user()->isRootAdmin() && $token->key_type === ApiKey::TYPE_ACCOUNT) {
             return true;
         }
 
