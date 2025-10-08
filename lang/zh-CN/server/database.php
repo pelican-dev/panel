@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => '数据库',
+    'empty' => '没有数据库',
+    'create_database' => '新建数据库',
+    'limit' => '已达到数据库限制',
+    'viewing' => '查看: :database',
+    'host' => '主机',
+    'database' => '数据库',
+    'username' => '用户名',
+    'password' => '密码',
+    'remote' => '远端',
+    'created_at' => '创建于',
+    'name' => '数据库名称',
+    'name_hint' => '留空将自动随机生成名称',
+    'connections_from' => '连接来自',
+    'max_connections' => '最大连接数',
+    'database_host' => '数据库主机',
+    'database_host_select' => '选择数据库主机',
+    'jdbc' => 'JDBC 连接字符串',
+    'create_notification' => '已创建 :database',
+    'create_notification_fail' => '创建 :database 失败',
+    'delete_notification' => '已删除 :database',
+    'delete_notification_fail' => '删除 :database 失败',
+];
