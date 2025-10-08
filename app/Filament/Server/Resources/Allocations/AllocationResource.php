@@ -76,8 +76,9 @@ class AllocationResource extends Resource
             ])
             ->recordActions([
                 DetachAction::make()
+                    ->visible(fn () => user()?->isRootAdmin() || $server->allocations()->count() !== 1)
                     ->authorize(fn () => user()?->can(Permission::ACTION_ALLOCATION_DELETE, $server))
-                    ->label(trans('server/network.delete'))
+                    ->label(trans('filament-actions::delete.single.modal.actions.delete.label'))
                     ->icon('tabler-trash')
                     ->action(function (Allocation $allocation) {
                         Allocation::query()->where('id', $allocation->id)->update([

@@ -11,5 +11,4 @@ return [
     'make_primary' => 'Make Primary',
     'primary' => 'Primary',
     'make' => 'Make',
-    'delete' => 'Delete',
 ];
