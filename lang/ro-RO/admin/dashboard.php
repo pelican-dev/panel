@@ -24,7 +24,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Nici un Nod creat',
-            'content' => "Se pare că nu aveți încă niciun Nod configurat, dar nu vă faceți griji, deoarece faceți clic pe butonul de acțiune pentru a crea primul!",
+            'content' => 'Se pare că nu aveți încă niciun Nod configurat, dar nu vă faceți griji, deoarece faceți clic pe butonul de acțiune pentru a crea primul!',
             'extra_note' => 'Dacă întâmpinați orice probleme, vă rugăm să le raportați pe GitHub.',
             'button_label' => 'Crează primul nod în Pelican',
         ],
