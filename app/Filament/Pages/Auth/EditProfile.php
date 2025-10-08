@@ -129,7 +129,7 @@ class EditProfile extends BaseEditProfile
                                     ->label(trans('profile.timezone'))
                                     ->required()
                                     ->prefixIcon('tabler-clock-pin')
-                                    ->default('UTC')
+                                    ->default(config('app.timezone', 'UTC'))
                                     ->selectablePlaceholder(false)
                                     ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
                                     ->searchable()
@@ -299,7 +299,13 @@ class EditProfile extends BaseEditProfile
                                                         TextEntry::make('memo')
                                                             ->hiddenLabel()
                                                             ->state(fn (ApiKey $key) => $key->memo),
-                                                    ]),
+                                                    ])
+                                                    ->visible(fn (User $user) => $user->apiKeys()->exists()),
+
+                                                TextEntry::make('no_api_keys')
+                                                    ->state(trans('profile.no_api_keys'))
+                                                    ->hiddenLabel()
+                                                    ->visible(fn (User $user) => !$user->apiKeys()->exists()),
                                             ]),
                                     ]),
                             ]),
@@ -388,7 +394,13 @@ class EditProfile extends BaseEditProfile
                                                     TextEntry::make('fingerprint')
                                                         ->hiddenLabel()
                                                         ->state(fn (UserSSHKey $key) => "SHA256:{$key->fingerprint}"),
-                                                ]),
+                                                ])
+                                                ->visible(fn (User $user) => $user->sshKeys()->exists()),
+
+                                            TextEntry::make('no_ssh_keys')
+                                                ->state(trans('profile.no_ssh_keys'))
+                                                ->hiddenLabel()
+                                                ->visible(fn (User $user) => !$user->sshKeys()->exists()),
                                         ]),
                                 ]),
                             ]),

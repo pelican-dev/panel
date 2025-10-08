@@ -63,4 +63,7 @@ return [
     'navigation' => 'Navigation Type',
     'top' => 'Topbar',
     'side' => 'Sidebar',
+    'no_oauth' => 'No Accounts Linked',
+    'no_api_keys' => 'No API Keys',
+    'no_ssh_keys' => 'No SSH Keys',
 ];

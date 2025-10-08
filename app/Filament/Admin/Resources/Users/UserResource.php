@@ -15,7 +15,6 @@ use App\Models\ApiKey;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserSSHKey;
-use App\Notifications\MailTested;
 use App\Services\Helpers\LanguageService;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
@@ -51,7 +50,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Auth\Events\PasswordResetLinkSent;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\HtmlString;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -177,30 +175,7 @@ class UserResource extends Resource
                                     ->email()
                                     ->required()
                                     ->unique()
-                                    ->maxLength(255)
-                                    ->hintAction(
-                                        Action::make('test')
-                                            ->label(trans('admin/setting.mail.test_mail'))
-                                            ->icon('tabler-send')
-                                            ->hidden(fn () => config('mail.default', 'log') === 'log')
-                                            ->action(function (User $user) {
-                                                try {
-                                                    MailNotification::route('mail', $user->email)
-                                                        ->notify(new MailTested($user));
-
-                                                    Notification::make()
-                                                        ->title(trans('admin/setting.mail.test_mail_sent'))
-                                                        ->success()
-                                                        ->send();
-                                                } catch (Exception $exception) {
-                                                    Notification::make()
-                                                        ->title(trans('admin/setting.mail.test_mail_failed'))
-                                                        ->body($exception->getMessage())
-                                                        ->danger()
-                                                        ->send();
-                                                }
-                                            })
-                                    ),
+                                    ->maxLength(255),
                                 TextInput::make('password')
                                     ->label(trans('admin/user.password'))
                                     ->columnSpan([
@@ -258,7 +233,7 @@ class UserResource extends Resource
                                     ])
                                     ->required()
                                     ->prefixIcon('tabler-clock-pin')
-                                    ->default('UTC')
+                                    ->default(fn () => config('app.timezone', 'UTC'))
                                     ->selectablePlaceholder(false)
                                     ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
                                     ->searchable()
@@ -279,11 +254,14 @@ class UserResource extends Resource
                                     ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
                                     ->native(false),
                                 FileUpload::make('avatar')
-                                    ->visible(fn (FileUpload $fileUpload, User $user) => $fileUpload->getDisk()->exists($fileUpload->getDirectory() . '/' . $user->id . '.png'))
+                                    ->visible(fn (?User $user, FileUpload $fileUpload) => $user ? $fileUpload->getDisk()->exists($fileUpload->getDirectory() . '/' . $user->id . '.png') : false)
                                     ->avatar()
                                     ->directory('avatars')
                                     ->disk('public')
-                                    ->formatStateUsing(function (FileUpload $fileUpload, User $user) {
+                                    ->formatStateUsing(function (FileUpload $fileUpload, ?User $user) {
+                                        if (!$user) {
+                                            return null;
+                                        }
                                         $path = $fileUpload->getDirectory() . '/' . $user->id . '.png';
                                         if ($fileUpload->getDisk()->exists($path)) {
                                             return $path;
@@ -299,10 +277,14 @@ class UserResource extends Resource
                                         }
                                     }),
                                 Section::make(trans('profile.tabs.oauth'))
-                                    ->visible(fn (User $user) => filled($user->oauth))
-                                    ->collapsible()->collapsed()
+                                    ->visible(fn (?User $user) => $user)
+                                    ->collapsible()
                                     ->columnSpanFull()
-                                    ->schema(function (OAuthService $oauthService, User $user) {
+                                    ->schema(function (OAuthService $oauthService, ?User $user) {
+
+                                        if (!$user) {
+                                            return;
+                                        }
                                         $actions = [];
                                         foreach ($user->oauth as $schema => $_) {
                                             $schema = $oauthService->get($schema);
@@ -325,6 +307,14 @@ class UserResource extends Resource
                                                         ->success()
                                                         ->send();
                                                 });
+                                        }
+
+                                        if (!$actions) {
+                                            return [
+                                                TextEntry::make('no_oauth')
+                                                    ->state(trans('profile.no_oauth'))
+                                                    ->hiddenLabel(),
+                                            ];
                                         }
 
                                         return [Actions::make($actions)];
@@ -357,10 +347,12 @@ class UserResource extends Resource
                                     ->columnSpanFull(),
                             ]),
                         Tab::make('keys')
+                            ->visible(fn (?User $user) => $user)
                             ->label(trans('profile.tabs.keys'))
                             ->icon('tabler-key')
                             ->schema([
-                                Section::make(trans('profile.api_keys'))->columnSpan(2)
+                                Section::make(trans('profile.api_keys'))
+                                    ->columnSpan(2)
                                     ->schema([
                                         Repeater::make('api_keys')
                                             ->hiddenLabel()
@@ -369,34 +361,40 @@ class UserResource extends Resource
                                             ->addable(false)
                                             ->itemLabel(fn ($state) => $state['identifier'])
                                             ->deleteAction(function (Action $action) {
-                                                $action->requiresConfirmation()->action(function (array $arguments, Repeater $component, User $user) {
+                                                $action->requiresConfirmation()->action(function (array $arguments, Repeater $component, ?User $user) {
                                                     $items = $component->getState();
-                                                    $key = $items[$arguments['item']];
+                                                    $key = $items[$arguments['item']] ?? null;
 
-                                                    $apiKey = ApiKey::find($key['id'] ?? null);
-                                                    if ($apiKey->exists()) {
-                                                        $apiKey->delete();
+                                                    if ($key) {
+                                                        $apiKey = ApiKey::find($key['id']);
+                                                        if ($apiKey?->exists()) {
+                                                            $apiKey->delete();
 
-                                                        Activity::event('user:api-key.delete')
-                                                            ->actor(auth()->user())
-                                                            ->subject($user)
-                                                            ->subject($apiKey)
-                                                            ->property('identifier', $apiKey->identifier)
-                                                            ->log();
+                                                            Activity::event('user:api-key.delete')
+                                                                ->actor(user())
+                                                                ->subject($user)
+                                                                ->subject($apiKey)
+                                                                ->property('identifier', $apiKey->identifier)
+                                                                ->log();
+                                                        }
+
+                                                        unset($items[$arguments['item']]);
+                                                        $component->state($items);
+                                                        $component->callAfterStateUpdated();
                                                     }
-
-                                                    unset($items[$arguments['item']]);
-
-                                                    $component->state($items);
-
-                                                    $component->callAfterStateUpdated();
                                                 });
                                             })
-                                            ->schema(fn () => [
+                                            ->schema([
                                                 TextEntry::make('memo')
                                                     ->hiddenLabel()
                                                     ->state(fn (ApiKey $key) => $key->memo),
-                                            ]),
+                                            ])
+                                            ->visible(fn (User $user) => $user->apiKeys()->exists()),
+
+                                        TextEntry::make('no_api_keys')
+                                            ->state(trans('profile.no_api_keys'))
+                                            ->hiddenLabel()
+                                            ->visible(fn (User $user) => !$user->apiKeys()->exists()),
                                     ]),
                                 Section::make(trans('profile.ssh_keys'))->columnSpan(2)
                                     ->schema([
@@ -434,10 +432,18 @@ class UserResource extends Resource
                                                 TextEntry::make('fingerprint')
                                                     ->hiddenLabel()
                                                     ->state(fn (UserSSHKey $key) => "SHA256:{$key->fingerprint}"),
-                                            ]),
+                                            ])
+                                            ->visible(fn (User $user) => $user->sshKeys()->exists()),
+
+                                        TextEntry::make('no_ssh_keys')
+                                            ->state(trans('profile.no_ssh_keys'))
+                                            ->hiddenLabel()
+                                            ->visible(fn (User $user) => !$user->sshKeys()->exists()),
                                     ]),
                             ]),
                         Tab::make('activity')
+                            ->visible(fn (?User $user) => $user)
+                            ->disabledOn('create')
                             ->label(trans('profile.tabs.activity'))
                             ->icon('tabler-history')
                             ->schema([
