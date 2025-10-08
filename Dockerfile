@@ -95,6 +95,7 @@ COPY docker/Caddyfile /etc/caddy/Caddyfile
 COPY docker/crontab /etc/supercronic/crontab
 
 COPY docker/entrypoint.sh /entrypoint.sh
+COPY docker/queue.sh /queue.sh
 COPY docker/healthcheck.sh /healthcheck.sh
 
 HEALTHCHECK --interval=5m --timeout=10s --start-period=5s --retries=3 \
