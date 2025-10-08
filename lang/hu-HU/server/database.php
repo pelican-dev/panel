@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'Adatbázisok',
+    'empty' => 'Nincs adatbázis',
+    'create_database' => 'Adatbázis Létrehozása',
+    'limit' => 'Adatbázis limit elérve',
+    'viewing' => 'Megtekintés: :database',
+    'host' => 'Hoszt',
+    'database' => 'Adatbázis',
+    'username' => 'Felhasználónév',
+    'password' => 'Jelszó',
+    'remote' => 'Távoli',
+    'created_at' => 'Létrehozva',
+    'name' => 'Adatbázis név',
+    'name_hint' => 'Ha ezt üresen hagyod, akkor automatikusan generál egy véletlenszerű nevet.',
+    'connections_from' => 'Csatlakozás innen',
+    'max_connections' => 'Maximum kapcsolatok',
+    'database_host' => 'Adatbázis szerver',
+    'database_host_select' => 'Válaszd ki az adatbázis szervert',
+    'jdbc' => 'JDBC kapcsolatlánc',
+    'create_notification' => 'Létrehozva :database',
+    'create_notification_fail' => 'A létrehozás nem sikerült :database',
+    'delete_notification' => 'Törölve :database',
+    'delete_notification_fail' => 'A törlés nem sikerült :database',
+];
