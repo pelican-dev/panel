@@ -72,7 +72,7 @@ class TasksRelationManager extends RelationManager
                 ->default('restart'),
             TextInput::make('time_offset')
                 ->label(trans('server/schedule.tasks.time_offset'))
-                ->hidden(fn (Get $get) => config('queue.default') === 'sync' || $get('sequence_id') === 1 || $schedule->tasks->count() === 0)
+                ->hidden(fn (Get $get) => config('queue.default') === 'sync' || $get('sequence_id') === 1 || $schedule->tasks->isEmpty())
                 ->default(0)
                 ->numeric()
                 ->minValue(0)
