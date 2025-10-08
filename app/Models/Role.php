@@ -49,6 +49,9 @@ class Role extends BaseRole
         'activityLog' => [
             'seeIps',
         ],
+        'panelLog' => [
+            'view',
+        ],
     ];
 
     /** @var array<string, array<string>> */
