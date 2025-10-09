@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use AchyutN\FilamentLogViewer\FilamentLogViewer;
+use App\Enums\CustomizationKey;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
@@ -39,6 +40,8 @@ class AdminPanelProvider extends PanelProvider
                     ->authorize(fn () => user()->can('view panelLog'))
                     ->navigationGroup(fn () => trans('admin/dashboard.advanced'))
                     ->navigationIcon('tabler-file-info'),
-            ]);
+            ])
+            ->topbar(fn () => user()?->getCustomization(CustomizationKey::TopNavigation));
+
     }
 }

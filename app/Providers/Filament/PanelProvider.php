@@ -84,6 +84,8 @@ abstract class PanelProvider extends BasePanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->topbar(fn () => user()?->getCustomization(CustomizationKey::TopNavigation));
+
     }
 }
