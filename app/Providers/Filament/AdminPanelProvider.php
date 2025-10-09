@@ -40,8 +40,6 @@ class AdminPanelProvider extends PanelProvider
                     ->authorize(fn () => user()->can('view panelLog'))
                     ->navigationGroup(fn () => trans('admin/dashboard.advanced'))
                     ->navigationIcon('tabler-file-info'),
-            ])
-            ->topbar(fn () => user()?->getCustomization(CustomizationKey::TopNavigation));
-
+            ]);
     }
 }
