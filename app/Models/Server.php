@@ -392,7 +392,7 @@ class Server extends Model implements Validatable
 
     public function resolveRouteBinding($value, $field = null): ?self
     {
-        if (!is_numeric($value)) {
+        if ($field === 'uuid' || $field === 'uuid_short' || !is_numeric($value)) {
             return $this->where('uuid_short', $value)->orWhere('uuid', $value)->firstOrFail();
         }
 
