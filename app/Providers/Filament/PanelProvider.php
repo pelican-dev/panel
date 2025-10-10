@@ -86,6 +86,5 @@ abstract class PanelProvider extends BasePanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
-
     }
 }
