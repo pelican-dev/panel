@@ -44,9 +44,17 @@ class UpdateWidget extends FormWidget
                     ->schema([
                         TextEntry::make('info')
                             ->state(trans('admin/dashboard.sections.intro-update-available.content', ['latestVersion' => $this->softwareVersionService->latestPanelVersion()])),
-                        TextEntry::make('Changelog')
-                            ->state($this->softwareVersionService->latestPanelVersionChangelog())
-                            ->markdown(),
+                        Section::make('What\'s New!')
+                            ->icon('tabler-icon')
+                            ->collapsible()
+                            ->persistCollapsed()
+                            ->collapsed()
+                            ->schema([
+                                TextEntry::make('Changelog')
+                                    ->hiddenLabel()
+                                    ->state($this->softwareVersionService->latestPanelVersionChangelog())
+                                    ->markdown(),
+                            ]),
                     ])
                     ->headerActions([
                         Action::make('update')
