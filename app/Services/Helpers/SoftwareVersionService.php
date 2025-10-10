@@ -18,7 +18,7 @@ class SoftwareVersionService
             try {
                 $response = Http::timeout(5)->connectTimeout(1)->get('https://api.github.com/repos/pelican-dev/panel/releases/latest')->throw()->json();
 
-                return trim($response['body'], 'v');
+                return $response['body'];
             } catch (Exception) {
                 return 'error';
             }
