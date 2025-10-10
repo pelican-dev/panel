@@ -258,6 +258,7 @@ class EditServer extends EditRecord
                                                     ->hidden(fn (Get $get) => $get('unlimited_cpu'))
                                                     ->label(trans('admin/server.cpu_limit'))->inlineLabel()
                                                     ->suffix('%')
+                                                    ->hintIcon('tabler-question-mark', trans('admin/server.cpu_helper'))
                                                     ->required()
                                                     ->columnSpan(2)
                                                     ->numeric()

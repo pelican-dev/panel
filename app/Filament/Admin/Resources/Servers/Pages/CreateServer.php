@@ -518,12 +518,12 @@ class CreateServer extends CreateRecord
                                                 ->hidden(fn (Get $get) => $get('unlimited_cpu'))
                                                 ->label(trans('admin/server.cpu_limit'))->inlineLabel()
                                                 ->suffix('%')
+                                                ->hintIcon('tabler-question-mark', trans('admin/server.cpu_helper'))
                                                 ->default(0)
                                                 ->required()
                                                 ->columnSpan(2)
                                                 ->numeric()
-                                                ->minValue(0)
-                                                ->helperText(trans('admin/server.cpu_helper')),
+                                                ->minValue(0),
                                         ]),
                                     Grid::make()
                                         ->columns(4)
