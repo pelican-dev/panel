@@ -286,7 +286,7 @@ class UserResource extends Resource
                                             return;
                                         }
                                         $actions = [];
-                                        foreach ($user->oauth as $schema => $_) {
+                                        foreach ($user->oauth ?? [] as $schema => $_) {
                                             $schema = $oauthService->get($schema);
                                             if (!$schema) {
                                                 return;
