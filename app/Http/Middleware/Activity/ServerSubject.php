@@ -22,7 +22,8 @@ class ServerSubject
     {
         $server = $request->route()->parameter('server');
 
-        if ($request->route()->hasParameter('tenant')) {
+        if ($request->route()->hasParameter('tenant') && is_int($request->route()->parameter('tenant'))) {
+            // We only want to find the server if the route parameter is an integer. As find will look at 'id', and may cause invalid type when using pgsql
             $server = Server::find($request->route()->parameter('tenant'));
         }
 
