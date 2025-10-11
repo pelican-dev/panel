@@ -9,7 +9,7 @@ class SoftwareVersionService
 {
     public function latestPanelVersionChangelog(): string
     {
-        $key = 'panel:latest_version_cl';
+        $key = 'panel:latest_version_changelog';
         if (cache()->get($key) === 'error') {
             cache()->forget($key);
         }
