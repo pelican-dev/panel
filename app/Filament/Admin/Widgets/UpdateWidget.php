@@ -43,7 +43,18 @@ class UpdateWidget extends FormWidget
                     ->iconColor('warning')
                     ->schema([
                         TextEntry::make('info')
+                            ->hiddenLabel()
                             ->state(trans('admin/dashboard.sections.intro-update-available.content', ['latestVersion' => $this->softwareVersionService->latestPanelVersion()])),
+                        Section::make(trans('admin/dashboard.sections.intro-update-available.button_changelog'))
+                            ->icon('tabler-script')
+                            ->collapsible()
+                            ->collapsed()
+                            ->schema([
+                                TextEntry::make('changelog')
+                                    ->hiddenLabel()
+                                    ->state($this->softwareVersionService->latestPanelVersionChangelog())
+                                    ->markdown(),
+                            ]),
                     ])
                     ->headerActions([
                         Action::make('update')

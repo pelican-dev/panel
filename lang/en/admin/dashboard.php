@@ -17,6 +17,7 @@ return [
         'intro-update-available' => [
             'heading' => 'Update available',
             'content' => ':latestVersion is now available! Read our documentation to update your Panel.',
+            'button_changelog' => 'What\'s New?',
         ],
         'intro-no-update' => [
             'heading' => 'Your Panel is up to date',
