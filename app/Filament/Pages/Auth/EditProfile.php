@@ -236,7 +236,7 @@ class EditProfile extends BaseEditProfile
                                                     ->columnSpanFull(),
                                             ])
                                             ->headerActions([
-                                                Action::make('create')
+                                                Action::make('create_api_key')
                                                     ->label(trans('filament-actions::create.single.modal.actions.create.label'))
                                                     ->disabled(fn (Get $get) => empty($get('description')))
                                                     ->successRedirectUrl(self::getUrl(['tab' => 'api-keys::data::tab'], panel: 'app'))
@@ -325,7 +325,7 @@ class EditProfile extends BaseEditProfile
                                                 ->live(),
                                         ])
                                         ->headerActions([
-                                            Action::make('create')
+                                            Action::make('create_ssh_key')
                                                 ->label(trans('filament-actions::create.single.modal.actions.create.label'))
                                                 ->disabled(fn (Get $get) => empty($get('name')) || empty($get('public_key')))
                                                 ->successRedirectUrl(self::getUrl(['tab' => 'ssh-keys::data::tab'], panel: 'app'))
