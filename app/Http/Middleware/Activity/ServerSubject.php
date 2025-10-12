@@ -5,6 +5,7 @@ namespace App\Http\Middleware\Activity;
 use App\Facades\LogTarget;
 use App\Models\Server;
 use Closure;
+use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,10 +22,7 @@ class ServerSubject
     public function handle(Request $request, Closure $next): Response
     {
         $server = $request->route()->parameter('server');
-
-        if ($request->route()->hasParameter('tenant')) {
-            $server = Server::find($request->route()->parameter('tenant'));
-        }
+        $server ??= Filament::getTenant();
 
         if ($server instanceof Server) {
             LogTarget::setActor($request->user());
