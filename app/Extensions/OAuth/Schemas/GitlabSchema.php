@@ -7,6 +7,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Wizard\Step;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
+use SocialiteProviders\GitLab\Provider;
 
 final class GitlabSchema extends OAuthSchema
 {
@@ -15,10 +16,15 @@ final class GitlabSchema extends OAuthSchema
         return 'gitlab';
     }
 
+    public function getSocialiteProvider(): string
+    {
+        return Provider::class;
+    }
+
     public function getServiceConfig(): array
     {
         return array_merge(parent::getServiceConfig(), [
-            'host' => env('OAUTH_GITLAB_HOST'),
+            'instance_uri' => env('OAUTH_GITLAB_HOST'),
         ]);
     }
 
