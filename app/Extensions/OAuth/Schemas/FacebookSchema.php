@@ -31,10 +31,11 @@ final class FacebookSchema extends OAuthSchema
                         ->default(fn () => url('/auth/oauth/callback/facebook')),
                     TextEntry::make('get_app_info')
                         ->hiddenLabel()
-                        ->state(new HtmlString(Blade::render('<p>To obtain the values go to <b>App Settings > Basic</b>.</p>')))
+                        ->state(new HtmlString(Blade::render('<p>To obtain the OAuth values go to <b>App Settings > Basic</b>.</p>'))),
                 ]),
         ], parent::getSetupSteps());
     }
+
     public function getIcon(): string
     {
         return 'tabler-brand-facebook-f';
