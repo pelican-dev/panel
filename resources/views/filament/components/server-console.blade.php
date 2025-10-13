@@ -88,7 +88,7 @@
         terminal.loadAddon(webLinksAddon);
         terminal.loadAddon(searchAddon);
         terminal.loadAddon(searchAddonBar);
-        terminal.loadAddon(webGl);
+        terminal.loadAddon(webglAddon);
 
         terminal.open(document.getElementById('terminal'));
 
