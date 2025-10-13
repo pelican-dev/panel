@@ -7,6 +7,7 @@ use App\Extensions\OAuth\Schemas\AuthentikSchema;
 use App\Extensions\OAuth\Schemas\BitbucketSchema;
 use App\Extensions\OAuth\Schemas\CommonSchema;
 use App\Extensions\OAuth\Schemas\DiscordSchema;
+use App\Extensions\OAuth\Schemas\FacebookSchema;
 use App\Extensions\OAuth\Schemas\GithubSchema;
 use App\Extensions\OAuth\Schemas\GitlabSchema;
 use App\Extensions\OAuth\Schemas\GoogleSchema;
@@ -23,7 +24,7 @@ class OAuthServiceProvider extends ServiceProvider
             $service = new OAuthService();
 
             // Default OAuth providers included with Socialite
-            $service->register(new CommonSchema('facebook', icon: 'tabler-brand-facebook-f', hexColor: '#1877f2'));
+            $service->register(new FacebookSchema());
             $service->register(new CommonSchema('x', icon: 'tabler-brand-x-f', hexColor: '#1da1f2'));
             $service->register(new LinkedinSchema());
             $service->register(new GoogleSchema());
