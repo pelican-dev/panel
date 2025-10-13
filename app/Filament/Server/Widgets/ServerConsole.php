@@ -125,7 +125,7 @@ class ServerConsole extends Widget
 
             $data[$timestamp] = $value;
 
-            cache()->put($cacheKey, $data, now()->addMinute());
+            cache()->put($cacheKey, array_slice($data, -120), now()->addMinute());
         }
     }
 
