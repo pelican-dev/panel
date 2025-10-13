@@ -7,7 +7,7 @@ import { WebGl } from '@xterm/xterm-addon-webgl';
 
 window.Xterm = {
     Terminal,
-    WebGl,
+    WebglAddon,
     FitAddon,
     WebLinksAddon,
     SearchAddon,
