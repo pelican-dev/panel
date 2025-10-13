@@ -76,7 +76,7 @@
             theme: theme
         };
 
-        const { Terminal, FitAddon, WebLinksAddon, SearchAddon, SearchBarAddon, WebGl } = window.Xterm;
+        const { Terminal, FitAddon, WebLinksAddon, SearchAddon, SearchBarAddon, WebglAddon } = window.Xterm;
 
         const terminal = new Terminal(options);
         const fitAddon = new FitAddon();
