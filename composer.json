@@ -31,7 +31,6 @@
         "secondnetwork/blade-tabler-icons": "^3.26",
         "socialiteproviders/authentik": "^5.2",
         "socialiteproviders/discord": "^4.2",
-        "socialiteproviders/gitlab": "^4.1",
         "socialiteproviders/steam": "^4.3",
         "spatie/laravel-data": "^4.17",
         "spatie/laravel-fractal": "^6.3",

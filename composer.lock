@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bf9cf96094f6bee1de175398231d78e7",
+    "content-hash": "101c2afb1f31acb872b4bed541397cd2",
     "packages": [
         {
             "name": "achyutn/filament-log-viewer",
@@ -7062,47 +7062,6 @@
                 "source": "https://github.com/socialiteproviders/providers"
             },
             "time": "2023-07-24T23:28:47+00:00"
-        },
-        {
-            "name": "socialiteproviders/gitlab",
-            "version": "4.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/SocialiteProviders/GitLab.git",
-                "reference": "a8f67d3b02c9ee8c70c25c6728417c0eddcbbb9d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/SocialiteProviders/GitLab/zipball/a8f67d3b02c9ee8c70c25c6728417c0eddcbbb9d",
-                "reference": "a8f67d3b02c9ee8c70c25c6728417c0eddcbbb9d",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": "^7.2 || ^8.0",
-                "socialiteproviders/manager": "~4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "SocialiteProviders\\GitLab\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Christoffer Martinsen",
-                    "email": "christoffermartinsen@gmail.com"
-                }
-            ],
-            "description": "GitLab OAuth2 Provider for Laravel Socialite",
-            "support": {
-                "source": "https://github.com/SocialiteProviders/GitLab/tree/4.1.0"
-            },
-            "time": "2020-12-01T23:10:59+00:00"
         },
         {
             "name": "socialiteproviders/manager",
