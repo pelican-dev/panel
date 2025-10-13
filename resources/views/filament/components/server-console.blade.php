@@ -76,19 +76,19 @@
             theme: theme
         };
 
-        const { Terminal, FitAddon, WebLinksAddon, SearchAddon, SearchBarAddon, CanvasAddon } = window.Xterm;
+        const { Terminal, FitAddon, WebLinksAddon, SearchAddon, SearchBarAddon, WebGl } = window.Xterm;
 
         const terminal = new Terminal(options);
         const fitAddon = new FitAddon();
         const webLinksAddon = new WebLinksAddon();
         const searchAddon = new SearchAddon();
         const searchAddonBar = new SearchBarAddon({ searchAddon });
-        const canvasAddon = new CanvasAddon();
+        const webGl = new WebGl();
         terminal.loadAddon(fitAddon);
         terminal.loadAddon(webLinksAddon);
         terminal.loadAddon(searchAddon);
         terminal.loadAddon(searchAddonBar);
-        terminal.loadAddon(canvasAddon);
+        terminal.loadAddon(webGl);
 
         terminal.open(document.getElementById('terminal'));
 
