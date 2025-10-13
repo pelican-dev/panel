@@ -83,7 +83,7 @@
         const webLinksAddon = new WebLinksAddon();
         const searchAddon = new SearchAddon();
         const searchAddonBar = new SearchBarAddon({ searchAddon });
-        const webGl = new WebGl();
+        const webglAddon = new WebglAddon();
         terminal.loadAddon(fitAddon);
         terminal.loadAddon(webLinksAddon);
         terminal.loadAddon(searchAddon);
