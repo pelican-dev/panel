@@ -5,7 +5,6 @@ namespace App\Providers\Extensions;
 use App\Extensions\OAuth\OAuthService;
 use App\Extensions\OAuth\Schemas\AuthentikSchema;
 use App\Extensions\OAuth\Schemas\BitbucketSchema;
-use App\Extensions\OAuth\Schemas\CommonSchema;
 use App\Extensions\OAuth\Schemas\DiscordSchema;
 use App\Extensions\OAuth\Schemas\FacebookSchema;
 use App\Extensions\OAuth\Schemas\GithubSchema;
@@ -14,6 +13,7 @@ use App\Extensions\OAuth\Schemas\GoogleSchema;
 use App\Extensions\OAuth\Schemas\LinkedinSchema;
 use App\Extensions\OAuth\Schemas\SlackSchema;
 use App\Extensions\OAuth\Schemas\SteamSchema;
+use App\Extensions\OAuth\Schemas\XSchema;
 use Illuminate\Support\ServiceProvider;
 
 class OAuthServiceProvider extends ServiceProvider
@@ -25,7 +25,7 @@ class OAuthServiceProvider extends ServiceProvider
 
             // Default OAuth providers included with Socialite
             $service->register(new FacebookSchema());
-            $service->register(new CommonSchema('x', icon: 'tabler-brand-x-f', hexColor: '#1da1f2'));
+            $service->register(new XSchema());
             $service->register(new LinkedinSchema());
             $service->register(new GoogleSchema());
             $service->register(new GithubSchema());
