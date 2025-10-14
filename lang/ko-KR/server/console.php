@@ -30,7 +30,7 @@ return [
         'restarting' => '재시작 중',
         'exited' => '종료됨',
         'paused' => '일시 중지됨',
-        'dead' => '죽음',
+        'dead' => '중단됨',
         'removing' => '제거 중',
         'stopping' => '중지 중',
         'offline' => '오프라인',
