@@ -178,6 +178,7 @@ class WebhookConfiguration extends Model
         if (is_object($replacement)) {
             $replacement = $replacement->toArray();
         }
+
         return preg_replace_callback(
             '/{{(.*?)}}/',
             function ($matches) use ($replacement) {
