@@ -171,10 +171,14 @@ class WebhookConfiguration extends Model
     }
 
     /**
-     * @param  array<mixed, mixed>  $replacement
+     * @param  array<mixed, mixed>|object  $replacement
      * */
-    public function replaceVars(array $replacement, string $subject): string
+    public function replaceVars(array|object $replacement, string $subject): string
     {
+        if (is_object($replacement)) {
+            $replacement = $replacement->toArray();
+        }
+
         return preg_replace_callback(
             '/{{(.*?)}}/',
             function ($matches) use ($replacement) {
