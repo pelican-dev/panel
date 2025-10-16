@@ -57,12 +57,16 @@ class ProcessWebhook implements ShouldQueue
         }
 
         try {
+            if ($this->webhookConfiguration->type === WebhookType::Regular){
             $customHeaders = $this->webhookConfiguration->headers;
             $headers = [];
             foreach ($customHeaders as $key => $value) {
                 $headers[$key] = $this->webhookConfiguration->replaceVars($data, $value);
             }
-
+            }
+            else{
+                $headers = [];
+            }
             Http::withHeaders($headers)->post($this->webhookConfiguration->endpoint, $data)->throw();
             $successful = now();
         } catch (Exception $exception) {
