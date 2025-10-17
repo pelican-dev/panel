@@ -591,7 +591,6 @@ class EditNode extends EditRecord
                                                     ->label(trans('admin/node.auto_command'))
                                                     ->readOnly()
                                                     ->autosize()
-                                                    ->hintCopy()
                                                     ->formatStateUsing(fn (NodeAutoDeployService $service, Node $node, Set $set, Get $get) => $set('generatedToken', $service->handle(request(), $node, $get('docker')))),
                                             ])
                                             ->mountUsing(function (Schema $schema) {
