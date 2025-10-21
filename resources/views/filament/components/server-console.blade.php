@@ -42,6 +42,11 @@
 
     @script
     <script>
+        const terminalDiv = document.getElementById('terminal'); 
+        if (terminalDiv) {
+            terminalDiv.innerHTML = '';
+        }
+
         let theme = {
             background: 'rgba(19,26,32,0.7)',
             cursor: 'transparent',
@@ -90,7 +95,7 @@
         terminal.loadAddon(searchAddonBar);
         terminal.loadAddon(webglAddon);
 
-        terminal.open(document.getElementById('terminal'));
+        terminal.open(terminalDiv);
 
         fitAddon.fit(); // Fixes SPA issues.
 
