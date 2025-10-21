@@ -35,9 +35,9 @@ class GetUserPermissionsService
             return $isOwner || $user->can('update', $server) ? array_merge(['*'], $adminPermissions) : array_merge([Permission::ACTION_WEBSOCKET_CONNECT], $adminPermissions);
         }
 
-        /** @var Subuser|null $subuserPermissions */
-        $subuserPermissions = $server->subusers()->where('user_id', $user->id)->first();
+        /** @var Subuser|null $subuser */
+        $subuser = $server->subusers()->where('user_id', $user->id)->first();
 
-        return $subuserPermissions->permissions ?? [];
+        return $subuser->permissions ?? [];
     }
 }
