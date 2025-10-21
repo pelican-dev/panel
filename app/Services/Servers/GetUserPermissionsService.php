@@ -32,7 +32,7 @@ class GetUserPermissionsService
         ];
 
         if ($isAdmin) {
-            return $user->can('update', $server) ? array_merge(['*'], $adminPermissions) : array_merge([Permission::ACTION_WEBSOCKET_CONNECT], $adminPermissions);
+            return $isOwner || $user->can('update', $server) ? array_merge(['*'], $adminPermissions) : array_merge([Permission::ACTION_WEBSOCKET_CONNECT], $adminPermissions);
         }
 
         /** @var Subuser|null $subuserPermissions */
