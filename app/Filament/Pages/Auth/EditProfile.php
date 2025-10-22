@@ -555,6 +555,7 @@ class EditProfile extends BaseEditProfile
     {
         return [
             $this->getSaveFormAction()->formId('form'),
+            $this->getCancelFormAction()->formId('form'),
         ];
 
     }
