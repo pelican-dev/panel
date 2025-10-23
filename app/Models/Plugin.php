@@ -119,7 +119,7 @@ class Plugin extends Model implements HasPluginSettings
                 $composerPackages = null;
                 if (array_key_exists('composer_packages', $data)) {
                     $composerPackages = $data['composer_packages'];
-                    $composerPackages = is_array($composerPackages) ? implode(',', $composerPackages) : $composerPackages;
+                    $composerPackages = is_array($composerPackages) ? json_encode($composerPackages, JSON_THROW_ON_ERROR) : $composerPackages;
                 }
 
                 $data = [

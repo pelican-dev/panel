@@ -162,7 +162,13 @@ class PluginService
     public function requireComposerPackages(Plugin $plugin): void
     {
         if ($plugin->composer_packages) {
-            $success = $this->composer->requirePackages(explode(',', $plugin->composer_packages));
+            $composerPackages = collect(json_decode($plugin->composer_packages, true, 512, JSON_THROW_ON_ERROR))
+                ->map(fn ($version, $package) => "'$package:$version'")
+                ->flatten()
+                ->unique()
+                ->toArray();
+
+            $success = $this->composer->requirePackages($composerPackages);
 
             if (!$success) {
                 throw new Exception("Could not require composer packages for plugin '{$plugin->id}'");
