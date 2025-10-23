@@ -33,6 +33,7 @@ use Filament\Notifications\Notification;
 use Filament\Panel;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\PageRegistration;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -298,18 +299,22 @@ class ListFiles extends ListRecords
                         ->label(trans('server/file.actions.archive.title'))
                         ->icon('tabler-archive')->iconSize(IconSize::Large)
                         ->schema([
-                            TextInput::make('name')
-                                ->label(trans('server/file.actions.archive.archive_name'))
-                                ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z'),
-                            Select::make('extension')
-                                ->label(trans('server/file.actions.archive.extension'))
-                                ->default(0)
-                                ->selectablePlaceholder(false)
-                                ->options([
-                                    'tar.gz' => 'tar.gz',
-                                    'zip' => 'zip',
-                                    'tar.bz2' => 'tar.bz2',
-                                    'tar.xz' => 'tar.xz',
+                            Grid::make(3)
+                                ->schema([
+                                    TextInput::make('name')
+                                        ->label(trans('server/file.actions.archive.archive_name'))
+                                        ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
+                                        ->columnSpan(2),
+                                    Select::make('extension')
+                                        ->label(trans('server/file.actions.archive.extension'))
+                                        ->selectablePlaceholder(false)
+                                        ->options([
+                                            'tar.gz' => 'tar.gz',
+                                            'zip' => 'zip',
+                                            'tar.bz2' => 'tar.bz2',
+                                            'tar.xz' => 'tar.xz',
+                                        ])
+                                        ->columnSpan(1),
                                 ]),
                         ])
                         ->action(function ($data, File $file) {
@@ -402,18 +407,22 @@ class ListFiles extends ListRecords
                     BulkAction::make('archive')
                         ->authorize(fn () => user()?->can(Permission::ACTION_FILE_ARCHIVE, $server))
                         ->schema([
-                            TextInput::make('name')
-                                ->label(trans('server/file.actions.archive.archive_name'))
-                                ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z'),
-                            Select::make('extension')
-                                ->label(trans('server/file.actions.archive.extension'))
-                                ->default(0)
-                                ->selectablePlaceholder(false)
-                                ->options([
-                                    'tar.gz' => 'tar.gz',
-                                    'zip' => 'zip',
-                                    'tar.bz2' => 'tar.bz2',
-                                    'tar.xz' => 'tar.xz',
+                            Grid::make(3)
+                                ->schema([
+                                    TextInput::make('name')
+                                        ->label(trans('server/file.actions.archive.archive_name'))
+                                        ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
+                                        ->columnSpan(2),
+                                    Select::make('extension')
+                                        ->label(trans('server/file.actions.archive.extension'))
+                                        ->selectablePlaceholder(false)
+                                        ->options([
+                                            'tar.gz' => 'tar.gz',
+                                            'zip' => 'zip',
+                                            'tar.bz2' => 'tar.bz2',
+                                            'tar.xz' => 'tar.xz',
+                                        ])
+                                        ->columnSpan(1),
                                 ]),
                         ])
                         ->action(function ($data, Collection $files) {
