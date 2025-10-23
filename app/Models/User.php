@@ -178,6 +178,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected function casts(): array
     {
         return [
+            'is_managed_externally' => 'boolean',
             'mfa_app_secret' => 'encrypted',
             'mfa_app_recovery_codes' => 'encrypted:array',
             'oauth' => 'array',
