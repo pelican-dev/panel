@@ -48,6 +48,7 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @property int $id
  * @property string|null $external_id
+ * @property bool $is_managed_externally
  * @property string $uuid
  * @property string $username
  * @property string $email
@@ -117,6 +118,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     protected $fillable = [
         'external_id',
+        'is_managed_externally',
         'username',
         'email',
         'password',
@@ -139,6 +141,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     protected $attributes = [
         'external_id' => null,
+        'is_managed_externally' => false,
         'language' => 'en',
         'timezone' => 'UTC',
         'mfa_app_secret' => null,
@@ -153,6 +156,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'uuid' => ['nullable', 'string', 'size:36', 'unique:users,uuid'],
         'email' => ['required', 'email', 'between:1,255', 'unique:users,email'],
         'external_id' => ['sometimes', 'nullable', 'string', 'max:255', 'unique:users,external_id'],
+        'is_managed_externally' => ['boolean'],
         'username' => ['required', 'between:1,255', 'unique:users,username'],
         'password' => ['sometimes', 'nullable', 'string'],
         'language' => ['string'],

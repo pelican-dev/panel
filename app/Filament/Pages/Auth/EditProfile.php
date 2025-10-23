@@ -94,12 +94,14 @@ class EditProfile extends BaseEditProfile
                             ->icon('tabler-user-cog')
                             ->schema([
                                 TextInput::make('username')
+                                    ->disabled(fn (User $user) => $user->is_managed_externally)
                                     ->prefixIcon('tabler-user')
                                     ->label(trans('profile.username'))
                                     ->required()
                                     ->maxLength(255)
                                     ->unique(),
                                 TextInput::make('email')
+                                    ->disabled(fn (User $user) => $user->is_managed_externally)
                                     ->prefixIcon('tabler-mail')
                                     ->label(trans('profile.email'))
                                     ->email()
@@ -107,6 +109,7 @@ class EditProfile extends BaseEditProfile
                                     ->maxLength(255)
                                     ->unique(),
                                 TextInput::make('password')
+                                    ->hidden(fn (User $user) => $user->is_managed_externally)
                                     ->label(trans('profile.password'))
                                     ->password()
                                     ->prefixIcon('tabler-password')
@@ -537,7 +540,6 @@ class EditProfile extends BaseEditProfile
                                     ]),
                             ]),
                     ]),
-
             ])
             ->operation('edit')
             ->model($this->getUser())
