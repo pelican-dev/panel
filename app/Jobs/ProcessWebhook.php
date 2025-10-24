@@ -34,7 +34,9 @@ class ProcessWebhook implements ShouldQueue
             $data = reset($data);
         }
 
-        $data = Arr::wrap(json_decode($data, true) ?? []);
+        if (is_string($data)) {
+            $data = Arr::wrap(json_decode($data, true) ?? []);
+        }
         $data['event'] = $this->webhookConfiguration->transformClassName($this->eventName);
 
         if ($this->webhookConfiguration->type === WebhookType::Discord) {
@@ -55,12 +57,13 @@ class ProcessWebhook implements ShouldQueue
         }
 
         try {
-            $customHeaders = $this->webhookConfiguration->headers;
             $headers = [];
-            foreach ($customHeaders as $key => $value) {
-                $headers[$key] = $this->webhookConfiguration->replaceVars($data, $value);
-            }
 
+            if ($this->webhookConfiguration->type === WebhookType::Regular) {
+                foreach ($this->webhookConfiguration->headers as $key => $value) {
+                    $headers[$key] = $this->webhookConfiguration->replaceVars($data, $value);
+                }
+            }
             Http::withHeaders($headers)->post($this->webhookConfiguration->endpoint, $data)->throw();
             $successful = now();
         } catch (Exception $exception) {
