@@ -4,6 +4,10 @@ namespace App\Extensions\OAuth\Schemas;
 
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Wizard\Step;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 use SocialiteProviders\Authentik\Provider;
 
 final class AuthentikSchema extends OAuthSchema
@@ -20,11 +24,27 @@ final class AuthentikSchema extends OAuthSchema
 
     public function getServiceConfig(): array
     {
-        return [
+        return array_merge(parent::getServiceConfig(), [
             'base_url' => env('OAUTH_AUTHENTIK_BASE_URL'),
-            'client_id' => env('OAUTH_AUTHENTIK_CLIENT_ID'),
-            'client_secret' => env('OAUTH_AUTHENTIK_CLIENT_SECRET'),
-        ];
+        ]);
+    }
+
+    public function getSetupSteps(): array
+    {
+        return array_merge([
+            Step::make('Create Authentik Application')
+                ->schema([
+                    TextEntry::make('create_application')
+                        ->hiddenLabel()
+                        ->state(new HtmlString(Blade::render('<p>On your Authentik dashboard select <b>Applications</b>, then select <b>Create with Provider</b>.</p><p>On the creation step select <b>OAuth2/OpenID Provider</b> and on the configure step set <b>Redirect URIs/Origins</b> to the value below.</p>'))),
+                    TextInput::make('_noenv_callback')
+                        ->label('Callback URL')
+                        ->dehydrated()
+                        ->disabled()
+                        ->hintCopy()
+                        ->default(fn () => url('/auth/oauth/callback/authentik')),
+                ]),
+        ], parent::getSetupSteps());
     }
 
     public function getSettingsForm(): array
