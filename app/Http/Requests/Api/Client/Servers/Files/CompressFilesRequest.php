@@ -22,7 +22,7 @@ class CompressFilesRequest extends ClientApiRequest
             'files' => 'required|array',
             'files.*' => 'string',
             'name' => 'sometimes|nullable|string',
-            'extension' => 'sometimes|in:zip,tgz,tbz2,txz,"tar.xz","tar.bz2","tar.gz"',
+            'extension' => 'sometimes|in:zip,tgz,tar.gz,txz,tar.xz,tbz2,tar.bz2',
         ];
     }
 }
