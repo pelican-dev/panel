@@ -26,12 +26,14 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Panel;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\PageRegistration;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -297,13 +299,27 @@ class ListFiles extends ListRecords
                         ->label(trans('server/file.actions.archive.title'))
                         ->icon('tabler-archive')->iconSize(IconSize::Large)
                         ->schema([
-                            TextInput::make('name')
-                                ->label(trans('server/file.actions.archive.archive_name'))
-                                ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
-                                ->suffix('.tar.gz'),
+                            Grid::make(3)
+                                ->schema([
+                                    TextInput::make('name')
+                                        ->label(trans('server/file.actions.archive.archive_name'))
+                                        ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
+                                        ->columnSpan(2),
+                                    Select::make('extension')
+                                        ->label(trans('server/file.actions.archive.extension'))
+                                        ->selectablePlaceholder(false)
+                                        ->native(false)
+                                        ->options([
+                                            'tar.gz' => 'tar.gz',
+                                            'zip' => 'zip',
+                                            'tar.bz2' => 'tar.bz2',
+                                            'tar.xz' => 'tar.xz',
+                                        ])
+                                        ->columnSpan(1),
+                                ]),
                         ])
                         ->action(function ($data, File $file) {
-                            $archive = $this->getDaemonFileRepository()->compressFiles($this->path, [$file->name], $data['name']);
+                            $archive = $this->getDaemonFileRepository()->compressFiles($this->path, [$file->name], $data['name'], $data['extension']);
 
                             Activity::event('server:file.compress')
                                 ->property('name', $archive['name'])
@@ -392,15 +408,29 @@ class ListFiles extends ListRecords
                     BulkAction::make('archive')
                         ->authorize(fn () => user()?->can(Permission::ACTION_FILE_ARCHIVE, $server))
                         ->schema([
-                            TextInput::make('name')
-                                ->label(trans('server/file.actions.archive.archive_name'))
-                                ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
-                                ->suffix('.tar.gz'),
+                            Grid::make(3)
+                                ->schema([
+                                    TextInput::make('name')
+                                        ->label(trans('server/file.actions.archive.archive_name'))
+                                        ->placeholder(fn () => 'archive-' . str(Carbon::now()->toRfc3339String())->replace(':', '')->before('+0000') . 'Z')
+                                        ->columnSpan(2),
+                                    Select::make('extension')
+                                        ->label(trans('server/file.actions.archive.extension'))
+                                        ->selectablePlaceholder(false)
+                                        ->native(false)
+                                        ->options([
+                                            'tar.gz' => 'tar.gz',
+                                            'zip' => 'zip',
+                                            'tar.bz2' => 'tar.bz2',
+                                            'tar.xz' => 'tar.xz',
+                                        ])
+                                        ->columnSpan(1),
+                                ]),
                         ])
                         ->action(function ($data, Collection $files) {
                             $files = $files->map(fn ($file) => $file['name'])->toArray();
 
-                            $archive = $this->getDaemonFileRepository()->compressFiles($this->path, $files, $data['name']);
+                            $archive = $this->getDaemonFileRepository()->compressFiles($this->path, $files, $data['name'], $data['extension']);
 
                             Activity::event('server:file.compress')
                                 ->property('name', $archive['name'])
