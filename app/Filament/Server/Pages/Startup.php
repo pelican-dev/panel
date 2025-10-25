@@ -147,14 +147,15 @@ class Startup extends ServerFormPage
         return parent::canAccess() && user()?->can(Permission::ACTION_STARTUP_READ, Filament::getTenant());
     }
 
-    public function update(?string $state, ServerVariable $serverVariable): null
+    public function update(string|bool|null $state, ServerVariable $serverVariable): null
     {
         $original = $serverVariable->variable_value;
 
         try {
+            $stateForValidation = is_bool($state) ? ($state ? '1' : '0') : $state;
 
             $validator = Validator::make(
-                ['variable_value' => $state],
+                ['variable_value' => $stateForValidation],
                 ['variable_value' => $serverVariable->variable->rules]
             );
 
@@ -172,21 +173,21 @@ class Startup extends ServerFormPage
                 'server_id' => $this->getRecord()->id,
                 'variable_id' => $serverVariable->variable->id,
             ], [
-                'variable_value' => $state ?? '',
+                'variable_value' => $stateForValidation ?? '',
             ]);
 
-            if ($original !== $state) {
+            if ($original !== $stateForValidation) {
                 Activity::event('server:startup.edit')
                     ->property([
                         'variable' => $serverVariable->variable->env_variable,
                         'old' => $original,
-                        'new' => $state,
+                        'new' => $stateForValidation,
                     ])
                     ->log();
             }
             Notification::make()
                 ->title(trans('server/startup.update', ['variable' => $serverVariable->variable->name]))
-                ->body(fn () => $original . ' -> ' . $state)
+                ->body(fn () => $original . ' -> ' . $stateForValidation)
                 ->success()
                 ->send();
         } catch (Exception $e) {
