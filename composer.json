@@ -13,6 +13,7 @@
         "calebporzio/sushi": "^2.5",
         "dedoc/scramble": "^0.12.10",
         "filament/filament": "~4.0",
+        "gboquizosanchez/filament-log-viewer": "^2.1",
         "guzzlehttp/guzzle": "^7.10",
         "laravel/framework": "^12.31",
         "laravel/helpers": "^1.7",

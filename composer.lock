@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2056f14d21c6eaf3fa4efb52ae989f77",
+    "content-hash": "4b12f7142187142f12803e23730992ff",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -1895,6 +1895,69 @@
                 }
             ],
             "time": "2023-10-12T05:21:21+00:00"
+        },
+        {
+            "name": "gboquizosanchez/filament-log-viewer",
+            "version": "2.1.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gboquizosanchez/filament-log-viewer.git",
+                "reference": "93ba67b35a39ac6ccd8bc2d3c7e5229eeafc07b1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gboquizosanchez/filament-log-viewer/zipball/93ba67b35a39ac6ccd8bc2d3c7e5229eeafc07b1",
+                "reference": "93ba67b35a39ac6ccd8bc2d3c7e5229eeafc07b1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-zip": "*",
+                "owenvoke/blade-fontawesome": "^2.9",
+                "php": "^8.3|^8.4"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.64",
+                "hermes/dependencies": "^1.1",
+                "larastan/larastan": "^2.9",
+                "orchestra/testbench": "^9.1",
+                "pestphp/pest": "^3.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Boquizo\\FilamentLogViewer\\FilamentLogViewerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Boquizo\\FilamentLogViewer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Germán Boquizo Sánchez",
+                    "email": "germanboquizosanchez@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Filament Log Viewer",
+            "homepage": "https://github.com/gboquizosanchez",
+            "keywords": [
+                "filament",
+                "laravel",
+                "log-viewer"
+            ],
+            "support": {
+                "issues": "https://github.com/gboquizosanchez/filament-log-viewer/issues",
+                "source": "https://github.com/gboquizosanchez/filament-log-viewer/tree/2.1.6"
+            },
+            "time": "2025-10-15T20:08:18+00:00"
         },
         {
             "name": "graham-campbell/result-type",
@@ -5076,6 +5139,66 @@
                 }
             ],
             "time": "2025-09-03T16:03:54+00:00"
+        },
+        {
+            "name": "owenvoke/blade-fontawesome",
+            "version": "v2.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/owenvoke/blade-fontawesome.git",
+                "reference": "94dcd0c78f43f8234b0d9c76c903ecd288b8b0d1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/owenvoke/blade-fontawesome/zipball/94dcd0c78f43f8234b0d9c76c903ecd288b8b0d1",
+                "reference": "94dcd0c78f43f8234b0d9c76c903ecd288b8b0d1",
+                "shasum": ""
+            },
+            "require": {
+                "blade-ui-kit/blade-icons": "^1.5",
+                "illuminate/support": "^10.34|^11.0|^12.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.13",
+                "orchestra/testbench": "^8.12|^9.0|^10.0",
+                "pestphp/pest": "^2.26|^3.7",
+                "phpstan/phpstan": "^1.10|^2.1",
+                "symfony/var-dumper": "^6.3|^7.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "OwenVoke\\BladeFontAwesome\\BladeFontAwesomeServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "OwenVoke\\BladeFontAwesome\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A package to easily make use of Font Awesome in your Laravel Blade views",
+            "support": {
+                "issues": "https://github.com/owenvoke/blade-fontawesome/issues",
+                "source": "https://github.com/owenvoke/blade-fontawesome/tree/v2.9.1"
+            },
+            "funding": [
+                {
+                    "url": "https://ecologi.com/owenvoke?gift-trees",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/owenvoke",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-03-28T16:03:42+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
