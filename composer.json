@@ -81,7 +81,8 @@
             "@php artisan filament:upgrade"
         ],
         "post-install-cmd": [
-            "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+            "php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "php -r \"$env = file_get_contents('.env'); if (strpos($env, 'FILAMENT_LOG_VIEWER_DRIVER=') === false) { file_put_contents('.env', rtrim($env) . PHP_EOL . 'FILAMENT_LOG_VIEWER_DRIVER=raw' . PHP_EOL); }\""
         ]
     },
     "config": {

@@ -37,6 +37,8 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentLogViewerPlugin::make()
                     ->authorize(fn () => user()->can('view panelLog'))
+                    ->listLogs(\App\Filament\Admin\Pages\ListLogs::class)
+                    ->viewLog(\App\Filament\Admin\Pages\ViewLogs::class)
                     ->navigationGroup(fn () => trans('admin/dashboard.advanced'))
                     ->navigationIcon('tabler-file-info'),
             ]);
