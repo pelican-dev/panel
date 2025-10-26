@@ -8,6 +8,7 @@ return [
     'actions' => [
         'upload_logs' => 'Upload Logs?',
         'upload_logs_description' => 'This will upload :file to :url Are you sure you wish to do this?',
+        'view_logs' => 'View Logs',
         'log_not_found' => 'Log not found!',
         'log_not_found_description' => 'Could not find log for :filename',
         'filed_to_upload' => 'Filed to upload.',
