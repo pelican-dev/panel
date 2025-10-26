@@ -14,5 +14,6 @@ return [
         'failed_to_upload_description' => 'HTTP Status: :status',
         'log_upload' => 'Log Uploaded!',
         'log_upload_action' => 'View Log',
+        'upload_tooltip' => 'Upload to :url',
     ],
 ];

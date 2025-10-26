@@ -25,6 +25,7 @@ class ViewLogs extends BaseViewLog
                 ->hiddenLabel()
                 ->icon('tabler-world-upload')->iconSize(IconSize::Medium)
                 ->requiresConfirmation()
+                ->tooltip(trans('admin/log.actions.upload_tooltip', ['url' => 'logs.pelican.dev']))
                 ->modalHeading(trans('admin/log.actions.upload_logs'))
                 ->modalDescription(trans('admin/log.actions.upload_logs_description', ['file' => $this->record->date, 'url' => 'https://logs.pelican.dev']))
                 ->action(function () {

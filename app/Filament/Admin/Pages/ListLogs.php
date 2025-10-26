@@ -49,7 +49,7 @@ class ListLogs extends BaseListLogs
                     ->icon('tabler-world-upload')->iconSize(IconSize::Medium)
                     ->requiresConfirmation()
                     ->modalHeading(trans('admin/log.actions.upload_logs'))
-                    ->modalDescription(trans('admin/log.actions.upload_logs_description', ['file' => $record['date'], 'url' => 'https://logs.pelican.dev']))
+                    ->modalDescription(fn ($record) => trans('admin/log.actions.upload_logs_description', ['file' => $record['date'], 'url' => 'https://logs.pelican.dev']))
                     ->action(function ($record) {
                         $logPath = storage_path('logs/' . $record['date']);
 
