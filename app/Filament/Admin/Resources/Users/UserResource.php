@@ -414,7 +414,7 @@ class UserResource extends Resource
                                                         $sshKey->delete();
 
                                                         Activity::event('user:ssh-key.delete')
-                                                            ->actor(auth()->user())
+                                                            ->actor(user())
                                                             ->subject($user)
                                                             ->subject($sshKey)
                                                             ->property('fingerprint', $sshKey->fingerprint)
