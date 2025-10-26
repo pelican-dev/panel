@@ -165,7 +165,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
 
     public function getIp(): ?string
     {
-        return auth()->user()->can('seeIps activityLog') ? $this->ip : null;
+        return user()?->can('seeIps activityLog') ? $this->ip : null;
     }
 
     public function htmlable(): string
