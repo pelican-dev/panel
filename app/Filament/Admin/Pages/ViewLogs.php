@@ -25,7 +25,8 @@ class ViewLogs extends BaseViewLog
                 ->hiddenLabel()
                 ->icon('tabler-world-upload')->iconSize(IconSize::Medium)
                 ->requiresConfirmation()
-                ->modalHeading(trans('admin/log.actions.upload_log'))
+                ->modalHeading(trans('admin/log.actions.upload_logs'))
+                ->modalDescription(trans('admin/log.actions.upload_logs_description', ['file' => $this->record->date, 'url' => 'https://logs.pelican.dev']))
                 ->action(function () {
                     $logPath = storage_path('logs/' . $this->record->date);
 
