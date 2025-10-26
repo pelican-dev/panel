@@ -17,13 +17,18 @@ use Illuminate\Support\Facades\Http;
 
 class ListLogs extends BaseListLogs
 {
-    protected static ?string $navigationLabel = 'Application Logs';
+    protected string $view = 'filament.components.list-logs';
 
-    protected static string|null|\UnitEnum $navigationGroup = 'Monitoring';
+    public function getHeading(): string|null|\Illuminate\Contracts\Support\Htmlable
+    {
+        return trans('admin/log.navigation.panel_logs');
+    }
 
     public static function table(Table $table): Table
     {
         return parent::table($table)
+            ->emptyStateHeading(trans('admin/log.empty_table'))
+            ->emptyStateIcon('tabler-check')
             ->columns([
                 NameColumn::make('date'),
                 LevelColumn::make(Level::ALL),
@@ -43,14 +48,14 @@ class ListLogs extends BaseListLogs
                     ->hiddenLabel()
                     ->icon('tabler-world-upload')->iconSize(IconSize::Medium)
                     ->requiresConfirmation()
-                    ->modalHeading('Upload Logs')
-                    ->action(function ($record, $action) {
+                    ->modalHeading(trans('admin/log.actions.upload_log'))
+                    ->action(function ($record) {
                         $logPath = storage_path('logs/' . $record['date']);
 
                         if (!file_exists($logPath)) {
                             Notification::make()
-                                ->title('Log file not found')
-                                ->body("Could not find log for {$record['date']}")
+                                ->title(trans('admin/log.actions.log_not_found'))
+                                ->body(trans('admin/log.actions.log_not_found_description', ['filename' => $record['date']]))
                                 ->danger()
                                 ->send();
 
@@ -77,8 +82,8 @@ class ListLogs extends BaseListLogs
 
                             if ($response->failed()) {
                                 Notification::make()
-                                    ->title('Failed to upload logs')
-                                    ->body("HTTP Status: {$response->status()}")
+                                    ->title(trans('admin/log.actions.filed_to_upload'))
+                                    ->body(trans('admin/log.actions.filed_to_upload', ['status' => $response->status()]))
                                     ->danger()
                                     ->send();
 
@@ -89,12 +94,12 @@ class ListLogs extends BaseListLogs
                             $url = $data['url'];
 
                             Notification::make()
-                                ->title('Log file uploaded')
+                                ->title(trans('admin/log.actions.log_upload'))
                                 ->body("{$url}")
                                 ->success()
                                 ->actions([
                                     Action::make('viewLogs')
-                                        ->label('View Logs')
+                                        ->label(trans('admin/log.actions.view_logs'))
                                         ->url($url)
                                         ->openUrlInNewTab(true),
                                 ])
@@ -103,18 +108,13 @@ class ListLogs extends BaseListLogs
 
                         } catch (\Exception $e) {
                             Notification::make()
-                                ->title('Failed to upload logs')
+                                ->title(trans('admin/log.actions.filed_to_upload'))
                                 ->body($e->getMessage())
                                 ->danger()
                                 ->send();
 
                             return;
                         }
-
-                        // Show modal with URL
-                        $action
-                            ->modalHeading('Logs Uploaded')
-                            ->modalSubmitAction(false);
                     }),
                 DeleteAction::make()
                     ->icon('tabler-trash')->iconSize(IconSize::Medium),

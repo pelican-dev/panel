@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Admin\Pages\ListLogs;
+use App\Filament\Admin\Pages\ViewLogs;
 use Boquizo\FilamentLogViewer\FilamentLogViewerPlugin;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -37,8 +39,9 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentLogViewerPlugin::make()
                     ->authorize(fn () => user()->can('view panelLog'))
-                    ->listLogs(\App\Filament\Admin\Pages\ListLogs::class)
-                    ->viewLog(\App\Filament\Admin\Pages\ViewLogs::class)
+                    ->listLogs(ListLogs::class)
+                    ->viewLog(ViewLogs::class)
+                    ->navigationLabel(fn () => trans('admin/log.navigation.panel_logs'))
                     ->navigationGroup(fn () => trans('admin/dashboard.advanced'))
                     ->navigationIcon('tabler-file-info'),
             ]);

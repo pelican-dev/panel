@@ -25,14 +25,14 @@ class ViewLogs extends BaseViewLog
                 ->hiddenLabel()
                 ->icon('tabler-world-upload')->iconSize(IconSize::Medium)
                 ->requiresConfirmation()
-                ->modalHeading('Upload Logs')
-                ->action(function ($action) {
+                ->modalHeading(trans('admin/log.actions.upload_log'))
+                ->action(function () {
                     $logPath = storage_path('logs/' . $this->record->date);
 
                     if (!file_exists($logPath)) {
                         Notification::make()
-                            ->title('Log file not found')
-                            ->body("Could not find log for {$this->record->date}")
+                            ->title(trans('admin/log.actions.log_not_found'))
+                            ->body(trans('admin/log.actions.log_not_found_description', ['filename' => $this->record['date']]))
                             ->danger()
                             ->send();
 
@@ -59,8 +59,8 @@ class ViewLogs extends BaseViewLog
 
                         if ($response->failed()) {
                             Notification::make()
-                                ->title('Failed to upload logs')
-                                ->body("HTTP Status: {$response->status()}")
+                                ->title(trans('admin/log.actions.filed_to_upload'))
+                                ->body(trans('admin/log.actions.filed_to_upload', ['status' => $response->status()]))
                                 ->danger()
                                 ->send();
 
@@ -70,22 +70,28 @@ class ViewLogs extends BaseViewLog
                         $data = $response->json();
                         $url = $data['url'];
 
-                        redirect($url);
+                        Notification::make()
+                            ->title(trans('admin/log.actions.log_upload'))
+                            ->body("{$url}")
+                            ->success()
+                            ->actions([
+                                Action::make('viewLogs')
+                                    ->label(trans('admin/log.actions.view_logs'))
+                                    ->url($url)
+                                    ->openUrlInNewTab(true),
+                            ])
+                            ->persistent()
+                            ->send();
 
                     } catch (\Exception $e) {
                         Notification::make()
-                            ->title('Failed to upload logs')
+                            ->title(trans('admin/log.actions.filed_to_upload'))
                             ->body($e->getMessage())
                             ->danger()
                             ->send();
 
                         return;
                     }
-
-                    // Show modal with URL
-                    $action
-                        ->modalHeading('Logs Uploaded')
-                        ->modalSubmitAction(false);
                 }),
             BackAction::make()
                 ->icon('tabler-arrow-left')->iconSize(IconSize::Medium),
