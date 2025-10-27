@@ -26,29 +26,17 @@ use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
-use Filament\Forms\Components\Field;
-use Filament\Forms\Components\TextInput\Actions\CopyAction;
-use Filament\Support\Colors\Color;
-use Filament\Support\Facades\FilamentColor;
-use Filament\Support\Facades\FilamentView;
-use Filament\View\PanelsRenderHook;
 use Illuminate\Config\Repository;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Console\AboutCommand;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
-use Livewire\Component;
-use Livewire\Livewire;
 use Spatie\Health\Facades\Health;
-
-use function Livewire\on;
-use function Livewire\store;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -103,57 +91,6 @@ class AppServiceProvider extends ServiceProvider
         $bearerTokens = fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer'));
         Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
-
-        FilamentColor::register([
-            'danger' => Color::Red,
-            'gray' => Color::Zinc,
-            'info' => Color::Sky,
-            'primary' => Color::Blue,
-            'success' => Color::Green,
-            'warning' => Color::Amber,
-            'blurple' => Color::hex('#5865F2'),
-        ]);
-
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::PAGE_START,
-            fn () => Blade::render('@livewire(\App\Livewire\AlertBannerContainer::class)'),
-        );
-
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::FOOTER,
-            fn () => Blade::render('filament.layouts.footer'),
-        );
-
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::STYLES_BEFORE,
-            fn () => Blade::render("@vite(['resources/css/app.css'])")
-        );
-
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::SCRIPTS_AFTER,
-            fn () => Blade::render("@vite(['resources/js/app.js'])"),
-        );
-
-        on('dehydrate', function (Component $component) {
-            if (!Livewire::isLivewireRequest()) {
-                return;
-            }
-
-            if (store($component)->has('redirect')) {
-                return;
-            }
-
-            if (count(session()->get('alert-banners') ?? []) <= 0) {
-                return;
-            }
-
-            $component->dispatch('alertBannerSent');
-        });
-
-        Field::macro('hintCopy', function () {
-            /** @var Field $this */
-            return $this->hintAction(CopyAction::make()); // @phpstan-ignore varTag.nativeType
-        });
 
         // Don't run any health checks during tests
         if (!$app->runningUnitTests()) {

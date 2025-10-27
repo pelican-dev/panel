@@ -5,6 +5,7 @@ return [
     App\Providers\AppServiceProvider::class,
     App\Providers\BackupsServiceProvider::class,
     App\Providers\EventServiceProvider::class,
+    App\Providers\Filament\FilamentServiceProvider::class,
     App\Providers\Filament\AdminPanelProvider::class,
     App\Providers\Filament\AppPanelProvider::class,
     App\Providers\Filament\ServerPanelProvider::class,
