@@ -11,6 +11,7 @@ return [
     'version' => 'Version',
     'category' => 'Category',
     'status' => 'Status',
+    'visit_website' => 'Visit Website',
     'settings' => 'Settings',
     'install' => 'Install',
     'update' => 'Update',

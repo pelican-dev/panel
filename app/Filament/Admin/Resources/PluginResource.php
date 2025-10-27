@@ -9,6 +9,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Tabs;
@@ -81,10 +82,24 @@ class PluginResource extends Resource
             ->recordActions([
                 Action::make('view')
                     ->label(trans('filament-actions::view.single.label'))
-                    ->icon('tabler-eye-share')
+                    ->icon(fn (Plugin $plugin) => $plugin->getReadme() ? 'tabler-eye' : 'tabler-eye-share')
                     ->color('gray')
-                    ->visible(fn (Plugin $plugin) => $plugin->url)
-                    ->url(fn (Plugin $plugin) => $plugin->url, true),
+                    ->visible(fn (Plugin $plugin) => $plugin->getReadme() || $plugin->url)
+                    ->url(fn (Plugin $plugin) => !$plugin->getReadme() ? $plugin->url : null, true)
+                    ->slideOver(true)
+                    ->modalHeading('Readme')
+                    ->modalSubmitAction(fn (Plugin $plugin) => Action::make('visit_website')
+                        ->label(trans('admin/plugin.visit_website'))
+                        ->visible($plugin->url)
+                        ->url($plugin->url, true)
+                    )
+                    ->modalCancelActionLabel(trans('filament::components/modal.actions.close.label'))
+                    ->schema(fn (Plugin $plugin) => $plugin->getReadme() ? [
+                        TextEntry::make('readme')
+                            ->hiddenLabel()
+                            ->markdown()
+                            ->state(fn (Plugin $plugin) => $plugin->getReadme()),
+                    ] : null),
                 Action::make('settings')
                     ->label(trans('admin/plugin.settings'))
                     ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))

@@ -402,4 +402,17 @@ class Plugin extends Model implements HasPluginSettings
 
         return array_map(fn ($provider) => $this->namespace . '\\Console\\Commands\\' . str($provider->getRelativePathname())->remove('.php', false), File::allFiles($path));
     }
+
+    public function getReadme(): ?string
+    {
+        return cache()->remember("plugins.$this->id.readme", now()->addMinutes(5), function () {
+            $path = plugin_path($this->id, 'README.md');
+
+            if (File::missing($path)) {
+                return null;
+            }
+
+            return File::get($path);
+        });
+    }
 }
