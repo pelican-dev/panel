@@ -162,7 +162,13 @@ class MountResource extends Resource
                     Section::make()->schema([
                         Select::make('eggs')->multiple()
                             ->label(trans('admin/mount.eggs'))
-                            ->relationship('eggs', 'name')
+                            ->relationship('eggs', 'name', function (Builder $query) {
+                                // Selecting only non-json fields to prevent Postgres from choking on DISTINCT JSON columns
+                                return $query
+                                    ->select(['eggs.id', 'eggs.name'])
+                                    ->groupBy('eggs.id', 'eggs.name')
+                                    ->orderBy('eggs.name');
+                            })
                             ->preload(),
                         Select::make('nodes')->multiple()
                             ->label(trans('admin/mount.nodes'))
