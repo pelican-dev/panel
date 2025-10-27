@@ -308,7 +308,6 @@ class ListFiles extends ListRecords
                                     Select::make('extension')
                                         ->label(trans('server/file.actions.archive.extension'))
                                         ->selectablePlaceholder(false)
-                                        ->native(false)
                                         ->options([
                                             'tar.gz' => 'tar.gz',
                                             'zip' => 'zip',
@@ -417,7 +416,6 @@ class ListFiles extends ListRecords
                                     Select::make('extension')
                                         ->label(trans('server/file.actions.archive.extension'))
                                         ->selectablePlaceholder(false)
-                                        ->native(false)
                                         ->options([
                                             'tar.gz' => 'tar.gz',
                                             'zip' => 'zip',

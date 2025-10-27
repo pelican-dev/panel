@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput\Actions\CopyAction;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
@@ -73,6 +74,8 @@ class FilamentServiceProvider extends ServiceProvider
             /** @var Field $this */
             return $this->hintAction(CopyAction::make()); // @phpstan-ignore varTag.nativeType
         });
+
+        Select::configureUsing(fn (Select $select) => $select->native(false));
     }
 
     public function register(): void {}

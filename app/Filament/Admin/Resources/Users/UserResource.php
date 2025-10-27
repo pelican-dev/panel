@@ -236,8 +236,7 @@ class UserResource extends Resource
                                     ->default(fn () => config('app.timezone', 'UTC'))
                                     ->selectablePlaceholder(false)
                                     ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
-                                    ->searchable()
-                                    ->native(false),
+                                    ->searchable(),
                                 Select::make('language')
                                     ->label(trans('profile.language'))
                                     ->columnSpan([
@@ -251,8 +250,7 @@ class UserResource extends Resource
                                     ->default('en')
                                     ->searchable()
                                     ->selectablePlaceholder(false)
-                                    ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
-                                    ->native(false),
+                                    ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
                                 FileUpload::make('avatar')
                                     ->visible(fn (?User $user, FileUpload $fileUpload) => $user ? $fileUpload->getDisk()->exists($fileUpload->getDirectory() . '/' . $user->id . '.png') : false)
                                     ->avatar()
