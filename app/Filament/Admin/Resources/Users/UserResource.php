@@ -130,7 +130,7 @@ class UserResource extends Resource
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->hidden(fn ($record) => static::canEdit($record)),
+                    ->hidden(fn ($record) => static::getEditAuthorizationResponse($record)->allowed()),
                 EditAction::make(),
             ])
             ->checkIfRecordIsSelectableUsing(fn (User $user) => user()?->id !== $user->id && !$user->servers_count)

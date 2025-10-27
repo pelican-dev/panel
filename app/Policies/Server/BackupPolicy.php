@@ -10,17 +10,17 @@ class BackupPolicy
 {
     protected string $modelName = 'backup';
 
-    public static function viewAny(): bool
+    public function viewAny(): bool
     {
         return user()?->can(Permission::ACTION_BACKUP_READ, Filament::getTenant());
     }
 
-    public static function create(): bool
+    public function create(): bool
     {
         return user()?->can(Permission::ACTION_BACKUP_CREATE, Filament::getTenant());
     }
 
-    public static function delete(Model $record): bool
+    public function delete(Model $record): bool
     {
         return user()?->can(Permission::ACTION_BACKUP_DELETE, Filament::getTenant());
     }

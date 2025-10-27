@@ -10,22 +10,22 @@ class UserPolicy
 {
     protected string $modelName = 'user';
 
-    public static function viewAny(): bool
+    public function viewAny(): bool
     {
         return user()?->can(Permission::ACTION_USER_READ, Filament::getTenant());
     }
 
-    public static function create(): bool
+    public function create(): bool
     {
         return user()?->can(Permission::ACTION_USER_CREATE, Filament::getTenant());
     }
 
-    public static function edit(Model $record): bool
+    public function edit(Model $record): bool
     {
         return user()?->can(Permission::ACTION_USER_UPDATE, Filament::getTenant());
     }
 
-    public static function delete(Model $record): bool
+    public function delete(Model $record): bool
     {
         return user()?->can(Permission::ACTION_USER_DELETE, Filament::getTenant());
     }

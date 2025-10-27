@@ -10,27 +10,27 @@ class DatabasePolicy
 {
     protected string $modelName = 'database';
 
-    public static function viewAny(): bool
+    public function viewAny(): bool
     {
         return user()?->can(Permission::ACTION_DATABASE_READ, Filament::getTenant());
     }
 
-    public static function view(Model $record): bool
+    public function view(Model $record): bool
     {
         return user()?->can(Permission::ACTION_DATABASE_READ, Filament::getTenant());
     }
 
-    public static function create(): bool
+    public function create(): bool
     {
         return user()?->can(Permission::ACTION_DATABASE_CREATE, Filament::getTenant());
     }
 
-    public static function edit(Model $record): bool
+    public function edit(Model $record): bool
     {
         return user()?->can(Permission::ACTION_DATABASE_UPDATE, Filament::getTenant());
     }
 
-    public static function delete(Model $record): bool
+    public function delete(Model $record): bool
     {
         return user()?->can(Permission::ACTION_DATABASE_DELETE, Filament::getTenant());
     }
