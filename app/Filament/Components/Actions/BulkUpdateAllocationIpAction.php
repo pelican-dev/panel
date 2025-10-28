@@ -3,6 +3,7 @@
 namespace App\Filament\Components\Actions;
 
 use App\Models\Allocation;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Select;
@@ -84,7 +85,7 @@ class BulkUpdateAllocationIpAction extends BulkAction
                 try {
                     $allocation->update(['ip' => $newIp]);
                     $updated++;
-                } catch (\Exception $exception) {
+                } catch (Exception $exception) {
                     $failed++;
                     report($exception);
                 }
