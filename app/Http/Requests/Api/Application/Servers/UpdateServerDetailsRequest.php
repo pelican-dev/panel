@@ -18,22 +18,30 @@ class UpdateServerDetailsRequest extends ServerWriteRequest
             'name' => $rules['name'],
             'user' => $rules['owner_id'],
             'description' => array_merge(['nullable'], $rules['description']),
+            'docker_labels' => 'sometimes|array',
+            'docker_labels.*' => 'string',
         ];
     }
 
     /**
      * Convert the posted data into the correct format that is expected by the application.
      *
-     * @return array<array-key, string>
+     * @return array<string, mixed>
      */
     public function validated($key = null, $default = null): array
     {
-        return [
+        $payload = [
             'external_id' => $this->input('external_id'),
             'name' => $this->input('name'),
             'owner_id' => $this->input('user'),
             'description' => $this->input('description'),
         ];
+
+        if ($this->has('docker_labels')) {
+            $payload['docker_labels'] = $this->input('docker_labels');
+        }
+
+        return $payload;
     }
 
     /**

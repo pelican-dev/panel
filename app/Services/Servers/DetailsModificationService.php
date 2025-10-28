@@ -26,7 +26,8 @@ class DetailsModificationService
      *     external_id: int,
      *     owner_id: int,
      *     name: string,
-     *     description?: ?string
+     *     description?: ?string,
+     *     docker_labels?: array<string, string>
      * } $data
      *
      * @throws Throwable
@@ -36,12 +37,18 @@ class DetailsModificationService
         return $this->connection->transaction(function () use ($data, $server) {
             $owner = $server->owner_id;
 
-            $server->forceFill([
+            $attributes = [
                 'external_id' => Arr::get($data, 'external_id'),
                 'owner_id' => Arr::get($data, 'owner_id'),
                 'name' => Arr::get($data, 'name'),
                 'description' => Arr::get($data, 'description') ?? '',
-            ])->saveOrFail();
+            ];
+
+            if (array_key_exists('docker_labels', $data)) {
+                $attributes['docker_labels'] = Arr::get($data, 'docker_labels');
+            }
+
+            $server->forceFill($attributes)->saveOrFail();
 
             // If the owner_id value is changed we need to revoke any tokens that exist for the server
             // on the daemon instance so that the old owner no longer has any permission to access the

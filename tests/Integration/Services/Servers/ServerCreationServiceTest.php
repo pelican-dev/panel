@@ -230,6 +230,57 @@ class ServerCreationServiceTest extends IntegrationTestCase
     }
 
     /**
+     * Test that docker labels are persisted when provided during server creation.
+     */
+    public function test_server_creation_accepts_docker_labels(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        /** @var Node $node */
+        $node = Node::factory()->create();
+
+        /** @var Allocation $allocation */
+        $allocation = Allocation::factory()->create([
+            'node_id' => $node->id,
+        ]);
+
+        $egg = $this->cloneEggAndVariables($this->bungeecord);
+
+        $labels = [
+            'com.example/app' => 'panel',
+            'tier' => 'production',
+        ];
+
+        $data = [
+            'name' => $this->faker->name(),
+            'description' => $this->faker->sentence(),
+            'owner_id' => $user->id,
+            'allocation_id' => $allocation->id,
+            'node_id' => $allocation->node_id,
+            'memory' => 256,
+            'swap' => 128,
+            'disk' => 100,
+            'io' => 500,
+            'cpu' => 0,
+            'startup' => 'java -jar server.jar',
+            'image' => 'java:8',
+            'egg_id' => $egg->id,
+            'environment' => [
+                'BUNGEE_VERSION' => '123',
+                'SERVER_JARFILE' => 'server.jar',
+            ],
+            'docker_labels' => $labels,
+        ];
+
+        $this->daemonServerRepository->expects('setServer->create')->with(false)->andReturnUndefined();
+
+        $server = $this->getService()->handle($data);
+
+        $this->assertSame($labels, $server->docker_labels);
+    }
+
+    /**
      * Test that a server is deleted from the Panel if daemon returns an error during the creation
      * process.
      */
