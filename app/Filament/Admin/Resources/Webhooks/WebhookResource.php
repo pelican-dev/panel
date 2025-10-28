@@ -98,7 +98,7 @@ class WebhookResource extends Resource
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->hidden(fn (WebhookConfiguration $record) => static::canEdit($record)),
+                    ->hidden(fn (WebhookConfiguration $record) => static::getEditAuthorizationResponse($record)->allowed()),
                 EditAction::make(),
                 ReplicateAction::make()
                     ->iconButton()

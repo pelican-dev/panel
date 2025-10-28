@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies;
+namespace App\Policies\Server;
 
 use App\Models\Permission;
 use App\Models\Server;
@@ -42,15 +42,5 @@ class ServerPolicy
 
         // Return null to let default policies take over
         return null;
-    }
-
-    /**
-     * This is a horrendous hack to avoid Laravel's "smart" behavior that does
-     * not call the before() function if there isn't a function matching the
-     * policy permission.
-     */
-    public function __call(string $name, mixed $arguments): void
-    {
-        // do nothing
     }
 }
