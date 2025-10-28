@@ -38,11 +38,7 @@ class BulkUpdateAllocationIpAction extends BulkAction
         $this->modalSubmitActionLabel(trans('admin/node.update_ip'));
 
         $this->schema(function (Collection $records) {
-            // Get unique IPs from selected allocations
             $currentIps = $records->pluck('ip')->unique()->values()->all();
-            
-            // Get available IPs from the node (we need access to the owner record)
-            // This will be set dynamically when the action is used
             $availableIps = $this->getAvailableIps();
 
             return [
@@ -62,10 +58,10 @@ class BulkUpdateAllocationIpAction extends BulkAction
         });
 
         $this->action(function (Collection $records, array $data) {
+            /** @var Collection<int, Allocation> $records */
             $oldIp = $data['old_ip'];
             $newIp = $data['new_ip'];
 
-            // Filter records to only those with the old IP
             $recordsToUpdate = $records->filter(fn (Allocation $allocation) => $allocation->ip === $oldIp);
 
             if ($recordsToUpdate->count() === 0) {
@@ -102,8 +98,10 @@ class BulkUpdateAllocationIpAction extends BulkAction
         $this->deselectRecordsAfterCompletion();
     }
 
+    /** @var string[] */
     protected array $availableIps = [];
 
+    /** @param  string[]  $ips */
     public function availableIps(array $ips): static
     {
         $this->availableIps = $ips;
@@ -111,6 +109,7 @@ class BulkUpdateAllocationIpAction extends BulkAction
         return $this;
     }
 
+    /** @return string[] */
     protected function getAvailableIps(): array
     {
         return $this->availableIps;
