@@ -166,7 +166,6 @@ class MountResource extends Resource
                                 // Selecting only non-json fields to prevent Postgres from choking on DISTINCT JSON columns
                                 return $query
                                     ->select(['eggs.id', 'eggs.name'])
-                                    ->groupBy('eggs.id', 'eggs.name')
                                     ->orderBy('eggs.name');
                             })
                             ->preload(),
