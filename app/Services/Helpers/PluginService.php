@@ -168,7 +168,7 @@ class PluginService
                 ->unique()
                 ->toArray();
 
-            $success = $this->composer->requirePackages($composerPackages);
+            $success = $this->composer->setWorkingPath(base_path())->requirePackages($composerPackages);
 
             if (!$success) {
                 throw new Exception("Could not require composer packages for plugin '{$plugin->id}'");
