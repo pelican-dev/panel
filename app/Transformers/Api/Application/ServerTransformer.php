@@ -85,6 +85,7 @@ class ServerTransformer extends BaseTransformer
             'container' => [
                 'startup_command' => $server->startup,
                 'image' => $server->image,
+                'docker_labels' => $server->docker_labels ?? [],
                 // This field is deprecated, please use "status".
                 'installed' => $server->isInstalled() ? 1 : 0,
                 'environment' => $this->environmentService->handle($server),

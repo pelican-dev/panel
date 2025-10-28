@@ -181,6 +181,8 @@ class Server extends Model implements Validatable
         'startup' => ['required', 'string'],
         'skip_scripts' => ['sometimes', 'boolean'],
         'image' => ['required', 'string', 'max:255'],
+        'docker_labels' => ['array'],
+        'docker_labels.*' => ['string'],
         'database_limit' => ['present', 'nullable', 'integer', 'min:0'],
         'allocation_limit' => ['sometimes', 'nullable', 'integer', 'min:0'],
         'backup_limit' => ['present', 'nullable', 'integer', 'min:0'],
