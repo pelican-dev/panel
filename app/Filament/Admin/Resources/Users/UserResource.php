@@ -188,7 +188,7 @@ class UserResource extends Resource
                                     ->hintAction(
                                         Action::make('password_reset')
                                             ->label(trans('admin/user.password_reset'))
-                                            ->hidden(fn () => config('mail.default', 'log') === 'log')
+                                            ->hidden(fn (string $operation) => $operation === 'create' || config('mail.default', 'log') === 'log')
                                             ->icon('tabler-send')
                                             ->action(function (User $user) {
                                                 $status = Password::broker(Filament::getPanel('app')->getAuthPasswordBroker())->sendResetLink([
