@@ -77,7 +77,7 @@ class DatabaseHostController extends ApplicationApiController
         return $this->fractal->item($databaseHost)
             ->transformWith($this->getTransformer(DatabaseHostTransformer::class))
             ->addMeta([
-                'resource' => route('api.application.databases.view', [
+                'resource' => route('api.application.databasehosts.view', [
                     'database_host' => $databaseHost->id,
                 ]),
             ])
