@@ -24,6 +24,7 @@ use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -125,6 +126,7 @@ class MountResource extends Resource
                     ToggleButtons::make('read_only')
                         ->label(trans('admin/mount.read_only'))
                         ->helperText(trans('admin/mount.read_only_help'))
+                        ->stateCast(new BooleanStateCast(false))
                         ->options([
                             false => trans('admin/mount.toggles.writable'),
                             true => trans('admin/mount.toggles.read_only'),
