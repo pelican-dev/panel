@@ -25,8 +25,10 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -54,22 +56,87 @@ class EditEgg extends EditRecord
                         ->columns(['default' => 2, 'sm' => 2, 'md' => 4, 'lg' => 6])
                         ->icon('tabler-egg')
                         ->schema([
-                            FileUpload::make('image')
-                                ->hiddenLabel()
-                                ->avatar()
-                                ->alignCenter()
-                                ->imagePreviewHeight('50')
-                                ->previewable()
-                                ->openable(false)
-                                ->downloadable(false)
-                                ->maxSize(1024)
-                                ->maxFiles(1)
-                                ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 1, 'lg' => 1])
-                                ->saveUploadedFileUsing(function ($file, $state, $record) {
-                                    $prefix = "data:{$file->getMimeType()};base64,";
+                            Image::make(fn ($record) => $record->image, '')
+                                ->imageSize(65),
+                            Action::make('uploadIcon')
+                                ->iconButton()
+                                ->icon('tabler-photo-up')
+                                ->modal()
+                                ->modalHeading('')
+                                ->schema([
+                                    Tabs::make()
+                                        ->contained(false)
+                                        ->tabs([
+                                            Tab::make('fromURL')
+                                                ->label('From URL')
+                                                ->schema([
+                                                    Hidden::make('base64Image'),
+                                                    TextInput::make('image_url')
+                                                        ->label('Image URL')
+                                                        ->reactive()
+                                                        ->autocomplete(false)
+                                                        ->debounce(500)
+                                                        ->afterStateUpdated(function ($state, callable $set, $get, $record) {
+                                                            if ($state) {
+                                                                try {
+                                                                    $imageContent = file_get_contents($state);
 
-                                    return $prefix . base64_encode(file_get_contents($file->getRealPath()));
-                                }),
+                                                                    if (!$imageContent) {
+                                                                        throw new \Exception('Error: Could not fetch image.');
+                                                                    }
+
+                                                                    $mimeTypes = [
+                                                                        'png' => 'image/png',
+                                                                        'jpg' => 'image/jpeg',
+                                                                        'jpeg' => 'image/jpeg',
+                                                                        'gif' => 'image/gif',
+                                                                        'webp' => 'image/webp',
+                                                                        'svg' => 'image/svg+xml',
+                                                                    ];
+                                                                    $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
+                                                                    $mimeType = $mimeTypes[$extension] ?? 'image/png';
+                                                                    $base64 = 'data:' . $mimeType . ';base64,' . base64_encode($imageContent);
+
+                                                                    $set('base64Image', $base64);
+                                                                    $set('image_url_error', null);
+                                                                } catch (\Exception $e) {
+                                                                    $set('image_url_error', $e->getMessage());
+                                                                }
+                                                            } else {
+                                                                $set('image_url_error', null);
+                                                            }
+                                                        }),
+                                                    TextEntry::make('image_url_error')
+                                                        ->hiddenLabel()
+                                                        ->visible(fn ($get) => $get('image_url_error') !== null)
+                                                        ->afterStateHydrated(fn ($set, $get) => $get('image_url_error')),
+                                                    Image::make(fn (Get $get) => $get('image_url'), '')
+                                                        ->imageSize(65)
+                                                        ->visible(fn ($get) => $get('image_url') && !$get('image_url_error'))
+                                                        ->alignCenter(),
+                                                ]),
+                                            Tab::make('fromFile')
+                                                ->label('From File')
+                                                ->schema([
+                                                    FileUpload::make('image')
+                                                        ->avatar()
+                                                        ->imagePreviewHeight('50')
+                                                        ->previewable()
+                                                        ->openable(false)
+                                                        ->downloadable(false)
+                                                        ->maxSize(1024)
+                                                        ->maxFiles(1)
+                                                        ->columnSpan(1)
+                                                        ->saveUploadedFileUsing(function ($file, Set $set) {
+                                                            $prefix = "data:{$file->getMimeType()};base64,";
+
+                                                            $set('base64Image', $prefix . base64_encode(file_get_contents($file->getRealPath())));
+
+                                                            return $prefix . base64_encode(file_get_contents($file->getRealPath()));
+                                                        }),
+                                                ]),
+                                        ]),
+                                ]),
                             TextInput::make('name')
                                 ->label(trans('admin/egg.name'))
                                 ->required()
