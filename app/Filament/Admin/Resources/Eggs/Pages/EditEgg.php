@@ -16,6 +16,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CodeEditor;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
@@ -120,6 +121,20 @@ class EditEgg extends EditRecord
                                 ->keyLabel(trans('admin/egg.docker_name'))
                                 ->valueLabel(trans('admin/egg.docker_uri'))
                                 ->helperText(trans('admin/egg.docker_help')),
+                            FileUpload::make('image')
+                                ->label('Egg Icon')
+                                ->avatar()
+                                ->imagePreviewHeight('50')
+                                ->previewable()
+                                ->openable(false)
+                                ->downloadable(false)
+                                ->maxSize(1024)
+                                ->maxFiles(1)
+                                ->saveUploadedFileUsing(function ($file, $state, $record) {
+                                    $prefix = "data:{$file->getMimeType()};base64,";
+
+                                    return $prefix . base64_encode(file_get_contents($file->getRealPath()));
+                                }),
                         ]),
                     Tab::make('process_management')
                         ->label(trans('admin/egg.tabs.process_management'))
