@@ -13,6 +13,8 @@ return [
     'import' => [
         'file' => 'File',
         'url' => 'URL',
+        'image_url' => 'Image URL',
+        'image_error' => 'Could not fetch image.',
         'egg_help' => 'This should be the raw .json/.yaml file',
         'url_help' => 'URLs must point directly to the raw .json/.yaml file',
         'add_url' => 'New URL',
@@ -20,6 +22,7 @@ return [
         'import_success' => 'Import Success',
         'github' => 'Add from Github',
         'refresh' => 'Refresh',
+        'import_image' => 'Import Image',
     ],
     'export' => [
         'modal' => 'How would you like to export :egg ?',
