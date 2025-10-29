@@ -51,36 +51,58 @@ class EditEgg extends EditRecord
                 Tabs::make()->tabs([
                     Tab::make('configuration')
                         ->label(trans('admin/egg.tabs.configuration'))
-                        ->columns(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 4])
+                        ->columns(['default' => 2, 'sm' => 2, 'md' => 4, 'lg' => 6])
                         ->icon('tabler-egg')
                         ->schema([
+                            FileUpload::make('image')
+                                ->hiddenLabel()
+                                ->avatar()
+                                ->alignCenter()
+                                ->imagePreviewHeight('50')
+                                ->previewable()
+                                ->openable(false)
+                                ->downloadable(false)
+                                ->maxSize(1024)
+                                ->maxFiles(1)
+                                ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 1, 'lg' => 1])
+                                ->saveUploadedFileUsing(function ($file, $state, $record) {
+                                    $prefix = "data:{$file->getMimeType()};base64,";
+
+                                    return $prefix . base64_encode(file_get_contents($file->getRealPath()));
+                                }),
                             TextInput::make('name')
                                 ->label(trans('admin/egg.name'))
                                 ->required()
                                 ->maxLength(255)
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
+                                ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 3, 'lg' => 2])
                                 ->helperText(trans('admin/egg.name_help')),
+                            Textarea::make('description')
+                                ->label(trans('admin/egg.description'))
+                                ->rows(3)
+                                ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 4, 'lg' => 3])
+                                ->helperText(trans('admin/egg.description_help')),
+                            TextInput::make('id')
+                                ->label(trans('admin/egg.egg_id'))
+                                ->columnSpan(1)
+                                ->disabled(),
                             TextInput::make('uuid')
                                 ->label(trans('admin/egg.egg_uuid'))
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                                 ->helperText(trans('admin/egg.uuid_help')),
-                            TextInput::make('id')
-                                ->label(trans('admin/egg.egg_id'))
-                                ->disabled(),
-                            Textarea::make('description')
-                                ->label(trans('admin/egg.description'))
-                                ->rows(3)
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
-                                ->helperText(trans('admin/egg.description_help')),
                             TextInput::make('author')
                                 ->label(trans('admin/egg.author'))
                                 ->required()
                                 ->maxLength(255)
                                 ->email()
                                 ->disabled()
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                                 ->helperText(trans('admin/egg.author_help_edit')),
+                            Toggle::make('force_outgoing_ip')
+                                ->inline(false)
+                                ->label(trans('admin/egg.force_ip'))
+                                ->columnSpan(1)
+                                ->hintIcon('tabler-question-mark', trans('admin/egg.force_ip_help')),
                             KeyValue::make('startup_commands')
                                 ->label(trans('admin/egg.startup_commands'))
                                 ->live()
@@ -94,24 +116,20 @@ class EditEgg extends EditRecord
                                 ->label(trans('admin/egg.file_denylist'))
                                 ->placeholder('denied-file.txt')
                                 ->helperText(trans('admin/egg.file_denylist_help'))
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
-                            TagsInput::make('features')
-                                ->label(trans('admin/egg.features'))
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 1]),
-                            Toggle::make('force_outgoing_ip')
-                                ->inline(false)
-                                ->label(trans('admin/egg.force_ip'))
-                                ->hintIcon('tabler-question-mark', trans('admin/egg.force_ip_help')),
-                            Hidden::make('script_is_privileged')
-                                ->helperText('The docker images available to servers using this egg.'),
-                            TagsInput::make('tags')
-                                ->label(trans('admin/egg.tags'))
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                                ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 2, 'lg' => 3]),
                             TextInput::make('update_url')
                                 ->label(trans('admin/egg.update_url'))
                                 ->url()
                                 ->hintIcon('tabler-question-mark', trans('admin/egg.update_url_help'))
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                                ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 2, 'lg' => 3]),
+                            TagsInput::make('features')
+                                ->label(trans('admin/egg.features'))
+                                ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 2, 'lg' => 3]),
+                            Hidden::make('script_is_privileged')
+                                ->helperText('The docker images available to servers using this egg.'),
+                            TagsInput::make('tags')
+                                ->label(trans('admin/egg.tags'))
+                                ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 2, 'lg' => 3]),
                             KeyValue::make('docker_images')
                                 ->label(trans('admin/egg.docker_images'))
                                 ->live()
@@ -121,20 +139,6 @@ class EditEgg extends EditRecord
                                 ->keyLabel(trans('admin/egg.docker_name'))
                                 ->valueLabel(trans('admin/egg.docker_uri'))
                                 ->helperText(trans('admin/egg.docker_help')),
-                            FileUpload::make('image')
-                                ->label('Egg Icon')
-                                ->avatar()
-                                ->imagePreviewHeight('50')
-                                ->previewable()
-                                ->openable(false)
-                                ->downloadable(false)
-                                ->maxSize(1024)
-                                ->maxFiles(1)
-                                ->saveUploadedFileUsing(function ($file, $state, $record) {
-                                    $prefix = "data:{$file->getMimeType()};base64,";
-
-                                    return $prefix . base64_encode(file_get_contents($file->getRealPath()));
-                                }),
                         ]),
                     Tab::make('process_management')
                         ->label(trans('admin/egg.tabs.process_management'))
