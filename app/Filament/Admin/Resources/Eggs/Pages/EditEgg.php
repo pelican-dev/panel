@@ -26,14 +26,18 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\IconSize;
 use Illuminate\Validation\Rules\Unique;
 
 class EditEgg extends EditRecord
@@ -56,85 +60,144 @@ class EditEgg extends EditRecord
                         ->columns(['default' => 2, 'sm' => 2, 'md' => 4, 'lg' => 6])
                         ->icon('tabler-egg')
                         ->schema([
-                            Image::make(fn ($record) => $record->image, '')
-                                ->imageSize(65),
-                            Action::make('uploadIcon')
-                                ->iconButton()
-                                ->icon('tabler-photo-up')
-                                ->modal()
-                                ->modalHeading('')
+                            Grid::make(2)
+                                ->columnSpan(1)
                                 ->schema([
-                                    Tabs::make()
-                                        ->contained(false)
-                                        ->tabs([
-                                            Tab::make('fromURL')
-                                                ->label('From URL')
+                                    Image::make('', '')
+                                        ->hidden(fn ($record) => !$record->image)
+                                        ->url(fn ($record) => $record->image)
+                                        ->alt('')
+                                        ->alignJustify()
+                                        ->imageSize(150)
+                                        ->columnSpanFull(),
+                                    Flex::make([
+                                            Action::make('uploadIcon')
+                                                ->iconButton()
+                                                ->iconSize(IconSize::Large)
+                                                ->icon('tabler-photo-up')
+                                                ->modal()
+                                                ->modalHeading('')
                                                 ->schema([
-                                                    Hidden::make('base64Image'),
-                                                    TextInput::make('image_url')
-                                                        ->label('Image URL')
-                                                        ->reactive()
-                                                        ->autocomplete(false)
-                                                        ->debounce(500)
-                                                        ->afterStateUpdated(function ($state, callable $set, $get, $record) {
-                                                            if ($state) {
-                                                                try {
-                                                                    $imageContent = file_get_contents($state);
+                                                    Tabs::make()
+                                                        ->contained(false)
+                                                        ->tabs([
+                                                            Tab::make('fromURL')
+                                                                ->label('From URL')
+                                                                ->schema([
+                                                                    Hidden::make('base64Image'),
+                                                                    TextInput::make('image_url')
+                                                                        ->label('Image URL')
+                                                                        ->reactive()
+                                                                        ->autocomplete(false)
+                                                                        ->debounce(500)
+                                                                        ->afterStateUpdated(function ($state, callable $set, $get, $record) {
+                                                                            if ($state) {
+                                                                                try {
+                                                                                    $imageContent = @file_get_contents($state);
 
-                                                                    if (!$imageContent) {
-                                                                        throw new \Exception('Error: Could not fetch image.');
-                                                                    }
+                                                                                    if (!$imageContent) {
+                                                                                        throw new \Exception('Could not fetch image.');
+                                                                                    }
 
-                                                                    $mimeTypes = [
-                                                                        'png' => 'image/png',
-                                                                        'jpg' => 'image/jpeg',
-                                                                        'jpeg' => 'image/jpeg',
-                                                                        'gif' => 'image/gif',
-                                                                        'webp' => 'image/webp',
-                                                                        'svg' => 'image/svg+xml',
-                                                                    ];
-                                                                    $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
-                                                                    $mimeType = $mimeTypes[$extension] ?? 'image/png';
-                                                                    $base64 = 'data:' . $mimeType . ';base64,' . base64_encode($imageContent);
+                                                                                    $mimeTypes = [
+                                                                                        'png' => 'image/png',
+                                                                                        'jpg' => 'image/jpeg',
+                                                                                        'jpeg' => 'image/jpeg',
+                                                                                        'gif' => 'image/gif',
+                                                                                        'webp' => 'image/webp',
+                                                                                        'svg' => 'image/svg+xml',
+                                                                                    ];
+                                                                                    $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
+                                                                                    $mimeType = $mimeTypes[$extension] ?? 'image/png';
+                                                                                    $base64 = 'data:' . $mimeType . ';base64,' . base64_encode($imageContent);
 
-                                                                    $set('base64Image', $base64);
-                                                                    $set('image_url_error', null);
-                                                                } catch (\Exception $e) {
-                                                                    $set('image_url_error', $e->getMessage());
-                                                                }
-                                                            } else {
-                                                                $set('image_url_error', null);
-                                                            }
-                                                        }),
-                                                    TextEntry::make('image_url_error')
-                                                        ->hiddenLabel()
-                                                        ->visible(fn ($get) => $get('image_url_error') !== null)
-                                                        ->afterStateHydrated(fn ($set, $get) => $get('image_url_error')),
-                                                    Image::make(fn (Get $get) => $get('image_url'), '')
-                                                        ->imageSize(65)
-                                                        ->visible(fn ($get) => $get('image_url') && !$get('image_url_error'))
-                                                        ->alignCenter(),
-                                                ]),
-                                            Tab::make('fromFile')
-                                                ->label('From File')
-                                                ->schema([
-                                                    FileUpload::make('image')
-                                                        ->avatar()
-                                                        ->imagePreviewHeight('50')
-                                                        ->previewable()
-                                                        ->openable(false)
-                                                        ->downloadable(false)
-                                                        ->maxSize(1024)
-                                                        ->maxFiles(1)
-                                                        ->columnSpan(1)
-                                                        ->saveUploadedFileUsing(function ($file, Set $set) {
-                                                            $prefix = "data:{$file->getMimeType()};base64,";
+                                                                                    $set('base64Image', $base64);
+                                                                                    $set('image_url_error', null);
+                                                                                } catch (\Exception $e) {
+                                                                                    $set('image_url_error', $e->getMessage());
+                                                                                }
+                                                                            } else {
+                                                                                $set('image_url_error', null);
+                                                                            }
+                                                                        }),
+                                                                    TextEntry::make('image_url_error')
+                                                                        ->hiddenLabel()
+                                                                        ->visible(fn ($get) => $get('image_url_error') !== null)
+                                                                        ->afterStateHydrated(fn ($set, $get) => $get('image_url_error')),
+                                                                    Image::make(fn (Get $get) => $get('image_url'), '')
+                                                                        ->imageSize(150)
+                                                                        ->visible(fn ($get) => $get('image_url') && !$get('image_url_error'))
+                                                                        ->alignCenter(),
+                                                                ]),
+                                                            Tab::make('fromFile')
+                                                                ->label('From File')
+                                                                ->schema([
+                                                                    FileUpload::make('image')
+                                                                        ->hiddenLabel()
+                                                                        ->avatar()
+                                                                        ->imagePreviewHeight('65')
+                                                                        ->previewable()
+                                                                        ->openable(false)
+                                                                        ->downloadable(false)
+                                                                        ->maxSize(1024)
+                                                                        ->maxFiles(1)
+                                                                        ->columnSpanFull()
+                                                                        ->alignCenter()
+                                                                        ->imageEditor()
+                                                                        ->saveUploadedFileUsing(function ($file, Set $set) {
+                                                                            $base64 = "data:{$file->getMimeType()};base64,". base64_encode(file_get_contents($file->getRealPath()));
+                                                                            $set('base64Image', $base64);
 
-                                                            $set('base64Image', $prefix . base64_encode(file_get_contents($file->getRealPath())));
+                                                                            return $base64;
+                                                                        }),
+                                                                ]),
+                                                        ]),
+                                                ])
+                                                ->action(function (array $data, $record): void {
+                                                    $base64 = $data['base64Image'] ?? null;
 
-                                                            return $prefix . base64_encode(file_get_contents($file->getRealPath()));
-                                                        }),
-                                                ]),
+                                                    if (empty($base64) && !empty($data['image'])) {
+                                                        $base64 = $data['image'];
+                                                    }
+
+                                                    if (!empty($base64)) {
+                                                        $record->update([
+                                                            'image' => $base64,
+                                                        ]);
+
+                                                        Notification::make()
+                                                            ->title('Image updated successfully!')
+                                                            ->success()
+                                                            ->send();
+
+                                                        $record->refresh();
+                                                    } else {
+                                                        Notification::make()
+                                                            ->title('No image provided')
+                                                            ->warning()
+                                                            ->send();
+                                                    }
+                                                }),
+                                            Action::make('deleteImage')
+                                                ->visible(fn ($record) => $record->image)
+                                                ->label('Delete Image')
+                                                ->icon('tabler-trash')
+                                                ->iconButton()
+                                                ->iconSize(IconSize::Large)
+                                                ->color('danger')
+                                                ->action(function ($record) {
+
+                                                    $record->update([
+                                                        'image' => null,
+                                                    ]);
+
+                                                    Notification::make()
+                                                        ->title('Image deleted successfully!')
+                                                        ->success()
+                                                        ->send();
+
+                                                    $record->refresh();
+                                                }),
                                         ]),
                                 ]),
                             TextInput::make('name')
