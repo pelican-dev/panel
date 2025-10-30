@@ -36,10 +36,12 @@ abstract class PanelProvider extends BasePanelProvider
             ->favicon(config('app.favicon', '/pelican.ico'))
             ->topNavigation(function () {
                 $navigationType = user()?->getCustomization(CustomizationKey::TopNavigation);
+
                 return $navigationType === 'topbar' || $navigationType === true;
             })
             ->topbar(function () {
                 $navigationType = user()?->getCustomization(CustomizationKey::TopNavigation);
+
                 return $navigationType === 'topbar' || $navigationType === 'mixed' || $navigationType === true;
             })
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))

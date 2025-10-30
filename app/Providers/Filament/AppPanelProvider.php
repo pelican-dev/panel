@@ -19,6 +19,7 @@ class AppPanelProvider extends PanelProvider
             ->navigation(false)
             ->topbar(function () {
                 $navigationType = user()?->getCustomization(CustomizationKey::TopNavigation);
+
                 return $navigationType === 'mixed' || $navigationType === 'topbar' || $navigationType === true;
             })
             ->userMenuItems([
