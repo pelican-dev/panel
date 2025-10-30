@@ -33,7 +33,7 @@
             @endif
         </div>
 
-        <div class="flex items-left text-left mb-3 ml-4 pl-4">
+        <div class="text-left mb-3 ml-4 pl-4">
             <p class="text-base text-gray-400">{{ $server->description }}</p>
         </div>
 
