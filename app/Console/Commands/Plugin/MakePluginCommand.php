@@ -6,6 +6,7 @@ use App\Enums\PluginCategory;
 use App\Enums\PluginStatus;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 
 class MakePluginCommand extends Command
 {
@@ -29,7 +30,7 @@ class MakePluginCommand extends Command
     public function handle(): void
     {
         $name = $this->option('name') ?? $this->ask('Name');
-        $id = str_slug(strtolower($name));
+        $id = Str::slug($name);
 
         if ($this->filesystem->exists(plugin_path($id))) {
             $this->error('Plugin with that name already exists!');
@@ -40,8 +41,8 @@ class MakePluginCommand extends Command
         $author = $this->option('author') ?? $this->ask('author', cache('plugin.author'));
         cache()->forever('plugin.author', $author);
 
-        $namespace = $author . '\\' . studly_case($name);
-        $class = studly_case($name . 'Plugin');
+        $namespace = $author . '\\' . Str::studly($name);
+        $class = Str::studly($name . 'Plugin');
 
         if (class_exists('\\' . $namespace . '\\' . $class)) {
             $this->error('Plugin class with that name already exists!');
@@ -97,15 +98,15 @@ class MakePluginCommand extends Command
 
         // Create src directory and create main class
         $this->filesystem->makeDirectory(plugin_path($id, 'src'));
-        $this->filesystem->put(plugin_path($id, 'src', $class . '.php'), str_replace(['$namespace$', '$class$', '$id$'], [$namespace, $class, $id], file_get_contents(__DIR__ . '/Plugin.stub')));
+        $this->filesystem->put(plugin_path($id, 'src', $class . '.php'), Str::replace(['$namespace$', '$class$', '$id$'], [$namespace, $class, $id], file_get_contents(__DIR__ . '/Plugin.stub')));
 
         // Create Providers directory and create service provider
         $this->filesystem->makeDirectory(plugin_path($id, 'src', 'Providers'));
-        $this->filesystem->put(plugin_path($id, 'src', 'Providers', $class . 'Provider.php'), str_replace(['$namespace$', '$class$'], [$namespace, $class], file_get_contents(__DIR__ . '/PluginProvider.stub')));
+        $this->filesystem->put(plugin_path($id, 'src', 'Providers', $class . 'Provider.php'), Str::replace(['$namespace$', '$class$'], [$namespace, $class], file_get_contents(__DIR__ . '/PluginProvider.stub')));
 
         // Create config directory and create config file
         $this->filesystem->makeDirectory(plugin_path($id, 'config'));
-        $this->filesystem->put(plugin_path($id, 'config', $id . '.php'), str_replace(['$name$'], [$name], file_get_contents(__DIR__ . '/PluginConfig.stub')));
+        $this->filesystem->put(plugin_path($id, 'config', $id . '.php'), Str::replace(['$name$'], [$name], file_get_contents(__DIR__ . '/PluginConfig.stub')));
 
         $this->info('Plugin created.');
     }
