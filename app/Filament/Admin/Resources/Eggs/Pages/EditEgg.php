@@ -165,21 +165,21 @@ class EditEgg extends EditRecord
                                                     ]);
 
                                                     Notification::make()
-                                                        ->title('Image updated successfully!')
+                                                        ->title(trans('admin/egg.import.image_updated'))
                                                         ->success()
                                                         ->send();
 
                                                     $record->refresh();
                                                 } else {
                                                     Notification::make()
-                                                        ->title('No image provided')
+                                                        ->title(trans('admin/egg.import.no_image'))
                                                         ->warning()
                                                         ->send();
                                                 }
                                             }),
                                         Action::make('deleteImage')
                                             ->visible(fn ($record) => $record->image)
-                                            ->label('Delete Image')
+                                            ->label('')
                                             ->icon('tabler-trash')
                                             ->iconButton()
                                             ->iconSize(IconSize::Large)
@@ -191,7 +191,7 @@ class EditEgg extends EditRecord
                                                 ]);
 
                                                 Notification::make()
-                                                    ->title('Image deleted successfully!')
+                                                    ->title(trans('admin/egg.import.image_deleted'))
                                                     ->success()
                                                     ->send();
 
