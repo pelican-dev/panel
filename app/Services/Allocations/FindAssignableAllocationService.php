@@ -22,9 +22,10 @@ class FindAssignableAllocationService
 
     /**
      * Finds an existing unassigned allocation and attempts to assign it to the given server.
-     * Behavior depends on the configured mode:
-     * - 'random': Only selects from existing available allocations (no creation)
-     * - 'range': Falls back to creating new allocation from configured port range if none available
+     *
+     * Always attempts to find an existing unassigned allocation first. If create_new is enabled
+     * and no unassigned allocation is available, creates a new one from the configured port range.
+     * If create_new is disabled, throws an exception when no unassigned allocations are available.
      *
      * @throws DisplayException
      * @throws CidrOutOfRangeException
@@ -38,13 +39,18 @@ class FindAssignableAllocationService
             throw new AutoAllocationNotEnabledException();
         }
 
-        $mode = config('panel.client_features.allocations.mode', 'range');
+        $createNew = config('panel.client_features.allocations.create_new', true);
 
         // Attempt to find a given available allocation for a server. If one cannot be found
-        // we will fall back to attempting to create a new allocation that can be used for the
-        // server (only in 'range' mode).
+        // we will fall back to attempting to create a new allocation from the configured range
+        // (only if create_new is enabled).
+        //
+        // Note: We use withoutGlobalScopes() to bypass Filament's tenant scoping when called
+        // from the Server panel context, which would otherwise filter allocations to only
+        // those belonging to the current server (making it impossible to find unassigned ones).
         /** @var Allocation|null $allocation */
-        $allocation = $server->node->allocations()
+        $allocation = Allocation::withoutGlobalScopes()
+            ->where('node_id', $server->node_id)
             ->when($server->allocation, function ($query) use ($server) {
                 $query->where('ip', $server->allocation->ip);
             })
@@ -52,12 +58,12 @@ class FindAssignableAllocationService
             ->inRandomOrder()
             ->first();
 
-        // In 'random' mode, we only pick from existing allocations
-        if ($mode === 'random' && !$allocation) {
+        // If create_new is disabled, only pick from existing allocations
+        if (!$createNew && !$allocation) {
             throw new NoAutoAllocationSpaceAvailableException();
         }
 
-        // In 'range' mode, create a new allocation if none available
+        // If create_new is enabled, create a new allocation if none available
         $allocation = $allocation ?? $this->createNewAllocation($server);
 
         $allocation->update(['server_id' => $server->id]);
@@ -90,7 +96,9 @@ class FindAssignableAllocationService
 
         // Get all the currently allocated ports for the node so that we can figure out
         // which port might be available.
-        $ports = $server->node->allocations()
+        // Use withoutGlobalScopes() to bypass tenant filtering.
+        $ports = Allocation::withoutGlobalScopes()
+            ->where('node_id', $server->node_id)
             ->where('ip', $server->allocation->ip)
             ->whereBetween('port', [$start, $end])
             ->pluck('port');
@@ -115,7 +123,8 @@ class FindAssignableAllocationService
         ]);
 
         /** @var Allocation $allocation */
-        $allocation = $server->node->allocations()
+        $allocation = Allocation::withoutGlobalScopes()
+            ->where('node_id', $server->node_id)
             ->where('ip', $server->allocation->ip)
             ->where('port', $port)
             ->firstOrFail();
