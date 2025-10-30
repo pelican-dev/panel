@@ -11,7 +11,7 @@
     </div>
 
     <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
-        <div class="flex items-center mb-5 gap-2">
+        <div class="flex items-center gap-2{{$server->description ? '' : ' mb-5' }}">
             <x-filament::icon-button
                 :icon="$server->condition->getIcon()"
                 :color="$server->condition->getColor()"
@@ -33,9 +33,11 @@
             @endif
         </div>
 
-        <div class="text-left mb-3 ml-4 pl-4">
+        @if ($server->description)
+        <div class="text-left mb-1 ml-4 pl-4">
             <p class="text-base text-gray-400">{{ $server->description }}</p>
         </div>
+        @endif
 
         <div class="flex justify-between text-center items-center gap-4">
             <div>
