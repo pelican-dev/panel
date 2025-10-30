@@ -17,11 +17,7 @@ class AppPanelProvider extends PanelProvider
             ->default()
             ->breadcrumbs(false)
             ->navigation(false)
-            ->topbar(function () {
-                $navigationType = user()?->getCustomization(CustomizationKey::TopNavigation);
-
-                return $navigationType === 'mixed' || $navigationType === 'topbar' || $navigationType === true;
-            })
+            ->topbar(true)
             ->userMenuItems([
                 Action::make('to_admin')
                     ->label(trans('profile.admin'))
