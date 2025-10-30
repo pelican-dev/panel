@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use AchyutN\FilamentLogViewer\FilamentLogViewer;
+use App\Enums\CustomizationKey;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Panel;
@@ -16,7 +17,10 @@ class AppPanelProvider extends PanelProvider
             ->default()
             ->breadcrumbs(false)
             ->navigation(false)
-            ->topbar(true)
+            ->topbar(function () {
+                $navigationType = user()?->getCustomization(CustomizationKey::TopNavigation);
+                return $navigationType === 'mixed' || $navigationType === 'topbar' || $navigationType === true;
+            })
             ->userMenuItems([
                 Action::make('to_admin')
                     ->label(trans('profile.admin'))
