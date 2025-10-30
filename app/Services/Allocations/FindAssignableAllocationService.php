@@ -21,9 +21,10 @@ class FindAssignableAllocationService
     public function __construct(private AssignmentService $service) {}
 
     /**
-     * Finds an existing unassigned allocation and attempts to assign it to the given server. If
-     * no allocation can be found, a new one will be created with a random port between the defined
-     * range from the configuration.
+     * Finds an existing unassigned allocation and attempts to assign it to the given server.
+     * Behavior depends on the configured mode:
+     * - 'random': Only selects from existing available allocations (no creation)
+     * - 'range': Falls back to creating new allocation from configured port range if none available
      *
      * @throws DisplayException
      * @throws CidrOutOfRangeException
@@ -37,9 +38,11 @@ class FindAssignableAllocationService
             throw new AutoAllocationNotEnabledException();
         }
 
+        $mode = config('panel.client_features.allocations.mode', 'range');
+
         // Attempt to find a given available allocation for a server. If one cannot be found
         // we will fall back to attempting to create a new allocation that can be used for the
-        // server.
+        // server (only in 'range' mode).
         /** @var Allocation|null $allocation */
         $allocation = $server->node->allocations()
             ->when($server->allocation, function ($query) use ($server) {
@@ -49,6 +52,12 @@ class FindAssignableAllocationService
             ->inRandomOrder()
             ->first();
 
+        // In 'random' mode, we only pick from existing allocations
+        if ($mode === 'random' && !$allocation) {
+            throw new NoAutoAllocationSpaceAvailableException();
+        }
+
+        // In 'range' mode, create a new allocation if none available
         $allocation = $allocation ?? $this->createNewAllocation($server);
 
         $allocation->update(['server_id' => $server->id]);
