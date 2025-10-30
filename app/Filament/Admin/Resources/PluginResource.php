@@ -220,14 +220,14 @@ class PluginResource extends Resource
 
                             Notification::make()
                                 ->success()
-                                ->title(trans('admin/plugin.notifications.downloaded'))
+                                ->title(trans('admin/plugin.notifications.imported'))
                                 ->send();
                         } catch (Exception $exception) {
                             report($exception);
 
                             Notification::make()
                                 ->danger()
-                                ->title(trans('admin/plugin.notifications.download_failed'))
+                                ->title(trans('admin/plugin.notifications.import_failed'))
                                 ->body($exception->getMessage())
                                 ->send();
                         }

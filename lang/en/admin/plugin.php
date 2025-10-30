@@ -49,7 +49,7 @@ return [
         'updated' => 'Plugin updated',
         'enabled' => 'Plugin enabled',
         'disabled' => 'Plugin disabled',
-        'downloaded' => 'Plugin downloaded',
-        'download_failed' => 'Could not download plugin',
+        'imported' => 'Plugin imported',
+        'import_failed' => 'Could not import plugin',
     ],
 ];
