@@ -435,7 +435,7 @@ class EditNode extends EditRecord
                                         ])
                                         ->numeric()
                                         ->minValue(-1)
-                                        ->maxValue(100)
+                                        ->maxValue(1000)
                                         ->suffix('%'),
                                 ]),
                             Grid::make()
@@ -496,7 +496,7 @@ class EditNode extends EditRecord
                                         ->required()
                                         ->numeric()
                                         ->minValue(-1)
-                                        ->maxValue(100)
+                                        ->maxValue(1000)
                                         ->suffix('%'),
                                 ]),
                             Grid::make()
@@ -537,7 +537,7 @@ class EditNode extends EditRecord
                                         ->required()
                                         ->numeric()
                                         ->minValue(-1)
-                                        ->maxValue(100)
+                                        ->maxValue(1000)
                                         ->suffix('%'),
                                 ]),
                         ]),
