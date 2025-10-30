@@ -3,7 +3,6 @@
 namespace App\Providers\Filament;
 
 use AchyutN\FilamentLogViewer\FilamentLogViewer;
-use App\Enums\CustomizationKey;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Panel;
