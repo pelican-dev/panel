@@ -90,7 +90,7 @@ class PluginResource extends Resource
                     ->modalHeading('Readme')
                     ->modalSubmitAction(fn (Plugin $plugin) => Action::make('visit_website')
                         ->label(trans('admin/plugin.visit_website'))
-                        ->visible($plugin->url)
+                        ->visible(!is_null($plugin->url))
                         ->url($plugin->url, true)
                     )
                     ->modalCancelActionLabel(trans('filament::components/modal.actions.close.label'))
