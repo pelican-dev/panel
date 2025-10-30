@@ -90,34 +90,66 @@ class EditEgg extends EditRecord
                                                                     ->reactive()
                                                                     ->autocomplete(false)
                                                                     ->debounce(500)
-                                                                    ->afterStateUpdated(function ($state, callable $set, $get, $record) {
-                                                                        if ($state) {
-                                                                            try {
-                                                                                $imageContent = @file_get_contents($state);
-
-                                                                                if (!$imageContent) {
-                                                                                    throw new \Exception(trans('admin/egg.import.image_error'));
-                                                                                }
-
-                                                                                $mimeTypes = [
-                                                                                    'png' => 'image/png',
-                                                                                    'jpg' => 'image/jpeg',
-                                                                                    'jpeg' => 'image/jpeg',
-                                                                                    'gif' => 'image/gif',
-                                                                                    'webp' => 'image/webp',
-                                                                                    'svg' => 'image/svg+xml',
-                                                                                ];
-                                                                                $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
-                                                                                $mimeType = $mimeTypes[$extension] ?? 'image/png';
-                                                                                $base64 = 'data:' . $mimeType . ';base64,' . base64_encode($imageContent);
-
-                                                                                $set('base64Image', $base64);
-                                                                                $set('image_url_error', null);
-                                                                            } catch (\Exception $e) {
-                                                                                $set('image_url_error', $e->getMessage());
-                                                                            }
-                                                                        } else {
+                                                                    ->afterStateUpdated(function ($state, Set $set) {
+                                                                        if (!$state) {
                                                                             $set('image_url_error', null);
+
+                                                                            return;
+                                                                        }
+
+                                                                        try {
+                                                                            if (!filter_var($state, FILTER_VALIDATE_URL)) {
+                                                                                throw new \Exception(trans('admin/egg.import.invalid_url'));
+                                                                            }
+
+                                                                            $allowedExtensions = [
+                                                                                'png' => 'image/png',
+                                                                                'jpg' => 'image/jpeg',
+                                                                                'jpeg' => 'image/jpeg',
+                                                                                'gif' => 'image/gif',
+                                                                                'webp' => 'image/webp',
+                                                                                'svg' => 'image/svg+xml',
+                                                                            ];
+
+                                                                            $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
+
+                                                                            if (!array_key_exists($extension, $allowedExtensions)) {
+                                                                                throw new \Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', $allowedExtensions)]));
+                                                                            }
+
+                                                                            $host = parse_url($state, PHP_URL_HOST);
+                                                                            $ip = gethostbyname($host);
+
+                                                                            if (
+                                                                                filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false
+                                                                            ) {
+                                                                                throw new \Exception(trans('admin/egg.import.no_local_ip'));
+                                                                            }
+
+                                                                            $context = stream_context_create([
+                                                                                'http' => ['timeout' => 3],
+                                                                                'https' => [
+                                                                                    'timeout' => 3,
+                                                                                    'verify_peer' => false,
+                                                                                    'verify_peer_name' => false,
+                                                                                ],
+                                                                            ]);
+
+                                                                            $imageContent = @file_get_contents($state, false, $context);
+
+                                                                            if (!$imageContent) {
+                                                                                throw new \Exception(trans('admin/egg.import.image_error'));
+                                                                            }
+
+                                                                            $mimeType = $allowedExtensions[$extension];
+                                                                            $base64 = 'data:' . $mimeType . ';base64,' . base64_encode($imageContent);
+
+                                                                            $set('base64Image', $base64);
+                                                                            $set('image_url_error', null);
+
+                                                                        } catch (\Exception $e) {
+                                                                            $set('image_url_error', $e->getMessage());
+                                                                            $set('base64Image', null);
                                                                         }
                                                                     }),
                                                                 TextEntry::make('image_url_error')
