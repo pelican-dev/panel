@@ -1,7 +1,6 @@
 @php
     $actiongroup = \App\Filament\App\Resources\Servers\Pages\ListServers::getPowerActionGroup()->record($server);
 @endphp
-
 <div wire:poll.15s
      class="relative cursor-pointer"
      x-on:click="window.location.href = '{{ \App\Filament\Server\Pages\Console::getUrl(panel: 'server', tenant: $server) }}'">
@@ -10,7 +9,13 @@
          style="background-color: {{ $server->condition->getColor(true) }};">
     </div>
 
-    <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
+    <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3"
+         @if($server->egg->image)
+             style="background:
+             linear-gradient(rgba(53,53,136,0.10), rgba(24, 24, 27, 0.05)),
+             url('{{ $server->egg->image }}') right no-repeat;"
+        @endif
+    >
         <div class="flex items-center mb-5 gap-2">
             <x-filament::icon-button
                 :icon="$server->condition->getIcon()"
