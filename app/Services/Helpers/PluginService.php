@@ -316,12 +316,6 @@ class PluginService
             $pluginData['meta'] = $metaData;
 
             File::put($path, json_encode($pluginData, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-
-            if (!$this->isDevModeActive()) {
-                // Update model to rebuild sushi cache
-                $plugin = !$plugin instanceof Plugin ? Plugin::findOrFail($plugin) : $plugin;
-                $plugin->update($metaData);
-            }
         }
     }
 

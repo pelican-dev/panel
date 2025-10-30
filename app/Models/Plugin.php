@@ -177,11 +177,6 @@ class Plugin extends Model implements HasPluginSettings
         return $plugins;
     }
 
-    protected function sushiShouldCache(): bool
-    {
-        return !Plugins::isDevModeActive();
-    }
-
     protected function casts(): array
     {
         return [
