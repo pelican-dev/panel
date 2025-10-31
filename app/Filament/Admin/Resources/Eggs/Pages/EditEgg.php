@@ -165,8 +165,6 @@ class EditEgg extends EditRecord
                                                             ->schema([
                                                                 FileUpload::make('image')
                                                                     ->hiddenLabel()
-                                                                    ->avatar()
-                                                                    ->imagePreviewHeight('65')
                                                                     ->previewable()
                                                                     ->openable(false)
                                                                     ->downloadable(false)
