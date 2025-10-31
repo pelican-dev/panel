@@ -38,7 +38,6 @@ class ServerEntry extends Component
                     <div style="
                         position: absolute;
                         inset: 0;
-                        background: linear-gradient(rgba(53,53,136,0.10), rgba(24,24,27,0.30));
                         z-index: 1;
                     "></div>
                 @endif
