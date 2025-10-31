@@ -11,7 +11,10 @@
     </div>
 
     <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
-        <div class="flex items-center gap-2{{$server->description ? '' : ' mb-5' }}">
+        <div @class([
+            'flex items-center gap-2',
+            'mb-5' => !$server->description,
+        ])>
             <x-filament::icon-button
                 :icon="$server->condition->getIcon()"
                 :color="$server->condition->getColor()"
