@@ -24,13 +24,24 @@ class ServerEntry extends Component
                 style="background-color: #D97706;">
             </div>
 
-                <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3"
-                     @if($server->egg->image)
-                         style="background:
-                         linear-gradient(rgba(53,53,136,0.10), rgba(24, 24, 27, 0.05)),
-                         url('{{ $server->egg->image }}') right no-repeat;"
-                    @endif
-                >
+            <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
+                @if($server->egg->image)
+                    <div style="
+                        position: absolute;
+                        inset: 0;
+                        background: url('{{ $server->egg->image }}') right no-repeat;
+                        background-size: contain;
+                        opacity: 0.25;
+                        max-width: 680px;
+                        max-height: 140px;
+                    "></div>
+                    <div style="
+                        inset: 0;
+                        background: linear-gradient(rgba(53,53,136,0.10), rgba(24,24,27,0.30));
+                        z-index: 1;
+                    "></div>
+                @endif
+
                 <div class="flex items-center mb-5 gap-2">
                     <x-filament::loading-indicator class="h-6 w-6" />
                     <h2 class="text-xl font-bold">

@@ -9,13 +9,24 @@
          style="background-color: {{ $server->condition->getColor(true) }};">
     </div>
 
-    <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3"
-         @if($server->egg->image)
-             style="background:
-             linear-gradient(rgba(53,53,136,0.10), rgba(24, 24, 27, 0.05)),
-             url('{{ $server->egg->image }}') right no-repeat;"
+    <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
+        @if($server->egg->image)
+            <div style="
+                position: absolute;
+                inset: 0;
+                background: url('{{ $server->egg->image }}') right no-repeat;
+                background-size: contain;
+                opacity: 0.25;
+                max-width: 680px;
+                max-height: 140px;
+        "></div>
+            <div style="
+                inset: 0;
+                background: linear-gradient(rgba(53,53,136,0.10), rgba(24,24,27,0.30));
+                z-index: 1;
+            "></div>
         @endif
-    >
+
         <div class="flex items-center mb-5 gap-2">
             <x-filament::icon-button
                 :icon="$server->condition->getIcon()"
@@ -31,7 +42,8 @@
             </h2>
             @if ($actiongroup->isVisible())
                 <div class="end-0">
-                    <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1" x-on:click.stop>
+                    <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1"
+                         x-on:click.stop>
                         {{ $actiongroup }}
                     </div>
                 </div>
