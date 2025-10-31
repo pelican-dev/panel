@@ -33,9 +33,13 @@ else
   echo "APP_KEY is already set."
 fi
 
-## make sure the db is set up
-echo -e "Migrating Database"
-php artisan migrate --force
+## make sure the db is set up unless an existing app is detected
+if [ -z "${APP_EXISTS:-}" ]; then
+  echo -e "Migrating Database"
+  php artisan migrate --force
+else
+  echo -e "Skipping database migration because APP_EXISTS is set"
+fi
 
 echo -e "Optimizing Filament"
 php artisan filament:optimize
