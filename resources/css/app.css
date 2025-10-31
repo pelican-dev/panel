@@ -24,4 +24,6 @@
 /* Required by widgets */
 @import '../../vendor/filament/widgets/resources/css/index.css';
 
+@source '../../vendor/gboquizosanchez/filament-log-viewer/resources/views/**/*.blade.php';
+
 @variant dark (&:where(.dark, .dark *));

@@ -3,17 +3,17 @@
     "description": "The free, open-source game management panel. Supporting Minecraft, Spigot, BungeeCord, and SRCDS servers.",
     "license": "AGPL-3.0-only",
     "require": {
-        "php": "^8.2 || ^8.3 || ^8.4",
+        "php": "^8.3 || ^8.4",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "ext-zip": "*",
-        "achyutn/filament-log-viewer": "^1.4",
         "aws/aws-sdk-php": "^3.356",
         "calebporzio/sushi": "^2.5",
         "dedoc/scramble": "^0.12.10",
         "filament/filament": "~4.0",
+        "gboquizosanchez/filament-log-viewer": "^2.1",
         "guzzlehttp/guzzle": "^7.10",
         "laravel/framework": "^12.31",
         "laravel/helpers": "^1.7",
@@ -81,7 +81,8 @@
             "@php artisan filament:upgrade"
         ],
         "post-install-cmd": [
-            "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+            "php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "php -r \"$env = file_get_contents('.env'); if (strpos($env, 'FILAMENT_LOG_VIEWER_DRIVER=') === false) { file_put_contents('.env', rtrim($env) . PHP_EOL . 'FILAMENT_LOG_VIEWER_DRIVER=raw' . PHP_EOL); }\""
         ]
     },
     "config": {
@@ -92,7 +93,7 @@
             "pestphp/pest-plugin": true
         },
         "platform": {
-            "php": "8.2"
+            "php": "8.3"
         }
     },
     "minimum-stability": "stable",
