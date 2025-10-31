@@ -31,7 +31,7 @@ class ServerEntry extends Component
                         inset: 0;
                         background: url('{{ $server->egg->image }}') right no-repeat;
                         background-size: contain;
-                        opacity: 0.25;
+                        opacity: 0.20;
                         max-width: 680px;
                         max-height: 140px;
                     "></div>

@@ -2,16 +2,13 @@
 
 namespace App\Filament\Admin\Resources\Eggs\Pages;
 
-use App\Enums\ServerResourceType;
 use App\Filament\Admin\Resources\Eggs\EggResource;
-use App\Filament\App\Resources\Servers\Pages\ListServers;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
 use App\Filament\Components\Actions\UpdateEggAction;
 use App\Filament\Components\Actions\UpdateEggBulkAction;
 use App\Filament\Components\Tables\Filters\TagsFilter;
 use App\Models\Egg;
-use App\Models\Server;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
@@ -22,7 +19,6 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Schemas\Components\Html;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
