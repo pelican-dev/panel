@@ -17,11 +17,6 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->homeUrl('/')
             ->breadcrumbs(false)
-            ->topbar(function () {
-                $navigationType = user()?->getCustomization(\App\Enums\CustomizationKey::TopNavigation);
-
-                return $navigationType === 'mixed' || $navigationType === 'topbar' || $navigationType === true;
-            })
             ->sidebarCollapsibleOnDesktop(fn () => !$panel->hasTopNavigation())
             ->userMenuItems([
                 Action::make('exit_admin')

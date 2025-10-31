@@ -20,11 +20,6 @@ class ServerPanelProvider extends PanelProvider
             ->path('server')
             ->homeUrl(fn () => Filament::getPanel('app')->getUrl())
             ->tenant(Server::class, 'uuid_short')
-            ->topbar(function () {
-                $navigationType = user()?->getCustomization(\App\Enums\CustomizationKey::TopNavigation);
-
-                return $navigationType === 'mixed' || $navigationType === 'topbar' || $navigationType === true;
-            })
             ->userMenuItems([
                 Action::make('to_serverList')
                     ->label(trans('profile.server_list'))
