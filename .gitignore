@@ -21,6 +21,7 @@ yarn-error.log
 /.idea
 /.nova
 /.vscode
+/.ddev
 
 public/assets/manifest.json
 /database/*.sqlite*
