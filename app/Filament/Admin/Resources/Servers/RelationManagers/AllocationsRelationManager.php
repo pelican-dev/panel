@@ -60,16 +60,35 @@ class AllocationsRelationManager extends RelationManager
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
                     ->default(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
                     ->label(trans('admin/server.primary')),
+                IconColumn::make('is_locked')
+                    ->label(trans('admin/server.locked'))
+                    ->tooltip(trans('admin/server.locked_helper'))
+                    ->trueIcon('tabler-lock')
+                    ->falseIcon('tabler-lock-open'),
             ])
             ->recordActions([
                 Action::make('make-primary')
                     ->label(trans('admin/server.make_primary'))
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
                     ->hidden(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id),
+                Action::make('lock')
+                    ->label(trans('admin/server.lock'))
+                    ->action(fn (Allocation $allocation) => $allocation->update(['is_locked' => true]) && $this->deselectAllTableRecords())
+                    ->hidden(fn (Allocation $allocation) => $allocation->is_locked),
+                Action::make('unlock')
+                    ->label(trans('admin/server.unlock'))
+                    ->action(fn (Allocation $allocation) => $allocation->update(['is_locked' => false]) && $this->deselectAllTableRecords())
+                    ->visible(fn (Allocation $allocation) => $allocation->is_locked),
                 DissociateAction::make()
                     ->after(function (Allocation $allocation) {
-                        $allocation->update(['notes' => null]);
-                        $this->getOwnerRecord()->allocation_id && $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id]);
+                        $allocation->update([
+                            'notes' => null,
+                            'is_locked' => false,
+                        ]);
+
+                        if (!$this->getOwnerRecord()->allocation_id) {
+                            $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id]);
+                        }
                     }),
             ])
             ->headerActions([
@@ -116,13 +135,25 @@ class AllocationsRelationManager extends RelationManager
                     ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
                     ->recordSelectSearchColumns(['ip', 'port'])
                     ->label(trans('admin/server.add_allocation'))
-                    ->after(fn (array $data) => !$this->getOwnerRecord()->allocation_id && $this->getOwnerRecord()->update(['allocation_id' => $data['recordId'][0]])),
+                    ->after(function (array $data) {
+                        Allocation::whereIn('id', array_values(array_unique($data['recordId'])))->update(['is_locked' => true]);
+
+                        if (!$this->getOwnerRecord()->allocation_id) {
+                            $this->getOwnerRecord()->update(['allocation_id' => $data['recordId'][0]]);
+                        }
+                    }),
             ])
             ->groupedBulkActions([
                 DissociateBulkAction::make()
                     ->after(function () {
-                        Allocation::whereNull('server_id')->update(['notes' => null]);
-                        $this->getOwnerRecord()->allocation_id && $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id]);
+                        Allocation::whereNull('server_id')->update([
+                            'notes' => null,
+                            'is_locked' => false,
+                        ]);
+
+                        if (!$this->getOwnerRecord()->allocation_id) {
+                            $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id]);
+                        }
                     }),
             ]);
     }

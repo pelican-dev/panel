@@ -12,4 +12,6 @@ return [
     'primary' => 'Primary',
     'make' => 'Make',
     'delete' => 'Delete',
+    'locked' => 'Locked?',
+    'locked_helper' => 'Locked allocations can only be deleted by admins',
 ];
