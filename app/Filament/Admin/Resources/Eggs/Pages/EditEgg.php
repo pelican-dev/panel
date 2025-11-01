@@ -130,15 +130,19 @@ class EditEgg extends EditRecord
                                                                                 'http' => ['timeout' => 3],
                                                                                 'https' => [
                                                                                     'timeout' => 3,
-                                                                                    'verify_peer' => false,
-                                                                                    'verify_peer_name' => false,
+                                                                                    'verify_peer' => true,
+                                                                                    'verify_peer_name' => true,
                                                                                 ],
                                                                             ]);
 
-                                                                            $imageContent = @file_get_contents($state, false, $context);
+                                                                            $imageContent = @file_get_contents($state, false, $context, 0, 1048576); // 1024KB
 
                                                                             if (!$imageContent) {
                                                                                 throw new \Exception(trans('admin/egg.import.image_error'));
+                                                                            }
+
+                                                                            if (strlen($imageContent) >= 1048576) {
+                                                                                throw new \Exception(trans('admin/egg.import.image_too_large'));
                                                                             }
 
                                                                             $mimeType = $allowedExtensions[$extension];
