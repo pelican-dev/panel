@@ -117,7 +117,6 @@ class PanelInstaller extends SimplePage implements HasForms
             ->selectablePlaceholder(false)
             ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
             ->afterStateUpdated(fn ($state, Application $app) => $app->setLocale($state ?? config('app.locale')))
-            ->native(false)
             ->columnStart(4);
     }
 

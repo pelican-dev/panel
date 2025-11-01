@@ -56,8 +56,7 @@ class JavaVersionSchema implements FeatureSchemaInterface
                     ->default(fn () => $server->image)
                     ->notIn(fn () => $server->image)
                     ->required()
-                    ->preload()
-                    ->native(false),
+                    ->preload(),
             ])
             ->action(function (array $data, DaemonServerRepository $serverRepository) use ($server) {
                 try {
