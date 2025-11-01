@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Nodes\RelationManagers;
 
 use App\Filament\Admin\Resources\Servers\Pages\CreateServer;
+use App\Filament\Components\Actions\BulkUpdateAllocationIpAction;
 use App\Models\Allocation;
 use App\Models\Node;
 use App\Services\Allocations\AssignmentService;
@@ -120,6 +121,9 @@ class AllocationsRelationManager extends RelationManager
                     ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord(), $data)),
             ])
             ->groupedBulkActions([
+                BulkUpdateAllocationIpAction::make()
+                    ->availableIps($this->getOwnerRecord()->ipAddresses())
+                    ->authorize(fn () => user()?->can('update', $this->getOwnerRecord())),
                 DeleteBulkAction::make()
                     ->authorize(fn () => user()?->can('update', $this->getOwnerRecord())),
             ]);
