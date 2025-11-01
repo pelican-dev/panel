@@ -38,7 +38,7 @@
 
         @if ($server->description)
         <div class="text-left mb-1 ml-4 pl-4">
-            <p class="text-base text-gray-400">{{ $server->description }}</p>
+            <p class="text-base text-gray-400">{{ Str::limit($server->description, 40, preserveWords: true) }}</p>
         </div>
         @endif
 
