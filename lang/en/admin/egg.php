@@ -15,7 +15,7 @@ return [
         'url' => 'URL',
         'image_url' => 'Image URL',
         'image_error' => 'Could not fetch image',
-        'image_too_large' => 'Image too large. Limit is 1024KB.=',
+        'image_too_large' => 'Image too large. Limit is 1024KB',
         'egg_help' => 'This should be the raw .json/.yaml file',
         'url_help' => 'URLs must point directly to the raw .json/.yaml file',
         'add_url' => 'New URL',
