@@ -21,6 +21,7 @@ use Illuminate\Support\Str;
  * @property string $author
  * @property string $name
  * @property string|null $description
+ * @property string|null $image
  * @property string[]|null $features
  * @property array<string, string> $docker_images
  * @property string|null $update_url
@@ -80,6 +81,7 @@ class Egg extends Model implements Validatable
         'name',
         'author',
         'description',
+        'image',
         'features',
         'docker_images',
         'force_outgoing_ip',
@@ -104,6 +106,7 @@ class Egg extends Model implements Validatable
         'uuid' => ['required', 'string', 'size:36'],
         'name' => ['required', 'string', 'max:255'],
         'description' => ['string', 'nullable'],
+        'image' => ['string', 'nullable'],
         'features' => ['array', 'nullable'],
         'author' => ['required', 'string', 'email'],
         'file_denylist' => ['array', 'nullable'],
