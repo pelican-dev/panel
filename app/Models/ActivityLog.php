@@ -185,7 +185,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
 
         return "
             <div style='display: flex; align-items: center;'>
-                <img width='50px' height='50px' src='{$avatarUrl}' style='margin-right: 15px' />
+                <img width='50px' height='50px' src='{$avatarUrl}' style='margin-right: 15px; border-radius: 50%;' />
 
                 <div>
                     <p>$username — $this->event</p>
