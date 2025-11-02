@@ -636,12 +636,10 @@ class ListFiles extends ListRecords
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        // Check if user has permission to upload files
         if (!user()?->can(Permission::ACTION_FILE_CREATE, $server)) {
             abort(403, 'You do not have permission to upload files.');
         }
 
-        // Use the FileUploadController's logic to generate the upload URL
         $jwtService = app(NodeJWTService::class);
         $user = user();
 
@@ -663,7 +661,6 @@ class ListFiles extends ListRecords
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        // Return upload size limit in bytes (stored as MB in database)
         return $server->node->upload_size * 1024 * 1024;
     }
 
