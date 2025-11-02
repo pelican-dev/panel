@@ -12,8 +12,10 @@ use App\Models\File;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
+use App\Services\Nodes\NodeJWTService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Carbon\CarbonImmutable;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -55,6 +57,8 @@ class ListFiles extends ListRecords
     use CanCustomizeHeaderWidgets;
 
     protected static string $resource = FileResource::class;
+
+    protected string $view = 'filament.server.pages.list-files';
 
     #[Locked]
     public string $path = '/';
@@ -625,6 +629,42 @@ class ListFiles extends ListRecords
             7 => ['read', 'write', 'execute'],
             default => [],
         };
+    }
+
+    public function getUploadUrl(): string
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        // Check if user has permission to upload files
+        if (!user()?->can(Permission::ACTION_FILE_CREATE, $server)) {
+            abort(403, 'You do not have permission to upload files.');
+        }
+
+        // Use the FileUploadController's logic to generate the upload URL
+        $jwtService = app(NodeJWTService::class);
+        $user = user();
+
+        $token = $jwtService
+            ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
+            ->setUser($user)
+            ->setClaims(['server_uuid' => $server->uuid])
+            ->handle($server->node, $user->id . $server->uuid);
+
+        return sprintf(
+            '%s/upload/file?token=%s',
+            $server->node->getConnectionAddress(),
+            $token->toString()
+        );
+    }
+
+    public function getUploadSizeLimit(): int
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        // Return upload size limit in bytes (stored as MB in database)
+        return $server->node->upload_size * 1024 * 1024;
     }
 
     private function getDaemonFileRepository(): DaemonFileRepository
