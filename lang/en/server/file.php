@@ -46,6 +46,7 @@ return [
             'title' => 'Archive',
             'archive_name' => 'Archive Name',
             'notification' => 'Archive Created',
+            'extension' => 'Extension',
         ],
         'unarchive' => [
             'title' => 'Unarchive',

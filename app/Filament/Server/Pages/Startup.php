@@ -51,7 +51,7 @@ class Startup extends ServerFormPage
                     ->label(trans('server/startup.command'))
                     ->live()
                     ->visible(fn (Server $server) => in_array($server->startup, $server->egg->startup_commands))
-                    ->disabled(fn (Server $server) => !auth()->user()->can(Permission::ACTION_STARTUP_UPDATE, $server))
+                    ->disabled(fn (Server $server) => !user()?->can(Permission::ACTION_STARTUP_UPDATE, $server))
                     ->formatStateUsing(fn (Server $server) => $server->startup)
                     ->afterStateUpdated(function ($state, Server $server, Set $set) {
                         $original = $server->startup;

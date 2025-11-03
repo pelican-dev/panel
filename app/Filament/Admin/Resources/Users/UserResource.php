@@ -189,7 +189,7 @@ class UserResource extends Resource
                                     ->hintAction(
                                         Action::make('password_reset')
                                             ->label(trans('admin/user.password_reset'))
-                                            ->hidden(fn () => config('mail.default', 'log') === 'log')
+                                            ->hidden(fn (string $operation) => $operation === 'create' || config('mail.default', 'log') === 'log')
                                             ->icon('tabler-send')
                                             ->action(function (User $user) {
                                                 $status = Password::broker(Filament::getPanel('app')->getAuthPasswordBroker())->sendResetLink([
@@ -246,8 +246,7 @@ class UserResource extends Resource
                                             ->default(fn () => config('app.timezone', 'UTC'))
                                             ->selectablePlaceholder(false)
                                             ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
-                                            ->searchable()
-                                            ->native(false),
+                                            ->searchable(),
                                         Select::make('language')
                                             ->label(trans('profile.language'))
                                             ->required()
@@ -256,8 +255,7 @@ class UserResource extends Resource
                                             ->default('en')
                                             ->searchable()
                                             ->selectablePlaceholder(false)
-                                            ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
-                                            ->native(false),
+                                            ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
                                         FileUpload::make('avatar')
                                             ->visible(fn (?User $user, FileUpload $fileUpload) => $user ? $fileUpload->getDisk()->exists($fileUpload->getDirectory() . '/' . $user->id . '.png') : false)
                                             ->columnSpanFull()
@@ -421,7 +419,7 @@ class UserResource extends Resource
                                                         $sshKey->delete();
 
                                                         Activity::event('user:ssh-key.delete')
-                                                            ->actor(auth()->user())
+                                                            ->actor(user())
                                                             ->subject($user)
                                                             ->subject($sshKey)
                                                             ->property('fingerprint', $sshKey->fingerprint)

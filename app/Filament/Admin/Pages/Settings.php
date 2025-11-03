@@ -181,7 +181,6 @@ class Settings extends Page implements HasSchemas
                 ->schema([
                     Select::make('FILAMENT_AVATAR_PROVIDER')
                         ->label(trans('admin/setting.general.avatar_provider'))
-                        ->native(false)
                         ->options($this->avatarService->getMappings())
                         ->selectablePlaceholder(false)
                         ->default(env('FILAMENT_AVATAR_PROVIDER', config('panel.filament.avatar-provider'))),
@@ -204,6 +203,15 @@ class Settings extends Page implements HasSchemas
                 ])
                 ->stateCast(new BooleanStateCast(false, true))
                 ->default(env('PANEL_USE_BINARY_PREFIX', config('panel.use_binary_prefix'))),
+            ToggleButtons::make('FILAMENT_DEFAULT_NAVIGATION')
+                ->label(trans('admin/setting.general.default_navigation'))
+                ->inline()
+                ->options([
+                    'sidebar' => trans('admin/setting.general.sidebar'),
+                    'topbar' => trans('admin/setting.general.topbar'),
+                    'mixed' => trans('admin/setting.general.mixed'),
+                ])
+                ->default(env('FILAMENT_DEFAULT_NAVIGATION', config('panel.filament.default-navigation'))),
             ToggleButtons::make('APP_2FA_REQUIRED')
                 ->label(trans('admin/setting.general.2fa_requirement'))
                 ->inline()
@@ -217,7 +225,6 @@ class Settings extends Page implements HasSchemas
                 ->default(env('APP_2FA_REQUIRED', config('panel.auth.2fa_required'))),
             Select::make('FILAMENT_WIDTH')
                 ->label(trans('admin/setting.general.display_width'))
-                ->native(false)
                 ->options(Width::class)
                 ->selectablePlaceholder(false)
                 ->default(env('FILAMENT_WIDTH', config('panel.filament.display-width'))),
