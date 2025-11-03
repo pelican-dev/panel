@@ -198,6 +198,7 @@ class EggImporterService
         return $model->forceFill([
             'name' => Arr::get($parsed, 'name'),
             'description' => Arr::get($parsed, 'description'),
+            'image' => Arr::get($parsed, 'image'),
             'tags' => Arr::get($parsed, 'tags', []),
             'features' => Arr::get($parsed, 'features'),
             'docker_images' => Arr::get($parsed, 'docker_images'),

@@ -13,6 +13,9 @@ return [
     'import' => [
         'file' => 'File',
         'url' => 'URL',
+        'image_url' => 'Image URL',
+        'image_error' => 'Could not fetch image',
+        'image_too_large' => 'Image too large. Limit is 1024KB',
         'egg_help' => 'This should be the raw .json/.yaml file',
         'url_help' => 'URLs must point directly to the raw .json/.yaml file',
         'add_url' => 'New URL',
@@ -20,6 +23,13 @@ return [
         'import_success' => 'Import Success',
         'github' => 'Add from Github',
         'refresh' => 'Refresh',
+        'import_image' => 'Import Image',
+        'no_local_ip' => 'Local IP Addresses are not allowed',
+        'unsupported_format' => 'Unsupported Format. Supported Formats: :formats',
+        'invalid_url' => 'The provided URL is invalid',
+        'image_deleted' => 'Image Deleted',
+        'no_image' => 'No Image Provided',
+        'image_updated' => 'Image Updated',
     ],
     'export' => [
         'modal' => 'How would you like to export :egg ?',
