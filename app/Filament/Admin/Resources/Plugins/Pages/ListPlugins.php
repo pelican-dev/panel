@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Resources\Plugins\Pages;
 
 use App\Enums\PluginCategory;
 use App\Facades\Plugins;
-use App\Filament\Admin\Resources\PluginResource;
+use App\Filament\Admin\Resources\Plugins\PluginResource;
 use App\Models\Plugin;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;

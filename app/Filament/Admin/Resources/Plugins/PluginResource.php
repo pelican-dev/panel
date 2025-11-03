@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\Admin\Resources\Plugins;
 
 use App\Facades\Plugins;
 use App\Filament\Admin\Resources\Plugins\Pages\ListPlugins;
