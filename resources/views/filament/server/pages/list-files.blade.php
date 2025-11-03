@@ -11,26 +11,26 @@
             autoCloseTimer: 1000,
 
             handleDragEnter(e) {
-                if (document.querySelector('.fi-modal-content')) return;
+                if (document.querySelector('.upload-modal-window')) return;
                 e.preventDefault();
                 e.stopPropagation();
                 this.dragCounter++;
                 this.isDragging = true;
             },
             handleDragLeave(e) {
-                if (document.querySelector('.fi-modal-content')) return;
+                if (document.querySelector('.upload-modal-window')) return;
                 e.preventDefault();
                 e.stopPropagation();
                 this.dragCounter--;
                 if (this.dragCounter === 0) this.isDragging = false;
             },
             handleDragOver(e) {
-                if (document.querySelector('.fi-modal-content')) return;
+                if (document.querySelector('.upload-modal-window')) return;
                 e.preventDefault();
                 e.stopPropagation();
             },
             async handleDrop(e) {
-                if (document.querySelector('.fi-modal-content')) return;
+                if (document.querySelector('.upload-modal-window')) return;
                 e.preventDefault();
                 e.stopPropagation();
                 this.isDragging = false;
