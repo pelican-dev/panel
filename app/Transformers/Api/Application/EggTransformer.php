@@ -46,6 +46,7 @@ class EggTransformer extends BaseTransformer
             'name' => $model->name,
             'author' => $model->author,
             'description' => $model->description,
+            'image' => $model->image,
             'features' => $model->features,
             'tags' => $model->tags,
             'docker_image' => Arr::first($model->docker_images, default: ''), // docker_images, use startup_commands

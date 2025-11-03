@@ -1,7 +1,6 @@
 @php
     $actiongroup = \App\Filament\App\Resources\Servers\Pages\ListServers::getPowerActionGroup()->record($server);
 @endphp
-
 <div wire:poll.15s
      class="relative cursor-pointer"
      x-on:click="window.location.href = '{{ \App\Filament\Server\Pages\Console::getUrl(panel: 'server', tenant: $server) }}'">
@@ -11,6 +10,18 @@
     </div>
 
     <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
+        @if($server->egg->image)
+            <div style="
+                position: absolute;
+                inset: 0;
+                background: url('{{ $server->egg->image }}') right no-repeat;
+                background-size: contain;
+                opacity: 0.20;
+                max-width: 680px;
+                max-height: 140px;
+        "></div>
+        @endif
+
         <div class="flex items-center mb-5 gap-2">
             <x-filament::icon-button
                 :icon="$server->condition->getIcon()"
@@ -26,7 +37,8 @@
             </h2>
             @if ($actiongroup->isVisible())
                 <div class="end-0">
-                    <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1" x-on:click.stop>
+                    <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1"
+                         x-on:click.stop>
                         {{ $actiongroup }}
                     </div>
                 </div>
