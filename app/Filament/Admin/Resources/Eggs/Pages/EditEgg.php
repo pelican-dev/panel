@@ -16,6 +16,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CodeEditor;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
@@ -24,13 +25,19 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\IconSize;
 use Illuminate\Validation\Rules\Unique;
 
 class EditEgg extends EditRecord
@@ -50,36 +57,215 @@ class EditEgg extends EditRecord
                 Tabs::make()->tabs([
                     Tab::make('configuration')
                         ->label(trans('admin/egg.tabs.configuration'))
-                        ->columns(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 4])
+                        ->columns(['default' => 2, 'sm' => 2, 'md' => 4, 'lg' => 6])
                         ->icon('tabler-egg')
                         ->schema([
+                            Grid::make(2)
+                                ->columnSpan(1)
+                                ->schema([
+                                    Image::make('', '')
+                                        ->hidden(fn ($record) => !$record->image)
+                                        ->url(fn ($record) => $record->image)
+                                        ->alt('')
+                                        ->alignJustify()
+                                        ->imageSize(150)
+                                        ->columnSpanFull(),
+                                    Flex::make([
+                                        Action::make('uploadImage')
+                                            ->iconButton()
+                                            ->iconSize(IconSize::Large)
+                                            ->icon('tabler-photo-up')
+                                            ->modal()
+                                            ->modalHeading('')
+                                            ->modalSubmitActionLabel(trans('admin/egg.import.import_image'))
+                                            ->schema([
+                                                Tabs::make()
+                                                    ->contained(false)
+                                                    ->tabs([
+                                                        Tab::make(trans('admin/egg.import.url'))
+                                                            ->schema([
+                                                                Hidden::make('base64Image'),
+                                                                TextInput::make('image_url')
+                                                                    ->label(trans('admin/egg.import.image_url'))
+                                                                    ->reactive()
+                                                                    ->autocomplete(false)
+                                                                    ->debounce(500)
+                                                                    ->afterStateUpdated(function ($state, Set $set) {
+                                                                        if (!$state) {
+                                                                            $set('image_url_error', null);
+
+                                                                            return;
+                                                                        }
+
+                                                                        try {
+                                                                            if (!filter_var($state, FILTER_VALIDATE_URL)) {
+                                                                                throw new \Exception(trans('admin/egg.import.invalid_url'));
+                                                                            }
+
+                                                                            $allowedExtensions = [
+                                                                                'png' => 'image/png',
+                                                                                'jpg' => 'image/jpeg',
+                                                                                'jpeg' => 'image/jpeg',
+                                                                                'gif' => 'image/gif',
+                                                                                'webp' => 'image/webp',
+                                                                                'svg' => 'image/svg+xml',
+                                                                            ];
+
+                                                                            $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
+
+                                                                            if (!array_key_exists($extension, $allowedExtensions)) {
+                                                                                throw new \Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', $allowedExtensions)]));
+                                                                            }
+
+                                                                            $host = parse_url($state, PHP_URL_HOST);
+                                                                            $ip = gethostbyname($host);
+
+                                                                            if (
+                                                                                filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false
+                                                                            ) {
+                                                                                throw new \Exception(trans('admin/egg.import.no_local_ip'));
+                                                                            }
+
+                                                                            $context = stream_context_create([
+                                                                                'http' => ['timeout' => 3],
+                                                                                'https' => [
+                                                                                    'timeout' => 3,
+                                                                                    'verify_peer' => true,
+                                                                                    'verify_peer_name' => true,
+                                                                                ],
+                                                                            ]);
+
+                                                                            $imageContent = @file_get_contents($state, false, $context, 0, 1048576); // 1024KB
+
+                                                                            if (!$imageContent) {
+                                                                                throw new \Exception(trans('admin/egg.import.image_error'));
+                                                                            }
+
+                                                                            if (strlen($imageContent) >= 1048576) {
+                                                                                throw new \Exception(trans('admin/egg.import.image_too_large'));
+                                                                            }
+
+                                                                            $mimeType = $allowedExtensions[$extension];
+                                                                            $base64 = 'data:' . $mimeType . ';base64,' . base64_encode($imageContent);
+
+                                                                            $set('base64Image', $base64);
+                                                                            $set('image_url_error', null);
+
+                                                                        } catch (\Exception $e) {
+                                                                            $set('image_url_error', $e->getMessage());
+                                                                            $set('base64Image', null);
+                                                                        }
+                                                                    }),
+                                                                TextEntry::make('image_url_error')
+                                                                    ->hiddenLabel()
+                                                                    ->visible(fn ($get) => $get('image_url_error') !== null)
+                                                                    ->afterStateHydrated(fn ($set, $get) => $get('image_url_error')),
+                                                                Image::make(fn (Get $get) => $get('image_url'), '')
+                                                                    ->imageSize(150)
+                                                                    ->visible(fn ($get) => $get('image_url') && !$get('image_url_error'))
+                                                                    ->alignCenter(),
+                                                            ]),
+                                                        Tab::make(trans('admin/egg.import.file'))
+                                                            ->schema([
+                                                                FileUpload::make('image')
+                                                                    ->hiddenLabel()
+                                                                    ->previewable()
+                                                                    ->openable(false)
+                                                                    ->downloadable(false)
+                                                                    ->maxSize(1024)
+                                                                    ->maxFiles(1)
+                                                                    ->columnSpanFull()
+                                                                    ->alignCenter()
+                                                                    ->imageEditor()
+                                                                    ->saveUploadedFileUsing(function ($file, Set $set) {
+                                                                        $base64 = "data:{$file->getMimeType()};base64,". base64_encode(file_get_contents($file->getRealPath()));
+                                                                        $set('base64Image', $base64);
+
+                                                                        return $base64;
+                                                                    }),
+                                                            ]),
+                                                    ]),
+                                            ])
+                                            ->action(function (array $data, $record): void {
+                                                $base64 = $data['base64Image'] ?? null;
+
+                                                if (empty($base64) && !empty($data['image'])) {
+                                                    $base64 = $data['image'];
+                                                }
+
+                                                if (!empty($base64)) {
+                                                    $record->update([
+                                                        'image' => $base64,
+                                                    ]);
+
+                                                    Notification::make()
+                                                        ->title(trans('admin/egg.import.image_updated'))
+                                                        ->success()
+                                                        ->send();
+
+                                                    $record->refresh();
+                                                } else {
+                                                    Notification::make()
+                                                        ->title(trans('admin/egg.import.no_image'))
+                                                        ->warning()
+                                                        ->send();
+                                                }
+                                            }),
+                                        Action::make('deleteImage')
+                                            ->visible(fn ($record) => $record->image)
+                                            ->label('')
+                                            ->icon('tabler-trash')
+                                            ->iconButton()
+                                            ->iconSize(IconSize::Large)
+                                            ->color('danger')
+                                            ->action(function ($record) {
+
+                                                $record->update([
+                                                    'image' => null,
+                                                ]);
+
+                                                Notification::make()
+                                                    ->title(trans('admin/egg.import.image_deleted'))
+                                                    ->success()
+                                                    ->send();
+
+                                                $record->refresh();
+                                            }),
+                                    ]),
+                                ]),
                             TextInput::make('name')
                                 ->label(trans('admin/egg.name'))
                                 ->required()
                                 ->maxLength(255)
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 1])
+                                ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 3, 'lg' => 2])
                                 ->helperText(trans('admin/egg.name_help')),
+                            Textarea::make('description')
+                                ->label(trans('admin/egg.description'))
+                                ->rows(3)
+                                ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 4, 'lg' => 3])
+                                ->helperText(trans('admin/egg.description_help')),
+                            TextInput::make('id')
+                                ->label(trans('admin/egg.egg_id'))
+                                ->columnSpan(1)
+                                ->disabled(),
                             TextInput::make('uuid')
                                 ->label(trans('admin/egg.egg_uuid'))
                                 ->disabled()
                                 ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                                 ->helperText(trans('admin/egg.uuid_help')),
-                            TextInput::make('id')
-                                ->label(trans('admin/egg.egg_id'))
-                                ->disabled(),
-                            Textarea::make('description')
-                                ->label(trans('admin/egg.description'))
-                                ->rows(3)
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
-                                ->helperText(trans('admin/egg.description_help')),
                             TextInput::make('author')
                                 ->label(trans('admin/egg.author'))
                                 ->required()
                                 ->maxLength(255)
                                 ->email()
                                 ->disabled()
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
+                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                                 ->helperText(trans('admin/egg.author_help_edit')),
+                            Toggle::make('force_outgoing_ip')
+                                ->inline(false)
+                                ->label(trans('admin/egg.force_ip'))
+                                ->columnSpan(1)
+                                ->hintIcon('tabler-question-mark', trans('admin/egg.force_ip_help')),
                             KeyValue::make('startup_commands')
                                 ->label(trans('admin/egg.startup_commands'))
                                 ->live()
@@ -93,24 +279,20 @@ class EditEgg extends EditRecord
                                 ->label(trans('admin/egg.file_denylist'))
                                 ->placeholder('denied-file.txt')
                                 ->helperText(trans('admin/egg.file_denylist_help'))
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
-                            TagsInput::make('features')
-                                ->label(trans('admin/egg.features'))
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 1]),
-                            Toggle::make('force_outgoing_ip')
-                                ->inline(false)
-                                ->label(trans('admin/egg.force_ip'))
-                                ->hintIcon('tabler-question-mark', trans('admin/egg.force_ip_help')),
-                            Hidden::make('script_is_privileged')
-                                ->helperText('The docker images available to servers using this egg.'),
-                            TagsInput::make('tags')
-                                ->label(trans('admin/egg.tags'))
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                                ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 2, 'lg' => 3]),
                             TextInput::make('update_url')
                                 ->label(trans('admin/egg.update_url'))
                                 ->url()
                                 ->hintIcon('tabler-question-mark', trans('admin/egg.update_url_help'))
-                                ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
+                                ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 2, 'lg' => 3]),
+                            TagsInput::make('features')
+                                ->label(trans('admin/egg.features'))
+                                ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 2, 'lg' => 3]),
+                            Hidden::make('script_is_privileged')
+                                ->helperText('The docker images available to servers using this egg.'),
+                            TagsInput::make('tags')
+                                ->label(trans('admin/egg.tags'))
+                                ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 2, 'lg' => 3]),
                             KeyValue::make('docker_images')
                                 ->label(trans('admin/egg.docker_images'))
                                 ->live()
@@ -248,7 +430,6 @@ class EditEgg extends EditRecord
                                 ->placeholder('ghcr.io/pelican-eggs/installers:debian'),
                             Select::make('script_entry')
                                 ->label(trans('admin/egg.script_entry'))
-                                ->native(false)
                                 ->selectablePlaceholder(false)
                                 ->options([
                                     'bash' => 'bash',
