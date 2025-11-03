@@ -1,55 +1,136 @@
 <x-filament-panels::page>
     <div
-        x-data="{
+        x-data="
+        {
             isDragging: false,
             dragCounter: 0,
             isUploading: false,
             uploadQueue: [],
             currentFileIndex: 0,
             totalFiles: 0,
-            autoCloseTimer: null,
+            autoCloseTimer: 1000,
+
             handleDragEnter(e) {
+                if (document.querySelector('.fi-modal-content')) return;
                 e.preventDefault();
                 e.stopPropagation();
                 this.dragCounter++;
                 this.isDragging = true;
             },
             handleDragLeave(e) {
+                if (document.querySelector('.fi-modal-content')) return;
                 e.preventDefault();
                 e.stopPropagation();
                 this.dragCounter--;
-                if (this.dragCounter === 0) {
-                    this.isDragging = false;
-                }
+                if (this.dragCounter === 0) this.isDragging = false;
             },
             handleDragOver(e) {
+                if (document.querySelector('.fi-modal-content')) return;
                 e.preventDefault();
                 e.stopPropagation();
             },
             async handleDrop(e) {
+                if (document.querySelector('.fi-modal-content')) return;
                 e.preventDefault();
                 e.stopPropagation();
                 this.isDragging = false;
                 this.dragCounter = 0;
 
+                const items = e.dataTransfer.items;
                 const files = e.dataTransfer.files;
-                if (files.length === 0) return;
 
-                await this.uploadFiles(files);
+                if ((!items || items.length === 0) && (!files || files.length === 0)) return;
+
+                let filesWithPaths = [];
+
+                if (items && items.length > 0 && items[0].webkitGetAsEntry) {
+                    filesWithPaths = await this.extractFilesFromItems(items);
+                }
+
+                if (files && files.length > 0 && filesWithPaths.length === 0) {
+                    filesWithPaths = Array.from(files).map(f => ({ file: f, path: '' }));
+                }
+
+                if (filesWithPaths.length > 0) {
+                    await this.uploadFilesWithFolders(filesWithPaths);
+                }
             },
-            async uploadFiles(files) {
+
+            async extractFilesFromItems(items) {
+            const filesWithPaths = [];
+            const traversePromises = [];
+
+            for (let i = 0; i < items.length; i++) {
+                const entry = items[i].webkitGetAsEntry?.();
+
+                if (entry) {
+                    traversePromises.push(this.traverseFileTree(entry, '', filesWithPaths));
+                } else if (items[i].kind === 'file') {
+                    const file = items[i].getAsFile();
+                    if (file) {
+                        filesWithPaths.push({
+                            file: file,
+                            path: '',
+                        });
+                    }
+                }
+            }
+
+            await Promise.all(traversePromises);
+
+            return filesWithPaths;
+            },
+
+        async traverseFileTree(entry, path, filesWithPaths) {
+            return new Promise((resolve) => {
+                if (entry.isFile) {
+                    entry.file((file) => {
+                        filesWithPaths.push({
+                            file: file,
+                            path: path,
+                        });
+                        resolve();
+                    });
+                } else if (entry.isDirectory) {
+                    const reader = entry.createReader();
+                    const readEntries = () => {
+                        reader.readEntries(async (entries) => {
+                            if (entries.length === 0) {
+                                resolve();
+                                return;
+                            }
+
+                            const subPromises = entries.map((e) =>
+                                this.traverseFileTree(
+                                    e,
+                                    path ? `${path}/${entry.name}` : entry.name,
+                                    filesWithPaths
+                                )
+                            );
+
+                            await Promise.all(subPromises);
+                            readEntries();
+                        });
+                    };
+                    readEntries();
+                } else {
+                    resolve();
+                }
+            });
+        },
+            async uploadFilesWithFolders(filesWithPaths) {
                 this.isUploading = true;
                 this.uploadQueue = [];
-                this.totalFiles = files.length;
+                this.totalFiles = filesWithPaths.length;
                 this.currentFileIndex = 0;
 
                 try {
                     const uploadSizeLimit = await $wire.getUploadSizeLimit();
 
-                    for (let i = 0; i < files.length; i++) {
-                        if (files[i].size > uploadSizeLimit) {
+                    for (const { file } of filesWithPaths) {
+                        if (file.size > uploadSizeLimit) {
                             new window.FilamentNotification()
-                                .title(`File ${files[i].name} exceeds the upload size limit of ${this.formatBytes(uploadSizeLimit)}`)
+                                .title(`File ${file.name} exceeds the upload size limit of ${this.formatBytes(uploadSizeLimit)}`)
                                 .danger()
                                 .send();
                             this.isUploading = false;
@@ -57,11 +138,32 @@
                         }
                     }
 
-                    for (let i = 0; i < files.length; i++) {
+                    const folderPaths = new Set();
+                    for (const { path } of filesWithPaths) {
+                        if (path) {
+                            const parts = path.split('/').filter(Boolean);
+                            let currentPath = '';
+                            for (const part of parts) {
+                                currentPath += part + '/';
+                                folderPaths.add(currentPath);
+                            }
+                        }
+                    }
+
+                    for (const folderPath of folderPaths) {
+                        try {
+                            await $wire.createFolder(folderPath.slice(0, -1));
+                        } catch (error) {
+                            console.warn(`Folder ${folderPath} already exists or failed to create.`);
+                        }
+                    }
+
+                    for (const f of filesWithPaths) {
                         this.uploadQueue.push({
-                            file: files[i],
-                            name: files[i].name,
-                            size: files[i].size,
+                            file: f.file,
+                            name: f.file.name,
+                            path: f.path,
+                            size: f.file.size,
                             progress: 0,
                             speed: 0,
                             uploadedBytes: 0,
@@ -74,67 +176,57 @@
                     let activeUploads = [];
                     let completedCount = 0;
 
-                    for (let i = 0; i < files.length; i++) {
+                    for (let i = 0; i < this.uploadQueue.length; i++) {
                         const uploadPromise = this.uploadFile(i)
-                            .then(() => {
-                                completedCount++;
-                                this.currentFileIndex = completedCount;
-                            })
-                            .catch((error) => {
-                                completedCount++;
-                                this.currentFileIndex = completedCount;
-                            });
+                            .then(() => { completedCount++; this.currentFileIndex = completedCount; })
+                            .catch(() => { completedCount++; this.currentFileIndex = completedCount; });
 
                         activeUploads.push(uploadPromise);
 
                         if (activeUploads.length >= maxConcurrent) {
                             await Promise.race(activeUploads);
-                            activeUploads = activeUploads.filter(p => {
-                                let isPending = true;
-                                p.then(() => { isPending = false; }).catch(() => { isPending = false; });
-                                return isPending;
-                            });
+                            activeUploads = activeUploads.filter(p => p.status !== 'fulfilled' && p.status !== 'rejected');
                         }
                     }
 
                     await Promise.allSettled(activeUploads);
-                    const failedUploads = this.uploadQueue.filter(f => f.status === 'error');
+
+                    const failed = this.uploadQueue.filter(f => f.status === 'error');
                     await $wire.$refresh();
 
-                    if (failedUploads.length === 0) {
-                        new window.FilamentNotification()
-                            .title('{{ trans('server/file.actions.upload.success') }}')
-                            .success()
-                            .send();
-                    } else if (failedUploads.length < this.totalFiles) {
-                        new window.FilamentNotification()
-                            .title(`${this.totalFiles - failedUploads.length} of ${this.totalFiles} files uploaded successfully`)
-                            .warning()
-                            .send();
+                    if (failed.length === 0) {
+                        new window.FilamentNotification().title('{{ trans('server/file.actions.upload.success') }}').success().send();
+                    } else if (failed.length === this.totalFiles) {
+                        new window.FilamentNotification().title('{{ trans('server/file.actions.upload.error_all') }}').danger().send();
                     } else {
-                        new window.FilamentNotification()
-                            .title('{{ trans('server/file.actions.upload.failed') }}')
-                            .danger()
-                            .send();
+                        new window.FilamentNotification().title('{{ trans('server/file.actions.upload.error_partial') }}').warning().send();
                     }
 
+                    if (this.autoCloseTimer) clearTimeout(this.autoCloseTimer);
+                    this.autoCloseTimer = setTimeout(() => {
+                        this.isUploading = false;
+                        this.uploadQueue = [];
+                    },1000);
                 } catch (error) {
-                    new window.FilamentNotification()
-                        .title('{{ trans('server/file.actions.upload.failed') }}')
-                        .danger()
-                        .send();
-                } finally {
-                    this.closeUploadDialog();
+                    console.error('Upload error:', error);
+                    new window.FilamentNotification().title('{{ trans('server/file.actions.upload.error') }}').danger().send();
+                    this.isUploading = false;
                 }
             },
+
             async uploadFile(index) {
                 const fileData = this.uploadQueue[index];
                 fileData.status = 'uploading';
-
                 try {
                     const uploadUrl = await $wire.getUploadUrl();
                     const url = new URL(uploadUrl);
-                    url.searchParams.append('directory', @js($this->path));
+                    let basePath = @js($this->path);
+
+                    if (fileData.path && fileData.path.trim() !== '') {
+                        basePath = basePath.replace(/\/+$/, '') + '/' + fileData.path.replace(/^\/+/, '');
+                    }
+
+                    url.searchParams.append('directory', basePath);
 
                     return new Promise((resolve, reject) => {
                         const xhr = new XMLHttpRequest();
@@ -149,19 +241,18 @@
                                 fileData.uploadedBytes = e.loaded;
                                 fileData.progress = Math.round((e.loaded / e.total) * 100);
 
-                                // Calculate upload speed
-                                const currentTime = Date.now();
-                                const timeDiff = (currentTime - lastTime) / 1000;
+                                const now = Date.now();
+                                const timeDiff = (now - lastTime) / 1000;
                                 if (timeDiff > 0.1) {
                                     const bytesDiff = e.loaded - lastLoaded;
                                     fileData.speed = bytesDiff / timeDiff;
-                                    lastTime = currentTime;
+                                    lastTime = now;
                                     lastLoaded = e.loaded;
                                 }
                             }
                         });
 
-                        xhr.addEventListener('load', () => {
+                        xhr.onload = () => {
                             if (xhr.status >= 200 && xhr.status < 300) {
                                 fileData.status = 'complete';
                                 fileData.progress = 100;
@@ -171,23 +262,24 @@
                                 fileData.error = `Upload failed (${xhr.status})`;
                                 reject(new Error(fileData.error));
                             }
-                        });
+                        };
 
-                        xhr.addEventListener('error', () => {
+                        xhr.onerror = () => {
                             fileData.status = 'error';
                             fileData.error = 'Network error';
-                            reject(new Error('Upload failed'));
-                        });
+                            reject(new Error('Network error'));
+                        };
 
                         xhr.open('POST', url.toString());
                         xhr.send(formData);
                     });
-                } catch (error) {
+                } catch (err) {
                     fileData.status = 'error';
                     fileData.error = 'Failed to get upload token';
-                    throw error;
+                    throw err;
                 }
             },
+
             formatBytes(bytes) {
                 if (bytes === 0) return '0.00 B';
                 const k = 1024;
@@ -198,28 +290,20 @@
             formatSpeed(bytesPerSecond) {
                 return this.formatBytes(bytesPerSecond) + '/s';
             },
-            closeUploadDialog() {
-                if (this.autoCloseTimer) {
-                    clearTimeout(this.autoCloseTimer);
-                    this.autoCloseTimer = null;
-                }
-                this.isUploading = false;
-                this.uploadQueue = [];
-            },
             handleEscapeKey(e) {
                 if (e.key === 'Escape' && this.isUploading) {
-                    this.closeUploadDialog();
+                    this.isUploading = false;
+                    this.uploadQueue = [];
                 }
-            }
+            },
         }"
         @dragenter.window="handleDragEnter($event)"
         @dragleave.window="handleDragLeave($event)"
-        @dragover.window="handleDragOver($event)" s
+        @dragover.window="handleDragOver($event)"
         @drop.window="handleDrop($event)"
         @keydown.window="handleEscapeKey($event)"
         class="relative"
     >
-        <!-- Drag & Drop Overlay -->
         <div
             x-show="isDragging"
             x-cloak
@@ -260,7 +344,7 @@
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {{ trans('server/file.actions.upload.header') }} -
                         <span class="text-lg text-gray-600 dark:text-gray-400">
-                            <span x-text="currentFileIndex"></span> Of <span x-text="totalFiles"></span>
+                            <span x-text="currentFileIndex"></span> of <span x-text="totalFiles"></span>
                         </span>
                     </h3>
                 </div>
@@ -275,7 +359,8 @@
                                         <div class="flex flex-col gap-y-1">
                                             <div
                                                 class="text-sm font-medium leading-6 text-gray-950 dark:text-white truncate max-w-xs"
-                                                x-text="fileData.name"></div>
+                                                x-text="(fileData.path ? fileData.path + '/' : '') + fileData.name">
+                                            </div>
                                             <div x-show="fileData.status === 'error'"
                                                  class="text-xs text-danger-600 dark:text-danger-400"
                                                  x-text="fileData.error"></div>
@@ -288,16 +373,16 @@
                                     <td class="px-4 py-4 sm:px-6">
                                         <div x-show="fileData.status === 'uploading' || fileData.status === 'complete'"
                                              class="flex justify-between items-center text-sm">
-                                            <span class="font-medium text-gray-700 dark:text-gray-300"
-                                                  x-text="`${fileData.progress}%`"></span>
+                                                <span class="font-medium text-gray-700 dark:text-gray-300"
+                                                      x-text="`${fileData.progress}%`"></span>
                                             <span x-show="fileData.status === 'uploading' && fileData.speed > 0"
                                                   class="text-gray-500 dark:text-gray-400"
                                                   x-text="formatSpeed(fileData.speed)"></span>
                                         </div>
                                         <span x-show="fileData.status === 'pending'"
                                               class="text-sm text-gray-500 dark:text-gray-400">
-                                            —
-                                        </span>
+                                                —
+                                            </span>
                                     </td>
                                 </tr>
                             </template>

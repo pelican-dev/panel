@@ -45,6 +45,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Carbon;
@@ -64,6 +65,7 @@ class ListFiles extends ListRecords
     public string $path = '/';
 
     private DaemonFileRepository $fileRepository;
+
 
     public function getTitle(): string
     {
@@ -631,7 +633,7 @@ class ListFiles extends ListRecords
         };
     }
 
-    public function getUploadUrl(): string
+    public function getUploadUrl(NodeJWTService $jwtService): string
     {
         /** @var Server $server */
         $server = Filament::getTenant();
@@ -640,14 +642,11 @@ class ListFiles extends ListRecords
             abort(403, 'You do not have permission to upload files.');
         }
 
-        $jwtService = app(NodeJWTService::class);
-        $user = user();
-
         $token = $jwtService
             ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
-            ->setUser($user)
+            ->setUser(user())
             ->setClaims(['server_uuid' => $server->uuid])
-            ->handle($server->node, $user->id . $server->uuid);
+            ->handle($server->node, user()->id . $server->uuid);
 
         return sprintf(
             '%s/upload/file?token=%s',
@@ -662,6 +661,32 @@ class ListFiles extends ListRecords
         $server = Filament::getTenant();
 
         return $server->node->upload_size * 1024 * 1024;
+    }
+
+    /**
+     * @throws ConnectionException
+     * @throws FileExistsException
+     * @throws \Throwable
+     */
+    public function createFolder(string $folderPath): void
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        if (!user()?->can(Permission::ACTION_FILE_CREATE, $server)) {
+            abort(403, 'You do not have permission to create folders.');
+        }
+
+        try {
+            $this->getDaemonFileRepository()->createDirectory($folderPath, $this->path);
+
+            Activity::event('server:file.create-directory')
+                ->property(['directory' => $this->path, 'name' => $folderPath])
+                ->log();
+
+        } catch (FileExistsException) {
+            // Ignore if the folder already exists.
+        }
     }
 
     private function getDaemonFileRepository(): DaemonFileRepository
