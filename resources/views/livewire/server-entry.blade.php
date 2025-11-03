@@ -20,11 +20,6 @@
                 max-width: 680px;
                 max-height: 140px;
         "></div>
-            <div style="
-                position: absolute;
-                inset: 0;
-                z-index: 1;
-            "></div>
         @endif
 
         <div class="flex items-center mb-5 gap-2">
