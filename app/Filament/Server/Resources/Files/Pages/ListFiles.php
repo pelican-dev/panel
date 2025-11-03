@@ -685,6 +685,12 @@ class ListFiles extends ListRecords
 
         } catch (FileExistsException) {
             // Ignore if the folder already exists.
+        } catch (ConnectionException $e) {
+            Notification::make()
+                ->body($e->getMessage())
+                ->danger()
+                ->send();
+            
         }
     }
 
