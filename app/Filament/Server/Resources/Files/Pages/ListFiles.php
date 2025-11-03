@@ -27,7 +27,6 @@ use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\CodeEditor;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
@@ -39,6 +38,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\View;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables\Columns\TextColumn;
@@ -46,7 +46,6 @@ use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route as RouteFacade;
@@ -539,17 +538,7 @@ class ListFiles extends ListRecords
                     ->tooltip(trans('server/file.actions.upload.title'))
                     ->color('success')
                     ->action(function ($data) {
-                        if (count($data['files']) > 0 && !isset($data['url'])) {
-                            /** @var UploadedFile $file */
-                            foreach ($data['files'] as $file) {
-                                $this->getDaemonFileRepository()->putContent(join_paths($this->path, $file->getClientOriginalName()), $file->getContent());
-
-                                Activity::event('server:file.uploaded')
-                                    ->property('directory', $this->path)
-                                    ->property('file', $file->getClientOriginalName())
-                                    ->log();
-                            }
-                        } elseif ($data['url'] !== null) {
+                        if ($data['url'] !== null) {
                             $this->getDaemonFileRepository()->pull($data['url'], $this->path);
 
                             Activity::event('server:file.pull')
@@ -566,19 +555,12 @@ class ListFiles extends ListRecords
                             ->schema([
                                 Tab::make('files')
                                     ->label(trans('server/file.actions.upload.from_files'))
-                                    ->live()
                                     ->schema([
-                                        FileUpload::make('files')
-                                            ->storeFiles(false)
-                                            ->previewable(false)
-                                            ->preserveFilenames()
-                                            ->maxSize((int) round($server->node->upload_size * (config('panel.use_binary_prefix') ? 1.048576 * 1024 : 1000)))
-                                            ->multiple(),
+                                        View::make('filament.server.pages.file-upload'),
                                     ]),
                                 Tab::make('url')
                                     ->label(trans('server/file.actions.upload.url'))
                                     ->live()
-                                    ->disabled(fn (Get $get) => count($get('files')) > 0)
                                     ->schema([
                                         TextInput::make('url')
                                             ->label(trans('server/file.actions.upload.url'))

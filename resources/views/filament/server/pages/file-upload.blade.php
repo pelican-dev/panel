@@ -1,7 +1,5 @@
-<x-filament-panels::page>
-    <div
-        x-data="
-        {
+<div
+    x-data="{
             isDragging: false,
             dragCounter: 0,
             isUploading: false,
@@ -11,26 +9,22 @@
             autoCloseTimer: 1000,
 
             handleDragEnter(e) {
-                if (document.querySelector('.fi-modal-content')) return;
                 e.preventDefault();
                 e.stopPropagation();
                 this.dragCounter++;
                 this.isDragging = true;
             },
             handleDragLeave(e) {
-                if (document.querySelector('.fi-modal-content')) return;
                 e.preventDefault();
                 e.stopPropagation();
                 this.dragCounter--;
                 if (this.dragCounter === 0) this.isDragging = false;
             },
             handleDragOver(e) {
-                if (document.querySelector('.fi-modal-content')) return;
                 e.preventDefault();
                 e.stopPropagation();
             },
             async handleDrop(e) {
-                if (document.querySelector('.fi-modal-content')) return;
                 e.preventDefault();
                 e.stopPropagation();
                 this.isDragging = false;
@@ -57,67 +51,67 @@
             },
 
             async extractFilesFromItems(items) {
-            const filesWithPaths = [];
-            const traversePromises = [];
+                const filesWithPaths = [];
+                const traversePromises = [];
 
-            for (let i = 0; i < items.length; i++) {
-                const entry = items[i].webkitGetAsEntry?.();
+                for (let i = 0; i < items.length; i++) {
+                    const entry = items[i].webkitGetAsEntry?.();
 
-                if (entry) {
-                    traversePromises.push(this.traverseFileTree(entry, '', filesWithPaths));
-                } else if (items[i].kind === 'file') {
-                    const file = items[i].getAsFile();
-                    if (file) {
-                        filesWithPaths.push({
-                            file: file,
-                            path: '',
-                        });
+                    if (entry) {
+                        traversePromises.push(this.traverseFileTree(entry, '', filesWithPaths));
+                    } else if (items[i].kind === 'file') {
+                        const file = items[i].getAsFile();
+                        if (file) {
+                            filesWithPaths.push({
+                                file: file,
+                                path: '',
+                            });
+                        }
                     }
                 }
-            }
 
-            await Promise.all(traversePromises);
-
-            return filesWithPaths;
+                await Promise.all(traversePromises);
+                return filesWithPaths;
             },
 
-        async traverseFileTree(entry, path, filesWithPaths) {
-            return new Promise((resolve) => {
-                if (entry.isFile) {
-                    entry.file((file) => {
-                        filesWithPaths.push({
-                            file: file,
-                            path: path,
+            async traverseFileTree(entry, path, filesWithPaths) {
+                return new Promise((resolve) => {
+                    if (entry.isFile) {
+                        entry.file((file) => {
+                            filesWithPaths.push({
+                                file: file,
+                                path: path,
+                            });
+                            resolve();
                         });
+                    } else if (entry.isDirectory) {
+                        const reader = entry.createReader();
+                        const readEntries = () => {
+                            reader.readEntries(async (entries) => {
+                                if (entries.length === 0) {
+                                    resolve();
+                                    return;
+                                }
+
+                                const subPromises = entries.map((e) =>
+                                    this.traverseFileTree(
+                                        e,
+                                        path ? `${path}/${entry.name}` : entry.name,
+                                        filesWithPaths
+                                    )
+                                );
+
+                                await Promise.all(subPromises);
+                                readEntries();
+                            });
+                        };
+                        readEntries();
+                    } else {
                         resolve();
-                    });
-                } else if (entry.isDirectory) {
-                    const reader = entry.createReader();
-                    const readEntries = () => {
-                        reader.readEntries(async (entries) => {
-                            if (entries.length === 0) {
-                                resolve();
-                                return;
-                            }
+                    }
+                });
+            },
 
-                            const subPromises = entries.map((e) =>
-                                this.traverseFileTree(
-                                    e,
-                                    path ? `${path}/${entry.name}` : entry.name,
-                                    filesWithPaths
-                                )
-                            );
-
-                            await Promise.all(subPromises);
-                            readEntries();
-                        });
-                    };
-                    readEntries();
-                } else {
-                    resolve();
-                }
-            });
-        },
             async uploadFilesWithFolders(filesWithPaths) {
                 this.isUploading = true;
                 this.uploadQueue = [];
@@ -296,105 +290,120 @@
                     this.uploadQueue = [];
                 }
             },
+            async handleFileSelect(e) {
+                const files = Array.from(e.target.files);
+                if (files.length > 0) {
+                    const filesWithPaths = files.map(f => ({ file: f, path: '' }));
+                    await this.uploadFilesWithFolders(filesWithPaths);
+                }
+            },
+            triggerBrowse() {
+                this.$refs.fileInput.click();
+            },
         }"
-        @dragenter.window="handleDragEnter($event)"
-        @dragleave.window="handleDragLeave($event)"
-        @dragover.window="handleDragOver($event)"
-        @drop.window="handleDrop($event)"
-        @keydown.window="handleEscapeKey($event)"
-        class="relative"
+    @dragenter.window="handleDragEnter($event)"
+    @dragleave.window="handleDragLeave($event)"
+    @dragover.window="handleDragOver($event)"
+    @drop.window="handleDrop($event)"
+    @keydown.window="handleEscapeKey($event)"
+    class="relative"
+>
+    <div
+        x-show="isDragging"
+        x-cloak
+        x-transition:enter="transition-[opacity] duration-200 ease-out"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition-[opacity] duration-150 ease-in"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+
+        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 dark:bg-gray-100/20"
     >
-        <div
-            x-show="isDragging"
-            x-cloak
-            x-transition:enter="transition-[opacity] duration-200 ease-out"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition-[opacity] duration-150 ease-in"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 dark:bg-gray-100/20"
-        >
-            <div class="rounded-lg bg-white p-8 shadow-xl dark:bg-gray-800">
-                <div class="flex flex-col items-center gap-4">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         class="icon icon-tabler icons-tabler-outline icon-tabler-upload size-12 text-success-500"
-                         viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
-                        <path d="M7 9l5 -5l5 5" />
-                        <path d="M12 4l0 12" />
-                    </svg>
-                    <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                        {{ trans('server/file.actions.upload.drop_files') }}
-                    </p>
-                </div>
+        <div class="rounded-lg bg-white p-8 shadow-xl dark:bg-gray-800">
+            <div class="flex flex-col items-center gap-4">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     class="size-12 text-success-500"
+                     viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+                    <path d="M7 9l5 -5l5 5" />
+                    <path d="M12 4l0 12" />
+                </svg>
+                <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    {{ trans('server/file.actions.upload.drop_files') }}
+                </p>
             </div>
         </div>
-
-        <div
-            x-show="isUploading"
-            x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 dark:bg-gray-100/20 p-4"
-        >
-            <div
-                class="rounded-lg bg-white shadow-xl dark:bg-gray-800 max-w-1/2 max-h-[50vh] overflow-hidden flex flex-col">
-                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-center">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                        {{ trans('server/file.actions.upload.header') }} -
-                        <span class="text-lg text-gray-600 dark:text-gray-400">
-                            <span x-text="currentFileIndex"></span> of <span x-text="totalFiles"></span>
-                        </span>
-                    </h3>
-                </div>
-
-                <div class="flex-1 overflow-y-auto">
-                    <div class="overflow-hidden">
-                        <table class="w-full divide-y divide-gray-200 dark:divide-white/5">
-                            <tbody class="divide-y divide-gray-200 dark:divide-white/5 bg-white dark:bg-gray-900">
-                            <template x-for="(fileData, index) in uploadQueue" :key="index">
-                                <tr class="transition duration-75 hover:bg-gray-50 dark:hover:bg-white/5">
-                                    <td class="px-4 py-4 sm:px-6">
-                                        <div class="flex flex-col gap-y-1">
-                                            <div
-                                                class="text-sm font-medium leading-6 text-gray-950 dark:text-white truncate max-w-xs"
-                                                x-text="(fileData.path ? fileData.path + '/' : '') + fileData.name">
-                                            </div>
-                                            <div x-show="fileData.status === 'error'"
-                                                 class="text-xs text-danger-600 dark:text-danger-400"
-                                                 x-text="fileData.error"></div>
-                                        </div>
-                                    </td>
-                                    <td class="px-4 py-4 sm:px-6">
-                                        <div class="text-sm text-gray-500 dark:text-gray-400"
-                                             x-text="formatBytes(fileData.size)"></div>
-                                    </td>
-                                    <td class="px-4 py-4 sm:px-6">
-                                        <div x-show="fileData.status === 'uploading' || fileData.status === 'complete'"
-                                             class="flex justify-between items-center text-sm">
-                                                <span class="font-medium text-gray-700 dark:text-gray-300"
-                                                      x-text="`${fileData.progress}%`"></span>
-                                            <span x-show="fileData.status === 'uploading' && fileData.speed > 0"
-                                                  class="text-gray-500 dark:text-gray-400"
-                                                  x-text="formatSpeed(fileData.speed)"></span>
-                                        </div>
-                                        <span x-show="fileData.status === 'pending'"
-                                              class="text-sm text-gray-500 dark:text-gray-400">
-                                                —
-                                            </span>
-                                    </td>
-                                </tr>
-                            </template>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{ $this->table }}
     </div>
 
-    <x-filament-actions::modals />
-</x-filament-panels::page>
+    <div class="p-4">
+        <input type="file" x-ref="fileInput" class="hidden" multiple @change="handleFileSelect">
+
+        <div class="flex items-center justify-center min-h-[200px]">
+            <x-filament::button outlined size="lg" color="primary" @click="triggerBrowse">
+                {{ trans('server/file.actions.upload.from_files') }}
+            </x-filament::button>
+        </div>
+    </div>
+
+    <div
+        x-show="isUploading"
+        x-cloak
+        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 dark:bg-gray-100/20 p-4"
+    >
+        <div
+            class="rounded-lg bg-white shadow-xl dark:bg-gray-800 max-w-1/2 max-h-[50vh] overflow-hidden flex flex-col">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-center">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    {{ trans('server/file.actions.upload.header') }} -
+                    <span class="text-lg text-gray-600 dark:text-gray-400">
+                            <span x-text="currentFileIndex"></span> of <span x-text="totalFiles"></span>
+                        </span>
+                </h3>
+            </div>
+
+            <div class="flex-1 overflow-y-auto">
+                <div class="overflow-hidden">
+                    <table class="w-full divide-y divide-gray-200 dark:divide-white/5">
+                        <tbody class="divide-y divide-gray-200 dark:divide-white/5 bg-white dark:bg-gray-900">
+                        <template x-for="(fileData, index) in uploadQueue" :key="index">
+                            <tr class="transition duration-75 hover:bg-gray-50 dark:hover:bg-white/5">
+                                <td class="px-4 py-4 sm:px-6">
+                                    <div class="flex flex-col gap-y-1">
+                                        <div
+                                            class="text-sm font-medium leading-6 text-gray-950 dark:text-white truncate max-w-xs"
+                                            x-text="(fileData.path ? fileData.path + '/' : '') + fileData.name">
+                                        </div>
+                                        <div x-show="fileData.status === 'error'"
+                                             class="text-xs text-danger-600 dark:text-danger-400"
+                                             x-text="fileData.error"></div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-4 sm:px-6">
+                                    <div class="text-sm text-gray-500 dark:text-gray-400"
+                                         x-text="formatBytes(fileData.size)"></div>
+                                </td>
+                                <td class="px-4 py-4 sm:px-6">
+                                    <div x-show="fileData.status === 'uploading' || fileData.status === 'complete'"
+                                         class="flex justify-between items-center text-sm">
+                                                <span class="font-medium text-gray-700 dark:text-gray-300"
+                                                      x-text="`${fileData.progress}%`"></span>
+                                        <span x-show="fileData.status === 'uploading' && fileData.speed > 0"
+                                              class="text-gray-500 dark:text-gray-400"
+                                              x-text="formatSpeed(fileData.speed)"></span>
+                                    </div>
+                                    <span x-show="fileData.status === 'pending'"
+                                          class="text-sm text-gray-500 dark:text-gray-400">
+                                                —
+                                            </span>
+                                </td>
+                            </tr>
+                        </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
