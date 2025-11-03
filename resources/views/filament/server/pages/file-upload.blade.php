@@ -1,54 +1,10 @@
 <div
     x-data="{
-            isDragging: false,
-            dragCounter: 0,
             isUploading: false,
             uploadQueue: [],
             currentFileIndex: 0,
             totalFiles: 0,
             autoCloseTimer: 1000,
-
-            handleDragEnter(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                this.dragCounter++;
-                this.isDragging = true;
-            },
-            handleDragLeave(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                this.dragCounter--;
-                if (this.dragCounter === 0) this.isDragging = false;
-            },
-            handleDragOver(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            },
-            async handleDrop(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                this.isDragging = false;
-                this.dragCounter = 0;
-
-                const items = e.dataTransfer.items;
-                const files = e.dataTransfer.files;
-
-                if ((!items || items.length === 0) && (!files || files.length === 0)) return;
-
-                let filesWithPaths = [];
-
-                if (items && items.length > 0 && items[0].webkitGetAsEntry) {
-                    filesWithPaths = await this.extractFilesFromItems(items);
-                }
-
-                if (files && files.length > 0 && filesWithPaths.length === 0) {
-                    filesWithPaths = Array.from(files).map(f => ({ file: f, path: '' }));
-                }
-
-                if (filesWithPaths.length > 0) {
-                    await this.uploadFilesWithFolders(filesWithPaths);
-                }
-            },
 
             async extractFilesFromItems(items) {
                 const filesWithPaths = [];
@@ -301,42 +257,8 @@
                 this.$refs.fileInput.click();
             },
         }"
-    @dragenter.window="handleDragEnter($event)"
-    @dragleave.window="handleDragLeave($event)"
-    @dragover.window="handleDragOver($event)"
-    @drop.window="handleDrop($event)"
-    @keydown.window="handleEscapeKey($event)"
     class="relative"
 >
-    <div
-        x-show="isDragging"
-        x-cloak
-        x-transition:enter="transition-[opacity] duration-200 ease-out"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition-[opacity] duration-150 ease-in"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-
-        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 dark:bg-gray-100/20"
-    >
-        <div class="rounded-lg bg-white p-8 shadow-xl dark:bg-gray-800">
-            <div class="flex flex-col items-center gap-4">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     class="size-12 text-success-500"
-                     viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
-                    <path d="M7 9l5 -5l5 5" />
-                    <path d="M12 4l0 12" />
-                </svg>
-                <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    {{ trans('server/file.actions.upload.drop_files') }}
-                </p>
-            </div>
-        </div>
-    </div>
-
     <div class="p-4">
         <input type="file" x-ref="fileInput" class="hidden" multiple @change="handleFileSelect">
 

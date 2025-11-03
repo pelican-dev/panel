@@ -549,9 +549,6 @@ class ListFiles extends ListRecords
 
                         $this->refreshPage();
                     })
-                    ->extraModalWindowAttributes([
-                        'class' => '.upload-modal-window',
-                    ])
                     ->schema([
                         Tabs::make()
                             ->contained(false)
