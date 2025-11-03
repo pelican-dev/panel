@@ -126,7 +126,7 @@
                     for (const { file } of filesWithPaths) {
                         if (file.size > uploadSizeLimit) {
                             new window.FilamentNotification()
-                                .title(`File ${file.name} exceeds the upload size limit of ${this.formatBytes(uploadSizeLimit)}`)
+                                .title(`File ${file.name} exceeds the upload limit.`)
                                 .danger()
                                 .send();
                             this.isUploading = false;
@@ -193,9 +193,9 @@
                     if (failed.length === 0) {
                         new window.FilamentNotification().title('{{ trans('server/file.actions.upload.success') }}').success().send();
                     } else if (failed.length === this.totalFiles) {
-                        new window.FilamentNotification().title('{{ trans('server/file.actions.upload.error_all') }}').danger().send();
+                        new window.FilamentNotification().title('{{ trans('server/file.actions.upload.failed') }}').danger().send();
                     } else {
-                        new window.FilamentNotification().title('{{ trans('server/file.actions.upload.error_partial') }}').warning().send();
+                        new window.FilamentNotification().title('{{ trans('server/file.actions.upload.failed') }}').danger().send();
                     }
 
                     if (this.autoCloseTimer) clearTimeout(this.autoCloseTimer);

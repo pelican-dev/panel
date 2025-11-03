@@ -21,6 +21,7 @@ return [
             'success' => 'Files uploaded successfully',
             'failed' => 'Failed to upload files',
             'header' => 'Uploading Files',
+            'error' => 'An error occurred while uploading',
         ],
         'rename' => [
             'title' => 'Rename',
