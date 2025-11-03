@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\User;
@@ -17,23 +18,26 @@ class GetUserPermissionsService
      */
     public function handle(Server $server, User $user): array
     {
-        if ($user->id === $server->owner_id) {
+        $isOwner = $user->id === $server->owner_id;
+        $isAdmin = $user->isAdmin() && ($user->can('view', $server) || $user->can('update', $server));
+
+        if ($isOwner && !$isAdmin) {
             return ['*'];
         }
 
-        if ($user->isAdmin() && ($user->can('view', $server) || $user->can('update', $server))) {
-            $permissions = $user->can('update', $server) ? ['*'] : ['websocket.connect', 'backup.read'];
+        $adminPermissions = [
+            'admin.websocket.errors',
+            'admin.websocket.install',
+            'admin.websocket.transfer',
+        ];
 
-            $permissions[] = 'admin.websocket.errors';
-            $permissions[] = 'admin.websocket.install';
-            $permissions[] = 'admin.websocket.transfer';
-
-            return $permissions;
+        if ($isAdmin) {
+            return $isOwner || $user->can('update', $server) ? array_merge(['*'], $adminPermissions) : array_merge([Permission::ACTION_WEBSOCKET_CONNECT], $adminPermissions);
         }
 
-        /** @var Subuser|null $subuserPermissions */
-        $subuserPermissions = $server->subusers()->where('user_id', $user->id)->first();
+        /** @var Subuser|null $subuser */
+        $subuser = $server->subusers()->where('user_id', $user->id)->first();
 
-        return $subuserPermissions ? $subuserPermissions->permissions : [];
+        return $subuser->permissions ?? [];
     }
 }

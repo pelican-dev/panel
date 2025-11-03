@@ -255,8 +255,7 @@ class ScheduleResource extends Resource
                                             '6' => trans('server/schedule.time.saturday'),
                                             '0' => trans('server/schedule.time.sunday'),
                                         ])
-                                        ->selectablePlaceholder(false)
-                                        ->native(false),
+                                        ->selectablePlaceholder(false),
                                 ])
                                 ->action(function (Set $set, $data) {
                                     $set('cron_minute', '0');

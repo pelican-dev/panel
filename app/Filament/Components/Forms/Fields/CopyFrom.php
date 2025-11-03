@@ -21,8 +21,6 @@ class CopyFrom extends Select
 
         $this->searchable();
 
-        $this->native(false);
-
         $this->live();
     }
 
