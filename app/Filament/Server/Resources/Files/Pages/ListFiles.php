@@ -66,7 +66,6 @@ class ListFiles extends ListRecords
 
     private DaemonFileRepository $fileRepository;
 
-
     public function getTitle(): string
     {
         return trans('server/file.title');
