@@ -33,7 +33,7 @@ class ServerResource extends Resource
         ];
     }
 
-    public static function embedServerList(bool $condition = true)
+    public static function embedServerList(bool $condition = true): void
     {
         static::$slug = $condition ? null : '/';
         static::$shouldRegisterNavigation = $condition;
