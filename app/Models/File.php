@@ -67,6 +67,7 @@ class File extends Model
         ];
     }
 
+    /** @return array<string, array<string, string|Closure|null>> */
     public static function getSpecialFiles(): array
     {
         $specialFiles = [
@@ -77,7 +78,7 @@ class File extends Model
             ],
         ];
 
-        return array_unique(array_merge($specialFiles, static::$customSpecialFiles));
+        return array_merge($specialFiles, static::$customSpecialFiles);
     }
 
     public static function get(Server $server, string $path = '/', ?string $searchTerm = null): Builder
