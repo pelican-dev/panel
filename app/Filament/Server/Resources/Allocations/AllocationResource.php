@@ -75,6 +75,7 @@ class AllocationResource extends Resource
                     ->label(trans('server/network.primary')),
                 IconColumn::make('is_locked')
                     ->label(trans('server/network.locked'))
+                    ->tooltip(trans('server/network.locked_helper'))
                     ->trueIcon('tabler-lock')
                     ->falseIcon('tabler-lock-open'),
             ])
