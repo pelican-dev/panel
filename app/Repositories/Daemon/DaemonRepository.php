@@ -52,6 +52,22 @@ abstract class DaemonRepository
         return Http::daemon($this->node, $headers)->throwIf(fn ($condition) => $this->enforceValidNodeToken($condition));
     }
 
+    /**
+     * Fetch diagnostics from Wings.
+     *
+     * @throws ConnectionException
+     */
+    public function getDiagnostics(int $logLines = 300, bool $includeEndpoints = true, bool $includeLogs = true): Response
+    {
+        $query = [
+            'include_endpoints' => $includeEndpoints,
+            'include_logs' => $includeLogs,
+            'log_lines' => $logLines,
+        ];
+
+        return $this->getHttpClient()->get('/api/diagnostics', $query);
+    }
+
     protected function enforceValidNodeToken(Response|bool $condition): bool
     {
         if (is_bool($condition)) {

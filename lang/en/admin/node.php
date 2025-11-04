@@ -10,6 +10,7 @@ return [
         'basic_settings' => 'Basic Settings',
         'advanced_settings' => 'Advanced Settings',
         'config_file' => 'Configuration File',
+        'diagnostics' => 'Diagnostics',
     ],
     'table' => [
         'health' => 'Health',
@@ -116,6 +117,20 @@ return [
     'error_connecting' => 'Error connecting to :node',
     'error_connecting_description' => 'The configuration could not be automatically updated on Wings, you will need to manually update the configuration file.',
     'allocation' => 'Allocation',
+
+    'diagnostics' => [
+        'header' => 'Node Diagnostics',
+        'include_endpoints' => 'Include Endpoints',
+        'include_endpoints_hint' => 'Including endpoints will show panel urls within the logs and NOT obscure them.',
+        'include_logs' => 'Include Logs',
+        'include_logs_hint' => 'Including logs will show recent wing logs and help track down possible issues.',
+        'run_diagnostics' => 'Run Diagnostics',
+        'upload_to_pelican' => 'Upload Logs',
+        'logs_uploaded' => 'Logs Uploaded',
+        'upload_failed' => 'Log Upload Failed',
+        'pull' => 'Pull',
+        'upload' => 'Upload',
+    ],
 
     'cloudflare_issue' => [
         'title' => 'Cloudflare Issue',
