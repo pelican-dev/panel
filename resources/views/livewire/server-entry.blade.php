@@ -22,7 +22,6 @@
         "></div>
         @endif
 
-        <div class="flex items-center mb-5 gap-2">
         <div @class([
             'flex items-center gap-2',
             'mb-5' => !$server->description,
