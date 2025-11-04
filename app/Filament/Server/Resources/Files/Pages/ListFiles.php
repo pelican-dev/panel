@@ -676,6 +676,19 @@ class ListFiles extends ListRecords
         }
     }
 
+    /**
+     * @param  string[]  $files
+     */
+    public function logUploadedFiles(array $files): void
+    {
+        $filesCollection = collect($files);
+
+        Activity::event('server:files.uploaded')
+            ->property('directory', $this->path)
+            ->property('files', $filesCollection)
+            ->log();
+    }
+
     private function getDaemonFileRepository(): DaemonFileRepository
     {
         /** @var Server $server */

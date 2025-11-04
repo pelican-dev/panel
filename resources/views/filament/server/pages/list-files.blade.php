@@ -119,6 +119,7 @@
                 this.uploadQueue = [];
                 this.totalFiles = filesWithPaths.length;
                 this.currentFileIndex = 0;
+                const uploadedFiles = [];
 
                 try {
                     const uploadSizeLimit = await $wire.getUploadSizeLimit();
@@ -174,7 +175,11 @@
 
                     for (let i = 0; i < this.uploadQueue.length; i++) {
                         const uploadPromise = this.uploadFile(i)
-                            .then(() => { completedCount++; this.currentFileIndex = completedCount; })
+                            .then(() => { completedCount++; this.currentFileIndex = completedCount;
+                                const item = this.uploadQueue[i];
+                                const relativePath = (item.path ? item.path.replace(/^\/+/, '') + '/' : '') + item.name;
+                                uploadedFiles.push(relativePath);
+                            })
                             .catch(() => { completedCount++; this.currentFileIndex = completedCount; });
 
                         activeUploads.push(uploadPromise);
@@ -196,6 +201,16 @@
                         new window.FilamentNotification().title('{{ trans('server/file.actions.upload.failed') }}').danger().send();
                     } else {
                         new window.FilamentNotification().title('{{ trans('server/file.actions.upload.failed') }}').danger().send();
+                    }
+
+                    if (uploadedFiles.length > 0) {
+                        this.$nextTick(() => {
+                            try {
+                                @this.call('logUploadedFiles', uploadedFiles);
+                            } catch (e) {
+                                $wire.call('logUploadedFiles', uploadedFiles);
+                            }
+                        });
                     }
 
                     if (this.autoCloseTimer) clearTimeout(this.autoCloseTimer);
