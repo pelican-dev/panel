@@ -78,6 +78,12 @@ class Allocation extends Model
 
     protected static function booted(): void
     {
+        static::updating(function (self $allocation) {
+            if (is_null($allocation->server_id)) {
+                $allocation->is_locked = false;
+            }
+        });
+
         static::deleting(function (self $allocation) {
             throw_if($allocation->server_id, new ServerUsingAllocationException(trans('exceptions.allocations.server_using')));
         });
