@@ -22,8 +22,6 @@ use App\Models\Server;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\UserSSHKey;
-use App\Repositories\Daemon\DaemonRepository;
-use App\Repositories\Daemon\HttpDaemonRepository;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
@@ -121,16 +119,5 @@ class AppServiceProvider extends ServiceProvider
         AboutCommand::add('Drivers', 'Backups', config('backups.default'));
 
         AboutCommand::add('Environment', 'Installation Directory', base_path());
-    }
-
-    /**
-     * Register application service providers.
-     */
-    public function register(): void
-    {
-        Scramble::ignoreDefaultRoutes();
-
-        // Bind the daemon repository abstract to a concrete implementation so it is instantiable.
-        $this->app->bind(DaemonRepository::class, HttpDaemonRepository::class);
     }
 }

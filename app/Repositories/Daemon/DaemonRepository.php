@@ -72,23 +72,4 @@ abstract class DaemonRepository
 
         return true;
     }
-
-    /**
-     * Retrieve diagnostics from the daemon for the current node.
-     *
-     *
-     * @throws ConnectionException
-     */
-    public function getDiagnostics(int $lines, bool $includeEndpoints, bool $includeLogs): Response
-    {
-        Assert::isInstanceOf($this->node, Node::class);
-
-        return $this->getHttpClient()
-            ->timeout(5)
-            ->get('/api/diagnostics', [
-                'log_lines' => $lines,
-                'include_endpoints' => $includeEndpoints ? 'true' : 'false',
-                'include_logs' => $includeLogs ? 'true' : 'false',
-            ]);
-    }
 }

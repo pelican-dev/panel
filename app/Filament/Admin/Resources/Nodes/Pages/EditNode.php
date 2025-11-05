@@ -4,8 +4,7 @@ namespace App\Filament\Admin\Resources\Nodes\Pages;
 
 use App\Filament\Admin\Resources\Nodes\NodeResource;
 use App\Models\Node;
-use App\Repositories\Daemon\DaemonConfigurationRepository;
-use App\Repositories\Daemon\DaemonRepository;
+use App\Repositories\Daemon\DaemonSystemRepository;
 use App\Services\Helpers\SoftwareVersionService;
 use App\Services\Nodes\NodeAutoDeployService;
 use App\Services\Nodes\NodeUpdateService;
@@ -51,17 +50,14 @@ class EditNode extends EditRecord
 
     protected static string $resource = NodeResource::class;
 
-    private DaemonConfigurationRepository $daemonConfigurationRepository;
-
-    private DaemonRepository $daemonRepository;
+    private DaemonSystemRepository $daemonSystemRepository;
 
     private NodeUpdateService $nodeUpdateService;
 
-    public function boot(DaemonConfigurationRepository $daemonConfigurationRepository, NodeUpdateService $nodeUpdateService, DaemonRepository $daemonRepository): void
+    public function boot(DaemonSystemRepository $daemonSystemRepository, NodeUpdateService $nodeUpdateService): void
     {
-        $this->daemonConfigurationRepository = $daemonConfigurationRepository;
+        $this->daemonSystemRepository = $daemonSystemRepository;
         $this->nodeUpdateService = $nodeUpdateService;
-        $this->daemonRepository = $daemonRepository;
     }
 
     /**
@@ -653,7 +649,7 @@ class EditNode extends EditRecord
                                             $logLines = $get('log_lines') ?? 200;
 
                                             try {
-                                                $response = $this->daemonRepository->setNode($node)->getDiagnostics($logLines, $includeEndpoints, $includeLogs);
+                                                $response = $this->daemonSystemRepository->setNode($node)->getDiagnostics($logLines, $includeEndpoints, $includeLogs);
 
                                                 $set('pulled', true);
                                                 $set('log', $response->body());
@@ -691,7 +687,7 @@ class EditNode extends EditRecord
                                                 if ($response->failed()) {
                                                     Notification::make()
                                                         ->title(trans('admin/node.diagnostics.upload_failed'))
-                                                        ->body($response->status())
+                                                        ->body(fn () => $response->status() . ' - ' . $response->body())
                                                         ->danger()
                                                         ->send();
 
@@ -752,7 +748,8 @@ class EditNode extends EditRecord
                                 ->hiddenLabel()
                                 ->columnSpanFull()
                                 ->rows(35)
-                                ->visible(fn (Get $get) => ($get('pulled') ?? false) || ($get('uploaded') ?? false)),                        ]),
+                                ->visible(fn (Get $get) => ($get('pulled') ?? false) || ($get('uploaded') ?? false)),
+                        ]),
                 ]),
         ]);
     }
@@ -810,7 +807,7 @@ class EditNode extends EditRecord
 
         try {
             if ($changed) {
-                $this->daemonConfigurationRepository->setNode($node)->update($node);
+                $this->daemonSystemRepository->setNode($node)->update($node);
             }
             parent::getSavedNotification()?->send();
         } catch (ConnectionException) {
