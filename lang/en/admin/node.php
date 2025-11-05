@@ -132,6 +132,7 @@ return [
         'view_logs' => 'View Logs',
         'pull' => 'Pull',
         'upload' => 'Upload',
+        'clear' => 'Clear',
         '404' => 'The requested diagnostic report could not be found. Make sure wings is up to date and try again.',
     ],
 

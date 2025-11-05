@@ -680,7 +680,7 @@ class EditNode extends EditRecord
                                     Action::make('upload')
                                         ->label(trans('admin/node.diagnostics.upload'))
                                         ->visible(fn (Get $get) => $get('pulled') ?? false)
-                                        ->icon('tabler-cloud-upload')->iconSize(IconSize::ExtraLarge)
+                                        ->icon('tabler-cloud-upload')->iconButton()->iconSize(IconSize::ExtraLarge)
                                         ->action(function (Get $get, Set $set) {
                                             try {
                                                 $response = Http::asMultipart()->post('https://logs.pelican.dev', [
@@ -731,6 +731,17 @@ class EditNode extends EditRecord
                                                     ->send();
                                             }
                                         }),
+                                    Action::make('clear')
+                                        ->label(trans('admin/node.diagnostics.clear'))
+                                        ->visible(fn (Get $get) => $get('pulled') ?? false)
+                                        ->icon('tabler-trash')->iconButton()->iconSize(IconSize::ExtraLarge)->color('danger')
+                                        ->action(function (Get $get, Set $set) {
+                                            $set('pulled', false);
+                                            $set('uploaded', false);
+                                            $set('log', null);
+                                            $this->refresh();
+                                        }
+                                        ),
                                 ])
                                 ->schema([
                                     Toggle::make('include_endpoints')
