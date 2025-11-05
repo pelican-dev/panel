@@ -44,6 +44,27 @@ fi
 echo -e "Optimizing Filament"
 php artisan filament:optimize
 
+echo -e "HAIL MARY"
+# Laravel optimizations
+php artisan optimize
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan event:cache
+
+# Filament specific
+php artisan filament:optimize
+
+# Data structures (Laravel Data package)
+php artisan data:cache-structures
+
+# Icons cache (Blade Icons)
+php artisan icons:cache
+
+# Structure Scouts (seems to be custom)
+php artisan structure-scouts:cache
+
+
 # default to caddy not starting
 export SUPERVISORD_CADDY=false
 
