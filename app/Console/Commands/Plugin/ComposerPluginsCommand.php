@@ -17,6 +17,10 @@ class ComposerPluginsCommand extends Command
     {
         $plugins = Plugin::all();
         foreach ($plugins as $plugin) {
+            if (!$plugin->shouldLoad()) {
+                continue;
+            }
+
             try {
                 Plugins::requireComposerPackages($plugin);
             } catch (Exception $exception) {
