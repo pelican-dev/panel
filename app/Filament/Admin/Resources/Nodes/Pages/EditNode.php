@@ -650,7 +650,7 @@ class EditNode extends EditRecord
                                             try {
                                                 $response = $this->daemonSystemRepository->setNode($node)->getDiagnostics($logLines, $includeEndpoints, $includeLogs);
 
-                                                if (str_contains($response->body(), '404')) {
+                                                if ($response->status() === 404) {
                                                     Notification::make()
                                                         ->title(trans('admin/node.diagnostics.404'))
                                                         ->warning()
@@ -724,7 +724,7 @@ class EditNode extends EditRecord
 
                                             } catch (\Exception $e) {
                                                 Notification::make()
-                                                    ->title(trans('admin/node.actions.upload_failed'))
+                                                    ->title(trans('admin/node.diagnostics.upload_failed'))
                                                     ->body($e->getMessage())
                                                     ->danger()
                                                     ->send();
