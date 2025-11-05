@@ -675,7 +675,7 @@ class EditNode extends EditRecord
                                         ->label(trans('admin/node.diagnostics.upload'))
                                         ->visible(fn (Get $get) => $get('pulled') ?? false)
                                         ->icon('tabler-cloud-upload')->iconSize(IconSize::ExtraLarge)
-                                        ->action(function (Get $get) {
+                                        ->action(function (Get $get, Set $set) {
                                             try {
                                                 $response = Http::asMultipart()->post('https://logs.pelican.dev', [
                                                     [
@@ -713,6 +713,9 @@ class EditNode extends EditRecord
                                                     ])
                                                     ->persistent()
                                                     ->send();
+                                                $set('log', $url);
+                                                $set('pulled', false);
+                                                $set('uploaded', true);
 
                                             } catch (\Exception $e) {
                                                 Notification::make()
@@ -749,8 +752,7 @@ class EditNode extends EditRecord
                                 ->hiddenLabel()
                                 ->columnSpanFull()
                                 ->rows(35)
-                                ->visible(fn (Get $get) => $get('pulled') ?? false),
-                        ]),
+                                ->visible(fn (Get $get) => ($get('pulled') ?? false) || ($get('uploaded') ?? false)),                        ]),
                 ]),
         ]);
     }
