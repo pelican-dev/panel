@@ -29,7 +29,8 @@ RUN composer config allow-plugins.php-http/discovery false
 RUN composer require --no-interaction --no-scripts \
       open-telemetry/sdk \
       open-telemetry/opentelemetry-auto-laravel \
-      php-http/guzzle7-adapter \
+      open-telemetry/opentelemetry-auto-guzzle \
+      open-telemetry/opentelemetry-auto-pdo \
       open-telemetry/exporter-otlp
 
 # ================================
