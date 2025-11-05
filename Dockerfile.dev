@@ -5,9 +5,11 @@ FROM --platform=$TARGETOS/$TARGETARCH php:8.4-fpm-alpine AS base
 
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-RUN install-php-extensions bcmath gd intl zip opcache pcntl posix pdo_mysql pdo_pgsql
+RUN install-php-extensions bcmath gd intl zip opcache pcntl posix pdo_mysql pdo_pgsql opentelemetry protobuf
 
 RUN rm /usr/local/bin/install-php-extensions
+
+RUN echo "OTEL: $(php -m | grep opentelemetry)"
 
 # ================================
 # Stage 1-1: Composer Install
@@ -22,6 +24,13 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 COPY composer.json composer.lock ./
 
 RUN composer install --no-dev --no-interaction --no-autoloader --no-scripts
+
+RUN composer config allow-plugins.php-http/discovery false
+RUN composer require \
+      open-telemetry/sdk \
+      open-telemetry/opentelemetry-auto-laravel \
+      php-http/guzzle7-adapter \
+      open-telemetry/exporter-otlp
 
 # ================================
 # Stage 1-2: Yarn Install
