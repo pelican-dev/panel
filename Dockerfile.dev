@@ -26,7 +26,7 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-interaction --no-autoloader --no-scripts
 
 RUN composer config allow-plugins.php-http/discovery false
-RUN composer require --no-interaction --no-autoloader --no-scripts \
+RUN composer require --no-interaction --no-scripts \
       open-telemetry/sdk \
       open-telemetry/opentelemetry-auto-laravel \
       php-http/guzzle7-adapter \
