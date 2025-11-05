@@ -637,6 +637,7 @@ class EditNode extends EditRecord
                                 ->heading(trans('admin/node.tabs.diagnostics'))
                                 ->columnSpanFull()
                                 ->columns(3)
+                                ->disabled(fn (Get $get) => ($get('pulled')))
                                 ->headerActions([
                                     Action::make('pull')
                                         ->label(trans('admin/node.diagnostics.pull'))
