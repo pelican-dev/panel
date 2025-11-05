@@ -637,12 +637,11 @@ class EditNode extends EditRecord
                                 ->heading(trans('admin/node.tabs.diagnostics'))
                                 ->columnSpanFull()
                                 ->columns(3)
-                                ->collapsible()->collapsed()
                                 ->headerActions([
                                     Action::make('pull')
                                         ->label(trans('admin/node.diagnostics.pull'))
                                         ->icon('tabler-cloud-download')->iconButton()->iconSize(IconSize::ExtraLarge)
-                                        ->visible(fn (Get $get) => !($get('pulled') ?? false))
+                                        ->hidden(fn (Get $get) => ($get('pulled')))
                                         ->action(function (Get $get, Set $set, Node $node) {
                                             $includeEndpoints = $get('include_endpoints') ?? true;
                                             $includeLogs = $get('include_logs') ?? true;
@@ -651,12 +650,21 @@ class EditNode extends EditRecord
                                             try {
                                                 $response = $this->daemonSystemRepository->setNode($node)->getDiagnostics($logLines, $includeEndpoints, $includeLogs);
 
+                                                if (str_contains($response->body(), '404')) {
+                                                    Notification::make()
+                                                        ->title(trans('admin/node.diagnostics.404'))
+                                                        ->warning()
+                                                        ->send();
+
+                                                    return;
+                                                }
+
                                                 $set('pulled', true);
                                                 $set('uploaded', false);
                                                 $set('log', $response->body());
 
                                                 Notification::make()
-                                                    ->title('Logs Pulled')
+                                                    ->title(trans('admin/node.diagnostics.logs_pulled'))
                                                     ->success()
                                                     ->send();
                                             } catch (ConnectionException $e) {

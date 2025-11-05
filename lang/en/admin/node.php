@@ -126,11 +126,13 @@ return [
         'include_logs_hint' => 'Including logs will show recent wing logs and help track down possible issues.',
         'run_diagnostics' => 'Run Diagnostics',
         'upload_to_pelican' => 'Upload Logs',
+        'logs_pulled' => 'Logs Pulled!',
         'logs_uploaded' => 'Logs Uploaded',
         'upload_failed' => 'Log Upload Failed',
         'view_logs' => 'View Logs',
         'pull' => 'Pull',
         'upload' => 'Upload',
+        '404' => 'The requested diagnostic report could not be found. Make sure wings is up to date and try again.',
     ],
 
     'cloudflare_issue' => [
