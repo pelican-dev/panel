@@ -652,6 +652,7 @@ class EditNode extends EditRecord
                                                 $response = $this->daemonSystemRepository->setNode($node)->getDiagnostics($logLines, $includeEndpoints, $includeLogs);
 
                                                 $set('pulled', true);
+                                                $set('uploaded', false);
                                                 $set('log', $response->body());
 
                                                 Notification::make()

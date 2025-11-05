@@ -120,4 +120,12 @@ class AppServiceProvider extends ServiceProvider
 
         AboutCommand::add('Environment', 'Installation Directory', base_path());
     }
+
+    /**
+     * Register application service providers.
+     */
+    public function register(): void
+    {
+        Scramble::ignoreDefaultRoutes();
+    }
 }
