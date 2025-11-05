@@ -16,6 +16,7 @@ use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListServers extends ListRecords
 {
@@ -47,7 +48,9 @@ class ListServers extends ListRecords
                     ->searchable(),
                 TextColumn::make('name')
                     ->label(trans('admin/server.name'))
-                    ->searchable()
+                    ->searchable(query: fn (Builder $query, string $search) => $query->where(
+                        Server::query()->qualifyColumn('name'), 'like', "%{$search}%")
+                    )
                     ->sortable(),
                 TextColumn::make('node.name')
                     ->label(trans('admin/server.node'))

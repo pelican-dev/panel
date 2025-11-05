@@ -29,6 +29,7 @@ class EggExporterService
             'author' => $egg->author,
             'uuid' => $egg->uuid,
             'description' => $egg->description,
+            'image' => $egg->image,
             'tags' => $egg->tags,
             'features' => $egg->features,
             'docker_images' => $egg->docker_images,
