@@ -637,12 +637,12 @@ class EditNode extends EditRecord
                                 ->heading(trans('admin/node.tabs.diagnostics'))
                                 ->columnSpanFull()
                                 ->columns(3)
-                                ->disabled(fn (Get $get) => ($get('pulled')))
+                                ->disabled(fn (Get $get) => $get('pulled'))
                                 ->headerActions([
                                     Action::make('pull')
                                         ->label(trans('admin/node.diagnostics.pull'))
                                         ->icon('tabler-cloud-download')->iconButton()->iconSize(IconSize::ExtraLarge)
-                                        ->hidden(fn (Get $get) => ($get('pulled')))
+                                        ->hidden(fn (Get $get) => $get('pulled'))
                                         ->action(function (Get $get, Set $set, Node $node) {
                                             $includeEndpoints = $get('include_endpoints') ?? true;
                                             $includeLogs = $get('include_logs') ?? true;
