@@ -163,7 +163,7 @@ class PluginService
     {
         if ($plugin->composer_packages) {
             $composerPackages = collect(json_decode($plugin->composer_packages, true, 512, JSON_THROW_ON_ERROR))
-                ->map(fn ($version, $package) => "'$package:$version'")
+                ->map(fn ($version, $package) => "$package:$version")
                 ->flatten()
                 ->unique()
                 ->toArray();
