@@ -44,6 +44,9 @@ fi
 echo -e "Optimizing Filament"
 php artisan filament:optimize
 
+echo -e "Optimizing everything"
+php artisan optimize
+
 # default to caddy not starting
 export SUPERVISORD_CADDY=false
 
