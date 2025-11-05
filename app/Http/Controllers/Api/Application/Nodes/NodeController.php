@@ -16,6 +16,7 @@ use App\Services\Nodes\NodeUpdateService;
 use App\Transformers\Api\Application\NodeTransformer;
 use Dedoc\Scramble\Attributes\Group;
 use Exception;
+use Illuminate\Http\Client\Response;
 use Illuminate\Http\JsonResponse;
 use Spatie\QueryBuilder\QueryBuilder;
 use Throwable;

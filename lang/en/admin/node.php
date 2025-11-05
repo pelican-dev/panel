@@ -128,6 +128,7 @@ return [
         'upload_to_pelican' => 'Upload Logs',
         'logs_uploaded' => 'Logs Uploaded',
         'upload_failed' => 'Log Upload Failed',
+        'view_logs' => 'View Logs',
         'pull' => 'Pull',
         'upload' => 'Upload',
     ],
