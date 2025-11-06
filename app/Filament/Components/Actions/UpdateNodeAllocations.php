@@ -4,12 +4,12 @@ namespace App\Filament\Components\Actions;
 
 use App\Models\Allocation;
 use Exception;
-use Filament\Actions\BulkAction;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Collection;
 
-class BulkUpdateAllocationIpAction extends BulkAction
+class UpdateNodeAllocations extends Action
 {
     public static function getDefaultName(): ?string
     {
@@ -36,34 +36,32 @@ class BulkUpdateAllocationIpAction extends BulkAction
 
         $this->modalSubmitActionLabel(trans('admin/node.update_ip'));
 
-        $this->schema(function (Collection $records) {
-            $currentIps = $records->pluck('ip')->unique()->values()->all();
+        $this->schema(function () {
+            $currentIps = $this->getOldIps();
             $availableIps = $this->getAvailableIps();
 
             return [
                 Select::make('old_ip')
                     ->label(trans('admin/node.old_ip'))
-                    ->options(array_combine($currentIps, $currentIps))
+                    ->options(array_combine($currentIps, $currentIps) ?: [])
                     ->required()
-                    ->helperText(trans('admin/node.old_ip_help'))
                     ->live(),
                 Select::make('new_ip')
                     ->label(trans('admin/node.new_ip'))
-                    ->options(fn () => array_combine($availableIps, $availableIps))
+                    ->options(fn () => array_combine($availableIps, $availableIps) ?: [])
                     ->required()
-                    ->helperText(trans('admin/node.new_ip_help'))
                     ->different('old_ip'),
             ];
         });
 
-        $this->action(function (Collection $records, array $data) {
-            /** @var Collection<int, Allocation> $records */
+        $this->action(function (array $data) {
             $oldIp = $data['old_ip'];
             $newIp = $data['new_ip'];
+            $nodeId = $this->nodeId;
 
-            $recordsToUpdate = $records->filter(fn (Allocation $allocation) => $allocation->ip === $oldIp);
+            $allocations = Allocation::where('node_id', $nodeId)->where('ip', $oldIp)->get();
 
-            if ($recordsToUpdate->count() === 0) {
+            if ($allocations->count() === 0) {
                 Notification::make()
                     ->title(trans('admin/node.no_allocations_to_update'))
                     ->warning()
@@ -75,8 +73,7 @@ class BulkUpdateAllocationIpAction extends BulkAction
             $updated = 0;
             $failed = 0;
 
-            /** @var Allocation $allocation */
-            foreach ($recordsToUpdate as $allocation) {
+            foreach ($allocations as $allocation) {
                 try {
                     $allocation->update(['ip' => $newIp]);
                     $updated++;
@@ -87,18 +84,21 @@ class BulkUpdateAllocationIpAction extends BulkAction
             }
 
             Notification::make()
-                ->title(trans('admin/node.ip_updated', ['count' => $updated, 'total' => $recordsToUpdate->count()]))
+                ->title(trans('admin/node.ip_updated', ['count' => $updated, 'total' => $allocations->count()]))
                 ->body($failed > 0 ? trans('admin/node.ip_update_failed', ['count' => $failed]) : null)
                 ->status($failed > 0 ? 'warning' : 'success')
                 ->persistent()
                 ->send();
         });
-
-        $this->deselectRecordsAfterCompletion();
     }
 
     /** @var string[] */
     protected array $availableIps = [];
+
+    /** @var string[] */
+    protected array $oldIps = [];
+
+    protected ?int $nodeId = null;
 
     /** @param  string[]  $ips */
     public function availableIps(array $ips): static
@@ -108,9 +108,42 @@ class BulkUpdateAllocationIpAction extends BulkAction
         return $this;
     }
 
+    /** @param  string[]  $ips */
+    public function oldIps(array $ips): static
+    {
+        $this->oldIps = $ips;
+
+        return $this;
+    }
+
+    public function forNode(int $nodeId): static
+    {
+        $this->nodeId = $nodeId;
+
+        return $this;
+    }
+
     /** @return string[] */
     protected function getAvailableIps(): array
     {
         return $this->availableIps;
+    }
+
+    /** @return string[] */
+    protected function getOldIps(): array
+    {
+        if (!empty($this->oldIps)) {
+            return $this->oldIps;
+        }
+
+        if ($this->nodeId) {
+            return Allocation::where('node_id', $this->nodeId)
+                ->pluck('ip')
+                ->unique()
+                ->values()
+                ->all();
+        }
+
+        return [];
     }
 }
