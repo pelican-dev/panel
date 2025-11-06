@@ -54,6 +54,7 @@ class Role extends BaseRole
         ],
         'plugin' => [
             'viewList',
+            'create',
             'update',
         ],
     ];
