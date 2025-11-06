@@ -7,7 +7,6 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use Illuminate\Database\Eloquent\Collection;
 
 class UpdateNodeAllocations extends Action
 {
