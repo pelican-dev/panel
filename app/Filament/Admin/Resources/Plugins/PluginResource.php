@@ -51,7 +51,7 @@ class PluginResource extends Resource
         return $table
             ->openRecordUrlInNewTab()
             ->reorderable('load_order')
-            ->authorizeReorder(fn () => auth()->user()->can('update plugin'))
+            ->authorizeReorder(fn () => user()?->can('update plugin'))
             ->reorderRecordsTriggerAction(fn (Action $action, bool $isReordering) => $action->hiddenLabel()->tooltip($isReordering ? trans('admin/plugin.apply_load_order') : trans('admin/plugin.change_load_order')))
             ->defaultSort('load_order')
             ->columns([
@@ -102,7 +102,7 @@ class PluginResource extends Resource
                     ] : null),
                 Action::make('settings')
                     ->label(trans('admin/plugin.settings'))
-                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
+                    ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                     ->icon('tabler-settings')
                     ->color('primary')
                     ->visible(fn (Plugin $plugin) => $plugin->isEnabled() && $plugin->hasSettings())
@@ -111,7 +111,7 @@ class PluginResource extends Resource
                     ->slideOver(),
                 Action::make('install')
                     ->label(trans('admin/plugin.install'))
-                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
+                    ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                     ->icon('tabler-terminal')
                     ->color('success')
                     ->hidden(fn (Plugin $plugin) => $plugin->isInstalled())
@@ -127,7 +127,7 @@ class PluginResource extends Resource
                     }),
                 Action::make('update')
                     ->label(trans('admin/plugin.update'))
-                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
+                    ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                     ->icon('tabler-download')
                     ->color('success')
                     ->visible(fn (Plugin $plugin) => $plugin->isUpdateAvailable())
@@ -143,7 +143,7 @@ class PluginResource extends Resource
                     }),
                 Action::make('enable')
                     ->label(trans('admin/plugin.enable'))
-                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
+                    ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                     ->icon('tabler-check')
                     ->color('success')
                     ->visible(fn (Plugin $plugin) => $plugin->canEnable())
@@ -162,7 +162,7 @@ class PluginResource extends Resource
                     }),
                 Action::make('disable')
                     ->label(trans('admin/plugin.disable'))
-                    ->authorize(fn (Plugin $plugin) => auth()->user()->can('update', $plugin))
+                    ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                     ->icon('tabler-x')
                     ->color('danger')
                     ->visible(fn (Plugin $plugin) => $plugin->canDisable())
@@ -180,7 +180,7 @@ class PluginResource extends Resource
             ->headerActions([
                 Action::make('import')
                     ->label(trans('admin/plugin.import'))
-                    ->authorize(fn () => auth()->user()->can('create', Plugin::class))
+                    ->authorize(fn () => user()?->can('create', Plugin::class))
                     ->icon('tabler-download')
                     ->schema([
                         Tabs::make('Tabs')
