@@ -16,8 +16,7 @@ class UpdatePluginCommand extends Command
     {
         $id = $this->argument('id') ?? $this->choice('Plugin', Plugin::pluck('name', 'id')->toArray());
 
-        /** @var ?Plugin $plugin */
-        $plugin = Plugin::where('id', $id)->first();
+        $plugin = Plugin::find($id);
 
         if (!$plugin) {
             $this->error('Plugin does not exist!');
