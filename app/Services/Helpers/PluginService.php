@@ -76,7 +76,7 @@ class PluginService
                 // Autoload src directory
                 $namespace = $plugin->namespace . '\\';
                 if (!array_key_exists($namespace, $classLoader->getPrefixesPsr4())) {
-                    $classLoader->setPsr4($namespace . '\\', plugin_path($plugin->id, 'src/'));
+                    $classLoader->setPsr4($namespace, plugin_path($plugin->id, 'src/'));
                 }
 
                 // Register service providers
