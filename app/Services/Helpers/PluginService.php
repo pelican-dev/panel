@@ -12,7 +12,6 @@ use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -23,7 +22,7 @@ use ZipArchive;
 
 class PluginService
 {
-    public function __construct(private Application $app, private Composer $composer) {}
+    public function __construct(private Application $app) {}
 
     public function loadPlugins(): void
     {
@@ -160,10 +159,9 @@ class PluginService
                 ->unique()
                 ->toArray();
 
-            $success = $this->composer->setWorkingPath(base_path())->requirePackages($composerPackages);
-
-            if (!$success) {
-                throw new Exception("Could not require composer packages for plugin '{$plugin->id}'");
+            $result = Process::path(base_path())->timeout(600)->run(['composer', 'require', ...$composerPackages]);
+            if ($result->failed()) {
+                throw new Exception('Could not require composer packages: ' . $result->errorOutput());
             }
         }
     }
