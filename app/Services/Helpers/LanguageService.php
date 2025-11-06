@@ -17,6 +17,14 @@ class LanguageService
         return in_array($countryCode, self::TRANSLATED_COMPLETELY, true);
     }
 
+    public function getLanguageDisplayName(string $code): string
+    {
+        $key = 'profile.current_language_name';
+        $trans = trans($key, locale: $code);
+
+        return $trans !== $key ? $trans : title_case(Locale::getDisplayName($code, $code));
+    }
+
     /**
      * @return array<array-key, string>
      */
@@ -25,11 +33,11 @@ class LanguageService
         $baseLanguages = collect(File::directories(base_path($path)))->mapWithKeys(function ($path) {
             $code = basename($path);
 
-            return [$code => title_case(Locale::getDisplayName($code, $code))];
+            return [$code => $this->getLanguageDisplayName($code)];
         })->toArray();
 
-        $pluginLanguages = collect(Plugins::getPluginLanguages())->mapWithKeys(fn ($code) => [$code => title_case(Locale::getDisplayName($code, $code))])->toArray();
+        $pluginLanguages = collect(Plugins::getPluginLanguages())->mapWithKeys(fn ($code) => [$code => $this->getLanguageDisplayName($code)])->toArray();
 
-        return array_unique(array_merge($baseLanguages, $pluginLanguages));
+        return array_sort(array_unique(array_merge($baseLanguages, $pluginLanguages)));
     }
 }
