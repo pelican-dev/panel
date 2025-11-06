@@ -15,6 +15,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\ServiceProvider;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
@@ -73,8 +74,9 @@ class PluginService
                 }
 
                 // Autoload src directory
-                if (!array_key_exists($plugin->namespace, $classLoader->getClassMap())) {
-                    $classLoader->setPsr4($plugin->namespace . '\\', plugin_path($plugin->id, 'src/'));
+                $namespace = $plugin->namespace . '\\';
+                if (!array_key_exists($namespace, $classLoader->getPrefixesPsr4())) {
+                    $classLoader->setPsr4($namespace . '\\', plugin_path($plugin->id, 'src/'));
                 }
 
                 // Register service providers
@@ -113,13 +115,7 @@ class PluginService
                     });
                 }
             } catch (Exception $exception) {
-                if ($this->isDevModeActive()) {
-                    throw ($exception);
-                }
-
-                report($exception);
-
-                $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
+                $this->handlePluginException($plugin, $exception);
             }
         }
     }
@@ -150,13 +146,7 @@ class PluginService
                     $this->enablePlugin($plugin);
                 }
             } catch (Exception $exception) {
-                if ($this->isDevModeActive()) {
-                    throw ($exception);
-                }
-
-                report($exception);
-
-                $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
+                $this->handlePluginException($plugin, $exception);
             }
         }
     }
@@ -193,12 +183,12 @@ class PluginService
     public function buildAssets(): bool
     {
         try {
-            $result = Process::run('yarn install');
+            $result = Process::path(base_path())->timeout(300)->run('yarn install');
             if ($result->failed()) {
                 throw new Exception('Could not install dependencies: ' . $result->errorOutput());
             }
 
-            $result = Process::run('yarn build');
+            $result = Process::path(base_path())->timeout(600)->run('yarn build');
             if ($result->failed()) {
                 throw new Exception('Could not build assets: ' . $result->errorOutput());
             }
@@ -232,13 +222,7 @@ class PluginService
                 }
             }
         } catch (Exception $exception) {
-            if ($this->isDevModeActive()) {
-                throw ($exception);
-            }
-
-            report($exception);
-
-            $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
+            $this->handlePluginException($plugin, $exception);
         }
     }
 
@@ -251,18 +235,17 @@ class PluginService
 
             cache()->forget("plugins.$plugin->id.update");
         } catch (Exception $exception) {
-            if ($this->isDevModeActive()) {
-                throw ($exception);
-            }
-
-            report($exception);
-
-            $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
+            $this->handlePluginException($plugin, $exception);
         }
     }
 
     public function downloadPluginFromFile(UploadedFile $file, bool $cleanDownload = false): void
     {
+        // Validate file size to prevent zip bombs
+        if ($file->getSize() > 100 * 1024 * 1024) {
+            throw new Exception('Zip file too large. (max 100 MB)');
+        }
+
         $zip = new ZipArchive();
 
         if (!$zip->open($file->getPathname())) {
@@ -271,6 +254,15 @@ class PluginService
 
         $pluginName = str($file->getClientOriginalName())->before('.zip')->toString();
 
+        // Validate zip contents before extraction
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $filename = $zip->getNameIndex($i);
+            if (str_contains($filename, '..') || str_starts_with($filename, '/')) {
+                $zip->close();
+                throw new Exception('Zip file contains invalid path traversal sequences.');
+            }
+        }
+
         if ($cleanDownload) {
             File::deleteDirectory(plugin_path($pluginName));
         }
@@ -278,6 +270,7 @@ class PluginService
         $extractPath = $zip->locateName($pluginName) ? base_path('plugins') : plugin_path($pluginName);
 
         if (!$zip->extractTo($extractPath)) {
+            $zip->close();
             throw new Exception('Could not extract zip file.');
         }
 
@@ -290,7 +283,14 @@ class PluginService
         $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
         $tmpPath = $tmpDir->path($info['basename']);
 
-        if (!file_put_contents($tmpPath, file_get_contents($url))) {
+        $content = Http::timeout(60)->connectTimeout(5)->throw()->get($url)->body();
+
+        // Validate file size to prevent zip bombs
+        if (strlen($content) > 100 * 1024 * 1024) {
+            throw new InvalidFileUploadException('Zip file too large. (100 MB)');
+        }
+
+        if (!file_put_contents($tmpPath, $content)) {
             throw new InvalidFileUploadException('Could not write temporary file.');
         }
 
@@ -371,5 +371,16 @@ class PluginService
     public function isDevModeActive(): bool
     {
         return config('panel.plugin.dev_mode', false);
+    }
+
+    private function handlePluginException(string|Plugin $plugin, Exception $exception): void
+    {
+        if ($this->isDevModeActive()) {
+            throw ($exception);
+        }
+
+        report($exception);
+
+        $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
     }
 }

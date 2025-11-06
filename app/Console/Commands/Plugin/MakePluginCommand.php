@@ -29,7 +29,7 @@ class MakePluginCommand extends Command
 
     public function handle(): void
     {
-        $name = $this->option('name') ?? $this->ask('Name');
+        $name = Str::ascii($this->option('name') ?? $this->ask('Name'));
         $id = Str::slug($name);
 
         if ($this->filesystem->exists(plugin_path($id))) {
@@ -38,10 +38,10 @@ class MakePluginCommand extends Command
             return;
         }
 
-        $author = $this->option('author') ?? $this->ask('author', cache('plugin.author'));
+        $author = Str::ascii($this->option('author') ?? $this->ask('Author', cache('plugin.author')));
         cache()->forever('plugin.author', $author);
 
-        $namespace = $author . '\\' . Str::studly($name);
+        $namespace = Str::studly($author) . '\\' . Str::studly($name);
         $class = Str::studly($name . 'Plugin');
 
         if (class_exists('\\' . $namespace . '\\' . $class)) {

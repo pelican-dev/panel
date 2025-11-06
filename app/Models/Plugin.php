@@ -134,7 +134,7 @@ class Plugin extends Model implements HasPluginSettings
                     'namespace' => $data['namespace'],
                     'class' => $data['class'],
                     'panels' => $panels,
-                    'panel_version' => Arr::get($data, 'update_url', null),
+                    'panel_version' => Arr::get($data, 'panel_version', null),
                     'composer_packages' => $composerPackages,
 
                     'status' => Arr::get($data, 'meta.status', PluginStatus::NotInstalled->value),
@@ -232,9 +232,9 @@ class Plugin extends Model implements HasPluginSettings
 
     public function isCompatible(): bool
     {
-        $panelVersion = config('app.version', 'canary');
+        $currentPanelVersion = config('app.version', 'canary');
 
-        return !$this->panel_version || $panelVersion === 'canary' || version_compare($this->panel_version, $panelVersion, $this->isPanelVersionStrict() ? '=' : '>=');
+        return !$this->panel_version || $currentPanelVersion === 'canary' || version_compare($currentPanelVersion, $this->panel_version, $this->isPanelVersionStrict() ? '=' : '>=');
     }
 
     public function isPanelVersionStrict(): bool
@@ -307,7 +307,7 @@ class Plugin extends Model implements HasPluginSettings
         $updateData = $this->getUpdateData();
         if ($updateData) {
             if (array_key_exists($panelVersion, $updateData)) {
-                return $updateData['panelVersion']['download_url'];
+                return $updateData[$panelVersion]['download_url'];
             }
 
             if (array_key_exists('*', $updateData)) {
