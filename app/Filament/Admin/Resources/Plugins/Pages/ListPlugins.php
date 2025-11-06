@@ -27,11 +27,12 @@ class ListPlugins extends ListRecords
         ];
 
         foreach (PluginCategory::cases() as $category) {
+            $query = Plugin::whereCategory($category->value);
             $tabs[$category->value] = Tab::make($category->value)
                 ->label($category->getLabel())
                 ->icon($category->getIcon())
-                ->badge(Plugin::whereCategory($category->value)->count())
-                ->modifyQueryUsing(fn ($query) => $query->whereCategory($category->value));
+                ->badge($query->count())
+                ->modifyQueryUsing(fn () => $query);
         }
 
         return $tabs;
