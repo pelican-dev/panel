@@ -190,14 +190,9 @@ class Plugin extends Model implements HasPluginSettings
         return '\\' . $this->namespace . '\\' . $this->class;
     }
 
-    public function shouldLoad(): bool
+    public function shouldLoad(?string $panelId = null): bool
     {
-        return !$this->isDisabled() && $this->isInstalled() && !$this->isIncompatible();
-    }
-
-    public function shouldLoadPanel(string $panelId): bool
-    {
-        return !$this->isDisabled() && $this->isInstalled() && !$this->isIncompatible() && (!$this->panels || in_array($panelId, explode(',', $this->panels)));
+        return !$this->isDisabled() && $this->isInstalled() && !$this->isIncompatible() && (is_null($panelId) || !$this->panels || in_array($panelId, explode(',', $this->panels)));
     }
 
     public function canEnable(): bool

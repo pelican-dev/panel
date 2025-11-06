@@ -134,7 +134,7 @@ class PluginService
         $plugins = Plugin::query()->orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
             try {
-                if (!$plugin->shouldLoadPanel($panel->getId())) {
+                if (!$plugin->shouldLoad($panel->getId())) {
                     continue;
                 }
 
@@ -146,7 +146,9 @@ class PluginService
 
                 $panel->plugin(new $pluginClass());
 
-                $this->enablePlugin($plugin);
+                if ($plugin->hasErrored()) {
+                    $this->enablePlugin($plugin);
+                }
             } catch (Exception $exception) {
                 if ($this->isDevModeActive()) {
                     throw ($exception);
