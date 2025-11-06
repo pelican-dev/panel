@@ -20,7 +20,11 @@ class ListPlugins extends ListRecords
 
     public function getTabs(): array
     {
-        $tabs = [];
+        $tabs = [
+            'all' => Tab::make('all')
+                ->label(trans('admin/plugin.all'))
+                ->badge(Plugin::count()),
+        ];
 
         foreach (PluginCategory::cases() as $category) {
             $tabs[$category->value] = Tab::make($category->value)
@@ -29,10 +33,6 @@ class ListPlugins extends ListRecords
                 ->badge(Plugin::whereCategory($category->value)->count())
                 ->modifyQueryUsing(fn ($query) => $query->whereCategory($category->value));
         }
-
-        $tabs['all'] = Tab::make('all')
-            ->label(trans('admin/plugin.all'))
-            ->badge(Plugin::count());
 
         return $tabs;
     }
