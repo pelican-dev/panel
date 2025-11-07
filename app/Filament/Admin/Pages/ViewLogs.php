@@ -27,9 +27,9 @@ class ViewLogs extends BaseViewLog
                 ->requiresConfirmation()
                 ->tooltip(trans('admin/log.actions.upload_tooltip', ['url' => 'logs.pelican.dev']))
                 ->modalHeading(trans('admin/log.actions.upload_logs'))
-                ->modalDescription(trans('admin/log.actions.upload_logs_description', ['file' => $this->record->date, 'url' => 'https://logs.pelican.dev']))
+                ->modalDescription(trans('admin/log.actions.upload_logs_description', ['file' => $this->record['date'], 'url' => 'https://logs.pelican.dev']))
                 ->action(function () {
-                    $logPath = storage_path('logs/' . $this->record->date);
+                    $logPath = storage_path('logs/' . $this->record['date']);
 
                     if (!file_exists($logPath)) {
                         Notification::make()
@@ -46,9 +46,9 @@ class ViewLogs extends BaseViewLog
                     $uploadLines = $totalLines <= 1000 ? $lines : array_slice($lines, -1000);
                     $content = implode("\n", $uploadLines);
 
-                    $hbUrl = 'https://logs.pelican.dev';
+                    $logUrl = 'https://logs.pelican.dev';
                     try {
-                        $response = Http::timeout(10)->asMultipart()->post($hbUrl, [
+                        $response = Http::timeout(10)->asMultipart()->post($logUrl, [
                             [
                                 'name' => 'c',
                                 'contents' => $content,
@@ -61,8 +61,8 @@ class ViewLogs extends BaseViewLog
 
                         if ($response->failed()) {
                             Notification::make()
-                                ->title(trans('admin/log.actions.filed_to_upload'))
-                                ->body(trans('admin/log.actions.filed_to_upload', ['status' => $response->status()]))
+                                ->title(trans('admin/log.actions.failed_to_upload'))
+                                ->body(trans('admin/log.actions.failed_to_upload_description', ['status' => $response->status()]))
                                 ->danger()
                                 ->send();
 
@@ -87,7 +87,7 @@ class ViewLogs extends BaseViewLog
 
                     } catch (\Exception $e) {
                         Notification::make()
-                            ->title(trans('admin/log.actions.filed_to_upload'))
+                            ->title(trans('admin/log.actions.failed_to_upload'))
                             ->body($e->getMessage())
                             ->danger()
                             ->send();

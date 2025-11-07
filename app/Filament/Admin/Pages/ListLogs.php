@@ -68,9 +68,9 @@ class ListLogs extends BaseListLogs
                         $uploadLines = $totalLines <= 1000 ? $lines : array_slice($lines, -1000);
                         $content = implode("\n", $uploadLines);
 
-                        $hbUrl = 'https://logs.pelican.dev';
+                        $logUrl = 'https://logs.pelican.dev';
                         try {
-                            $response = Http::timeout(10)->asMultipart()->post($hbUrl, [
+                            $response = Http::timeout(10)->asMultipart()->post($logUrl, [
                                 [
                                     'name' => 'c',
                                     'contents' => $content,
@@ -83,8 +83,8 @@ class ListLogs extends BaseListLogs
 
                             if ($response->failed()) {
                                 Notification::make()
-                                    ->title(trans('admin/log.actions.filed_to_upload'))
-                                    ->body(trans('admin/log.actions.filed_to_upload', ['status' => $response->status()]))
+                                    ->title(trans('admin/log.actions.failed_to_upload'))
+                                    ->body(trans('admin/log.actions.failed_to_upload_description', ['status' => $response->status()]))
                                     ->danger()
                                     ->send();
 
@@ -109,7 +109,7 @@ class ListLogs extends BaseListLogs
 
                         } catch (\Exception $e) {
                             Notification::make()
-                                ->title(trans('admin/log.actions.filed_to_upload'))
+                                ->title(trans('admin/log.actions.failed_to_upload'))
                                 ->body($e->getMessage())
                                 ->danger()
                                 ->send();
