@@ -14,6 +14,7 @@ return [
     'visit_website' => 'Visit Website',
     'settings' => 'Settings',
     'install' => 'Install',
+    'uninstall' => 'Uninstall',
     'update' => 'Update',
     'enable' => 'Enable',
     'disable' => 'Disable',
@@ -46,6 +47,8 @@ return [
 
     'notifications' => [
         'installed' => 'Plugin installed',
+        'uninstalled' => 'Plugin uninstalled',
+        'deleted' => 'Plugin deleted',
         'updated' => 'Plugin updated',
         'enabled' => 'Plugin enabled',
         'disabled' => 'Plugin disabled',

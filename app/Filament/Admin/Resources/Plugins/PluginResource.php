@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\Plugins\Pages\ListPlugins;
 use App\Models\Plugin;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
@@ -17,6 +18,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 
 class PluginResource extends Resource
 {
@@ -109,73 +111,109 @@ class PluginResource extends Resource
                     ->schema(fn (Plugin $plugin) => $plugin->getSettingsForm())
                     ->action(fn (array $data, Plugin $plugin) => $plugin->saveSettings($data))
                     ->slideOver(),
-                Action::make('install')
-                    ->label(trans('admin/plugin.install'))
-                    ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                    ->icon('tabler-terminal')
-                    ->color('success')
-                    ->hidden(fn (Plugin $plugin) => $plugin->isInstalled())
-                    ->action(function (Plugin $plugin, $livewire) {
-                        Plugins::installPlugin($plugin, !$plugin->isTheme() || !Plugins::hasThemePluginEnabled());
+                ActionGroup::make([
+                    Action::make('install')
+                        ->label(trans('admin/plugin.install'))
+                        ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
+                        ->icon('tabler-terminal')
+                        ->color('success')
+                        ->hidden(fn (Plugin $plugin) => $plugin->isInstalled())
+                        ->action(function (Plugin $plugin, $livewire) {
+                            Plugins::installPlugin($plugin, !$plugin->isTheme() || !Plugins::hasThemePluginEnabled());
 
-                        redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
+                            redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
-                        Notification::make()
-                            ->success()
-                            ->title(trans('admin/plugin.notifications.installed'))
-                            ->send();
-                    }),
-                Action::make('update')
-                    ->label(trans('admin/plugin.update'))
-                    ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                    ->icon('tabler-download')
-                    ->color('success')
-                    ->visible(fn (Plugin $plugin) => $plugin->isUpdateAvailable())
-                    ->action(function (Plugin $plugin, $livewire) {
-                        Plugins::updatePlugin($plugin);
+                            Notification::make()
+                                ->success()
+                                ->title(trans('admin/plugin.notifications.installed'))
+                                ->send();
+                        }),
+                    Action::make('update')
+                        ->label(trans('admin/plugin.update'))
+                        ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
+                        ->icon('tabler-download')
+                        ->color('success')
+                        ->visible(fn (Plugin $plugin) => $plugin->isInstalled() && $plugin->isUpdateAvailable())
+                        ->action(function (Plugin $plugin, $livewire) {
+                            Plugins::updatePlugin($plugin);
 
-                        redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
+                            redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
-                        Notification::make()
-                            ->success()
-                            ->title(trans('admin/plugin.notifications.updated'))
-                            ->send();
-                    }),
-                Action::make('enable')
-                    ->label(trans('admin/plugin.enable'))
-                    ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                    ->icon('tabler-check')
-                    ->color('success')
-                    ->visible(fn (Plugin $plugin) => $plugin->canEnable())
-                    ->requiresConfirmation(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled())
-                    ->modalHeading(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled() ? trans('admin/plugin.enable_theme_modal.heading') : null)
-                    ->modalDescription(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled() ? trans('admin/plugin.enable_theme_modal.description') : null)
-                    ->action(function (Plugin $plugin, $livewire) {
-                        Plugins::enablePlugin($plugin);
+                            Notification::make()
+                                ->success()
+                                ->title(trans('admin/plugin.notifications.updated'))
+                                ->send();
+                        }),
+                    Action::make('enable')
+                        ->label(trans('admin/plugin.enable'))
+                        ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
+                        ->icon('tabler-check')
+                        ->color('success')
+                        ->visible(fn (Plugin $plugin) => $plugin->canEnable())
+                        ->requiresConfirmation(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled())
+                        ->modalHeading(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled() ? trans('admin/plugin.enable_theme_modal.heading') : null)
+                        ->modalDescription(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled() ? trans('admin/plugin.enable_theme_modal.description') : null)
+                        ->action(function (Plugin $plugin, $livewire) {
+                            Plugins::enablePlugin($plugin);
 
-                        redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
+                            redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
-                        Notification::make()
-                            ->success()
-                            ->title(trans('admin/plugin.notifications.updated'))
-                            ->send();
-                    }),
-                Action::make('disable')
-                    ->label(trans('admin/plugin.disable'))
-                    ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                    ->icon('tabler-x')
-                    ->color('danger')
-                    ->visible(fn (Plugin $plugin) => $plugin->canDisable())
-                    ->action(function (Plugin $plugin, $livewire) {
-                        Plugins::disablePlugin($plugin);
+                            Notification::make()
+                                ->success()
+                                ->title(trans('admin/plugin.notifications.updated'))
+                                ->send();
+                        }),
+                    Action::make('disable')
+                        ->label(trans('admin/plugin.disable'))
+                        ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
+                        ->icon('tabler-x')
+                        ->color('warning')
+                        ->visible(fn (Plugin $plugin) => $plugin->canDisable())
+                        ->action(function (Plugin $plugin, $livewire) {
+                            Plugins::disablePlugin($plugin);
 
-                        redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
+                            redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
-                        Notification::make()
-                            ->success()
-                            ->title(trans('admin/plugin.notifications.disabled'))
-                            ->send();
-                    }),
+                            Notification::make()
+                                ->success()
+                                ->title(trans('admin/plugin.notifications.disabled'))
+                                ->send();
+                        }),
+                    Action::make('delete')
+                        ->label(trans('filament-actions::delete.single.label'))
+                        ->authorize(fn (Plugin $plugin) => user()?->can('create', $plugin))
+                        ->icon('tabler-trash')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->hidden(fn (Plugin $plugin) => $plugin->isInstalled())
+                        ->action(function (Plugin $plugin, $livewire) {
+                            File::deleteDirectory(plugin_path($plugin->id));
+
+                            redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
+
+                            Notification::make()
+                                ->success()
+                                ->title(trans('admin/plugin.notifications.deleted'))
+                                ->send();
+                        }),
+                    Action::make('uninstall')
+                        ->label(trans('admin/plugin.uninstall'))
+                        ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
+                        ->icon('tabler-terminal')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->visible(fn (Plugin $plugin) => $plugin->isInstalled())
+                        ->action(function (Plugin $plugin, $livewire) {
+                            Plugins::uninstallPlugin($plugin);
+
+                            redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
+
+                            Notification::make()
+                                ->success()
+                                ->title(trans('admin/plugin.notifications.uninstalled'))
+                                ->send();
+                        }),
+                ]),
             ])
             ->headerActions([
                 Action::make('import')
