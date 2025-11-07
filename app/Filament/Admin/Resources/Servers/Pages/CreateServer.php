@@ -116,6 +116,14 @@ class CreateServer extends CreateRecord
                                 ->prefixIcon('tabler-server-2')
                                 ->selectablePlaceholder(false)
                                 ->default(function () {
+                                    $lastUsedNode = session()->get('lastUsedNode');
+
+                                    if ($lastUsedNode && user()?->accessibleNodes()->where('id', $lastUsedNode)->exists()) {
+                                        $this->node = Node::find($lastUsedNode);
+
+                                        return $this->node?->id;
+                                    }
+
                                     /** @var ?Node $latestNode */
                                     $latestNode = user()?->accessibleNodes()->latest()->first();
                                     $this->node = $latestNode;
@@ -254,7 +262,7 @@ class CreateServer extends CreateRecord
                                             ->required(),
                                     ];
                                 })
-                                ->createOptionUsing(function (array $data, Get $get, AssignmentService $assignmentService): int {
+                                ->createOptionUsing(function (array $data, Get $get, AssignmentService $assignmentService): \Closure {
                                     return collect(
                                         $assignmentService->handle(Node::find($get('node_id')), $data)
                                     )->first();
@@ -828,6 +836,8 @@ class CreateServer extends CreateRecord
         if ($allocation_additional = array_get($data, 'allocation_additional')) {
             $data['allocation_additional'] = collect($allocation_additional)->filter()->all();
         }
+
+        session()->put('lastUsedNode', $data['node_id']);
 
         try {
             return $this->serverCreationService->handle($data);
