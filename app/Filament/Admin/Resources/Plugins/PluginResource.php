@@ -18,7 +18,6 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\File;
 
 class PluginResource extends Resource
 {
@@ -187,7 +186,7 @@ class PluginResource extends Resource
                         ->requiresConfirmation()
                         ->hidden(fn (Plugin $plugin) => $plugin->isInstalled())
                         ->action(function (Plugin $plugin, $livewire) {
-                            File::deleteDirectory(plugin_path($plugin->id));
+                            Plugins::deletePlugin($plugin);
 
                             redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 

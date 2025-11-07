@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void updatePlugin(Plugin $plugin)
  * @method static void downloadPluginFromFile(UploadedFile $file)
  * @method static void downloadPluginFromUrl(string $url)
+ * @method static void deletePlugin(Plugin $plugin)
  * @method static void enablePlugin(string|Plugin $plugin)
  * @method static void disablePlugin(string|Plugin $plugin)
  * @method static void updateLoadOrder(array<int, string> $order)

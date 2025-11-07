@@ -275,7 +275,7 @@ class PluginService
             $this->buildAssets();
 
             if ($deleteFiles) {
-                File::deleteDirectory(plugin_path($plugin->id));
+                $this->deletePlugin($plugin);
             } else {
                 $this->setStatus($plugin, PluginStatus::NotInstalled);
             }
@@ -340,6 +340,11 @@ class PluginService
         }
 
         $this->downloadPluginFromFile(new UploadedFile($tmpPath, $info['basename'], 'application/zip'), $cleanDownload);
+    }
+
+    public function deletePlugin(Plugin $plugin): void
+    {
+        File::deleteDirectory(plugin_path($plugin->id));
     }
 
     public function enablePlugin(string|Plugin $plugin): void
