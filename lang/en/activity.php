@@ -21,6 +21,7 @@ return [
     ],
     'user' => [
         'account' => [
+            'username-changed' => 'Changed username from <b>:old</b> to <b>:new</b>',
             'email-changed' => 'Changed email from <b>:old</b> to <b>:new</b>',
             'password-changed' => 'Changed password',
         ],

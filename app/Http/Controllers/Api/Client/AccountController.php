@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Client;
 use App\Facades\Activity;
 use App\Http\Requests\Api\Client\Account\UpdateEmailRequest;
 use App\Http\Requests\Api\Client\Account\UpdatePasswordRequest;
+use App\Http\Requests\Api\Client\Account\UpdateUsernameRequest;
 use App\Services\Users\UserUpdateService;
 use App\Transformers\Api\Client\UserTransformer;
 use Illuminate\Auth\AuthManager;
@@ -34,6 +35,25 @@ class AccountController extends ClientApiController
         return $this->fractal->item($request->user())
             ->transformWith($this->getTransformer(UserTransformer::class))
             ->toArray();
+    }
+
+    /**
+     * Update username
+     *
+     * Update the authenticated user's username.
+     */
+    public function updateUsername(UpdateUsernameRequest $request): JsonResponse
+    {
+        $original = $request->user()->username;
+        $this->updateService->handle($request->user(), $request->validated());
+
+        if ($original !== $request->input('username')) {
+            Activity::event('user:account.username-changed')
+                ->property(['old' => $original, 'new' => $request->input('username')])
+                ->log();
+        }
+
+        return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
 
     /**

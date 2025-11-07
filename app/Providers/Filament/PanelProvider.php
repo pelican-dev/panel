@@ -34,8 +34,16 @@ abstract class PanelProvider extends BasePanelProvider
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
             ->favicon(config('app.favicon', '/pelican.ico'))
-            ->topNavigation(fn () => user()?->getCustomization(CustomizationKey::TopNavigation))
-            ->topbar(fn () => user()?->getCustomization(CustomizationKey::TopNavigation))
+            ->topNavigation(function () {
+                $navigationType = user()?->getCustomization(CustomizationKey::TopNavigation);
+
+                return $navigationType === 'topbar' || $navigationType === true;
+            })
+            ->topbar(function () {
+                $navigationType = user()?->getCustomization(CustomizationKey::TopNavigation);
+
+                return $navigationType === 'topbar' || $navigationType === 'mixed' || $navigationType === true;
+            })
             ->maxContentWidth(config('panel.filament.display-width', 'screen-2xl'))
             ->profile(EditProfile::class, false)
             ->userMenuItems([
