@@ -22,10 +22,10 @@ else
   echo -e "APP_INSTALLED=false" >> /pelican-data/.env
 fi
 
-sed -i "s/upload_max_filesize = 2M/upload_max_filesize = ${UPLOAD_LIMIT:-100}M/" /usr/local/etc/php/php.ini-production
-sed -i "s/post_max_size = 8M/post_max_size = ${UPLOAD_LIMIT:-100}M/" /usr/local/etc/php/php.ini-production
-sed -i "s/max_execution_time = 30/max_execution_time = 300/" /usr/local/etc/php/php.ini-production
-sed -i "s/memory_limit = 128M/memory_limit = 512M/" /usr/local/etc/php/php.ini-production
+sed -i "s/^upload_max_filesize = .*/upload_max_filesize = ${UPLOAD_LIMIT:-100}M/" /usr/local/etc/php/php.ini-production
+sed -i "s/^post_max_size = .*/post_max_size = ${UPLOAD_LIMIT:-100}M/" /usr/local/etc/php/php.ini-production
+sed -i "s/^max_execution_time = .*/max_execution_time = 300/" /usr/local/etc/php/php.ini-production
+sed -i "s/^memory_limit = .*/memory_limit = 512M/" /usr/local/etc/php/php.ini-production
 
 mkdir -p /pelican-data/database /pelican-data/storage/avatars /pelican-data/storage/fonts /var/www/html/storage/logs/supervisord 2>/dev/null
 
