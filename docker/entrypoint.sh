@@ -48,12 +48,9 @@ export SUPERVISORD_CADDY=false
 export SUPERVISORD_WEBSERVER=false
 
 ## Configure webserver based on environment variables
-if [ "${SKIP_WEBSERVER:-}" = "true" ]; then
-  echo "Starting PHP-FPM only (external webserver mode)"
+if [ "${SKIP_WEBSERVER:-}" = "true" ] || [ "${SKIP_CADDY:-}" = "true" ]; then
+  echo "Starting PHP-FPM only (no internal webserver)"
   # Only PHP-FPM will run, no internal webserver
-elif [ "${SKIP_CADDY:-}" = "true" ]; then
-  echo "Starting PHP-FPM only (Caddy disabled)"
-  # Only PHP-FPM will run, but for internal use without webserver
 else
   echo "Starting PHP-FPM and Caddy webserver"
   # enable caddy
