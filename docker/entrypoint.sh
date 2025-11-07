@@ -22,10 +22,21 @@ else
   echo -e "APP_INSTALLED=false" >> /pelican-data/.env
 fi
 
-sed -i "s/^upload_max_filesize = .*/upload_max_filesize = ${UPLOAD_LIMIT:-100}M/" /usr/local/etc/php/php.ini-production
-sed -i "s/^post_max_size = .*/post_max_size = ${UPLOAD_LIMIT:-100}M/" /usr/local/etc/php/php.ini-production
-sed -i "s/^max_execution_time = .*/max_execution_time = 300/" /usr/local/etc/php/php.ini-production
-sed -i "s/^memory_limit = .*/memory_limit = 512M/" /usr/local/etc/php/php.ini-production
+## Configure PHP settings
+UPLOAD_LIMIT_VAL=${UPLOAD_LIMIT:-100}
+
+# Calculate max_execution_time based on upload limit (larger files need more time)
+# Base time: 300s, additional 3s per MB above 100MB
+if [ "$UPLOAD_LIMIT_VAL" -gt 100 ]; then
+  CALCULATED_EXECUTION_TIME=$((300 + (UPLOAD_LIMIT_VAL - 100) * 3))
+else
+  CALCULATED_EXECUTION_TIME=300
+fi
+
+sed -i "s/^upload_max_filesize = .*/upload_max_filesize = ${UPLOAD_LIMIT_VAL}M/" /usr/local/etc/php/php.ini-production
+sed -i "s/^post_max_size = .*/post_max_size = ${UPLOAD_LIMIT_VAL}M/" /usr/local/etc/php/php.ini-production
+sed -i "s/^max_execution_time = .*/max_execution_time = ${PHP_MAX_EXECUTION_TIME:-$CALCULATED_EXECUTION_TIME}/" /usr/local/etc/php/php.ini-production
+sed -i "s/^memory_limit = .*/memory_limit = ${PHP_MEMORY_LIMIT:-512M}/" /usr/local/etc/php/php.ini-production
 mkdir -p /pelican-data/database /pelican-data/storage/avatars /pelican-data/storage/fonts /var/www/html/storage/logs/supervisord 2>/dev/null
 
 if ! grep -q "APP_KEY=" .env || grep -q "APP_KEY=$" .env; then
