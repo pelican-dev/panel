@@ -70,7 +70,7 @@ class ListLogs extends BaseListLogs
 
                         $hbUrl = 'https://logs.pelican.dev';
                         try {
-                            $response = Http::asMultipart()->post($hbUrl, [
+                            $response = Http::timeout(10)->asMultipart()->post($hbUrl, [
                                 [
                                     'name' => 'c',
                                     'contents' => $content,
