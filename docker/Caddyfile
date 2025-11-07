@@ -13,6 +13,15 @@
 	root * /var/www/html/public
 	encode gzip
 
+	# Request body size limit (should match PHP upload_max_filesize)
+	request_body {
+		max_size {$UPLOAD_LIMIT:100}MB
+	}
+
 	file_server
-	php_fastcgi 127.0.0.1:9000
+	php_fastcgi 127.0.0.1:9000 {
+		# PHP-FPM timeout for large uploads
+		read_timeout 300s
+		write_timeout 300s
+	}
 }

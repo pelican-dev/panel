@@ -22,7 +22,10 @@ else
   echo -e "APP_INSTALLED=false" >> /pelican-data/.env
 fi
 
-sed -i "s/upload_max_filesize = 2M/upload_max_filesize = ${UPLOAD_LIMIT}M/" /usr/local/etc/php/php.ini-production
+sed -i "s/upload_max_filesize = 2M/upload_max_filesize = ${UPLOAD_LIMIT:-100}M/" /usr/local/etc/php/php.ini-production
+sed -i "s/post_max_size = 8M/post_max_size = ${UPLOAD_LIMIT:-100}M/" /usr/local/etc/php/php.ini-production
+sed -i "s/max_execution_time = 30/max_execution_time = 300/" /usr/local/etc/php/php.ini-production
+sed -i "s/memory_limit = 128M/memory_limit = 512M/" /usr/local/etc/php/php.ini-production
 
 mkdir -p /pelican-data/database /pelican-data/storage/avatars /pelican-data/storage/fonts /var/www/html/storage/logs/supervisord 2>/dev/null
 
@@ -40,20 +43,27 @@ php artisan migrate --force
 echo -e "Optimizing Filament"
 php artisan filament:optimize
 
-# default to caddy not starting
+# default to both services not starting
 export SUPERVISORD_CADDY=false
+export SUPERVISORD_WEBSERVER=false
 
-## disable caddy if SKIP_CADDY is set
-if [[ "${SKIP_CADDY:-}" == "true" ]]; then
-  echo "Starting PHP-FPM only"
+## Configure webserver based on environment variables
+if [ "${SKIP_WEBSERVER:-}" = "true" ]; then
+  echo "Starting PHP-FPM only (external webserver mode)"
+  # Only PHP-FPM will run, no internal webserver
+elif [ "${SKIP_CADDY:-}" = "true" ]; then
+  echo "Starting PHP-FPM only (Caddy disabled)"
+  # Only PHP-FPM will run, but for internal use without webserver
 else
-  echo "Starting PHP-FPM and Caddy"
+  echo "Starting PHP-FPM and Caddy webserver"
   # enable caddy
   export SUPERVISORD_CADDY=true
+  export SUPERVISORD_WEBSERVER=true
 
   # handle trusted proxies for caddy
-  if [[ ! -z ${TRUSTED_PROXIES} ]]; then
-    export CADDY_TRUSTED_PROXIES=$(echo "trusted_proxies static ${TRUSTED_PROXIES}" | sed 's/,/ /g')
+  if [ -n "${TRUSTED_PROXIES:-}" ]; then
+    CADDY_TRUSTED_PROXIES_VALUE=$(echo "trusted_proxies static ${TRUSTED_PROXIES}" | sed 's/,/ /g')
+    export CADDY_TRUSTED_PROXIES="$CADDY_TRUSTED_PROXIES_VALUE"
     export CADDY_STRICT_PROXIES="trusted_proxies_strict"
   fi
 fi
