@@ -30,7 +30,10 @@ class UninstallPluginCommand extends Command
             return;
         }
 
-        $deleteFiles = $this->option('delete') ?? $this->confirm('Do you also want to delete the plugin files?');
+        $deleteFiles = $this->option('delete');
+        if ($this->input->isInteractive() && !$deleteFiles) {
+            $deleteFiles = $this->confirm('Do you also want to delete the plugin files?');
+        }
 
         Plugins::uninstallPlugin($plugin, $deleteFiles);
 
