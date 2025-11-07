@@ -262,7 +262,7 @@ class CreateServer extends CreateRecord
                                             ->required(),
                                     ];
                                 })
-                                ->createOptionUsing(function (array $data, Get $get, AssignmentService $assignmentService): \Closure {
+                                ->createOptionUsing(function (array $data, Get $get, AssignmentService $assignmentService): int {
                                     return collect(
                                         $assignmentService->handle(Node::find($get('node_id')), $data)
                                     )->first();
