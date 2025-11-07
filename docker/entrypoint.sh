@@ -26,7 +26,6 @@ sed -i "s/^upload_max_filesize = .*/upload_max_filesize = ${UPLOAD_LIMIT:-100}M/
 sed -i "s/^post_max_size = .*/post_max_size = ${UPLOAD_LIMIT:-100}M/" /usr/local/etc/php/php.ini-production
 sed -i "s/^max_execution_time = .*/max_execution_time = 300/" /usr/local/etc/php/php.ini-production
 sed -i "s/^memory_limit = .*/memory_limit = 512M/" /usr/local/etc/php/php.ini-production
-
 mkdir -p /pelican-data/database /pelican-data/storage/avatars /pelican-data/storage/fonts /var/www/html/storage/logs/supervisord 2>/dev/null
 
 if ! grep -q "APP_KEY=" .env || grep -q "APP_KEY=$" .env; then
@@ -43,19 +42,20 @@ php artisan migrate --force
 echo -e "Optimizing Filament"
 php artisan filament:optimize
 
-# default to both services not starting
+# default to caddy not starting
 export SUPERVISORD_CADDY=false
-export SUPERVISORD_WEBSERVER=false
 
 ## Configure webserver based on environment variables
-if [ "${SKIP_WEBSERVER:-}" = "true" ] || [ "${SKIP_CADDY:-}" = "true" ]; then
-  echo "Starting PHP-FPM only (no internal webserver)"
+if [ "${SKIP_WEBSERVER:-}" = "true" ]; then
+  echo "Starting PHP-FPM only (external webserver mode)"
   # Only PHP-FPM will run, no internal webserver
+elif [ "${SKIP_CADDY:-}" = "true" ]; then
+  echo "Starting PHP-FPM only (Caddy disabled)"
+  # Only PHP-FPM will run, but for internal use without webserver
 else
   echo "Starting PHP-FPM and Caddy webserver"
   # enable caddy
   export SUPERVISORD_CADDY=true
-  export SUPERVISORD_WEBSERVER=true
 
   # handle trusted proxies for caddy
   if [ -n "${TRUSTED_PROXIES:-}" ]; then
