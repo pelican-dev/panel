@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\AvatarProviders\PelicanAvatarProvider;
 use App\Enums\CustomizationKey;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\Login;
@@ -34,6 +35,7 @@ abstract class PanelProvider extends BasePanelProvider
             ->brandLogo(config('app.logo'))
             ->brandLogoHeight('2rem')
             ->favicon(config('app.favicon', '/pelican.ico'))
+            ->defaultAvatarProvider(PelicanAvatarProvider::class)
             ->topNavigation(function () {
                 $navigationType = user()?->getCustomization(CustomizationKey::TopNavigation);
 
