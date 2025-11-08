@@ -4,7 +4,6 @@ namespace App\Services\Avatars;
 
 use Filament\AvatarProviders\Contracts\AvatarProvider;
 use Filament\Facades\Filament;
-use Filament\Support\Colors\Color;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
