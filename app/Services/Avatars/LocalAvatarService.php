@@ -25,6 +25,7 @@ SVG;
         return $svg;
     }
 
+
     protected function getInitials(string $name): string
     {
         $initials = str($name)
@@ -32,7 +33,7 @@ SVG;
             ->explode(' ')
             ->map(fn (string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
             ->join('');
-
+        
         return strtoupper((string) $initials);
     }
 
@@ -42,18 +43,15 @@ SVG;
         string $textColor = 'FFFFFF',
         int $size = 128
     ): string {
+        $backgroundColor = ltrim($backgroundColor, '#');
         $cacheKey = "avatar:{$name}:{$backgroundColor}:{$textColor}:{$size}";
-
+        
         return Cache::remember($cacheKey, now()->addDay(), function () use ($name, $backgroundColor, $textColor, $size) {
             $svg = $this->generateSvgAvatar($name, $backgroundColor, $textColor, $size);
-
             return 'data:image/svg+xml;base64,' . base64_encode($svg);
         });
     }
 
-    /**
-     * @return string Hex color without #
-     */
     public function generateColorFromName(string $name): string
     {
         $hash = md5($name);
@@ -64,14 +62,6 @@ SVG;
         return $this->hslToHex($hue, $saturation, $lightness);
     }
 
-    /**
-     * Convert HSL to Hex color.
-     *
-     * @param  float  $h  Hue (0-360)
-     * @param  float  $s  Saturation (0-100)
-     * @param  float  $l  Lightness (0-100)
-     * @return string Hex color without #
-     */
     protected function hslToHex(float $h, float $s, float $l): string
     {
         $h /= 360;
@@ -84,35 +74,21 @@ SVG;
             $q = $l < 0.5 ? $l * (1 + $s) : $l + $s - $l * $s;
             $p = 2 * $l - $q;
 
-            $r = $this->hueToRgb($p, $q, $h + 1 / 3);
+            $r = $this->hueToRgb($p, $q, $h + 1/3);
             $g = $this->hueToRgb($p, $q, $h);
-            $b = $this->hueToRgb($p, $q, $h - 1 / 3);
+            $b = $this->hueToRgb($p, $q, $h - 1/3);
         }
 
         return sprintf('%02x%02x%02x', round($r * 255), round($g * 255), round($b * 255));
     }
 
-    /**
-     * Helper function to convert hue to RGB.
-     */
     protected function hueToRgb(float $p, float $q, float $t): float
     {
-        if ($t < 0) {
-            $t += 1;
-        }
-        if ($t > 1) {
-            $t -= 1;
-        }
-        if ($t < 1 / 6) {
-            return $p + ($q - $p) * 6 * $t;
-        }
-        if ($t < 1 / 2) {
-            return $q;
-        }
-        if ($t < 2 / 3) {
-            return $p + ($q - $p) * (2 / 3 - $t) * 6;
-        }
-
+        if ($t < 0) $t += 1;
+        if ($t > 1) $t -= 1;
+        if ($t < 1/6) return $p + ($q - $p) * 6 * $t;
+        if ($t < 1/2) return $q;
+        if ($t < 2/3) return $p + ($q - $p) * (2/3 - $t) * 6;
         return $p;
     }
 }
