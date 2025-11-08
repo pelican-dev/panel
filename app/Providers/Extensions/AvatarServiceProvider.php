@@ -4,7 +4,7 @@ namespace App\Providers\Extensions;
 
 use App\Extensions\Avatar\AvatarService;
 use App\Extensions\Avatar\Schemas\GravatarSchema;
-use App\Extensions\Avatar\Schemas\UiAvatarsSchema;
+use App\Extensions\Avatar\Schemas\LocalAvatarSchema;
 use Illuminate\Support\ServiceProvider;
 
 class AvatarServiceProvider extends ServiceProvider
@@ -16,7 +16,7 @@ class AvatarServiceProvider extends ServiceProvider
 
             // Default Avatar providers
             $service->register(new GravatarSchema());
-            $service->register(new UiAvatarsSchema());
+            $service->register($app->make(LocalAvatarSchema::class));
 
             return $service;
         });

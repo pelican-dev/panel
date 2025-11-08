@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Extensions\Avatar\Schemas;
+
+use App\Extensions\Avatar\AvatarSchemaInterface;
+use App\Models\User;
+use App\Services\Avatars\LocalAvatarService;
+use Filament\Facades\Filament;
+use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentColor;
+
+class LocalAvatarSchema implements AvatarSchemaInterface
+{
+    public function __construct(protected LocalAvatarService $avatarService) {}
+
+    public function getId(): string
+    {
+        return 'local';
+    }
+
+    public function getName(): string
+    {
+        return 'Local Avatar';
+    }
+
+    public function get(User $user): ?string
+    {
+        $name = Filament::getNameForDefaultAvatar($user);
+
+        $backgroundColor = FilamentColor::getColor('gray')[950] ?? Color::Gray[950];
+
+        $backgroundColor = ltrim($backgroundColor, '#');
+
+        return $this->avatarService->generateDataUri(
+            name: $name,
+            backgroundColor: $backgroundColor,
+            textColor: 'FFFFFF',
+            size: 128
+        );
+    }
+}
