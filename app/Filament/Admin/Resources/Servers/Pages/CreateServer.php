@@ -837,7 +837,7 @@ class CreateServer extends CreateRecord
             $data['allocation_additional'] = collect($allocation_additional)->filter()->all();
         }
 
-        session()->put('lastUsedNode', $data['node_id']);
+        session()->put('last_utilized_node', $data['node_id']);
 
         try {
             return $this->serverCreationService->handle($data);
