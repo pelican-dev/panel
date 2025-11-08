@@ -43,7 +43,7 @@ return [
     'error' => 'This is the domain name that points to your node\'s IP Address. If you\'ve already set up this, you can verify it by checking the next field!',
     'fqdn_help' => 'Your panel is currently secured via an SSL certificate and that means your nodes require one too. You must use a domain name, because you cannot get SSL certificates for IP Addresses.',
     'dns' => 'DNS Record Check',
-    'dns_help' => 'This lets you know if you DNS record is pointing to the correct IP address.',
+    'dns_help' => 'This lets you know if your DNS record is pointing to the correct IP address.',
     'valid' => 'Valid',
     'invalid' => 'Invalid',
     'port' => 'Port',
