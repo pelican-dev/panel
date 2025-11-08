@@ -27,13 +27,9 @@ class LocalAvatarSchema implements AvatarSchemaInterface
     {
         $name = Filament::getNameForDefaultAvatar($user);
 
-        $backgroundColor = FilamentColor::getColor('gray')[950] ?? Color::Gray[950];
-
-        $backgroundColor = ltrim($backgroundColor, '#');
-
         return $this->avatarService->generateDataUri(
             name: $name,
-            backgroundColor: $backgroundColor,
+            backgroundColor: Color::Gray[950],
             textColor: 'FFFFFF',
             size: 128
         );
