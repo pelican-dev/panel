@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Resources\Nodes\Pages;
 
 use App\Filament\Admin\Resources\Nodes\NodeResource;
 use App\Models\Node;
-use App\Repositories\Daemon\DaemonConfigurationRepository;
+use App\Repositories\Daemon\DaemonSystemRepository;
 use App\Services\Helpers\SoftwareVersionService;
 use App\Services\Nodes\NodeAutoDeployService;
 use App\Services\Nodes\NodeUpdateService;
@@ -14,6 +14,8 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Slider;
+use Filament\Forms\Components\Slider\Enums\PipsMode;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -25,6 +27,7 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -33,7 +36,10 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\IconSize;
+use Filament\Support\RawJs;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\HtmlString;
 use Phiki\Grammar\Grammar;
 use Throwable;
@@ -45,13 +51,13 @@ class EditNode extends EditRecord
 
     protected static string $resource = NodeResource::class;
 
-    private DaemonConfigurationRepository $daemonConfigurationRepository;
+    private DaemonSystemRepository $daemonSystemRepository;
 
     private NodeUpdateService $nodeUpdateService;
 
-    public function boot(DaemonConfigurationRepository $daemonConfigurationRepository, NodeUpdateService $nodeUpdateService): void
+    public function boot(DaemonSystemRepository $daemonSystemRepository, NodeUpdateService $nodeUpdateService): void
     {
-        $this->daemonConfigurationRepository = $daemonConfigurationRepository;
+        $this->daemonSystemRepository = $daemonSystemRepository;
         $this->nodeUpdateService = $nodeUpdateService;
     }
 
@@ -624,6 +630,154 @@ class EditNode extends EditRecord
                                     ])->fullWidth(),
                                 ]),
                         ]),
+                    Tab::make('diagnostics')
+                        ->label(trans('admin/node.tabs.diagnostics'))
+                        ->icon('tabler-heart-search')
+                        ->schema([
+                            Section::make('diag')
+                                ->heading(trans('admin/node.tabs.diagnostics'))
+                                ->columnSpanFull()
+                                ->columns(4)
+                                ->disabled(fn (Get $get) => $get('pulled'))
+                                ->headerActions([
+                                    Action::make('pull')
+                                        ->label(trans('admin/node.diagnostics.pull'))
+                                        ->icon('tabler-cloud-download')->iconButton()->iconSize(IconSize::ExtraLarge)
+                                        ->hidden(fn (Get $get) => $get('pulled'))
+                                        ->action(function (Get $get, Set $set, Node $node) {
+                                            $includeEndpoints = $get('include_endpoints') ?? true;
+                                            $includeLogs = $get('include_logs') ?? true;
+                                            $logLines = $get('log_lines') ?? 200;
+
+                                            try {
+                                                $response = $this->daemonSystemRepository->setNode($node)->getDiagnostics($logLines, $includeEndpoints, $includeLogs);
+
+                                                if ($response->status() === 404) {
+                                                    Notification::make()
+                                                        ->title(trans('admin/node.diagnostics.404'))
+                                                        ->warning()
+                                                        ->send();
+
+                                                    return;
+                                                }
+
+                                                $set('pulled', true);
+                                                $set('uploaded', false);
+                                                $set('log', $response->body());
+
+                                                Notification::make()
+                                                    ->title(trans('admin/node.diagnostics.logs_pulled'))
+                                                    ->success()
+                                                    ->send();
+                                            } catch (ConnectionException $e) {
+                                                Notification::make()
+                                                    ->title(trans('admin/node.error_connecting', ['node' => $node->name]))
+                                                    ->body($e->getMessage())
+                                                    ->danger()
+                                                    ->send();
+
+                                            }
+                                        }),
+                                    Action::make('upload')
+                                        ->label(trans('admin/node.diagnostics.upload'))
+                                        ->visible(fn (Get $get) => $get('pulled') ?? false)
+                                        ->icon('tabler-cloud-upload')->iconButton()->iconSize(IconSize::ExtraLarge)
+                                        ->action(function (Get $get, Set $set) {
+                                            try {
+                                                $response = Http::asMultipart()->post('https://logs.pelican.dev', [
+                                                    [
+                                                        'name' => 'c',
+                                                        'contents' => $get('log'),
+                                                    ],
+                                                    [
+                                                        'name' => 'e',
+                                                        'contents' => '14d',
+                                                    ],
+                                                ]);
+
+                                                if ($response->failed()) {
+                                                    Notification::make()
+                                                        ->title(trans('admin/node.diagnostics.upload_failed'))
+                                                        ->body(fn () => $response->status() . ' - ' . $response->body())
+                                                        ->danger()
+                                                        ->send();
+
+                                                    return;
+                                                }
+
+                                                $data = $response->json();
+                                                $url = $data['url'];
+
+                                                Notification::make()
+                                                    ->title(trans('admin/node.diagnostics.logs_uploaded'))
+                                                    ->body("{$url}")
+                                                    ->success()
+                                                    ->actions([
+                                                        Action::make('viewLogs')
+                                                            ->label(trans('admin/node.diagnostics.view_logs'))
+                                                            ->url($url)
+                                                            ->openUrlInNewTab(true),
+                                                    ])
+                                                    ->persistent()
+                                                    ->send();
+                                                $set('log', $url);
+                                                $set('pulled', false);
+                                                $set('uploaded', true);
+
+                                            } catch (\Exception $e) {
+                                                Notification::make()
+                                                    ->title(trans('admin/node.diagnostics.upload_failed'))
+                                                    ->body($e->getMessage())
+                                                    ->danger()
+                                                    ->send();
+                                            }
+                                        }),
+                                    Action::make('clear')
+                                        ->label(trans('admin/node.diagnostics.clear'))
+                                        ->visible(fn (Get $get) => $get('pulled') ?? false)
+                                        ->icon('tabler-trash')->iconButton()->iconSize(IconSize::ExtraLarge)->color('danger')
+                                        ->action(function (Get $get, Set $set) {
+                                            $set('pulled', false);
+                                            $set('uploaded', false);
+                                            $set('log', null);
+                                            $this->refresh();
+                                        }
+                                        ),
+                                ])
+                                ->schema([
+                                    ToggleButtons::make('include_endpoints')
+                                        ->hintIcon('tabler-question-mark')->inline()
+                                        ->hintIconTooltip(trans('admin/node.diagnostics.include_endpoints_hint'))
+                                        ->formatStateUsing(fn () => 1)
+                                        ->boolean(),
+                                    ToggleButtons::make('include_logs')
+                                        ->live()
+                                        ->hintIcon('tabler-question-mark')->inline()
+                                        ->hintIconTooltip(trans('admin/node.diagnostics.include_logs_hint'))
+                                        ->formatStateUsing(fn () => 1)
+                                        ->boolean(),
+                                    Slider::make('log_lines')
+                                        ->columnSpan(2)
+                                        ->hiddenLabel()
+                                        ->live()
+                                        ->tooltips(RawJs::make(<<<'JS'
+                                            `${$value} lines`
+                                            JS))
+                                        ->visible(fn (Get $get) => $get('include_logs'))
+                                        ->range(minValue: 100, maxValue: 500)
+                                        ->pips(PipsMode::Steps, density: 10)
+                                        ->step(50)
+                                        ->formatStateUsing(fn () => 200)
+                                        ->fillTrack(),
+                                    Hidden::make('pulled'),
+                                    Hidden::make('uploaded'),
+                                ]),
+                            Textarea::make('log')
+                                ->hiddenLabel()
+                                ->columnSpanFull()
+                                ->rows(35)
+                                ->visible(fn (Get $get) => ($get('pulled') ?? false) || ($get('uploaded') ?? false)),
+                        ]),
                 ]),
         ]);
     }
@@ -681,7 +835,7 @@ class EditNode extends EditRecord
 
         try {
             if ($changed) {
-                $this->daemonConfigurationRepository->setNode($node)->update($node);
+                $this->daemonSystemRepository->setNode($node)->update($node);
             }
             parent::getSavedNotification()?->send();
         } catch (ConnectionException) {
