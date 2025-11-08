@@ -22,7 +22,10 @@
         "></div>
         @endif
 
-        <div class="flex items-center mb-5 gap-2">
+        <div @class([
+            'flex items-center gap-2',
+            'mb-5' => !$server->description,
+        ])>
             <x-filament::icon-button
                 :icon="$server->condition->getIcon()"
                 :color="$server->condition->getColor()"
@@ -44,6 +47,12 @@
                 </div>
             @endif
         </div>
+
+        @if ($server->description)
+        <div class="text-left mb-1 ml-4 pl-4">
+            <p class="text-base text-gray-400">{{ Str::limit($server->description, 40, preserveWords: true) }}</p>
+        </div>
+        @endif
 
         <div class="flex justify-between text-center items-center gap-4">
             <div>
