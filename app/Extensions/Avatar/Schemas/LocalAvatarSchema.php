@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Services\Avatars\LocalAvatarService;
 use Filament\Facades\Filament;
 use Filament\Support\Colors\Color;
-use Filament\Support\Facades\FilamentColor;
 
 class LocalAvatarSchema implements AvatarSchemaInterface
 {
