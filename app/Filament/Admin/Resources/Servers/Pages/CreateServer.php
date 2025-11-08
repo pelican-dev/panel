@@ -116,7 +116,7 @@ class CreateServer extends CreateRecord
                                 ->prefixIcon('tabler-server-2')
                                 ->selectablePlaceholder(false)
                                 ->default(function () {
-                                    $lastUsedNode = session()->get('lastUsedNode');
+                                    $lastUsedNode = session()->get('last_utilized_node');
 
                                     if ($lastUsedNode && user()?->accessibleNodes()->where('id', $lastUsedNode)->exists()) {
                                         $this->node = Node::find($lastUsedNode);
