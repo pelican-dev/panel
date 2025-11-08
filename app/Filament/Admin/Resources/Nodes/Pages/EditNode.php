@@ -637,7 +637,7 @@ class EditNode extends EditRecord
                             Section::make('diag')
                                 ->heading(trans('admin/node.tabs.diagnostics'))
                                 ->columnSpanFull()
-                                ->columns(3)
+                                ->columns(4)
                                 ->disabled(fn (Get $get) => $get('pulled'))
                                 ->headerActions([
                                     Action::make('pull')
@@ -757,6 +757,7 @@ class EditNode extends EditRecord
                                         ->formatStateUsing(fn () => 1)
                                         ->boolean(),
                                     Slider::make('log_lines')
+                                        ->columnSpan(2)
                                         ->hiddenLabel()
                                         ->live()
                                         ->tooltips(RawJs::make(<<<'JS'
