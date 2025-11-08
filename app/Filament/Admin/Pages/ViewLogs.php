@@ -27,14 +27,14 @@ class ViewLogs extends BaseViewLog
                 ->requiresConfirmation()
                 ->tooltip(trans('admin/log.actions.upload_tooltip', ['url' => 'logs.pelican.dev']))
                 ->modalHeading(trans('admin/log.actions.upload_logs'))
-                ->modalDescription(trans('admin/log.actions.upload_logs_description', ['file' => $this->record['date'], 'url' => 'https://logs.pelican.dev']))
+                ->modalDescription(trans('admin/log.actions.upload_logs_description', ['file' => $this->record->date, 'url' => 'https://logs.pelican.dev']))
                 ->action(function () {
-                    $logPath = storage_path('logs/' . $this->record['date']);
+                    $logPath = storage_path('logs/' . $this->record->date);
 
                     if (!file_exists($logPath)) {
                         Notification::make()
                             ->title(trans('admin/log.actions.log_not_found'))
-                            ->body(trans('admin/log.actions.log_not_found_description', ['filename' => $this->record['date']]))
+                            ->body(trans('admin/log.actions.log_not_found_description', ['filename' => $this->record->date]))
                             ->danger()
                             ->send();
 
