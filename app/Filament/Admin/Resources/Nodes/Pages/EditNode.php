@@ -749,27 +749,13 @@ class EditNode extends EditRecord
                                         ->hintIcon('tabler-question-mark')->inline()
                                         ->hintIconTooltip(trans('admin/node.diagnostics.include_endpoints_hint'))
                                         ->formatStateUsing(fn () => 1)
-                                        ->options([
-                                            1 => 'Yes',
-                                            0 => 'No',
-                                        ])
-                                        ->colors([
-                                            1 => 'success',
-                                            0 => 'danger',
-                                        ]),
+                                        ->boolean(),
                                     ToggleButtons::make('include_logs')
                                         ->live()
                                         ->hintIcon('tabler-question-mark')->inline()
                                         ->hintIconTooltip(trans('admin/node.diagnostics.include_logs_hint'))
                                         ->formatStateUsing(fn () => 1)
-                                        ->options([
-                                            1 => 'Yes',
-                                            0 => 'No',
-                                        ])
-                                        ->colors([
-                                            1 => 'success',
-                                            0 => 'danger',
-                                        ]),
+                                        ->boolean(),
                                     Slider::make('log_lines')
                                         ->hiddenLabel()
                                         ->live()
