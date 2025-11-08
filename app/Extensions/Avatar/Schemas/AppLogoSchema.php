@@ -9,12 +9,12 @@ class AppLogoSchema implements AvatarSchemaInterface
 {
     public function getId(): string
     {
-        return 'appIcon';
+        return 'appLogo';
     }
 
     public function getName(): string
     {
-        return 'App Icon';
+        return 'App Logo';
     }
 
     public function get(User $user): string
