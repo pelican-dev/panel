@@ -7,6 +7,7 @@ use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\Login;
 use App\Http\Middleware\LanguageMiddleware;
 use App\Models\User;
+use App\Services\Avatars\LocalAvatarProvider;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
@@ -50,6 +51,7 @@ abstract class PanelProvider extends BasePanelProvider
                 'profile' => fn (Action $action) => $action
                     ->url(fn () => EditProfile::getUrl(panel: 'app')),
             ])
+            ->defaultAvatarProvider(LocalAvatarProvider::class)
             ->login(Login::class)
             ->passwordReset()
             ->multiFactorAuthentication([
