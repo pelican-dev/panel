@@ -31,12 +31,18 @@ class ListLogs extends BaseListLogs
             ->emptyStateIcon('tabler-check')
             ->columns([
                 NameColumn::make('date'),
-                LevelColumn::make(Level::ALL),
-                LevelColumn::make(Level::Error),
-                LevelColumn::make(Level::Warning),
-                LevelColumn::make(Level::Notice),
-                LevelColumn::make(Level::Info),
-                LevelColumn::make(Level::Debug),
+                LevelColumn::make(Level::ALL)
+                    ->tooltip(trans('admin/log.total_logs')),
+                LevelColumn::make(Level::Error)
+                    ->tooltip(trans('admin/log.error')),
+                LevelColumn::make(Level::Warning)
+                    ->tooltip(trans('admin/log.warning')),
+                LevelColumn::make(Level::Notice)
+                    ->tooltip(trans('admin/log.notice')),
+                LevelColumn::make(Level::Info)
+                    ->tooltip(trans('admin/log.info')),
+                LevelColumn::make(Level::Debug)
+                    ->tooltip(trans('admin/log.debug')),
             ])
             ->recordActions([
                 ViewLogAction::make()

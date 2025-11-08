@@ -2,6 +2,12 @@
 
 return [
     'empty_table' => 'Yay! No Errors!',
+    'total_logs' => 'Total Logs',
+    'error' => 'Error',
+    'warning' => 'Warning',
+    'notice' => 'Notice',
+    'info' => 'Info',
+    'debug' => 'Debug',
     'navigation' => [
         'panel_logs' => 'Panel Logs',
     ],
