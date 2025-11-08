@@ -1,279 +1,308 @@
 <div
     x-data="{
-            isUploading: false,
-            uploadQueue: [],
-            currentFileIndex: 0,
-            totalFiles: 0,
-            autoCloseTimer: 1000,
+    isUploading: false,
+    uploadQueue: [],
+    currentFileIndex: 0,
+    totalFiles: 0,
+    autoCloseTimer: 1000,
 
-            async extractFilesFromItems(items) {
-                const filesWithPaths = [];
-                const traversePromises = [];
+    async extractFilesFromItems(items) {
+        const filesWithPaths = [];
+        const traversePromises = [];
 
-                for (let i = 0; i < items.length; i++) {
-                    const entry = items[i].webkitGetAsEntry?.();
+        for (let i = 0; i < items.length; i++) {
+            const entry = items[i].webkitGetAsEntry?.();
 
-                    if (entry) {
-                        traversePromises.push(this.traverseFileTree(entry, '', filesWithPaths));
-                    } else if (items[i].kind === 'file') {
-                        const file = items[i].getAsFile();
-                        if (file) {
-                            filesWithPaths.push({
-                                file: file,
-                                path: '',
-                            });
-                        }
-                    }
+            if (entry) {
+                traversePromises.push(this.traverseFileTree(entry, '', filesWithPaths));
+            } else if (items[i].kind === 'file') {
+                const file = items[i].getAsFile();
+                if (file) {
+                    filesWithPaths.push({
+                        file: file,
+                        path: '',
+                    });
                 }
+            }
+        }
 
-                await Promise.all(traversePromises);
-                return filesWithPaths;
-            },
+        await Promise.all(traversePromises);
+        return filesWithPaths;
+    },
 
-            async traverseFileTree(entry, path, filesWithPaths) {
-                return new Promise((resolve) => {
-                    if (entry.isFile) {
-                        entry.file((file) => {
-                            filesWithPaths.push({
-                                file: file,
-                                path: path,
-                            });
-                            resolve();
-                        });
-                    } else if (entry.isDirectory) {
-                        const reader = entry.createReader();
-                        const readEntries = () => {
-                            reader.readEntries(async (entries) => {
-                                if (entries.length === 0) {
-                                    resolve();
-                                    return;
-                                }
-
-                                const subPromises = entries.map((e) =>
-                                    this.traverseFileTree(
-                                        e,
-                                        path ? `${path}/${entry.name}` : entry.name,
-                                        filesWithPaths
-                                    )
-                                );
-
-                                await Promise.all(subPromises);
-                                readEntries();
-                            });
-                        };
-                        readEntries();
-                    } else {
-                        resolve();
-                    }
+    async traverseFileTree(entry, path, filesWithPaths) {
+        return new Promise((resolve) => {
+            if (entry.isFile) {
+                entry.file((file) => {
+                    filesWithPaths.push({
+                        file: file,
+                        path: path,
+                    });
+                    resolve();
                 });
-            },
-
-            async uploadFilesWithFolders(filesWithPaths) {
-                this.isUploading = true;
-                this.uploadQueue = [];
-                this.totalFiles = filesWithPaths.length;
-                this.currentFileIndex = 0;
-                const uploadedFiles = [];
-
-                try {
-                    const uploadSizeLimit = await $wire.getUploadSizeLimit();
-
-                    for (const { file } of filesWithPaths) {
-                        if (file.size > uploadSizeLimit) {
-                            new window.FilamentNotification()
-                                .title(`File ${file.name} exceeds the upload size limit of ${this.formatBytes(uploadSizeLimit)}`)
-                                .danger()
-                                .send();
-                            this.isUploading = false;
+            } else if (entry.isDirectory) {
+                const reader = entry.createReader();
+                const readEntries = () => {
+                    reader.readEntries(async (entries) => {
+                        if (entries.length === 0) {
+                            resolve();
                             return;
                         }
+
+                        const subPromises = entries.map((e) =>
+                            this.traverseFileTree(
+                                e,
+                                path ? `${path}/${entry.name}` : entry.name,
+                                filesWithPaths
+                            )
+                        );
+
+                        await Promise.all(subPromises);
+                        readEntries();
+                    });
+                };
+                readEntries();
+            } else {
+                resolve();
+            }
+        });
+    },
+
+    async uploadFilesWithFolders(filesWithPaths) {
+        this.isUploading = true;
+        this.uploadQueue = [];
+        this.totalFiles = filesWithPaths.length;
+        this.currentFileIndex = 0;
+        const uploadedFiles = [];
+
+        try {
+            const uploadSizeLimit = await $wire.getUploadSizeLimit();
+
+            for (const {
+                    file
+                }
+                of filesWithPaths) {
+                if (file.size > uploadSizeLimit) {
+                    new window.FilamentNotification()
+                        .title(`File ${file.name} exceeds the upload size limit of ${this.formatBytes(uploadSizeLimit)}`)
+                        .danger()
+                        .send();
+                    this.isUploading = false;
+                    return;
+                }
+            }
+
+            const folderPaths = new Set();
+            for (const {
+                    path
+                }
+                of filesWithPaths) {
+                if (path) {
+                    const parts = path.split('/').filter(Boolean);
+                    let currentPath = '';
+                    for (const part of parts) {
+                        currentPath += part + '/';
+                        folderPaths.add(currentPath);
                     }
+                }
+            }
 
-                    const folderPaths = new Set();
-                    for (const { path } of filesWithPaths) {
-                        if (path) {
-                            const parts = path.split('/').filter(Boolean);
-                            let currentPath = '';
-                            for (const part of parts) {
-                                currentPath += part + '/';
-                                folderPaths.add(currentPath);
-                            }
-                        }
-                    }
+            for (const folderPath of folderPaths) {
+                try {
+                    await $wire.createFolder(folderPath.slice(0, -1));
+                } catch (error) {
+                    console.warn(`Folder ${folderPath} already exists or failed to create.`);
+                }
+            }
 
-                    for (const folderPath of folderPaths) {
-                        try {
-                            await $wire.createFolder(folderPath.slice(0, -1));
-                        } catch (error) {
-                            console.warn(`Folder ${folderPath} already exists or failed to create.`);
-                        }
-                    }
+            for (const f of filesWithPaths) {
+                this.uploadQueue.push({
+                    file: f.file,
+                    name: f.file.name,
+                    path: f.path,
+                    size: f.file.size,
+                    progress: 0,
+                    speed: 0,
+                    uploadedBytes: 0,
+                    status: 'pending',
+                    error: null
+                });
+            }
 
-                    for (const f of filesWithPaths) {
-                        this.uploadQueue.push({
-                            file: f.file,
-                            name: f.file.name,
-                            path: f.path,
-                            size: f.file.size,
-                            progress: 0,
-                            speed: 0,
-                            uploadedBytes: 0,
-                            status: 'pending',
-                            error: null
-                        });
-                    }
+            const maxConcurrent = 3;
+            let activeUploads = [];
+            let completedCount = 0;
 
-                    const maxConcurrent = 3;
-                    let activeUploads = [];
-                    let completedCount = 0;
+            for (let i = 0; i < this.uploadQueue.length; i++) {
+                const uploadPromise = this.uploadFile(i)
+                    .then(() => {
+                        completedCount++;
+                        this.currentFileIndex = completedCount;
+                        const item = this.uploadQueue[i];
+                        const relativePath = (item.path ? item.path.replace(/^\/+/, '') + '/' : '') + item.name;
+                        uploadedFiles.push(relativePath);
+                    })
+                    .catch(() => {
+                        completedCount++;
+                        this.currentFileIndex = completedCount;
+                    });
 
-                    for (let i = 0; i < this.uploadQueue.length; i++) {
-                        const uploadPromise = this.uploadFile(i)
-                            .then(() => { completedCount++; this.currentFileIndex = completedCount;
-                                const item = this.uploadQueue[i];
-                                const relativePath = (item.path ? item.path.replace(/^\/+/, '') + '/' : '') + item.name;
-                                uploadedFiles.push(relativePath);
-                            })
-                            .catch(() => { completedCount++; this.currentFileIndex = completedCount; });
+                activeUploads.push(uploadPromise);
 
-                        activeUploads.push(uploadPromise);
+                if (activeUploads.length >= maxConcurrent) {
+                    await Promise.race(activeUploads);
+                    activeUploads = activeUploads.filter(p => p.status !== 'fulfilled' && p.status !== 'rejected');
+                }
+            }
 
-                        if (activeUploads.length >= maxConcurrent) {
-                            await Promise.race(activeUploads);
-                            activeUploads = activeUploads.filter(p => p.status !== 'fulfilled' && p.status !== 'rejected');
-                        }
-                    }
+            await Promise.allSettled(activeUploads);
 
-                    await Promise.allSettled(activeUploads);
-
-                    const failed = this.uploadQueue.filter(f => f.status === 'error');
-                    await $wire.$refresh();
+            const failed = this.uploadQueue.filter(f => f.status === 'error');
+            await $wire.$refresh();
 
                     if (failed.length === 0) {
-                        new window.FilamentNotification().title('{{ trans('server/file.actions.upload.success') }}').success().send();
+                        new window.FilamentNotification()
+                            .title('{{ trans('server/file.actions.upload.success') }}')
+                            .success()
+                            .send();
                     } else if (failed.length === this.totalFiles) {
-                        new window.FilamentNotification().title('{{ trans('server/file.actions.upload.error_all') }}').danger().send();
+                        new window.FilamentNotification()
+                            .title('{{ trans('server/file.actions.upload.failed') }}')
+                            .danger()
+                            .send();
                     } else {
-                        new window.FilamentNotification().title('{{ trans('server/file.actions.upload.error_partial') }}').warning().send();
+                        new window.FilamentNotification()
+                            .title('{{ trans('server/file.actions.upload.failed') }}')
+                            .danger()
+                            .send();
                     }
 
-                    if (uploadedFiles.length > 0) {
-                        this.$nextTick(() => {
-                            try {
-                                @this.call('logUploadedFiles', uploadedFiles);
-                            } catch (e) {
-                                $wire.call('logUploadedFiles', uploadedFiles);
-                            }
-                        });
+            if (uploadedFiles.length > 0) {
+                this.$nextTick(() => {
+                    if (typeof $wire !== 'undefined' && $wire && typeof $wire.call === 'function') {
+                        $wire.call('logUploadedFiles', uploadedFiles);
+                    } else if (typeof window.livewire !== 'undefined' && typeof window.livewire.call === 'function') {
+                        window.livewire.call('logUploadedFiles', uploadedFiles);
+                    } else if (typeof Livewire !== 'undefined' && typeof Livewire.call === 'function') {
+                        Livewire.call('logUploadedFiles', uploadedFiles);
+                    } else {
+                        console.warn('Could not call Livewire method logUploadedFiles; Livewire not found.');
                     }
+                });
+            }
 
-                    if (this.autoCloseTimer) clearTimeout(this.autoCloseTimer);
-                    this.autoCloseTimer = setTimeout(() => {
-                        this.isUploading = false;
-                        this.uploadQueue = [];
-                    },1000);
-                } catch (error) {
-                    console.error('Upload error:', error);
-                    new window.FilamentNotification().title('{{ trans('server/file.actions.upload.error') }}').danger().send();
-                    this.isUploading = false;
-                }
-            },
+            if (this.autoCloseTimer) clearTimeout(this.autoCloseTimer);
+            this.autoCloseTimer = setTimeout(() => {
+                this.isUploading = false;
+                this.uploadQueue = [];
+            }, 1000);
+        } catch (error) {
+            console.error('Upload error:', error);
+            new window.FilamentNotification()
+                .title('{{ trans('server/file.actions.upload.error') }}')
+                .danger()
+                .send();
+            this.isUploading = false;
+        }
+    },
 
-            async uploadFile(index) {
-                const fileData = this.uploadQueue[index];
-                fileData.status = 'uploading';
-                try {
-                    const uploadUrl = await $wire.getUploadUrl();
-                    const url = new URL(uploadUrl);
-                    let basePath = @js($this->path);
+    async uploadFile(index) {
+        const fileData = this.uploadQueue[index];
+        fileData.status = 'uploading';
+        try {
+            const uploadUrl = await $wire.getUploadUrl();
+            const url = new URL(uploadUrl);
+            let basePath = @js($this->path);
 
-                    if (fileData.path && fileData.path.trim() !== '') {
-                        basePath = basePath.replace(/\/+$/, '') + '/' + fileData.path.replace(/^\/+/, '');
+            if (fileData.path && fileData.path.trim() !== '') {
+                basePath = basePath.replace(/\/+$/, '') + '/' + fileData.path.replace(/^\/+/, '');
+            }
+
+            url.searchParams.append('directory', basePath);
+
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                const formData = new FormData();
+                formData.append('files', fileData.file);
+
+                let lastLoaded = 0;
+                let lastTime = Date.now();
+
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        fileData.uploadedBytes = e.loaded;
+                        fileData.progress = Math.round((e.loaded / e.total) * 100);
+
+                        const now = Date.now();
+                        const timeDiff = (now - lastTime) / 1000;
+                        if (timeDiff > 0.1) {
+                            const bytesDiff = e.loaded - lastLoaded;
+                            fileData.speed = bytesDiff / timeDiff;
+                            lastTime = now;
+                            lastLoaded = e.loaded;
+                        }
                     }
+                });
 
-                    url.searchParams.append('directory', basePath);
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        fileData.status = 'complete';
+                        fileData.progress = 100;
+                        resolve();
+                    } else {
+                        fileData.status = 'error';
+                        fileData.error = `Upload failed (${xhr.status})`;
+                        reject(new Error(fileData.error));
+                    }
+                };
 
-                    return new Promise((resolve, reject) => {
-                        const xhr = new XMLHttpRequest();
-                        const formData = new FormData();
-                        formData.append('files', fileData.file);
-
-                        let lastLoaded = 0;
-                        let lastTime = Date.now();
-
-                        xhr.upload.addEventListener('progress', (e) => {
-                            if (e.lengthComputable) {
-                                fileData.uploadedBytes = e.loaded;
-                                fileData.progress = Math.round((e.loaded / e.total) * 100);
-
-                                const now = Date.now();
-                                const timeDiff = (now - lastTime) / 1000;
-                                if (timeDiff > 0.1) {
-                                    const bytesDiff = e.loaded - lastLoaded;
-                                    fileData.speed = bytesDiff / timeDiff;
-                                    lastTime = now;
-                                    lastLoaded = e.loaded;
-                                }
-                            }
-                        });
-
-                        xhr.onload = () => {
-                            if (xhr.status >= 200 && xhr.status < 300) {
-                                fileData.status = 'complete';
-                                fileData.progress = 100;
-                                resolve();
-                            } else {
-                                fileData.status = 'error';
-                                fileData.error = `Upload failed (${xhr.status})`;
-                                reject(new Error(fileData.error));
-                            }
-                        };
-
-                        xhr.onerror = () => {
-                            fileData.status = 'error';
-                            fileData.error = 'Network error';
-                            reject(new Error('Network error'));
-                        };
-
-                        xhr.open('POST', url.toString());
-                        xhr.send(formData);
-                    });
-                } catch (err) {
+                xhr.onerror = () => {
                     fileData.status = 'error';
-                    fileData.error = 'Failed to get upload token';
-                    throw err;
-                }
-            },
+                    fileData.error = 'Network error';
+                    reject(new Error('Network error'));
+                };
 
-            formatBytes(bytes) {
-                if (bytes === 0) return '0.00 B';
-                const k = 1024;
-                const sizes = ['B', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
-            },
-            formatSpeed(bytesPerSecond) {
-                return this.formatBytes(bytesPerSecond) + '/s';
-            },
-            handleEscapeKey(e) {
-                if (e.key === 'Escape' && this.isUploading) {
-                    this.isUploading = false;
-                    this.uploadQueue = [];
-                }
-            },
-            async handleFileSelect(e) {
-                const files = Array.from(e.target.files);
-                if (files.length > 0) {
-                    const filesWithPaths = files.map(f => ({ file: f, path: '' }));
-                    await this.uploadFilesWithFolders(filesWithPaths);
-                }
-            },
-            triggerBrowse() {
-                this.$refs.fileInput.click();
-            },
-        }"
-    class="relative"
->
+                xhr.open('POST', url.toString());
+                xhr.send(formData);
+            });
+        } catch (err) {
+            fileData.status = 'error';
+            fileData.error = 'Failed to get upload token';
+            throw err;
+        }
+    },
+
+    formatBytes(bytes) {
+        if (bytes === 0) return '0.00 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
+    },
+    formatSpeed(bytesPerSecond) {
+        return this.formatBytes(bytesPerSecond) + '/s';
+    },
+    handleEscapeKey(e) {
+        if (e.key === 'Escape' && this.isUploading) {
+            this.isUploading = false;
+            this.uploadQueue = [];
+        }
+    },
+    async handleFileSelect(e) {
+        const files = Array.from(e.target.files);
+        if (files.length > 0) {
+            const filesWithPaths = files.map(f => ({
+                file: f,
+                path: ''
+            }));
+            await this.uploadFilesWithFolders(filesWithPaths);
+        }
+    },
+    triggerBrowse() {
+        this.$refs.fileInput.click();
+    },
+}"
+    class="relative">
     <div class="p-4">
         <input type="file" x-ref="fileInput" class="hidden" multiple @change="handleFileSelect">
 

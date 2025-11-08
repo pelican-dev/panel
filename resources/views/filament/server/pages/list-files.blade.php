@@ -44,7 +44,10 @@
                 }
 
                 if (files && files.length > 0 && filesWithPaths.length === 0) {
-                    filesWithPaths = Array.from(files).map(f => ({ file: f, path: '' }));
+                    filesWithPaths = Array.from(files).map(f => ({
+                        file: f,
+                        path: ''
+                    }));
                 }
 
                 if (filesWithPaths.length > 0) {
@@ -53,67 +56,67 @@
             },
 
             async extractFilesFromItems(items) {
-            const filesWithPaths = [];
-            const traversePromises = [];
+                const filesWithPaths = [];
+                const traversePromises = [];
 
-            for (let i = 0; i < items.length; i++) {
-                const entry = items[i].webkitGetAsEntry?.();
+                for (let i = 0; i < items.length; i++) {
+                    const entry = items[i].webkitGetAsEntry?.();
 
-                if (entry) {
-                    traversePromises.push(this.traverseFileTree(entry, '', filesWithPaths));
-                } else if (items[i].kind === 'file') {
-                    const file = items[i].getAsFile();
-                    if (file) {
-                        filesWithPaths.push({
-                            file: file,
-                            path: '',
-                        });
+                    if (entry) {
+                        traversePromises.push(this.traverseFileTree(entry, '', filesWithPaths));
+                    } else if (items[i].kind === 'file') {
+                        const file = items[i].getAsFile();
+                        if (file) {
+                            filesWithPaths.push({
+                                file: file,
+                                path: '',
+                            });
+                        }
                     }
                 }
-            }
 
-            await Promise.all(traversePromises);
+                await Promise.all(traversePromises);
 
-            return filesWithPaths;
+                return filesWithPaths;
             },
 
-        async traverseFileTree(entry, path, filesWithPaths) {
-            return new Promise((resolve) => {
-                if (entry.isFile) {
-                    entry.file((file) => {
-                        filesWithPaths.push({
-                            file: file,
-                            path: path,
+            async traverseFileTree(entry, path, filesWithPaths) {
+                return new Promise((resolve) => {
+                    if (entry.isFile) {
+                        entry.file((file) => {
+                            filesWithPaths.push({
+                                file: file,
+                                path: path,
+                            });
+                            resolve();
                         });
+                    } else if (entry.isDirectory) {
+                        const reader = entry.createReader();
+                        const readEntries = () => {
+                            reader.readEntries(async (entries) => {
+                                if (entries.length === 0) {
+                                    resolve();
+                                    return;
+                                }
+
+                                const subPromises = entries.map((e) =>
+                                    this.traverseFileTree(
+                                        e,
+                                        path ? `${path}/${entry.name}` : entry.name,
+                                        filesWithPaths
+                                    )
+                                );
+
+                                await Promise.all(subPromises);
+                                readEntries();
+                            });
+                        };
+                        readEntries();
+                    } else {
                         resolve();
-                    });
-                } else if (entry.isDirectory) {
-                    const reader = entry.createReader();
-                    const readEntries = () => {
-                        reader.readEntries(async (entries) => {
-                            if (entries.length === 0) {
-                                resolve();
-                                return;
-                            }
-
-                            const subPromises = entries.map((e) =>
-                                this.traverseFileTree(
-                                    e,
-                                    path ? `${path}/${entry.name}` : entry.name,
-                                    filesWithPaths
-                                )
-                            );
-
-                            await Promise.all(subPromises);
-                            readEntries();
-                        });
-                    };
-                    readEntries();
-                } else {
-                    resolve();
-                }
-            });
-        },
+                    }
+                });
+            },
             async uploadFilesWithFolders(filesWithPaths) {
                 this.isUploading = true;
                 this.uploadQueue = [];
@@ -124,7 +127,10 @@
                 try {
                     const uploadSizeLimit = await $wire.getUploadSizeLimit();
 
-                    for (const { file } of filesWithPaths) {
+                    for (const {
+                            file
+                        }
+                        of filesWithPaths) {
                         if (file.size > uploadSizeLimit) {
                             new window.FilamentNotification()
                                 .title(`File ${file.name} exceeds the upload limit.`)
@@ -136,7 +142,10 @@
                     }
 
                     const folderPaths = new Set();
-                    for (const { path } of filesWithPaths) {
+                    for (const {
+                            path
+                        }
+                        of filesWithPaths) {
                         if (path) {
                             const parts = path.split('/').filter(Boolean);
                             let currentPath = '';
@@ -175,12 +184,17 @@
 
                     for (let i = 0; i < this.uploadQueue.length; i++) {
                         const uploadPromise = this.uploadFile(i)
-                            .then(() => { completedCount++; this.currentFileIndex = completedCount;
+                            .then(() => {
+                                completedCount++;
+                                this.currentFileIndex = completedCount;
                                 const item = this.uploadQueue[i];
                                 const relativePath = (item.path ? item.path.replace(/^\/+/, '') + '/' : '') + item.name;
                                 uploadedFiles.push(relativePath);
                             })
-                            .catch(() => { completedCount++; this.currentFileIndex = completedCount; });
+                            .catch(() => {
+                                completedCount++;
+                                this.currentFileIndex = completedCount;
+                            });
 
                         activeUploads.push(uploadPromise);
 
@@ -196,19 +210,32 @@
                     await $wire.$refresh();
 
                     if (failed.length === 0) {
-                        new window.FilamentNotification().title('{{ trans('server/file.actions.upload.success') }}').success().send();
+                        new window.FilamentNotification()
+                            .title('{{ trans('server/file.actions.upload.success') }}')
+                            .success()
+                            .send();
                     } else if (failed.length === this.totalFiles) {
-                        new window.FilamentNotification().title('{{ trans('server/file.actions.upload.failed') }}').danger().send();
+                        new window.FilamentNotification()
+                            .title('{{ trans('server/file.actions.upload.failed') }}')
+                            .danger()
+                            .send();
                     } else {
-                        new window.FilamentNotification().title('{{ trans('server/file.actions.upload.failed') }}').danger().send();
+                        new window.FilamentNotification()
+                            .title('{{ trans('server/file.actions.upload.failed') }}')
+                            .danger()
+                            .send();
                     }
 
                     if (uploadedFiles.length > 0) {
                         this.$nextTick(() => {
-                            try {
-                                @this.call('logUploadedFiles', uploadedFiles);
-                            } catch (e) {
+                            if (typeof $wire !== 'undefined' && $wire && typeof $wire.call === 'function') {
                                 $wire.call('logUploadedFiles', uploadedFiles);
+                            } else if (typeof window.livewire !== 'undefined' && typeof window.livewire.call === 'function') {
+                                window.livewire.call('logUploadedFiles', uploadedFiles);
+                            } else if (typeof Livewire !== 'undefined' && typeof Livewire.call === 'function') {
+                                Livewire.call('logUploadedFiles', uploadedFiles);
+                            } else {
+                                console.warn('Could not call Livewire method logUploadedFiles; Livewire not found.');
                             }
                         });
                     }
@@ -217,10 +244,13 @@
                     this.autoCloseTimer = setTimeout(() => {
                         this.isUploading = false;
                         this.uploadQueue = [];
-                    },1000);
+                    }, 1000);
                 } catch (error) {
                     console.error('Upload error:', error);
-                    new window.FilamentNotification().title('{{ trans('server/file.actions.upload.error') }}').danger().send();
+                    new window.FilamentNotification()
+                        .title('{{ trans('server/file.actions.upload.error') }}')
+                        .danger()
+                        .send();
                     this.isUploading = false;
                 }
             },
