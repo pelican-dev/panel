@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Plugin;
 
+use App\Enums\PluginStatus;
 use App\Facades\Plugins;
 use App\Models\Plugin;
 use Illuminate\Console\Command;
@@ -24,7 +25,7 @@ class UninstallPluginCommand extends Command
             return;
         }
 
-        if (!$plugin->isInstalled()) {
+        if ($plugin->status === PluginStatus::NotInstalled) {
             $this->error('Plugin is not installed!');
 
             return;

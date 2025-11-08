@@ -192,42 +192,17 @@ class Plugin extends Model implements HasPluginSettings
 
     public function shouldLoad(?string $panelId = null): bool
     {
-        return !$this->isDisabled() && $this->isInstalled() && !$this->isIncompatible() && (is_null($panelId) || !$this->panels || in_array($panelId, explode(',', $this->panels)));
+        return ($this->status === PluginStatus::Enabled || $this->status === PluginStatus::Errored) && (is_null($panelId) || !$this->panels || in_array($panelId, explode(',', $this->panels)));
     }
 
     public function canEnable(): bool
     {
-        return $this->isDisabled() && $this->isInstalled() && $this->isCompatible();
+        return $this->status === PluginStatus::Disabled && $this->isCompatible();
     }
 
     public function canDisable(): bool
     {
-        return $this->isEnabled() && $this->isInstalled() && $this->isCompatible();
-    }
-
-    public function isEnabled(): bool
-    {
-        return $this->status === PluginStatus::Enabled;
-    }
-
-    public function isDisabled(): bool
-    {
-        return $this->status === PluginStatus::Disabled;
-    }
-
-    public function isInstalled(): bool
-    {
-        return $this->status !== PluginStatus::NotInstalled;
-    }
-
-    public function hasErrored(): bool
-    {
-        return $this->status === PluginStatus::Errored;
-    }
-
-    public function isIncompatible(): bool
-    {
-        return $this->status === PluginStatus::Incompatible;
+        return $this->status !== PluginStatus::Disabled && $this->status !== PluginStatus::NotInstalled && $this->isCompatible();
     }
 
     public function isCompatible(): bool

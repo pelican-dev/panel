@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Plugins;
 
+use App\Enums\PluginStatus;
 use App\Facades\Plugins;
 use App\Filament\Admin\Resources\Plugins\Pages\ListPlugins;
 use App\Models\Plugin;
@@ -106,7 +107,7 @@ class PluginResource extends Resource
                     ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                     ->icon('tabler-settings')
                     ->color('primary')
-                    ->visible(fn (Plugin $plugin) => $plugin->isEnabled() && $plugin->hasSettings())
+                    ->visible(fn (Plugin $plugin) => $plugin->status === PluginStatus::Enabled && $plugin->hasSettings())
                     ->schema(fn (Plugin $plugin) => $plugin->getSettingsForm())
                     ->action(fn (array $data, Plugin $plugin) => $plugin->saveSettings($data))
                     ->slideOver(),
@@ -116,7 +117,7 @@ class PluginResource extends Resource
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                         ->icon('tabler-terminal')
                         ->color('success')
-                        ->hidden(fn (Plugin $plugin) => $plugin->isInstalled())
+                        ->hidden(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled)
                         ->action(function (Plugin $plugin, $livewire) {
                             Plugins::installPlugin($plugin, !$plugin->isTheme() || !Plugins::hasThemePluginEnabled());
 
@@ -132,7 +133,7 @@ class PluginResource extends Resource
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                         ->icon('tabler-download')
                         ->color('success')
-                        ->visible(fn (Plugin $plugin) => $plugin->isInstalled() && $plugin->isUpdateAvailable())
+                        ->visible(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled && $plugin->isUpdateAvailable())
                         ->action(function (Plugin $plugin, $livewire) {
                             Plugins::updatePlugin($plugin);
 
@@ -184,7 +185,7 @@ class PluginResource extends Resource
                         ->icon('tabler-trash')
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->hidden(fn (Plugin $plugin) => $plugin->isInstalled())
+                        ->visible(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled)
                         ->action(function (Plugin $plugin, $livewire) {
                             Plugins::deletePlugin($plugin);
 
@@ -201,7 +202,7 @@ class PluginResource extends Resource
                         ->icon('tabler-terminal')
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->visible(fn (Plugin $plugin) => $plugin->isInstalled())
+                        ->hidden(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled)
                         ->action(function (Plugin $plugin, $livewire) {
                             Plugins::uninstallPlugin($plugin);
 

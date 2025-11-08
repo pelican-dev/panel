@@ -44,7 +44,7 @@ class PluginService
                     continue;
                 } else {
                     // Make sure to update the status if a plugin is no longer incompatible (e.g. because the user changed their panel version)
-                    if ($plugin->isIncompatible()) {
+                    if ($plugin->status === PluginStatus::Incompatible) {
                         $this->disablePlugin($plugin);
                     }
                 }
@@ -141,7 +141,7 @@ class PluginService
 
                 $panel->plugin(new $pluginClass());
 
-                if ($plugin->hasErrored()) {
+                if ($plugin->status === PluginStatus::Errored) {
                     $this->enablePlugin($plugin);
                 }
             } catch (Exception $exception) {
@@ -243,7 +243,7 @@ class PluginService
             if ($enable) {
                 $this->enablePlugin($plugin);
             } else {
-                if (!$plugin->isInstalled()) {
+                if ($plugin->status === PluginStatus::NotInstalled) {
                     $this->disablePlugin($plugin);
                 }
             }
@@ -393,7 +393,7 @@ class PluginService
     {
         $plugins = Plugin::query()->orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
-            if ($plugin->isTheme() && $plugin->isEnabled()) {
+            if ($plugin->isTheme() && $plugin->status === PluginStatus::Enabled) {
                 return true;
             }
         }
@@ -408,7 +408,7 @@ class PluginService
 
         $plugins = Plugin::query()->orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
-            if (!$plugin->isEnabled() || !$plugin->isLanguage()) {
+            if ($plugin->status !== PluginStatus::Enabled || !$plugin->isLanguage()) {
                 continue;
             }
 
