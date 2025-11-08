@@ -15,10 +15,10 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Slider;
+use Filament\Forms\Components\Slider\Enums\PipsMode;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Infolists\Components\CodeEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -37,6 +37,7 @@ use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
+use Filament\Support\RawJs;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\HtmlString;
@@ -744,24 +745,43 @@ class EditNode extends EditRecord
                                         ),
                                 ])
                                 ->schema([
-                                    Toggle::make('include_endpoints')
-                                        ->hintIcon('tabler-question-mark')
+                                    ToggleButtons::make('include_endpoints')
+                                        ->hintIcon('tabler-question-mark')->inline()
                                         ->hintIconTooltip(trans('admin/node.diagnostics.include_endpoints_hint'))
-                                        ->formatStateUsing(fn () => true),
-                                    Toggle::make('include_logs')
+                                        ->formatStateUsing(fn () => 1)
+                                        ->options([
+                                            1 => 'Yes',
+                                            0 => 'No',
+                                        ])
+                                        ->colors([
+                                            1 => 'success',
+                                            0 => 'danger',
+                                        ]),
+                                    ToggleButtons::make('include_logs')
                                         ->live()
-                                        ->hintIcon('tabler-question-mark')
+                                        ->hintIcon('tabler-question-mark')->inline()
                                         ->hintIconTooltip(trans('admin/node.diagnostics.include_logs_hint'))
-                                        ->formatStateUsing(fn () => true),
+                                        ->formatStateUsing(fn () => 1)
+                                        ->options([
+                                            1 => 'Yes',
+                                            0 => 'No',
+                                        ])
+                                        ->colors([
+                                            1 => 'success',
+                                            0 => 'danger',
+                                        ]),
                                     Slider::make('log_lines')
-                                        ->columnSpanFull()
                                         ->hiddenLabel()
                                         ->live()
-                                        ->tooltips()->fillTrack()->pips()->steppedPips()
+                                        ->tooltips(RawJs::make(<<<'JS'
+                                            `${$value} lines`
+                                            JS))
                                         ->visible(fn (Get $get) => $get('include_logs'))
                                         ->range(minValue: 100, maxValue: 500)
-                                        ->step(25)
-                                        ->formatStateUsing(fn () => 200),
+                                        ->pips(PipsMode::Steps, density: 10)
+                                        ->step(50)
+                                        ->formatStateUsing(fn () => 200)
+                                        ->fillTrack(),
                                     Hidden::make('pulled'),
                                     Hidden::make('uploaded'),
                                 ]),
