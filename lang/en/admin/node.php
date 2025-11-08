@@ -140,4 +140,13 @@ return [
         'title' => 'Cloudflare Issue',
         'body' => 'Your Node is not accessible by Cloudflare',
     ],
+
+    'bulk_update_ip' => 'Update IPs',
+    'bulk_update_ip_description' => 'Replace an old IP address with a new one for allocations. This is useful when a node\'s IP address changes',
+    'update_ip' => 'Update IP',
+    'old_ip' => 'Old IP Address',
+    'new_ip' => 'New IP Address',
+    'no_allocations_to_update' => 'No allocations with the selected old IP address were found',
+    'ip_updated' => 'Successfully updated :count of :total allocation(s)',
+    'ip_update_failed' => ':count allocation(s) failed to update',
 ];
