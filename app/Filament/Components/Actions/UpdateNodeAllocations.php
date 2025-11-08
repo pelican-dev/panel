@@ -3,6 +3,7 @@
 namespace App\Filament\Components\Actions;
 
 use App\Models\Allocation;
+use App\Models\Node;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -36,29 +37,34 @@ class UpdateNodeAllocations extends Action
         $this->modalSubmitActionLabel(trans('admin/node.update_ip'));
 
         $this->schema(function () {
-            $currentIps = $this->getOldIps();
-            $availableIps = $this->getAvailableIps();
+            /** @var Node $node */
+            $node = $this->record;
+
+            $currentIps = Allocation::where('node_id', $node->id)
+                ->pluck('ip')
+                ->unique()
+                ->values()
+                ->all();
 
             return [
                 Select::make('old_ip')
                     ->label(trans('admin/node.old_ip'))
-                    ->options(array_combine($currentIps, $currentIps) ?: [])
+                    ->options(array_combine($currentIps, $currentIps))
+                    ->selectablePlaceholder(false)
                     ->required()
                     ->live(),
                 Select::make('new_ip')
                     ->label(trans('admin/node.new_ip'))
-                    ->options(fn () => array_combine($availableIps, $availableIps) ?: [])
+                    ->options(fn () => array_combine($node->ipAddresses(), $node->ipAddresses()) ?: [])
                     ->required()
                     ->different('old_ip'),
             ];
         });
 
         $this->action(function (array $data) {
-            $oldIp = $data['old_ip'];
-            $newIp = $data['new_ip'];
-            $nodeId = $this->nodeId;
-
-            $allocations = Allocation::where('node_id', $nodeId)->where('ip', $oldIp)->get();
+            /** @var Node $node */
+            $node = $this->record;
+            $allocations = Allocation::where('node_id', $node->id)->where('ip', $data['old_ip'])->get();
 
             if ($allocations->count() === 0) {
                 Notification::make()
@@ -74,7 +80,7 @@ class UpdateNodeAllocations extends Action
 
             foreach ($allocations as $allocation) {
                 try {
-                    $allocation->update(['ip' => $newIp]);
+                    $allocation->update(['ip' => $data['new_ip']]);
                     $updated++;
                 } catch (Exception $exception) {
                     $failed++;
@@ -91,58 +97,10 @@ class UpdateNodeAllocations extends Action
         });
     }
 
-    /** @var string[] */
-    protected array $availableIps = [];
-
-    /** @var string[] */
-    protected array $oldIps = [];
-
-    protected ?int $nodeId = null;
-
-    /** @param  string[]  $ips */
-    public function availableIps(array $ips): static
+    public function nodeRecord(Node $node): static
     {
-        $this->availableIps = $ips;
+        $this->record = $node;
 
         return $this;
-    }
-
-    /** @param  string[]  $ips */
-    public function oldIps(array $ips): static
-    {
-        $this->oldIps = $ips;
-
-        return $this;
-    }
-
-    public function forNode(int $nodeId): static
-    {
-        $this->nodeId = $nodeId;
-
-        return $this;
-    }
-
-    /** @return string[] */
-    protected function getAvailableIps(): array
-    {
-        return $this->availableIps;
-    }
-
-    /** @return string[] */
-    protected function getOldIps(): array
-    {
-        if (!empty($this->oldIps)) {
-            return $this->oldIps;
-        }
-
-        if ($this->nodeId) {
-            return Allocation::where('node_id', $this->nodeId)
-                ->pluck('ip')
-                ->unique()
-                ->values()
-                ->all();
-        }
-
-        return [];
     }
 }

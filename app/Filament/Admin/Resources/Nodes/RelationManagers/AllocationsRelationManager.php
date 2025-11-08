@@ -122,8 +122,7 @@ class AllocationsRelationManager extends RelationManager
                     ])
                     ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord(), $data)),
                 UpdateNodeAllocations::make()
-                    ->availableIps($this->getOwnerRecord()->ipAddresses())
-                    ->forNode($this->getOwnerRecord()->id)
+                    ->nodeRecord($this->getOwnerRecord())
                     ->authorize(fn () => user()?->can('update', $this->getOwnerRecord())),
             ]);
     }
