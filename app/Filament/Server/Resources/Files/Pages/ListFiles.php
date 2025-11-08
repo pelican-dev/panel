@@ -35,10 +35,7 @@ use Filament\Panel;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\View;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tables\Columns\TextColumn;
@@ -532,41 +529,30 @@ class ListFiles extends ListRecords
                             ->label(trans('server/file.actions.new_folder.folder_name'))
                             ->required(),
                     ]),
-                Action::make('upload')
+                Action::make('uploadFile')
                     ->authorize(fn () => user()?->can(Permission::ACTION_FILE_CREATE, $server))
-                    ->hiddenLabel()->icon('tabler-upload')->iconButton()->iconSize(IconSize::ExtraLarge)
-                    ->tooltip(trans('server/file.actions.upload.title'))
+                    ->view('filament.server.pages.file-upload'),
+                Action::make('uploadURL')
+                    ->authorize(fn () => user()?->can(Permission::ACTION_FILE_CREATE, $server))
+                    ->hiddenLabel()->icon('tabler-download')->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->tooltip(trans('server/file.actions.upload.from_url'))
+                    ->modalHeading(trans('server/file.actions.upload.from_url'))
                     ->color('success')
                     ->action(function ($data) {
-                        if ($data['url'] !== null) {
-                            $this->getDaemonFileRepository()->pull($data['url'], $this->path);
+                        $this->getDaemonFileRepository()->pull($data['url'], $this->path);
 
-                            Activity::event('server:file.pull')
-                                ->property('url', $data['url'])
-                                ->property('directory', $this->path)
-                                ->log();
-                        }
+                        Activity::event('server:file.pull')
+                            ->property('url', $data['url'])
+                            ->property('directory', $this->path)
+                            ->log();
 
                         $this->refreshPage();
                     })
                     ->schema([
-                        Tabs::make()
-                            ->contained(false)
-                            ->schema([
-                                Tab::make('files')
-                                    ->label(trans('server/file.actions.upload.from_files'))
-                                    ->schema([
-                                        View::make('filament.server.pages.file-upload'),
-                                    ]),
-                                Tab::make('url')
-                                    ->label(trans('server/file.actions.upload.url'))
-                                    ->live()
-                                    ->schema([
-                                        TextInput::make('url')
-                                            ->label(trans('server/file.actions.upload.url'))
-                                            ->url(),
-                                    ]),
-                            ]),
+                        TextInput::make('url')
+                            ->label(trans('server/file.actions.upload.url'))
+                            ->required()
+                            ->url(),
                     ]),
                 Action::make('search')
                     ->authorize(fn () => user()?->can(Permission::ACTION_FILE_READ, $server))

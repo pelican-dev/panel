@@ -302,17 +302,15 @@
         this.$refs.fileInput.click();
     },
 }"
-    class="relative">
-    <div class="p-4">
-        <input type="file" x-ref="fileInput" class="hidden" multiple @change="handleFileSelect">
-
-        <div class="flex items-center justify-center min-h-[200px]">
-            <x-filament::button outlined size="lg" color="primary" @click="triggerBrowse">
-                {{ trans('server/file.actions.upload.from_files') }}
-            </x-filament::button>
-        </div>
-    </div>
-
+>
+    <x-filament::icon-button
+        iconSize="xl"
+        icon="tabler-upload"
+        color="success"
+        tooltip="{{ trans('server/file.actions.upload.title') }}"
+        @click="triggerBrowse">
+    </x-filament::icon-button>
+    <input type="file" x-ref="fileInput" class="hidden" multiple @change="handleFileSelect">
     <div
         x-show="isUploading"
         x-cloak
