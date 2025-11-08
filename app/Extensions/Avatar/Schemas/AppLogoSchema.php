@@ -29,6 +29,6 @@ class AppLogoSchema implements AvatarSchemaInterface
             return url($logo);
         }
 
-        return '/pelican.svg';
+        return url('/pelican.svg');
     }
 }
