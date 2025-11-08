@@ -18,7 +18,7 @@ class LocalAvatarProvider implements AvatarProvider
 
         return $this->avatarService->generateDataUri(
             name: $name,
-            backgroundColor: Color::Gray[950],
+            backgroundColor: $this->avatarService->generateColorFromName($name),
             textColor: 'FFFFFF',
             size: 128
         );
