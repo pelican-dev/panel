@@ -3,11 +3,11 @@
 namespace App\Providers\Filament;
 
 use App\Enums\CustomizationKey;
+use App\Extensions\Avatar\Schemas\Local\LocalAvatarProvider;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\Login;
 use App\Http\Middleware\LanguageMiddleware;
 use App\Models\User;
-use App\Services\Avatars\LocalAvatarProvider;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;

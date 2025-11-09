@@ -4,9 +4,9 @@ namespace App\Extensions\Avatar\Schemas;
 
 use App\Extensions\Avatar\AvatarSchemaInterface;
 use App\Models\User;
+use Filament\AvatarProviders\UiAvatarsProvider;
 
-class UiAvatarsSchema implements AvatarSchemaInterface
-{
+class UiAvatarsSchema extends UiAvatarsProvider implements AvatarSchemaInterface {
     public function getId(): string
     {
         return 'uiavatars';
@@ -17,9 +17,4 @@ class UiAvatarsSchema implements AvatarSchemaInterface
         return 'UI Avatars';
     }
 
-    public function get(User $user): ?string
-    {
-        // UI Avatars is the default of filament so just return null here
-        return null;
-    }
 }
