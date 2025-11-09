@@ -43,6 +43,9 @@ class FindAssignableAllocationService
         $start = config('panel.client_features.allocations.range_start', null);
         $end = config('panel.client_features.allocations.range_end', null);
 
+        Assert::integerish($start);
+        Assert::integerish($end);
+
         /** @var Allocation|null $allocation */
         $allocation = $server->node->allocations()
             ->when($server->allocation, function ($query) use ($server) {
@@ -78,9 +81,6 @@ class FindAssignableAllocationService
         if (!$start || !$end) {
             throw new NoAutoAllocationSpaceAvailableException();
         }
-
-        Assert::integerish($start);
-        Assert::integerish($end);
 
         // Get all the currently allocated ports for the node so that we can figure out
         // which port might be available.
