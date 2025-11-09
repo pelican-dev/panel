@@ -2,8 +2,8 @@
 
 namespace App\Providers\Filament;
 
-use Boquizo\FilamentLogViewer\FilamentLogViewerPlugin;
 use App\Facades\Plugins;
+use Boquizo\FilamentLogViewer\FilamentLogViewerPlugin;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Panel;

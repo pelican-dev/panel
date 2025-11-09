@@ -2,10 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Facades\Plugins;
 use App\Filament\Admin\Pages\ListLogs;
 use App\Filament\Admin\Pages\ViewLogs;
 use Boquizo\FilamentLogViewer\FilamentLogViewerPlugin;
-use App\Facades\Plugins;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
