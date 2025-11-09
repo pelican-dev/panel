@@ -505,7 +505,7 @@ class ListFiles extends ListRecords
                     ->color('primary')
                     ->action(function ($data) {
                         try {
-                            $this->getDaemonFileRepository()->createDirectory($data['name'], $this->path);
+                            $this->createFolder($data['name']);
 
                             Activity::event('server:file.create-directory')
                                 ->property(['directory' => $this->path, 'name' => $data['name']])
