@@ -22,6 +22,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
@@ -444,9 +445,8 @@ class ListFiles extends ListRecords
 
                             $this->refreshPage();
                         }),
-                    BulkAction::make('delete selected')
-                        ->color('danger')
-                        ->icon('heroicon-o-trash')
+                    DeleteBulkAction::make()
+                        ->successNotificationTitle(null)
                         ->authorize(fn () => user()?->can(Permission::ACTION_FILE_DELETE, $server))
                         ->action(function (Collection $files) {
                             $files = $files->map(fn ($file) => $file['name'])->toArray();
