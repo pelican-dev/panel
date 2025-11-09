@@ -40,8 +40,13 @@ class FindAssignableAllocationService
         // Attempt to find a given available allocation for a server. If one cannot be found
         // we will fall back to attempting to create a new allocation that can be used for the
         // server.
+        //
+        // Note: We use withoutGlobalScopes() to bypass Filament's tenant scoping when called
+        // from the Server panel context, which would otherwise filter allocations to only
+        // those belonging to the current server (making it impossible to find unassigned ones)
         /** @var Allocation|null $allocation */
-        $allocation = $server->node->allocations()
+        $allocation = Allocation::withoutGlobalScopes()
+            ->where('node_id', $server->node_id)
             ->when($server->allocation, function ($query) use ($server) {
                 $query->where('ip', $server->allocation->ip);
             })
@@ -81,7 +86,9 @@ class FindAssignableAllocationService
 
         // Get all the currently allocated ports for the node so that we can figure out
         // which port might be available.
-        $ports = $server->node->allocations()
+        // Use withoutGlobalScopes() to bypass tenant filtering.
+        $ports = Allocation::withoutGlobalScopes()
+            ->where('node_id', $server->node_id)
             ->where('ip', $server->allocation->ip)
             ->whereBetween('port', [$start, $end])
             ->pluck('port');
@@ -106,7 +113,8 @@ class FindAssignableAllocationService
         ]);
 
         /** @var Allocation $allocation */
-        $allocation = $server->node->allocations()
+        $allocation = Allocation::withoutGlobalScopes()
+            ->where('node_id', $server->node_id)
             ->where('ip', $server->allocation->ip)
             ->where('port', $port)
             ->firstOrFail();
