@@ -4,7 +4,7 @@ namespace App\Services\Nodes;
 
 use App\Exceptions\Service\Node\ConfigurationNotPersistedException;
 use App\Models\Node;
-use App\Repositories\Daemon\DaemonConfigurationRepository;
+use App\Repositories\Daemon\DaemonSystemRepository;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Str;
@@ -17,7 +17,7 @@ class NodeUpdateService
      */
     public function __construct(
         private ConnectionInterface $connection,
-        private DaemonConfigurationRepository $configurationRepository,
+        private DaemonSystemRepository $configurationRepository,
     ) {}
 
     /**

@@ -6,7 +6,7 @@ use App\Models\Node;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 
-class DaemonConfigurationRepository extends DaemonRepository
+class DaemonSystemRepository extends DaemonRepository
 {
     /**
      * Returns system information from the daemon instance.
@@ -28,6 +28,23 @@ class DaemonConfigurationRepository extends DaemonRepository
 
                 return true;
             })->json();
+    }
+
+    /**
+     * Retrieve diagnostics from the daemon for the current node.
+     *
+     *
+     * @throws ConnectionException
+     */
+    public function getDiagnostics(int $lines, bool $includeEndpoints, bool $includeLogs): Response
+    {
+        return $this->getHttpClient()
+            ->timeout(5)
+            ->get('/api/diagnostics', [
+                'log_lines' => $lines,
+                'include_endpoints' => $includeEndpoints ? 'true' : 'false',
+                'include_logs' => $includeLogs ? 'true' : 'false',
+            ]);
     }
 
     /**

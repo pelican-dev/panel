@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $address
  * @property Server|null $server
  * @property Node $node
+ * @property bool $is_locked
  *
  * @method static AllocationFactory factory(...$parameters)
  * @method static Builder|Allocation newModelQuery()
@@ -55,6 +56,10 @@ class Allocation extends Model
      */
     public const RESOURCE_NAME = 'allocation';
 
+    protected $attributes = [
+        'is_locked' => false,
+    ];
+
     /**
      * Fields that are not mass assignable.
      */
@@ -68,10 +73,17 @@ class Allocation extends Model
         'ip_alias' => ['nullable', 'string'],
         'server_id' => ['nullable', 'exists:servers,id'],
         'notes' => ['nullable', 'string', 'max:256'],
+        'is_locked' => ['boolean'],
     ];
 
     protected static function booted(): void
     {
+        static::updating(function (self $allocation) {
+            if (is_null($allocation->server_id)) {
+                $allocation->is_locked = false;
+            }
+        });
+
         static::deleting(function (self $allocation) {
             throw_if($allocation->server_id, new ServerUsingAllocationException(trans('exceptions.allocations.server_using')));
         });
@@ -83,6 +95,7 @@ class Allocation extends Model
             'node_id' => 'integer',
             'port' => 'integer',
             'server_id' => 'integer',
+            'is_locked' => 'bool',
         ];
     }
 

@@ -12,8 +12,10 @@ use App\Models\File;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
+use App\Services\Nodes\NodeJWTService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Carbon\CarbonImmutable;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -25,7 +27,6 @@ use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\CodeEditor;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
@@ -34,8 +35,6 @@ use Filament\Panel;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentView;
@@ -43,7 +42,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\UploadedFile;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route as RouteFacade;
@@ -55,6 +54,8 @@ class ListFiles extends ListRecords
     use CanCustomizeHeaderWidgets;
 
     protected static string $resource = FileResource::class;
+
+    protected string $view = 'filament.server.pages.list-files';
 
     #[Locked]
     public string $path = '/';
@@ -504,7 +505,7 @@ class ListFiles extends ListRecords
                     ->color('primary')
                     ->action(function ($data) {
                         try {
-                            $this->getDaemonFileRepository()->createDirectory($data['name'], $this->path);
+                            $this->createFolder($data['name']);
 
                             Activity::event('server:file.create-directory')
                                 ->property(['directory' => $this->path, 'name' => $data['name']])
@@ -528,58 +529,30 @@ class ListFiles extends ListRecords
                             ->label(trans('server/file.actions.new_folder.folder_name'))
                             ->required(),
                     ]),
-                Action::make('upload')
+                Action::make('uploadFile')
                     ->authorize(fn () => user()?->can(Permission::ACTION_FILE_CREATE, $server))
-                    ->hiddenLabel()->icon('tabler-upload')->iconButton()->iconSize(IconSize::ExtraLarge)
-                    ->tooltip(trans('server/file.actions.upload.title'))
+                    ->view('filament.server.pages.file-upload'),
+                Action::make('uploadURL')
+                    ->authorize(fn () => user()?->can(Permission::ACTION_FILE_CREATE, $server))
+                    ->hiddenLabel()->icon('tabler-download')->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->tooltip(trans('server/file.actions.upload.from_url'))
+                    ->modalHeading(trans('server/file.actions.upload.from_url'))
                     ->color('success')
                     ->action(function ($data) {
-                        if (count($data['files']) > 0 && !isset($data['url'])) {
-                            /** @var UploadedFile $file */
-                            foreach ($data['files'] as $file) {
-                                $this->getDaemonFileRepository()->putContent(join_paths($this->path, $file->getClientOriginalName()), $file->getContent());
+                        $this->getDaemonFileRepository()->pull($data['url'], $this->path);
 
-                                Activity::event('server:file.uploaded')
-                                    ->property('directory', $this->path)
-                                    ->property('file', $file->getClientOriginalName())
-                                    ->log();
-                            }
-                        } elseif ($data['url'] !== null) {
-                            $this->getDaemonFileRepository()->pull($data['url'], $this->path);
-
-                            Activity::event('server:file.pull')
-                                ->property('url', $data['url'])
-                                ->property('directory', $this->path)
-                                ->log();
-                        }
+                        Activity::event('server:file.pull')
+                            ->property('url', $data['url'])
+                            ->property('directory', $this->path)
+                            ->log();
 
                         $this->refreshPage();
                     })
                     ->schema([
-                        Tabs::make()
-                            ->contained(false)
-                            ->schema([
-                                Tab::make('files')
-                                    ->label(trans('server/file.actions.upload.from_files'))
-                                    ->live()
-                                    ->schema([
-                                        FileUpload::make('files')
-                                            ->storeFiles(false)
-                                            ->previewable(false)
-                                            ->preserveFilenames()
-                                            ->maxSize((int) round($server->node->upload_size * (config('panel.use_binary_prefix') ? 1.048576 * 1024 : 1000)))
-                                            ->multiple(),
-                                    ]),
-                                Tab::make('url')
-                                    ->label(trans('server/file.actions.upload.url'))
-                                    ->live()
-                                    ->disabled(fn (Get $get) => count($get('files')) > 0)
-                                    ->schema([
-                                        TextInput::make('url')
-                                            ->label(trans('server/file.actions.upload.url'))
-                                            ->url(),
-                                    ]),
-                            ]),
+                        TextInput::make('url')
+                            ->label(trans('server/file.actions.upload.url'))
+                            ->required()
+                            ->url(),
                     ]),
                 Action::make('search')
                     ->authorize(fn () => user()?->can(Permission::ACTION_FILE_READ, $server))
@@ -625,6 +598,81 @@ class ListFiles extends ListRecords
             7 => ['read', 'write', 'execute'],
             default => [],
         };
+    }
+
+    public function getUploadUrl(NodeJWTService $jwtService): string
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        if (!user()?->can(Permission::ACTION_FILE_CREATE, $server)) {
+            abort(403, 'You do not have permission to upload files.');
+        }
+
+        $token = $jwtService
+            ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
+            ->setUser(user())
+            ->setClaims(['server_uuid' => $server->uuid])
+            ->handle($server->node, user()->id . $server->uuid);
+
+        return sprintf(
+            '%s/upload/file?token=%s',
+            $server->node->getConnectionAddress(),
+            $token->toString()
+        );
+    }
+
+    public function getUploadSizeLimit(): int
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        return $server->node->upload_size * 1024 * 1024;
+    }
+
+    /**
+     * @throws ConnectionException
+     * @throws FileExistsException
+     * @throws \Throwable
+     */
+    public function createFolder(string $folderPath): void
+    {
+        /** @var Server $server */
+        $server = Filament::getTenant();
+
+        if (!user()?->can(Permission::ACTION_FILE_CREATE, $server)) {
+            abort(403, 'You do not have permission to create folders.');
+        }
+
+        try {
+            $this->getDaemonFileRepository()->createDirectory($folderPath, $this->path);
+
+            Activity::event('server:file.create-directory')
+                ->property(['directory' => $this->path, 'name' => $folderPath])
+                ->log();
+
+        } catch (FileExistsException) {
+            // Ignore if the folder already exists.
+        } catch (ConnectionException $e) {
+            Notification::make()
+                ->body($e->getMessage())
+                ->danger()
+                ->send();
+
+        }
+    }
+
+    /**
+     * @param  string[]  $files
+     */
+    public function logUploadedFiles(array $files): void
+    {
+        $filesCollection = collect($files);
+
+        Activity::event('server:files.uploaded')
+            ->property('directory', $this->path)
+            ->property('files', $filesCollection)
+            ->log();
     }
 
     private function getDaemonFileRepository(): DaemonFileRepository

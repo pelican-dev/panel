@@ -230,6 +230,7 @@ class BackupResource extends Resource
                         ->disabled(fn (Backup $backup) => $backup->is_locked && $backup->status !== BackupStatus::Failed)
                         ->modalDescription(fn (Backup $backup) => trans('server/backup.actions.delete.description', ['backup' => $backup->name]))
                         ->modalSubmitActionLabel(trans('server/backup.actions.delete.title'))
+                        ->successNotificationTitle(null)
                         ->action(function (Backup $backup, DeleteBackupService $deleteBackupService) {
                             try {
                                 $deleteBackupService->handle($backup);
@@ -265,6 +266,7 @@ class BackupResource extends Resource
                     ->color(fn () => $server->backups()->count() >= $server->backup_limit ? 'danger' : 'primary')
                     ->createAnother(false)
                     ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->successNotificationTitle(null)
                     ->action(function (InitiateBackupService $initiateBackupService, $data) use ($server) {
                         $action = $initiateBackupService->setIgnoredFiles(explode(PHP_EOL, $data['ignored'] ?? ''));
 
