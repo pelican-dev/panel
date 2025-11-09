@@ -34,7 +34,6 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -440,10 +439,10 @@ class EditProfile extends BaseEditProfile
                                             ->label(trans('profile.navigation'))
                                             ->inline()
                                             ->options([
-                                                1 => trans('profile.top'),
-                                                0 => trans('profile.side'),
-                                            ])
-                                            ->stateCast(new BooleanStateCast(false, true)),
+                                                'sidebar' => trans('profile.sidebar'),
+                                                'topbar' => trans('profile.topbar'),
+                                                'mixed' => trans('profile.mixed'),
+                                            ]),
                                     ]),
                                 Section::make(trans('profile.console'))
                                     ->collapsible()
@@ -583,7 +582,14 @@ class EditProfile extends BaseEditProfile
         $data['console_rows'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleRows);
         $data['console_graph_period'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $data['dashboard_layout'] = $this->getUser()->getCustomization(CustomizationKey::DashboardLayout);
-        $data['top_navigation'] = (bool) $this->getUser()->getCustomization(CustomizationKey::TopNavigation);
+
+        // Handle migration from boolean to string navigation types
+        $topNavigation = $this->getUser()->getCustomization(CustomizationKey::TopNavigation);
+        if (is_bool($topNavigation)) {
+            $data['top_navigation'] = $topNavigation ? 'topbar' : 'sidebar';
+        } else {
+            $data['top_navigation'] = $topNavigation;
+        }
 
         return $data;
     }

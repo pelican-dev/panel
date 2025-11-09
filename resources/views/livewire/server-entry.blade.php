@@ -1,7 +1,6 @@
 @php
     $actiongroup = \App\Filament\App\Resources\Servers\Pages\ListServers::getPowerActionGroup()->record($server);
 @endphp
-
 <div wire:poll.15s
      class="relative cursor-pointer"
      x-on:click="window.location.href = '{{ \App\Filament\Server\Pages\Console::getUrl(panel: 'server', tenant: $server) }}'">
@@ -11,7 +10,22 @@
     </div>
 
     <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
-        <div class="flex items-center mb-5 gap-2">
+        @if($server->egg->image)
+            <div style="
+                position: absolute;
+                inset: 0;
+                background: url('{{ $server->egg->image }}') right no-repeat;
+                background-size: contain;
+                opacity: 0.20;
+                max-width: 680px;
+                max-height: 140px;
+        "></div>
+        @endif
+
+        <div @class([
+            'flex items-center gap-2',
+            'mb-5' => !$server->description,
+        ])>
             <x-filament::icon-button
                 :icon="$server->condition->getIcon()"
                 :color="$server->condition->getColor()"
@@ -26,12 +40,19 @@
             </h2>
             @if ($actiongroup->isVisible())
                 <div class="end-0">
-                    <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1" x-on:click.stop>
+                    <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1"
+                         x-on:click.stop>
                         {{ $actiongroup }}
                     </div>
                 </div>
             @endif
         </div>
+
+        @if ($server->description)
+        <div class="text-left mb-1 ml-4 pl-4">
+            <p class="text-base text-gray-400">{{ Str::limit($server->description, 40, preserveWords: true) }}</p>
+        </div>
+        @endif
 
         <div class="flex justify-between text-center items-center gap-4">
             <div>

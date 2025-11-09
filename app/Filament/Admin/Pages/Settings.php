@@ -203,6 +203,15 @@ class Settings extends Page implements HasSchemas
                 ])
                 ->stateCast(new BooleanStateCast(false, true))
                 ->default(env('PANEL_USE_BINARY_PREFIX', config('panel.use_binary_prefix'))),
+            ToggleButtons::make('FILAMENT_DEFAULT_NAVIGATION')
+                ->label(trans('admin/setting.general.default_navigation'))
+                ->inline()
+                ->options([
+                    'sidebar' => trans('admin/setting.general.sidebar'),
+                    'topbar' => trans('admin/setting.general.topbar'),
+                    'mixed' => trans('admin/setting.general.mixed'),
+                ])
+                ->default(env('FILAMENT_DEFAULT_NAVIGATION', config('panel.filament.default-navigation'))),
             ToggleButtons::make('APP_2FA_REQUIRED')
                 ->label(trans('admin/setting.general.2fa_requirement'))
                 ->inline()

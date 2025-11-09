@@ -25,6 +25,18 @@ class ServerEntry extends Component
             </div>
 
             <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
+                @if($server->egg->image)
+                    <div style="
+                        position: absolute;
+                        inset: 0;
+                        background: url('{{ $server->egg->image }}') right no-repeat;
+                        background-size: contain;
+                        opacity: 0.20;
+                        max-width: 680px;
+                        max-height: 140px;
+                    "></div>
+                @endif
+
                 <div class="flex items-center mb-5 gap-2">
                     <x-filament::loading-indicator class="h-6 w-6" />
                     <h2 class="text-xl font-bold">
