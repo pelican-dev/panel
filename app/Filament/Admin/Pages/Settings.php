@@ -622,6 +622,18 @@ class Settings extends Page implements HasSchemas
                         ->columnSpanFull()
                         ->stateCast(new BooleanStateCast(false))
                         ->default(env('PANEL_CLIENT_ALLOCATIONS_ENABLED', config('panel.client_features.allocations.enabled'))),
+                    Toggle::make('PANEL_CLIENT_ALLOCATIONS_CREATE_NEW')
+                        ->label(trans('admin/setting.misc.auto_allocation.create_new'))
+                        ->helperText(trans('admin/setting.misc.auto_allocation.create_new_help'))
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->columnSpanFull()
+                        ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
+                        ->stateCast(new BooleanStateCast(false))
+                        ->default(env('PANEL_CLIENT_ALLOCATIONS_CREATE_NEW', config('panel.client_features.allocations.create_new'))),
                     TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_START')
                         ->label(trans('admin/setting.misc.auto_allocation.start'))
                         ->required()
