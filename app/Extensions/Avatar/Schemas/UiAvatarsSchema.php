@@ -3,10 +3,10 @@
 namespace App\Extensions\Avatar\Schemas;
 
 use App\Extensions\Avatar\AvatarSchemaInterface;
-use App\Models\User;
 use Filament\AvatarProviders\UiAvatarsProvider;
 
-class UiAvatarsSchema extends UiAvatarsProvider implements AvatarSchemaInterface {
+class UiAvatarsSchema extends UiAvatarsProvider implements AvatarSchemaInterface
+{
     public function getId(): string
     {
         return 'uiavatars';
@@ -16,5 +16,4 @@ class UiAvatarsSchema extends UiAvatarsProvider implements AvatarSchemaInterface
     {
         return 'UI Avatars';
     }
-
 }

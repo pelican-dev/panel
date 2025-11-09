@@ -2,18 +2,15 @@
 
 namespace App\Extensions\Avatar\Schemas\Local;
 
-use App\Models\User;
 use Filament\AvatarProviders\Contracts\AvatarProvider;
 use Filament\Facades\Filament;
-use Filament\Models\Contracts\HasAvatar;
-use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Model;
 
 class LocalAvatarProvider implements AvatarProvider
-{   
+{
     private string $name;
 
-    private ?string $initials;
+    private string $initials;
 
     private string $backgroundColor = '111827';
 
@@ -21,17 +18,16 @@ class LocalAvatarProvider implements AvatarProvider
 
     private float $size = 128;
 
-    private float $fontSize = 128;
-
     private float $fontSizeMultiplier = 0.4;
 
     public function get(Model $record): string
     {
         $name = Filament::getNameForDefaultAvatar($record);
-        
+
         return $this->generateDataUri($name);
-        
+
     }
+
     private function generateDataUri(string $name): string
     {
         $this->name = $name;
@@ -49,7 +45,8 @@ class LocalAvatarProvider implements AvatarProvider
         });
     }
 
-    public function generateSvgAvatar(): string {
+    public function generateSvgAvatar(): string
+    {
         $fontSize = $this->size * $this->fontSizeMultiplier;
 
         $svg = <<<SVG
@@ -77,7 +74,6 @@ SVG;
     {
         $hash = md5($this->initials);
         $hue = hexdec(substr($hash, 0, 2)) / 255 * 360;
-
 
         return $this->hslToHex($hue);
     }

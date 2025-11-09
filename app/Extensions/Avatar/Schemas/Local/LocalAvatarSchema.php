@@ -4,7 +4,6 @@ namespace App\Extensions\Avatar\Schemas\Local;
 
 use App\Extensions\Avatar\AvatarSchemaInterface;
 use App\Models\User;
-use Filament\Facades\Filament;
 
 class LocalAvatarSchema implements AvatarSchemaInterface
 {
@@ -21,6 +20,7 @@ class LocalAvatarSchema implements AvatarSchemaInterface
     public function get(User $user): string
     {
         $provider = new LocalAvatarProvider();
+
         return $provider->get($user);
     }
 }
