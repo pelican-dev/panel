@@ -40,16 +40,22 @@ class FindAssignableAllocationService
         // Attempt to find a given available allocation for a server. If one cannot be found
         // we will fall back to attempting to create a new allocation that can be used for the
         // server.
+        $start = config('panel.client_features.allocations.range_start', null);
+        $end = config('panel.client_features.allocations.range_end', null);
+
         /** @var Allocation|null $allocation */
         $allocation = $server->node->allocations()
             ->when($server->allocation, function ($query) use ($server) {
                 $query->where('ip', $server->allocation->ip);
             })
+            ->when($start && $end, function ($query) use ($start, $end) {
+                $query->whereBetween('port', [$start, $end]);
+            })
             ->whereNull('server_id')
             ->inRandomOrder()
             ->first();
 
-        $allocation = $allocation ?? $this->createNewAllocation($server);
+        $allocation = $allocation ?? $this->createNewAllocation($server, $start, $end);
 
         $allocation->update(['server_id' => $server->id]);
 
@@ -67,11 +73,8 @@ class FindAssignableAllocationService
      * @throws PortOutOfRangeException
      * @throws TooManyPortsInRangeException
      */
-    protected function createNewAllocation(Server $server): Allocation
+    protected function createNewAllocation(Server $server, ?int $start, ?int $end): Allocation
     {
-        $start = config('panel.client_features.allocations.range_start', null);
-        $end = config('panel.client_features.allocations.range_end', null);
-
         if (!$start || !$end) {
             throw new NoAutoAllocationSpaceAvailableException();
         }
