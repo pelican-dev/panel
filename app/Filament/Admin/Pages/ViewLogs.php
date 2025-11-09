@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Traits\ResolvesRecordDate;
 use Boquizo\FilamentLogViewer\Actions\BackAction;
 use Boquizo\FilamentLogViewer\Actions\DeleteAction;
 use Boquizo\FilamentLogViewer\Actions\DownloadAction;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Http;
 
 class ViewLogs extends BaseViewLog
 {
+    use ResolvesRecordDate;
+
     public function getHeaderActions(): array
     {
         return [
@@ -27,14 +30,14 @@ class ViewLogs extends BaseViewLog
                 ->requiresConfirmation()
                 ->tooltip(trans('admin/log.actions.upload_tooltip', ['url' => 'logs.pelican.dev']))
                 ->modalHeading(trans('admin/log.actions.upload_logs'))
-                ->modalDescription(trans('admin/log.actions.upload_logs_description', ['file' => $this->record->date, 'url' => 'https://logs.pelican.dev']))
+                ->modalDescription(fn () => trans('admin/log.actions.upload_logs_description', ['file' => $this->resolveRecordDate(), 'url' => 'https://logs.pelican.dev']))
                 ->action(function () {
-                    $logPath = storage_path('logs/' . $this->record->date);
+                    $logPath = storage_path('logs/' . $this->resolveRecordDate());
 
                     if (!file_exists($logPath)) {
                         Notification::make()
                             ->title(trans('admin/log.actions.log_not_found'))
-                            ->body(trans('admin/log.actions.log_not_found_description', ['filename' => $this->record->date]))
+                            ->body(trans('admin/log.actions.log_not_found_description', ['filename' => $this->resolveRecordDate()]))
                             ->danger()
                             ->send();
 
