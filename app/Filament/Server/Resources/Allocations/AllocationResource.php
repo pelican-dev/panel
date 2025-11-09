@@ -105,7 +105,7 @@ class AllocationResource extends Resource
                     ->icon(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'tabler-network-off' : 'tabler-network')
                     ->authorize(fn () => user()?->can(Permission::ACTION_ALLOCATION_CREATE, $server))
                     ->tooltip(fn () => $server->allocations()->count() >= $server->allocation_limit ? trans('server/network.limit') : trans('server/network.add'))
-                    ->hidden(fn () => !config('panel.client_features.allocations.enabled'))
+                    ->hidden(fn () => !config('panel.client_features.allocations.enabled') || $server->allocation === null)
                     ->disabled(fn () => $server->allocations()->count() >= $server->allocation_limit)
                     ->color(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'danger' : 'primary')
                     ->action(function (FindAssignableAllocationService $service) use ($server) {
