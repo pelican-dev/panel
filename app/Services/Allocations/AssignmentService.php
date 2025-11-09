@@ -85,6 +85,7 @@ class AssignmentService
                             'port' => (int) $unit,
                             'ip_alias' => array_get($data, 'allocation_alias'),
                             'server_id' => $server->id ?? null,
+                            'is_locked' => array_get($data, 'is_locked', false),
                         ];
                     }
                 } else {
@@ -98,6 +99,7 @@ class AssignmentService
                         'port' => (int) $port,
                         'ip_alias' => array_get($data, 'allocation_alias'),
                         'server_id' => $server->id ?? null,
+                        'is_locked' => array_get($data, 'is_locked', false),
                     ];
                 }
 
