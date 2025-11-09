@@ -81,6 +81,7 @@ class DatabasesRelationManager extends RelationManager
                 ViewAction::make()
                     ->color('primary'),
                 DeleteAction::make()
+                    ->successNotificationTitle(null)
                     ->using(function (Database $database, DatabaseManagementService $service) {
                         try {
                             $service->delete($database);

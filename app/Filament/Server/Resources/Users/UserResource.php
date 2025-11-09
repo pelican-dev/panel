@@ -140,6 +140,7 @@ class UserResource extends Resource
                 DeleteAction::make()
                     ->label(trans('server/user.delete'))
                     ->hidden(fn (User $user) => user()?->id === $user->id)
+                    ->successNotificationTitle(null)
                     ->action(function (User $user, SubuserDeletionService $subuserDeletionService) use ($server) {
                         $subuser = $server->subusers->where('user_id', $user->id)->first();
                         $subuserDeletionService->handle($subuser, $server);
@@ -154,6 +155,7 @@ class UserResource extends Resource
                     ->hidden(fn (User $user) => user()?->id === $user->id)
                     ->authorize(fn () => user()?->can(Permission::ACTION_USER_UPDATE, $server))
                     ->modalHeading(fn (User $user) => trans('server/user.editing', ['user' => $user->email]))
+                    ->successNotificationTitle(null)
                     ->action(function (array $data, SubuserUpdateService $subuserUpdateService, User $user) use ($server) {
                         $subuser = $server->subusers->where('user_id', $user->id)->first();
 

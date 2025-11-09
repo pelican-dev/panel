@@ -138,6 +138,7 @@ class DatabaseResource extends Resource
                 ViewAction::make()
                     ->modalHeading(fn (Database $database) => trans('server/database.viewing', ['database' => $database->database])),
                 DeleteAction::make()
+                    ->successNotificationTitle(null)
                     ->using(function (Database $database, DatabaseManagementService $service) {
                         try {
                             $service->delete($database);
@@ -164,6 +165,7 @@ class DatabaseResource extends Resource
                     ->disabled(fn () => $server->databases()->count() >= $server->database_limit)
                     ->color(fn () => $server->databases()->count() >= $server->database_limit ? 'danger' : 'primary')
                     ->createAnother(false)
+                    ->successNotificationTitle(null)
                     ->schema([
                         Grid::make()
                             ->columns(2)

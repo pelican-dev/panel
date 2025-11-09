@@ -191,6 +191,7 @@ class ServerCreationService
             ->get()
             ->each(function (Allocation $allocation) use ($server) {
                 $allocation->server_id = $server->id;
+                $allocation->is_locked = true;
                 $allocation->save();
             });
     }

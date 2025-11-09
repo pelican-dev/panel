@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Exceptions\Service\HasActiveServersException;
-use App\Repositories\Daemon\DaemonConfigurationRepository;
+use App\Repositories\Daemon\DaemonSystemRepository;
 use App\Traits\HasValidation;
 use Carbon\Carbon;
 use Exception;
@@ -316,7 +316,7 @@ class Node extends Model implements Validatable
     {
         return once(function () {
             try {
-                return (new DaemonConfigurationRepository())
+                return (new DaemonSystemRepository())
                     ->setNode($this)
                     ->getSystemInformation();
             } catch (Exception $exception) {
