@@ -18,7 +18,7 @@ class MakePluginCommand extends Command
                             {--url=}
                             {--updateUrl=}
                             {--panels=}
-                            {--composerPackages=}';
+                            {--panelVersion=}';
 
     protected $description = 'Create a new plugin';
 
@@ -55,7 +55,7 @@ class MakePluginCommand extends Command
 
         $this->info('Creating Plugin "' . $name . '" (' . $id . ') by ' . $author);
 
-        $description = $this->option('description') ?? $this->ask('Description');
+        $description = $this->option('description') ?? $this->ask('Description (can be empty)');
 
         $category = $this->option('category') ?? $this->choice('Category', collect(PluginCategory::cases())->mapWithKeys(fn (PluginCategory $category) => [$category->value => $category->getLabel()])->toArray(), PluginCategory::Plugin->value);
 
@@ -65,25 +65,32 @@ class MakePluginCommand extends Command
             return;
         }
 
-        $url = $this->option('url') ?? $this->ask('URL');
-        $updateUrl = $this->option('updateUrl') ?? $this->ask('Update URL');
-        $panels = $this->option('panels') ?? $this->choice('Panels', [
+        $url = $this->option('url') ?? $this->ask('URL (can be empty)');
+        $updateUrl = $this->option('updateUrl') ?? $this->ask('Update URL (can be empty)');
+
+        $panels = $this->option('panels') ?? $this->choice('Panels (leave empty for "all panels", otherwise comma separated list)', [
             'admin' => 'Admin Area',
             'server' => 'Client Area',
             'app' => 'Server List',
-        ], 'admin,server', multiple: true);
-        $composerPackages = $this->option('composerPackages') ?? $this->ask('Composer Packages');
+        ], multiple: true);
+
+        $panelVersion = $this->option('panelVersion');
+        if (!$panelVersion) {
+            $panelVersion = $this->ask('Required panel version (leave empty for no constraint)', config('app.version') === 'canary' ? null : config('app.version'));
+
+            if ($panelVersion && $this->confirm("Should the version constraint be minimal instead of strict? ($panelVersion or higher instead of only $panelVersion)")) {
+                $panelVersion = "^$panelVersion";
+            }
+        }
+
+        $composerPackages = null;
+        // TODO: ask for composer packages?
 
         // Create base directory
         $this->filesystem->makeDirectory(plugin_path($id));
 
         // Write plugin.json
         $this->filesystem->put(plugin_path($id, 'plugin.json'), json_encode([
-            'meta' => [
-                'status' => PluginStatus::Enabled,
-                'status_message' => null,
-                'load_order' => 0,
-            ],
             'id' => $id,
             'name' => $name,
             'author' => $author,
@@ -95,8 +102,12 @@ class MakePluginCommand extends Command
             'namespace' => $namespace,
             'class' => $class,
             'panels' => is_string($panels) ? explode(',', $panels) : $panels,
-            'panel_version' => config('app.version') === 'canary' ? null : config('app.version'),
-            'composer_packages' => is_string($composerPackages) ? explode(',', $composerPackages) : $composerPackages,
+            'panel_version' => $panelVersion,
+            'composer_packages' => $composerPackages,
+            'meta' => [
+                'status' => PluginStatus::Enabled,
+                'status_message' => null,
+            ],
         ], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         // Create src directory and create main class
