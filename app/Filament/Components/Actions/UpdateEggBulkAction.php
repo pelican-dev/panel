@@ -52,16 +52,18 @@ class UpdateEggBulkAction extends BulkAction
 
             /** @var Egg $egg */
             foreach ($records as $egg) {
-                try {
-                    $eggImporterService->fromUrl($egg->update_url, $egg);
+                if ($egg->update_url !== null) {
+                    try {
+                        $eggImporterService->fromUrl($egg->update_url, $egg);
 
-                    $success++;
+                        $success++;
 
-                    cache()->forget("eggs.$egg->uuid.update");
-                } catch (Exception $exception) {
-                    $failed++;
+                        cache()->forget("eggs.$egg->uuid.update");
+                    } catch (Exception $exception) {
+                        $failed++;
 
-                    report($exception);
+                        report($exception);
+                    }
                 }
             }
 
