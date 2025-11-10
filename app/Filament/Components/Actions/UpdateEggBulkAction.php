@@ -57,7 +57,6 @@ class UpdateEggBulkAction extends BulkAction
                     $skipped++;
                     continue;
                 }
-
                 try {
                     $eggImporterService->fromUrl($egg->update_url, $egg);
 
