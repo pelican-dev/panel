@@ -77,6 +77,7 @@ class UpdateEggBulkAction extends BulkAction
                         $failed > 0 ? trans('admin/egg.updated_failed', ['count' => $failed]) : null,
                         $skipped > 0 ? trans('admin/egg.updated_skipped', ['count' => $skipped]) : null
                     ])->filter()->join(' ')
+                )
                 ->status($failed > 0 ? 'warning' : 'success')
                 ->persistent()
                 ->send();
