@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static void loadPlugins()
  * @method static void loadPanelPlugins(Panel $panel)
- * @method static void manageComposerPackages(?array $oldPackages = null)
+ * @method static void manageComposerPackages(null|array<string, string> $newPackages = [], null|array<string, string> $oldPackages = null)
  * @method static void runPluginMigrations(Plugin $plugin)
  * @method static void rollbackPluginMigrations(Plugin $plugin)
  * @method static void installPlugin(Plugin $plugin, bool $enable = true)

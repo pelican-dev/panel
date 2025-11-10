@@ -150,7 +150,10 @@ class PluginService
         }
     }
 
-    /** @param null|string[] $oldPackages */
+    /**
+     * @param  null|array<string, string>  $newPackages
+     * @param  null|array<string, string>  $oldPackages
+     */
     public function manageComposerPackages(?array $newPackages = [], ?array $oldPackages = null): void
     {
         $newPackages ??= [];
