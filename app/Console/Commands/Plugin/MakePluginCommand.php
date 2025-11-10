@@ -68,11 +68,19 @@ class MakePluginCommand extends Command
         $url = $this->option('url') ?? $this->ask('URL (can be empty)');
         $updateUrl = $this->option('updateUrl') ?? $this->ask('Update URL (can be empty)');
 
-        $panels = $this->option('panels') ?? $this->choice('Panels (leave empty for "all panels", otherwise comma separated list)', [
-            'admin' => 'Admin Area',
-            'server' => 'Client Area',
-            'app' => 'Server List',
-        ], multiple: true);
+        $panels = $this->option('panels');
+        if (!$panels) {
+            if ($this->confirm('Should the plugin be available on all panels?', true)) {
+                $panels = null;
+            } else {
+                $panels = $this->choice('Panels (comma separated list)', [
+                    'admin' => 'Admin Area',
+                    'server' => 'Client Area',
+                    'app' => 'Server List',
+                ], multiple: true);
+            }
+        }
+        $panels = is_string($panels) ? explode(',', $panels) : $panels;
 
         $panelVersion = $this->option('panelVersion');
         if (!$panelVersion) {
@@ -101,7 +109,7 @@ class MakePluginCommand extends Command
             'update_url' => $updateUrl,
             'namespace' => $namespace,
             'class' => $class,
-            'panels' => is_string($panels) ? explode(',', $panels) : $panels,
+            'panels' => $panels,
             'panel_version' => $panelVersion,
             'composer_packages' => $composerPackages,
             'meta' => [
