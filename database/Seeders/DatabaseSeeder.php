@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(EggSeeder::class);
+//         $this->call(EggSeeder::class);
 
         Role::firstOrCreate(['name' => Role::ROOT_ADMIN]);
     }
