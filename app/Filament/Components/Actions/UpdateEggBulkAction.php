@@ -49,6 +49,7 @@ class UpdateEggBulkAction extends BulkAction
 
             $success = 0;
             $failed = 0;
+            $skipped = 0;
 
             /** @var Egg $egg */
             foreach ($records as $egg) {
@@ -64,12 +65,18 @@ class UpdateEggBulkAction extends BulkAction
 
                         report($exception);
                     }
+                } else {
+                    $skipped++;
                 }
             }
 
             Notification::make()
                 ->title(trans_choice('admin/egg.updated', 2, ['count' => $success, 'total' => $records->count()]))
-                ->body($failed > 0 ? trans('admin/egg.updated_failed', ['count' => $failed]) : null)
+                ->body(
+                    collect([
+                        $failed > 0 ? trans('admin/egg.updated_failed', ['count' => $failed]) : null,
+                        $skipped > 0 ? trans('admin/egg.updated_skipped', ['count' => $skipped]) : null
+                    ])->filter()->join(' ')
                 ->status($failed > 0 ? 'warning' : 'success')
                 ->persistent()
                 ->send();
