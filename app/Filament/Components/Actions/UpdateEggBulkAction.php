@@ -75,7 +75,7 @@ class UpdateEggBulkAction extends BulkAction
                 ->body(
                     collect([
                         $failed > 0 ? trans('admin/egg.updated_failed', ['count' => $failed]) : null,
-                        $skipped > 0 ? trans('admin/egg.updated_skipped', ['count' => $skipped]) : null
+                        $skipped > 0 ? trans('admin/egg.updated_skipped', ['count' => $skipped]) : null,
                     ])->filter()->join(' ')
                 )
                 ->status($failed > 0 ? 'warning' : 'success')
