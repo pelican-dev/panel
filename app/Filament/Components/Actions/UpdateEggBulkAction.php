@@ -55,6 +55,7 @@ class UpdateEggBulkAction extends BulkAction
             foreach ($records as $egg) {
                 if ($egg->update_url === null) {
                     $skipped++;
+
                     continue;
                 }
                 try {
