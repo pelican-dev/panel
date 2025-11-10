@@ -3,7 +3,6 @@
 namespace App\Console\Commands\Plugin;
 
 use App\Facades\Plugins;
-use App\Models\Plugin;
 use Exception;
 use Illuminate\Console\Command;
 
@@ -11,23 +10,16 @@ class ComposerPluginsCommand extends Command
 {
     protected $signature = 'p:plugin:composer';
 
-    protected $description = 'Runs "composer require" on all installed plugins.';
+    protected $description = 'Makes sure the needed composer packages for all installed plugins are available.';
 
     public function handle(): void
     {
-        $plugins = Plugin::all();
-        foreach ($plugins as $plugin) {
-            if (!$plugin->shouldLoad()) {
-                continue;
-            }
+        try {
+            Plugins::manageComposerPackages();
+        } catch (Exception $exception) {
+            report($exception);
 
-            try {
-                Plugins::requireComposerPackages($plugin);
-            } catch (Exception $exception) {
-                report($exception);
-
-                $this->error($exception->getMessage());
-            }
+            $this->error($exception->getMessage());
         }
     }
 }

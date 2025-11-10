@@ -150,34 +150,54 @@ class PluginService
         }
     }
 
-    public function requireComposerPackages(Plugin $plugin): void
+    /** @param null|string[] $oldPackages */
+    public function manageComposerPackages(?array $newPackages = [], ?array $oldPackages = null): void
     {
-        if ($plugin->composer_packages) {
-            $composerPackages = collect(json_decode($plugin->composer_packages, true, 512, JSON_THROW_ON_ERROR))
-                ->map(fn ($version, $package) => "$package:$version")
-                ->flatten()
-                ->unique()
-                ->toArray();
+        $newPackages ??= [];
 
-            $result = Process::path(base_path())->timeout(600)->run(['composer', 'require', ...$composerPackages]);
-            if ($result->failed()) {
-                throw new Exception('Could not require composer packages: ' . $result->errorOutput());
+        $plugins = Plugin::query()->orderBy('load_order')->get();
+        foreach ($plugins as $plugin) {
+            if (!$plugin->composer_packages) {
+                continue;
+            }
+
+            if (!$plugin->shouldLoad()) {
+                continue;
+            }
+
+            try {
+                $pluginPackages = json_decode($plugin->composer_packages, true, 512, JSON_THROW_ON_ERROR);
+
+                $newPackages = array_merge($newPackages, $pluginPackages);
+            } catch (Exception $exception) {
+                report($exception);
             }
         }
-    }
 
-    public function removeComposerPackages(Plugin $plugin): void
-    {
-        if ($plugin->composer_packages) {
-            $composerPackages = collect(json_decode($plugin->composer_packages, true, 512, JSON_THROW_ON_ERROR))
-                ->map(fn ($version, $package) => "$package:$version")
-                ->flatten()
-                ->unique()
-                ->toArray();
+        $oldPackages = collect($oldPackages)
+            ->filter(fn ($version, $package) => !array_key_exists($package, $newPackages))
+            ->map(fn ($version, $package) => "$package:$version")
+            ->flatten()
+            ->unique()
+            ->toArray();
 
-            $result = Process::path(base_path())->timeout(600)->run(['composer', 'remove', ...$composerPackages]);
+        if (count($oldPackages) > 0) {
+            $result = Process::path(base_path())->timeout(600)->run(['composer', 'remove', ...$oldPackages]);
             if ($result->failed()) {
-                throw new Exception('Could not remove composer packages: ' . $result->errorOutput());
+                throw new Exception('Could not remove old composer packages: ' . $result->errorOutput());
+            }
+        }
+
+        $newPackages = collect($newPackages)
+            ->map(fn ($version, $package) => "$package:$version")
+            ->flatten()
+            ->unique()
+            ->toArray();
+
+        if (count($newPackages) > 0) {
+            $result = Process::path(base_path())->timeout(600)->run(['composer', 'require', ...$newPackages]);
+            if ($result->failed()) {
+                throw new Exception('Could not require new composer packages: ' . $result->errorOutput());
             }
         }
     }
@@ -234,7 +254,7 @@ class PluginService
     public function installPlugin(Plugin $plugin, bool $enable = true): void
     {
         try {
-            $this->requireComposerPackages($plugin);
+            $this->manageComposerPackages(json_decode($plugin->composer_packages, true, 512));
 
             $this->runPluginMigrations($plugin);
 
@@ -268,7 +288,7 @@ class PluginService
     public function uninstallPlugin(Plugin $plugin, bool $deleteFiles = false): void
     {
         try {
-            $this->removeComposerPackages($plugin);
+            $pluginPackages = json_decode($plugin->composer_packages, true, 512);
 
             $this->rollbackPluginMigrations($plugin);
 
@@ -279,6 +299,8 @@ class PluginService
             } else {
                 $this->setStatus($plugin, PluginStatus::NotInstalled);
             }
+
+            $this->manageComposerPackages(oldPackages: $pluginPackages);
         } catch (Exception $exception) {
             $this->handlePluginException($plugin, $exception);
         }
