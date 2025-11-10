@@ -91,8 +91,10 @@ class ListEggs extends ListRecords
                     })),
                 UpdateEggBulkAction::make()
                     ->before(fn (&$records) => $records = $records->filter(function ($egg) {
-                        /** @var Egg $egg */
-                        return cache()->get("eggs.$egg->uuid.update", false);
+                        if ($egg->update_url != null) {
+                            /** @var Egg $egg */
+                            return cache()->get("eggs.$egg->uuid.update", false);
+                        }
                     })),
             ])
             ->emptyStateIcon('tabler-eggs')
