@@ -240,7 +240,14 @@ class Plugin extends Model implements HasPluginSettings
 
         return cache()->remember("plugins.$this->id.update", now()->addMinutes(10), function () {
             try {
-                return json_decode(file_get_contents($this->update_url), true, 512, JSON_THROW_ON_ERROR);
+                $data = json_decode(file_get_contents($this->update_url), true, 512, JSON_THROW_ON_ERROR);
+
+                // Support update jsons that cover multiple plugins
+                if (array_key_exists($this->id, $data)) {
+                    $data = $data[$this->id];
+                }
+
+                return $data;
             } catch (Exception $exception) {
                 report($exception);
             }
