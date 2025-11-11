@@ -180,8 +180,7 @@ class PluginService
 
         $oldPackages = collect($oldPackages)
             ->filter(fn ($version, $package) => !array_key_exists($package, $newPackages))
-            ->map(fn ($version, $package) => "$package:$version")
-            ->flatten()
+            ->keys()
             ->unique()
             ->toArray();
 
