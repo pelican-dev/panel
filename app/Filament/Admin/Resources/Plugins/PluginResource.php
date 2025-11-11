@@ -180,7 +180,7 @@ class PluginResource extends Resource
                         }),
                     Action::make('delete')
                         ->label(trans('filament-actions::delete.single.label'))
-                        ->authorize(fn (Plugin $plugin) => user()?->can('create', $plugin))
+                        ->authorize(fn (Plugin $plugin) => user()?->can('delete', $plugin))
                         ->icon('tabler-trash')
                         ->color('danger')
                         ->requiresConfirmation()

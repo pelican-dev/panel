@@ -56,6 +56,7 @@ class Role extends BaseRole
             'viewList',
             'create',
             'update',
+            'delete',
         ],
     ];
 
