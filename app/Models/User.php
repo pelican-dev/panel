@@ -342,9 +342,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             return false;
         }
 
-        $check = in_array($permission, $subuser->permissions);
-
-        return $check;
+        return in_array($permission, $subuser->permissions);
     }
 
     /**
