@@ -137,7 +137,7 @@ class Plugin extends Model implements HasPluginSettings
                     'panel_version' => Arr::get($data, 'panel_version', null),
                     'composer_packages' => $composerPackages,
 
-                    'status' => Arr::get($data, 'meta.status', PluginStatus::NotInstalled->value),
+                    'status' => Str::lower(Arr::get($data, 'meta.status', PluginStatus::NotInstalled->value)),
                     'status_message' => Arr::get($data, 'meta.status_message', null),
                     'load_order' => Arr::integer($data, 'meta.load_order', 0),
                 ];
