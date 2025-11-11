@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use ZipArchive;
 
@@ -312,8 +313,9 @@ class PluginService
     public function downloadPluginFromFile(UploadedFile $file, bool $cleanDownload = false): void
     {
         // Validate file size to prevent zip bombs
-        if ($file->getSize() > 100 * 1024 * 1024) {
-            throw new Exception('Zip file too large. (max 100 MB)');
+        $maxSize = config('panel.plugin.max_import_size');
+        if ($file->getSize() > $maxSize) {
+            throw new Exception("Zip file too large. ($maxSize  MiB)");
         }
 
         $zip = new ZipArchive();
@@ -327,7 +329,7 @@ class PluginService
         // Validate zip contents before extraction
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $filename = $zip->getNameIndex($i);
-            if (str_contains($filename, '..') || str_starts_with($filename, '/')) {
+            if (Str::contains($filename, '..') || Str::startsWith($filename, '/')) {
                 $zip->close();
                 throw new Exception('Zip file contains invalid path traversal sequences.');
             }
@@ -356,8 +358,9 @@ class PluginService
         $content = Http::timeout(60)->connectTimeout(5)->throw()->get($url)->body();
 
         // Validate file size to prevent zip bombs
-        if (strlen($content) > 100 * 1024 * 1024) {
-            throw new InvalidFileUploadException('Zip file too large. (100 MB)');
+        $maxSize = config('panel.plugin.max_import_size');
+        if (strlen($content) > $maxSize) {
+            throw new InvalidFileUploadException("Zip file too large. ($maxSize  MiB)");
         }
 
         if (!file_put_contents($tmpPath, $content)) {
