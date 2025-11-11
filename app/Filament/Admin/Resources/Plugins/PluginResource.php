@@ -14,8 +14,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Http\UploadedFile;
@@ -63,7 +61,8 @@ class PluginResource extends Resource
                     ->icon(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? 'tabler-versions-off' : 'tabler-versions')
                     ->iconColor(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? 'danger' : 'success')
                     ->tooltip(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? trans('admin/plugin.update_available') : null)
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('author')
                     ->label(trans('admin/plugin.author'))
                     ->sortable(),
@@ -216,50 +215,74 @@ class PluginResource extends Resource
                 ]),
             ])
             ->headerActions([
-                Action::make('import')
-                    ->label(trans('admin/plugin.import'))
+                Action::make('import_from_file')
+                    ->label(trans('admin/plugin.import_from_file'))
                     ->authorize(fn () => user()?->can('create', Plugin::class))
-                    ->icon('tabler-download')
+                    ->icon('tabler-file-download')
                     ->schema([
-                        Tabs::make('Tabs')
-                            ->contained(false)
-                            ->tabs([
-                                Tab::make('from_file')
-                                    ->label(trans('admin/plugin.from_file'))
-                                    ->icon('tabler-file-upload')
-                                    ->schema([
-                                        FileUpload::make('file')
-                                            ->acceptedFileTypes(['application/zip', 'application/zip-compressed', 'application/x-zip-compressed'])
-                                            ->preserveFilenames()
-                                            ->previewable(false)
-                                            ->storeFiles(false),
-                                    ]),
-                                Tab::make('from_url')
-                                    ->label(trans('admin/plugin.from_url'))
-                                    ->icon('tabler-world-upload')
-                                    ->schema([
-                                        TextInput::make('url')
-                                            ->url()
-                                            ->endsWith('.zip'),
-                                    ]),
-                            ]),
+                        // TODO: switch to new file upload
+                        FileUpload::make('file')
+                            ->required()
+                            ->acceptedFileTypes(['application/zip', 'application/zip-compressed', 'application/x-zip-compressed'])
+                            ->preserveFilenames()
+                            ->previewable(false)
+                            ->storeFiles(false),
                     ])
                     ->action(function ($data, $livewire) {
                         try {
-                            if ($data['file'] instanceof UploadedFile) {
-                                Plugins::downloadPluginFromFile($data['file']);
+                            /** @var UploadedFile $file */
+                            $file = $data['file'];
+
+                            $pluginName = str($file->getClientOriginalName())->before('.zip')->toString();
+
+                            if (Plugin::where('id', $pluginName)->exists()) {
+                                throw new Exception(trans('admin/plugin.notifications.import_exists'));
                             }
 
-                            if (is_string($data['url'])) {
-                                Plugins::downloadPluginFromUrl($data['url']);
-                            }
-
-                            redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
+                            Plugins::downloadPluginFromFile($file);
 
                             Notification::make()
                                 ->success()
                                 ->title(trans('admin/plugin.notifications.imported'))
                                 ->send();
+
+                            redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
+                        } catch (Exception $exception) {
+                            report($exception);
+
+                            Notification::make()
+                                ->danger()
+                                ->title(trans('admin/plugin.notifications.import_failed'))
+                                ->body($exception->getMessage())
+                                ->send();
+                        }
+                    }),
+                Action::make('import_from_url')
+                    ->label(trans('admin/plugin.import_from_url'))
+                    ->authorize(fn () => user()?->can('create', Plugin::class))
+                    ->icon('tabler-world-download')
+                    ->schema([
+                        TextInput::make('url')
+                            ->required()
+                            ->url()
+                            ->endsWith('.zip'),
+                    ])
+                    ->action(function ($data, $livewire) {
+                        try {
+                            $pluginName = str($data['url'])->before('.zip')->split('/')->last();
+
+                            if (Plugin::where('id', $pluginName)->exists()) {
+                                throw new Exception(trans('admin/plugin.notifications.import_exists'));
+                            }
+
+                            Plugins::downloadPluginFromUrl($data['url']);
+
+                            Notification::make()
+                                ->success()
+                                ->title(trans('admin/plugin.notifications.imported'))
+                                ->send();
+
+                            redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
                         } catch (Exception $exception) {
                             report($exception);
 
