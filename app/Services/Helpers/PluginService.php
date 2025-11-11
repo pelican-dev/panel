@@ -396,6 +396,9 @@ class PluginService
             $pluginData['meta'] = $metaData;
 
             File::put($path, json_encode($pluginData, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+            $plugin = $plugin instanceof Plugin ? $plugin : Plugin::findOrFail($plugin);
+            $plugin->update($metaData);
         }
     }
 
