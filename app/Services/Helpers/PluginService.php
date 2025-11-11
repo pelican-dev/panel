@@ -50,6 +50,12 @@ class PluginService
                     }
                 }
 
+                // Autoload src directory to make sure all class names can be resolved (e.g. in migrations)
+                $namespace = $plugin->namespace . '\\';
+                if (!array_key_exists($namespace, $classLoader->getPrefixesPsr4())) {
+                    $classLoader->setPsr4($namespace, plugin_path($plugin->id, 'src/'));
+                }
+
                 // Filter out plugins that should not be loaded (e.g. because they are disabled or not installed yet)
                 if (!$plugin->shouldLoad()) {
                     continue;
@@ -71,12 +77,6 @@ class PluginService
                             $translator->addNamespace($plugin->id, $translations);
                         }
                     });
-                }
-
-                // Autoload src directory
-                $namespace = $plugin->namespace . '\\';
-                if (!array_key_exists($namespace, $classLoader->getPrefixesPsr4())) {
-                    $classLoader->setPsr4($namespace, plugin_path($plugin->id, 'src/'));
                 }
 
                 // Register service providers
