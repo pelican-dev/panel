@@ -260,10 +260,6 @@ class PluginService
         try {
             $this->manageComposerPackages(json_decode($plugin->composer_packages, true, 512));
 
-            $this->runPluginMigrations($plugin);
-
-            $this->buildAssets();
-
             if ($enable) {
                 $this->enablePlugin($plugin);
             } else {
@@ -271,6 +267,10 @@ class PluginService
                     $this->disablePlugin($plugin);
                 }
             }
+
+            $this->buildAssets();
+
+            $this->runPluginMigrations($plugin);
         } catch (Exception $exception) {
             $this->handlePluginException($plugin, $exception);
         }
@@ -296,13 +296,13 @@ class PluginService
 
             $this->rollbackPluginMigrations($plugin);
 
-            $this->buildAssets();
-
             if ($deleteFiles) {
                 $this->deletePlugin($plugin);
             } else {
                 $this->setStatus($plugin, PluginStatus::NotInstalled);
             }
+
+            $this->buildAssets();
 
             $this->manageComposerPackages(oldPackages: $pluginPackages);
         } catch (Exception $exception) {
