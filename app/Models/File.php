@@ -123,7 +123,7 @@ class File extends Model
             return false;
         }
 
-        return $this->is_file && !in_array($this->mime_type, ['application/jar', 'application/octet-stream', 'inode/directory']);
+        return $this->is_file && !in_array($this->mime_type, ['application/java-archive', 'application/octet-stream', 'inode/directory']);
     }
 
     public function server(): Server
@@ -202,7 +202,7 @@ class File extends Model
                     'is_directory' => $file['directory'],
                     'is_file' => $file['file'],
                     'is_symlink' => $file['symlink'],
-                    'mime_type' => $file['file'] && str($file['name'])->lower()->endsWith('.jar') && in_array($file['mime'], self::ARCHIVE_MIMES) ? 'application/jar' : $file['mime'],
+                    'mime_type' => $file['file'] && str($file['name'])->lower()->endsWith('.jar') && in_array($file['mime'], self::ARCHIVE_MIMES) ? 'application/java-archive' : $file['mime'],
                 ];
             }, $contents);
 
