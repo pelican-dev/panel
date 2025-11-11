@@ -50,7 +50,13 @@ class PluginService
                     }
                 }
 
-                // Autoload src directory to make sure all class names can be resolved (e.g. in migrations)
+                // Load config
+                $config = plugin_path($plugin->id, 'config', $plugin->id . '.php');
+                if (file_exists($config)) {
+                    config()->set($plugin->id, require $config);
+                }
+
+                // Always autoload src directory to make sure all class names can be resolved (e.g. in migrations)
                 $namespace = $plugin->namespace . '\\';
                 if (!array_key_exists($namespace, $classLoader->getPrefixesPsr4())) {
                     $classLoader->setPsr4($namespace, plugin_path($plugin->id, 'src/'));
@@ -59,12 +65,6 @@ class PluginService
                 // Filter out plugins that should not be loaded (e.g. because they are disabled or not installed yet)
                 if (!$plugin->shouldLoad()) {
                     continue;
-                }
-
-                // Load config
-                $config = plugin_path($plugin->id, 'config', $plugin->id . '.php');
-                if (file_exists($config)) {
-                    config()->set($plugin->id, require $config);
                 }
 
                 // Load translations
