@@ -124,7 +124,7 @@ class RoleResource extends Resource
             $options = [];
 
             foreach ($permissions as $permission) {
-                $options[$permission . ' ' . strtolower($model)] = Str::headline($permission);
+                $options[$permission . ' ' . $model] = Str::headline($permission);
             }
 
             $permissionSections[] = self::makeSection($model, $options);
