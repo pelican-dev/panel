@@ -171,7 +171,7 @@ class EditFiles extends Page
                             ->language(fn (Get $get) => $get('lang'))
                             ->default(function () {
                                 try {
-                                    return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
+                                    return mb_convert_encoding($this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size')), 'UTF-8');
                                 } catch (FileSizeTooLargeException) {
                                     AlertBanner::make('file_too_large')
                                         ->title(trans('server/file.alerts.file_too_large.title', ['name' => basename($this->path)]))
