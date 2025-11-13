@@ -446,6 +446,7 @@ class ListFiles extends ListRecords
                             $this->refreshPage();
                         }),
                     DeleteBulkAction::make()
+                        ->successNotificationTitle(null)
                         ->authorize(fn () => user()?->can(Permission::ACTION_FILE_DELETE, $server))
                         ->action(function (Collection $files) {
                             $files = $files->map(fn ($file) => $file['name'])->toArray();
