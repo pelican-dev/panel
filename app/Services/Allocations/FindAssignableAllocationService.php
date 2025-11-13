@@ -58,7 +58,7 @@ class FindAssignableAllocationService
             ->inRandomOrder()
             ->first();
 
-        $allocation = $allocation ?? $this->createNewAllocation($server, $start, $end);
+        $allocation ??= $this->createNewAllocation($server, $start, $end);
 
         $allocation->update(['server_id' => $server->id]);
 
