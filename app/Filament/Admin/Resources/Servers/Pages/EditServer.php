@@ -155,7 +155,9 @@ class EditServer extends EditRecord
                                                     ->hiddenLabel()
                                                     ->formatStateUsing(function (Server $server, DaemonServerRepository $serverRepository) {
                                                         try {
-                                                            return mb_convert_encoding($serverRepository->setServer($server)->getInstallLogs(), 'UTF-8');
+                                                            $logs = $serverRepository->setServer($server)->getInstallLogs();
+
+                                                            return mb_convert_encoding($logs, 'UTF-8', ['UTF-8', 'ISO-8859-1', 'Windows-1252', 'ASCII']);
                                                         } catch (ConnectionException) {
                                                             Notification::make()
                                                                 ->title(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
