@@ -21,6 +21,7 @@
         lineNumbersMinChars: {{ $getLineNumbersMinChars() }},
         automaticLayout: {{ (int) $getAutomaticLayout() }},
         monacoId: $id('monaco-editor'),
+        isReadOnly: {{ (int) $isDisabled() }},
 
         toggleFullScreenMode() {
             this.fullScreenModeEnabled = !this.fullScreenModeEnabled;
@@ -119,7 +120,11 @@
                             verticalScrollbarSize: 15
                         },
                         wordWrap: 'on',
-                        WrappingIndent: 'same'
+                        WrappingIndent: 'same',
+                        readOnly: isReadOnly,
+                        minimap: {
+                            enabled: !isReadOnly
+                        }
                     });
                     monacoEditor(document.getElementById(monacoId).editor);
                     document.getElementById(monacoId).addEventListener('monaco-editor-focused', (event) => {

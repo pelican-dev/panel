@@ -154,6 +154,7 @@ class EditServer extends EditRecord
                                             ->schema([
                                                 MonacoEditor::make('logs')
                                                     ->hiddenLabel()
+                                                    ->disabled()
                                                     ->language(EditorLanguages::shell->value)
                                                     ->placeholderText(trans('admin/server.no_log'))
                                                     ->formatStateUsing(function (Server $server, DaemonServerRepository $serverRepository) {
