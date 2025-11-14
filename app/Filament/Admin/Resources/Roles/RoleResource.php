@@ -30,6 +30,7 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -104,12 +105,6 @@ class RoleResource extends Resource
             ->checkIfRecordIsSelectableUsing(fn (Role $role) => !$role->isRootAdmin() && $role->users_count <= 0)
             ->groupedBulkActions([
                 DeleteBulkAction::make(),
-            ])
-            ->emptyStateIcon('tabler-users-group')
-            ->emptyStateDescription('')
-            ->emptyStateHeading(trans('admin/role.no_roles'))
-            ->emptyStateActions([
-                CreateAction::make(),
             ]);
     }
 

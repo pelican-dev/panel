@@ -26,6 +26,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -104,10 +105,7 @@ class MountResource extends Resource
             ])
             ->emptyStateIcon('tabler-layers-linked')
             ->emptyStateDescription('')
-            ->emptyStateHeading(trans('admin/mount.no_mounts'))
-            ->emptyStateActions([
-                CreateAction::make(),
-            ]);
+            ->emptyStateHeading(trans('admin/mount.no_mounts'));
     }
 
     /**

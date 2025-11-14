@@ -35,6 +35,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -114,15 +115,7 @@ class WebhookResource extends Resource
             ->emptyStateIcon('tabler-webhook')
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/webhook.no_webhooks'))
-            ->emptyStateActions([
-                CreateAction::make(),
-            ])
-            ->persistFiltersInSession()
-            ->filters([
-                SelectFilter::make('type')
-                    ->options(WebhookType::class)
-                    ->attribute('type'),
-            ]);
+            ->persistFiltersInSession();
     }
 
     public static function defaultForm(Schema $schema): Schema

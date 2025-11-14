@@ -10,6 +10,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\IconSize;
 
 class ListMounts extends ListRecords
 {
@@ -23,7 +24,8 @@ class ListMounts extends ListRecords
     {
         return [
             CreateAction::make()
-                ->hidden(fn () => Mount::count() <= 0),
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-file-plus'),
         ];
     }
 }

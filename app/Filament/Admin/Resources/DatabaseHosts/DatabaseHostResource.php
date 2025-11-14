@@ -25,6 +25,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -100,10 +101,7 @@ class DatabaseHostResource extends Resource
             ])
             ->emptyStateIcon('tabler-database')
             ->emptyStateDescription('')
-            ->emptyStateHeading(trans('admin/databasehost.no_database_hosts'))
-            ->emptyStateActions([
-                CreateAction::make(),
-            ]);
+            ->emptyStateHeading(trans('admin/databasehost.no_database_hosts'));
     }
 
     /**
