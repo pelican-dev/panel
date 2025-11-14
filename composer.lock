@@ -4,8 +4,90 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fc2037e2f16ad43582ceaf9d41aba799",
+    "content-hash": "ca0edfb5baaa240a0d4f6f770add2eac",
     "packages": [
+        {
+            "name": "abdelhamiderrahmouni/filament-monaco-editor",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/abdelhamiderrahmouni/filament-monaco-editor.git",
+                "reference": "81031476565e05f8cf1f2245ac5a143f0f9047be"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/abdelhamiderrahmouni/filament-monaco-editor/zipball/81031476565e05f8cf1f2245ac5a143f0f9047be",
+                "reference": "81031476565e05f8cf1f2245ac5a143f0f9047be",
+                "shasum": ""
+            },
+            "require": {
+                "filament/forms": "^4.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.15.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "orchestra/testbench": "^9.5|^10.4",
+                "pestphp/pest": "^3.0|^3.8",
+                "pestphp/pest-plugin-arch": "^3.0",
+                "pestphp/pest-plugin-laravel": "^3.0",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan-deprecation-rules": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "spatie/laravel-ray": "^1.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "MonacoEditor": "AbdelhamidErrahmouni\\FilamentMonacoEditor\\Facades\\MonacoEditor"
+                    },
+                    "providers": [
+                        "AbdelhamidErrahmouni\\FilamentMonacoEditor\\MonacoEditorServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AbdelhamidErrahmouni\\FilamentMonacoEditor\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Abdelhamid Errahmouni",
+                    "email": "abdelhamid.errahmouni@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A monaco editor form field for filamentphp.",
+            "homepage": "https://github.com/abdelhamiderrahmouni/filament-monaco-editor",
+            "keywords": [
+                "Abdelhamid Errahmouni",
+                "Monaco",
+                "code editor",
+                "filament monaco code editor",
+                "filament monaco editor",
+                "filamentphp",
+                "laravel",
+                "monaco editor",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/abdelhamiderrahmouni/filament-monaco-editor/issues",
+                "source": "https://github.com/abdelhamiderrahmouni/filament-monaco-editor"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/AbdelhamidErrahmouni",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-10-28T08:30:01+00:00"
+        },
         {
             "name": "anourvalar/eloquent-serialize",
             "version": "1.3.4",
@@ -15337,7 +15419,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "abdelhamiderrahmouni/filament-monaco-editor": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -15348,7 +15432,7 @@
         "ext-pdo": "*",
         "ext-zip": "*"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "platform-overrides": {
         "php": "8.2"
     },
