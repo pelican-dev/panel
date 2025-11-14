@@ -7,7 +7,7 @@ return [
         'show-placeholder' => false,
         'placeholder-text' => '',
         'show-loader' => false,
-        'font-size' => '16px',
+        'font-size' => '15px',
         'line-numbers-min-chars' => 3,
         'automatic-layout' => true,
         'default-theme' => 'blackboard',

@@ -82,14 +82,6 @@
 
     }" x-init="
         previewContent = wrapPreview(monacoContent);
-        $el.style.height = '500px';
-        $watch('fullScreenModeEnabled', value => {
-            if (value) {
-                $el.style.height = '100vh';
-            } else {
-                $el.style.height = '500px';
-            }
-        });
 
         if(typeof _amdLoaderGlobal == 'undefined'){
             monacoEditorAddLoaderScriptToHead();
@@ -113,12 +105,6 @@
                         lineNumbersMinChars: lineNumbersMinChars,
                         automaticLayout: automaticLayout,
                         language: monacoLanguage,
-                        scrollbar: {
-                            horizontal: 'auto',
-                            horizontalScrollbarSize: 15,
-                            vertical: 'auto',
-                            verticalScrollbarSize: 15
-                        },
                         wordWrap: 'on',
                         WrappingIndent: 'same',
                         readOnly: isReadOnly,
