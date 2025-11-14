@@ -82,6 +82,7 @@ class ListServers extends ListRecords
             TextColumn::make('cpuUsage')
                 ->label(trans('server/dashboard.resources'))
                 ->icon('tabler-cpu')
+                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::CPULimit)]))
                 ->state(fn (Server $server) => $server->formatResource(ServerResourceType::CPU))
                 ->color(fn (Server $server) => $this->getResourceColor($server, 'cpu')),
             TextColumn::make('memoryUsage')
