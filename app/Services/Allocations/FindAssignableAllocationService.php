@@ -51,7 +51,7 @@ class FindAssignableAllocationService
             ->when($server->allocation, function ($query) use ($server) {
                 $query->where('ip', $server->allocation->ip);
             })
-            ->whereBetween('port', [$start, $end]);
+            ->whereBetween('port', [$start, $end])
             ->whereNull('server_id')
             ->inRandomOrder()
             ->first();
