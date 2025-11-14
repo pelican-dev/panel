@@ -552,10 +552,12 @@ class EditProfile extends BaseEditProfile
     protected function getDefaultHeaderActions(): array
     {
         return [
+            $this->getCancelFormAction()->formId('form')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-arrow-left'),
             $this->getSaveFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),
-            $this->getCancelFormAction()->formId('form'),
         ];
 
     }
