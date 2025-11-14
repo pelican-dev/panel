@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\DatabaseHosts\Pages;
 
 use App\Filament\Admin\Resources\DatabaseHosts\DatabaseHostResource;
-use App\Models\DatabaseHost;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;

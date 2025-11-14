@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\ApiKeys\Pages;
 
 use App\Filament\Admin\Resources\ApiKeys\ApiKeyResource;
-use App\Models\ApiKey;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
