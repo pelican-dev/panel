@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Enums\CustomizationKey;
+use App\Extensions\Avatar\Schemas\Local\LocalAvatarProvider;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\Login;
 use App\Http\Middleware\LanguageMiddleware;
@@ -50,6 +51,7 @@ abstract class PanelProvider extends BasePanelProvider
                 'profile' => fn (Action $action) => $action
                     ->url(fn () => EditProfile::getUrl(panel: 'app')),
             ])
+            ->defaultAvatarProvider(LocalAvatarProvider::class)
             ->login(Login::class)
             ->passwordReset()
             ->multiFactorAuthentication([
