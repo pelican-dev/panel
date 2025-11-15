@@ -33,6 +33,7 @@ return [
 
         'allocations' => [
             'enabled' => env('PANEL_CLIENT_ALLOCATIONS_ENABLED', false),
+            'create_new' => env('PANEL_CLIENT_ALLOCATIONS_CREATE_NEW', true),
             'range_start' => env('PANEL_CLIENT_ALLOCATIONS_RANGE_START'),
             'range_end' => env('PANEL_CLIENT_ALLOCATIONS_RANGE_END'),
         ],

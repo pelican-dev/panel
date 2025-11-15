@@ -108,6 +108,8 @@ return [
             'title' => 'Automatic Allocation Creation',
             'helper' => 'Toggle if Users can create allocations via the client area.',
             'question' => 'Allow Users to create Allocations?',
+            'create_new' => 'Create new allocations if none available?',
+            'create_new_help' => 'When enabled, creates new allocations. When disabled, only assigns from existing unassigned allocations. Both options faktor the port range below into account.',
             'start' => 'Start Port',
             'end' => 'End Port',
         ],
