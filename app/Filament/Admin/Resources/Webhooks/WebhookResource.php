@@ -15,7 +15,6 @@ use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
@@ -37,7 +36,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Livewire\Component as Livewire;
 use Livewire\Features\SupportEvents\HandlesEvents;
@@ -114,15 +112,7 @@ class WebhookResource extends Resource
             ->emptyStateIcon('tabler-webhook')
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/webhook.no_webhooks'))
-            ->emptyStateActions([
-                CreateAction::make(),
-            ])
-            ->persistFiltersInSession()
-            ->filters([
-                SelectFilter::make('type')
-                    ->options(WebhookType::class)
-                    ->attribute('type'),
-            ]);
+            ->persistFiltersInSession();
     }
 
     public static function defaultForm(Schema $schema): Schema

@@ -17,6 +17,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
@@ -34,6 +35,12 @@ class ImportEggAction extends Action
         parent::setUp();
 
         $this->label(trans('filament-actions::import.modal.actions.import.label'));
+
+        $this->iconButton();
+
+        $this->icon('tabler-file-import');
+
+        $this->iconSize(IconSize::ExtraLarge);
 
         $this->authorize(fn () => user()?->can('import egg'));
 

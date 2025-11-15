@@ -13,6 +13,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -67,9 +68,6 @@ class ListNodes extends ListRecords
             ->emptyStateIcon('tabler-server-2')
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/node.no_nodes'))
-            ->emptyStateActions([
-                CreateAction::make(),
-            ])
             ->filters([
                 TagsFilter::make()
                     ->model(Node::class),
@@ -81,7 +79,8 @@ class ListNodes extends ListRecords
     {
         return [
             CreateAction::make()
-                ->hidden(fn () => Node::count() <= 0),
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-file-plus'),
         ];
     }
 }

@@ -19,6 +19,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -98,11 +99,6 @@ class ListEggs extends ListRecords
             ->emptyStateIcon('tabler-eggs')
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/egg.no_eggs'))
-            ->emptyStateActions([
-                CreateAction::make(),
-                ImportEggAction::make()
-                    ->multiple(),
-            ])
             ->filters([
                 TagsFilter::make()
                     ->model(Egg::class),
@@ -117,7 +113,9 @@ class ListEggs extends ListRecords
         return [
             ImportEggAction::make()
                 ->multiple(),
-            CreateAction::make(),
+            CreateAction::make()
+                ->icon('tabler-file-plus')
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
         ];
     }
 }
