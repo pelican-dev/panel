@@ -55,6 +55,7 @@ use Psr\Http\Message\ResponseInterface;
  * @property int $egg_id
  * @property string $startup
  * @property string $image
+ * @property string|null $icon
  * @property int|null $allocation_limit
  * @property int|null $database_limit
  * @property int|null $backup_limit
@@ -181,6 +182,7 @@ class Server extends Model implements Validatable
         'startup' => ['required', 'string'],
         'skip_scripts' => ['sometimes', 'boolean'],
         'image' => ['required', 'string', 'max:255'],
+        'icon' => ['sometimes', 'nullable', 'string'],
         'database_limit' => ['present', 'nullable', 'integer', 'min:0'],
         'allocation_limit' => ['sometimes', 'nullable', 'integer', 'min:0'],
         'backup_limit' => ['present', 'nullable', 'integer', 'min:0'],
@@ -208,6 +210,7 @@ class Server extends Model implements Validatable
             self::UPDATED_AT => 'datetime',
             'installed_at' => 'datetime',
             'docker_labels' => 'array',
+            'icon' => 'string',
         ];
     }
 

@@ -34,6 +34,12 @@ return [
             'password' => 'Password',
             'password_body' => 'Your SFTP password is the same as the password you use to access this panel.',
         ],
+        'icon' => 'Server Icon',
+    ],
+    'icon' => [
+        'upload' => 'Upload Icon',
+        'updated' => 'Server icon updated',
+        'deleted' => 'Server icon deleted',
     ],
     'reinstall' => [
         'title' => 'Reinstall Server',

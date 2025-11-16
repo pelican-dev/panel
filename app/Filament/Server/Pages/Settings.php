@@ -8,14 +8,23 @@ use App\Models\Server;
 use App\Services\Servers\ReinstallServerService;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\IconSize;
 
 class Settings extends ServerFormPage
 {
@@ -35,19 +44,180 @@ class Settings extends ServerFormPage
                     ->columnSpanFull()
                     ->columns([
                         'default' => 1,
-                        'sm' => 2,
+                        'sm' => 1,
                         'md' => 4,
-                        'lg' => 6,
+                        'lg' => 8,
                     ])
                     ->schema([
                         Fieldset::make()
+                            ->label(trans('server/setting.server_info.icon'))
+                            ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
+                            ->schema([
+                                Image::make('', 'icon')
+                                    ->url(fn ($record) => $record->icon ?: $record->egg->image)
+                                    ->imageSize(150)
+                                    ->alignJustify()
+                                    ->columnSpanFull(),
+                                Flex::make([
+                                    Action::make('uploadIcon')
+                                        ->iconButton()->iconSize(IconSize::Large)
+                                        ->icon('tabler-photo-up')
+                                        ->modal()
+                                        ->modalSubmitActionLabel(trans('server/setting.icon.upload'))
+                                        ->schema([
+                                            Tabs::make()->tabs([
+                                                Tab::make(trans('admin/egg.import.url'))
+                                                    ->schema([
+                                                        Hidden::make('base64Image'),
+                                                        TextInput::make('image_url')
+                                                            ->label(trans('admin/egg.import.image_url'))
+                                                            ->reactive()
+                                                            ->autocomplete(false)
+                                                            ->debounce(500)
+                                                            ->afterStateUpdated(function ($state, Set $set) {
+                                                                if (!$state) {
+                                                                    $set('image_url_error', null);
+
+                                                                    return;
+                                                                }
+
+                                                                try {
+                                                                    if (!filter_var($state, FILTER_VALIDATE_URL)) {
+                                                                        throw new \Exception(trans('admin/egg.import.invalid_url'));
+                                                                    }
+
+                                                                    $allowedExtensions = [
+                                                                        'png' => 'image/png',
+                                                                        'jpg' => 'image/jpeg',
+                                                                        'jpeg' => 'image/jpeg',
+                                                                        'gif' => 'image/gif',
+                                                                        'webp' => 'image/webp',
+                                                                        'svg' => 'image/svg+xml',
+                                                                    ];
+
+                                                                    $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
+
+                                                                    if (!array_key_exists($extension, $allowedExtensions)) {
+                                                                        throw new \Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', $allowedExtensions)]));
+                                                                    }
+
+                                                                    $host = parse_url($state, PHP_URL_HOST);
+                                                                    $ip = gethostbyname($host);
+
+                                                                    if (
+                                                                        filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false
+                                                                    ) {
+                                                                        throw new \Exception(trans('admin/egg.import.no_local_ip'));
+                                                                    }
+
+                                                                    $context = stream_context_create([
+                                                                        'http' => ['timeout' => 3],
+                                                                        'https' => [
+                                                                            'timeout' => 3,
+                                                                            'verify_peer' => true,
+                                                                            'verify_peer_name' => true,
+                                                                        ],
+                                                                    ]);
+
+                                                                    $imageContent = @file_get_contents($state, false, $context, 0, 1048576); // 1024KB
+
+                                                                    if (!$imageContent) {
+                                                                        throw new \Exception(trans('admin/egg.import.image_error'));
+                                                                    }
+
+                                                                    if (strlen($imageContent) >= 1048576) {
+                                                                        throw new \Exception(trans('admin/egg.import.image_too_large'));
+                                                                    }
+
+                                                                    $mimeType = $allowedExtensions[$extension];
+                                                                    $base64 = 'data:' . $mimeType . ';base64,' . base64_encode($imageContent);
+
+                                                                    $set('base64Image', $base64);
+                                                                    $set('image_url_error', null);
+
+                                                                } catch (\Exception $e) {
+                                                                    $set('image_url_error', $e->getMessage());
+                                                                    $set('base64Image', null);
+                                                                }
+                                                            }),
+                                                        TextEntry::make('image_url_error')
+                                                            ->hiddenLabel()
+                                                            ->visible(fn (Get $get) => $get('image_url_error') !== null)
+                                                            ->afterStateHydrated(fn ($set, $get) => $get('image_url_error')),
+                                                        Image::make(fn (Get $get) => $get('image_url'), '')
+                                                            ->imageSize(150)
+                                                            ->visible(fn (Get $get) => $get('image_url') && !$get('image_url_error'))
+                                                            ->alignCenter(),
+                                                    ]),
+                                                Tab::make(trans('admin/egg.import.file'))
+                                                    ->schema([
+                                                        FileUpload::make('image')
+                                                            ->hiddenLabel()
+                                                            ->previewable()
+                                                            ->openable(false)
+                                                            ->downloadable(false)
+                                                            ->maxSize(1024)
+                                                            ->maxFiles(1)
+                                                            ->columnSpanFull()
+                                                            ->alignCenter()
+                                                            ->imageEditor()
+                                                            ->saveUploadedFileUsing(function ($file, Set $set) {
+                                                                $base64 = "data:{$file->getMimeType()};base64,". base64_encode(file_get_contents($file->getRealPath()));
+                                                                $set('base64Image', $base64);
+
+                                                                return $base64;
+                                                            }),
+                                                    ]),
+                                            ]),
+                                        ])
+                                        ->action(function (array $data, $record): void {
+                                            $base64 = $data['base64Image'] ?? null;
+
+                                            if (empty($base64) && !empty($data['image'])) {
+                                                $base64 = $data['image'];
+                                            }
+
+                                            if (!empty($base64)) {
+                                                $record->update([
+                                                    'icon' => $base64,
+                                                ]);
+
+                                                Notification::make()
+                                                    ->title(trans('server/setting.icon.updated'))
+                                                    ->success()
+                                                    ->send();
+
+                                                $record->refresh();
+                                            } else {
+                                                Notification::make()
+                                                    ->title(trans('admin/egg.import.no_image'))
+                                                    ->warning()
+                                                    ->send();
+                                            }
+                                        }),
+                                    Action::make('deleteIcon')
+                                        ->visible(fn ($record) => $record->icon)
+                                        ->label('')
+                                        ->icon('tabler-trash')
+                                        ->iconButton()->iconSize(IconSize::Large)
+                                        ->color('danger')
+                                        ->action(function ($record) {
+                                            $record->update([
+                                                'icon' => null,
+                                            ]);
+
+                                            Notification::make()
+                                                ->title(trans('server/setting.icon.deleted'))
+                                                ->success()
+                                                ->send();
+
+                                            $record->refresh();
+                                        }),
+                                ]),
+                            ]),
+                        Fieldset::make()
                             ->label(trans('server/setting.server_info.information'))
-                            ->columnSpan([
-                                'default' => 1,
-                                'sm' => 2,
-                                'md' => 2,
-                                'lg' => 6,
-                            ])
+                            ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 3, 'lg' => 6])
                             ->schema([
                                 TextInput::make('name')
                                     ->label(trans('server/setting.server_info.name'))
@@ -97,14 +267,14 @@ class Settings extends ServerFormPage
                             ->label(trans('server/setting.server_info.limits.title'))
                             ->columnSpan([
                                 'default' => 1,
-                                'sm' => 2,
-                                'md' => 2,
-                                'lg' => 6,
+                                'sm' => 1,
+                                'md' => 4,
+                                'lg' => 8,
                             ])
                             ->columns([
                                 'default' => 1,
                                 'sm' => 1,
-                                'md' => 1,
+                                'md' => 2,
                                 'lg' => 3,
                             ])
                             ->schema([
