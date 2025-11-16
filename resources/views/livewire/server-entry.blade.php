@@ -49,9 +49,9 @@
         </div>
 
         @if ($server->description)
-        <div class="text-left mb-1 ml-4 pl-4">
-            <p class="text-base text-gray-400">{{ Str::limit($server->description, 40, preserveWords: true) }}</p>
-        </div>
+            <div class="text-left mb-1 ml-4 pl-4">
+                <p class="text-base dark:text-gray-400">{{ Str::limit($server->description, 40, preserveWords: true) }}</p>
+            </div>
         @endif
 
         <div class="flex justify-between text-center items-center gap-4">

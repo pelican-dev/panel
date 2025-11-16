@@ -37,7 +37,12 @@ class ServerEntry extends Component
                     "></div>
                 @endif
 
-                <div class="flex items-center mb-5 gap-2">
+
+                @if ($server->description)
+                    <div class="flex items-center gap-2">
+                @else
+                    <div class="flex items-center mb-5 gap-2">
+                @endif
                     <x-filament::loading-indicator class="h-6 w-6" />
                     <h2 class="text-xl font-bold">
                         {{ $server->name }}
@@ -46,6 +51,12 @@ class ServerEntry extends Component
                         </span>
                     </h2>
                 </div>
+
+                @if ($server->description)
+                    <div class="text-left mb-1 ml-4 pl-4">
+                        <p class="text-base text-gray-400">{{ Str::limit($server->description, 40, preserveWords: true) }}</p>
+                    </div>
+                @endif
 
                 <div class="flex justify-between text-center items-center gap-4">
                     <div>
