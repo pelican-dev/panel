@@ -210,7 +210,6 @@ class Server extends Model implements Validatable
             self::UPDATED_AT => 'datetime',
             'installed_at' => 'datetime',
             'docker_labels' => 'array',
-            'icon' => 'string',
         ];
     }
 
