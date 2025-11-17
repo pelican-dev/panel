@@ -15,7 +15,7 @@ class ServerEntry extends Component
         return view('livewire.server-entry');
     }
 
-    public function placeholder(): string
+    public function placeholder(): View
     {
         return view('livewire.server-entry-placeholder', ['server' => $this->server]);
     }
