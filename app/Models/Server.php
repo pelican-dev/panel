@@ -185,7 +185,7 @@ class Server extends Model implements HasAvatar, Validatable
         'startup' => ['required', 'string'],
         'skip_scripts' => ['sometimes', 'boolean'],
         'image' => ['required', 'string', 'max:255'],
-        'icon' => ['sometimes', 'nullable', 'string'],
+        'icon' => ['sometimes', 'nullable', 'string', 'max:280000'],
         'database_limit' => ['present', 'nullable', 'integer', 'min:0'],
         'allocation_limit' => ['sometimes', 'nullable', 'integer', 'min:0'],
         'backup_limit' => ['present', 'nullable', 'integer', 'min:0'],
@@ -521,7 +521,7 @@ class Server extends Model implements HasAvatar, Validatable
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->icon ?? $this->egg->image ?? null;
+        return $this->icon ?? $this->egg?->image ?? null;
 
     }
 }
