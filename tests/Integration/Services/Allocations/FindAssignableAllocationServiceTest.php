@@ -29,10 +29,13 @@ class FindAssignableAllocationServiceTest extends IntegrationTestCase
     public function test_existing_allocation_is_preferred(): void
     {
         $server = $this->createServerModel();
+        config()->set('panel.client_features.allocations.range_start', 5000);
+        config()->set('panel.client_features.allocations.range_end', 5005);
 
         $created = Allocation::factory()->create([
             'node_id' => $server->node_id,
             'ip' => $server->allocation->ip,
+            'port' => 5005,
         ]);
 
         $response = $this->getService()->handle($server);
