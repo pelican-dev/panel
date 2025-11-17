@@ -9,7 +9,7 @@ use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class ServerRelationManager extends RelationManager
+class ServersRelationManager extends RelationManager
 {
     protected static string $relationship = 'servers';
 
@@ -48,12 +48,13 @@ class ServerRelationManager extends RelationManager
                     ->sortable(),
                 TextColumn::make('cpu')
                     ->label(trans('admin/node.cpu'))
-                    ->state(fn (Server $server) => $server->formatResource(ServerResourceType::CPULimit))
-                    ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::CPULimit)])),
+                    ->state(fn (Server $server) => $server->formatResource(ServerResourceType::CPULimit)),
                 TextColumn::make('memory')
                     ->label(trans('admin/node.memory'))
-                    ->state(fn (Server $server) => $server->formatResource(ServerResourceType::MemoryLimit))
-                    ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::MemoryLimit)])),
+                    ->state(fn (Server $server) => $server->formatResource(ServerResourceType::MemoryLimit)),
+                TextColumn::make('disk')
+                    ->label(trans('admin/node.disk'))
+                    ->state(fn (Server $server) => $server->formatResource(ServerResourceType::DiskLimit)),
                 TextColumn::make('databases_count')
                     ->counts('databases')
                     ->label(trans('admin/node.databases'))
