@@ -62,13 +62,13 @@ jobs:
         run: touch database/testing.sqlite
 
       - name: Unit tests
-        run: composer run test:parallel -- --processes=10 tests/Unit
+        run: composer run test:parallel -- tests/Unit
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: composer run test:parallel -- --processes=10 tests/Integration
+        run: composer run test:parallel -- tests/Integration
 
   mysql:
     name: MySQL
@@ -121,13 +121,13 @@ jobs:
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
       - name: Unit tests
-        run: composer run test:parallel -- --processes=10 tests/Unit
+        run: composer run test:parallel -- tests/Unit
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: composer run test:parallel -- --processes=10 tests/Integration
+        run: composer run test:parallel -- tests/Integration
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -183,13 +183,13 @@ jobs:
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
       - name: Unit tests
-        run: composer run test:parallel -- --processes=10 tests/Unit
+        run: composer run test:parallel -- tests/Unit
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: composer run test:parallel -- --processes=10 tests/Integration
+        run: composer run test:parallel -- tests/Integration
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -251,11 +251,11 @@ jobs:
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
       - name: Unit tests
-        run: composer run test:parallel -- --processes=10 tests/Unit
+        run: composer run test:parallel -- tests/Unit
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: composer run test:parallel -- --processes=10 tests/Integration
+        run: composer run test:parallel -- tests/Integration
 
