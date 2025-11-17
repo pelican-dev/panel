@@ -12,6 +12,8 @@ use App\Services\Subusers\SubuserDeletionService;
 use App\Traits\HasValidation;
 use Carbon\CarbonInterface;
 use Database\Factories\ServerFactory;
+use Filament\Models\Contracts\HasAvatar;
+use Filament\Panel\Concerns\HasAvatars;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -130,8 +132,9 @@ use Psr\Http\Message\ResponseInterface;
  * @method static Builder|Server wherePorts($value)
  * @method static Builder|Server whereUuidShort($value)
  */
-class Server extends Model implements Validatable
+class Server extends Model implements HasAvatar, Validatable
 {
+    use HasAvatars;
     use HasFactory;
     use HasValidation;
     use Notifiable;
@@ -514,5 +517,11 @@ class Server extends Model implements Validatable
         return Attribute::make(
             get: fn () => $this->status ?? $this->retrieveStatus(),
         );
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->icon ?? $this->egg->image ?? null;
+
     }
 }
