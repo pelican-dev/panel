@@ -123,9 +123,6 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
-      - name: Run migrations
-        run: php artisan migrate --force
-
       - name: Unit tests
         run: composer run test:parallel -- tests/Unit
         env:
@@ -187,9 +184,6 @@ jobs:
 
       - name: Install dependencies
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
-
-      - name: Run migrations
-        run: php artisan migrate --force
 
       - name: Unit tests
         run: composer run test:parallel -- tests/Unit
