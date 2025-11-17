@@ -54,8 +54,8 @@ class Settings extends ServerFormPage
                             ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 2])
                             ->schema([
                                 Image::make('', 'icon')
+                                    ->hidden(fn ($record) => !$record->icon && !$record->egg->image)
                                     ->url(fn ($record) => $record->icon ?: $record->egg->image)
-                                    ->imageSize(150)
                                     ->alignJustify()
                                     ->columnSpanFull(),
                                 Flex::make([
@@ -156,7 +156,7 @@ class Settings extends ServerFormPage
                                                             ->previewable()
                                                             ->openable(false)
                                                             ->downloadable(false)
-                                                            ->maxSize(1024)
+                                                            ->maxSize(256)
                                                             ->maxFiles(1)
                                                             ->columnSpanFull()
                                                             ->alignCenter()
