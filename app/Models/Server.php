@@ -72,7 +72,7 @@ use Psr\Http\Message\ResponseInterface;
  * @property int|null $backups_count
  * @property Collection|Database[] $databases
  * @property int|null $databases_count
- * @property Egg|null $egg
+ * @property Egg $egg
  * @property Collection|Mount[] $mounts
  * @property int|null $mounts_count
  * @property Node $node
@@ -519,7 +519,7 @@ class Server extends Model implements HasAvatar, Validatable
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->icon ?? $this->egg->image ?? null;
+        return $this->icon ?? $this->egg->image;
 
     }
 }

@@ -1,5 +1,5 @@
 @php
-    $backgroundImage = $server->icon ?? $server->egg->image ?? null;
+    $backgroundImage = $server->icon ?? $server->egg->image;
 @endphp
 
 <div class="relative cursor-pointer"

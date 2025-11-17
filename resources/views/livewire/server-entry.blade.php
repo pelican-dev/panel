@@ -1,6 +1,6 @@
 @php
     $actiongroup = \App\Filament\App\Resources\Servers\Pages\ListServers::getPowerActionGroup()->record($server);
-    $backgroundImage = $server->icon ?? $server->egg->image ?? null;
+    $backgroundImage = $server->icon ?? $server->egg->image;
 @endphp
 <div wire:poll.15s
      class="relative cursor-pointer"
