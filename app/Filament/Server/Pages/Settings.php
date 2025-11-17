@@ -98,7 +98,7 @@ class Settings extends ServerFormPage
                                                                     $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
 
                                                                     if (!array_key_exists($extension, $allowedExtensions)) {
-                                                                        throw new \Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', $allowedExtensions)]));
+                                                                        throw new \Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', array_keys($allowedExtensions))]));
                                                                     }
 
                                                                     $host = parse_url($state, PHP_URL_HOST);
@@ -143,7 +143,7 @@ class Settings extends ServerFormPage
                                                         TextEntry::make('image_url_error')
                                                             ->hiddenLabel()
                                                             ->visible(fn (Get $get) => $get('image_url_error') !== null)
-                                                            ->afterStateHydrated(fn ($set, $get) => $get('image_url_error')),
+                                                            ->afterStateHydrated(fn (Get $get) => $get('image_url_error')),
                                                         Image::make(fn (Get $get) => $get('image_url'), '')
                                                             ->imageSize(150)
                                                             ->visible(fn (Get $get) => $get('image_url') && !$get('image_url_error'))
@@ -161,6 +161,7 @@ class Settings extends ServerFormPage
                                                             ->columnSpanFull()
                                                             ->alignCenter()
                                                             ->imageEditor()
+                                                            ->image()
                                                             ->saveUploadedFileUsing(function ($file, Set $set) {
                                                                 $base64 = "data:{$file->getMimeType()};base64,". base64_encode(file_get_contents($file->getRealPath()));
                                                                 $set('base64Image', $base64);

@@ -13,7 +13,6 @@ use App\Traits\HasValidation;
 use Carbon\CarbonInterface;
 use Database\Factories\ServerFactory;
 use Filament\Models\Contracts\HasAvatar;
-use Filament\Panel\Concerns\HasAvatars;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -134,7 +133,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Server extends Model implements HasAvatar, Validatable
 {
-    use HasAvatars;
     use HasFactory;
     use HasValidation;
     use Notifiable;
@@ -521,7 +519,7 @@ class Server extends Model implements HasAvatar, Validatable
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->icon ?? $this->egg?->image ?? null;
+        return $this->icon ?? $this->egg->image ?? null;
 
     }
 }
