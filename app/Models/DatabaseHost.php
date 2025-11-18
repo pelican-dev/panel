@@ -60,7 +60,7 @@ class DatabaseHost extends Model implements Validatable
         'username' => ['required', 'string', 'max:32'],
         'password' => ['nullable', 'string'],
         'node_ids' => ['nullable', 'array'],
-        'node_ids.*' => ['required', 'integer,exists:nodes,id'],
+        'node_ids.*' => ['required', 'integer', 'exists:nodes,id'],
     ];
 
     protected function casts(): array
