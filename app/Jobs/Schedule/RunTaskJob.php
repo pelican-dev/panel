@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use InvalidArgumentException;
 use Throwable;
 
 class RunTaskJob extends Job implements ShouldQueue
@@ -51,7 +52,13 @@ class RunTaskJob extends Job implements ShouldQueue
 
         // Perform the provided task against the daemon.
         try {
-            $taskService->get($this->task->action)->runTask($this->task);
+            $taskSchema = $taskService->get($this->task->action);
+
+            if (!$taskSchema) {
+                throw new InvalidArgumentException('Invalid task action provided: ' . $this->task->action);
+            }
+
+            $taskSchema->runTask($this->task);
         } catch (Exception $exception) {
             // If this isn't a ConnectionException on a task that allows for failures
             // throw the exception back up the chain so that the task is stopped.
