@@ -277,7 +277,7 @@ class Settings extends ServerFormPage
 
     public function updateDescription(string $description, Server $server): void
     {
-        abort_unless(user()?->can(Permission::ACTION_SETTINGS_RENAME, $server) && config('panel.editable_server_descriptions'), 403);
+        abort_unless(user()?->can(Permission::ACTION_SETTINGS_DESCRIPTION, $server) && config('panel.editable_server_descriptions'), 403);
 
         $original = $server->description;
 
