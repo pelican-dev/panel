@@ -9,6 +9,7 @@ return [
     App\Providers\Extensions\CaptchaServiceProvider::class,
     App\Providers\Extensions\FeatureServiceProvider::class,
     App\Providers\Extensions\OAuthServiceProvider::class,
+    App\Providers\Extensions\TaskServiceProvider::class,
     App\Providers\Filament\FilamentServiceProvider::class,
     App\Providers\Filament\AdminPanelProvider::class,
     App\Providers\Filament\AppPanelProvider::class,
