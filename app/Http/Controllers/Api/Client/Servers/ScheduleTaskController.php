@@ -170,7 +170,7 @@ class ScheduleTaskController extends ClientApiController
             throw new NotFoundHttpException();
         }
 
-        if (!$request->user()->can(Permission::ACTION_SCHEDULE_UPDATE, $server)) {
+        if (!$request->user()->can(Permission::ACTION_SCHEDULE_DELETE, $server)) {
             throw new HttpForbiddenException('You do not have permission to perform this action.');
         }
 

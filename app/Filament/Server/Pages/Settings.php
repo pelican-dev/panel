@@ -64,7 +64,7 @@ class Settings extends ServerFormPage
                                 Textarea::make('description')
                                     ->label(trans('server/setting.server_info.description'))
                                     ->hidden(!config('panel.editable_server_descriptions'))
-                                    ->disabled(fn (Server $server) => !user()?->can(Permission::ACTION_SETTINGS_RENAME, $server))
+                                    ->disabled(fn (Server $server) => !user()?->can(Permission::ACTION_SETTINGS_DESCRIPTION, $server))
                                     ->columnSpan([
                                         'default' => 1,
                                         'sm' => 2,
