@@ -15,6 +15,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -37,7 +38,6 @@ class Settings extends ServerFormPage
     public function form(Schema $schema): Schema
     {
         return parent::form($schema)
-            ->columns(4)
             ->components([
                 Section::make(trans('server/setting.server_info.title'))
                     ->columnSpanFull()
@@ -45,28 +45,28 @@ class Settings extends ServerFormPage
                         'default' => 1,
                         'sm' => 1,
                         'md' => 4,
-                        'lg' => 3,
+                        'lg' => 6,
                     ])
                     ->schema([
                         Fieldset::make()
                             ->label(trans('server/setting.server_info.information'))
                             ->columnSpanFull()
                             ->schema([
-                                Fieldset::make()
-                                    ->hiddenLabel()
-                                    ->columns(1)
-                                    ->columnSpan([
-                                        'default' => 1,
-                                        'lg' => 3,
-                                    ])
+                                Grid::make()
+                                    ->columns(2)
+                                    ->columnSpan(5)
                                     ->schema([
                                         TextInput::make('name')
+                                            ->columnStart(1)
+                                            ->columnSpanFull()
                                             ->label(trans('server/setting.server_info.name'))
                                             ->disabled(fn (Server $server) => !user()?->can(Permission::ACTION_SETTINGS_RENAME, $server))
                                             ->required()
                                             ->live(onBlur: true)
                                             ->afterStateUpdated(fn ($state, Server $server) => $this->updateName($state, $server)),
                                         Textarea::make('description')
+                                            ->columnStart(1)
+                                            ->columnSpanFull()
                                             ->label(trans('server/setting.server_info.description'))
                                             ->hidden(!config('panel.editable_server_descriptions'))
                                             ->disabled(fn (Server $server) => !user()?->can(Permission::ACTION_SETTINGS_RENAME, $server))
@@ -74,26 +74,21 @@ class Settings extends ServerFormPage
                                             ->live(onBlur: true)
                                             ->afterStateUpdated(fn ($state, Server $server) => $this->updateDescription($state ?? '', $server)),
                                     ]),
-                                Fieldset::make()
-                                    ->hiddenLabel()
-                                    ->columnSpan([
-                                        'default' => 1,
-                                        'lg' => 1,
-                                    ])
-                                    ->extraAttributes([
-                                        'class' => 'flex flex-col justify-start gap-4',
-                                    ])
+                                Grid::make()
+                                    ->columns(2)
+                                    ->columnStart(6)
                                     ->schema([
                                         Image::make('', 'icon')
                                             ->hidden(fn ($record) => !$record->icon && !$record->egg->image)
                                             ->url(fn ($record) => $record->icon ?: $record->egg->image)
-                                            ->columnSpanFull()
+                                            ->tooltip(fn ($record) => $record->icon ? '' : trans('server/setting.server_info.icon.tooltip'))
+                                            ->columnSpan(2)
                                             ->alignJustify(),
                                         Action::make('uploadIcon')
                                             ->iconButton()->iconSize(IconSize::Large)
                                             ->icon('tabler-photo-up')
                                             ->modal()
-                                            ->modalSubmitActionLabel(trans('server/setting.icon.upload'))
+                                            ->modalSubmitActionLabel(trans('server/setting.server_info.icon.upload'))
                                             ->schema([
                                                 Tabs::make()->tabs([
                                                     Tab::make(trans('admin/egg.import.url'))
@@ -149,7 +144,7 @@ class Settings extends ServerFormPage
                                                                             ],
                                                                         ]);
 
-                                                                        $imageContent = @file_get_contents($state, false, $context, 0, 1048576); // 1024KB
+                                                                        $imageContent = @file_get_contents($state, false, $context, 0, 256000); // 1024KB
 
                                                                         if (!$imageContent) {
                                                                             throw new \Exception(trans('admin/egg.import.image_error'));
@@ -214,7 +209,7 @@ class Settings extends ServerFormPage
                                                     ]);
 
                                                     Notification::make()
-                                                        ->title(trans('server/setting.icon.updated'))
+                                                        ->title(trans('server/setting.server_info.icon.updated'))
                                                         ->success()
                                                         ->send();
 
@@ -238,7 +233,7 @@ class Settings extends ServerFormPage
                                                 ]);
 
                                                 Notification::make()
-                                                    ->title(trans('server/setting.icon.deleted'))
+                                                    ->title(trans('server/setting.server_info.icon.deleted'))
                                                     ->success()
                                                     ->send();
 
@@ -270,7 +265,7 @@ class Settings extends ServerFormPage
                                 'default' => 1,
                                 'sm' => 1,
                                 'md' => 4,
-                                'lg' => 8,
+                                'lg' => 6,
                             ])
                             ->columns([
                                 'default' => 1,

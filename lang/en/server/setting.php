@@ -14,6 +14,12 @@ return [
         'uuid' => 'Server UUID',
         'uuid_short' => 'Server ID',
         'node_name' => 'Node Name',
+        'icon' => [
+            'upload' => 'Upload Icon',
+            'tooltip' => 'Using Egg Icon',
+            'updated' => 'Server icon updated',
+            'deleted' => 'Server icon deleted',
+        ],
         'limits' => [
             'title' => 'Limits',
             'unlimited' => 'Unlimited',
@@ -34,12 +40,6 @@ return [
             'password' => 'Password',
             'password_body' => 'Your SFTP password is the same as the password you use to access this panel.',
         ],
-        'icon' => 'Server Icon',
-    ],
-    'icon' => [
-        'upload' => 'Upload Icon',
-        'updated' => 'Server icon updated',
-        'deleted' => 'Server icon deleted',
     ],
     'reinstall' => [
         'title' => 'Reinstall Server',
