@@ -22,7 +22,6 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\Arr;
 
 class TasksRelationManager extends RelationManager
 {
@@ -34,15 +33,17 @@ class TasksRelationManager extends RelationManager
      *
      * @throws Exception
      */
-    private function getTaskForm(Schedule $schedule, array $tasks): array
+    private function getTaskForm(Schedule $schedule, TaskService $taskService): array
     {
+        $tasks = $taskService->getAll();
+
         return [
             Select::make('action')
                 ->label(trans('server/schedule.tasks.actions.title'))
                 ->required()
                 ->live()
                 ->disableOptionWhen(fn (string $value) => !$tasks[$value]->canCreate($schedule))
-                ->options(Arr::mapWithKeys($tasks, fn (TaskSchemaInterface $task) => [$task->getId() => $task->getName()]))
+                ->options($taskService->getMappings())
                 ->selectablePlaceholder(false)
                 ->default(array_key_first($tasks))
                 ->afterStateUpdated(fn ($state, Set $set) => $set('payload', $tasks[$state]->getDefaultPayload())),
@@ -68,8 +69,10 @@ class TasksRelationManager extends RelationManager
         /** @var Schedule $schedule */
         $schedule = $this->getOwnerRecord();
 
-        // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
-        $tasks = app(TaskService::class)->getAll();
+        /** @var TaskService $taskService */
+        $taskService = app(TaskService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+
+        $tasks = $taskService->getAll();
 
         return $table
             ->reorderable('sequence_id')
@@ -96,7 +99,7 @@ class TasksRelationManager extends RelationManager
             ])
             ->recordActions([
                 EditAction::make()
-                    ->schema($this->getTaskForm($schedule, $tasks))
+                    ->schema($this->getTaskForm($schedule, $taskService))
                     ->mutateDataUsing(function ($data) {
                         $data['payload'] ??= '';
 
@@ -129,7 +132,7 @@ class TasksRelationManager extends RelationManager
                     ->createAnother(false)
                     ->label(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10) ? trans('server/schedule.tasks.limit') : trans('server/schedule.tasks.create'))
                     ->disabled(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10))
-                    ->schema($this->getTaskForm($schedule, $tasks))
+                    ->schema($this->getTaskForm($schedule, $taskService))
                     ->action(function ($data) use ($schedule) {
                         $sequenceId = ($schedule->tasks()->orderByDesc('sequence_id')->first()->sequence_id ?? 0) + 1;
 

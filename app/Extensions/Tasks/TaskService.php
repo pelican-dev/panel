@@ -28,4 +28,10 @@ class TaskService
 
         $this->schemas[$schema->getId()] = $schema;
     }
+
+    /** @return array<string, string> */
+    public function getMappings(): array
+    {
+        return collect($this->schemas)->mapWithKeys(fn ($schema) => [$schema->getId() => $schema->getName()])->all();
+    }
 }
