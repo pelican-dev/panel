@@ -2,7 +2,6 @@
 
 namespace App\Filament\Server\Resources\Schedules\RelationManagers;
 
-use App\Extensions\Tasks\TaskSchemaInterface;
 use App\Extensions\Tasks\TaskService;
 use App\Facades\Activity;
 use App\Models\Schedule;
@@ -28,7 +27,6 @@ class TasksRelationManager extends RelationManager
     protected static string $relationship = 'tasks';
 
     /**
-     * @param  TaskSchemaInterface[]  $tasks
      * @return Component[]
      *
      * @throws Exception
