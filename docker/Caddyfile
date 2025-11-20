@@ -6,10 +6,10 @@
 	}
 	admin off
 	auto_https off
-	email {$ADMIN_EMAIL}
+	{$PARSED_ADMIN_EMAIL}
 }
 
-{$APP_URL} {
+{$PARSED_APP_URL} {
 	root * /var/www/html/public
 	encode gzip
 

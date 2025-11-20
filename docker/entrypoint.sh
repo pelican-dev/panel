@@ -14,7 +14,7 @@ else
      echo -e "Generated app key: $APP_KEY"
      echo -e "APP_KEY=$APP_KEY" > /pelican-data/.env
   else
-    echo -e "APP_KEY exists in environment, using that."
+    echo -e "APP_KEY exists in environment, using that."I c
     echo -e "APP_KEY=$APP_KEY" > /pelican-data/.env
   fi
 
@@ -33,15 +33,22 @@ else
   echo "APP_KEY is already set."
 fi
 
-## make sure the db is set up
-echo -e "Migrating Database"
-php artisan migrate --force
-
 echo -e "Optimizing Filament"
 php artisan filament:optimize
 
 # default to caddy not starting
 export SUPERVISORD_CADDY=false
+export PARSED_ADMIN_EMAIL=${ADMIN_EMAIL}
+export PARSED_APP_URL=${APP_URL}
+
+# when running behind a proxy
+if [[ ${BEHIND_PROXY} == "true" ]]; then
+  echo "running behin proxy"
+  echo "listening on port 80 internally"
+  export PARSED_ADMIN_EMAIL=""
+  export PARSED_APP_URL=":80"
+  export APP_ASSETT=${APP_URL}
+fi
 
 ## disable caddy if SKIP_CADDY is set
 if [[ "${SKIP_CADDY:-}" == "true" ]]; then
