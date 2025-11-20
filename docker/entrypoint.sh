@@ -47,7 +47,7 @@ if [[ ${BEHIND_PROXY} == "true" ]]; then
   echo "listening on port 80 internally"
   export PARSED_ADMIN_EMAIL=""
   export PARSED_APP_URL=":80"
-  export APP_ASSETT=${APP_URL}
+  export APP_ASSET=${APP_URL}
 fi
 
 ## disable caddy if SKIP_CADDY is set
