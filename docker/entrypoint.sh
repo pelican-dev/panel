@@ -38,14 +38,14 @@ php artisan filament:optimize
 
 # default to caddy not starting
 export SUPERVISORD_CADDY=false
-export PARSED_ADMIN_EMAIL=${ADMIN_EMAIL}
+export PARSED_LE_EMAIL=${LE_EMAIL}
 export PARSED_APP_URL=${APP_URL}
 
 # when running behind a proxy
 if [[ ${BEHIND_PROXY} == "true" ]]; then
   echo "running behin proxy"
   echo "listening on port 80 internally"
-  export PARSED_ADMIN_EMAIL=""
+  export PARSED_LE_EMAIL=""
   export PARSED_APP_URL=":80"
   export APP_ASSETT=${APP_URL}
 fi

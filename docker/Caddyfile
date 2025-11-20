@@ -6,7 +6,7 @@
 	}
 	admin off
 	auto_https off
-	{$PARSED_ADMIN_EMAIL}
+	{$PARSED_LE_EMAIL}
 }
 
 {$PARSED_APP_URL} {
