@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Contracts\Validatable;
+use App\Extensions\Tasks\TaskSchemaInterface;
+use App\Extensions\Tasks\TaskService;
 use App\Traits\HasValidation;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -108,5 +110,13 @@ class Task extends Model implements Validatable
             'schedule_id', // tasks.schedule_id
             'server_id' // schedules.server_id
         );
+    }
+
+    public function getSchema(): ?TaskSchemaInterface
+    {
+        /** @var TaskService $taskService */
+        $taskService = app(TaskService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+
+        return $taskService->get($this->action);
     }
 }

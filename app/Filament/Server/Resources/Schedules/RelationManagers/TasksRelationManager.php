@@ -31,8 +31,11 @@ class TasksRelationManager extends RelationManager
      *
      * @throws Exception
      */
-    private function getTaskForm(Schedule $schedule, TaskService $taskService): array
+    private function getTaskForm(Schedule $schedule): array
     {
+        /** @var TaskService $taskService */
+        $taskService = app(TaskService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+
         $tasks = $taskService->getAll();
 
         return [
@@ -67,22 +70,17 @@ class TasksRelationManager extends RelationManager
         /** @var Schedule $schedule */
         $schedule = $this->getOwnerRecord();
 
-        /** @var TaskService $taskService */
-        $taskService = app(TaskService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
-
-        $tasks = $taskService->getAll();
-
         return $table
             ->reorderable('sequence_id')
             ->defaultSort('sequence_id')
             ->columns([
                 TextColumn::make('action')
                     ->label(trans('server/schedule.tasks.actions.title'))
-                    ->state(fn (Task $task) => $tasks[$task->action]->getName()),
+                    ->state(fn (Task $task) => $task->getSchema()?->getName() ?? $task->action),
                 TextColumn::make('payload')
                     ->label(trans('server/schedule.tasks.payload'))
-                    ->state(fn (Task $task) => $tasks[$task->action]->formatPayload($task->payload))
-                    ->tooltip(fn (Task $task) => $tasks[$task->action]->getPayloadLabel())
+                    ->state(fn (Task $task) => $task->getSchema()?->formatPayload($task->payload) ?? $task->payload)
+                    ->tooltip(fn (Task $task) => $task->getSchema()?->getPayloadLabel())
                     ->placeholder(trans('server/schedule.tasks.no_payload'))
                     ->badge(),
                 TextColumn::make('time_offset')
@@ -97,7 +95,7 @@ class TasksRelationManager extends RelationManager
             ])
             ->recordActions([
                 EditAction::make()
-                    ->schema($this->getTaskForm($schedule, $taskService))
+                    ->schema($this->getTaskForm($schedule))
                     ->mutateDataUsing(function ($data) {
                         $data['payload'] ??= '';
 
@@ -130,7 +128,7 @@ class TasksRelationManager extends RelationManager
                     ->createAnother(false)
                     ->label(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10) ? trans('server/schedule.tasks.limit') : trans('server/schedule.tasks.create'))
                     ->disabled(fn () => $schedule->tasks()->count() >= config('panel.client_features.schedules.per_schedule_task_limit', 10))
-                    ->schema($this->getTaskForm($schedule, $taskService))
+                    ->schema($this->getTaskForm($schedule))
                     ->action(function ($data) use ($schedule) {
                         $sequenceId = ($schedule->tasks()->orderByDesc('sequence_id')->first()->sequence_id ?? 0) + 1;
 
