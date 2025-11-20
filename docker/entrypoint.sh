@@ -9,12 +9,12 @@ else
 
   ## manually generate a key because key generate --force fails
   if [ -z $APP_KEY ]; then
-     echo -e "Generating key."
-     APP_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-     echo -e "Generated app key: $APP_KEY"
-     echo -e "APP_KEY=$APP_KEY" > /pelican-data/.env
+    echo -e "Generating key."
+    APP_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    echo -e "Generated app key: $APP_KEY"
+    echo -e "APP_KEY=$APP_KEY" > /pelican-data/.env
   else
-    echo -e "APP_KEY exists in environment, using that."I c
+    echo -e "APP_KEY exists in environment, using that."
     echo -e "APP_KEY=$APP_KEY" > /pelican-data/.env
   fi
 
