@@ -36,17 +36,6 @@ class Task extends Model implements Validatable
     public const RESOURCE_NAME = 'schedule_task';
 
     /**
-     * The default actions that can exist for a task
-     */
-    public const ACTION_POWER = 'power';
-
-    public const ACTION_COMMAND = 'command';
-
-    public const ACTION_BACKUP = 'backup';
-
-    public const ACTION_DELETE_FILES = 'delete_files';
-
-    /**
      * Relationships to be updated when this model is updated.
      *
      * @var string[]

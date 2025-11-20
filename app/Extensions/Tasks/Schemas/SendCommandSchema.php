@@ -10,7 +10,7 @@ final class SendCommandSchema extends TaskSchema
 {
     public function getId(): string
     {
-        return Task::ACTION_COMMAND;
+        return 'command';
     }
 
     public function runTask(Task $task): void

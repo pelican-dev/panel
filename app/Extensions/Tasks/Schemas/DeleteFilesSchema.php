@@ -11,7 +11,7 @@ final class DeleteFilesSchema extends TaskSchema
 
     public function getId(): string
     {
-        return Task::ACTION_DELETE_FILES;
+        return 'delete_files';
     }
 
     public function runTask(Task $task): void

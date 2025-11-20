@@ -14,7 +14,7 @@ final class PowerActionSchema extends TaskSchema
 
     public function getId(): string
     {
-        return Task::ACTION_POWER;
+        return 'power';
     }
 
     public function runTask(Task $task): void

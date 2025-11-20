@@ -12,7 +12,7 @@ final class CreateBackupSchema extends TaskSchema
 
     public function getId(): string
     {
-        return Task::ACTION_BACKUP;
+        return 'backup';
     }
 
     public function runTask(Task $task): void
