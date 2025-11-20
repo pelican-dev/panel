@@ -73,10 +73,9 @@ services:
       <<: [*panel-environment, *mail-environment]
       XDG_DATA_HOME: /pelican-data
       # SKIP_CADDY: true # enable when not using caddy.
-      APP_ENVIRONMENT_ONLY: "false"
-      CACHE_DRIVER: "redis"
+      CACHE_STORE: "redis"
       SESSION_DRIVER: "redis"
-      QUEUE_DRIVER: "redis"
+      QUEUE_CONNECTION: "redis"
       REDIS_HOST: "cache"
       DB_CONNECTION: "mariadb"
       DB_HOST: "database"
