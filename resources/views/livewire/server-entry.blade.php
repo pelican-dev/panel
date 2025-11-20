@@ -4,7 +4,8 @@
 @endphp
 <div wire:poll.15s
      class="relative cursor-pointer"
-     x-on:click="window.location.href = '{{ \App\Filament\Server\Pages\Console::getUrl(panel: 'server', tenant: $server) }}'">
+     x-on:click="{{ $component->redirectUrl() }}"
+     x-on:auxclick.prevent="if ($event.button === 1) {{ $component->redirectUrl(true) }}">
 
     <div class="absolute left-0 top-1 bottom-0 w-1 rounded-lg"
          style="background-color: {{ $server->condition->getColor(true) }};">
