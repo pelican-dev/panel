@@ -43,7 +43,7 @@ export PARSED_APP_URL=${APP_URL}
 
 # when running behind a proxy
 if [[ ${BEHIND_PROXY} == "true" ]]; then
-  echo "running behin proxy"
+  echo "running behind proxy"
   echo "listening on port 80 internally"
   export PARSED_LE_EMAIL=""
   export PARSED_APP_URL=":80"
