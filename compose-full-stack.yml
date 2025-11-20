@@ -7,7 +7,7 @@ x-common:
     APP_ENV: "production"
 
     # BEHIND_PROXY: true # uncomment to run behind a proxy
-    # TRUSTED_PROXIES: 127.0.0.1,172.17.0.1,172.21.0.1 # defaults are for local proxies
+    # TRUSTED_PROXIES: 127.0.0.1,172.17.0.1,172.20.0.1 # defaults are for local proxies
 
   mail:
     &mail-environment
