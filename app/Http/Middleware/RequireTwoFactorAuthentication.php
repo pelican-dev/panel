@@ -30,11 +30,8 @@ class RequireTwoFactorAuthentication
         /** @var ?User $user */
         $user = $request->user();
 
-        $uri = rtrim($request->getRequestUri(), '/') . '/';
-        $route = $request->route()->getName();
-
         // Auth and profile endpoints should always be available
-        if (!$user || Str::startsWith($uri, ['/auth/', '/profile']) || Str::startsWith($route, ['auth.', 'account.', 'filament.app.auth.'])) {
+        if (!$user || $request->routeIs('*auth.*')) {
             return $next($request);
         }
 
@@ -52,7 +49,7 @@ class RequireTwoFactorAuthentication
         }
 
         // For API calls return an exception which gets rendered nicely in the API response...
-        if ($request->isJson() || Str::startsWith($uri, '/api/')) {
+        if ($request->isJson() || Str::startsWith($request->path(), '/api')) {
             throw new TwoFactorAuthRequiredException();
         }
 
