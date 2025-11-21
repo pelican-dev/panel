@@ -144,7 +144,7 @@ class Settings extends ServerFormPage
                                                                             ],
                                                                         ]);
 
-                                                                        $imageContent = @file_get_contents($state, false, $context, 0, 256000); //256KB
+                                                                        $imageContent = @file_get_contents($state, false, $context, 0, 262144); //256KB
 
                                                                         if (!$imageContent) {
                                                                             throw new \Exception(trans('admin/egg.import.image_error'));
