@@ -19,6 +19,15 @@ x-common:
     # MAIL_PASSWORD: ""
     # MAIL_SCHEME: ""
 
+  database:
+    &db-environment
+    # Do not remove the "&db-password" from the end of the line below, it is important
+    # for Panel functionality.
+    MYSQL_ROOT_PASSWORD: "SUPERNEEDSTOCHANGE"
+    MYSQL_PASSWORD: &db-password "NEEDSTOCHANGE"
+    MYSQL_DATABASE: &db-database "panel"
+    MYSQL_USER: &db-username "pelican"
+
 #
 # ------------------------------------------------------------------------------------------
 # DANGER ZONE BELOW
@@ -28,6 +37,19 @@ x-common:
 #
 
 services:
+  database:
+    image: mariadb:10.11
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - pelican-db:/var/lib/mysql
+    environment:
+      <<: *db-environment
+
+  cache:
+    image: redis:alpine
+    restart: always
+
   panel:
     image: ghcr.io/pelican-dev/panel:latest
     build: .
@@ -39,6 +61,9 @@ services:
       - "443:443"
       # - "81:80" # if you are behind a proxy uncomment this line and comment out 80 and 443
       # - "9000:9000" # enable when not using caddy to be able to reach php-fpm
+    links:
+      - database
+      - cache
     extra_hosts:
       - "host.docker.internal:host-gateway" # shows the panel on the internal docker network as well. usually '172.17.0.1'
     volumes:
@@ -48,10 +73,21 @@ services:
       <<: [*panel-environment, *mail-environment]
       XDG_DATA_HOME: /pelican-data
       # SKIP_CADDY: true # enable when not using caddy.
+      CACHE_STORE: "redis"
+      SESSION_DRIVER: "redis"
+      QUEUE_CONNECTION: "redis"
+      REDIS_HOST: "cache"
+      DB_CONNECTION: "mariadb"
+      DB_HOST: "database"
+      DB_PORT: "3306"
+      DB_DATABASE: *db-database
+      DB_USERNAME: *db-username
+      DB_PASSWORD: *db-password
 
 volumes:
   pelican-data:
   pelican-logs:
+  pelican-db:
 
 networks:
   default:

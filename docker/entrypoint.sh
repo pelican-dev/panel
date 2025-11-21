@@ -9,10 +9,10 @@ else
 
   ## manually generate a key because key generate --force fails
   if [ -z $APP_KEY ]; then
-     echo -e "Generating key."
-     APP_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-     echo -e "Generated app key: $APP_KEY"
-     echo -e "APP_KEY=$APP_KEY" > /pelican-data/.env
+    echo -e "Generating key."
+    APP_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    echo -e "Generated app key: $APP_KEY"
+    echo -e "APP_KEY=$APP_KEY" > /pelican-data/.env
   else
     echo -e "APP_KEY exists in environment, using that."
     echo -e "APP_KEY=$APP_KEY" > /pelican-data/.env
@@ -33,15 +33,22 @@ else
   echo "APP_KEY is already set."
 fi
 
-## make sure the db is set up
-echo -e "Migrating Database"
-php artisan migrate --force
-
 echo -e "Optimizing Filament"
 php artisan filament:optimize
 
 # default to caddy not starting
 export SUPERVISORD_CADDY=false
+export PARSED_LE_EMAIL=${LE_EMAIL}
+export PARSED_APP_URL=${APP_URL}
+
+# when running behind a proxy
+if [[ ${BEHIND_PROXY} == "true" ]]; then
+  echo "running behind proxy"
+  echo "listening on port 80 internally"
+  export PARSED_LE_EMAIL=""
+  export PARSED_APP_URL=":80"
+  export APP_ASSET=${APP_URL}
+fi
 
 ## disable caddy if SKIP_CADDY is set
 if [[ "${SKIP_CADDY:-}" == "true" ]]; then
