@@ -131,9 +131,14 @@ class EditServer extends EditRecord
                                                                     }
 
                                                                     try {
+                                                                        if (!in_array(parse_url($state, PHP_URL_SCHEME), ['http', 'https'], true)) {
+                                                                            throw new \Exception(trans('admin/egg.import.invalid_url'));
+                                                                        }
+
                                                                         if (!filter_var($state, FILTER_VALIDATE_URL)) {
                                                                             throw new \Exception(trans('admin/egg.import.invalid_url'));
                                                                         }
+
 
                                                                         $allowedExtensions = [
                                                                             'png' => 'image/png',
