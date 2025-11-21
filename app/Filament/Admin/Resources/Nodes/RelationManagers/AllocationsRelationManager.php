@@ -16,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -86,6 +87,8 @@ class AllocationsRelationManager extends RelationManager
                     ->authorize(fn () => user()?->can('update', $this->getOwnerRecord())),
                 Action::make('create new allocation')
                     ->label(trans('admin/node.create_allocation'))
+                    ->icon('tabler-world-plus')
+                    ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->schema(fn () => [
                         Select::make('allocation_ip')
                             ->options(fn () => collect($this->getOwnerRecord()->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))

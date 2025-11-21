@@ -1123,7 +1123,9 @@ class EditServer extends EditRecord
                     }
                 })
                 ->hidden(fn () => $canForceDelete)
-                ->authorize(fn (Server $server) => user()?->can('delete server', $server)),
+                ->authorize(fn (Server $server) => user()?->can('delete server', $server))
+                ->icon('tabler-trash')
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
             Action::make('ForceDelete')
                 ->color('danger')
                 ->label(trans('filament-actions::force-delete.single.label'))
@@ -1144,8 +1146,11 @@ class EditServer extends EditRecord
             Action::make('console')
                 ->label(trans('admin/server.console'))
                 ->icon('tabler-terminal')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)),
-            $this->getSaveFormAction()->formId('form'),
+            $this->getSaveFormAction()->formId('form')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-device-floppy'),
         ];
 
     }
