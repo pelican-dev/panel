@@ -150,10 +150,6 @@ class Settings extends ServerFormPage
                                                                             throw new \Exception(trans('admin/egg.import.image_error'));
                                                                         }
 
-                                                                        if (strlen($imageContent) >= 1048576) {
-                                                                            throw new \Exception(trans('admin/egg.import.image_too_large'));
-                                                                        }
-
                                                                         $mimeType = $allowedExtensions[$extension];
                                                                         $base64 = 'data:' . $mimeType . ';base64,' . base64_encode($imageContent);
 

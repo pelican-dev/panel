@@ -183,7 +183,7 @@ class Server extends Model implements HasAvatar, Validatable
         'startup' => ['required', 'string'],
         'skip_scripts' => ['sometimes', 'boolean'],
         'image' => ['required', 'string', 'max:255'],
-        'icon' => ['sometimes', 'nullable', 'string', 'max:280000'],
+        'icon' => ['sometimes', 'nullable', 'string'],
         'database_limit' => ['present', 'nullable', 'integer', 'min:0'],
         'allocation_limit' => ['sometimes', 'nullable', 'integer', 'min:0'],
         'backup_limit' => ['present', 'nullable', 'integer', 'min:0'],
