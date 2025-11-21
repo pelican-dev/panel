@@ -1,15 +1,11 @@
 @php
-    $actiongroup = \App\Filament\App\Resources\Servers\Pages\ListServers::getPowerActionGroup()->record($server);
     $backgroundImage = $server->icon ?? $server->egg->image;
 @endphp
-<div wire:poll.15s
-     class="relative cursor-pointer"
+
+<div class="relative cursor-pointer"
      x-on:click="{{ $component->redirectUrl() }}"
      x-on:auxclick.prevent="if ($event.button === 1) {{ $component->redirectUrl(true) }}">
-
-    <div class="absolute left-0 top-1 bottom-0 w-1 rounded-lg"
-         style="background-color: {{ $server->condition->getColor(true) }};">
-    </div>
+    <div class="absolute left-0 top-1 bottom-0 w-1 rounded-lg" style="background-color: #D97706;"></div>
 
     <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
         @if($backgroundImage)
@@ -27,27 +23,13 @@
         <div @class([
             'flex items-center gap-2',
             'mb-5' => !$server->description,
-        ])>
-            <x-filament::icon-button
-                :icon="$server->condition->getIcon()"
-                :color="$server->condition->getColor()"
-                :tooltip="$server->condition->getLabel()"
-                size="lg"
-            />
+            ])>
+
+            <x-filament::loading-indicator class="h-6 w-6" />
             <h2 class="text-xl font-bold">
                 {{ $server->name }}
-                <span class="dark:text-gray-400">
-                    ({{ $server->formatResource(\App\Enums\ServerResourceType::Uptime) }})
-                </span>
+                <span class="dark:text-gray-400">({{ trans('server/dashboard.loading') }})</span>
             </h2>
-            @if ($actiongroup->isVisible())
-                <div class="end-0">
-                    <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-b-lg overflow-hidden p-1"
-                         x-on:click.stop>
-                        {{ $actiongroup }}
-                    </div>
-                </div>
-            @endif
         </div>
 
         @if ($server->description)
@@ -56,22 +38,23 @@
             </div>
         @endif
 
+
         <div class="flex justify-between text-center items-center gap-4">
             <div>
                 <p class="text-sm dark:text-gray-400">{{ trans('server/dashboard.cpu') }}</p>
-                <p class="text-md font-semibold">{{ $server->formatResource(\App\Enums\ServerResourceType::CPU) }}</p>
+                <p class="text-md font-semibold">{{ format_number(0, precision: 2) . '%' }}</p>
                 <hr class="p-0.5">
                 <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::CPULimit) }}</p>
             </div>
             <div>
                 <p class="text-sm dark:text-gray-400">{{ trans('server/dashboard.memory') }}</p>
-                <p class="text-md font-semibold">{{ $server->formatResource(\App\Enums\ServerResourceType::Memory) }}</p>
+                <p class="text-md font-semibold">{{ convert_bytes_to_readable(0, decimals: 2) }}</p>
                 <hr class="p-0.5">
                 <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::MemoryLimit) }}</p>
             </div>
             <div>
                 <p class="text-sm dark:text-gray-400">{{ trans('server/dashboard.disk') }}</p>
-                <p class="text-md font-semibold">{{ $server->formatResource(\App\Enums\ServerResourceType::Disk) }}</p>
+                <p class="text-md font-semibold">{{ convert_bytes_to_readable(0, decimals: 2) }}</p>
                 <hr class="p-0.5">
                 <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::DiskLimit) }}</p>
             </div>
@@ -83,3 +66,4 @@
         </div>
     </div>
 </div>
+
