@@ -139,7 +139,6 @@ class EditServer extends EditRecord
                                                                             throw new \Exception(trans('admin/egg.import.invalid_url'));
                                                                         }
 
-
                                                                         $allowedExtensions = [
                                                                             'png' => 'image/png',
                                                                             'jpg' => 'image/jpeg',
