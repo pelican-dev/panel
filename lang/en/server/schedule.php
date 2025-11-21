@@ -76,6 +76,7 @@ return [
         'limit' => 'Task Limit Reached',
         'action' => 'Action',
         'payload' => 'Payload',
+        'no_payload' => 'No Payload',
         'time_offset' => 'Time Offset',
         'first_task' => 'First Task',
         'seconds' => 'Second|Seconds',
@@ -99,10 +100,9 @@ return [
                 'title' => 'Create Backup',
                 'files_to_ignore' => 'Files to Ignore',
             ],
-            'delete' => [
+            'delete_files' => [
                 'title' => 'Delete Files',
                 'files_to_delete' => 'Files to Delete',
-
             ],
         ],
     ],

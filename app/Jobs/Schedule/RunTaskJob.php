@@ -2,11 +2,9 @@
 
 namespace App\Jobs\Schedule;
 
+use App\Extensions\Tasks\TaskService;
 use App\Jobs\Job;
 use App\Models\Task;
-use App\Repositories\Daemon\DaemonServerRepository;
-use App\Services\Backups\InitiateBackupService;
-use App\Services\Files\DeleteFilesService;
 use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -31,11 +29,8 @@ class RunTaskJob extends Job implements ShouldQueue
      *
      * @throws Throwable
      */
-    public function handle(
-        InitiateBackupService $backupService,
-        DaemonServerRepository $serverRepository,
-        DeleteFilesService $deleteFilesService
-    ): void {
+    public function handle(TaskService $taskService): void
+    {
         // Do not process a task that is not set to active, unless it's been manually triggered.
         if (!$this->task->schedule->is_active && !$this->manualRun) {
             $this->markTaskNotQueued();
@@ -57,22 +52,13 @@ class RunTaskJob extends Job implements ShouldQueue
 
         // Perform the provided task against the daemon.
         try {
-            switch ($this->task->action) {
-                case Task::ACTION_POWER:
-                    $serverRepository->setServer($server)->power($this->task->payload);
-                    break;
-                case Task::ACTION_COMMAND:
-                    $server->send($this->task->payload);
-                    break;
-                case Task::ACTION_BACKUP:
-                    $backupService->setIgnoredFiles(explode(PHP_EOL, $this->task->payload))->handle($server, null, true);
-                    break;
-                case Task::ACTION_DELETE_FILES:
-                    $deleteFilesService->handle($server, explode(PHP_EOL, $this->task->payload));
-                    break;
-                default:
-                    throw new InvalidArgumentException('Invalid task action provided: ' . $this->task->action);
+            $taskSchema = $taskService->get($this->task->action);
+
+            if (!$taskSchema) {
+                throw new InvalidArgumentException('Invalid task action provided: ' . $this->task->action);
             }
+
+            $taskSchema->runTask($this->task);
         } catch (Exception $exception) {
             // If this isn't a ConnectionException on a task that allows for failures
             // throw the exception back up the chain so that the task is stopped.
