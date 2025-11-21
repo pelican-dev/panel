@@ -56,7 +56,8 @@
         "pestphp/pest": "^3.7",
         "pestphp/pest-plugin-faker": "^3.0",
         "pestphp/pest-plugin-livewire": "^3.0",
-        "spatie/laravel-ignition": "^2.9"
+        "spatie/laravel-ignition": "^2.9",
+        "brianium/paratest": "^7.8.4"
     },
     "autoload": {
         "files": [
@@ -76,6 +77,8 @@
     "scripts": {
         "pint": "pint",
         "phpstan": "phpstan --memory-limit=-1",
+        "test": "php artisan test",
+        "test:parallel": "php artisan test --parallel",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan filament:upgrade"
