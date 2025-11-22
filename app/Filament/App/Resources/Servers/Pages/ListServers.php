@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources\Servers\Pages;
 use App\Enums\CustomizationKey;
 use App\Enums\ServerResourceType;
 use App\Filament\App\Resources\Servers\ServerResource;
+use App\Filament\Components\Tables\Columns\ProgressBarColumn;
 use App\Filament\Components\Tables\Columns\ServerEntryColumn;
 use App\Filament\Server\Pages\Console;
 use App\Models\Permission;
@@ -84,24 +85,24 @@ class ListServers extends ListRecords
                 ->visibleFrom('md')
                 ->copyable()
                 ->state(fn (Server $server) => $server->allocation->address ?? 'None'),
-            TextColumn::make('cpuUsage')
-                ->label(trans('server/dashboard.resources'))
-                ->icon('tabler-cpu')
-                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::CPULimit)]))
-                ->state(fn (Server $server) => $server->formatResource(ServerResourceType::CPU))
-                ->color(fn (Server $server) => $this->getResourceColor($server, 'cpu')),
-            TextColumn::make('memoryUsage')
+            ProgressBarColumn::make('cpuUsage')
                 ->label('')
-                ->icon('tabler-device-desktop-analytics')
-                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::MemoryLimit)]))
-                ->state(fn (Server $server) => $server->formatResource(ServerResourceType::Memory))
-                ->color(fn (Server $server) => $this->getResourceColor($server, 'memory')),
-            TextColumn::make('diskUsage')
+                ->maxValue(fn (Server $server) => $server->cpu === 0 ? 100 : $server->cpu)
+                ->state(fn (Server $server) => mt_rand(1, $server->cpu))
+                ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::CPU) . ' / ' . $server->formatResource(ServerResourceType::CPULimit))
+                ->tooltip(fn (Server $server) => $server->formatResource(ServerResourceType::CPU)),
+            ProgressBarColumn::make('memoryUsage')
                 ->label('')
-                ->icon('tabler-device-sd-card')
-                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::DiskLimit)]))
-                ->state(fn (Server $server) => $server->formatResource(ServerResourceType::Disk))
-                ->color(fn (Server $server) => $this->getResourceColor($server, 'disk')),
+                ->maxValue(fn (Server $server) => $server->memory)
+                ->state(fn (Server $server) => mt_rand(1, $server->memory))
+                ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::Memory) . ' / ' . $server->formatResource(ServerResourceType::MemoryLimit))
+                ->tooltip(fn (Server $server) => $server->formatResource(ServerResourceType::Memory)),
+            ProgressBarColumn::make('diskUsage')
+                ->label('')
+                ->maxValue(fn (Server $server) => $server->disk === 0 ? 100 : $server->disk)
+                ->state(fn (Server $server) => mt_rand(1, $server->disk))
+                ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::Disk) . ' / ' . $server->formatResource(ServerResourceType::DiskLimit))
+                ->tooltip(fn (Server $server) => $server->formatResource(ServerResourceType::Disk)),
         ];
     }
 
