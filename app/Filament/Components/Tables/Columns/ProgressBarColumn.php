@@ -4,6 +4,7 @@ namespace App\Filament\Components\Tables\Columns;
 
 use Closure;
 use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentColor;
 use Filament\Tables\Columns\Column;
 
 class ProgressBarColumn extends Column
@@ -38,9 +39,9 @@ class ProgressBarColumn extends Column
     {
         parent::setUp();
 
-        $this->dangerColor = Color::Red[500];
-        $this->warningColor = Color::Amber[500];
-        $this->color = Color::Blue[500];
+        $this->dangerColor = FilamentColor::getColor('danger');
+        $this->warningColor = FilamentColor::getColor('warning');
+        $this->color = FilamentColor::getColor('primary');
 
         $this->helperLabel = fn ($state) => $state !== null ? (string) $state : '0';
     }
@@ -143,9 +144,9 @@ class ProgressBarColumn extends Column
     {
         $lower = strtolower(trim($color));
         $aliases = [
-            'danger' => Color::Red[500],
-            'warning' => Color::Amber[500],
-            'primary' => Color::Blue[500],
+            'danger' => FilamentColor::getColor('danger'),
+            'warning' => FilamentColor::getColor('warning'),
+            'primary' => FilamentColor::getColor('primary'),
         ];
 
         if (isset($aliases[$lower])) {
