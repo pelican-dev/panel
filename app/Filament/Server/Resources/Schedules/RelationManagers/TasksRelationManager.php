@@ -48,7 +48,7 @@ class TasksRelationManager extends RelationManager
                 ->selectablePlaceholder(false)
                 ->default(array_key_first($tasks))
                 ->afterStateUpdated(fn ($state, Set $set) => $set('payload', $tasks[$state]->getDefaultPayload())),
-            Group::make(fn (Get $get) => $tasks[$get('action')]->getPayloadForm()),
+            Group::make(fn (Get $get) => array_key_exists($get('action'), $tasks) ? $tasks[$get('action')]->getPayloadForm() : []),
             TextInput::make('time_offset')
                 ->label(trans('server/schedule.tasks.time_offset'))
                 ->hidden(fn (Get $get) => config('queue.default') === 'sync' || $get('sequence_id') === 1 || $schedule->tasks->isEmpty())
