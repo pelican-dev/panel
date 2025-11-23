@@ -55,6 +55,8 @@ class ListServers extends ListRecords
         return [
             Stack::make([
                 ServerEntryColumn::make('server_entry')
+                    ->warningThresholdPercent(static::WARNING_THRESHOLD)
+                    ->dangerThresholdPercent(static::DANGER_THRESHOLD)
                     ->searchable(['name']),
             ]),
         ];

@@ -33,15 +33,11 @@
 @endphp
 
 <div
-    {{
-        $attributes
-            ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-text block w-full px-3'])
-    }}
+    @class(['fi-ta-text block w-full px-3'])
 >
     @if($isDanger && $animClass)
         <style>
-            @keyframes {{ $animClass }}           {
+            @keyframes {{ $animClass }}                   {
                 0% {
                     color: {{ $color }};
                 }
@@ -53,7 +49,7 @@
                 }
             }
 
-            .{{ $animClass }}           {
+            .{{ $animClass }}                   {
                 animation: {{ $animClass }} 1s ease-in-out infinite;
             }
         </style>
@@ -93,4 +89,3 @@
         </span>
     </div>
 </div>
-
