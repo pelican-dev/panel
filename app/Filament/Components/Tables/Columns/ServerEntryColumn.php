@@ -144,6 +144,12 @@ class ServerEntryColumn extends Column
             return Color::convertToRgb((string) $value);
         }
 
+        if (is_array($color)) {
+            $first = $color[500] ?? reset($color);
+
+            return Color::convertToRgb((string) $first);
+        }
+
         return Color::convertToRgb($color);
     }
 
