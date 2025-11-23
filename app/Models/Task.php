@@ -120,4 +120,9 @@ class Task extends Model implements Validatable
             'server_id' // schedules.server_id
         );
     }
+
+    public function isFirst(): bool
+    {
+        return $this->schedule->firstTask()?->id === $this->id;
+    }
 }
