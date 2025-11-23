@@ -112,6 +112,11 @@ class Task extends Model implements Validatable
         );
     }
 
+    public function isFirst(): bool
+    {
+        return $this->schedule->firstTask()?->id === $this->id;
+    }
+
     public function getSchema(): ?TaskSchemaInterface
     {
         /** @var TaskService $taskService */

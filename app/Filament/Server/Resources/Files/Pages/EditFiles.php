@@ -267,7 +267,7 @@ class EditFiles extends Page
         $previousParts = '';
         foreach (explode('/', $this->path) as $part) {
             $previousParts = $previousParts . '/' . $part;
-            $breadcrumbs[self::getUrl(['path' => ltrim($previousParts, '/')])] = $part;
+            $breadcrumbs[ListFiles::getUrl(['path' => ltrim($previousParts, '/')])] = $part;
         }
 
         return $breadcrumbs;
