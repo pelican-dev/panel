@@ -41,7 +41,7 @@
 >
     @if($isDanger && $animClass)
         <style>
-            @keyframes {{ $animClass }}  {
+            @keyframes {{ $animClass }}     {
                 0% {
                     color: {{ $color }};
                 }
@@ -53,7 +53,7 @@
                 }
             }
 
-            .{{ $animClass }}  {
+            .{{ $animClass }}     {
                 animation: {{ $animClass }} 1s ease-in-out infinite;
             }
         </style>
@@ -76,9 +76,9 @@
         </div>
         <span
             @class([
-                'text-xs text-center w-40',
+                'text-sm text-center w-40',
                 'text-gray-500 dark:text-gray-400' => ! $isDanger,
-                'font-semibold' => $isDanger,
+                'font-bold' => $isDanger,
                 $animClass => $isDanger && $animClass,
             ])
             @if($isDanger)
