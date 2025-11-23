@@ -455,6 +455,7 @@ class EditProfile extends BaseEditProfile
                                             ->minValue(1)
                                             ->numeric()
                                             ->required()
+                                            ->live()
                                             ->default(14),
                                         Select::make('console_font')
                                             ->label(trans('profile.font'))
@@ -479,9 +480,8 @@ class EditProfile extends BaseEditProfile
 
                                                 return $fonts;
                                             })
-                                            ->reactive()
-                                            ->default('monospace')
-                                            ->afterStateUpdated(fn ($state, Set $set) => $set('font_preview', $state)),
+                                            ->live()
+                                            ->default('monospace'),
                                         TextEntry::make('font_preview')
                                             ->label(trans('profile.font_preview'))
                                             ->columnSpan(2)
