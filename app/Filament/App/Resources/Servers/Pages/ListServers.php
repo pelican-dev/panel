@@ -92,21 +92,21 @@ class ListServers extends ListRecords
                 ->warningThresholdPercent(static::WARNING_THRESHOLD)
                 ->dangerThresholdPercent(static::DANGER_THRESHOLD)
                 ->maxValue(fn (Server $server) => $server->cpu === 0 ? 100 : $server->cpu)
-                ->state(fn (Server $server) => $server->retrieveResources()['cpu_absolute'] ?? 1)
+                ->state(fn (Server $server) => $server->retrieveResources()['cpu_absolute'] ?? 0)
                 ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::CPU, 0) . ' / ' . $server->formatResource(ServerResourceType::CPULimit, 0)),
             ProgressBarColumn::make('memoryUsage')
                 ->label('')
                 ->warningThresholdPercent(static::WARNING_THRESHOLD)
                 ->dangerThresholdPercent(static::DANGER_THRESHOLD)
                 ->maxValue(fn (Server $server) => $server->memory * 1048576)
-                ->state(fn (Server $server) => $server->retrieveResources()['memory_bytes'])
+                ->state(fn (Server $server) => $server->retrieveResources()['memory_bytes'] ?? 0)
                 ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::Memory) . ' / ' . $server->formatResource(ServerResourceType::MemoryLimit)),
             ProgressBarColumn::make('diskUsage')
                 ->label('')
                 ->warningThresholdPercent(static::WARNING_THRESHOLD)
                 ->dangerThresholdPercent(static::DANGER_THRESHOLD)
                 ->maxValue(fn (Server $server) => $server->disk * 1048576)
-                ->state(fn (Server $server) => $server->retrieveResources()['disk_bytes'])
+                ->state(fn (Server $server) => $server->retrieveResources()['disk_bytes'] ?? 0)
                 ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::Disk) . ' / ' . $server->formatResource(ServerResourceType::DiskLimit)),
         ];
     }

@@ -142,6 +142,10 @@ class ProgressBarColumn extends Column
      */
     protected function normalizeColor(string|array|null $color): string|array|null
     {
+        if ($color === null) {
+            return null;
+        }
+
         if (is_array($color)) {
             $first = $color[500] ?? reset($color);
 

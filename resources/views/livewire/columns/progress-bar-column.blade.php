@@ -7,7 +7,7 @@
     $color = $getProgressColor();
 
     if (is_array($color)) {
-        $color = $color[0] ?? 'gray';
+         $color = $color[500] ?? reset($color) ?? 'gray';
     }
 
     $isVar = str_starts_with($color, 'var(');
@@ -37,7 +37,7 @@
 >
     @if($isDanger && $animClass)
         <style>
-            @keyframes {{ $animClass }}                   {
+            @keyframes {{ $animClass }}                     {
                 0% {
                     color: {{ $color }};
                 }
@@ -49,7 +49,7 @@
                 }
             }
 
-            .{{ $animClass }}                   {
+            .{{ $animClass }}                     {
                 animation: {{ $animClass }} 1s ease-in-out infinite;
             }
         </style>

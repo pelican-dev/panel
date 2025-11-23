@@ -129,7 +129,7 @@ class ServerEntryColumn extends Column
             return null;
         }
 
-        $lower = strtolower(trim(is_array($color) ? (string) ($color[0] ?? '') : (string) $color));
+        $lower = strtolower(trim(is_array($color) ? (string) ($color[500] ?? '') : (string) $color));
         $aliases = [
             'danger' => FilamentColor::getColor('danger'),
             'warning' => FilamentColor::getColor('warning'),

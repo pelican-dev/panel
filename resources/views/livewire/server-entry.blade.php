@@ -1,5 +1,4 @@
 @php
-    use App\Enums\ServerResourceType;
     $actiongroup = \App\Filament\App\Resources\Servers\Pages\ListServers::getPowerActionGroup()->record($server);
     $backgroundImage = $server->icon ?? $server->egg->image;
 
@@ -45,7 +44,7 @@
             <h2 class="text-xl font-bold">
                 {{ $server->name }}
                 <span class="dark:text-gray-400">
-                    ({{ $server->formatResource(ServerResourceType::Uptime) }})
+                    ({{ $server->formatResource(\App\Enums\ServerResourceType::Uptime) }})
                 </span>
             </h2>
             @if ($actiongroup->isVisible())
@@ -67,12 +66,12 @@
         <div class="flex justify-between text-center items-center gap-4">
             <div class="w-full max-w-xs">
                 @php
-                    $cpuCurrent = ServerResourceType::CPU->getResourceAmount($server);
-                    $cpuMax = ServerResourceType::CPULimit->getResourceAmount($server) === 0 ? ($serverNodeSystemInfo['cpu_count'] * 100) : ServerResourceType::CPULimit->getResourceAmount($server);
+                    $cpuCurrent = \App\Enums\ServerResourceType::CPU->getResourceAmount($server);
+                    $cpuMax = \App\Enums\ServerResourceType::CPULimit->getResourceAmount($server) === 0 ? ($serverNodeSystemInfo['cpu_count'] * 100) : \App\Enums\ServerResourceType::CPULimit->getResourceAmount($server);
                     $getState = fn() => $cpuCurrent;
                     $getMaxValue = fn() => $cpuMax;
                     $getProgressPercentage = fn() => $cpuMax > 0 ? ($cpuCurrent / $cpuMax) * 100 : 0;
-                    $getProgressLabel = fn () => $server->formatResource(ServerResourceType::CPU, 0) . ' / ' . $server->formatResource(ServerResourceType::CPULimit, 0);
+                    $getProgressLabel = fn () => $server->formatResource(\App\Enums\ServerResourceType::CPU, 0) . ' / ' . $server->formatResource(\App\Enums\ServerResourceType::CPULimit, 0);
                     $getProgressStatus = fn() => ($cpuMax > 0 && ($cpuCurrent / $cpuMax) * 100 >= ($dangerPercent * 100)) ? 'danger' : (( $cpuMax > 0 && ($cpuCurrent / $cpuMax) * 100 >= ($warningPercent * 100)) ? 'warning' : 'success');
                     $getProgressColor = fn() => $serverEntryColumn->getProgressColorForStatus($getProgressStatus());
                 @endphp
@@ -89,12 +88,12 @@
 
             <div class="w-full max-w-xs">
                 @php
-                    $memCurrent = ServerResourceType::Memory->getResourceAmount($server);
-                    $memMax = ServerResourceType::MemoryLimit->getResourceAmount($server) === 0 ? $serverNodeStatistics['memory_total'] : ServerResourceType::MemoryLimit->getResourceAmount($server);
+                    $memCurrent = \App\Enums\ServerResourceType::Memory->getResourceAmount($server);
+                    $memMax = \App\Enums\ServerResourceType::MemoryLimit->getResourceAmount($server) === 0 ? $serverNodeStatistics['memory_total'] : \App\Enums\ServerResourceType::MemoryLimit->getResourceAmount($server);
                     $getState = fn() => $memCurrent;
                     $getMaxValue = fn() => $memMax > 0 ? $memMax : null;
                     $getProgressPercentage = fn() => ($memMax > 0) ? ($memCurrent / $memMax) * 100 : 0;
-                    $getProgressLabel = fn() => $server->formatResource(ServerResourceType::Memory) . ' / ' . $server->formatResource(ServerResourceType::MemoryLimit);
+                    $getProgressLabel = fn() => $server->formatResource(\App\Enums\ServerResourceType::Memory) . ' / ' . $server->formatResource(\App\Enums\ServerResourceType::MemoryLimit);
                     $getProgressStatus = fn() => ($memMax > 0 && ($memCurrent / $memMax) * 100 >= ($dangerPercent * 100)) ? 'danger' : (( $memMax > 0 && ($memCurrent / $memMax) * 100 >= ($warningPercent * 100)) ? 'warning' : 'success');
                     $getProgressColor = fn() => $serverEntryColumn->getProgressColorForStatus($getProgressStatus());
                 @endphp
@@ -111,12 +110,12 @@
 
             <div class="w-full max-w-xs">
                 @php
-                    $diskCurrent = ServerResourceType::Disk->getResourceAmount($server);
-                    $diskMax = ServerResourceType::DiskLimit->getResourceAmount($server) === 0 ? $serverNodeStatistics['disk_total'] : ServerResourceType::DiskLimit->getResourceAmount($server);
+                    $diskCurrent = \App\Enums\ServerResourceType::Disk->getResourceAmount($server);
+                    $diskMax = \App\Enums\ServerResourceType::DiskLimit->getResourceAmount($server) === 0 ? $serverNodeStatistics['disk_total'] : \App\Enums\ServerResourceType::DiskLimit->getResourceAmount($server);
                     $getState = fn() => $diskCurrent;
                     $getMaxValue = fn() => $diskMax > 0 ? $diskMax : null;
                     $getProgressPercentage = fn() => ($diskMax > 0) ? ($diskCurrent / $diskMax) * 100 : 0;
-                    $getProgressLabel = fn() => $server->formatResource(ServerResourceType::Disk) . ' / ' . $server->formatResource(ServerResourceType::DiskLimit);
+                    $getProgressLabel = fn() => $server->formatResource(\App\Enums\ServerResourceType::Disk) . ' / ' . $server->formatResource(\App\Enums\ServerResourceType::DiskLimit);
                     $getProgressStatus = fn() => ($diskMax > 0 && ($diskCurrent / $diskMax) * 100 >= ($dangerPercent * 100)) ? 'danger' : (( $diskMax > 0 && ($diskCurrent / $diskMax) * 100 >= ($warningPercent * 100)) ? 'warning' : 'success');
                     $getProgressColor = fn() => $serverEntryColumn->getProgressColorForStatus($getProgressStatus());
                 @endphp
