@@ -71,7 +71,7 @@ class ListServers extends ListRecords
             TextColumn::make('condition')
                 ->label(trans('server/dashboard.status'))
                 ->badge()
-                ->tooltip(fn (Server $server) => $server->formatResource(ServerResourceType::Uptime))
+                ->tooltip(fn (Server $server) => $server->formatResource(ServerResourceType::Uptime, 2))
                 ->icon(fn (Server $server) => $server->condition->getIcon())
                 ->color(fn (Server $server) => $server->condition->getColor()),
             TextColumn::make('name')
@@ -91,7 +91,7 @@ class ListServers extends ListRecords
                 ->dangerThresholdPercent(static::DANGER_THRESHOLD)
                 ->maxValue(fn (Server $server) => $server->cpu === 0 ? 100 : $server->cpu)
                 ->state(fn (Server $server) => $server->retrieveResources()['cpu_absolute'] ?? 1)
-                ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::CPU) . ' / ' . $server->formatResource(ServerResourceType::CPULimit)),
+                ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::CPU, 0) . ' / ' . $server->formatResource(ServerResourceType::CPULimit, 0)),
             ProgressBarColumn::make('memoryUsage')
                 ->label('')
                 ->warningThresholdPercent(static::WARNING_THRESHOLD)

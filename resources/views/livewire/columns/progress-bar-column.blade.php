@@ -41,7 +41,7 @@
 >
     @if($isDanger && $animClass)
         <style>
-            @keyframes {{ $animClass }}     {
+            @keyframes {{ $animClass }}           {
                 0% {
                     color: {{ $color }};
                 }
@@ -53,16 +53,16 @@
                 }
             }
 
-            .{{ $animClass }}     {
+            .{{ $animClass }}           {
                 animation: {{ $animClass }} 1s ease-in-out infinite;
             }
         </style>
     @endif
 
-    <div @class(['flex flex-col gap-2 w-40'])>
+    <div @class(['flex flex-col gap-2'])>
         <div
             @class(['relative rounded-full overflow-hidden w-full'])
-            style="height: 0.625rem; background-color: {{ $lightBackgroundColor }};"
+            style="height: 0.725rem; background-color: {{ $lightBackgroundColor }};"
             role="progressbar"
             aria-valuenow="{{ $currentValue }}"
             aria-valuemin="0"
@@ -76,7 +76,7 @@
         </div>
         <span
             @class([
-                'text-sm text-center w-40',
+                'text-sm text-center',
                 'text-gray-500 dark:text-gray-400' => ! $isDanger,
                 'font-bold' => $isDanger,
                 $animClass => $isDanger && $animClass,
