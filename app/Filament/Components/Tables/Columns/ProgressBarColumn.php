@@ -10,16 +10,26 @@ class ProgressBarColumn extends Column
 {
     protected string $view = 'livewire.columns.progress-bar-column';
 
-    protected int|Closure|null $maxValue = null;
+    // Accept int or float for max values
+    protected int|float|Closure|null $maxValue = null;
 
-    protected float|Closure|null $warningThresholdPercent = 0.7;
+    protected float|Closure|null $warningThresholdPercent = null;
 
-    protected float|Closure|null $dangerThresholdPercent = 0.9;
+    protected float|Closure|null $dangerThresholdPercent = null;
 
+    /**
+     * @var string|array<int|string,string>|Closure|Color|null
+     */
     protected string|array|Closure|Color|null $dangerColor = null;
 
+    /**
+     * @var string|array<int|string,string>|Closure|Color|null
+     */
     protected string|array|Closure|Color|null $warningColor = null;
 
+    /**
+     * @var string|array<int|string,string>|Closure|Color|null
+     */
     protected string|array|Closure|Color|null $color = null;
 
     protected string|Closure|null $helperLabel = null;
@@ -35,14 +45,14 @@ class ProgressBarColumn extends Column
         $this->helperLabel = fn ($state) => $state !== null ? (string) $state : '0';
     }
 
-    public function maxValue(int|Closure $value): static
+    public function maxValue(int|float|Closure $value): static
     {
         $this->maxValue = $value;
 
         return $this;
     }
 
-    public function getMaxValue(): ?int
+    public function getMaxValue(): ?float
     {
         return $this->evaluate($this->maxValue);
     }
@@ -71,6 +81,9 @@ class ProgressBarColumn extends Column
         return $this->evaluate($this->dangerThresholdPercent);
     }
 
+    /**
+     * @param  string|array<int|string,string>|Closure  $color
+     */
     public function dangerColor(string|array|Closure $color): static
     {
         $this->dangerColor = $color;
@@ -78,11 +91,17 @@ class ProgressBarColumn extends Column
         return $this;
     }
 
+    /**
+     * @return string|array<int|string,string>|null
+     */
     public function getDangerColor(): string|array|null
     {
         return $this->normalizeColor($this->evaluate($this->dangerColor));
     }
 
+    /**
+     * @param  string|array<int|string,string>|Closure  $color
+     */
     public function warningColor(string|array|Closure $color): static
     {
         $this->warningColor = $color;
@@ -90,11 +109,17 @@ class ProgressBarColumn extends Column
         return $this;
     }
 
+    /**
+     * @return string|array<int|string,string>|null
+     */
     public function getWarningColor(): string|array|null
     {
         return $this->normalizeColor($this->evaluate($this->warningColor));
     }
 
+    /**
+     * @param  string|array<int|string,string>|Closure  $color
+     */
     public function color(string|array|Closure $color): static
     {
         $this->color = $color;
@@ -102,50 +127,38 @@ class ProgressBarColumn extends Column
         return $this;
     }
 
+    /**
+     * @return string|array<int|string,string>|null
+     */
     public function getColor(): string|array|null
     {
         return $this->normalizeColor($this->evaluate($this->color));
     }
 
+    /**
+     * @param  string|array<int|string,string>|null  $color
+     * @return string|array<int|string,string>|null
+     */
     protected function normalizeColor(string|array|null $color): string|array|null
     {
-        if ($color === null) {
-            return null;
-        }
+        $lower = strtolower(trim($color));
+        $aliases = [
+            'danger' => Color::Red[500],
+            'warning' => Color::Amber[500],
+            'primary' => Color::Blue[500],
+        ];
 
-        // Accept friendly aliases like 'danger', 'warning', 'primary' and map them
-        if (is_string($color)) {
-            $lower = strtolower(trim($color));
+        if (isset($aliases[$lower])) {
+            $resolved = $aliases[$lower];
+            $resolvedArray = (array) $resolved;
+            $value = reset($resolvedArray);
 
-            $aliases = [
-                'danger' => Color::Red,
-                'warning' => Color::Amber,
-                'primary' => Color::Blue,
-            ];
-
-            if (isset($aliases[$lower])) {
-                $color = $aliases[$lower];
-            }
-        }
-
-        if (is_array($color)) {
-            $value = reset($color);
-
-            if (is_string($value)) {
-                return Color::convertToRgb($value);
-            }
-
-            return $color;
-        }
-
-        if (is_string($color) && str_starts_with($color, 'var(')) {
-            return $color;
+            return Color::convertToRgb((string) $value);
         }
 
         return Color::convertToRgb($color);
     }
 
-    // Helper label setter/getter
     public function helperLabel(string|Closure $label): static
     {
         $this->helperLabel = $label;
@@ -153,12 +166,14 @@ class ProgressBarColumn extends Column
         return $this;
     }
 
-    public function getHelperLabel(int|float|null $currentValue): ?string
+    public function getHelperLabel(int|float|null $currentValue = null): string
     {
-        return $this->evaluate($this->helperLabel, [
+        $result = $this->evaluate($this->helperLabel, [
             'state' => $currentValue,
             'percentage' => $this->getProgressPercentage(),
         ]);
+
+        return $result !== null ? (string) $result : '';
     }
 
     public function getProgressPercentage(): float
@@ -200,21 +215,40 @@ class ProgressBarColumn extends Column
 
         $label = $this->getHelperLabel($currentValue);
 
-        if ($label !== null && $label !== '') {
+        if ($label !== '') {
             return $label;
         }
 
         return (string) round($this->getProgressPercentage()) . '%';
     }
 
+    /**
+     * Return the resolved progress color. Always returns a non-null string or array.
+     *
+     * @return string|array<int|string,string>
+     */
     public function getProgressColor(): string|array
     {
         $status = $this->getProgressStatus();
 
-        return match ($status) {
+        $color = match ($status) {
             'danger' => $this->getDangerColor(),
             'warning' => $this->getWarningColor(),
             'success' => $this->getColor(),
+            default => $this->getColor(),
         };
+
+        // Normalize nullable branches to a non-null value. Prefer the resolved color, then fallback
+        // to the primary color, then to a safe string 'gray'. This guarantees the return type is
+        // string|array and avoids phpstan complaining about nullable returns in the match.
+        if ($color === null) {
+            $color = $this->getColor();
+        }
+
+        if ($color === null) {
+            return 'gray';
+        }
+
+        return $color;
     }
 }

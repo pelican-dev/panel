@@ -35,11 +35,11 @@ class ListServers extends ListRecords
     use CanCustomizeHeaderActions;
     use CanCustomizeHeaderWidgets;
 
-    protected static string $resource = ServerResource::class;
+    public const WARNING_THRESHOLD = 0.7;
 
     public const DANGER_THRESHOLD = 0.9;
 
-    public const WARNING_THRESHOLD = 0.7;
+    protected static string $resource = ServerResource::class;
 
     private DaemonServerRepository $daemonServerRepository;
 
@@ -87,22 +87,25 @@ class ListServers extends ListRecords
                 ->state(fn (Server $server) => $server->allocation->address ?? 'None'),
             ProgressBarColumn::make('cpuUsage')
                 ->label('')
+                ->warningThresholdPercent(static::WARNING_THRESHOLD)
+                ->dangerThresholdPercent(static::DANGER_THRESHOLD)
                 ->maxValue(fn (Server $server) => $server->cpu === 0 ? 100 : $server->cpu)
-                ->state(fn (Server $server) => mt_rand(1, $server->cpu))
-                ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::CPU) . ' / ' . $server->formatResource(ServerResourceType::CPULimit))
-                ->tooltip(fn (Server $server) => $server->formatResource(ServerResourceType::CPU)),
+                ->state(fn (Server $server) => $server->retrieveResources()['cpu_absolute'] ?? 1)
+                ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::CPU) . ' / ' . $server->formatResource(ServerResourceType::CPULimit)),
             ProgressBarColumn::make('memoryUsage')
                 ->label('')
-                ->maxValue(fn (Server $server) => $server->memory)
-                ->state(fn (Server $server) => mt_rand(1, $server->memory))
-                ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::Memory) . ' / ' . $server->formatResource(ServerResourceType::MemoryLimit))
-                ->tooltip(fn (Server $server) => $server->formatResource(ServerResourceType::Memory)),
+                ->warningThresholdPercent(static::WARNING_THRESHOLD)
+                ->dangerThresholdPercent(static::DANGER_THRESHOLD)
+                ->maxValue(fn (Server $server) => $server->memory * 1048576)
+                ->state(fn (Server $server) => $server->retrieveResources()['memory_bytes'])
+                ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::Memory) . ' / ' . $server->formatResource(ServerResourceType::MemoryLimit)),
             ProgressBarColumn::make('diskUsage')
                 ->label('')
-                ->maxValue(fn (Server $server) => $server->disk === 0 ? 100 : $server->disk)
-                ->state(fn (Server $server) => mt_rand(1, $server->disk))
-                ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::Disk) . ' / ' . $server->formatResource(ServerResourceType::DiskLimit))
-                ->tooltip(fn (Server $server) => $server->formatResource(ServerResourceType::Disk)),
+                ->warningThresholdPercent(static::WARNING_THRESHOLD)
+                ->dangerThresholdPercent(static::DANGER_THRESHOLD)
+                ->maxValue(fn (Server $server) => $server->disk * 1048576)
+                ->state(fn (Server $server) => $server->retrieveResources()['disk_bytes'])
+                ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::Disk) . ' / ' . $server->formatResource(ServerResourceType::DiskLimit)),
         ];
     }
 

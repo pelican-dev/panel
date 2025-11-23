@@ -27,28 +27,7 @@
     $animClass = null;
 
     if ($isDanger) {
-        if ($isRgb) {
-            preg_match_all('/[0-9]+(?:\.[0-9]+)?/', $color, $matches);
-            $parts = $matches[0] ?? [];
-
-            if (count($parts) >= 3) {
-                $r = (int) $parts[0];
-                $g = (int) $parts[1];
-                $b = (int) $parts[2];
-
-                $mix = 0.5;
-                $lr = (int) round($r + (255 - $r) * $mix);
-                $lg = (int) round($g + (255 - $g) * $mix);
-                $lb = (int) round($b + (255 - $b) * $mix);
-
-                $lighterColor = sprintf('rgb(%d, %d, %d)', $lr, $lg, $lb);
-            }
-        } elseif ($isVar) {
-            $lighterColor = "color-mix(in srgb, {$color} 50%, #ffffff)";
-        } else {
-            $lighterColor = "color-mix(in srgb, {$color} 50%, #ffffff)";
-        }
-
+        $lighterColor = "color-mix(in srgb, {$color} 50%, #ffffff)";
         $animClass = 'danger-pulse-' . substr(md5($color), 0, 8);
     }
 @endphp
@@ -62,21 +41,27 @@
 >
     @if($isDanger && $animClass)
         <style>
-            @keyframes {{ $animClass }} {
-                0% { color: {{ $color }}; }
-                50% { color: {{ $lighterColor }}; }
-                100% { color: {{ $color }}; }
+            @keyframes {{ $animClass }}  {
+                0% {
+                    color: {{ $color }};
+                }
+                50% {
+                    color: {{ $lighterColor }};
+                }
+                100% {
+                    color: {{ $color }};
+                }
             }
 
-            .{{ $animClass }} {
+            .{{ $animClass }}  {
                 animation: {{ $animClass }} 1s ease-in-out infinite;
             }
         </style>
     @endif
 
-    <div @class(['flex flex-col gap-1.5 w-full'])>
+    <div @class(['flex flex-col gap-2 w-40'])>
         <div
-            @class(['relative w-full rounded-full overflow-hidden'])
+            @class(['relative rounded-full overflow-hidden w-full'])
             style="height: 0.625rem; background-color: {{ $lightBackgroundColor }};"
             role="progressbar"
             aria-valuenow="{{ $currentValue }}"
@@ -91,15 +76,15 @@
         </div>
         <span
             @class([
-                'text-xs',
+                'text-xs text-center w-40',
                 'text-gray-500 dark:text-gray-400' => ! $isDanger,
                 'font-semibold' => $isDanger,
                 $animClass => $isDanger && $animClass,
             ])
             @if($isDanger)
                 role="status"
-                aria-live="assertive"
-                style="color: {{ $color }};"
+            aria-live="assertive"
+            style="color: {{ $color }};"
             @else
                 style="color: unset;"
             @endif
