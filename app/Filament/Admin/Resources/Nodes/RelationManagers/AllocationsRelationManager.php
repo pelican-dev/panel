@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Nodes\RelationManagers;
 
 use App\Filament\Admin\Resources\Servers\Pages\CreateServer;
+use App\Filament\Components\Actions\UpdateNodeAllocations;
 use App\Models\Allocation;
 use App\Models\Node;
 use App\Services\Allocations\AssignmentService;
@@ -80,7 +81,9 @@ class AllocationsRelationManager extends RelationManager
                     ->searchable()
                     ->label(trans('admin/node.table.ip')),
             ])
-            ->headerActions([
+            ->toolbarActions([
+                DeleteBulkAction::make()
+                    ->authorize(fn () => user()?->can('update', $this->getOwnerRecord())),
                 Action::make('create new allocation')
                     ->label(trans('admin/node.create_allocation'))
                     ->schema(fn () => [
@@ -118,9 +121,8 @@ class AllocationsRelationManager extends RelationManager
                             ->required(),
                     ])
                     ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord(), $data)),
-            ])
-            ->groupedBulkActions([
-                DeleteBulkAction::make()
+                UpdateNodeAllocations::make()
+                    ->nodeRecord($this->getOwnerRecord())
                     ->authorize(fn () => user()?->can('update', $this->getOwnerRecord())),
             ]);
     }

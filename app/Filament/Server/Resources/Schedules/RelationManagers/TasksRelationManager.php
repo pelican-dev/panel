@@ -72,7 +72,7 @@ class TasksRelationManager extends RelationManager
                 ->default('restart'),
             TextInput::make('time_offset')
                 ->label(trans('server/schedule.tasks.time_offset'))
-                ->hidden(fn (Get $get) => config('queue.default') === 'sync' || $get('sequence_id') === 1 || $schedule->tasks->isEmpty())
+                ->hidden(fn (Get $get, ?Task $task) => config('queue.default') === 'sync' || $schedule->tasks->isEmpty() || $task?->isFirst())
                 ->default(0)
                 ->numeric()
                 ->minValue(0)
@@ -108,8 +108,8 @@ class TasksRelationManager extends RelationManager
                 TextColumn::make('time_offset')
                     ->label(trans('server/schedule.tasks.time_offset'))
                     ->hidden(fn () => config('queue.default') === 'sync')
-                    ->suffix(fn (Task $task) => $task->sequence_id > 1 ? ' '. trans_choice('server/schedule.tasks.seconds', $task->time_offset) : null)
-                    ->state(fn (Task $task) => $task->sequence_id === 1 ? null : $task->time_offset)
+                    ->state(fn (Task $task) => $task->isFirst() ? null : $task->time_offset)
+                    ->suffix(fn ($state) => ' ' . trans_choice('server/schedule.tasks.seconds', $state))
                     ->placeholder(trans('server/schedule.tasks.first_task')),
                 IconColumn::make('continue_on_failure')
                     ->label(trans('server/schedule.tasks.continue_on_failure'))

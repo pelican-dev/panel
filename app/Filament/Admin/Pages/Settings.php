@@ -756,6 +756,7 @@ class Settings extends Page implements HasSchemas
                         ->hint(trans('admin/setting.misc.server.console_font_hint'))
                         ->label(trans('admin/setting.misc.server.console_font_upload'))
                         ->directory('fonts')
+                        ->disk('public')
                         ->columnSpan(1)
                         ->maxFiles(1)
                         ->preserveFilenames(),

@@ -101,6 +101,7 @@ return [
     'update' => 'Update|Update selected',
     'updated' => 'Egg updated|:count/:total Eggs updated',
     'updated_failed' => ':count failed',
+    'updated_skipped' => ':count skipped',
     'update_question' => 'Are you sure you want to update this egg?|Are you sure you want to update the selected eggs?',
     'update_description' => 'If you made any changes to the egg they will be overwritten!|If you made any changes to the eggs they will be overwritten!',
     'no_updates' => 'No updates for the selected eggs available',

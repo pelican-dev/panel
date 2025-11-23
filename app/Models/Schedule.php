@@ -142,4 +142,12 @@ class Schedule extends Model implements Validatable
     {
         return $this->belongsTo(Server::class);
     }
+
+    public function firstTask(): ?Task
+    {
+        /** @var ?Task $task */
+        $task = $this->tasks()->orderBy('sequence_id')->first();
+
+        return $task;
+    }
 }

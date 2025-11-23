@@ -57,18 +57,4 @@ return [
             'error_message' => 'An error was encountered while processing Schedule: :schedules',
         ],
     ],
-    'upgrade' => [
-        'integrity' => 'This command does not verify the integrity of downloaded assets. Please ensure that you trust the download source before continuing. If you do not wish to download an archive, please indicate that using the --skip-download flag, or answering "no" to the question below.',
-        'source_url' => 'Download Source (set with --url=):',
-        'php_version' => 'Cannot execute self-upgrade process. The minimum required PHP version required is 7.4.0, you have :current',
-        'skipDownload' => 'Would you like to download and unpack the archive files for the latest version?',
-        'webserver_user' => 'Your webserver user has been detected as <fg=blue>[{:user}]:</> is this correct?',
-        'name_webserver' => 'Please enter the name of the user running your webserver process. This varies from system to system, but is generally "www-data", "nginx", or "apache".',
-        'group_webserver' => 'Your webserver group has been detected as <fg=blue>[{:group}]:</> is this correct?',
-        'group_webserver_question' => 'Please enter the name of the group running your webserver process. Normally this is the same as your user.',
-        'are_your_sure' => 'Are you sure you want to run the upgrade process for your Panel?',
-        'terminated' => 'Upgrade process terminated by user.',
-        'success' => 'Panel has been successfully upgraded. Please ensure you also update any Daemon instances',
-
-    ],
 ];

@@ -126,7 +126,7 @@ class MountResource extends Resource
                     ToggleButtons::make('read_only')
                         ->label(trans('admin/mount.read_only'))
                         ->helperText(trans('admin/mount.read_only_help'))
-                        ->stateCast(new BooleanStateCast(false))
+                        ->stateCast(new BooleanStateCast(false, true))
                         ->options([
                             false => trans('admin/mount.toggles.writable'),
                             true => trans('admin/mount.toggles.read_only'),
@@ -140,8 +140,7 @@ class MountResource extends Resource
                             true => 'success',
                         ])
                         ->inline()
-                        ->default(false)
-                        ->required(),
+                        ->default(false),
                     TextInput::make('source')
                         ->label(trans('admin/mount.source'))
                         ->required()

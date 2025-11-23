@@ -17,6 +17,11 @@ return [
             'from_files' => 'Upload Files',
             'from_url' => 'Upload from URL',
             'url' => 'URL',
+            'drop_files' => 'Drop files to upload',
+            'success' => 'Files uploaded successfully',
+            'failed' => 'Failed to upload files',
+            'header' => 'Uploading Files',
+            'error' => 'An error occurred while uploading',
         ],
         'rename' => [
             'title' => 'Rename',
