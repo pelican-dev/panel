@@ -2,7 +2,6 @@
 
 namespace App\Filament\Components\Actions;
 
-use AllowDynamicProperties;
 use App\Enums\EggFormat;
 use App\Models\Egg;
 use Filament\Actions\Action;
