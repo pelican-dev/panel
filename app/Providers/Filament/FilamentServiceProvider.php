@@ -121,12 +121,12 @@ class FilamentServiceProvider extends ServiceProvider
             SupportIconAlias::BREADCRUMBS_SEPARATOR => 'tabler-chevrons-right',
             SupportIconAlias::PAGINATION_NEXT_BUTTON => 'tabler-arrow-right',
             SupportIconAlias::PAGINATION_PREVIOUS_BUTTON => 'tabler-arrow-left',
-            SupportIconAlias::SECTION_COLLAPSE_BUTTON => 'tabler-arrow-up',
+            SupportIconAlias::SECTION_COLLAPSE_BUTTON => 'tabler-chevron-up',
 
             FormsIconAlias::COMPONENTS_KEY_VALUE_ACTIONS_DELETE => 'tabler-trash',
             FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_DELETE => 'tabler-trash',
-            FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_EXPAND => 'tabler-arrow-down',
-            FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_COLLAPSE => 'tabler-arrow-up',
+            FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_EXPAND => 'tabler-chevron-down',
+            FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_COLLAPSE => 'tabler-chevron-up',
             FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_REORDER => 'tabler-arrows-sort',
 
             SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP => 'tabler-check',
