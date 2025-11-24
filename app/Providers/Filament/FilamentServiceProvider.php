@@ -86,7 +86,6 @@ class FilamentServiceProvider extends ServiceProvider
         });
 
         Select::configureUsing(fn (Select $select) => $select->native(false));
-        Action::configureUsing(fn (Action $action) => $action->iconSize(IconSize::Large));
 
         FilamentIcon::register([
             ActionsIconAlias::DELETE_ACTION => 'tabler-trash',

@@ -2,12 +2,12 @@
 
 namespace App\Filament\Components\Actions;
 
+use AllowDynamicProperties;
 use App\Enums\EggFormat;
 use App\Models\Egg;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\IconSize;
 
 class ExportEggAction extends Action
 {
@@ -21,11 +21,10 @@ class ExportEggAction extends Action
         parent::setUp();
 
         $this->label(trans('filament-actions::export.modal.actions.export.label'));
+
         $this->iconButton();
 
         $this->icon('tabler-file-export');
-
-        $this->iconSize(IconSize::ExtraLarge);
 
         $this->tableIcon('tabler-download');
 
