@@ -36,7 +36,7 @@ Route::prefix('/account')->middleware(AccountSubject::class)->group(function () 
     Route::prefix('/ssh-keys')->group(function () {
         Route::get('/', [Client\SSHKeyController::class, 'index']);
         Route::post('/', [Client\SSHKeyController::class, 'store']);
-        Route::delete('/{identifier}', [Client\SSHKeyController::class, 'delete']);
+        Route::delete('/{fingerprint}', [Client\SSHKeyController::class, 'delete']);
     });
 });
 

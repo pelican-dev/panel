@@ -40,20 +40,13 @@ class SSHKeyControllerTest extends ClientApiIntegrationTestCase
         $key = UserSSHKey::factory()->for($user)->create();
         $key2 = UserSSHKey::factory()->for($user2)->create();
 
-        $endpoint = '/api/client/account/ssh-keys/remove';
-
         $this->actingAs($user);
-        $this->deleteJson($endpoint)
-            ->assertUnprocessable()
-            ->assertJsonPath('errors.0.meta', ['source_field' => 'fingerprint', 'rule' => 'required']);
-
-        $this->deleteJson($endpoint, ['fingerprint' => $key->fingerprint])->assertNoContent();
+        $this->delete('/api/client/account/ssh-keys/' . $key->fingerprint)->assertNoContent();
 
         $this->assertSoftDeleted($key);
         $this->assertNotSoftDeleted($key2);
 
-        $this->deleteJson($endpoint, ['fingerprint' => $key->fingerprint])->assertNoContent();
-        $this->deleteJson($endpoint, ['fingerprint' => $key2->fingerprint])->assertNoContent();
+        $this->delete('/api/client/account/ssh-keys/' . $key2->fingerprint)->assertNotFound();
 
         $this->assertNotSoftDeleted($key2);
     }
