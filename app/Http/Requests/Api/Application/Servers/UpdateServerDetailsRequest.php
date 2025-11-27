@@ -30,7 +30,7 @@ class UpdateServerDetailsRequest extends ServerWriteRequest
      */
     public function validated($key = null, $default = null): array
     {
-        $payload = [
+        $attributes = [
             'external_id' => $this->input('external_id'),
             'name' => $this->input('name'),
             'owner_id' => $this->input('user'),
@@ -38,10 +38,10 @@ class UpdateServerDetailsRequest extends ServerWriteRequest
         ];
 
         if ($this->has('docker_labels')) {
-            $payload['docker_labels'] = $this->input('docker_labels');
+            $attributes['docker_labels'] = $this->input('docker_labels');
         }
 
-        return $payload;
+        return $attributes;
     }
 
     /**
