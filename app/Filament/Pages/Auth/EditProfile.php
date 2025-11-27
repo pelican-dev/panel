@@ -37,7 +37,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\IconSize;
@@ -456,6 +455,7 @@ class EditProfile extends BaseEditProfile
                                             ->minValue(1)
                                             ->numeric()
                                             ->required()
+                                            ->live()
                                             ->default(14),
                                         Select::make('console_font')
                                             ->label(trans('profile.font'))
@@ -480,9 +480,8 @@ class EditProfile extends BaseEditProfile
 
                                                 return $fonts;
                                             })
-                                            ->reactive()
-                                            ->default('monospace')
-                                            ->afterStateUpdated(fn ($state, Set $set) => $set('font_preview', $state)),
+                                            ->live()
+                                            ->default('monospace'),
                                         TextEntry::make('font_preview')
                                             ->label(trans('profile.font_preview'))
                                             ->columnSpan(2)

@@ -2,7 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Filament\Server\Pages\Console;
 use App\Models\Server;
+use Filament\Support\Facades\FilamentView;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -12,68 +14,23 @@ class ServerEntry extends Component
 
     public function render(): View
     {
-        return view('livewire.server-entry');
+        return view('livewire.server-entry', ['component' => $this]);
     }
 
-    public function placeholder(): string
+    public function placeholder(): View
     {
-        return <<<'HTML'
-        <div class="relative cursor-pointer" x-on:click="window.location.href = '{{ \App\Filament\Server\Pages\Console::getUrl(panel: 'server', tenant: $server) }}'">
-            <div
-                class="absolute left-0 top-1 bottom-0 w-1 rounded-lg"
-                style="background-color: #D97706;">
-            </div>
+        return view('livewire.server-entry-placeholder', ['server' => $this->server, 'component' => $this]);
+    }
 
-            <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
-                @if($server->egg->image)
-                    <div style="
-                        position: absolute;
-                        inset: 0;
-                        background: url('{{ $server->egg->image }}') right no-repeat;
-                        background-size: contain;
-                        opacity: 0.20;
-                        max-width: 680px;
-                        max-height: 140px;
-                    "></div>
-                @endif
+    public function redirectUrl(?bool $shouldOpenUrlInNewTab = false): string
+    {
+        $url = Console::getUrl(panel: 'server', tenant: $this->server);
+        $target = $shouldOpenUrlInNewTab ? '_blank' : '_self';
 
-                <div class="flex items-center mb-5 gap-2">
-                    <x-filament::loading-indicator class="h-6 w-6" />
-                    <h2 class="text-xl font-bold">
-                        {{ $server->name }}
-                        <span class="dark:text-gray-400">
-                        ({{ trans('server/dashboard.loading') }})
-                        </span>
-                    </h2>
-                </div>
+        if (!$shouldOpenUrlInNewTab && FilamentView::hasSpaMode($url)) {
+            return sprintf("Livewire.navigate('%s')", $url);
+        }
 
-                <div class="flex justify-between text-center items-center gap-4">
-                    <div>
-                        <p class="text-sm dark:text-gray-400">{{ trans('server/dashboard.cpu') }}</p>
-                        <p class="text-md font-semibold">{{ format_number(0, precision: 2) . '%' }}</p>
-                        <hr class="p-0.5">
-                        <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::CPULimit) }}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm dark:text-gray-400">{{ trans('server/dashboard.memory') }}</p>
-                        <p class="text-md font-semibold">{{ convert_bytes_to_readable(0, decimals: 2) }}</p>
-                        <hr class="p-0.5">
-                        <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::MemoryLimit) }}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm dark:text-gray-400">{{ trans('server/dashboard.disk') }}</p>
-                        <p class="text-md font-semibold">{{ convert_bytes_to_readable(0, decimals: 2) }}</p>
-                        <hr class="p-0.5">
-                        <p class="text-xs dark:text-gray-400">{{ $server->formatResource(\App\Enums\ServerResourceType::DiskLimit) }}</p>
-                    </div>
-                    <div class="hidden sm:block">
-                        <p class="text-sm dark:text-gray-400">{{ trans('server/dashboard.network') }}</p>
-                        <hr class="p-0.5">
-                        <p class="text-md font-semibold">{{ $server->allocation?->address ?? trans('server/dashboard.none') }} </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        HTML;
+        return sprintf("window.open('%s', '%s')", $url, $target);
     }
 }
