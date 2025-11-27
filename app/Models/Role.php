@@ -55,6 +55,7 @@ class Role extends BaseRole
     ];
 
     public const MODEL_ICONS = [
+        'health' => 'tabler-heart',
         'activityLog' => 'tabler-stack',
         'panelLog' => 'tabler-file-info',
     ];
@@ -82,6 +83,14 @@ class Role extends BaseRole
         static::registerCustomPermissions([
             $model => $permissions,
         ]);
+    }
+
+    /** @var array<string, string> */
+    protected static array $customModelIcons = [];
+
+    public static function registerCustomModelIcon(string $model, string $icon): void
+    {
+        static::$customModelIcons[$model] = $icon;
     }
 
     /** @return array<string, array<string>> */
@@ -131,8 +140,10 @@ class Role extends BaseRole
 
     public static function getModelIcon(string $model): ?string
     {
-        if (array_key_exists($model, static::MODEL_ICONS)) {
-            return static::MODEL_ICONS[$model];
+        $customModels = array_merge(static::MODEL_ICONS, static::$customModelIcons);
+
+        if (array_key_exists($model, $customModels)) {
+            return $customModels[$model];
         }
 
         $model = ucwords($model);
