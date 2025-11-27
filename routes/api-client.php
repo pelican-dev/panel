@@ -27,14 +27,16 @@ Route::prefix('/account')->middleware(AccountSubject::class)->group(function () 
 
     Route::get('/activity', Client\ActivityLogController::class)->name('api:client.account.activity');
 
-    Route::get('/api-keys', [Client\ApiKeyController::class, 'index']);
-    Route::post('/api-keys', [Client\ApiKeyController::class, 'store']);
-    Route::delete('/api-keys/{identifier}', [Client\ApiKeyController::class, 'delete']);
+    Route::prefix('/api-keys')->group(function () {
+        Route::get('/', [Client\ApiKeyController::class, 'index']);
+        Route::post('/', [Client\ApiKeyController::class, 'store']);
+        Route::delete('/{identifier}', [Client\ApiKeyController::class, 'delete']);
+    });
 
     Route::prefix('/ssh-keys')->group(function () {
         Route::get('/', [Client\SSHKeyController::class, 'index']);
         Route::post('/', [Client\SSHKeyController::class, 'store']);
-        Route::post('/remove', [Client\SSHKeyController::class, 'delete']);
+        Route::delete('/{fingerprint}', [Client\SSHKeyController::class, 'delete']);
     });
 });
 
@@ -91,12 +93,12 @@ Route::prefix('/servers/{server:uuid}')->middleware([ServerSubject::class, Authe
         Route::delete('/{schedule}/tasks/{task}', [Client\Servers\ScheduleTaskController::class, 'delete']);
     });
 
-    Route::prefix('/network')->group(function () {
-        Route::get('/allocations', [Client\Servers\NetworkAllocationController::class, 'index']);
-        Route::post('/allocations', [Client\Servers\NetworkAllocationController::class, 'store']);
-        Route::post('/allocations/{allocation}', [Client\Servers\NetworkAllocationController::class, 'update']);
-        Route::post('/allocations/{allocation}/primary', [Client\Servers\NetworkAllocationController::class, 'setPrimary']);
-        Route::delete('/allocations/{allocation}', [Client\Servers\NetworkAllocationController::class, 'delete']);
+    Route::prefix('/network/allocations')->group(function () {
+        Route::get('/', [Client\Servers\NetworkAllocationController::class, 'index']);
+        Route::post('/', [Client\Servers\NetworkAllocationController::class, 'store']);
+        Route::post('/{allocation}', [Client\Servers\NetworkAllocationController::class, 'update']);
+        Route::post('/{allocation}/primary', [Client\Servers\NetworkAllocationController::class, 'setPrimary']);
+        Route::delete('/{allocation}', [Client\Servers\NetworkAllocationController::class, 'delete']);
     });
 
     Route::prefix('/users')->group(function () {
