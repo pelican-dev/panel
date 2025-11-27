@@ -44,8 +44,8 @@ class DetailsModificationService
                 'description' => Arr::get($data, 'description') ?? '',
             ];
 
-            if (array_key_exists('docker_labels', $data)) {
-                $attributes['docker_labels'] = Arr::get($data, 'docker_labels');
+            if ($labels = Arr::get($data, 'docker_labels')) {
+                $attributes['docker_labels'] = $labels;
             }
 
             $server->forceFill($attributes)->saveOrFail();
