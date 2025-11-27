@@ -167,23 +167,11 @@ class RoleResource extends Resource
      */
     private static function makeSection(string $model, array $options): Section
     {
-        $model = ucwords($model);
-
-        $icon = null;
-
-        if (class_exists($class = '\\App\\Filament\\Admin\\Resources\\' . $model . 's\\' . $model . 'Resource')) {
-            $icon = $class::getNavigationIcon();
-        } elseif (class_exists($class = '\\App\\Filament\\Admin\\Pages\\' . $model)) {
-            $icon = $class::getNavigationIcon();
-        } elseif (class_exists($class = '\\App\\Filament\\Server\\Resources\\' . $model . 's\\' . $model . 'Resource')) {
-            $icon = $class::getNavigationIcon();
-        }
-
         return Section::make(Str::headline($model))
             ->columnSpan(1)
             ->collapsible()
             ->collapsed()
-            ->icon($icon)
+            ->icon(Role::getModelIcon($model))
             ->headerActions([
                 Action::make('count')
                     ->label(fn (Get $get) => count($get(strtolower($model) . '_list')))

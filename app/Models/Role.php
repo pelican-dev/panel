@@ -54,6 +54,11 @@ class Role extends BaseRole
         ],
     ];
 
+    public const MODEL_ICONS = [
+        'activityLog' => 'tabler-stack',
+        'panelLog' => 'tabler-file-info',
+    ];
+
     /** @var array<string, array<string>> */
     protected static array $customPermissions = [];
 
@@ -122,6 +127,29 @@ class Role extends BaseRole
         }
 
         return $allPermissions;
+    }
+
+    public static function getModelIcon(string $model): ?string
+    {
+        if (array_key_exists($model, static::MODEL_ICONS)) {
+            return static::MODEL_ICONS[$model];
+        }
+
+        $model = ucwords($model);
+
+        if (class_exists($class = '\\App\\Filament\\Admin\\Resources\\' . $model . 's\\' . $model . 'Resource')) {
+            return $class::getNavigationIcon();
+        }
+
+        if (class_exists($class = '\\App\\Filament\\Admin\\Pages\\' . $model)) {
+            return $class::getNavigationIcon();
+        }
+
+        if (class_exists($class = '\\App\\Filament\\Server\\Resources\\' . $model . 's\\' . $model . 'Resource')) {
+            return $class::getNavigationIcon();
+        }
+
+        return null;
     }
 
     public function isRootAdmin(): bool
