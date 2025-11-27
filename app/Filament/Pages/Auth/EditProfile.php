@@ -39,6 +39,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
@@ -550,8 +551,12 @@ class EditProfile extends BaseEditProfile
     protected function getDefaultHeaderActions(): array
     {
         return [
-            $this->getSaveFormAction()->formId('form'),
-            $this->getCancelFormAction()->formId('form'),
+            $this->getCancelFormAction()->formId('form')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-arrow-left'),
+            $this->getSaveFormAction()->formId('form')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-device-floppy'),
         ];
 
     }

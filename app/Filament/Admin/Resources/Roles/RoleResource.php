@@ -15,7 +15,6 @@ use App\Traits\Filament\CanModifyTable;
 use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -104,12 +103,6 @@ class RoleResource extends Resource
             ->checkIfRecordIsSelectableUsing(fn (Role $role) => !$role->isRootAdmin() && $role->users_count <= 0)
             ->groupedBulkActions([
                 DeleteBulkAction::make(),
-            ])
-            ->emptyStateIcon('tabler-users-group')
-            ->emptyStateDescription('')
-            ->emptyStateHeading(trans('admin/role.no_roles'))
-            ->emptyStateActions([
-                CreateAction::make(),
             ]);
     }
 
