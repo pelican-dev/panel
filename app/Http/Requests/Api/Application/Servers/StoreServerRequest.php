@@ -30,7 +30,7 @@ class StoreServerRequest extends ApplicationApiRequest
             'egg' => $rules['egg_id'],
             'docker_image' => 'sometimes|string',
             'docker_labels' => 'sometimes|array',
-            'docker_labels.*' => 'string',
+            'docker_labels.*' => 'required|string',
             'startup' => 'sometimes|string',
             'environment' => 'present|array',
             'skip_scripts' => 'sometimes|boolean',
