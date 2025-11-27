@@ -2,36 +2,19 @@
 
 namespace App\Filament\Components\Tables\Columns;
 
+use App\Filament\Components\Tables\Columns\Concerns\HasProgress;
 use Closure;
-use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Tables\Columns\Column;
 
 class ProgressBarColumn extends Column
 {
+    use HasProgress;
+
     protected string $view = 'livewire.columns.progress-bar-column';
 
     // Accept int or float for max values
     protected int|float|Closure|null $maxValue = null;
-
-    protected float|Closure|null $warningThresholdPercent = null;
-
-    protected float|Closure|null $dangerThresholdPercent = null;
-
-    /**
-     * @var string|array<int|string,string>|Closure|Color|null
-     */
-    protected string|array|Closure|Color|null $dangerColor = null;
-
-    /**
-     * @var string|array<int|string,string>|Closure|Color|null
-     */
-    protected string|array|Closure|Color|null $warningColor = null;
-
-    /**
-     * @var string|array<int|string,string>|Closure|Color|null
-     */
-    protected string|array|Closure|Color|null $color = null;
 
     protected string|Closure|null $helperLabel = null;
 
@@ -58,118 +41,6 @@ class ProgressBarColumn extends Column
         return $this->evaluate($this->maxValue);
     }
 
-    public function warningThresholdPercent(float|Closure $value): static
-    {
-        $this->warningThresholdPercent = $value;
-
-        return $this;
-    }
-
-    public function getWarningThresholdPercent(): ?float
-    {
-        return $this->evaluate($this->warningThresholdPercent);
-    }
-
-    public function dangerThresholdPercent(float|Closure $value): static
-    {
-        $this->dangerThresholdPercent = $value;
-
-        return $this;
-    }
-
-    public function getDangerThresholdPercent(): ?float
-    {
-        return $this->evaluate($this->dangerThresholdPercent);
-    }
-
-    /**
-     * @param  string|array<int|string,string>|Closure  $color
-     */
-    public function dangerColor(string|array|Closure $color): static
-    {
-        $this->dangerColor = $color;
-
-        return $this;
-    }
-
-    /**
-     * @return string|array<int|string,string>|null
-     */
-    public function getDangerColor(): string|array|null
-    {
-        return $this->normalizeColor($this->evaluate($this->dangerColor));
-    }
-
-    /**
-     * @param  string|array<int|string,string>|Closure  $color
-     */
-    public function warningColor(string|array|Closure $color): static
-    {
-        $this->warningColor = $color;
-
-        return $this;
-    }
-
-    /**
-     * @return string|array<int|string,string>|null
-     */
-    public function getWarningColor(): string|array|null
-    {
-        return $this->normalizeColor($this->evaluate($this->warningColor));
-    }
-
-    /**
-     * @param  string|array<int|string,string>|Closure  $color
-     */
-    public function color(string|array|Closure $color): static
-    {
-        $this->color = $color;
-
-        return $this;
-    }
-
-    /**
-     * @return string|array<int|string,string>|null
-     */
-    public function getColor(): string|array|null
-    {
-        return $this->normalizeColor($this->evaluate($this->color));
-    }
-
-    /**
-     * @param  string|array<int|string,string>|null  $color
-     * @return string|array<int|string,string>|null
-     */
-    protected function normalizeColor(string|array|null $color): string|array|null
-    {
-        if ($color === null) {
-            return null;
-        }
-
-        if (is_array($color)) {
-            $first = $color[500] ?? reset($color);
-
-            return Color::convertToRgb((string) $first);
-        }
-
-        $lower = strtolower(trim($color));
-        $aliases = [
-            'danger' => FilamentColor::getColor('danger'),
-            'warning' => FilamentColor::getColor('warning'),
-            'primary' => FilamentColor::getColor('primary'),
-        ];
-
-        if (isset($aliases[$lower])) {
-            $resolved = $aliases[$lower];
-            $resolvedArray = (array) $resolved;
-            $value = reset($resolvedArray);
-
-            return Color::convertToRgb((string) $value);
-        }
-
-        return Color::convertToRgb($color);
-    }
-
     public function helperLabel(string|Closure $label): static
     {
         $this->helperLabel = $label;
@@ -177,7 +48,7 @@ class ProgressBarColumn extends Column
         return $this;
     }
 
-    public function getHelperLabel(int|float|null $currentValue = null): string
+    public function getHelperLabel(mixed $currentValue = null): string
     {
         $result = $this->evaluate($this->helperLabel, [
             'state' => $currentValue,
@@ -230,7 +101,7 @@ class ProgressBarColumn extends Column
             return $label;
         }
 
-        return (string) round($this->getProgressPercentage()) . '%';
+        return sprintf('%d%%', (int) round($this->getProgressPercentage()));
     }
 
     /**
