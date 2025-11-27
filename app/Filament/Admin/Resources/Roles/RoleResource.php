@@ -171,12 +171,12 @@ class RoleResource extends Resource
 
         $icon = null;
 
-        if (class_exists('\App\Filament\Admin\Resources\\' . $model . 'Resource')) {
-            $icon = ('\App\Filament\Admin\Resources\\' . $model . 'Resource')::getNavigationIcon();
-        } elseif (class_exists('\App\Filament\Admin\Pages\\' . $model)) {
-            $icon = ('\App\Filament\Admin\Pages\\' . $model)::getNavigationIcon();
-        } elseif (class_exists('\App\Filament\Server\Resources\\' . $model . 'Resource')) {
-            $icon = ('\App\Filament\Server\Resources\\' . $model . 'Resource')::getNavigationIcon();
+        if (class_exists($class = '\\App\\Filament\\Admin\\Resources\\' . $model . 's\\' . $model . 'Resource')) {
+            $icon = $class::getNavigationIcon();
+        } elseif (class_exists($class = '\\App\\Filament\\Admin\\Pages\\' . $model)) {
+            $icon = $class::getNavigationIcon();
+        } elseif (class_exists($class = '\\App\\Filament\\Server\\Resources\\' . $model . 's\\' . $model . 'Resource')) {
+            $icon = $class::getNavigationIcon();
         }
 
         return Section::make(Str::headline($model))
