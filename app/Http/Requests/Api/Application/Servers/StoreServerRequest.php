@@ -30,7 +30,9 @@ class StoreServerRequest extends ApplicationApiRequest
             'egg' => $rules['egg_id'],
             'docker_image' => 'sometimes|string',
             'docker_labels' => 'sometimes|array',
-            'docker_labels.*' => 'required|string',
+            // Docker labels are validated via https://regex101.com/r/FiYrwo/1 following Docker key format
+            // recommendations: https://docs.docker.com/engine/manage-resources/labels/
+            'docker_labels.*' => 'required|regex:/^(?!(?:com\.docker\.|io\.docker\.|org\.dockerproject\.))(?=.*[a-z]$)[a-z](?:[a-z0-9]|(?<!\.)\.(?!\.)|(?<!-)-(?!-))*$/',
             'startup' => 'sometimes|string',
             'environment' => 'present|array',
             'skip_scripts' => 'sometimes|boolean',
