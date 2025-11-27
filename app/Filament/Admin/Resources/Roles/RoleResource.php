@@ -15,7 +15,6 @@ use App\Traits\Filament\CanModifyTable;
 use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -104,12 +103,6 @@ class RoleResource extends Resource
             ->checkIfRecordIsSelectableUsing(fn (Role $role) => !$role->isRootAdmin() && $role->users_count <= 0)
             ->groupedBulkActions([
                 DeleteBulkAction::make(),
-            ])
-            ->emptyStateIcon('tabler-users-group')
-            ->emptyStateDescription('')
-            ->emptyStateHeading(trans('admin/role.no_roles'))
-            ->emptyStateActions([
-                CreateAction::make(),
             ]);
     }
 
@@ -167,23 +160,11 @@ class RoleResource extends Resource
      */
     private static function makeSection(string $model, array $options): Section
     {
-        $model = ucwords($model);
-
-        $icon = null;
-
-        if (class_exists('\App\Filament\Admin\Resources\\' . $model . 'Resource')) {
-            $icon = ('\App\Filament\Admin\Resources\\' . $model . 'Resource')::getNavigationIcon();
-        } elseif (class_exists('\App\Filament\Admin\Pages\\' . $model)) {
-            $icon = ('\App\Filament\Admin\Pages\\' . $model)::getNavigationIcon();
-        } elseif (class_exists('\App\Filament\Server\Resources\\' . $model . 'Resource')) {
-            $icon = ('\App\Filament\Server\Resources\\' . $model . 'Resource')::getNavigationIcon();
-        }
-
         return Section::make(Str::headline($model))
             ->columnSpan(1)
             ->collapsible()
             ->collapsed()
-            ->icon($icon)
+            ->icon(Role::getModelIcon($model))
             ->headerActions([
                 Action::make('count')
                     ->label(fn (Get $get) => count($get(strtolower($model) . '_list')))

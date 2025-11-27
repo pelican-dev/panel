@@ -20,6 +20,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -62,6 +63,10 @@ class ListServers extends ListRecords
     protected function tableColumns(): array
     {
         return [
+            ImageColumn::make('icon')
+                ->label('')
+                ->imageSize(46)
+                ->state(fn (Server $server) => $server->icon ?: $server->egg->image),
             TextColumn::make('condition')
                 ->label(trans('server/dashboard.status'))
                 ->badge()
