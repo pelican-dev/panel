@@ -21,9 +21,11 @@ class FindAssignableAllocationService
     public function __construct(private AssignmentService $service) {}
 
     /**
-     * Finds an existing unassigned allocation and attempts to assign it to the given server. If
-     * no allocation can be found, a new one will be created with a random port between the defined
-     * range from the configuration.
+     * Finds an existing unassigned allocation and attempts to assign it to the given server.
+     *
+     * Always attempts to find an existing unassigned allocation first. If create_new is enabled
+     * and no unassigned allocation is available, creates a new one from the configured port range.
+     * If create_new is disabled, throws an exception when no unassigned allocations are available.
      *
      * @throws DisplayException
      * @throws CidrOutOfRangeException
@@ -37,9 +39,11 @@ class FindAssignableAllocationService
             throw new AutoAllocationNotEnabledException();
         }
 
+        $createNew = config('panel.client_features.allocations.create_new', true);
+
         // Attempt to find a given available allocation for a server. If one cannot be found
-        // we will fall back to attempting to create a new allocation that can be used for the
-        // server.
+        // and create_new is enabled, we will fall back to attempting to create a new allocation
+        // that can be used for the server.
         $start = config('panel.client_features.allocations.range_start', null);
         $end = config('panel.client_features.allocations.range_end', null);
 
@@ -61,6 +65,12 @@ class FindAssignableAllocationService
             ->inRandomOrder()
             ->first();
 
+        // If create_new is disabled, only pick from existing allocations
+        if (!$createNew && !$allocation) {
+            throw new NoAutoAllocationSpaceAvailableException();
+        }
+
+        // If create_new is enabled, create a new allocation if none available
         $allocation ??= $this->createNewAllocation($server, $start, $end);
 
         $allocation->update(['server_id' => $server->id]);
