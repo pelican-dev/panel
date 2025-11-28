@@ -13,7 +13,6 @@ class ProgressBarColumn extends Column
 
     protected string $view = 'livewire.columns.progress-bar-column';
 
-    // Accept int or float for max values
     protected int|float|Closure|null $maxValue = null;
 
     protected string|Closure|null $helperLabel = null;
@@ -105,8 +104,6 @@ class ProgressBarColumn extends Column
     }
 
     /**
-     * Return the resolved progress color. Always returns a non-null string or array.
-     *
      * @return string|array<int|string,string>
      */
     public function getProgressColor(): string|array
@@ -120,9 +117,6 @@ class ProgressBarColumn extends Column
             default => $this->getColor(),
         };
 
-        // Normalize nullable branches to a non-null value. Prefer the resolved color, then fallback
-        // to the primary color, then to a safe string 'gray'. This guarantees the return type is
-        // string|array and avoids phpstan complaining about nullable returns in the match.
         if ($color === null) {
             $color = $this->getColor();
         }
@@ -132,5 +126,37 @@ class ProgressBarColumn extends Column
         }
 
         return $color;
+    }
+
+    public static function resolveColor(mixed $color): ?string
+    {
+        $resolvedColor = null;
+
+        if (is_object($color)) {
+            if (method_exists($color, 'toCss')) {
+                $resolvedColor = $color->toCss();
+            } elseif (method_exists($color, 'toRgb')) {
+                $resolvedColor = $color->toRgb();
+            } elseif (method_exists($color, 'toHex')) {
+                $resolvedColor = $color->toHex();
+            } else {
+                $resolvedColor = $color;
+            }
+        } elseif (is_array($color)) {
+            $resolvedColor = $color[500] ?? reset($color) ?? null;
+        } else {
+            $resolvedColor = (string) $color;
+        }
+
+        if (is_string($resolvedColor)) {
+            return $resolvedColor;
+        }
+
+        return null;
+    }
+
+    public function getResolvedProgressColor(): ?string
+    {
+        return self::resolveColor($this->getProgressColor());
     }
 }

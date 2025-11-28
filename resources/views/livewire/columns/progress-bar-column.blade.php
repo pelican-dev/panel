@@ -5,44 +5,13 @@
     $percentage = $getProgressPercentage();
     $label = $getProgressLabel();
     $color = $getProgressColor();
-
-    // Resolve various color inputs into a CSS-friendly string when possible.
-    $resolvedColor = null;
-
-    if (is_object($color)) {
-        // Try common Color object methods, then fallback to string cast.
-        if (method_exists($color, 'toCss')) {
-            $resolvedColor = $color->toCss();
-        } elseif (method_exists($color, 'toRgb')) {
-            $resolvedColor = $color->toRgb();
-        } elseif (method_exists($color, 'toHex')) {
-            $resolvedColor = $color->toHex();
-        } else {
-            try {
-                $resolvedColor = (string) $color;
-            } catch (\Throwable $e) {
-                $resolvedColor = null;
-            }
-        }
-    } elseif (is_array($color)) {
-        $resolvedColor = $color[500] ?? reset($color) ?? null;
-    } else {
-        $resolvedColor = $color;
-    }
-
-    // Final fallback to 'gray' if nothing resolved.
-    $color = $resolvedColor ?? 'gray';
-
-    // Ensure we have a string for string-specific checks below.
+    $resolved = \App\Filament\Components\Tables\Columns\ProgressBarColumn::resolveColor($color);
+    $color = $resolved ?? (is_string($color) ? $color : 'gray');
     $colorStr = is_string($color) ? $color : 'gray';
-
-    $isVar = str_starts_with($colorStr, 'var(');
-    $isRgb = str_starts_with($colorStr, 'rgb');
+    $isRgb = str_starts_with($colorStr, 'rgb(');
 
     if ($isRgb) {
         $lightBackgroundColor = str_replace('rgb(', 'rgba(', rtrim($colorStr, ')') . ', 0.15)');
-    } elseif ($isVar) {
-        $lightBackgroundColor = "color-mix(in srgb, {$colorStr} 15%, transparent)";
     } else {
         $lightBackgroundColor = "color-mix(in srgb, {$colorStr} 15%, transparent)";
     }
@@ -63,7 +32,7 @@
 >
     @if($isDanger && $animClass)
         <style>
-            @keyframes {{ $animClass }}                       {
+            @keyframes {{ $animClass }}                               {
                 0% {
                     color: {{ $colorStr }};
                 }
@@ -75,7 +44,7 @@
                 }
             }
 
-            .{{ $animClass }}                       {
+            .{{ $animClass }}                               {
                 animation: {{ $animClass }} 1s ease-in-out infinite;
             }
         </style>
@@ -93,7 +62,7 @@
         >
             <div
                 @class(['h-full rounded-full transition-all duration-300 ease-in-out'])
-                style="width: {{ $percentage }}%; background-color: {{ is_string($color) ? $color : (is_object($color) ? (string)$color : 'gray') }};"
+                style="width: {{ $percentage }}%; background-color: {{ $colorStr }};"
             ></div>
         </div>
         <span
@@ -106,7 +75,7 @@
             @if($isDanger)
                 role="status"
             aria-live="assertive"
-            style="color: {{ is_string($color) ? $color : (is_object($color) ? (string)$color : 'gray') }};"
+            style="color: {{ $colorStr }};"
             @else
                 style="color: unset;"
             @endif
