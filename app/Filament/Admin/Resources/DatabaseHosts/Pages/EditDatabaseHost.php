@@ -38,8 +38,7 @@ class EditDatabaseHost extends EditRecord
             DeleteAction::make()
                 ->label(fn (DatabaseHost $databaseHost) => $databaseHost->databases()->count() > 0 ? trans('admin/databasehost.delete_help') : trans('filament-actions::delete.single.modal.actions.delete.label'))
                 ->disabled(fn (DatabaseHost $databaseHost) => $databaseHost->databases()->count() > 0)
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-trash'),
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
             $this->getSaveFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),

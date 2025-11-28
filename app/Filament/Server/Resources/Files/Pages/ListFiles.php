@@ -359,7 +359,7 @@ class ListFiles extends ListRecords
                 DeleteAction::make()
                     ->authorize(fn () => user()?->can(Permission::ACTION_FILE_DELETE, $server))
                     ->hiddenLabel()
-                    ->icon('tabler-trash')->iconSize(IconSize::Large)
+                    ->iconSize(IconSize::Large)
                     ->requiresConfirmation()
                     ->modalHeading(fn (File $file) => trans('filament-actions::delete.single.modal.heading', ['label' => $file->name . ' ' . ($file->is_directory ? 'folder' : 'file')]))
                     ->action(function (File $file) {

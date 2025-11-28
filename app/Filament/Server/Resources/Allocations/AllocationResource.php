@@ -84,7 +84,6 @@ class AllocationResource extends Resource
                     ->visible(fn (Allocation $allocation) => !$allocation->is_locked || user()?->can('update', $allocation->node))
                     ->authorize(fn () => user()?->can(Permission::ACTION_ALLOCATION_DELETE, $server))
                     ->label(trans('server/network.delete'))
-                    ->icon('tabler-trash')
                     ->action(function (Allocation $allocation) {
                         Allocation::where('id', $allocation->id)->update([
                             'notes' => null,

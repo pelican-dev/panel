@@ -8,7 +8,6 @@ use App\Models\Server;
 use App\Services\Allocations\AssignmentService;
 use Filament\Actions\Action;
 use Filament\Actions\AssociateAction;
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DissociateAction;
 use Filament\Actions\DissociateBulkAction;
@@ -95,19 +94,17 @@ class AllocationsRelationManager extends RelationManager
                     }),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DissociateBulkAction::make()
-                        ->after(function () {
-                            Allocation::whereNull('server_id')->update([
-                                'notes' => null,
-                                'is_locked' => false,
-                            ]);
+                DissociateBulkAction::make()
+                    ->after(function () {
+                        Allocation::whereNull('server_id')->update([
+                            'notes' => null,
+                            'is_locked' => false,
+                        ]);
 
-                            if (!$this->getOwnerRecord()->allocation_id) {
-                                $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id]);
-                            }
-                        }),
-                ]),
+                        if (!$this->getOwnerRecord()->allocation_id) {
+                            $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id]);
+                        }
+                    }),
                 CreateAction::make()
                     ->label(trans('admin/server.create_allocation'))
                     ->icon('tabler-network')
