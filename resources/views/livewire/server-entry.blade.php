@@ -67,7 +67,7 @@
             <div class="w-full max-w-xs">
                 @php
                     $cpuCurrent = \App\Enums\ServerResourceType::CPU->getResourceAmount($server);
-                    $cpuMax = \App\Enums\ServerResourceType::CPULimit->getResourceAmount($server) === 0 ? ($serverNodeSystemInfo['cpu_count'] ?? 0 * 100) : \App\Enums\ServerResourceType::CPULimit->getResourceAmount($server);
+                    $cpuMax = \App\Enums\ServerResourceType::CPULimit->getResourceAmount($server) === 0 ? (($serverNodeSystemInfo['cpu_count'] ?? 0) * 100) : \App\Enums\ServerResourceType::CPULimit->getResourceAmount($server);
                     $getState = fn() => $cpuCurrent;
                     $getMaxValue = fn() => $cpuMax;
                     $getProgressPercentage = fn() => $cpuMax > 0 ? ($cpuCurrent / $cpuMax) * 100 : 0;
