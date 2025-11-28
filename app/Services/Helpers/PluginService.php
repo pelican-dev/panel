@@ -338,7 +338,12 @@ class PluginService
             File::deleteDirectory(plugin_path($pluginName));
         }
 
-        $extractPath = $zip->locateName($pluginName . '/') !== false ? base_path('plugins') : plugin_path($pluginName);
+        $extractPath = (bool) array_filter(
+            array_map(fn ($i) => $zip->getNameIndex($i), range(0, $zip->numFiles - 1)),
+            fn ($name) => str_starts_with($name, $pluginName)
+        )
+            ? base_path('plugins')
+            : plugin_path($pluginName);
 
         if (!$zip->extractTo($extractPath)) {
             $zip->close();
