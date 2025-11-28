@@ -67,7 +67,7 @@
             <div class="w-full max-w-xs">
                 @php
                     $cpuCurrent = \App\Enums\ServerResourceType::CPU->getResourceAmount($server);
-                    $cpuMax = \App\Enums\ServerResourceType::CPULimit->getResourceAmount($server) === 0 ? ($serverNodeSystemInfo['cpu_count'] * 100) : \App\Enums\ServerResourceType::CPULimit->getResourceAmount($server);
+                    $cpuMax = \App\Enums\ServerResourceType::CPULimit->getResourceAmount($server) === 0 ? ($serverNodeSystemInfo['cpu_count'] ?? 0 * 100) : \App\Enums\ServerResourceType::CPULimit->getResourceAmount($server);
                     $getState = fn() => $cpuCurrent;
                     $getMaxValue = fn() => $cpuMax;
                     $getProgressPercentage = fn() => $cpuMax > 0 ? ($cpuCurrent / $cpuMax) * 100 : 0;
@@ -89,7 +89,7 @@
             <div class="w-full max-w-xs">
                 @php
                     $memCurrent = \App\Enums\ServerResourceType::Memory->getResourceAmount($server);
-                    $memMax = \App\Enums\ServerResourceType::MemoryLimit->getResourceAmount($server) === 0 ? $serverNodeStatistics['memory_total'] : \App\Enums\ServerResourceType::MemoryLimit->getResourceAmount($server);
+                    $memMax = \App\Enums\ServerResourceType::MemoryLimit->getResourceAmount($server) === 0 ? $serverNodeStatistics['memory_total'] ?? 0 : \App\Enums\ServerResourceType::MemoryLimit->getResourceAmount($server);
                     $getState = fn() => $memCurrent;
                     $getMaxValue = fn() => $memMax > 0 ? $memMax : null;
                     $getProgressPercentage = fn() => ($memMax > 0) ? ($memCurrent / $memMax) * 100 : 0;
@@ -111,7 +111,7 @@
             <div class="w-full max-w-xs">
                 @php
                     $diskCurrent = \App\Enums\ServerResourceType::Disk->getResourceAmount($server);
-                    $diskMax = \App\Enums\ServerResourceType::DiskLimit->getResourceAmount($server) === 0 ? $serverNodeStatistics['disk_total'] : \App\Enums\ServerResourceType::DiskLimit->getResourceAmount($server);
+                    $diskMax = \App\Enums\ServerResourceType::DiskLimit->getResourceAmount($server) === 0 ? $serverNodeStatistics['disk_total'] ?? 0 : \App\Enums\ServerResourceType::DiskLimit->getResourceAmount($server);
                     $getState = fn() => $diskCurrent;
                     $getMaxValue = fn() => $diskMax > 0 ? $diskMax : null;
                     $getProgressPercentage = fn() => ($diskMax > 0) ? ($diskCurrent / $diskMax) * 100 : 0;
