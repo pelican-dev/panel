@@ -91,21 +91,21 @@ class ListServers extends ListRecords
                 ->label('')
                 ->warningThresholdPercent(static::WARNING_THRESHOLD)
                 ->dangerThresholdPercent(static::DANGER_THRESHOLD)
-                ->maxValue(fn (Server $server) => ServerResourceType::CPULimit->getResourceAmount($server) === 0 ? ($server->node->systemInformation()['cpu_count'] * 100) : ServerResourceType::CPULimit->getResourceAmount($server))
+                ->maxValue(fn (Server $server) => ServerResourceType::CPULimit->getResourceAmount($server) === 0 ? ($server->node->systemInformation()['cpu_count'] ?? 0 * 100) : ServerResourceType::CPULimit->getResourceAmount($server))
                 ->state(fn (Server $server) => $server->retrieveResources()['cpu_absolute'] ?? 0)
                 ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::CPU, 0) . ' / ' . $server->formatResource(ServerResourceType::CPULimit, 0)),
             ProgressBarColumn::make('memoryUsage')
                 ->label('')
                 ->warningThresholdPercent(static::WARNING_THRESHOLD)
                 ->dangerThresholdPercent(static::DANGER_THRESHOLD)
-                ->maxValue(fn (Server $server) => ServerResourceType::MemoryLimit->getResourceAmount($server) === 0 ? $server->node->statistics()['memory_total'] : ServerResourceType::MemoryLimit->getResourceAmount($server))
+                ->maxValue(fn (Server $server) => ServerResourceType::MemoryLimit->getResourceAmount($server) === 0 ? $server->node->statistics()['memory_total'] ?? 0 : ServerResourceType::MemoryLimit->getResourceAmount($server))
                 ->state(fn (Server $server) => $server->retrieveResources()['memory_bytes'] ?? 0)
                 ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::Memory) . ' / ' . $server->formatResource(ServerResourceType::MemoryLimit)),
             ProgressBarColumn::make('diskUsage')
                 ->label('')
                 ->warningThresholdPercent(static::WARNING_THRESHOLD)
                 ->dangerThresholdPercent(static::DANGER_THRESHOLD)
-                ->maxValue(fn (Server $server) => ServerResourceType::DiskLimit->getResourceAmount($server) === 0 ? $server->node->statistics()['disk_total'] : ServerResourceType::DiskLimit->getResourceAmount($server))
+                ->maxValue(fn (Server $server) => ServerResourceType::DiskLimit->getResourceAmount($server) === 0 ? $server->node->statistics()['disk_total'] ?? 0 : ServerResourceType::DiskLimit->getResourceAmount($server))
                 ->state(fn (Server $server) => $server->retrieveResources()['disk_bytes'] ?? 0)
                 ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::Disk) . ' / ' . $server->formatResource(ServerResourceType::DiskLimit)),
         ];
