@@ -3,13 +3,13 @@
 namespace App\Filament\Admin\Resources\ApiKeys\Pages;
 
 use App\Filament\Admin\Resources\ApiKeys\ApiKeyResource;
-use App\Models\ApiKey;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\IconSize;
 
 class ListApiKeys extends ListRecords
 {
@@ -23,7 +23,8 @@ class ListApiKeys extends ListRecords
     {
         return [
             CreateAction::make()
-                ->hidden(fn () => ApiKey::where('key_type', ApiKey::TYPE_APPLICATION)->count() <= 0),
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-file-plus'),
         ];
     }
 }

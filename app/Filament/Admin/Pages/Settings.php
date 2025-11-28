@@ -36,6 +36,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Arr;
@@ -841,6 +842,8 @@ class Settings extends Page implements HasSchemas
     {
         return [
             Action::make('save')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-device-floppy')
                 ->action('save')
                 ->authorize(fn () => user()?->can('update settings'))
                 ->keyBindings(['mod+s']),
