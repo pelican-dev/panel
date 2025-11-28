@@ -179,7 +179,7 @@ class PluginService
         }
 
         $oldPackages = collect($oldPackages)
-            ->filter(fn($version, $package) => !array_key_exists($package, $newPackages))
+            ->filter(fn ($version, $package) => !array_key_exists($package, $newPackages))
             ->keys()
             ->unique()
             ->toArray();
@@ -192,7 +192,7 @@ class PluginService
         }
 
         $newPackages = collect($newPackages)
-            ->map(fn($version, $package) => "$package:$version")
+            ->map(fn ($version, $package) => "$package:$version")
             ->flatten()
             ->unique()
             ->toArray();
@@ -339,8 +339,8 @@ class PluginService
         }
 
         $extractPath = (bool) array_filter(
-            array_map(fn($i) => $zip->getNameIndex($i), range(0, $zip->numFiles - 1)),
-            fn($name) => str_starts_with($name, $pluginName)
+            array_map(fn ($i) => $zip->getNameIndex($i), range(0, $zip->numFiles - 1)),
+            fn ($name) => str_starts_with($name, $pluginName)
         )
             ? base_path('plugins')
             : plugin_path($pluginName);
@@ -447,7 +447,7 @@ class PluginService
                 continue;
             }
 
-            $languages = array_merge($languages, collect(File::directories(plugin_path($plugin->id, 'lang')))->map(fn($path) => basename($path))->toArray());
+            $languages = array_merge($languages, collect(File::directories(plugin_path($plugin->id, 'lang')))->map(fn ($path) => basename($path))->toArray());
         }
 
         return array_unique($languages);
