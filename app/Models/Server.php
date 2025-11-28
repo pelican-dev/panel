@@ -184,6 +184,11 @@ class Server extends Model implements HasAvatar, Validatable
         'skip_scripts' => ['sometimes', 'boolean'],
         'image' => ['required', 'string', 'max:255'],
         'icon' => ['sometimes', 'nullable', 'string'],
+        'docker_labels' => ['array'],
+        // Docker labels are validated via https://regex101.com/r/FiYrwo/1 following Docker key format
+        // recommendations: https://docs.docker.com/engine/manage-resources/labels/
+
+        'docker_labels.*' => ['required', 'regex:/^(?!(?:com\.docker\.|io\.docker\.|org\.dockerproject\.))(?=.*[a-z]$)[a-z](?:[a-z0-9]|(?<!\.)\.(?!\.)|(?<!-)-(?!-))*$/'],
         'database_limit' => ['present', 'nullable', 'integer', 'min:0'],
         'allocation_limit' => ['sometimes', 'nullable', 'integer', 'min:0'],
         'backup_limit' => ['present', 'nullable', 'integer', 'min:0'],

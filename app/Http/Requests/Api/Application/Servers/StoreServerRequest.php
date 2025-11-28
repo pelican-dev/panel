@@ -29,6 +29,10 @@ class StoreServerRequest extends ApplicationApiRequest
             'user' => $rules['owner_id'],
             'egg' => $rules['egg_id'],
             'docker_image' => 'sometimes|string',
+            'docker_labels' => 'sometimes|array',
+            // Docker labels are validated via https://regex101.com/r/FiYrwo/1 following Docker key format
+            // recommendations: https://docs.docker.com/engine/manage-resources/labels/
+            'docker_labels.*' => 'required|regex:/^(?!(?:com\.docker\.|io\.docker\.|org\.dockerproject\.))(?=.*[a-z]$)[a-z](?:[a-z0-9]|(?<!\.)\.(?!\.)|(?<!-)-(?!-))*$/',
             'startup' => 'sometimes|string',
             'environment' => 'present|array',
             'skip_scripts' => 'sometimes|boolean',
@@ -122,6 +126,7 @@ class StoreServerRequest extends ApplicationApiRequest
             'allocation_limit' => array_get($data, 'feature_limits.allocations'),
             'backup_limit' => array_get($data, 'feature_limits.backups'),
             'oom_killer' => array_get($data, 'oom_killer'),
+            'docker_labels' => array_get($data, 'docker_labels'),
         ];
     }
 
