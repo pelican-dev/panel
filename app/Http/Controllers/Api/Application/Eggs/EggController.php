@@ -13,7 +13,9 @@ use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggExporterService;
 use App\Services\Eggs\Sharing\EggImporterService;
 use App\Transformers\Api\Application\EggTransformer;
+use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EggController extends ApplicationApiController
@@ -51,6 +53,20 @@ class EggController extends ApplicationApiController
         return $this->fractal->item($egg)
             ->transformWith($this->getTransformer(EggTransformer::class))
             ->toArray();
+    }
+
+    /**
+     * Delete egg
+     *
+     * Delete a egg host from the Panel.
+     *
+     * @throws Exception
+     */
+    public function delete(GetEggRequest $request, Egg $egg): Response
+    {
+        $egg->delete();
+
+        return $this->returnNoContent();
     }
 
     /**
