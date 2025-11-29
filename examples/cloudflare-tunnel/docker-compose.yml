@@ -1,0 +1,40 @@
+services:
+  panel:
+    image: ghcr.io/pelican-dev/panel:latest
+    container_name: pelican-panel
+    restart: always
+    networks:
+      - pelican
+    #ports:
+      # Port 80 not exposed - only accessed via Cloudflare Tunnel internally by cloudflared container
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - pelican-data:/pelican-data
+      - pelican-logs:/var/www/html/storage/logs
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    environment:
+      XDG_DATA_HOME: /pelican-data
+      APP_URL: ${APP_URL}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflare-tunnel
+    restart: unless-stopped
+    networks:
+      - pelican
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+
+volumes:
+  pelican-data:
+  pelican-logs:
+
+networks:
+  pelican:
+    name: pelican
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
