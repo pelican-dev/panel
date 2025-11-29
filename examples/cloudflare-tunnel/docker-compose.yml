@@ -17,6 +17,7 @@ services:
       XDG_DATA_HOME: /pelican-data
       APP_URL: ${APP_URL}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
+      DOCKER_SUBNET: ${DOCKER_SUBNET:-172.21.0.0/16}
 
   cloudflared:
     image: cloudflare/cloudflared:latest
@@ -37,4 +38,4 @@ networks:
     name: pelican
     ipam:
       config:
-        - subnet: 172.21.0.0/16
+        - subnet: ${DOCKER_SUBNET:-172.21.0.0/16}

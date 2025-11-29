@@ -1,7 +1,7 @@
 {
   admin off
   servers {
-    trusted_proxies static 172.21.0.0/16
+    trusted_proxies static {$DOCKER_SUBNET}
   }
 }
 
