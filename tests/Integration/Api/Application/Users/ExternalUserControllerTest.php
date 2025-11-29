@@ -23,7 +23,7 @@ class ExternalUserControllerTest extends ApplicationApiIntegrationTestCase
         $response->assertJsonStructure([
             'object',
             'attributes' => [
-                'id', 'external_id', 'uuid', 'username', 'email',
+                'id', 'external_id', 'is_managed_externally', 'uuid', 'username', 'email',
                 'language', 'root_admin', '2fa', 'created_at', 'updated_at',
             ],
         ]);
@@ -33,6 +33,7 @@ class ExternalUserControllerTest extends ApplicationApiIntegrationTestCase
             'attributes' => [
                 'id' => $user->id,
                 'external_id' => $user->external_id,
+                'is_managed_externally' => $user->is_managed_externally,
                 'uuid' => $user->uuid,
                 'username' => $user->username,
                 'email' => $user->email,
