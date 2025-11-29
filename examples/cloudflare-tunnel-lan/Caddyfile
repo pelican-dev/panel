@@ -1,0 +1,38 @@
+{
+  admin off
+  servers {
+    trusted_proxies static {$DOCKER_SUBNET}
+  }
+}
+
+:80 {
+  root * /var/www/html/public
+  encode gzip
+
+  php_fastcgi 127.0.0.1:9000 {
+    env PHP_VALUE "upload_max_filesize = {$PHP_UPLOAD_LIMIT}
+post_max_size = {$PHP_UPLOAD_LIMIT}"
+  }
+
+  file_server
+}
+
+:443 {
+  root * /var/www/html/public
+  encode gzip
+
+  tls internal {
+    on_demand
+  }
+
+  header {
+    Strict-Transport-Security "max-age=31536000"
+  }
+
+  php_fastcgi 127.0.0.1:9000 {
+    env PHP_VALUE "upload_max_filesize = {$PHP_UPLOAD_LIMIT}
+post_max_size = {$PHP_UPLOAD_LIMIT}"
+  }
+
+  file_server
+}
