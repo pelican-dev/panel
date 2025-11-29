@@ -22,7 +22,7 @@ class EggController extends ApplicationApiController
 {
     public function __construct(
         private EggExporterService $exporterService,
-        private EggImporterService $importService,
+        private EggImporterService $importService
     ) {
         parent::__construct();
     }
@@ -112,7 +112,7 @@ class EggController extends ApplicationApiController
         } catch (\Throwable $e) {
             return response()->json([
                 'error' => 'Unable to import egg',
-                'message' => 'An unexpected error occurred. ' . $e->getMessage()
+                'message' => 'An unexpected error occurred. ' . $e->getMessage(),
             ], 500);
         }
     }
