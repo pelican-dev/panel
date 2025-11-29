@@ -3,19 +3,24 @@
 namespace App\Http\Controllers\Api\Application\Eggs;
 
 use App\Enums\EggFormat;
+use App\Exceptions\Service\InvalidFileUploadException;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Eggs\ExportEggRequest;
 use App\Http\Requests\Api\Application\Eggs\GetEggRequest;
 use App\Http\Requests\Api\Application\Eggs\GetEggsRequest;
+use App\Http\Requests\Api\Application\Eggs\ImportEggRequest;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggExporterService;
+use App\Services\Eggs\Sharing\EggImporterService;
 use App\Transformers\Api\Application\EggTransformer;
+use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EggController extends ApplicationApiController
 {
     public function __construct(
         private EggExporterService $exporterService,
+        private EggImporterService $importService,
     ) {
         parent::__construct();
     }
@@ -62,5 +67,38 @@ class EggController extends ApplicationApiController
         }, 'egg-' . $egg->getKebabName() . '.' . $format->value, [
             'Content-Type' => 'application/' . $format->value,
         ]);
+    }
+
+    /**
+     * Import egg
+     *
+     * Create a new egg on the Panel. Returns the created egg and an HTTP/201 status response on success
+     * If no uuid is supplied a new one will be generated
+     * If an uuid is supplied, and it already exists the old configuration get overwritten
+     */
+    public function import(ImportEggRequest $request): JsonResponse
+    {
+        $format = EggFormat::tryFrom($request->input('format')) ?? EggFormat::YAML;
+
+        $content = $request->getContent(false);
+
+        try {
+            $egg = $this->importService->fromContent($content, $format, null);
+
+            return $this->fractal->item($egg)
+                ->transformWith($this->getTransformer(EggTransformer::class))
+                ->respond(201);
+        } catch (InvalidFileUploadException $e) {
+            return response()->json([
+                'error' => 'Invalid content',
+                'message' => $e->getMessage(),
+            ], 422);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => 'Unable to import egg',
+                'message' => 'An unexpected error occurred. ' . $e->getMessage(),
+                'trace' => $e->getTrace(),
+            ], 500);
+        }
     }
 }

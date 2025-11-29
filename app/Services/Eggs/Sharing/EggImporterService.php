@@ -2,6 +2,7 @@
 
 namespace App\Services\Eggs\Sharing;
 
+use App\Enums\EggFormat;
 use App\Exceptions\Service\InvalidFileUploadException;
 use App\Models\Egg;
 use App\Models\EggVariable;
@@ -32,6 +33,18 @@ class EggImporterService
     public function __construct(protected ConnectionInterface $connection) {}
 
     /**
+     * Take a string and type and parse it into a new egg.
+     *
+     * @throws InvalidFileUploadException|Throwable
+     */
+    public function fromContent(string $content, EggFormat $format, ?Egg $egg = null)
+    {
+        $parsed = $this->parse($content, $format);
+
+        return $this->fromParsed($parsed, $egg);
+    }
+
+    /**
      * Take an uploaded JSON or YAML file and parse it into a new egg.
      *
      * @throws InvalidFileUploadException|Throwable
@@ -40,6 +53,16 @@ class EggImporterService
     {
         $parsed = $this->parseFile($file);
 
+        return $this->fromParsed($parsed, $egg);
+    }
+
+    /**
+     * Take an array and parse it into a new egg.
+     *
+     * @throws InvalidFileUploadException|Throwable
+     */
+    public function fromParsed(array $parsed, ?Egg $egg = null): Egg
+    {
         return $this->connection->transaction(function () use ($egg, $parsed) {
             $uuid = $parsed['uuid'] ?? Uuid::uuid4()->toString();
             $egg = $egg ?? Egg::where('uuid', $uuid)->first() ?? new Egg();
@@ -103,28 +126,20 @@ class EggImporterService
     }
 
     /**
-     * Takes an uploaded file and parses out the egg configuration from within.
+     * Takes a string and parses out the egg configuration from within.
      *
      * @return array<array-key, mixed>
      *
      * @throws InvalidFileUploadException|JsonException
      */
-    protected function parseFile(UploadedFile $file): array
+    protected function parse(string $content, EggFormat $format): array
     {
-        if ($file->getError() !== UPLOAD_ERR_OK) {
-            throw new InvalidFileUploadException('The selected file was not uploaded successfully');
-        }
-
-        $extension = strtolower($file->getClientOriginalExtension());
-        $mime = $file->getMimeType();
 
         try {
-            $content = $file->getContent();
-
-            $parsed = match (true) {
-                in_array($extension, ['yaml', 'yml']),
-                str_contains($mime, 'yaml') => Yaml::parse($content),
-                default => json_decode($content, true, 512, JSON_THROW_ON_ERROR),
+            $parsed = match ($format) {
+                EggFormat::YAML => Yaml::parse($content),
+                EggFormat::JSON => json_decode($content, true, 512, JSON_THROW_ON_ERROR),
+                default => throw new InvalidFileUploadException('Egg format is not supported!')
             };
         } catch (Throwable $e) {
             throw new InvalidFileUploadException('File parse failed: ' . $e->getMessage());
@@ -188,6 +203,35 @@ class EggImporterService
         }
 
         return $parsed;
+    }
+
+    /**
+     * Takes an uploaded file and parses out the egg configuration from within.
+     *
+     * @return array<array-key, mixed>
+     *
+     * @throws InvalidFileUploadException|JsonException
+     */
+    protected function parseFile(UploadedFile $file): array
+    {
+        if ($file->getError() !== UPLOAD_ERR_OK) {
+            throw new InvalidFileUploadException('The selected file was not uploaded successfully');
+        }
+
+        $extension = strtolower($file->getClientOriginalExtension());
+        $mime = $file->getMimeType();
+
+        try {
+            $content = $file->getContent();
+
+            if (in_array($extension, ['yaml', 'yml']) || str_contains($mime, 'yaml')) {
+                return $this->parse($content, EggFormat::YAML);
+            } else {
+                return $this->parse($content, EggFormat::JSON);
+            }
+        } catch (Throwable $e) {
+            throw new InvalidFileUploadException('File parse failed: ' . $e->getMessage());
+        }
     }
 
     /**
