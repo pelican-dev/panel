@@ -87,6 +87,13 @@ if (!function_exists('resolve_path')) {
     }
 }
 
+if (!function_exists('plugin_path')) {
+    function plugin_path(string $plugin, string ...$paths): string
+    {
+        return join_paths(base_path('plugins'), $plugin, implode('/', $paths));
+    }
+}
+
 if (!function_exists('get_ip_from_hostname')) {
     function get_ip_from_hostname(string $hostname): string|bool
     {
