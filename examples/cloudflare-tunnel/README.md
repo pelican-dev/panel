@@ -17,4 +17,4 @@ This example shows how to run Pelican Panel entirely behind a Cloudflare Tunnel 
 5. Start the stack with `docker compose up -d`.
 6. Watch the logs with `docker compose logs -f cloudflared panel` and proceed through the Pelican installer once the services are healthy.
 
-Detailed guidance, screenshots, and troubleshooting steps live in the docs at `docs/panel/advanced/cloudflare-tunnel`.
+Detailed guidance and troubleshooting steps in the docs at `docs/panel/advanced/cloudflare-tunnel`.

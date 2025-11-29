@@ -10,8 +10,8 @@
   encode gzip
 
   php_fastcgi 127.0.0.1:9000 {
-    env PHP_VALUE "upload_max_filesize = 256M
-post_max_size = 256M"
+    env PHP_VALUE "upload_max_filesize = {$PHP_UPLOAD_LIMIT}
+post_max_size = {$PHP_UPLOAD_LIMIT}"
   }
 
   file_server

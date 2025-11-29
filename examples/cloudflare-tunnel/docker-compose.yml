@@ -18,6 +18,7 @@ services:
       APP_URL: ${APP_URL}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       DOCKER_SUBNET: ${DOCKER_SUBNET:-172.21.0.0/16}
+      PHP_UPLOAD_LIMIT: ${PHP_UPLOAD_LIMIT:-256M}
 
   cloudflared:
     image: cloudflare/cloudflared:latest
