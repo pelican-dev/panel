@@ -37,7 +37,7 @@ class EggImporterService
      *
      * @throws InvalidFileUploadException|Throwable
      */
-    public function fromContent(string $content, EggFormat $format, ?Egg $egg = null)
+    public function fromContent(string $content, EggFormat $format, ?Egg $egg = null): Egg
     {
         $parsed = $this->parse($content, $format);
 
@@ -58,6 +58,8 @@ class EggImporterService
 
     /**
      * Take an array and parse it into a new egg.
+     *
+     * @param  array<array-key, mixed>  $parsed
      *
      * @throws InvalidFileUploadException|Throwable
      */
@@ -138,8 +140,7 @@ class EggImporterService
         try {
             $parsed = match ($format) {
                 EggFormat::YAML => Yaml::parse($content),
-                EggFormat::JSON => json_decode($content, true, 512, JSON_THROW_ON_ERROR),
-                default => throw new InvalidFileUploadException('Egg format is not supported!')
+                default => json_decode($content, true, 512, JSON_THROW_ON_ERROR),
             };
         } catch (Throwable $e) {
             throw new InvalidFileUploadException('File parse failed: ' . $e->getMessage());
@@ -210,7 +211,7 @@ class EggImporterService
      *
      * @return array<array-key, mixed>
      *
-     * @throws InvalidFileUploadException|JsonException
+     * @throws InvalidFileUploadException
      */
     protected function parseFile(UploadedFile $file): array
     {
