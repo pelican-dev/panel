@@ -112,8 +112,7 @@ class EggController extends ApplicationApiController
         } catch (\Throwable $e) {
             return response()->json([
                 'error' => 'Unable to import egg',
-                'message' => 'An unexpected error occurred. ' . $e->getMessage(),
-                'trace' => $e->getTrace(),
+                'message' => 'An unexpected error occurred. ' . $e->getMessage()
             ], 500);
         }
     }
