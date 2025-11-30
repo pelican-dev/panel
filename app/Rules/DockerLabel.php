@@ -19,6 +19,7 @@ class DockerLabel implements ValidationRule
             // recommendations: https://docs.docker.com/engine/manage-resources/labels/
             if (!preg_match('/^(?!com\.docker\.|io\.docker\.|org\.dockerproject\.)(?=.*[a-z]$)[a-z](?:[a-z0-9]|(?<!\.)\.(?!\.)|(?<!-)-(?!-))*$/', $key)) {
                 $fail("{$attribute} contains an invalid label: {$key}");
+
                 return;
             }
         }

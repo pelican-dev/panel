@@ -185,7 +185,7 @@ class Server extends Model implements HasAvatar, Validatable
         'image' => ['required', 'string', 'max:255'],
         'icon' => ['sometimes', 'nullable', 'string'],
         'docker_labels' => ['array'],
-        'docker_labels.*' => 'required|string',
+        'docker_labels.*' => ['required', 'string'],
         'database_limit' => ['present', 'nullable', 'integer', 'min:0'],
         'allocation_limit' => ['sometimes', 'nullable', 'integer', 'min:0'],
         'backup_limit' => ['present', 'nullable', 'integer', 'min:0'],

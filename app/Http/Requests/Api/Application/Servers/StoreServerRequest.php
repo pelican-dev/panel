@@ -18,6 +18,8 @@ class StoreServerRequest extends ApplicationApiRequest
 
     /**
      * Rules to be applied to this request.
+     *
+     * @return array<string, array<string|DockerLabel>|string>
      */
     public function rules(): array
     {
@@ -30,7 +32,7 @@ class StoreServerRequest extends ApplicationApiRequest
             'user' => $rules['owner_id'],
             'egg' => $rules['egg_id'],
             'docker_image' => 'sometimes|string',
-            'docker_labels' => ['sometimes', 'array', new DockerLabel],
+            'docker_labels' => ['sometimes', 'array', new DockerLabel()],
             'docker_labels.*' => 'required|string',
             'startup' => 'sometimes|string',
             'environment' => 'present|array',
