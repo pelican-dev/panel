@@ -5,6 +5,7 @@ namespace App\Http\Requests\Api\Application\Servers;
 use App\Http\Requests\Api\Application\ApplicationApiRequest;
 use App\Models\Objects\DeploymentObject;
 use App\Models\Server;
+use App\Rules\DockerLabel;
 use App\Services\Acl\Api\AdminAcl;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
@@ -29,10 +30,8 @@ class StoreServerRequest extends ApplicationApiRequest
             'user' => $rules['owner_id'],
             'egg' => $rules['egg_id'],
             'docker_image' => 'sometimes|string',
-            'docker_labels' => 'sometimes|array',
-            // Docker labels are validated via https://regex101.com/r/FiYrwo/1 following Docker key format
-            // recommendations: https://docs.docker.com/engine/manage-resources/labels/
-            'docker_labels.*' => 'required|regex:/^(?!(?:com\.docker\.|io\.docker\.|org\.dockerproject\.))(?=.*[a-z]$)[a-z](?:[a-z0-9]|(?<!\.)\.(?!\.)|(?<!-)-(?!-))*$/',
+            'docker_labels' => ['sometimes', 'array', new DockerLabel],
+            'docker_labels.*' => 'required|string',
             'startup' => 'sometimes|string',
             'environment' => 'present|array',
             'skip_scripts' => 'sometimes|boolean',
