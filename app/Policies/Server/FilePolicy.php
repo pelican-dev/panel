@@ -3,30 +3,34 @@
 namespace App\Policies\Server;
 
 use App\Models\Permission;
+use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 
 class FilePolicy
 {
-    protected string $modelName = 'file';
-
-    public function viewAny(): bool
+    public function viewAny(User $user): bool
     {
-        return user()?->can(Permission::ACTION_FILE_READ, Filament::getTenant());
+        return $user->can(Permission::ACTION_FILE_READ, Filament::getTenant());
     }
 
-    public function create(): bool
+    public function view(User $user, Model $record): bool
     {
-        return user()?->can(Permission::ACTION_FILE_CREATE, Filament::getTenant());
+        return $user->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant());
     }
 
-    public function edit(Model $record): bool
+    public function create(User $user): bool
     {
-        return user()?->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant());
+        return $user->can(Permission::ACTION_FILE_CREATE, Filament::getTenant());
     }
 
-    public function delete(Model $record): bool
+    public function edit(User $user, Model $record): bool
     {
-        return user()?->can(Permission::ACTION_FILE_DELETE, Filament::getTenant());
+        return $user->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant());
+    }
+
+    public function delete(User $user, Model $record): bool
+    {
+        return $user->can(Permission::ACTION_FILE_DELETE, Filament::getTenant());
     }
 }
