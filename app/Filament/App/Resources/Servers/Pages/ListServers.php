@@ -118,7 +118,8 @@ class ListServers extends ListRecords
         $usingGrid = user()?->getCustomization(CustomizationKey::DashboardLayout) === 'grid';
 
         return $table
-            ->paginated(false)
+            ->paginated($usingGrid ? [10, 20, 30, 40] : [10, 20, 50, 100])
+            ->defaultPaginationPageOption($usingGrid ? 10 : 20)
             ->query(fn () => $baseQuery)
             ->poll('15s')
             ->columns($usingGrid ? $this->gridColumns() : $this->tableColumns())
