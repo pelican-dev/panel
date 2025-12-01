@@ -338,7 +338,7 @@ class PluginService
             File::deleteDirectory(plugin_path($pluginName));
         }
 
-        $extractPath = $zip->locateName($pluginName . '/') !== false ? base_path('plugins') : plugin_path($pluginName);
+        $extractPath = $zip->locateName($pluginName . '/plugin.json') !== false ? base_path('plugins') : plugin_path($pluginName);
 
         if (!$zip->extractTo($extractPath)) {
             $zip->close();
