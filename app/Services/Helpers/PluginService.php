@@ -278,11 +278,14 @@ class PluginService
     public function updatePlugin(Plugin $plugin): void
     {
         try {
-            $this->downloadPluginFromUrl($plugin->getDownloadUrlForUpdate(), true);
+            $downloadUrl = $plugin->getDownloadUrlForUpdate();
+            if ($downloadUrl) {
+                $this->downloadPluginFromUrl($downloadUrl, true);
 
-            $this->installPlugin($plugin, false);
+                $this->installPlugin($plugin, false);
 
-            cache()->forget("plugins.$plugin->id.update");
+                cache()->forget("plugins.$plugin->id.update");
+            }
         } catch (Exception $exception) {
             $this->handlePluginException($plugin, $exception);
         }
