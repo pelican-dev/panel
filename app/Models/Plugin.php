@@ -11,6 +11,7 @@ use Filament\Schemas\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use JsonException;
 use Sushi\Sushi;
@@ -240,7 +241,7 @@ class Plugin extends Model implements HasPluginSettings
 
         return cache()->remember("plugins.$this->id.update", now()->addMinutes(10), function () {
             try {
-                $data = json_decode(file_get_contents($this->update_url), true, 512, JSON_THROW_ON_ERROR);
+                $data = Http::timeout(5)->connectTimeout(1)->get($this->update_url)->throw()->json();
 
                 // Support update jsons that cover multiple plugins
                 if (array_key_exists($this->id, $data)) {

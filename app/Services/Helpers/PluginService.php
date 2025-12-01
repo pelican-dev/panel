@@ -326,8 +326,6 @@ class PluginService
             throw new Exception('Could not open zip file.');
         }
 
-        $pluginName = str($file->getClientOriginalName())->before('.zip')->toString();
-
         // Validate zip contents before extraction
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $filename = $zip->getNameIndex($i);
@@ -336,6 +334,8 @@ class PluginService
                 throw new Exception('Zip file contains invalid path traversal sequences.');
             }
         }
+
+        $pluginName = str($file->getClientOriginalName())->before('.zip')->toString();
 
         if ($cleanDownload) {
             File::deleteDirectory(plugin_path($pluginName));
