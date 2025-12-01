@@ -6,5 +6,5 @@ class ApiKeyPolicy
 {
     use DefaultPolicies;
 
-    protected string $modelName = 'apikey';
+    protected string $modelName = 'apiKey';
 }

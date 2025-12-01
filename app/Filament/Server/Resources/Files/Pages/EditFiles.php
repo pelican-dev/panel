@@ -7,11 +7,13 @@ use App\Exceptions\Repository\FileNotEditableException;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\Files\FileResource;
 use App\Livewire\AlertBanner;
+use App\Models\File;
 use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CodeEditor;
@@ -169,7 +171,9 @@ class EditFiles extends Page
                             ->language(fn (Get $get) => $get('lang'))
                             ->default(function () {
                                 try {
-                                    return $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
+                                    $contents = $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
+
+                                    return mb_convert_encoding($contents, 'UTF-8', ['UTF-8', 'UTF-16', 'ISO-8859-1', 'Windows-1252', 'ASCII']);
                                 } catch (FileSizeTooLargeException) {
                                     AlertBanner::make('file_too_large')
                                         ->title(trans('server/file.alerts.file_too_large.title', ['name' => basename($this->path)]))
@@ -215,13 +219,15 @@ class EditFiles extends Page
 
         $this->previousUrl = url()->previous();
 
-        if (str($path)->endsWith('.pelicanignore')) {
-            AlertBanner::make('.pelicanignore_info')
-                ->title(trans('server/file.alerts.pelicanignore.title'))
-                ->body(trans('server/file.alerts.pelicanignore.body'))
-                ->info()
-                ->closable()
-                ->send();
+        foreach (File::getSpecialFiles() as $fileName => $data) {
+            if ($data['check'] instanceof Closure && $data['check']($path)) {
+                AlertBanner::make($fileName . '_info')
+                    ->title($data['title'])
+                    ->body($data['body'])
+                    ->info()
+                    ->closable()
+                    ->send();
+            }
         }
     }
 
@@ -261,7 +267,7 @@ class EditFiles extends Page
         $previousParts = '';
         foreach (explode('/', $this->path) as $part) {
             $previousParts = $previousParts . '/' . $part;
-            $breadcrumbs[self::getUrl(['path' => ltrim($previousParts, '/')])] = $part;
+            $breadcrumbs[ListFiles::getUrl(['path' => ltrim($previousParts, '/')])] = $part;
         }
 
         return $breadcrumbs;

@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Nodes\RelationManagers;
 
 use App\Filament\Admin\Resources\Servers\Pages\CreateServer;
+use App\Filament\Components\Actions\UpdateNodeAllocations;
 use App\Models\Allocation;
 use App\Models\Node;
 use App\Services\Allocations\AssignmentService;
@@ -15,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -80,9 +82,13 @@ class AllocationsRelationManager extends RelationManager
                     ->searchable()
                     ->label(trans('admin/node.table.ip')),
             ])
-            ->headerActions([
+            ->toolbarActions([
+                DeleteBulkAction::make()
+                    ->authorize(fn () => user()?->can('update', $this->getOwnerRecord())),
                 Action::make('create new allocation')
                     ->label(trans('admin/node.create_allocation'))
+                    ->icon('tabler-world-plus')
+                    ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->schema(fn () => [
                         Select::make('allocation_ip')
                             ->options(fn () => collect($this->getOwnerRecord()->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
@@ -118,9 +124,8 @@ class AllocationsRelationManager extends RelationManager
                             ->required(),
                     ])
                     ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord(), $data)),
-            ])
-            ->groupedBulkActions([
-                DeleteBulkAction::make()
+                UpdateNodeAllocations::make()
+                    ->nodeRecord($this->getOwnerRecord())
                     ->authorize(fn () => user()?->can('update', $this->getOwnerRecord())),
             ]);
     }

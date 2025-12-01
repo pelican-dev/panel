@@ -33,6 +33,7 @@ return [
 
         'allocations' => [
             'enabled' => env('PANEL_CLIENT_ALLOCATIONS_ENABLED', false),
+            'create_new' => env('PANEL_CLIENT_ALLOCATIONS_CREATE_NEW', true),
             'range_start' => env('PANEL_CLIENT_ALLOCATIONS_RANGE_START'),
             'range_end' => env('PANEL_CLIENT_ALLOCATIONS_RANGE_END'),
         ],
@@ -53,6 +54,7 @@ return [
         'display-width' => env('FILAMENT_WIDTH', 'screen-2xl'),
         'avatar-provider' => env('FILAMENT_AVATAR_PROVIDER', 'gravatar'),
         'uploadable-avatars' => env('FILAMENT_UPLOADABLE_AVATARS', false),
+        'default-navigation' => env('FILAMENT_DEFAULT_NAVIGATION', 'sidebar'),
     ],
 
     'use_binary_prefix' => env('PANEL_USE_BINARY_PREFIX', true),

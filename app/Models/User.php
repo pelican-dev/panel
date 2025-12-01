@@ -287,7 +287,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             ->leftJoin('subusers', 'subusers.server_id', '=', 'servers.id')
             ->where(function (Builder $builder) {
                 $builder->where('servers.owner_id', $this->id)->orWhere('subusers.user_id', $this->id);
-            });
+            })
+            ->distinct('servers.id');
     }
 
     public function accessibleNodes(): Builder
@@ -341,9 +342,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             return false;
         }
 
-        $check = in_array($permission, $subuser->permissions);
-
-        return $check;
+        return in_array($permission, $subuser->permissions);
     }
 
     /**

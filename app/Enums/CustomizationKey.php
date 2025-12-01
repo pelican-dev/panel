@@ -18,7 +18,7 @@ enum CustomizationKey: string
             self::ConsoleFont => 'monospace',
             self::ConsoleFontSize => 14,
             self::ConsoleGraphPeriod => 30,
-            self::TopNavigation => false,
+            self::TopNavigation => config('panel.filament.default-navigation', 'sidebar'),
             self::DashboardLayout => 'grid',
         };
     }

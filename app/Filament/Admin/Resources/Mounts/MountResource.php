@@ -12,7 +12,6 @@ use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use Exception;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -24,6 +23,7 @@ use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -103,10 +103,7 @@ class MountResource extends Resource
             ])
             ->emptyStateIcon('tabler-layers-linked')
             ->emptyStateDescription('')
-            ->emptyStateHeading(trans('admin/mount.no_mounts'))
-            ->emptyStateActions([
-                CreateAction::make(),
-            ]);
+            ->emptyStateHeading(trans('admin/mount.no_mounts'));
     }
 
     /**
@@ -125,6 +122,7 @@ class MountResource extends Resource
                     ToggleButtons::make('read_only')
                         ->label(trans('admin/mount.read_only'))
                         ->helperText(trans('admin/mount.read_only_help'))
+                        ->stateCast(new BooleanStateCast(false, true))
                         ->options([
                             false => trans('admin/mount.toggles.writable'),
                             true => trans('admin/mount.toggles.read_only'),
@@ -138,8 +136,7 @@ class MountResource extends Resource
                             true => 'success',
                         ])
                         ->inline()
-                        ->default(false)
-                        ->required(),
+                        ->default(false),
                     TextInput::make('source')
                         ->label(trans('admin/mount.source'))
                         ->required()
@@ -162,7 +159,8 @@ class MountResource extends Resource
                     Section::make()->schema([
                         Select::make('eggs')->multiple()
                             ->label(trans('admin/mount.eggs'))
-                            ->relationship('eggs', 'name')
+                            // Selecting only non-json fields to prevent Postgres from choking on DISTINCT JSON columns
+                            ->relationship('eggs', 'name', fn (Builder $query) => $query->select(['eggs.id', 'eggs.name']))
                             ->preload(),
                         Select::make('nodes')->multiple()
                             ->label(trans('admin/mount.nodes'))

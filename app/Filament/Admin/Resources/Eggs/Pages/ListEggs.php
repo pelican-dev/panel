@@ -19,6 +19,8 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\IconSize;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -42,6 +44,13 @@ class ListEggs extends ListRecords
                 TextColumn::make('id')
                     ->label('Id')
                     ->hidden(),
+                ImageColumn::make('image')
+                    ->label('')
+                    ->alignCenter()
+                    ->circular()
+                    ->getStateUsing(fn ($record) => $record->image
+                        ? $record->image
+                        : 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(public_path('pelican.svg')))),
                 TextColumn::make('name')
                     ->label(trans('admin/egg.name'))
                     ->description(fn ($record): ?string => (strlen($record->description) > 120) ? substr($record->description, 0, 120).'...' : $record->description)
@@ -58,7 +67,8 @@ class ListEggs extends ListRecords
                     ->tooltip(trans('filament-actions::edit.single.label')),
                 ExportEggAction::make()
                     ->iconButton()
-                    ->tooltip(trans('filament-actions::export.modal.actions.export.label')),
+                    ->tooltip(trans('filament-actions::export.modal.actions.export.label'))
+                    ->iconSize(IconSize::Large),
                 UpdateEggAction::make()
                     ->iconButton()
                     ->tooltip(trans_choice('admin/egg.update', 1)),
@@ -90,11 +100,6 @@ class ListEggs extends ListRecords
             ->emptyStateIcon('tabler-eggs')
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/egg.no_eggs'))
-            ->emptyStateActions([
-                CreateAction::make(),
-                ImportEggAction::make()
-                    ->multiple(),
-            ])
             ->filters([
                 TagsFilter::make()
                     ->model(Egg::class),
@@ -109,7 +114,9 @@ class ListEggs extends ListRecords
         return [
             ImportEggAction::make()
                 ->multiple(),
-            CreateAction::make(),
+            CreateAction::make()
+                ->icon('tabler-file-plus')
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
         ];
     }
 }

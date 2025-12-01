@@ -13,7 +13,6 @@ use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use Exception;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -100,10 +99,7 @@ class DatabaseHostResource extends Resource
             ])
             ->emptyStateIcon('tabler-database')
             ->emptyStateDescription('')
-            ->emptyStateHeading(trans('admin/databasehost.no_database_hosts'))
-            ->emptyStateActions([
-                CreateAction::make(),
-            ]);
+            ->emptyStateHeading(trans('admin/databasehost.no_database_hosts'));
     }
 
     /**

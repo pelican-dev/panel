@@ -12,6 +12,7 @@ use App\Services\Subusers\SubuserDeletionService;
 use App\Traits\HasValidation;
 use Carbon\CarbonInterface;
 use Database\Factories\ServerFactory;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -55,6 +56,7 @@ use Psr\Http\Message\ResponseInterface;
  * @property int $egg_id
  * @property string $startup
  * @property string $image
+ * @property string|null $icon
  * @property int|null $allocation_limit
  * @property int|null $database_limit
  * @property int|null $backup_limit
@@ -70,7 +72,7 @@ use Psr\Http\Message\ResponseInterface;
  * @property int|null $backups_count
  * @property Collection|Database[] $databases
  * @property int|null $databases_count
- * @property Egg|null $egg
+ * @property Egg $egg
  * @property Collection|Mount[] $mounts
  * @property int|null $mounts_count
  * @property Node $node
@@ -129,7 +131,7 @@ use Psr\Http\Message\ResponseInterface;
  * @method static Builder|Server wherePorts($value)
  * @method static Builder|Server whereUuidShort($value)
  */
-class Server extends Model implements Validatable
+class Server extends Model implements HasAvatar, Validatable
 {
     use HasFactory;
     use HasValidation;
@@ -181,6 +183,7 @@ class Server extends Model implements Validatable
         'startup' => ['required', 'string'],
         'skip_scripts' => ['sometimes', 'boolean'],
         'image' => ['required', 'string', 'max:255'],
+        'icon' => ['sometimes', 'nullable', 'string'],
         'database_limit' => ['present', 'nullable', 'integer', 'min:0'],
         'allocation_limit' => ['sometimes', 'nullable', 'integer', 'min:0'],
         'backup_limit' => ['present', 'nullable', 'integer', 'min:0'],
@@ -479,7 +482,7 @@ class Server extends Model implements Validatable
         });
     }
 
-    public function formatResource(ServerResourceType $resourceType): string
+    public function formatResource(ServerResourceType $resourceType, int $precision = 2): string
     {
         $resourceAmount = $resourceType->getResourceAmount($this);
 
@@ -501,10 +504,10 @@ class Server extends Model implements Validatable
         }
 
         if ($resourceType->isPercentage()) {
-            return format_number($resourceAmount, precision: 2) . '%';
+            return format_number($resourceAmount, precision: $precision) . '%';
         }
 
-        return convert_bytes_to_readable($resourceAmount, base: 3);
+        return convert_bytes_to_readable($resourceAmount, decimals: $precision, base: 3);
     }
 
     public function condition(): Attribute
@@ -512,5 +515,11 @@ class Server extends Model implements Validatable
         return Attribute::make(
             get: fn () => $this->status ?? $this->retrieveStatus(),
         );
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->icon ?? $this->egg->image;
+
     }
 }

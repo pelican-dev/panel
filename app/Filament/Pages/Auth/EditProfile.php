@@ -34,13 +34,12 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
@@ -132,8 +131,7 @@ class EditProfile extends BaseEditProfile
                                     ->default(config('app.timezone', 'UTC'))
                                     ->selectablePlaceholder(false)
                                     ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
-                                    ->searchable()
-                                    ->native(false),
+                                    ->searchable(),
                                 Select::make('language')
                                     ->label(trans('profile.language'))
                                     ->required()
@@ -143,8 +141,7 @@ class EditProfile extends BaseEditProfile
                                     ->selectablePlaceholder(false)
                                     ->helperText(fn ($state, LanguageService $languageService) => new HtmlString($languageService->isLanguageTranslated($state) ? ''
                                             : trans('profile.language_help', ['state' => $state]) . ' <u><a href="https://crowdin.com/project/pelican-dev/">Update On Crowdin</a></u>'))
-                                    ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages())
-                                    ->native(false),
+                                    ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
                                 FileUpload::make('avatar')
                                     ->visible(fn () => config('panel.filament.uploadable-avatars'))
                                     ->avatar()
@@ -442,10 +439,10 @@ class EditProfile extends BaseEditProfile
                                             ->label(trans('profile.navigation'))
                                             ->inline()
                                             ->options([
-                                                1 => trans('profile.top'),
-                                                0 => trans('profile.side'),
-                                            ])
-                                            ->stateCast(new BooleanStateCast(false, true)),
+                                                'sidebar' => trans('profile.sidebar'),
+                                                'topbar' => trans('profile.topbar'),
+                                                'mixed' => trans('profile.mixed'),
+                                            ]),
                                     ]),
                                 Section::make(trans('profile.console'))
                                     ->collapsible()
@@ -458,6 +455,7 @@ class EditProfile extends BaseEditProfile
                                             ->minValue(1)
                                             ->numeric()
                                             ->required()
+                                            ->live()
                                             ->default(14),
                                         Select::make('console_font')
                                             ->label(trans('profile.font'))
@@ -482,9 +480,8 @@ class EditProfile extends BaseEditProfile
 
                                                 return $fonts;
                                             })
-                                            ->reactive()
-                                            ->default('monospace')
-                                            ->afterStateUpdated(fn ($state, Set $set) => $set('font_preview', $state)),
+                                            ->live()
+                                            ->default('monospace'),
                                         TextEntry::make('font_preview')
                                             ->label(trans('profile.font_preview'))
                                             ->columnSpan(2)
@@ -554,8 +551,12 @@ class EditProfile extends BaseEditProfile
     protected function getDefaultHeaderActions(): array
     {
         return [
-            $this->getSaveFormAction()->formId('form'),
-            $this->getCancelFormAction()->formId('form'),
+            $this->getCancelFormAction()->formId('form')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-arrow-left'),
+            $this->getSaveFormAction()->formId('form')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-device-floppy'),
         ];
 
     }
@@ -585,7 +586,14 @@ class EditProfile extends BaseEditProfile
         $data['console_rows'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleRows);
         $data['console_graph_period'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $data['dashboard_layout'] = $this->getUser()->getCustomization(CustomizationKey::DashboardLayout);
-        $data['top_navigation'] = (bool) $this->getUser()->getCustomization(CustomizationKey::TopNavigation);
+
+        // Handle migration from boolean to string navigation types
+        $topNavigation = $this->getUser()->getCustomization(CustomizationKey::TopNavigation);
+        if (is_bool($topNavigation)) {
+            $data['top_navigation'] = $topNavigation ? 'topbar' : 'sidebar';
+        } else {
+            $data['top_navigation'] = $topNavigation;
+        }
 
         return $data;
     }

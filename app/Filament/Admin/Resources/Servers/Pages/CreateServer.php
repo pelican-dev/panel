@@ -116,6 +116,14 @@ class CreateServer extends CreateRecord
                                 ->prefixIcon('tabler-server-2')
                                 ->selectablePlaceholder(false)
                                 ->default(function () {
+                                    $lastUsedNode = session()->get('last_utilized_node');
+
+                                    if ($lastUsedNode && user()?->accessibleNodes()->where('id', $lastUsedNode)->exists()) {
+                                        $this->node = Node::find($lastUsedNode);
+
+                                        return $this->node?->id;
+                                    }
+
                                     /** @var ?Node $latestNode */
                                     $latestNode = user()?->accessibleNodes()->latest()->first();
                                     $this->node = $latestNode;
@@ -405,6 +413,7 @@ class CreateServer extends CreateRecord
                             Select::make('select_startup')
                                 ->label(trans('admin/server.startup_cmd'))
                                 ->hidden(fn (Get $get) => $get('egg_id') === null)
+                                ->required()
                                 ->live()
                                 ->afterStateUpdated(fn (Set $set, $state) => $set('startup', $state))
                                 ->options(function ($state, Get $get, Set $set) {
@@ -418,7 +427,7 @@ class CreateServer extends CreateRecord
                                         $set('select_startup', $currentStartup);
                                     }
 
-                                    return array_flip($startups) + ['' => 'Custom Startup'];
+                                    return array_flip($startups) + ['custom' => 'Custom Startup'];
                                 })
                                 ->selectablePlaceholder(false)
                                 ->columnSpanFull(),
@@ -436,7 +445,7 @@ class CreateServer extends CreateRecord
                                     if (in_array($state, $startups)) {
                                         $set('select_startup', $state);
                                     } else {
-                                        $set('select_startup', '');
+                                        $set('select_startup', 'custom');
                                     }
                                 })
                                 ->placeholder(trans('admin/server.startup_placeholder'))
@@ -828,6 +837,8 @@ class CreateServer extends CreateRecord
         if ($allocation_additional = array_get($data, 'allocation_additional')) {
             $data['allocation_additional'] = collect($allocation_additional)->filter()->all();
         }
+
+        session()->put('last_utilized_node', $data['node_id']);
 
         try {
             return $this->serverCreationService->handle($data);

@@ -10,6 +10,7 @@ return [
         'basic_settings' => 'Basic Settings',
         'advanced_settings' => 'Advanced Settings',
         'config_file' => 'Configuration File',
+        'diagnostics' => 'Diagnostics',
     ],
     'table' => [
         'health' => 'Health',
@@ -43,7 +44,7 @@ return [
     'error' => 'This is the domain name that points to your node\'s IP Address. If you\'ve already set up this, you can verify it by checking the next field!',
     'fqdn_help' => 'Your panel is currently secured via an SSL certificate and that means your nodes require one too. You must use a domain name, because you cannot get SSL certificates for IP Addresses.',
     'dns' => 'DNS Record Check',
-    'dns_help' => 'This lets you know if you DNS record is pointing to the correct IP address.',
+    'dns_help' => 'This lets you know if your DNS record is pointing to the correct IP address.',
     'valid' => 'Valid',
     'invalid' => 'Invalid',
     'port' => 'Port',
@@ -117,8 +118,35 @@ return [
     'error_connecting_description' => 'The configuration could not be automatically updated on Wings, you will need to manually update the configuration file.',
     'allocation' => 'Allocation',
 
+    'diagnostics' => [
+        'header' => 'Node Diagnostics',
+        'include_endpoints' => 'Include Endpoints',
+        'include_endpoints_hint' => 'Including endpoints will show panel urls within the logs and NOT obscure them.',
+        'include_logs' => 'Include Logs',
+        'include_logs_hint' => 'Including logs will show recent logs and help track down possible issues.',
+        'run_diagnostics' => 'Run Diagnostics',
+        'upload_to_pelican' => 'Upload Logs',
+        'logs_pulled' => 'Logs Pulled!',
+        'logs_uploaded' => 'Logs Uploaded',
+        'upload_failed' => 'Logs Upload Failed',
+        'view_logs' => 'View Logs',
+        'pull' => 'Pull',
+        'upload' => 'Upload',
+        'clear' => 'Clear',
+        '404' => 'The requested diagnostic report could not be found. Make sure wings is up to date and try again.',
+    ],
+
     'cloudflare_issue' => [
         'title' => 'Cloudflare Issue',
         'body' => 'Your Node is not accessible by Cloudflare',
     ],
+
+    'bulk_update_ip' => 'Update IPs',
+    'bulk_update_ip_description' => 'Replace an old IP address with a new one for allocations. This is useful when a node\'s IP address changes',
+    'update_ip' => 'Update IP',
+    'old_ip' => 'Old IP Address',
+    'new_ip' => 'New IP Address',
+    'no_allocations_to_update' => 'No allocations with the selected old IP address were found',
+    'ip_updated' => 'Successfully updated :count of :total allocation(s)',
+    'ip_update_failed' => ':count allocation(s) failed to update',
 ];

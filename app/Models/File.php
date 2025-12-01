@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Livewire\AlertBanner;
 use App\Repositories\Daemon\DaemonFileRepository;
 use Carbon\Carbon;
+use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -54,6 +55,32 @@ class File extends Model
 
     protected static ?string $searchTerm;
 
+    /** @var array<string, array<string, string|Closure|null>> */
+    protected static array $customSpecialFiles = [];
+
+    public static function registerSpecialFile(string $fileName, string|Closure $bannerTitle, string|Closure|null $bannerBody = null, ?Closure $nameCheck = null): void
+    {
+        static::$customSpecialFiles[$fileName] = [
+            'title' => $bannerTitle,
+            'body' => $bannerBody,
+            'check' => $nameCheck ?? fn (string $path) => str($path)->endsWith($fileName),
+        ];
+    }
+
+    /** @return array<string, array<string, string|Closure|null>> */
+    public static function getSpecialFiles(): array
+    {
+        $specialFiles = [
+            '.pelicanignore' => [
+                'title' => fn () => trans('server/file.alerts.pelicanignore.title'),
+                'body' => fn () => trans('server/file.alerts.pelicanignore.body'),
+                'check' => fn (string $path) => str($path)->endsWith('.pelicanignore'),
+            ],
+        ];
+
+        return array_merge($specialFiles, static::$customSpecialFiles);
+    }
+
     public static function get(Server $server, string $path = '/', ?string $searchTerm = null): Builder
     {
         self::$server = $server;
@@ -96,7 +123,7 @@ class File extends Model
             return false;
         }
 
-        return $this->is_file && !in_array($this->mime_type, ['application/jar', 'application/octet-stream', 'inode/directory']);
+        return $this->is_file && !in_array($this->mime_type, ['application/java-archive', 'application/octet-stream', 'inode/directory']);
     }
 
     public function server(): Server
@@ -175,7 +202,7 @@ class File extends Model
                     'is_directory' => $file['directory'],
                     'is_file' => $file['file'],
                     'is_symlink' => $file['symlink'],
-                    'mime_type' => $file['file'] && str($file['name'])->lower()->endsWith('.jar') && in_array($file['mime'], self::ARCHIVE_MIMES) ? 'application/jar' : $file['mime'],
+                    'mime_type' => $file['file'] && str($file['name'])->lower()->endsWith('.jar') && in_array($file['mime'], self::ARCHIVE_MIMES) ? 'application/java-archive' : $file['mime'],
                 ];
             }, $contents);
 
