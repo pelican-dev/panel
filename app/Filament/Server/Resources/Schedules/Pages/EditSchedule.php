@@ -63,7 +63,7 @@ class EditSchedule extends EditRecord
                 ->tooltip(trans('server/schedule.save')),
             $this->getCancelFormAction()->formId('form')
                 ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-cancel')
+                ->icon('tabler-arrow-left')
                 ->tooltip(trans('server/schedule.cancel')),
         ];
     }
