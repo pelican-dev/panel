@@ -6,6 +6,7 @@ use App\Facades\Activity;
 use App\Filament\Server\Resources\Users\Pages\ListUsers;
 use App\Models\Permission;
 use App\Models\Server;
+use App\Models\Subuser;
 use App\Models\User;
 use App\Services\Subusers\SubuserCreationService;
 use App\Services\Subusers\SubuserDeletionService;
@@ -91,7 +92,11 @@ class UserResource extends Resource
         $tabs = [];
         $permissionsArray = [];
 
-        foreach (Permission::permissionData() as $data) {
+        foreach (Subuser::allPermissionData() as $data) {
+            if ($data['hidden'] ?? false) {
+                continue;
+            }
+
             $options = [];
             $descriptions = [];
 
@@ -107,6 +112,7 @@ class UserResource extends Resource
                     Section::make()
                         ->description(trans('server/user.permissions.' . $data['name'] . '_desc'))
                         ->icon($data['icon'])
+                        ->contained(false)
                         ->schema([
                             CheckboxList::make($data['name'])
                                 ->hiddenLabel()

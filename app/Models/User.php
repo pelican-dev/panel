@@ -356,13 +356,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function can($abilities, mixed $arguments = []): bool
     {
-        if (is_string($abilities) && str_contains($abilities, '.')) {
-            [$permission, $key] = str($abilities)->explode('.', 2);
-
-            if (isset(Permission::permissions()[$permission]['keys'][$key])) {
-                if ($arguments instanceof Server) {
-                    return $this->checkPermission($arguments, $abilities);
-                }
+        if ($arguments instanceof Server) {
+            if (is_string($abilities) && Subuser::doesPermissionExist($abilities)) {
+                return $this->checkPermission($arguments, $abilities);
             }
         }
 

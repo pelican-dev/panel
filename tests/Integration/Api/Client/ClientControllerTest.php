@@ -214,7 +214,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
             ->assertJson([
                 'object' => 'system_permissions',
                 'attributes' => [
-                    'permissions' => Permission::permissions()->toArray(),
+                    'permissions' => Subuser::allPermissionKeys()->toArray(),
                 ],
             ]);
     }

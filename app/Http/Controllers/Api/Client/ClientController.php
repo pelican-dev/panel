@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\Client;
 
 use App\Http\Requests\Api\Client\GetServersRequest;
 use App\Models\Filters\MultiFieldServerFilter;
-use App\Models\Permission;
 use App\Models\Server;
+use App\Models\Subuser;
 use App\Transformers\Api\Client\ServerTransformer;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Database\Eloquent\Builder;
@@ -88,7 +88,7 @@ class ClientController extends ClientApiController
         return [
             'object' => 'system_permissions',
             'attributes' => [
-                'permissions' => Permission::permissions(),
+                'permissions' => Subuser::allPermissionKeys(),
             ],
         ];
     }

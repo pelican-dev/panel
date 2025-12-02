@@ -82,18 +82,17 @@ class SubuserController extends ClientApiController
      */
     public function store(StoreSubuserRequest $request, Server $server): array
     {
-        $response = $this->creationService->handle(
-            $server,
-            $request->input('email'),
-            $this->getDefaultPermissions($request)
-        );
+        $email = $request->input('email');
+        $permissions = $this->getCleanedPermissions($request);
+
+        $subuser = $this->creationService->handle($server, $email, $permissions);
 
         Activity::event('server:subuser.create')
-            ->subject($response->user)
-            ->property(['email' => $request->input('email'), 'permissions' => $this->getDefaultPermissions($request)])
+            ->subject($subuser->user)
+            ->property(['email' => $email, 'permissions' => $permissions])
             ->log();
 
-        return $this->fractal->item($response)
+        return $this->fractal->item($subuser)
             ->transformWith($this->getTransformer(SubuserTransformer::class))
             ->toArray();
     }
@@ -112,7 +111,7 @@ class SubuserController extends ClientApiController
         /** @var Subuser $subuser */
         $subuser = $request->attributes->get('subuser');
 
-        $this->updateService->handle($subuser, $server, $this->getDefaultPermissions($request));
+        $this->updateService->handle($subuser, $server, $this->getCleanedPermissions($request));
 
         return $this->fractal->item($subuser->refresh())
             ->transformWith($this->getTransformer(SubuserTransformer::class))
@@ -135,17 +134,18 @@ class SubuserController extends ClientApiController
     }
 
     /**
-     * Returns the default permissions for subusers and parses out any permissions
+     * Returns the "cleaned" permissions for subusers and parses out any permissions
      * that were passed that do not also exist in the internally tracked list of
      * permissions.
      *
      * @return array<array-key, mixed>
      */
-    protected function getDefaultPermissions(Request $request): array
+    protected function getCleanedPermissions(Request $request): array
     {
-        $allowed = Permission::permissionKeys()->all();
-        $cleaned = array_intersect($request->input('permissions') ?? [], $allowed);
-
-        return array_unique(array_merge($cleaned, [Permission::ACTION_WEBSOCKET_CONNECT]));
+        return collect($request->input('permissions') ?? [])
+            ->intersect(Subuser::allPermissionKeys())
+            ->push(Permission::ACTION_WEBSOCKET_CONNECT)
+            ->unique()
+            ->toArray();
     }
 }
