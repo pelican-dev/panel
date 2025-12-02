@@ -482,7 +482,7 @@ class Server extends Model implements HasAvatar, Validatable
         });
     }
 
-    public function formatResource(ServerResourceType $resourceType): string
+    public function formatResource(ServerResourceType $resourceType, int $precision = 2): string
     {
         $resourceAmount = $resourceType->getResourceAmount($this);
 
@@ -504,10 +504,10 @@ class Server extends Model implements HasAvatar, Validatable
         }
 
         if ($resourceType->isPercentage()) {
-            return format_number($resourceAmount, precision: 2) . '%';
+            return format_number($resourceAmount, precision: $precision) . '%';
         }
 
-        return convert_bytes_to_readable($resourceAmount, base: 3);
+        return convert_bytes_to_readable($resourceAmount, decimals: $precision, base: 3);
     }
 
     public function condition(): Attribute
