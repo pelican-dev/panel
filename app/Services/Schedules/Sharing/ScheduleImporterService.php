@@ -10,6 +10,7 @@ use App\Models\Task;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Http;
 use JsonException;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 
@@ -70,7 +71,9 @@ class ScheduleImporterService
         $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
         $tmpPath = $tmpDir->path($info['basename']);
 
-        if (!file_put_contents($tmpPath, file_get_contents($url))) {
+        $fileContents = Http::timeout(5)->connectTimeout(1)->get($url)->throw()->body();
+
+        if (!$fileContents || !file_put_contents($tmpPath, $fileContents)) {
             throw new InvalidFileUploadException('Could not write temporary file.');
         }
 
