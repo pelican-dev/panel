@@ -12,7 +12,6 @@ use App\Filament\Components\StateCasts\ServerConditionStateCast;
 use App\Filament\Server\Pages\Console;
 use App\Models\Allocation;
 use App\Models\Egg;
-use App\Models\Node;
 use App\Models\Server;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonServerRepository;
@@ -1008,7 +1007,7 @@ class EditServer extends EditRecord
                                                 Actions::make([
                                                     Action::make('transfer')
                                                         ->label(trans('admin/server.transfer'))
-                                                        ->disabled(fn (Server $server) => Node::count() <= 1 || $server->isInConflictState())
+                                                        ->disabled(fn (Server $server) => user()?->accessibleNodes()->count() <= 1 || $server->isInConflictState())
                                                         ->modalHeading(trans('admin/server.transfer'))
                                                         ->schema($this->transferServer())
                                                         ->action(function (TransferServerService $transfer, Server $server, $data) {
@@ -1080,10 +1079,10 @@ class EditServer extends EditRecord
                 ->label(trans('admin/server.node'))
                 ->prefixIcon('tabler-server-2')
                 ->selectablePlaceholder(false)
-                ->default(fn (Server $server) => Node::whereNot('id', $server->node->id)->first()?->id)
+                ->default(fn (Server $server) => user()?->accessibleNodes()->whereNot('id', $server->node->id)->first()?->id)
                 ->required()
                 ->live()
-                ->options(fn (Server $server) => Node::whereNot('id', $server->node->id)->pluck('name', 'id')->all()),
+                ->options(fn (Server $server) => user()?->accessibleNodes()->whereNot('id', $server->node->id)->pluck('name', 'id')->all()),
             Select::make('allocation_id')
                 ->label(trans('admin/server.primary_allocation'))
                 ->disabled(fn (Get $get, Server $server) => !$get('node_id') || !$server->allocation_id)
