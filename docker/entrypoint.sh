@@ -38,7 +38,7 @@ php artisan filament:optimize
 
 # default to caddy not starting
 export SUPERVISORD_CADDY=false
-export PARSED_LE_EMAIL=${LE_EMAIL}
+export PARSED_LE_EMAIL="email ${LE_EMAIL}"
 export PARSED_APP_URL=${APP_URL}
 
 # when running behind a proxy
