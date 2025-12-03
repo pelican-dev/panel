@@ -8,6 +8,7 @@ use App\Models\Server;
 use App\Services\Schedules\Sharing\ScheduleExporterService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Support\Enums\IconSize;
 
 class ExportScheduleAction extends Action
 {
@@ -19,6 +20,16 @@ class ExportScheduleAction extends Action
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->hiddenLabel();
+
+        $this->iconButton();
+
+        $this->iconSize(IconSize::ExtraLarge);
+
+        $this->icon('tabler-download');
+
+        $this->tooltip(trans('server/schedule.export'));
 
         /** @var Server $server */
         $server = Filament::getTenant();

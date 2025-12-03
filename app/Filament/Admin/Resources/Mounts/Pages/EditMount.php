@@ -23,8 +23,7 @@ class EditMount extends EditRecord
     {
         return [
             DeleteAction::make()
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-trash'),
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
             $this->getSaveFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),

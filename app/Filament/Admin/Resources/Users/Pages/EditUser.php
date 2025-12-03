@@ -35,8 +35,7 @@ class EditUser extends EditRecord
             DeleteAction::make()
                 ->label(fn (User $user) => user()?->id === $user->id ? trans('admin/user.self_delete') : ($user->servers()->count() > 0 ? trans('admin/user.has_servers') : trans('filament-actions::delete.single.modal.actions.delete.label')))
                 ->disabled(fn (User $user) => user()?->id === $user->id || $user->servers()->count() > 0)
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-trash'),
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
             $this->getSaveFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),

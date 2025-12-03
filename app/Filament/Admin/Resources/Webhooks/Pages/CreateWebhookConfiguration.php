@@ -9,6 +9,7 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Support\Enums\IconSize;
 
 class CreateWebhookConfiguration extends CreateRecord
 {
@@ -23,8 +24,10 @@ class CreateWebhookConfiguration extends CreateRecord
     protected function getDefaultHeaderActions(): array
     {
         return [
-            $this->getCancelFormAction()->formId('form'),
-            $this->getCreateFormAction()->formId('form'),
+            $this->getCancelFormAction()->formId('form')
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
+            $this->getCreateFormAction()->formId('form')
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
         ];
     }
 

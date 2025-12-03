@@ -25,8 +25,7 @@ class EditWebhookConfiguration extends EditRecord
     {
         return [
             DeleteAction::make()
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-trash'),
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
             Action::make('test_now')
                 ->label(trans('admin/webhook.test_now'))
                 ->color('primary')

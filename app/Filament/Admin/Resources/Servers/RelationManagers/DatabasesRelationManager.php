@@ -84,7 +84,6 @@ class DatabasesRelationManager extends RelationManager
                     ->color('primary'),
                 DeleteAction::make()
                     ->iconButton()->iconSize(IconSize::ExtraLarge)
-                    ->icon('tabler-trash')
                     ->successNotificationTitle(null)
                     ->using(function (Database $database, DatabaseManagementService $service) {
                         try {

@@ -60,7 +60,6 @@ class EditRole extends EditRecord
             DeleteAction::make()
                 ->label(fn (Role $role) => $role->isRootAdmin() ? trans('admin/role.root_admin_delete') : ($role->users_count >= 1 ? trans('admin/role.in_use') : trans('filament-actions::delete.single.label')))
                 ->disabled(fn (Role $role) => $role->isRootAdmin() || $role->users_count >= 1)
-                ->icon('tabler-trash')
                 ->iconButton()->iconSize(IconSize::ExtraLarge),
             $this->getSaveFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
