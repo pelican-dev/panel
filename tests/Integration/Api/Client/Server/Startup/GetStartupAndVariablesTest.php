@@ -2,8 +2,8 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Startup;
 
+use App\Enums\SubuserPermission;
 use App\Models\EggVariable;
-use App\Models\Permission;
 use App\Models\User;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -51,7 +51,7 @@ class GetStartupAndVariablesTest extends ClientApiIntegrationTestCase
      */
     public function test_startup_data_is_not_returned_without_permission(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::WebsocketConnect]);
         $this->actingAs($user)->getJson($this->link($server) . '/startup')->assertForbidden();
 
         $user2 = User::factory()->create();
@@ -60,6 +60,6 @@ class GetStartupAndVariablesTest extends ClientApiIntegrationTestCase
 
     public static function permissionsDataProvider(): array
     {
-        return [[[]], [[Permission::ACTION_STARTUP_READ]]];
+        return [[[]], [[SubuserPermission::StartupRead]]];
     }
 }

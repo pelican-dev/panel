@@ -2,11 +2,11 @@
 
 namespace App\Filament\Server\Resources\Activities;
 
+use App\Enums\SubuserPermission;
 use App\Filament\Admin\Resources\Users\Pages\EditUser;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\Activities\Pages\ListActivities;
 use App\Models\ActivityLog;
-use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Server;
 use App\Models\User;
@@ -166,7 +166,7 @@ class ActivityResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return user()?->can(Permission::ACTION_ACTIVITY_READ, Filament::getTenant());
+        return user()?->can(SubuserPermission::ActivityRead, Filament::getTenant());
     }
 
     /** @return array<string, PageRegistration> */

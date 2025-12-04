@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Contracts\Validatable;
+use App\Enums\SubuserPermission;
 use App\Traits\HasValidation;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,68 +33,10 @@ class Subuser extends Model implements Validatable
      */
     public const RESOURCE_NAME = 'server_subuser';
 
-    public const DEFAULT_PERMISSIONS = [
-        [
-            'name' => 'websocket',
-            'hidden' => true,
-            'permissions' => ['connect'],
-        ],
-        [
-            'name' => 'control',
-            'icon' => 'tabler-terminal-2',
-            'permissions' => ['console', 'start', 'stop', 'restart'],
-        ],
-        [
-            'name' => 'user',
-            'icon' => 'tabler-users',
-            'permissions' => ['read', 'create', 'update', 'delete'],
-        ],
-        [
-            'name' => 'file',
-            'icon' => 'tabler-files',
-            'permissions' => ['read', 'read-content', 'create', 'update', 'delete', 'archive', 'sftp'],
-        ],
-        [
-            'name' => 'backup',
-            'icon' => 'tabler-file-zip',
-            'permissions' => ['read', 'create', 'delete', 'download', 'restore'],
-        ],
-        [
-            'name' => 'allocation',
-            'icon' => 'tabler-network',
-            'permissions' => ['read', 'create', 'update', 'delete'],
-        ],
-        [
-            'name' => 'startup',
-            'icon' => 'tabler-player-play',
-            'permissions' => ['read', 'update', 'docker-image'],
-        ],
-        [
-            'name' => 'database',
-            'icon' => 'tabler-database',
-            'permissions' => ['read', 'create', 'update', 'delete', 'view-password'],
-        ],
-        [
-            'name' => 'schedule',
-            'icon' => 'tabler-clock',
-            'permissions' => ['read', 'create', 'update', 'delete'],
-        ],
-        [
-            'name' => 'settings',
-            'icon' => 'tabler-settings',
-            'permissions' => ['rename', 'description', 'reinstall'],
-        ],
-        [
-            'name' => 'activity',
-            'icon' => 'tabler-stack',
-            'permissions' => ['read'],
-        ],
-    ];
-
     /** @var array<string, array<string>> */
     protected static array $customPermissions = [];
 
-    /** @param array<string, array<string>> $customPermissions */
+    /** @param array<string, array<string>> $permissions */
     public static function registerCustomPermission(string $name, string $icon, array $permissions): void
     {
         array_push(static::$customPermissions, [
@@ -144,7 +87,22 @@ class Subuser extends Model implements Validatable
     /** @return array<array<string, mixed>> */
     public static function allPermissionData(): array
     {
-        return array_merge(static::DEFAULT_PERMISSIONS, static::$customPermissions);
+        $defaultPermissions = [];
+
+        foreach (SubuserPermission::cases() as $subuserPermission) {
+            [$group, $permission] = $subuserPermission->split();
+
+            $defaultPermissions[$group] = [
+                'name' => $group,
+                'hidden' => $subuserPermission->isHidden(),
+                'icon' => $subuserPermission->getIcon(),
+                'permissions' => array_merge($defaultPermissions[$group]['permissions'] ?? [], [$permission]),
+            ];
+        }
+
+        $defaultPermissions = array_values($defaultPermissions);
+
+        return array_merge($defaultPermissions, static::$customPermissions);
     }
 
     /** @return string[] */
@@ -157,8 +115,12 @@ class Subuser extends Model implements Validatable
             ->toArray();
     }
 
-    public static function doesPermissionExist(string $permission): bool
+    public static function doesPermissionExist(string|SubuserPermission $permission): bool
     {
+        if ($permission instanceof SubuserPermission) {
+            $permission = $permission->value;
+        }
+
         return str_contains($permission, '.') && in_array($permission, static::allPermissionKeys());
     }
 }

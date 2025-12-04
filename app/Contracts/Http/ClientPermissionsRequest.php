@@ -2,6 +2,8 @@
 
 namespace App\Contracts\Http;
 
+use App\Enums\SubuserPermission;
+
 interface ClientPermissionsRequest
 {
     /**
@@ -9,5 +11,5 @@ interface ClientPermissionsRequest
      * validate that the authenticated user has permission to perform this action against
      * the given resource (server).
      */
-    public function permission(): string;
+    public function permission(): SubuserPermission|string;
 }

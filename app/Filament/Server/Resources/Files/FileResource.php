@@ -2,12 +2,12 @@
 
 namespace App\Filament\Server\Resources\Files;
 
+use App\Enums\SubuserPermission;
 use App\Filament\Server\Resources\Files\Pages\DownloadFiles;
 use App\Filament\Server\Resources\Files\Pages\EditFiles;
 use App\Filament\Server\Resources\Files\Pages\ListFiles;
 use App\Filament\Server\Resources\Files\Pages\SearchFiles;
 use App\Models\File;
-use App\Models\Permission;
 use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
@@ -32,22 +32,22 @@ class FileResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return user()?->can(Permission::ACTION_FILE_READ, Filament::getTenant());
+        return user()?->can(SubuserPermission::FileRead, Filament::getTenant());
     }
 
     public static function canCreate(): bool
     {
-        return user()?->can(Permission::ACTION_FILE_CREATE, Filament::getTenant());
+        return user()?->can(SubuserPermission::FileCreate, Filament::getTenant());
     }
 
     public static function canEdit(Model $record): bool
     {
-        return user()?->can(Permission::ACTION_FILE_UPDATE, Filament::getTenant());
+        return user()?->can(SubuserPermission::FileUpdate, Filament::getTenant());
     }
 
     public static function canDelete(Model $record): bool
     {
-        return user()?->can(Permission::ACTION_FILE_DELETE, Filament::getTenant());
+        return user()?->can(SubuserPermission::FileDelete, Filament::getTenant());
     }
 
     /** @return array<string, PageRegistration> */

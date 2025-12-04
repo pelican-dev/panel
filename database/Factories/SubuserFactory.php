@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Permission;
 use App\Models\Subuser;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -22,7 +21,7 @@ class SubuserFactory extends Factory
     {
         return [
             'permissions' => [
-                Permission::ACTION_WEBSOCKET_CONNECT,
+                SubuserPermission::WebsocketConnect,
             ],
         ];
     }

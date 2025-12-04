@@ -2,9 +2,9 @@
 
 namespace App\Filament\Server\Resources\Users;
 
+use App\Enums\SubuserPermission;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\Users\Pages\ListUsers;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\User;
@@ -66,22 +66,22 @@ class UserResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return user()?->can(Permission::ACTION_USER_READ, Filament::getTenant());
+        return user()?->can(SubuserPermission::UserRead, Filament::getTenant());
     }
 
     public static function canCreate(): bool
     {
-        return user()?->can(Permission::ACTION_USER_CREATE, Filament::getTenant());
+        return user()?->can(SubuserPermission::UserCreate, Filament::getTenant());
     }
 
     public static function canEdit(Model $record): bool
     {
-        return user()?->can(Permission::ACTION_USER_UPDATE, Filament::getTenant());
+        return user()?->can(SubuserPermission::UserUpdate, Filament::getTenant());
     }
 
     public static function canDelete(Model $record): bool
     {
-        return user()?->can(Permission::ACTION_USER_DELETE, Filament::getTenant());
+        return user()?->can(SubuserPermission::UserDelete, Filament::getTenant());
     }
 
     public static function defaultTable(Table $table): Table
@@ -159,7 +159,7 @@ class UserResource extends Resource
                 EditAction::make()
                     ->label(trans('server/user.edit'))
                     ->hidden(fn (User $user) => user()?->id === $user->id)
-                    ->authorize(fn () => user()?->can(Permission::ACTION_USER_UPDATE, $server))
+                    ->authorize(fn () => user()?->can(SubuserPermission::UserUpdate, $server))
                     ->modalHeading(fn (User $user) => trans('server/user.editing', ['user' => $user->email]))
                     ->successNotificationTitle(null)
                     ->action(function (array $data, SubuserUpdateService $subuserUpdateService, User $user) use ($server) {
@@ -168,7 +168,7 @@ class UserResource extends Resource
                         $permissions = collect($data)
                             ->forget('email')
                             ->flatMap(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))
-                            ->push(Permission::ACTION_WEBSOCKET_CONNECT)
+                            ->push(SubuserPermission::WebsocketConnect->value)
                             ->unique()
                             ->all();
 
@@ -245,7 +245,7 @@ class UserResource extends Resource
                     ->icon('tabler-user-plus')
                     ->tooltip(trans('server/user.invite_user'))
                     ->createAnother(false)
-                    ->authorize(fn () => user()?->can(Permission::ACTION_USER_CREATE, $server))
+                    ->authorize(fn () => user()?->can(SubuserPermission::UserCreate, $server))
                     ->schema([
                         Grid::make()
                             ->columnSpanFull()
@@ -299,7 +299,7 @@ class UserResource extends Resource
                         $permissions = collect($data)
                             ->forget('email')
                             ->flatMap(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))
-                            ->push(Permission::ACTION_WEBSOCKET_CONNECT)
+                            ->push(SubuserPermission::WebsocketConnect->value)
                             ->unique()
                             ->all();
 

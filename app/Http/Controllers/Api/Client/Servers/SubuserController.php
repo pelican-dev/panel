@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Enums\SubuserPermission;
 use App\Exceptions\Model\DataValidationException;
 use App\Exceptions\Service\Subuser\ServerSubuserExistsException;
 use App\Exceptions\Service\Subuser\UserIsServerOwnerException;
@@ -11,7 +12,6 @@ use App\Http\Requests\Api\Client\Servers\Subusers\DeleteSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\GetSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\StoreSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\UpdateSubuserRequest;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\User;
@@ -144,7 +144,7 @@ class SubuserController extends ClientApiController
     {
         return collect($request->input('permissions') ?? [])
             ->intersect(Subuser::allPermissionKeys())
-            ->push(Permission::ACTION_WEBSOCKET_CONNECT)
+            ->push(SubuserPermission::WebsocketConnect->value)
             ->unique()
             ->toArray();
     }

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Server\Resources\Files\Pages;
 
+use App\Enums\SubuserPermission;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\Files\FileResource;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Nodes\NodeJWTService;
 use Carbon\CarbonImmutable;
@@ -55,7 +55,7 @@ class DownloadFiles extends Page
 
     protected function authorizeAccess(): void
     {
-        abort_unless(user()?->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()), 403);
+        abort_unless(user()?->can(SubuserPermission::FileReadContent, Filament::getTenant()), 403);
     }
 
     public static function route(string $path): PageRegistration
