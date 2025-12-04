@@ -14,6 +14,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Http\UploadedFile;
@@ -219,6 +220,8 @@ class PluginResource extends Resource
                     ->label(trans('admin/plugin.import_from_file'))
                     ->authorize(fn () => user()?->can('create', Plugin::class))
                     ->icon('tabler-file-download')
+                    ->iconButton()
+                    ->iconSize(IconSize::ExtraLarge)
                     ->schema([
                         // TODO: switch to new file upload
                         FileUpload::make('file')
@@ -261,6 +264,8 @@ class PluginResource extends Resource
                     ->label(trans('admin/plugin.import_from_url'))
                     ->authorize(fn () => user()?->can('create', Plugin::class))
                     ->icon('tabler-world-download')
+                    ->iconButton()
+                    ->iconSize(IconSize::ExtraLarge)
                     ->schema([
                         TextInput::make('url')
                             ->required()
