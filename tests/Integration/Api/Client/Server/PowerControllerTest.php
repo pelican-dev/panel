@@ -15,7 +15,7 @@ class PowerControllerTest extends ClientApiIntegrationTestCase
      * an error in response. This checks against the specific permission needed to send
      * the command to the server.
      *
-     * @param  string[]  $permissions
+     * @param  array<string|SubuserPermission>  $permissions
      */
     #[DataProvider('invalidPermissionDataProvider')]
     public function test_subuser_without_permissions_receives_error(string $action, array $permissions): void
@@ -47,7 +47,7 @@ class PowerControllerTest extends ClientApiIntegrationTestCase
      * Test that sending a valid power actions works.
      */
     #[DataProvider('validPowerActionDataProvider')]
-    public function test_action_can_be_sent_to_server(string $action, string $permission): void
+    public function test_action_can_be_sent_to_server(string $action, string|SubuserPermission $permission): void
     {
         $service = \Mockery::mock(DaemonServerRepository::class);
         $this->app->instance(DaemonServerRepository::class, $service);

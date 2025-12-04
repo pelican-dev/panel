@@ -86,7 +86,7 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
 
     public function test_jwt_is_configured_correctly_for_server_subuser(): void
     {
-        $permissions = [SubuserPermission::WebsocketConnect, SubuserPermission::ControlConsole];
+        $permissions = [SubuserPermission::WebsocketConnect->value, SubuserPermission::ControlConsole->value];
 
         /** @var \App\Models\User $user */
         /** @var \App\Models\Server $server */

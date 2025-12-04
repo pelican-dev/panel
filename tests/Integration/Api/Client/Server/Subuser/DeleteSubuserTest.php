@@ -2,6 +2,7 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Subuser;
 
+use App\Enums\SubuserPermission;
 use App\Models\Subuser;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonServerRepository;
