@@ -33,17 +33,26 @@ class Subuser extends Model implements Validatable
      */
     public const RESOURCE_NAME = 'server_subuser';
 
-    /** @var array<array{name: string, icon: string, permissions: string[]}> */
+    /** @var array<string, array{name: string, hidden: bool, icon: string, permissions: string[]}> */
     protected static array $customPermissions = [];
 
     /** @param string[] $permissions */
-    public static function registerCustomPermissions(string $name, string $icon, array $permissions): void
+    public static function registerCustomPermissions(string $name, array $permissions, ?string $icon = null, ?bool $hidden = null): void
     {
-        array_push(static::$customPermissions, [
-            'name' => $name,
-            'icon' => $icon,
-            'permissions' => $permissions,
-        ]);
+        $customPermission = static::$customPermissions[$name] ?? [];
+
+        $customPermission['name'] = $name;
+        $customPermission['permissions'] = array_merge($customPermission['permissions'] ?? [], $permissions);
+
+        if (!is_null($icon)) {
+            $customPermission['icon'] = $icon;
+        }
+
+        if (!is_null($hidden)) {
+            $customPermission['hidden'] = $hidden;
+        }
+
+        static::$customPermissions[$name] = $customPermission;
     }
 
     /**
@@ -84,25 +93,38 @@ class Subuser extends Model implements Validatable
         return $this->belongsTo(User::class);
     }
 
-    /** @return array<array<string, mixed>> */
+    /** @return array<array{name: string, hidden: bool, icon: string, permissions: string[]}> */
     public static function allPermissionData(): array
     {
-        $defaultPermissions = [];
+        $allPermissions = [];
 
         foreach (SubuserPermission::cases() as $subuserPermission) {
             [$group, $permission] = $subuserPermission->split();
 
-            $defaultPermissions[$group] = [
+            $allPermissions[$group] = [
                 'name' => $group,
                 'hidden' => $subuserPermission->isHidden(),
                 'icon' => $subuserPermission->getIcon(),
-                'permissions' => array_merge($defaultPermissions[$group]['permissions'] ?? [], [$permission]),
+                'permissions' => array_merge($allPermissions[$group]['permissions'] ?? [], [$permission]),
             ];
         }
 
-        $defaultPermissions = array_values($defaultPermissions);
+        foreach (static::$customPermissions as $customPermission) {
+            $name = $customPermission['name'];
 
-        return array_merge($defaultPermissions, static::$customPermissions);
+            $groupData = $allPermissions[$name] ?? [];
+
+            $groupData = [
+                'name' => $name,
+                'hidden' => $customPermission['hidden'] ?? $groupData['hidden'] ?? false,
+                'icon' => $customPermission['icon'] ?? $groupData['icon'],
+                'permissions' => array_unique(array_merge($groupData['permissions'] ?? [], $customPermission['permissions'])),
+            ];
+
+            $allPermissions[$name] = $groupData;
+        }
+
+        return array_values($allPermissions);
     }
 
     /** @return string[] */

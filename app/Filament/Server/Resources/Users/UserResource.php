@@ -93,7 +93,7 @@ class UserResource extends Resource
         $permissionsArray = [];
 
         foreach (Subuser::allPermissionData() as $data) {
-            if ($data['hidden'] ?? false) {
+            if ($data['hidden']) {
                 continue;
             }
 
