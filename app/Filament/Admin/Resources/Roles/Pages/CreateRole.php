@@ -12,7 +12,7 @@ use Filament\Resources\Pages\CreateRecord;
 use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Spatie\Permission\Models\Permission as RolePermission;
+use Spatie\Permission\Models\Permission;
 
 /**
  * @property Role $record
@@ -60,7 +60,7 @@ class CreateRole extends CreateRecord
     {
         $permissionModels = collect();
         $this->permissions->each(function ($permission) use ($permissionModels) {
-            $permissionModels->push(RolePermission::firstOrCreate([
+            $permissionModels->push(Permission::firstOrCreate([
                 'name' => $permission,
                 'guard_name' => $this->data['guard_name'],
             ]));
