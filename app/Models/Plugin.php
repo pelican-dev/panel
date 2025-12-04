@@ -111,6 +111,10 @@ class Plugin extends Model implements HasPluginSettings
             try {
                 $data = File::json($path, JSON_THROW_ON_ERROR);
 
+                if ($data['id'] !== $plugin) {
+                    throw new Exception("Plugin id mismatch for folder name ($plugin) and id in plugin.json ({$data['id']})!");
+                }
+
                 $panels = null;
                 if (array_key_exists('panels', $data)) {
                     $panels = $data['panels'];
