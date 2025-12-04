@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\SubuserPermission;
 use App\Models\Subuser;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
