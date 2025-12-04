@@ -7,9 +7,8 @@ use App\Enums\SubuserPermission;
 interface ClientPermissionsRequest
 {
     /**
-     * Returns the permissions string indicating which permission should be used to
-     * validate that the authenticated user has permission to perform this action against
-     * the given resource (server).
+     * Returns the permission used to validate that the authenticated user may perform
+     * this action against the given resource (server).
      */
     public function permission(): SubuserPermission|string;
 }

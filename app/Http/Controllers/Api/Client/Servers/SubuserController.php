@@ -89,7 +89,7 @@ class SubuserController extends ClientApiController
 
         Activity::event('server:subuser.create')
             ->subject($subuser->user)
-            ->property(['email' => $email, 'permissions' => $permissions])
+            ->property(['email' => $email, 'permissions' => $subuser->permissions])
             ->log();
 
         return $this->fractal->item($subuser)
