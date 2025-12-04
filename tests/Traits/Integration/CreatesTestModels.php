@@ -2,6 +2,7 @@
 
 namespace App\Tests\Traits\Integration;
 
+use App\Enums\SubuserPermission;
 use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
@@ -82,7 +83,7 @@ trait CreatesTestModels
         Subuser::query()->create([
             'user_id' => $user->id,
             'server_id' => $server->id,
-            'permissions' => $permissions,
+            'permissions' => array_map(fn ($permission) => $permission instanceof SubuserPermission ? $permission->value : $permission, $permissions),
         ]);
 
         return [$user, $server];

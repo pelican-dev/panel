@@ -176,7 +176,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
 
         $this->postJson('/api/remote/sftp/auth', $data)
             ->assertOk()
-            ->assertJsonPath('permissions', [SubuserPermission::FileRead, SubuserPermission::FileSftp]);
+            ->assertJsonPath('permissions', [SubuserPermission::FileRead->value, SubuserPermission::FileSftp->value]);
 
         $user->syncRoles(Role::getRootAdmin());
 

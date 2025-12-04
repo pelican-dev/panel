@@ -2,6 +2,7 @@
 
 namespace App\Tests\Integration\Api\Client\Server;
 
+use App\Enums\SubuserPermission;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Response;
