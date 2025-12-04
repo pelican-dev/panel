@@ -138,7 +138,7 @@ class SubuserController extends ClientApiController
      * that were passed that do not also exist in the internally tracked list of
      * permissions.
      *
-     * @return array<array-key, mixed>
+     * @return string[]
      */
     protected function getCleanedPermissions(Request $request): array
     {
@@ -146,6 +146,7 @@ class SubuserController extends ClientApiController
             ->intersect(Subuser::allPermissionKeys())
             ->push(SubuserPermission::WebsocketConnect->value)
             ->unique()
+            ->values()
             ->toArray();
     }
 }

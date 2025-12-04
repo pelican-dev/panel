@@ -33,11 +33,11 @@ class Subuser extends Model implements Validatable
      */
     public const RESOURCE_NAME = 'server_subuser';
 
-    /** @var array<string, array<string>> */
+    /** @var array<array{name: string, icon: string, permissions: string[]}> */
     protected static array $customPermissions = [];
 
-    /** @param array<string, array<string>> $permissions */
-    public static function registerCustomPermission(string $name, string $icon, array $permissions): void
+    /** @param string[] $permissions */
+    public static function registerCustomPermissions(string $name, string $icon, array $permissions): void
     {
         array_push(static::$customPermissions, [
             'name' => $name,

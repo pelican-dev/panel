@@ -158,7 +158,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         Subuser::query()->create([
             'user_id' => $users[0]->id,
             'server_id' => $servers[1]->id,
-            'permissions' => [SubuserPermission::WebsocketConnect],
+            'permissions' => [SubuserPermission::WebsocketConnect->value],
         ]);
 
         $response = $this->actingAs($users[0])->getJson('/api/client');
@@ -239,7 +239,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         Subuser::query()->create([
             'user_id' => $users[0]->id,
             'server_id' => $servers[1]->id,
-            'permissions' => [SubuserPermission::WebsocketConnect],
+            'permissions' => [SubuserPermission::WebsocketConnect->value],
         ]);
 
         // Only servers 2 & 3 (0 indexed) should be returned by the API at this point. The user making
@@ -274,7 +274,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         Subuser::query()->create([
             'user_id' => $users[0]->id,
             'server_id' => $servers[1]->id,
-            'permissions' => [SubuserPermission::WebsocketConnect],
+            'permissions' => [SubuserPermission::WebsocketConnect->value],
         ]);
 
         // All servers should be returned.

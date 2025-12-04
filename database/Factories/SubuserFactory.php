@@ -22,7 +22,7 @@ class SubuserFactory extends Factory
     {
         return [
             'permissions' => [
-                SubuserPermission::WebsocketConnect,
+                SubuserPermission::WebsocketConnect->value,
             ],
         ];
     }
