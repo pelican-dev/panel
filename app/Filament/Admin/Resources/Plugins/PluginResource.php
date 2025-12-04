@@ -274,7 +274,7 @@ class PluginResource extends Resource
                     ])
                     ->action(function ($data, $livewire) {
                         try {
-                            $pluginName = str($data['url'])->before('.zip')->split('/')->last();
+                            $pluginName = str($data['url'])->before('.zip')->explode('/')->last();
 
                             if (Plugin::where('id', $pluginName)->exists()) {
                                 throw new Exception(trans('admin/plugin.notifications.import_exists'));
