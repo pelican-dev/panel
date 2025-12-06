@@ -5,6 +5,7 @@ namespace App\Http\Requests\Api\Application\Servers;
 use App\Http\Requests\Api\Application\ApplicationApiRequest;
 use App\Models\Objects\DeploymentObject;
 use App\Models\Server;
+use App\Rules\DockerLabel;
 use App\Services\Acl\Api\AdminAcl;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
@@ -17,6 +18,8 @@ class StoreServerRequest extends ApplicationApiRequest
 
     /**
      * Rules to be applied to this request.
+     *
+     * @return array<string, array<string|DockerLabel>|string>
      */
     public function rules(): array
     {
@@ -29,6 +32,8 @@ class StoreServerRequest extends ApplicationApiRequest
             'user' => $rules['owner_id'],
             'egg' => $rules['egg_id'],
             'docker_image' => 'sometimes|string',
+            'docker_labels' => ['sometimes', 'array', new DockerLabel()],
+            'docker_labels.*' => 'required|string',
             'startup' => 'sometimes|string',
             'environment' => 'present|array',
             'skip_scripts' => 'sometimes|boolean',
@@ -122,6 +127,7 @@ class StoreServerRequest extends ApplicationApiRequest
             'allocation_limit' => array_get($data, 'feature_limits.allocations'),
             'backup_limit' => array_get($data, 'feature_limits.backups'),
             'oom_killer' => array_get($data, 'oom_killer'),
+            'docker_labels' => array_get($data, 'docker_labels'),
         ];
     }
 
