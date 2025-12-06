@@ -37,7 +37,6 @@ use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 
 class UserResource extends Resource
 {
@@ -61,26 +60,6 @@ class UserResource extends Resource
         $server = Filament::getTenant();
 
         return $server->subusers->count();
-    }
-
-    public static function canViewAny(): bool
-    {
-        return user()?->can(Permission::ACTION_USER_READ, Filament::getTenant());
-    }
-
-    public static function canCreate(): bool
-    {
-        return user()?->can(Permission::ACTION_USER_CREATE, Filament::getTenant());
-    }
-
-    public static function canEdit(Model $record): bool
-    {
-        return user()?->can(Permission::ACTION_USER_UPDATE, Filament::getTenant());
-    }
-
-    public static function canDelete(Model $record): bool
-    {
-        return user()?->can(Permission::ACTION_USER_DELETE, Filament::getTenant());
     }
 
     public static function defaultTable(Table $table): Table

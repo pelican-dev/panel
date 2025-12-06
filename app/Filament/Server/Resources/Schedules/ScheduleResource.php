@@ -13,7 +13,6 @@ use App\Filament\Server\Resources\Schedules\Pages\ListSchedules;
 use App\Filament\Server\Resources\Schedules\Pages\ViewSchedule;
 use App\Filament\Server\Resources\Schedules\RelationManagers\TasksRelationManager;
 use App\Helpers\Utilities;
-use App\Models\Permission;
 use App\Models\Schedule;
 use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
@@ -26,7 +25,6 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -46,7 +44,6 @@ use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Throwable;
 
@@ -63,26 +60,6 @@ class ScheduleResource extends Resource
     protected static ?int $navigationSort = 4;
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-clock';
-
-    public static function canViewAny(): bool
-    {
-        return user()?->can(Permission::ACTION_SCHEDULE_READ, Filament::getTenant());
-    }
-
-    public static function canCreate(): bool
-    {
-        return user()?->can(Permission::ACTION_SCHEDULE_CREATE, Filament::getTenant());
-    }
-
-    public static function canEdit(Model $record): bool
-    {
-        return user()?->can(Permission::ACTION_SCHEDULE_UPDATE, Filament::getTenant());
-    }
-
-    public static function canDelete(Model $record): bool
-    {
-        return user()?->can(Permission::ACTION_SCHEDULE_DELETE, Filament::getTenant());
-    }
 
     /**
      * @throws Exception
@@ -357,7 +334,8 @@ class ScheduleResource extends Resource
                     ->state(fn (Schedule $schedule) => $schedule->status === ScheduleStatus::Active ? $schedule->next_run_at : null),
             ])
             ->recordActions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->hidden(fn ($record) => static::getEditAuthorizationResponse($record)->allowed()),
                 EditAction::make(),
                 DeleteAction::make()
                     ->after(function (Schedule $schedule) {

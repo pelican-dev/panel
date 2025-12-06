@@ -31,7 +31,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class DatabaseResource extends Resource
@@ -208,31 +207,6 @@ class DatabaseResource extends Resource
                         }
                     }),
             ]);
-    }
-
-    public static function canViewAny(): bool
-    {
-        return user()?->can(Permission::ACTION_DATABASE_READ, Filament::getTenant());
-    }
-
-    public static function canView(Model $record): bool
-    {
-        return user()?->can(Permission::ACTION_DATABASE_READ, Filament::getTenant());
-    }
-
-    public static function canCreate(): bool
-    {
-        return user()?->can(Permission::ACTION_DATABASE_CREATE, Filament::getTenant());
-    }
-
-    public static function canEdit(Model $record): bool
-    {
-        return user()?->can(Permission::ACTION_DATABASE_UPDATE, Filament::getTenant());
-    }
-
-    public static function canDelete(Model $record): bool
-    {
-        return user()?->can(Permission::ACTION_DATABASE_DELETE, Filament::getTenant());
     }
 
     /** @return array<string, PageRegistration> */

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies;
+namespace App\Policies\Admin;
 
 use App\Models\DatabaseHost;
 use App\Models\User;
