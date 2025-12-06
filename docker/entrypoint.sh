@@ -22,8 +22,6 @@ else
   echo -e "APP_INSTALLED=false" >> /pelican-data/.env
 fi
 
-sed -i "s/upload_max_filesize = 2M/upload_max_filesize = ${UPLOAD_LIMIT}M/" /usr/local/etc/php/php.ini-production
-
 mkdir -p /pelican-data/database /pelican-data/storage/avatars /pelican-data/storage/fonts /var/www/html/storage/logs/supervisord 2>/dev/null
 
 if ! grep -q "APP_KEY=" .env || grep -q "APP_KEY=$" .env; then
@@ -47,6 +45,7 @@ if [[ ${BEHIND_PROXY} == "true" ]]; then
   echo "listening on port 80 internally"
   export PARSED_LE_EMAIL=""
   export PARSED_APP_URL=":80"
+  export PARSED_AUTO_HTTPS="auto_https off"
   export APP_ASSET=${APP_URL}
 fi
 

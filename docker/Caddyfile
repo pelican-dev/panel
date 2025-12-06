@@ -5,7 +5,7 @@
 		{$CADDY_STRICT_PROXIES}
 	}
 	admin off
-	auto_https off
+	{$PARSED_AUTO_HTTPS}
 	{$PARSED_LE_EMAIL}
 }
 
