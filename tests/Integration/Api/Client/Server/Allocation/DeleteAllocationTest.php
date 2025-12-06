@@ -2,8 +2,8 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Allocation;
 
+use App\Enums\SubuserPermission;
 use App\Models\Allocation;
-use App\Models\Permission;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -56,7 +56,7 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
     public function test_error_is_returned_if_user_does_not_have_permission(): void
     {
         /** @var \App\Models\Server $server */
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_ALLOCATION_CREATE]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::AllocationCreate]);
 
         /** @var \App\Models\Allocation $allocation */
         $allocation = Allocation::factory()->create([
@@ -101,6 +101,6 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
 
     public static function permissionDataProvider(): array
     {
-        return [[[Permission::ACTION_ALLOCATION_DELETE]], [[]]];
+        return [[[SubuserPermission::AllocationDelete]], [[]]];
     }
 }

@@ -3,7 +3,6 @@
 use App\Enums\RolePermissionModels;
 use App\Filament\Admin\Resources\Nodes\Pages\ListNodes;
 use App\Models\Node;
-use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Server;
 use Filament\Actions\CreateAction;

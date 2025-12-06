@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Schedules;
 
+use App\Enums\SubuserPermission;
 use App\Http\Requests\Api\Client\ClientApiRequest;
-use App\Models\Permission;
 use App\Models\Schedule;
 use App\Models\Server;
 use App\Models\Task;
@@ -36,8 +36,8 @@ class ViewScheduleRequest extends ClientApiRequest
         return true;
     }
 
-    public function permission(): string
+    public function permission(): SubuserPermission
     {
-        return Permission::ACTION_SCHEDULE_READ;
+        return SubuserPermission::ScheduleRead;
     }
 }

@@ -2,14 +2,14 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Schedules;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 use App\Models\Schedule;
 
 class StoreScheduleRequest extends ViewScheduleRequest
 {
-    public function permission(): string
+    public function permission(): SubuserPermission
     {
-        return Permission::ACTION_SCHEDULE_CREATE;
+        return SubuserPermission::ScheduleCreate;
     }
 
     public function rules(): array

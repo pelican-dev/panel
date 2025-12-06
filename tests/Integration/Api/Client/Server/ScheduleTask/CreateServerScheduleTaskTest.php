@@ -2,7 +2,7 @@
 
 namespace App\Tests\Integration\Api\Client\Server\ScheduleTask;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 use App\Models\Schedule;
 use App\Models\Task;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
@@ -160,7 +160,7 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
      */
     public function test_error_is_returned_if_subuser_does_not_have_schedule_update_permissions(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_SCHEDULE_CREATE]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::ScheduleCreate]);
 
         /** @var \App\Models\Schedule $schedule */
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
@@ -172,6 +172,6 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
 
     public static function permissionsDataProvider(): array
     {
-        return [[[]], [[Permission::ACTION_SCHEDULE_UPDATE]]];
+        return [[[]], [[SubuserPermission::ScheduleUpdate]]];
     }
 }

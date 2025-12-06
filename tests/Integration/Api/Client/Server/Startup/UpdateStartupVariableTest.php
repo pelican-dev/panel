@@ -2,8 +2,8 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Startup;
 
+use App\Enums\SubuserPermission;
 use App\Models\EggVariable;
-use App\Models\Permission;
 use App\Models\User;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Illuminate\Http\Response;
@@ -139,7 +139,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
      */
     public function test_startup_variable_cannot_be_updated_if_not_user_viewable(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::WebsocketConnect]);
         $this->actingAs($user)->putJson($this->link($server) . '/startup/variable')->assertForbidden();
 
         $user2 = User::factory()->create();
@@ -148,6 +148,6 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
 
     public static function permissionsDataProvider(): array
     {
-        return [[[]], [[Permission::ACTION_STARTUP_UPDATE]]];
+        return [[[]], [[SubuserPermission::StartupUpdate]]];
     }
 }

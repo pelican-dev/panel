@@ -2,7 +2,7 @@
 
 namespace App\Tests\Integration\Api\Client\Server;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Illuminate\Http\Response;
@@ -15,7 +15,7 @@ class PowerControllerTest extends ClientApiIntegrationTestCase
      * an error in response. This checks against the specific permission needed to send
      * the command to the server.
      *
-     * @param  string[]  $permissions
+     * @param  array<string|SubuserPermission>  $permissions
      */
     #[DataProvider('invalidPermissionDataProvider')]
     public function test_subuser_without_permissions_receives_error(string $action, array $permissions): void
@@ -47,7 +47,7 @@ class PowerControllerTest extends ClientApiIntegrationTestCase
      * Test that sending a valid power actions works.
      */
     #[DataProvider('validPowerActionDataProvider')]
-    public function test_action_can_be_sent_to_server(string $action, string $permission): void
+    public function test_action_can_be_sent_to_server(string $action, string|SubuserPermission $permission): void
     {
         $service = \Mockery::mock(DaemonServerRepository::class);
         $this->app->instance(DaemonServerRepository::class, $service);
@@ -74,25 +74,25 @@ class PowerControllerTest extends ClientApiIntegrationTestCase
     public static function invalidPermissionDataProvider(): array
     {
         return [
-            ['start', [Permission::ACTION_CONTROL_STOP, Permission::ACTION_CONTROL_RESTART]],
-            ['stop', [Permission::ACTION_CONTROL_START]],
-            ['kill', [Permission::ACTION_CONTROL_START, Permission::ACTION_CONTROL_RESTART]],
-            ['restart', [Permission::ACTION_CONTROL_STOP, Permission::ACTION_CONTROL_START]],
-            ['random', [Permission::ACTION_CONTROL_START]],
+            ['start', [SubuserPermission::ControlStop, SubuserPermission::ControlRestart]],
+            ['stop', [SubuserPermission::ControlStart]],
+            ['kill', [SubuserPermission::ControlStart, SubuserPermission::ControlRestart]],
+            ['restart', [SubuserPermission::ControlStop, SubuserPermission::ControlStart]],
+            ['random', [SubuserPermission::ControlStart]],
         ];
     }
 
     public static function validPowerActionDataProvider(): array
     {
         return [
-            ['start', Permission::ACTION_CONTROL_START],
-            ['stop', Permission::ACTION_CONTROL_STOP],
-            ['restart', Permission::ACTION_CONTROL_RESTART],
-            ['kill', Permission::ACTION_CONTROL_STOP],
+            ['start', SubuserPermission::ControlStart],
+            ['stop', SubuserPermission::ControlStop],
+            ['restart', SubuserPermission::ControlRestart],
+            ['kill', SubuserPermission::ControlStop],
             // Yes, these spaces are intentional. You should be able to send values with or without
             // a space on the start/end since we should be trimming the values.
-            [' restart', Permission::ACTION_CONTROL_RESTART],
-            ['kill ', Permission::ACTION_CONTROL_STOP],
+            [' restart', SubuserPermission::ControlRestart],
+            ['kill ', SubuserPermission::ControlStop],
         ];
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Schedule;
 
+use App\Enums\SubuserPermission;
 use App\Helpers\Utilities;
-use App\Models\Permission;
 use App\Models\Schedule;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -70,7 +70,7 @@ class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
      */
     public function test_error_is_returned_if_subuser_does_not_have_permission_to_modify_schedule(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_SCHEDULE_CREATE]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::ScheduleCreate]);
 
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
 
@@ -109,6 +109,6 @@ class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
 
     public static function permissionsDataProvider(): array
     {
-        return [[[]], [[Permission::ACTION_SCHEDULE_UPDATE]]];
+        return [[[]], [[SubuserPermission::ScheduleUpdate]]];
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Transformers\Api\Client;
 
+use App\Enums\SubuserPermission;
 use App\Models\Database;
-use App\Models\Permission;
 use League\Fractal\Resource\Item;
 use League\Fractal\Resource\NullResource;
 
@@ -41,7 +41,7 @@ class DatabaseTransformer extends BaseClientTransformer
      */
     public function includePassword(Database $database): Item|NullResource
     {
-        if (!$this->request->user()->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $database->server)) {
+        if (!$this->request->user()->can(SubuserPermission::DatabaseViewPassword, $database->server)) {
             return $this->null();
         }
 

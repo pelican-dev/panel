@@ -2,7 +2,7 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Schedule;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 use App\Models\Schedule;
 use App\Models\Task;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
@@ -66,7 +66,7 @@ class DeleteServerScheduleTest extends ClientApiIntegrationTestCase
      */
     public function test_error_is_returned_if_subuser_does_not_have_required_permissions(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_SCHEDULE_UPDATE]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::ScheduleUpdate]);
 
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
 
@@ -79,6 +79,6 @@ class DeleteServerScheduleTest extends ClientApiIntegrationTestCase
 
     public static function permissionsDataProvider(): array
     {
-        return [[[]], [[Permission::ACTION_SCHEDULE_DELETE]]];
+        return [[[]], [[SubuserPermission::ScheduleDelete]]];
     }
 }

@@ -2,13 +2,13 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Subusers;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 
 class StoreSubuserRequest extends SubuserRequest
 {
-    public function permission(): string
+    public function permission(): SubuserPermission
     {
-        return Permission::ACTION_USER_CREATE;
+        return SubuserPermission::UserCreate;
     }
 
     public function rules(): array

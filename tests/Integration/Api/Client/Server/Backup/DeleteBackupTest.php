@@ -2,9 +2,9 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Backup;
 
+use App\Enums\SubuserPermission;
 use App\Events\ActivityLogged;
 use App\Models\Backup;
-use App\Models\Permission;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Illuminate\Http\Response;
@@ -24,7 +24,7 @@ class DeleteBackupTest extends ClientApiIntegrationTestCase
 
     public function test_user_without_permission_cannot_delete_backup(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_BACKUP_CREATE]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::BackupCreate]);
 
         $backup = Backup::factory()->create(['server_id' => $server->id]);
 
@@ -41,7 +41,7 @@ class DeleteBackupTest extends ClientApiIntegrationTestCase
     {
         Event::fake([ActivityLogged::class]);
 
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_BACKUP_DELETE]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::BackupDelete]);
 
         /** @var \App\Models\Backup $backup */
         $backup = Backup::factory()->create(['server_id' => $server->id]);

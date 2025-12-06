@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Enums\SubuserPermission;
 use App\Exceptions\Model\DataValidationException;
 use App\Exceptions\Service\Subuser\ServerSubuserExistsException;
 use App\Exceptions\Service\Subuser\UserIsServerOwnerException;
@@ -11,7 +12,6 @@ use App\Http\Requests\Api\Client\Servers\Subusers\DeleteSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\GetSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\StoreSubuserRequest;
 use App\Http\Requests\Api\Client\Servers\Subusers\UpdateSubuserRequest;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\User;
@@ -82,18 +82,17 @@ class SubuserController extends ClientApiController
      */
     public function store(StoreSubuserRequest $request, Server $server): array
     {
-        $response = $this->creationService->handle(
-            $server,
-            $request->input('email'),
-            $this->getDefaultPermissions($request)
-        );
+        $email = $request->input('email');
+        $permissions = $this->getCleanedPermissions($request);
+
+        $subuser = $this->creationService->handle($server, $email, $permissions);
 
         Activity::event('server:subuser.create')
-            ->subject($response->user)
-            ->property(['email' => $request->input('email'), 'permissions' => $this->getDefaultPermissions($request)])
+            ->subject($subuser->user)
+            ->property(['email' => $email, 'permissions' => $subuser->permissions])
             ->log();
 
-        return $this->fractal->item($response)
+        return $this->fractal->item($subuser)
             ->transformWith($this->getTransformer(SubuserTransformer::class))
             ->toArray();
     }
@@ -112,7 +111,7 @@ class SubuserController extends ClientApiController
         /** @var Subuser $subuser */
         $subuser = $request->attributes->get('subuser');
 
-        $this->updateService->handle($subuser, $server, $this->getDefaultPermissions($request));
+        $this->updateService->handle($subuser, $server, $this->getCleanedPermissions($request));
 
         return $this->fractal->item($subuser->refresh())
             ->transformWith($this->getTransformer(SubuserTransformer::class))
@@ -135,17 +134,19 @@ class SubuserController extends ClientApiController
     }
 
     /**
-     * Returns the default permissions for subusers and parses out any permissions
+     * Returns the "cleaned" permissions for subusers and parses out any permissions
      * that were passed that do not also exist in the internally tracked list of
      * permissions.
      *
-     * @return array<array-key, mixed>
+     * @return string[]
      */
-    protected function getDefaultPermissions(Request $request): array
+    protected function getCleanedPermissions(Request $request): array
     {
-        $allowed = Permission::permissionKeys()->all();
-        $cleaned = array_intersect($request->input('permissions') ?? [], $allowed);
-
-        return array_unique(array_merge($cleaned, [Permission::ACTION_WEBSOCKET_CONNECT]));
+        return collect($request->input('permissions') ?? [])
+            ->intersect(Subuser::allPermissionKeys())
+            ->push(SubuserPermission::WebsocketConnect->value)
+            ->unique()
+            ->values()
+            ->toArray();
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Tests\Integration\Api\Client;
 
+use App\Enums\SubuserPermission;
 use App\Models\Allocation;
-use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Server;
 use App\Models\Subuser;
@@ -158,7 +158,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         Subuser::query()->create([
             'user_id' => $users[0]->id,
             'server_id' => $servers[1]->id,
-            'permissions' => [Permission::ACTION_WEBSOCKET_CONNECT],
+            'permissions' => [SubuserPermission::WebsocketConnect->value],
         ]);
 
         $response = $this->actingAs($users[0])->getJson('/api/client');
@@ -189,7 +189,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         Subuser::query()->create([
             'user_id' => $users[0]->id,
             'server_id' => $servers[1]->id,
-            'permissions' => [Permission::ACTION_WEBSOCKET_CONNECT],
+            'permissions' => [SubuserPermission::WebsocketConnect],
         ]);
 
         $response = $this->actingAs($users[0])->getJson('/api/client?type=owner');
@@ -214,7 +214,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
             ->assertJson([
                 'object' => 'system_permissions',
                 'attributes' => [
-                    'permissions' => Permission::permissions()->toArray(),
+                    'permissions' => Subuser::allPermissionKeys(),
                 ],
             ]);
     }
@@ -239,7 +239,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         Subuser::query()->create([
             'user_id' => $users[0]->id,
             'server_id' => $servers[1]->id,
-            'permissions' => [Permission::ACTION_WEBSOCKET_CONNECT],
+            'permissions' => [SubuserPermission::WebsocketConnect->value],
         ]);
 
         // Only servers 2 & 3 (0 indexed) should be returned by the API at this point. The user making
@@ -274,7 +274,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         Subuser::query()->create([
             'user_id' => $users[0]->id,
             'server_id' => $servers[1]->id,
-            'permissions' => [Permission::ACTION_WEBSOCKET_CONNECT],
+            'permissions' => [SubuserPermission::WebsocketConnect->value],
         ]);
 
         // All servers should be returned.
@@ -311,7 +311,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
     public function test_only_primary_allocation_is_returned_to_subuser(): void
     {
         /** @var \App\Models\Server $server */
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::WebsocketConnect]);
         $server->allocation->notes = 'Test notes';
         $server->allocation->save();
 

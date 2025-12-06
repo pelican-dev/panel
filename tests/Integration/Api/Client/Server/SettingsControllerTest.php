@@ -3,7 +3,7 @@
 namespace App\Tests\Integration\Api\Client\Server;
 
 use App\Enums\ServerState;
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
@@ -48,7 +48,7 @@ class SettingsControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_subuser_cannot_change_server_name_without_permission(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::WebsocketConnect]);
         $originalName = $server->name;
 
         $this->actingAs($user)
@@ -97,7 +97,7 @@ class SettingsControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_subuser_cannot_reinstall_server_without_permission(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::WebsocketConnect]);
 
         $this->actingAs($user)
             ->postJson("/api/client/servers/$server->uuid/settings/reinstall")
@@ -109,11 +109,11 @@ class SettingsControllerTest extends ClientApiIntegrationTestCase
 
     public static function renamePermissionsDataProvider(): array
     {
-        return [[[]], [[Permission::ACTION_SETTINGS_RENAME]]];
+        return [[[]], [[SubuserPermission::SettingsRename]]];
     }
 
     public static function reinstallPermissionsDataProvider(): array
     {
-        return [[[]], [[Permission::ACTION_SETTINGS_REINSTALL]]];
+        return [[[]], [[SubuserPermission::SettingsReinstall]]];
     }
 }

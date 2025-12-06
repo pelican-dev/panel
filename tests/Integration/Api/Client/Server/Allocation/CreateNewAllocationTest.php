@@ -2,8 +2,8 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Allocation;
 
+use App\Enums\SubuserPermission;
 use App\Models\Allocation;
-use App\Models\Permission;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -48,7 +48,7 @@ class CreateNewAllocationTest extends ClientApiIntegrationTestCase
     public function test_allocation_cannot_be_created_if_user_does_not_have_permission(): void
     {
         /** @var \App\Models\Server $server */
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_ALLOCATION_UPDATE]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::AllocationUpdate]);
         $server->update(['allocation_limit' => 2]);
 
         $this->actingAs($user)->postJson($this->link($server, '/network/allocations'))->assertForbidden();
@@ -88,6 +88,6 @@ class CreateNewAllocationTest extends ClientApiIntegrationTestCase
 
     public static function permissionDataProvider(): array
     {
-        return [[[Permission::ACTION_ALLOCATION_CREATE]], [[]]];
+        return [[[SubuserPermission::AllocationCreate]], [[]]];
     }
 }

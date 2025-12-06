@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Enums\SubuserPermission;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\ClientApiRequest;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Nodes\NodeJWTService;
 use App\Services\Servers\GetUserPermissionsService;
@@ -37,7 +37,7 @@ class WebsocketController extends ClientApiController
     public function __invoke(ClientApiRequest $request, Server $server): JsonResponse
     {
         $user = $request->user();
-        if ($user->cannot(Permission::ACTION_WEBSOCKET_CONNECT, $server)) {
+        if ($user->cannot(SubuserPermission::WebsocketConnect, $server)) {
             throw new HttpForbiddenException('You do not have permission to connect to this server\'s websocket.');
         }
 

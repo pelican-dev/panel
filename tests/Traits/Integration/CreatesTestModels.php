@@ -2,6 +2,7 @@
 
 namespace App\Tests\Traits\Integration;
 
+use App\Enums\SubuserPermission;
 use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
@@ -65,7 +66,7 @@ trait CreatesTestModels
      * Generates a user and a server for that user. If an array of permissions is passed it
      * is assumed that the user is actually a subuser of the server.
      *
-     * @param  string[]  $permissions
+     * @param  array<string|SubuserPermission>  $permissions
      * @return array{\App\Models\User, \App\Models\Server}
      */
     public function generateTestAccount(array $permissions = []): array
@@ -82,7 +83,7 @@ trait CreatesTestModels
         Subuser::query()->create([
             'user_id' => $user->id,
             'server_id' => $server->id,
-            'permissions' => $permissions,
+            'permissions' => array_map(fn ($permission) => $permission instanceof SubuserPermission ? $permission->value : $permission, $permissions),
         ]);
 
         return [$user, $server];

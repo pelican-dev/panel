@@ -3,8 +3,8 @@
 namespace App\Http\Requests\Api\Client\Servers\Settings;
 
 use App\Contracts\Http\ClientPermissionsRequest;
+use App\Enums\SubuserPermission;
 use App\Http\Requests\Api\Client\ClientApiRequest;
-use App\Models\Permission;
 use App\Models\Server;
 
 class RenameServerRequest extends ClientApiRequest implements ClientPermissionsRequest
@@ -14,9 +14,9 @@ class RenameServerRequest extends ClientApiRequest implements ClientPermissionsR
      * validate that the authenticated user has permission to perform this action against
      * the given resource (server).
      */
-    public function permission(): string
+    public function permission(): SubuserPermission
     {
-        return Permission::ACTION_SETTINGS_RENAME;
+        return SubuserPermission::SettingsRename;
     }
 
     /**

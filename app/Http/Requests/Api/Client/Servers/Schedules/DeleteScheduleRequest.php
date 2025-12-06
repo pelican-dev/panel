@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Schedules;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 
 class DeleteScheduleRequest extends ViewScheduleRequest
 {
-    public function permission(): string
+    public function permission(): SubuserPermission
     {
-        return Permission::ACTION_SCHEDULE_DELETE;
+        return SubuserPermission::ScheduleDelete;
     }
 }

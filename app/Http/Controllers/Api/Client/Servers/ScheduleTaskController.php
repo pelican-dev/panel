@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Enums\SubuserPermission;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Exceptions\Model\DataValidationException;
 use App\Exceptions\Service\ServiceLimitExceededException;
@@ -9,7 +10,6 @@ use App\Facades\Activity;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Http\Requests\Api\Client\Servers\Schedules\StoreTaskRequest;
-use App\Models\Permission;
 use App\Models\Schedule;
 use App\Models\Server;
 use App\Models\Task;
@@ -170,7 +170,7 @@ class ScheduleTaskController extends ClientApiController
             throw new NotFoundHttpException();
         }
 
-        if (!$request->user()->can(Permission::ACTION_SCHEDULE_DELETE, $server)) {
+        if (!$request->user()->can(SubuserPermission::ScheduleDelete, $server)) {
             throw new HttpForbiddenException('You do not have permission to perform this action.');
         }
 

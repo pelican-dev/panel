@@ -3,6 +3,7 @@
 namespace App\Filament\Server\Resources\Schedules;
 
 use App\Enums\ScheduleStatus;
+use App\Enums\SubuserPermission;
 use App\Facades\Activity;
 use App\Filament\Components\Actions\ImportScheduleAction;
 use App\Filament\Components\Forms\Actions\CronPresetAction;
@@ -13,7 +14,6 @@ use App\Filament\Server\Resources\Schedules\Pages\ListSchedules;
 use App\Filament\Server\Resources\Schedules\Pages\ViewSchedule;
 use App\Filament\Server\Resources\Schedules\RelationManagers\TasksRelationManager;
 use App\Helpers\Utilities;
-use App\Models\Permission;
 use App\Models\Schedule;
 use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
@@ -66,22 +66,22 @@ class ScheduleResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return user()?->can(Permission::ACTION_SCHEDULE_READ, Filament::getTenant());
+        return user()?->can(SubuserPermission::ScheduleRead, Filament::getTenant());
     }
 
     public static function canCreate(): bool
     {
-        return user()?->can(Permission::ACTION_SCHEDULE_CREATE, Filament::getTenant());
+        return user()?->can(SubuserPermission::ScheduleCreate, Filament::getTenant());
     }
 
     public static function canEdit(Model $record): bool
     {
-        return user()?->can(Permission::ACTION_SCHEDULE_UPDATE, Filament::getTenant());
+        return user()?->can(SubuserPermission::ScheduleUpdate, Filament::getTenant());
     }
 
     public static function canDelete(Model $record): bool
     {
-        return user()?->can(Permission::ACTION_SCHEDULE_DELETE, Filament::getTenant());
+        return user()?->can(SubuserPermission::ScheduleDelete, Filament::getTenant());
     }
 
     /**

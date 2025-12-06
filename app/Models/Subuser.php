@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use App\Contracts\Validatable;
+use App\Enums\SubuserPermission;
 use App\Traits\HasValidation;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 
 /**
@@ -32,6 +32,28 @@ class Subuser extends Model implements Validatable
      * API representation using fractal.
      */
     public const RESOURCE_NAME = 'server_subuser';
+
+    /** @var array<string, array{name: string, hidden: ?bool, icon: ?string, permissions: string[]}> */
+    protected static array $customPermissions = [];
+
+    /** @param string[] $permissions */
+    public static function registerCustomPermissions(string $name, array $permissions, ?string $icon = null, ?bool $hidden = null): void
+    {
+        $customPermission = static::$customPermissions[$name] ?? [];
+
+        $customPermission['name'] = $name;
+        $customPermission['permissions'] = array_merge($customPermission['permissions'] ?? [], $permissions);
+
+        if (!is_null($icon)) {
+            $customPermission['icon'] = $icon;
+        }
+
+        if (!is_null($hidden)) {
+            $customPermission['hidden'] = $hidden;
+        }
+
+        static::$customPermissions[$name] = $customPermission;
+    }
 
     /**
      * Fields that are not mass assignable.
@@ -71,11 +93,56 @@ class Subuser extends Model implements Validatable
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Gets the permissions associated with a subuser.
-     */
-    public function permissions(): HasMany
+    /** @return array<array{name: string, hidden: bool, icon: string, permissions: string[]}> */
+    public static function allPermissionData(): array
     {
-        return $this->hasMany(Permission::class);
+        $allPermissions = [];
+
+        foreach (SubuserPermission::cases() as $subuserPermission) {
+            [$group, $permission] = $subuserPermission->split();
+
+            $allPermissions[$group] = [
+                'name' => $group,
+                'hidden' => $subuserPermission->isHidden(),
+                'icon' => $subuserPermission->getIcon(),
+                'permissions' => array_merge($allPermissions[$group]['permissions'] ?? [], [$permission]),
+            ];
+        }
+
+        foreach (static::$customPermissions as $customPermission) {
+            $name = $customPermission['name'];
+
+            $groupData = $allPermissions[$name] ?? [];
+
+            $groupData = [
+                'name' => $name,
+                'hidden' => $customPermission['hidden'] ?? $groupData['hidden'] ?? false,
+                'icon' => $customPermission['icon'] ?? $groupData['icon'],
+                'permissions' => array_unique(array_merge($groupData['permissions'] ?? [], $customPermission['permissions'])),
+            ];
+
+            $allPermissions[$name] = $groupData;
+        }
+
+        return array_values($allPermissions);
+    }
+
+    /** @return string[] */
+    public static function allPermissionKeys(): array
+    {
+        return collect(static::allPermissionData())
+            ->map(fn ($data) => array_map(fn ($permission) => $data['name'] . '.' . $permission, $data['permissions']))
+            ->flatten()
+            ->unique()
+            ->toArray();
+    }
+
+    public static function doesPermissionExist(string|SubuserPermission $permission): bool
+    {
+        if ($permission instanceof SubuserPermission) {
+            $permission = $permission->value;
+        }
+
+        return str_contains($permission, '.') && in_array($permission, static::allPermissionKeys());
     }
 }

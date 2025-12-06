@@ -2,11 +2,11 @@
 
 namespace App\Services\Subusers;
 
+use App\Enums\SubuserPermission;
 use App\Events\Server\SubUserAdded;
 use App\Exceptions\Model\DataValidationException;
 use App\Exceptions\Service\Subuser\ServerSubuserExistsException;
 use App\Exceptions\Service\Subuser\UserIsServerOwnerException;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\User;
@@ -58,7 +58,7 @@ class SubuserCreationService
 
             $cleanedPermissions = collect($permissions)
                 ->unique()
-                ->filter(fn ($permission) => $permission === Permission::ACTION_WEBSOCKET_CONNECT || user()?->can($permission, $server))
+                ->filter(fn ($permission) => $permission === SubuserPermission::WebsocketConnect->value || user()?->can($permission, $server))
                 ->sort()
                 ->values()
                 ->all();

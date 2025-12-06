@@ -2,13 +2,13 @@
 
 namespace App\Filament\Server\Resources\Files\Pages;
 
+use App\Enums\SubuserPermission;
 use App\Exceptions\Http\Server\FileSizeTooLargeException;
 use App\Exceptions\Repository\FileNotEditableException;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\Files\FileResource;
 use App\Livewire\AlertBanner;
 use App\Models\File;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -83,7 +83,7 @@ class EditFiles extends Page
                     ->footerActions([
                         Action::make('save_and_close')
                             ->label(trans('server/file.actions.edit.save_close'))
-                            ->authorize(fn () => user()?->can(Permission::ACTION_FILE_UPDATE, $server))
+                            ->authorize(fn () => user()?->can(SubuserPermission::FileUpdate, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+shift+s')
                             ->action(function () {
@@ -103,7 +103,7 @@ class EditFiles extends Page
                             }),
                         Action::make('save')
                             ->label(trans('server/file.actions.edit.save'))
-                            ->authorize(fn () => user()?->can(Permission::ACTION_FILE_UPDATE, $server))
+                            ->authorize(fn () => user()?->can(SubuserPermission::FileUpdate, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
                             ->action(function () {
@@ -233,7 +233,7 @@ class EditFiles extends Page
 
     protected function authorizeAccess(): void
     {
-        abort_unless(user()?->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()), 403);
+        abort_unless(user()?->can(SubuserPermission::FileReadContent, Filament::getTenant()), 403);
     }
 
     /**

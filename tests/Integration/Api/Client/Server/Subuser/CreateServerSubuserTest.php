@@ -2,7 +2,7 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Subuser;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 use App\Models\Subuser;
 use App\Models\User;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
@@ -26,7 +26,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
         $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
             'email' => $email = $this->faker->email(),
             'permissions' => [
-                Permission::ACTION_USER_CREATE,
+                SubuserPermission::UserCreate->value,
             ],
         ]);
 
@@ -38,8 +38,8 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
         $response->assertJsonPath('object', Subuser::RESOURCE_NAME);
         $response->assertJsonPath('attributes.uuid', $subuser->uuid);
         $response->assertJsonPath('attributes.permissions', [
-            Permission::ACTION_USER_CREATE,
-            Permission::ACTION_WEBSOCKET_CONNECT,
+            SubuserPermission::UserCreate->value,
+            SubuserPermission::WebsocketConnect->value,
         ]);
 
         $expected = $response->json('attributes');
@@ -55,16 +55,16 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
     public function test_error_is_returned_if_assigning_permissions_not_assigned_to_self(): void
     {
         [$user, $server] = $this->generateTestAccount([
-            Permission::ACTION_USER_CREATE,
-            Permission::ACTION_USER_READ,
-            Permission::ACTION_CONTROL_CONSOLE,
+            SubuserPermission::UserCreate,
+            SubuserPermission::UserRead,
+            SubuserPermission::ControlConsole,
         ]);
 
         $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
             'email' => $this->faker->email(),
             'permissions' => [
-                Permission::ACTION_USER_CREATE,
-                Permission::ACTION_USER_UPDATE, // This permission is not assigned to the subuser.
+                SubuserPermission::UserCreate->value,
+                SubuserPermission::UserUpdate->value, // This permission is not assigned to the subuser.
             ],
         ]);
 
@@ -85,7 +85,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
         $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
             'email' => $email,
             'permissions' => [
-                Permission::ACTION_USER_CREATE,
+                SubuserPermission::UserCreate->value,
             ],
         ]);
 
@@ -94,7 +94,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
         $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
             'email' => $email . '.au',
             'permissions' => [
-                Permission::ACTION_USER_CREATE,
+                SubuserPermission::UserCreate->value,
             ],
         ]);
 
@@ -117,7 +117,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
         $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
             'email' => $existing->email,
             'permissions' => [
-                Permission::ACTION_USER_CREATE,
+                SubuserPermission::UserCreate->value,
             ],
         ]);
 
@@ -137,7 +137,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
         $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
             'email' => $email = $this->faker->email(),
             'permissions' => [
-                Permission::ACTION_USER_CREATE,
+                SubuserPermission::UserCreate->value,
             ],
         ]);
 
@@ -146,7 +146,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
         $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
             'email' => $email,
             'permissions' => [
-                Permission::ACTION_USER_CREATE,
+                SubuserPermission::UserCreate->value,
             ],
         ]);
 
@@ -157,6 +157,6 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
 
     public static function permissionsDataProvider(): array
     {
-        return [[[]], [[Permission::ACTION_USER_CREATE]]];
+        return [[[]], [[SubuserPermission::UserCreate]]];
     }
 }

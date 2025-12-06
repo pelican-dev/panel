@@ -2,7 +2,7 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Subuser;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 use App\Models\Subuser;
 use App\Models\User;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
@@ -43,9 +43,9 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
 
         $server->subusers()->where('user_id', $user->id)->update([
             'permissions' => [
-                Permission::ACTION_USER_UPDATE,
-                Permission::ACTION_CONTROL_START,
-                Permission::ACTION_CONTROL_STOP,
+                SubuserPermission::UserUpdate,
+                SubuserPermission::ControlStart,
+                SubuserPermission::ControlStop,
             ],
         ]);
 
@@ -95,7 +95,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
      */
     public function test_user_cannot_assign_permissions_they_do_not_have(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_USER_READ, Permission::ACTION_USER_UPDATE]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::UserRead, SubuserPermission::UserUpdate]);
 
         $subuser = Subuser::factory()
             ->for(User::factory()->create())
@@ -104,7 +104,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
 
         $this->actingAs($user)
             ->postJson("/api/client/servers/$server->uuid/users/{$subuser->user->uuid}", [
-                'permissions' => [Permission::ACTION_USER_READ, Permission::ACTION_CONTROL_CONSOLE],
+                'permissions' => [SubuserPermission::UserRead, SubuserPermission::ControlConsole],
             ])
             ->assertForbidden();
 
@@ -116,7 +116,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
      */
     public function test_user_cannot_update_self(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_USER_READ, Permission::ACTION_USER_UPDATE]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::UserRead, SubuserPermission::UserUpdate]);
 
         $this->actingAs($user)
             ->postJson("/api/client/servers/$server->uuid/users/$user->uuid", [])
