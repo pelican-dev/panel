@@ -46,7 +46,7 @@ if [[ ${BEHIND_PROXY} == "true" ]]; then
   export PARSED_LE_EMAIL=""
   export PARSED_APP_URL=":80"
   export PARSED_AUTO_HTTPS="auto_https off"
-  export APP_ASSET=${APP_URL}
+  export ASSET_URL=${APP_URL}
 fi
 
 ## disable caddy if SKIP_CADDY is set
