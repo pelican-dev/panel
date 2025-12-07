@@ -26,6 +26,7 @@ use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
+use Filament\Facades\Filament;
 use Illuminate\Config\Repository;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
@@ -106,8 +107,21 @@ class AppServiceProvider extends ServiceProvider
             ]);
         }
 
-        Gate::before(function (User $user, $ability) {
-            return $user->isRootAdmin() ? true : null;
+        Gate::before(fn (User $user, $ability) => $user->isRootAdmin() ? true : null);
+
+        Gate::guessPolicyNamesUsing(function (string $modelClass) {
+            $panelId = mb_ucfirst(Filament::getCurrentOrDefaultPanel()->getId());
+
+            if ($panelId === 'App') {
+                return;
+            }
+
+            $modelName = class_basename($modelClass);
+            $class = "App\\Policies\\{$panelId}\\{$modelName}Policy";
+
+            if (class_exists($class)) {
+                return $class;
+            }
         });
 
         AboutCommand::add('Pelican', [
