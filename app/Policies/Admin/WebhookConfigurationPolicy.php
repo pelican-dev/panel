@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies;
+namespace App\Policies\Admin;
 
 class WebhookConfigurationPolicy
 {

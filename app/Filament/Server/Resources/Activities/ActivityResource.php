@@ -2,7 +2,6 @@
 
 namespace App\Filament\Server\Resources\Activities;
 
-use App\Enums\SubuserPermission;
 use App\Filament\Admin\Resources\Users\Pages\EditUser;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\Activities\Pages\ListActivities;
@@ -162,11 +161,6 @@ class ActivityResource extends Resource
                             ->orWhereIn('users.id', $subusers);
                     });
             });
-    }
-
-    public static function canViewAny(): bool
-    {
-        return user()?->can(SubuserPermission::ActivityRead, Filament::getTenant());
     }
 
     /** @return array<string, PageRegistration> */

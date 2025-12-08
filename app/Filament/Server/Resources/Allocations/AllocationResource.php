@@ -23,7 +23,6 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 
 class AllocationResource extends Resource
 {
@@ -120,26 +119,6 @@ class AllocationResource extends Resource
                             ->log();
                     }),
             ]);
-    }
-
-    public static function canViewAny(): bool
-    {
-        return user()?->can(SubuserPermission::AllocationRead, Filament::getTenant());
-    }
-
-    public static function canCreate(): bool
-    {
-        return user()?->can(SubuserPermission::AllocationCreate, Filament::getTenant());
-    }
-
-    public static function canEdit(Model $record): bool
-    {
-        return user()?->can(SubuserPermission::AllocationUpdate, Filament::getTenant());
-    }
-
-    public static function canDelete(Model $record): bool
-    {
-        return user()?->can(SubuserPermission::AllocationDelete, Filament::getTenant());
     }
 
     /** @return array<string, PageRegistration> */
