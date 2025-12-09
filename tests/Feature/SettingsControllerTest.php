@@ -93,10 +93,10 @@ test('unauthorized user cannot change docker image in use by server', function (
 test('cannot change docker image to image not allowed by egg', function () {
 
     [$user, $server] = generateTestAccount([Permission::ACTION_STARTUP_DOCKER_IMAGE]);
-    $server->image = 'ghcr.io/parkervcp/yolks:java_17';
+    $server->image = 'ghcr.io/pelican-eggs/yolks:java_17';
     $server->save();
 
-    $newImage = 'ghcr.io/parkervcp/fake:image';
+    $newImage = 'ghcr.io/pelican-eggs/fake:image';
 
     $server = $server->refresh();
 
@@ -113,11 +113,11 @@ test('cannot change docker image to image not allowed by egg', function () {
 
 test('can change docker image in use by server', function () {
     [$user, $server] = generateTestAccount([Permission::ACTION_STARTUP_DOCKER_IMAGE]);
-    $oldImage = 'ghcr.io/parkervcp/yolks:java_17';
+    $oldImage = 'ghcr.io/pelican-eggs/yolks:java_17';
     $server->image = $oldImage;
     $server->save();
 
-    $newImage = 'ghcr.io/parkervcp/yolks:java_21';
+    $newImage = 'ghcr.io/pelican-eggs/yolks:java_21';
 
     $this->actingAs($user)
         ->putJson("/api/client/servers/$server->uuid/settings/docker-image", [
@@ -136,11 +136,11 @@ test('can change docker image in use by server', function () {
 
 test('unable to change the docker image set by administrator', function () {
     [$user, $server] = generateTestAccount([Permission::ACTION_STARTUP_DOCKER_IMAGE]);
-    $oldImage = 'ghcr.io/parkervcp/yolks:java_custom';
+    $oldImage = 'ghcr.io/pelican-eggs/yolks:java_custom';
     $server->image = $oldImage;
     $server->save();
 
-    $newImage = 'ghcr.io/parkervcp/yolks:java_8';
+    $newImage = 'ghcr.io/pelican-eggs/yolks:java_8';
 
     $this->actingAs($user)
         ->putJson("/api/client/servers/$server->uuid/settings/docker-image", [
