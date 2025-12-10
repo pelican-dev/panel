@@ -57,7 +57,7 @@ scripts:
       fi
 
       curl -o ${SERVER_JARFILE} https://ci.md-5.net/job/BungeeCord/${BUNGEE_VERSION}/artifact/bootstrap/target/BungeeCord.jar
-    container: 'ghcr.io/parkervcp/installers:alpine'
+    container: 'ghcr.io/pelican-eggs/installers:alpine'
     entrypoint: ash
 variables:
   -
