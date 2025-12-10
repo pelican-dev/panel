@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Policies\Server;
+namespace App\Policies;
 
 use App\Models\Permission;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 
-class UserPolicy
+class SubuserPolicy
 {
     public function viewAny(User $user): bool
     {

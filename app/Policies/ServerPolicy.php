@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies\Server;
+namespace App\Policies;
 
 use App\Models\Permission;
 use App\Models\Server;
@@ -8,6 +8,10 @@ use App\Models\User;
 
 class ServerPolicy
 {
+    use DefaultAdminPolicies;
+
+    protected string $modelName = 'server';
+
     /**
      * Runs before any of the functions are called. Used to determine if the (sub-)user has permissions.
      */

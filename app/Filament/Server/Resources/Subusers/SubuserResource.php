@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Server\Resources\Users;
+namespace App\Filament\Server\Resources\Subusers;
 
 use App\Facades\Activity;
-use App\Filament\Server\Resources\Users\Pages\ListUsers;
+use App\Filament\Server\Resources\Subusers\Pages\ListSubusers;
 use App\Models\Permission;
 use App\Models\Server;
-use App\Models\User;
+use App\Models\Subuser;
 use App\Services\Subusers\SubuserCreationService;
 use App\Services\Subusers\SubuserDeletionService;
 use App\Services\Subusers\SubuserUpdateService;
@@ -38,7 +38,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class UserResource extends Resource
+class SubuserResource extends Resource
 {
     use BlockAccessInConflict;
     use CanCustomizePages;
@@ -46,13 +46,11 @@ class UserResource extends Resource
     use CanModifyTable;
     use HasLimitBadge;
 
-    protected static ?string $model = User::class;
+    protected static ?string $model = Subuser::class;
 
     protected static ?int $navigationSort = 5;
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-users';
-
-    protected static ?string $tenantOwnershipRelationshipName = 'subServers';
 
     protected static function getBadgeCount(): int
     {
@@ -104,24 +102,23 @@ class UserResource extends Resource
                     ->visibleFrom('lg')
                     ->label('')
                     ->alignCenter()->circular()
-                    ->defaultImageUrl(fn (User $user) => Filament::getUserAvatarUrl($user)),
-                TextColumn::make('username')
+                    ->defaultImageUrl(fn (Subuser $subuser) => Filament::getUserAvatarUrl($subuser->user)),
+                TextColumn::make('user.username')
                     ->label(trans('server/user.username'))
                     ->searchable(),
-                TextColumn::make('email')
+                TextColumn::make('user.email')
                     ->label(trans('server/user.email'))
                     ->searchable(),
                 TextColumn::make('permissions')
                     ->label(trans('server/user.permissions.title'))
-                    ->state(fn (User $user) => count($server->subusers->where('user_id', $user->id)->first()->permissions)),
+                    ->state(fn (Subuser $subuser) => count($subuser->permissions) - 1),
             ])
             ->recordActions([
                 DeleteAction::make()
                     ->label(trans('server/user.delete'))
-                    ->hidden(fn (User $user) => user()?->id === $user->id)
+                    ->hidden(fn (Subuser $subuser) => user()?->id === $subuser->user->id)
                     ->successNotificationTitle(null)
-                    ->action(function (User $user, SubuserDeletionService $subuserDeletionService) use ($server) {
-                        $subuser = $server->subusers->where('user_id', $user->id)->first();
+                    ->action(function (Subuser $subuser, SubuserDeletionService $subuserDeletionService) use ($server) {
                         $subuserDeletionService->handle($subuser, $server);
 
                         Notification::make()
@@ -131,13 +128,11 @@ class UserResource extends Resource
                     }),
                 EditAction::make()
                     ->label(trans('server/user.edit'))
-                    ->hidden(fn (User $user) => user()?->id === $user->id)
+                    ->hidden(fn (Subuser $subuser) => user()?->id === $subuser->user->id)
                     ->authorize(fn () => user()?->can(Permission::ACTION_USER_UPDATE, $server))
-                    ->modalHeading(fn (User $user) => trans('server/user.editing', ['user' => $user->email]))
+                    ->modalHeading(fn (Subuser $subuser) => trans('server/user.editing', ['user' => $subuser->user->email]))
                     ->successNotificationTitle(null)
-                    ->action(function (array $data, SubuserUpdateService $subuserUpdateService, User $user) use ($server) {
-                        $subuser = $server->subusers->where('user_id', $user->id)->first();
-
+                    ->action(function (array $data, SubuserUpdateService $subuserUpdateService, Subuser $subuser) use ($server) {
                         $permissions = collect($data)
                             ->forget('email')
                             ->flatMap(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))
@@ -172,7 +167,8 @@ class UserResource extends Resource
                                         'sm' => 1,
                                         'md' => 4,
                                         'lg' => 5,
-                                    ]),
+                                    ])
+                                    ->formatStateUsing(fn (Subuser $subuser) => $subuser->user->email),
                                 Actions::make([
                                     Action::make('assignAll')
                                         ->label(trans('server/user.assign_all'))
@@ -195,12 +191,10 @@ class UserResource extends Resource
                                     ->schema($tabs),
                             ]),
                     ])
-                    ->mutateRecordDataUsing(function ($data, User $user) use ($server) {
-                        $permissionsArray = $server->subusers->where('user_id', $user->id)->first()->permissions;
-
+                    ->mutateRecordDataUsing(function ($data, Subuser $subuser) {
                         $transformedPermissions = [];
 
-                        foreach ($permissionsArray as $permission) {
+                        foreach ($subuser->permissions as $permission) {
                             [$group, $action] = explode('.', $permission, 2);
                             $transformedPermissions[$group][] = $action;
                         }
@@ -312,7 +306,7 @@ class UserResource extends Resource
     public static function getDefaultPages(): array
     {
         return [
-            'index' => ListUsers::route('/'),
+            'index' => ListSubusers::route('/'),
         ];
     }
 
