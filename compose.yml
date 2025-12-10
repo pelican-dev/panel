@@ -2,10 +2,12 @@ x-common:
   panel:
     &panel-environment
     APP_URL: "https://localhost" # can be set to 'http://localhost' on port 80 only
-    ADMIN_EMAIL: "USEYOUROWNEMAILHERE@example.com"
-
+    LE_EMAIL: "USEYOUROWNEMAILHERE@example.com" # email to be used for let's encrypt certificates
     APP_DEBUG: "false"
     APP_ENV: "production"
+
+    # BEHIND_PROXY: true # uncomment to run behind a proxy
+    # TRUSTED_PROXIES: 127.0.0.1,172.17.0.1,172.20.0.1 # defaults are for local proxies
 
   mail:
     &mail-environment
@@ -35,6 +37,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      # - "81:80" # if you are behind a proxy uncomment this line and comment out 80 and 443
       # - "9000:9000" # enable when not using caddy to be able to reach php-fpm
     extra_hosts:
       - "host.docker.internal:host-gateway" # shows the panel on the internal docker network as well. usually '172.17.0.1'
@@ -45,7 +48,6 @@ services:
       <<: [*panel-environment, *mail-environment]
       XDG_DATA_HOME: /pelican-data
       # SKIP_CADDY: true # enable when not using caddy.
-      TRUSTED_PROXIES:
 
 volumes:
   pelican-data:

@@ -452,8 +452,7 @@ class EditEgg extends EditRecord
             DeleteAction::make()
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
                 ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use'))
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-trash'),
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
             ExportEggAction::make(),
             ImportEggAction::make()
                 ->multiple(false),

@@ -64,17 +64,18 @@ class ListEggs extends ListRecords
             ->recordActions([
                 EditAction::make()
                     ->iconButton()
-                    ->tooltip(trans('filament-actions::edit.single.label')),
+                    ->tooltip(trans('filament-actions::edit.single.label'))
+                    ->iconSize(IconSize::Large),
                 ExportEggAction::make()
-                    ->iconButton()
                     ->tooltip(trans('filament-actions::export.modal.actions.export.label'))
                     ->iconSize(IconSize::Large),
                 UpdateEggAction::make()
-                    ->iconButton()
-                    ->tooltip(trans_choice('admin/egg.update', 1)),
+                    ->tooltip(trans_choice('admin/egg.update', 1))
+                    ->iconSize(IconSize::Large),
                 ReplicateAction::make()
                     ->iconButton()
                     ->tooltip(trans('filament-actions::replicate.single.label'))
+                    ->iconSize(IconSize::Large)
                     ->modal(false)
                     ->excludeAttributes(['author', 'uuid', 'update_url', 'servers_count', 'created_at', 'updated_at'])
                     ->beforeReplicaSaved(function (Egg $replica) {

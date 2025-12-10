@@ -71,8 +71,7 @@ class DatabasesRelationManager extends RelationManager
                 ViewAction::make()
                     ->color('primary'),
                 DeleteAction::make()
-                    ->iconButton()->iconSize(IconSize::ExtraLarge)
-                    ->icon('tabler-trash'),
+                    ->iconButton()->iconSize(IconSize::ExtraLarge),
             ]);
     }
 }

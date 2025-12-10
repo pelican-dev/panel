@@ -23,7 +23,6 @@ class ViewMount extends ViewRecord
     {
         return [
             EditAction::make()
-                ->icon('tabler-edit')
                 ->iconSize(IconSize::ExtraLarge)
                 ->iconButton(),
         ];

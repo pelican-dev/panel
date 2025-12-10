@@ -16,7 +16,7 @@ tags:
 features:
   - steam_disk_space
 docker_images:
-  Source: 'ghcr.io/parkervcp/games:source'
+  Source: 'ghcr.io/pelican-eggs/games:source'
 file_denylist: {  }
 startup_commands:
   Default: './srcds_run -game {{SRCDS_GAME}} -console -port {{SERVER_PORT}} +map {{SRCDS_MAP}} +ip 0.0.0.0 -strictportbind -norestart'
@@ -81,7 +81,7 @@ scripts:
       ## set up 64 bit libraries
       mkdir -p /mnt/server/.steam/sdk64
       cp -v linux64/steamclient.so ../.steam/sdk64/steamclient.so
-    container: 'ghcr.io/parkervcp/installers:debian'
+    container: 'ghcr.io/pelican-eggs/installers:debian'
     entrypoint: bash
 variables:
   -
