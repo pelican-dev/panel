@@ -25,9 +25,11 @@ class CreateWebhookConfiguration extends CreateRecord
     {
         return [
             $this->getCancelFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-arrow-left'),
             $this->getCreateFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-file-plus'),
         ];
     }
 
