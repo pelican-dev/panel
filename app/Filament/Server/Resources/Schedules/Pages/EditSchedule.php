@@ -50,24 +50,20 @@ class EditSchedule extends EditRecord
         return [
             DeleteAction::make()
                 ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-trash')
                 ->tooltip(trans('server/schedule.delete'))
                 ->after(function ($record) {
                     Activity::event('server:schedule.delete')
                         ->property('name', $record->name)
                         ->log();
                 }),
-            ExportScheduleAction::make()
-                ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-download')
-                ->tooltip(trans('server/schedule.export')),
+            ExportScheduleAction::make(),
             $this->getSaveFormAction()->formId('form')
                 ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy')
                 ->tooltip(trans('server/schedule.save')),
             $this->getCancelFormAction()->formId('form')
                 ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-cancel')
+                ->icon('tabler-arrow-left')
                 ->tooltip(trans('server/schedule.cancel')),
         ];
     }

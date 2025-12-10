@@ -291,6 +291,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             ->distinct('servers.id');
     }
 
+    /** @return Builder<Node> */
     public function accessibleNodes(): Builder
     {
         // Root admins can access all nodes

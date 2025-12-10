@@ -23,7 +23,6 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 
 class AllocationResource extends Resource
 {
@@ -84,7 +83,6 @@ class AllocationResource extends Resource
                     ->visible(fn (Allocation $allocation) => !$allocation->is_locked || user()?->can('update', $allocation->node))
                     ->authorize(fn () => user()?->can(Permission::ACTION_ALLOCATION_DELETE, $server))
                     ->label(trans('server/network.delete'))
-                    ->icon('tabler-trash')
                     ->action(function (Allocation $allocation) {
                         Allocation::where('id', $allocation->id)->update([
                             'notes' => null,
@@ -121,26 +119,6 @@ class AllocationResource extends Resource
                             ->log();
                     }),
             ]);
-    }
-
-    public static function canViewAny(): bool
-    {
-        return user()?->can(Permission::ACTION_ALLOCATION_READ, Filament::getTenant());
-    }
-
-    public static function canCreate(): bool
-    {
-        return user()?->can(Permission::ACTION_ALLOCATION_CREATE, Filament::getTenant());
-    }
-
-    public static function canEdit(Model $record): bool
-    {
-        return user()?->can(Permission::ACTION_ALLOCATION_UPDATE, Filament::getTenant());
-    }
-
-    public static function canDelete(Model $record): bool
-    {
-        return user()?->can(Permission::ACTION_ALLOCATION_DELETE, Filament::getTenant());
     }
 
     /** @return array<string, PageRegistration> */

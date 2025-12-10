@@ -55,23 +55,19 @@ class SSHKeyController extends ClientApiController
      *
      * Deletes an SSH key from the user's account.
      */
-    public function delete(ClientApiRequest $request): JsonResponse
+    public function delete(ClientApiRequest $request, string $fingerprint): JsonResponse
     {
-        $request->validate(['fingerprint' => ['required', 'string']]);
-
-        /** @var ?UserSSHKey $key */
+        /** @var UserSSHKey $key */
         $key = $request->user()->sshKeys()
-            ->where('fingerprint', $request->input('fingerprint'))
-            ->first();
+            ->where('fingerprint', $fingerprint)
+            ->firstOrFail();
 
-        if (!is_null($key)) {
-            $key->delete();
+        Activity::event('user:ssh-key.delete')
+            ->subject($key)
+            ->property('fingerprint', $key->fingerprint)
+            ->log();
 
-            Activity::event('user:ssh-key.delete')
-                ->subject($key)
-                ->property('fingerprint', $key->fingerprint)
-                ->log();
-        }
+        $key->delete();
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
     }

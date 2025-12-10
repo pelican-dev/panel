@@ -19,6 +19,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
@@ -400,14 +401,16 @@ class CreateNode extends CreateRecord
                                 ]),
                         ]),
                 ])->columnSpanFull()
-                    ->nextAction(fn (Action $action) => $action->label(trans('admin/node.next_step')))
+                    ->nextAction(fn (Action $action) => $action->label(trans('admin/node.next_step'))->iconButton()->iconSize(IconSize::ExtraLarge)->icon('tabler-arrow-right'))
+                    ->previousAction(fn (Action $action) => $action->iconButton()->iconSize(IconSize::ExtraLarge)->icon('tabler-arrow-left'))
                     ->submitAction(new HtmlString(Blade::render(<<<'BLADE'
-                                        <x-filament::button
+                                        <x-filament::icon-button
                                                 type="submit"
-                                                size="sm"
+                                                iconSize="xl"
+                                                icon="tabler-file-plus"
                                             >
                                                 {{ trans('admin/node.create') }}
-                                            </x-filament::button>
+                                            </x-filament::icon-button>
                                         BLADE))),
             ]);
     }

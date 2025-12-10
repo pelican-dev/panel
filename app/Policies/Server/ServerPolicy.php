@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies;
+namespace App\Policies\Server;
 
 use App\Models\Permission;
 use App\Models\Server;
@@ -8,10 +8,6 @@ use App\Models\User;
 
 class ServerPolicy
 {
-    use DefaultPolicies;
-
-    protected string $modelName = 'server';
-
     /**
      * Runs before any of the functions are called. Used to determine if the (sub-)user has permissions.
      */
@@ -48,8 +44,10 @@ class ServerPolicy
      * This is a horrendous hack to avoid Laravel's "smart" behavior that does
      * not call the before() function if there isn't a function matching the
      * policy permission.
+     *
+     * @param  array<string, mixed>  $arguments
      */
-    public function __call(string $name, mixed $arguments): void
+    public function __call(string $name, array $arguments): void
     {
         // do nothing
     }

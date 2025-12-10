@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies;
+namespace App\Policies\Admin;
 
 use App\Models\DatabaseHost;
 use App\Models\User;
@@ -9,7 +9,7 @@ class DatabaseHostPolicy
 {
     use DefaultPolicies;
 
-    protected string $modelName = 'databasehost';
+    protected string $modelName = 'databaseHost';
 
     public function before(User $user, string $ability, string|DatabaseHost $databaseHost): ?bool
     {
