@@ -798,37 +798,17 @@ class EditServer extends EditRecord
                                     ->label(trans('admin/server.startup_cmd'))
                                     ->required()
                                     ->live()
-                                    ->afterStateUpdated(function (Set $set, $state) {
-                                        $set('startup', $state);
-                                        $set('previewing', false);
-                                    })
-                                    ->options(function ($state, Get $get, Set $set) {
+                                    ->options(function (Get $get) {
                                         $egg = Egg::find($get('egg_id'));
-                                        $startups = $egg->startup_commands ?? [];
 
-                                        $currentStartup = $get('startup');
-                                        if (!$currentStartup && $startups) {
-                                            $currentStartup = collect($startups)->first();
-                                            $set('startup', $currentStartup);
-                                            $set('select_startup', $currentStartup);
-                                        }
-
-                                        return array_flip($startups) + ['custom' => 'Custom Startup'];
+                                        return array_flip($egg->startup_commands ?? []) + ['custom' => 'Custom Startup'];
                                     })
-                                    ->formatStateUsing(function (Server $server) {
-                                        $startups = $server->egg->startup_commands;
-
-                                        $currentStartup = $server->startup;
-                                        $matchingStartup = collect($startups)
-                                            ->filter(fn ($value, $key) => $value === $currentStartup)
-                                            ->keys()
-                                            ->first();
-
-                                        if (!$matchingStartup) {
-                                            return 'custom';
+                                    ->formatStateUsing(fn (Server $server) => in_array($server->startup, $server->egg->startup_commands) ? $server->startup : 'custom')
+                                    ->afterStateUpdated(function (Set $set, string $state) {
+                                        if ($state !== 'custom') {
+                                            $set('startup', $state);
                                         }
-
-                                        return $matchingStartup;
+                                        $set('previewing', false);
                                     })
                                     ->selectablePlaceholder(false)
                                     ->columnSpanFull()
