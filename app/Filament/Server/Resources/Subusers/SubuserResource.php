@@ -114,7 +114,7 @@ class SubuserResource extends Resource
                 TextColumn::make('user.email')
                     ->label(trans('server/user.email'))
                     ->searchable(),
-                TextColumn::make('permissions')
+                TextColumn::make('permissions_count')
                     ->label(trans('server/user.permissions.title'))
                     ->state(fn (Subuser $subuser) => count($subuser->permissions) - 1),
             ])
