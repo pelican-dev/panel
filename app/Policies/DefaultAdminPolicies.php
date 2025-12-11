@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Policies\Admin;
+namespace App\Policies;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
-trait DefaultPolicies
+trait DefaultAdminPolicies
 {
     public function viewAny(User $user): bool
     {

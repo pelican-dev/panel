@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Policies\Admin;
+namespace App\Policies;
 
 use App\Models\DatabaseHost;
 use App\Models\User;
 
 class DatabaseHostPolicy
 {
-    use DefaultPolicies;
+    use DefaultAdminPolicies;
 
     protected string $modelName = 'databaseHost';
 
