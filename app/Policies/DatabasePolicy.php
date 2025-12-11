@@ -1,36 +1,36 @@
 <?php
 
-namespace App\Policies\Server;
+namespace App\Policies;
 
 use App\Enums\SubuserPermission;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 
-class FilePolicy
+class DatabasePolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->can(SubuserPermission::FileRead, Filament::getTenant());
+        return $user->can(SubuserPermission::DatabaseRead, Filament::getTenant());
     }
 
     public function view(User $user, Model $record): bool
     {
-        return $user->can(SubuserPermission::FileReadContent, Filament::getTenant());
+        return $user->can(SubuserPermission::DatabaseRead, Filament::getTenant());
     }
 
     public function create(User $user): bool
     {
-        return $user->can(SubuserPermission::FileCreate, Filament::getTenant());
+        return $user->can(SubuserPermission::DatabaseCreate, Filament::getTenant());
     }
 
     public function edit(User $user, Model $record): bool
     {
-        return $user->can(SubuserPermission::FileUpdate, Filament::getTenant());
+        return $user->can(SubuserPermission::DatabaseUpdate, Filament::getTenant());
     }
 
     public function delete(User $user, Model $record): bool
     {
-        return $user->can(SubuserPermission::FileDelete, Filament::getTenant());
+        return $user->can(SubuserPermission::DatabaseDelete, Filament::getTenant());
     }
 }

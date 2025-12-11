@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies\Server;
+namespace App\Policies;
 
 use App\Enums\SubuserPermission;
 use App\Models\User;

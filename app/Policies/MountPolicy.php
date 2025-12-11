@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Policies\Admin;
+namespace App\Policies;
 
 use App\Models\Mount;
 use App\Models\User;
 
 class MountPolicy
 {
-    use DefaultPolicies;
+    use DefaultAdminPolicies;
 
     protected string $modelName = 'mount';
 

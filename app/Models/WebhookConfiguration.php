@@ -221,7 +221,7 @@ class WebhookConfiguration extends Model
             'created_at' => '2025-09-05T01:15:43.000000Z',
             'updated_at' => '2025-09-11T22:45:14.000000Z',
             'allocation_id' => 4,
-            'image' => 'ghcr.io/parkervcp/yolks:java_21',
+            'image' => 'ghcr.io/pelican-eggs/yolks:java_21',
             'description' => 'This is an example server description.',
             'skip_scripts' => false,
             'external_id' => null,

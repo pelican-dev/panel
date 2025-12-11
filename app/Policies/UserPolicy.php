@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Policies\Admin;
+namespace App\Policies;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class UserPolicy
 {
-    use DefaultPolicies {
+    use DefaultAdminPolicies {
         update as defaultUpdate;
         delete as defaultDelete;
     }

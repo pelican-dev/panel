@@ -127,7 +127,7 @@ class CreateEgg extends CreateRecord
                                 ->keyLabel(trans('admin/egg.docker_name'))
                                 ->keyPlaceholder('Java 21')
                                 ->valueLabel(trans('admin/egg.docker_uri'))
-                                ->valuePlaceholder('ghcr.io/parkervcp/yolks:java_21')
+                                ->valuePlaceholder('ghcr.io/pelican-eggs/yolks:java_21')
                                 ->helperText(trans('admin/egg.docker_help')),
                         ]),
 
