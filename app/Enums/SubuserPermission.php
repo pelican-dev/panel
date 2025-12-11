@@ -11,11 +11,19 @@ enum SubuserPermission: string
     case ControlStop = 'control.stop';
     case ControlRestart = 'control.restart';
 
-    case DatabaseRead = 'database.read';
-    case DatabaseCreate = 'database.create';
-    case DatabaseUpdate = 'database.update';
-    case DatabaseDelete = 'database.delete';
-    case DatabaseViewPassword = 'database.view-password';
+    case FileRead = 'file.read';
+    case FileReadContent = 'file.read-content';
+    case FileCreate = 'file.create';
+    case FileUpdate = 'file.update';
+    case FileDelete = 'file.delete';
+    case FileArchive = 'file.archive';
+    case FileSftp = 'file.sftp';
+
+    case BackupRead = 'backup.read';
+    case BackupCreate = 'backup.create';
+    case BackupDelete = 'backup.delete';
+    case BackupDownload = 'backup.download';
+    case BackupRestore = 'backup.restore';
 
     case ScheduleRead = 'schedule.read';
     case ScheduleCreate = 'schedule.create';
@@ -27,24 +35,18 @@ enum SubuserPermission: string
     case UserUpdate = 'user.update';
     case UserDelete = 'user.delete';
 
-    case BackupRead = 'backup.read';
-    case BackupCreate = 'backup.create';
-    case BackupDelete = 'backup.delete';
-    case BackupDownload = 'backup.download';
-    case BackupRestore = 'backup.restore';
+    case DatabaseRead = 'database.read';
+    case DatabaseCreate = 'database.create';
+    case DatabaseUpdate = 'database.update';
+    case DatabaseDelete = 'database.delete';
+    case DatabaseViewPassword = 'database.view-password';
 
     case AllocationRead = 'allocation.read';
     case AllocationCreate = 'allocation.create';
     case AllocationUpdate = 'allocation.update';
     case AllocationDelete = 'allocation.delete';
 
-    case FileRead = 'file.read';
-    case FileReadContent = 'file.read-content';
-    case FileCreate = 'file.create';
-    case FileUpdate = 'file.update';
-    case FileDelete = 'file.delete';
-    case FileArchive = 'file.archive';
-    case FileSftp = 'file.sftp';
+    case ActivityRead = 'activity.read';
 
     case StartupRead = 'startup.read';
     case StartupUpdate = 'startup.update';
@@ -53,8 +55,6 @@ enum SubuserPermission: string
     case SettingsRename = 'settings.rename';
     case SettingsDescription = 'settings.description';
     case SettingsReinstall = 'settings.reinstall';
-
-    case ActivityRead = 'activity.read';
 
     /** @return string[] */
     public function split(): array
