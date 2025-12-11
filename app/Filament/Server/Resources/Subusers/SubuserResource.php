@@ -116,7 +116,10 @@ class SubuserResource extends Resource
                     ->searchable(),
                 TextColumn::make('permissions_count')
                     ->label(trans('server/user.permissions.title'))
-                    ->state(fn (Subuser $subuser) => count($subuser->permissions) - 1),
+                    ->state(fn (Subuser $subuser) => collect($subuser->permissions)
+                        ->reject(fn (string $permission) => SubuserPermission::tryFrom($permission)?->isHidden() ?? false)
+                        ->count()
+                    ),
             ])
             ->recordActions([
                 DeleteAction::make()
