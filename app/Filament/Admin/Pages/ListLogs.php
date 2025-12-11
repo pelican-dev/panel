@@ -46,13 +46,12 @@ class ListLogs extends BaseListLogs
             ])
             ->recordActions([
                 ViewLogAction::make()
-                    ->icon('tabler-file-description')->iconSize(IconSize::Medium),
+                    ->icon('tabler-file-description')->iconSize(IconSize::Large)->iconButton(),
                 DownloadAction::make()
-                    ->icon('tabler-file-download')->iconSize(IconSize::Medium),
+                    ->icon('tabler-file-download')->iconSize(IconSize::Large)->iconButton(),
                 Action::make('uploadLogs')
-                    ->button()
                     ->hiddenLabel()
-                    ->icon('tabler-world-upload')->iconSize(IconSize::Medium)
+                    ->icon('tabler-world-upload')->iconSize(IconSize::Large)->iconButton()
                     ->requiresConfirmation()
                     ->modalHeading(trans('admin/log.actions.upload_logs'))
                     ->modalDescription(fn ($record) => trans('admin/log.actions.upload_logs_description', ['file' => $record['date'], 'url' => 'https://logs.pelican.dev']))
@@ -124,7 +123,7 @@ class ListLogs extends BaseListLogs
                         }
                     }),
                 DeleteAction::make()
-                    ->icon('tabler-trash')->iconSize(IconSize::Medium),
+                    ->icon('tabler-trash')->iconSize(IconSize::Medium)->iconButton(),
             ]);
     }
 }

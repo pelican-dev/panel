@@ -2,9 +2,9 @@
 
 namespace App\Extensions\Features\Schemas;
 
+use App\Enums\SubuserPermission;
 use App\Extensions\Features\FeatureSchemaInterface;
 use App\Facades\Activity;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use Exception;
@@ -44,7 +44,7 @@ class JavaVersionSchema implements FeatureSchemaInterface
             ->modalHeading('Unsupported Java Version')
             ->modalDescription('This server is currently running an unsupported version of Java and cannot be started.')
             ->modalSubmitActionLabel('Update Docker Image')
-            ->disabledSchema(fn () => !user()?->can(Permission::ACTION_STARTUP_DOCKER_IMAGE, $server))
+            ->disabledSchema(fn () => !user()?->can(SubuserPermission::StartupDockerImage, $server))
             ->schema([
                 TextEntry::make('java')
                     ->label('Please select a supported version from the list below to continue starting the server.'),

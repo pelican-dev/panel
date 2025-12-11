@@ -451,11 +451,14 @@ class EditEgg extends EditRecord
         return [
             DeleteAction::make()
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
-                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use')),
+                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use'))
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
             ExportEggAction::make(),
             ImportEggAction::make()
                 ->multiple(false),
-            $this->getSaveFormAction()->formId('form'),
+            $this->getSaveFormAction()->formId('form')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-device-floppy'),
         ];
     }
 

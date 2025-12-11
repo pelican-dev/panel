@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Schedules;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 
 class StoreTaskRequest extends ViewScheduleRequest
 {
@@ -11,9 +11,9 @@ class StoreTaskRequest extends ViewScheduleRequest
      * check if they can modify a schedule to determine if they're able to do this. There
      * are no task specific permissions.
      */
-    public function permission(): string
+    public function permission(): SubuserPermission
     {
-        return Permission::ACTION_SCHEDULE_UPDATE;
+        return SubuserPermission::ScheduleUpdate;
     }
 
     public function rules(): array

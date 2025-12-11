@@ -12,7 +12,6 @@ use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use Exception;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -96,7 +95,7 @@ class MountResource extends Resource
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->hidden(fn ($record) => static::canEdit($record)),
+                    ->hidden(fn ($record) => static::getEditAuthorizationResponse($record)->allowed()),
                 EditAction::make(),
             ])
             ->groupedBulkActions([
@@ -104,10 +103,7 @@ class MountResource extends Resource
             ])
             ->emptyStateIcon('tabler-layers-linked')
             ->emptyStateDescription('')
-            ->emptyStateHeading(trans('admin/mount.no_mounts'))
-            ->emptyStateActions([
-                CreateAction::make(),
-            ]);
+            ->emptyStateHeading(trans('admin/mount.no_mounts'));
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Components\Actions;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 use App\Models\Server;
 use App\Services\Schedules\Sharing\ScheduleImporterService;
 use Exception;
@@ -33,7 +33,7 @@ class ImportScheduleAction extends Action
 
         $this->label(trans('filament-actions::import.modal.actions.import.label'));
 
-        $this->authorize(fn () => user()?->can(Permission::ACTION_SCHEDULE_CREATE, $server));
+        $this->authorize(fn () => user()?->can(SubuserPermission::ScheduleCreate, $server));
 
         $this->schema([
             Tabs::make('Tabs')

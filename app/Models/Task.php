@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Contracts\Validatable;
+use App\Extensions\Tasks\TaskSchemaInterface;
+use App\Extensions\Tasks\TaskService;
 use App\Traits\HasValidation;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -34,17 +36,6 @@ class Task extends Model implements Validatable
      * API representation using fractal.
      */
     public const RESOURCE_NAME = 'schedule_task';
-
-    /**
-     * The default actions that can exist for a task
-     */
-    public const ACTION_POWER = 'power';
-
-    public const ACTION_COMMAND = 'command';
-
-    public const ACTION_BACKUP = 'backup';
-
-    public const ACTION_DELETE_FILES = 'delete_files';
 
     /**
      * Relationships to be updated when this model is updated.
@@ -124,5 +115,13 @@ class Task extends Model implements Validatable
     public function isFirst(): bool
     {
         return $this->schedule->firstTask()?->id === $this->id;
+    }
+
+    public function getSchema(): ?TaskSchemaInterface
+    {
+        /** @var TaskService $taskService */
+        $taskService = app(TaskService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+
+        return $taskService->get($this->action);
     }
 }

@@ -9,6 +9,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Enums\IconSize;
 
 class EditMount extends EditRecord
 {
@@ -21,8 +22,11 @@ class EditMount extends EditRecord
     protected function getDefaultHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
-            $this->getSaveFormAction()->formId('form'),
+            DeleteAction::make()
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
+            $this->getSaveFormAction()->formId('form')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-device-floppy'),
         ];
     }
 

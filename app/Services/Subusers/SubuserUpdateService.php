@@ -2,8 +2,8 @@
 
 namespace App\Services\Subusers;
 
+use App\Enums\SubuserPermission;
 use App\Facades\Activity;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Repositories\Daemon\DaemonServerRepository;
@@ -22,7 +22,7 @@ class SubuserUpdateService
     {
         $cleanedPermissions = collect($permissions)
             ->unique()
-            ->filter(fn ($permission) => $permission === Permission::ACTION_WEBSOCKET_CONNECT || user()?->can($permission, $server))
+            ->filter(fn ($permission) => $permission === SubuserPermission::WebsocketConnect->value || user()?->can($permission, $server))
             ->sort()
             ->values()
             ->all();

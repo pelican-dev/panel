@@ -2,13 +2,13 @@
 
 namespace App\Policies;
 
-use App\Models\Permission;
 use App\Models\Server;
+use App\Models\Subuser;
 use App\Models\User;
 
 class ServerPolicy
 {
-    use DefaultPolicies;
+    use DefaultAdminPolicies;
 
     protected string $modelName = 'server';
 
@@ -22,7 +22,7 @@ class ServerPolicy
             return null;
         }
 
-        if (Permission::permissionKeys()->contains($ability)) {
+        if (Subuser::doesPermissionExist($ability)) {
             // Owner has full server permissions
             if ($server->owner_id === $user->id) {
                 return true;
@@ -48,8 +48,10 @@ class ServerPolicy
      * This is a horrendous hack to avoid Laravel's "smart" behavior that does
      * not call the before() function if there isn't a function matching the
      * policy permission.
+     *
+     * @param  array<string, mixed>  $arguments
      */
-    public function __call(string $name, mixed $arguments): void
+    public function __call(string $name, array $arguments): void
     {
         // do nothing
     }

@@ -4,7 +4,7 @@ namespace App\Policies;
 
 class ApiKeyPolicy
 {
-    use DefaultPolicies;
+    use DefaultAdminPolicies;
 
-    protected string $modelName = 'apikey';
+    protected string $modelName = 'apiKey';
 }

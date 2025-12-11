@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserPolicy
 {
-    use DefaultPolicies {
+    use DefaultAdminPolicies {
         update as defaultUpdate;
         delete as defaultDelete;
     }

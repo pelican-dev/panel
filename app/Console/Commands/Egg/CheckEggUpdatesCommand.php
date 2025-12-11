@@ -7,6 +7,7 @@ use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggExporterService;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
 use JsonException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -44,9 +45,7 @@ class CheckEggUpdatesCommand extends Command
             ? Yaml::parse($exporterService->handle($egg->id, EggFormat::YAML))
             : json_decode($exporterService->handle($egg->id, EggFormat::JSON), true);
 
-        $remote = file_get_contents($egg->update_url);
-        assert($remote !== false);
-
+        $remote = Http::timeout(5)->connectTimeout(1)->get($egg->update_url)->throw()->body();
         $remote = $isYaml ? Yaml::parse($remote) : json_decode($remote, true);
 
         unset($local['exported_at'], $remote['exported_at']);

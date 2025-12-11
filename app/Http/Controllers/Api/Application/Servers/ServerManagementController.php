@@ -34,7 +34,7 @@ class ServerManagementController extends ApplicationApiController
     }
 
     /**
-     * Suspsend
+     * Suspend
      *
      * Suspend a server on the Panel.
      *

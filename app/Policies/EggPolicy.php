@@ -4,7 +4,7 @@ namespace App\Policies;
 
 class EggPolicy
 {
-    use DefaultPolicies;
+    use DefaultAdminPolicies;
 
     protected string $modelName = 'egg';
 }

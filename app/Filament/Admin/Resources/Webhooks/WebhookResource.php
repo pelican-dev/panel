@@ -15,7 +15,6 @@ use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
@@ -98,7 +97,7 @@ class WebhookResource extends Resource
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->hidden(fn (WebhookConfiguration $record) => static::canEdit($record)),
+                    ->hidden(fn (WebhookConfiguration $record) => static::getEditAuthorizationResponse($record)->allowed()),
                 EditAction::make(),
                 ReplicateAction::make()
                     ->iconButton()
@@ -114,9 +113,6 @@ class WebhookResource extends Resource
             ->emptyStateIcon('tabler-webhook')
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/webhook.no_webhooks'))
-            ->emptyStateActions([
-                CreateAction::make(),
-            ])
             ->persistFiltersInSession()
             ->filters([
                 SelectFilter::make('type')

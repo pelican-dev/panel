@@ -106,9 +106,7 @@ class AppServiceProvider extends ServiceProvider
             ]);
         }
 
-        Gate::before(function (User $user, $ability) {
-            return $user->isRootAdmin() ? true : null;
-        });
+        Gate::before(fn (User $user, $ability) => $user->isRootAdmin() ? true : null);
 
         AboutCommand::add('Pelican', [
             'Panel Version' => $versionService->currentPanelVersion(),

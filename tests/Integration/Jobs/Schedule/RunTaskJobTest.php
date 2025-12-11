@@ -78,7 +78,7 @@ class RunTaskJobTest extends IntegrationTestCase
         /** @var \App\Models\Task $task */
         $task = Task::factory()->create([
             'schedule_id' => $schedule->id,
-            'action' => Task::ACTION_POWER,
+            'action' => 'power',
             'payload' => 'start',
             'is_queued' => true,
             'continue_on_failure' => false,
@@ -112,7 +112,7 @@ class RunTaskJobTest extends IntegrationTestCase
         /** @var \App\Models\Task $task */
         $task = Task::factory()->create([
             'schedule_id' => $schedule->id,
-            'action' => Task::ACTION_POWER,
+            'action' => 'power',
             'payload' => 'start',
             'continue_on_failure' => $continueOnFailure,
         ]);
@@ -152,7 +152,7 @@ class RunTaskJobTest extends IntegrationTestCase
         ]);
 
         $task = Task::factory()->for($schedule)->create([
-            'action' => Task::ACTION_POWER,
+            'action' => 'power',
             'payload' => 'start',
         ]);
 

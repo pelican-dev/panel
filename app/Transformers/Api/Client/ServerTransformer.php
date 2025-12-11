@@ -2,10 +2,10 @@
 
 namespace App\Transformers\Api\Client;
 
+use App\Enums\SubuserPermission;
 use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\EggVariable;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Services\Servers\StartupCommandService;
@@ -60,7 +60,7 @@ class ServerTransformer extends BaseClientTransformer
                 'oom_disabled' => !$server->oom_killer,
                 'oom_killer' => $server->oom_killer,
             ],
-            'invocation' => $service->handle($server, hideAllValues: !$user->can(Permission::ACTION_STARTUP_READ, $server)),
+            'invocation' => $service->handle($server, hideAllValues: !$user->can(SubuserPermission::StartupRead, $server)),
             'docker_image' => $server->image,
             'egg_features' => $server->egg->inherit_features,
             'feature_limits' => [
@@ -98,7 +98,7 @@ class ServerTransformer extends BaseClientTransformer
         //
         // This allows us to avoid too much permission regression, without also hiding information that
         // is generally needed for the frontend to make sense when browsing or searching results.
-        if (!$user->can(Permission::ACTION_ALLOCATION_READ, $server)) {
+        if (!$user->can(SubuserPermission::AllocationRead, $server)) {
             $primary = clone $server->allocation;
             $primary->notes = null;
 
@@ -110,7 +110,7 @@ class ServerTransformer extends BaseClientTransformer
 
     public function includeVariables(Server $server): Collection|NullResource
     {
-        if (!$this->request->user()->can(Permission::ACTION_STARTUP_READ, $server)) {
+        if (!$this->request->user()->can(SubuserPermission::StartupRead, $server)) {
             return $this->null();
         }
 
@@ -134,7 +134,7 @@ class ServerTransformer extends BaseClientTransformer
      */
     public function includeSubusers(Server $server): Collection|NullResource
     {
-        if (!$this->request->user()->can(Permission::ACTION_USER_READ, $server)) {
+        if (!$this->request->user()->can(SubuserPermission::UserRead, $server)) {
             return $this->null();
         }
 
