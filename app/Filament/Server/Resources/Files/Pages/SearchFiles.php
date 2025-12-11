@@ -67,10 +67,10 @@ class SearchFiles extends ListRecords
             ])
             ->recordUrl(function (File $file) {
                 if ($file->is_directory) {
-                    return ListFiles::getUrl(['path' => join_paths($this->path, $file->name)]);
+                    return ListFiles::getUrl(['path' => $file->name]);
                 }
 
-                return $file->canEdit() ? EditFiles::getUrl(['path' => join_paths($this->path, $file->name)]) : null;
+                return $file->canEdit() ? EditFiles::getUrl(['path' => $file->name]) : null;
             });
     }
 
