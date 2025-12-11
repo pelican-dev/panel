@@ -36,7 +36,7 @@ class SearchFiles extends ListRecords
 
         return [
             $resource::getUrl() => $resource::getBreadcrumb(),
-            self::getUrl(['searchTerm' => $this->searchTerm]) => trans('server/file.actions.global_search.search_for_term', ['term' => ' "' . $this->searchTerm . '"']),
+            self::getUrl(['searchTerm' => $this->searchTerm]) => trans('server/file.actions.nested_search.search_for_term', ['term' => ' "' . $this->searchTerm . '"']),
         ];
     }
 
@@ -76,6 +76,6 @@ class SearchFiles extends ListRecords
 
     public function getTitle(): string|Htmlable
     {
-        return trans('server/file.actions.global_search.title');
+        return trans('server/file.actions.nested_search.title');
     }
 }
