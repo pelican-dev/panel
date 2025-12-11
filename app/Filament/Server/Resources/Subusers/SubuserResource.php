@@ -2,9 +2,9 @@
 
 namespace App\Filament\Server\Resources\Subusers;
 
+use App\Enums\SubuserPermission;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\Subusers\Pages\ListSubusers;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Models\Subuser;
 use App\Services\Subusers\SubuserCreationService;
@@ -68,7 +68,11 @@ class SubuserResource extends Resource
         $tabs = [];
         $permissionsArray = [];
 
-        foreach (Permission::permissionData() as $data) {
+        foreach (Subuser::allPermissionData() as $data) {
+            if ($data['hidden']) {
+                continue;
+            }
+
             $options = [];
             $descriptions = [];
 
@@ -84,6 +88,7 @@ class SubuserResource extends Resource
                     Section::make()
                         ->description(trans('server/user.permissions.' . $data['name'] . '_desc'))
                         ->icon($data['icon'])
+                        ->contained(false)
                         ->schema([
                             CheckboxList::make($data['name'])
                                 ->hiddenLabel()
@@ -109,9 +114,12 @@ class SubuserResource extends Resource
                 TextColumn::make('user.email')
                     ->label(trans('server/user.email'))
                     ->searchable(),
-                TextColumn::make('permissions')
+                TextColumn::make('permissions_count')
                     ->label(trans('server/user.permissions.title'))
-                    ->state(fn (Subuser $subuser) => count($subuser->permissions) - 1),
+                    ->state(fn (Subuser $subuser) => collect($subuser->permissions)
+                        ->reject(fn (string $permission) => SubuserPermission::tryFrom($permission)?->isHidden() ?? false)
+                        ->count()
+                    ),
             ])
             ->recordActions([
                 DeleteAction::make()
@@ -129,14 +137,14 @@ class SubuserResource extends Resource
                 EditAction::make()
                     ->label(trans('server/user.edit'))
                     ->hidden(fn (Subuser $subuser) => user()?->id === $subuser->user->id)
-                    ->authorize(fn () => user()?->can(Permission::ACTION_USER_UPDATE, $server))
+                    ->authorize(fn () => user()?->can(SubuserPermission::UserUpdate, $server))
                     ->modalHeading(fn (Subuser $subuser) => trans('server/user.editing', ['user' => $subuser->user->email]))
                     ->successNotificationTitle(null)
                     ->action(function (array $data, SubuserUpdateService $subuserUpdateService, Subuser $subuser) use ($server) {
                         $permissions = collect($data)
                             ->forget('email')
                             ->flatMap(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))
-                            ->push(Permission::ACTION_WEBSOCKET_CONNECT)
+                            ->push(SubuserPermission::WebsocketConnect->value)
                             ->unique()
                             ->all();
 
@@ -212,7 +220,7 @@ class SubuserResource extends Resource
                     ->icon('tabler-user-plus')
                     ->tooltip(trans('server/user.invite_user'))
                     ->createAnother(false)
-                    ->authorize(fn () => user()?->can(Permission::ACTION_USER_CREATE, $server))
+                    ->authorize(fn () => user()?->can(SubuserPermission::UserCreate, $server))
                     ->schema([
                         Grid::make()
                             ->columnSpanFull()
@@ -266,7 +274,7 @@ class SubuserResource extends Resource
                         $permissions = collect($data)
                             ->forget('email')
                             ->flatMap(fn ($permissions, $key) => collect($permissions)->map(fn ($permission) => "$key.$permission"))
-                            ->push(Permission::ACTION_WEBSOCKET_CONNECT)
+                            ->push(SubuserPermission::WebsocketConnect->value)
                             ->unique()
                             ->all();
 

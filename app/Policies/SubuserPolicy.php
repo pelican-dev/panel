@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
@@ -11,26 +11,26 @@ class SubuserPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->can(Permission::ACTION_USER_READ, Filament::getTenant());
+        return $user->can(SubuserPermission::UserRead, Filament::getTenant());
     }
 
     public function view(User $user, Model $record): bool
     {
-        return $user->can(Permission::ACTION_USER_READ, Filament::getTenant());
+        return $user->can(SubuserPermission::UserRead, Filament::getTenant());
     }
 
     public function create(User $user): bool
     {
-        return $user->can(Permission::ACTION_USER_CREATE, Filament::getTenant());
+        return $user->can(SubuserPermission::UserCreate, Filament::getTenant());
     }
 
     public function edit(User $user, Model $record): bool
     {
-        return $user->can(Permission::ACTION_USER_UPDATE, Filament::getTenant());
+        return $user->can(SubuserPermission::UserUpdate, Filament::getTenant());
     }
 
     public function delete(User $user, Model $record): bool
     {
-        return $user->can(Permission::ACTION_USER_DELETE, Filament::getTenant());
+        return $user->can(SubuserPermission::UserDelete, Filament::getTenant());
     }
 }

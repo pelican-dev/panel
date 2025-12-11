@@ -4,13 +4,13 @@ namespace App\Filament\Server\Resources\Backups;
 
 use App\Enums\BackupStatus;
 use App\Enums\ServerState;
+use App\Enums\SubuserPermission;
 use App\Facades\Activity;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\Backups\Pages\ListBackups;
 use App\Http\Controllers\Api\Client\Servers\BackupController;
 use App\Models\Backup;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Services\Backups\DeleteBackupService;
@@ -128,7 +128,7 @@ class BackupResource extends Resource
                 ActionGroup::make([
                     Action::make('rename')
                         ->icon('tabler-pencil')
-                        ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_DELETE, $server))
+                        ->authorize(fn () => user()?->can(SubuserPermission::BackupDelete, $server))
                         ->label(trans('server/backup.actions.rename.title'))
                         ->schema([
                             TextInput::make('name')
@@ -159,7 +159,7 @@ class BackupResource extends Resource
                     Action::make('lock')
                         ->iconSize(IconSize::Large)
                         ->icon(fn (Backup $backup) => !$backup->is_locked ? 'tabler-lock' : 'tabler-lock-open')
-                        ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_DELETE, $server))
+                        ->authorize(fn () => user()?->can(SubuserPermission::BackupDelete, $server))
                         ->label(fn (Backup $backup) => !$backup->is_locked ? trans('server/backup.actions.lock.lock') : trans('server/backup.actions.lock.unlock'))
                         ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->toggleLock($request, $server, $backup))
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
@@ -168,7 +168,7 @@ class BackupResource extends Resource
                         ->iconSize(IconSize::Large)
                         ->color('primary')
                         ->icon('tabler-download')
-                        ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_DOWNLOAD, $server))
+                        ->authorize(fn () => user()?->can(SubuserPermission::BackupDownload, $server))
                         ->url(fn (DownloadLinkService $downloadLinkService, Backup $backup, Request $request) => $downloadLinkService->handle($backup, $request->user()), true)
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     Action::make('restore')
@@ -176,7 +176,7 @@ class BackupResource extends Resource
                         ->iconSize(IconSize::Large)
                         ->color('success')
                         ->icon('tabler-folder-up')
-                        ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_RESTORE, $server))
+                        ->authorize(fn () => user()?->can(SubuserPermission::BackupRestore, $server))
                         ->schema([
                             TextEntry::make('stop_info')
                                 ->hiddenLabel()
@@ -258,7 +258,7 @@ class BackupResource extends Resource
             ])
             ->toolbarActions([
                 CreateAction::make()
-                    ->authorize(fn () => user()?->can(Permission::ACTION_BACKUP_CREATE, $server))
+                    ->authorize(fn () => user()?->can(SubuserPermission::BackupCreate, $server))
                     ->icon('tabler-file-zip')
                     ->tooltip(fn () => $server->backups()->count() >= $server->backup_limit ? trans('server/backup.actions.create.limit') : trans('server/backup.actions.create.title'))
                     ->disabled(fn () => $server->backups()->count() >= $server->backup_limit)
@@ -269,7 +269,7 @@ class BackupResource extends Resource
                     ->action(function (InitiateBackupService $initiateBackupService, $data) use ($server) {
                         $action = $initiateBackupService->setIgnoredFiles(explode(PHP_EOL, $data['ignored'] ?? ''));
 
-                        if (user()?->can(Permission::ACTION_BACKUP_DELETE, $server)) {
+                        if (user()?->can(SubuserPermission::BackupDelete, $server)) {
                             $action->setIsLocked((bool) $data['is_locked']);
                         }
 

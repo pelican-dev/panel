@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Permission;
 use App\Models\Server;
+use App\Models\Subuser;
 use App\Models\User;
 
 class ServerPolicy
@@ -22,7 +22,7 @@ class ServerPolicy
             return null;
         }
 
-        if (Permission::permissionKeys()->contains($ability)) {
+        if (Subuser::doesPermissionExist($ability)) {
             // Owner has full server permissions
             if ($server->owner_id === $user->id) {
                 return true;

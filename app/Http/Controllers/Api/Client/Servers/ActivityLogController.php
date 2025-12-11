@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Enums\SubuserPermission;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Models\ActivityLog;
-use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Server;
 use App\Models\User;
@@ -29,7 +29,7 @@ class ActivityLogController extends ClientApiController
      */
     public function __invoke(ClientApiRequest $request, Server $server): array
     {
-        Gate::authorize(Permission::ACTION_ACTIVITY_READ, $server);
+        Gate::authorize(SubuserPermission::ActivityRead, $server);
 
         $activity = QueryBuilder::for($server->activity())
             ->allowedSorts(['timestamp'])
