@@ -4,7 +4,7 @@ namespace App\Policies;
 
 class PluginPolicy
 {
-    use DefaultPolicies;
+    use DefaultAdminPolicies;
 
     protected string $modelName = 'plugin';
 }
