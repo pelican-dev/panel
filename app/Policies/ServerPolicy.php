@@ -1,13 +1,17 @@
 <?php
 
-namespace App\Policies\Server;
+namespace App\Policies;
 
-use App\Models\Permission;
 use App\Models\Server;
+use App\Models\Subuser;
 use App\Models\User;
 
 class ServerPolicy
 {
+    use DefaultAdminPolicies;
+
+    protected string $modelName = 'server';
+
     /**
      * Runs before any of the functions are called. Used to determine if the (sub-)user has permissions.
      */
@@ -18,7 +22,7 @@ class ServerPolicy
             return null;
         }
 
-        if (Permission::permissionKeys()->contains($ability)) {
+        if (Subuser::doesPermissionExist($ability)) {
             // Owner has full server permissions
             if ($server->owner_id === $user->id) {
                 return true;

@@ -2,15 +2,15 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Subusers;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 
 class GetSubuserRequest extends SubuserRequest
 {
     /**
      * Confirm that a user is able to view subusers for the specified server.
      */
-    public function permission(): string
+    public function permission(): SubuserPermission
     {
-        return Permission::ACTION_USER_READ;
+        return SubuserPermission::UserRead;
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Policies\Admin;
+namespace App\Policies;
 
 class RolePolicy
 {
-    use DefaultPolicies;
+    use DefaultAdminPolicies;
 
     protected string $modelName = 'role';
 }

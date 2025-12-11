@@ -1,8 +1,8 @@
 <?php
 
 use App\Enums\ServerState;
+use App\Enums\SubuserPermission;
 use App\Http\Controllers\Api\Client\Servers\SettingsController;
-use App\Models\Permission;
 use App\Repositories\Daemon\DaemonServerRepository;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -11,7 +11,7 @@ pest()->group('API');
 covers(SettingsController::class);
 
 it('server name cannot be changed', function () {
-    [$user, $server] = generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
+    [$user, $server] = generateTestAccount([SubuserPermission::WebsocketConnect]);
     $originalName = $server->name;
 
     $this->actingAs($user)
@@ -26,7 +26,7 @@ it('server name cannot be changed', function () {
 });
 
 it('server description can be changed', function () {
-    [$user, $server] = generateTestAccount([Permission::ACTION_SETTINGS_DESCRIPTION]);
+    [$user, $server] = generateTestAccount([SubuserPermission::SettingsDescription]);
     $originalDescription = $server->description;
 
     $newDescription = 'Test Server Description';
@@ -45,7 +45,7 @@ it('server description can be changed', function () {
 });
 
 it('server description cannot be changed', function () {
-    [$user, $server] = generateTestAccount([Permission::ACTION_SETTINGS_DESCRIPTION]);
+    [$user, $server] = generateTestAccount([SubuserPermission::SettingsDescription]);
     Config::set('panel.editable_server_descriptions', false);
     $originalDescription = $server->description;
 
@@ -61,7 +61,7 @@ it('server description cannot be changed', function () {
 });
 
 it('server name can be changed', function () {
-    [$user, $server] = generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT, Permission::ACTION_SETTINGS_RENAME]);
+    [$user, $server] = generateTestAccount([SubuserPermission::WebsocketConnect, SubuserPermission::SettingsRename]);
     $originalName = $server->name;
 
     $this->actingAs($user)
@@ -76,7 +76,7 @@ it('server name can be changed', function () {
 });
 
 test('unauthorized user cannot change docker image in use by server', function () {
-    [$user, $server] = generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
+    [$user, $server] = generateTestAccount([SubuserPermission::WebsocketConnect]);
     $originalImage = $server->image;
 
     $this->actingAs($user)
@@ -92,7 +92,7 @@ test('unauthorized user cannot change docker image in use by server', function (
 
 test('cannot change docker image to image not allowed by egg', function () {
 
-    [$user, $server] = generateTestAccount([Permission::ACTION_STARTUP_DOCKER_IMAGE]);
+    [$user, $server] = generateTestAccount([SubuserPermission::StartupDockerImage]);
     $server->image = 'ghcr.io/pelican-eggs/yolks:java_17';
     $server->save();
 
@@ -112,7 +112,7 @@ test('cannot change docker image to image not allowed by egg', function () {
 });
 
 test('can change docker image in use by server', function () {
-    [$user, $server] = generateTestAccount([Permission::ACTION_STARTUP_DOCKER_IMAGE]);
+    [$user, $server] = generateTestAccount([SubuserPermission::StartupDockerImage]);
     $oldImage = 'ghcr.io/pelican-eggs/yolks:java_17';
     $server->image = $oldImage;
     $server->save();
@@ -135,7 +135,7 @@ test('can change docker image in use by server', function () {
 });
 
 test('unable to change the docker image set by administrator', function () {
-    [$user, $server] = generateTestAccount([Permission::ACTION_STARTUP_DOCKER_IMAGE]);
+    [$user, $server] = generateTestAccount([SubuserPermission::StartupDockerImage]);
     $oldImage = 'ghcr.io/pelican-eggs/yolks:java_custom';
     $server->image = $oldImage;
     $server->save();
@@ -155,7 +155,7 @@ test('unable to change the docker image set by administrator', function () {
 });
 
 test('can be reinstalled', function () {
-    [$user, $server] = generateTestAccount([Permission::ACTION_SETTINGS_REINSTALL]);
+    [$user, $server] = generateTestAccount([SubuserPermission::SettingsReinstall]);
     expect($server->isInstalled())->toBeTrue();
 
     $service = \Mockery::mock(DaemonServerRepository::class);

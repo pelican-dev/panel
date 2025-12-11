@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Enums\CustomizationKey;
+use App\Enums\SubuserPermission;
 use App\Exceptions\DisplayException;
 use App\Extensions\Avatar\AvatarService;
 use App\Models\Traits\HasAccessTokens;
@@ -327,14 +328,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return !$key ? $customization : $customization[$key->value];
     }
 
-    protected function checkPermission(Server $server, string $permission = ''): bool
+    protected function checkPermission(Server $server, string|SubuserPermission $permission = ''): bool
     {
+        if ($permission instanceof SubuserPermission) {
+            $permission = $permission->value;
+        }
+
         if ($this->canned('update', $server) || $server->owner_id === $this->id) {
             return true;
         }
 
         // If the user only has "view" permissions allow viewing the console
-        if ($permission === Permission::ACTION_WEBSOCKET_CONNECT && $this->canned('view', $server)) {
+        if ($permission === SubuserPermission::WebsocketConnect->value && $this->canned('view', $server)) {
             return true;
         }
 
@@ -356,13 +361,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function can($abilities, mixed $arguments = []): bool
     {
-        if (is_string($abilities) && str_contains($abilities, '.')) {
-            [$permission, $key] = str($abilities)->explode('.', 2);
-
-            if (isset(Permission::permissions()[$permission]['keys'][$key])) {
-                if ($arguments instanceof Server) {
-                    return $this->checkPermission($arguments, $abilities);
-                }
+        if ($arguments instanceof Server) {
+            if ($abilities instanceof SubuserPermission || Subuser::doesPermissionExist($abilities)) {
+                return $this->checkPermission($arguments, $abilities);
             }
         }
 

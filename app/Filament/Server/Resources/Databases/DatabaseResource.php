@@ -2,12 +2,12 @@
 
 namespace App\Filament\Server\Resources\Databases;
 
+use App\Enums\SubuserPermission;
 use App\Filament\Components\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\Databases\Pages\ListDatabases;
 use App\Models\Database;
 use App\Models\DatabaseHost;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
 use App\Traits\Filament\BlockAccessInConflict;
@@ -87,10 +87,10 @@ class DatabaseResource extends Resource
                 TextInput::make('password')
                     ->label(trans('server/database.password'))
                     ->password()->revealable()
-                    ->hidden(fn () => !user()?->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
+                    ->hidden(fn () => !user()?->can(SubuserPermission::DatabaseViewPassword, $server))
                     ->hintAction(
                         RotateDatabasePasswordAction::make()
-                            ->authorize(fn () => user()?->can(Permission::ACTION_DATABASE_UPDATE, $server))
+                            ->authorize(fn () => user()?->can(SubuserPermission::DatabaseUpdate, $server))
                     )
                     ->copyable()
                     ->formatStateUsing(fn (Database $database) => $database->password),
@@ -102,7 +102,7 @@ class DatabaseResource extends Resource
                 TextInput::make('jdbc')
                     ->label(trans('server/database.jdbc'))
                     ->password()->revealable()
-                    ->hidden(!user()?->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
+                    ->hidden(!user()?->can(SubuserPermission::DatabaseViewPassword, $server))
                     ->copyable()
                     ->columnSpanFull()
                     ->formatStateUsing(fn (Database $database) => $database->jdbc),

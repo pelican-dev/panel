@@ -2,14 +2,14 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Backups;
 
+use App\Enums\SubuserPermission;
 use App\Http\Requests\Api\Client\ClientApiRequest;
-use App\Models\Permission;
 
 class RenameBackupRequest extends ClientApiRequest
 {
-    public function permission(): string
+    public function permission(): SubuserPermission
     {
-        return Permission::ACTION_BACKUP_DELETE;
+        return SubuserPermission::BackupDelete;
     }
 
     public function rules(): array

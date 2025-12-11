@@ -2,9 +2,9 @@
 
 namespace App\Filament\Server\Widgets;
 
+use App\Enums\SubuserPermission;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Livewire\AlertBanner;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Models\User;
 use App\Services\Nodes\NodeJWTService;
@@ -46,7 +46,7 @@ class ServerConsole extends Widget
 
     protected function getToken(): string
     {
-        if (!$this->user || !$this->server || $this->user->cannot(Permission::ACTION_WEBSOCKET_CONNECT, $this->server)) {
+        if (!$this->user || !$this->server || $this->user->cannot(SubuserPermission::WebsocketConnect, $this->server)) {
             throw new HttpForbiddenException('You do not have permission to connect to this server\'s websocket.');
         }
 
@@ -72,7 +72,7 @@ class ServerConsole extends Widget
 
     protected function authorizeSendCommand(): bool
     {
-        return $this->user->can(Permission::ACTION_CONTROL_CONSOLE, $this->server);
+        return $this->user->can(SubuserPermission::ControlConsole, $this->server);
     }
 
     protected function canSendCommand(): bool
