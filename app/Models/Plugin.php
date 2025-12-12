@@ -370,6 +370,14 @@ class Plugin extends Model implements HasPluginSettings
         return array_map(fn ($provider) => $this->namespace . '\\Console\\Commands\\' . str($provider->getRelativePathname())->remove('.php', false), File::allFiles($path));
     }
 
+    public function getSeeder(): ?string
+    {
+        $name = Str::studly($this->name);
+        $seeder = "\Database\Seeders\\{$name}Seeder";
+
+        return class_exists($seeder) ? $seeder : null;
+    }
+
     public function getReadme(): ?string
     {
         return cache()->remember("plugins.$this->id.readme", now()->addMinutes(5), function () {

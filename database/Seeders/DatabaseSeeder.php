@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Plugin;
 use App\Models\Role;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,10 +23,7 @@ class DatabaseSeeder extends Seeder
                 continue;
             }
 
-            $name = Str::studly($plugin->name);
-            $seeder = "\Database\Seeders\\{$name}Seeder";
-
-            if (class_exists($seeder)) {
+            if ($seeder = $plugin->getSeeder()) {
                 $this->call($seeder);
             }
         }

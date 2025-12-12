@@ -230,6 +230,18 @@ class PluginService
         }
     }
 
+    public function runPluginSeeder(Plugin $plugin): void
+    {
+        $seeder = $plugin->getSeeder();
+        if ($seeder) {
+            $success = Artisan::call('db:Seed', ['--class' => $seeder, '--force' => true]) === 0;
+
+            if (!$success) {
+                throw new Exception("Could not run seeder for plugin '{$plugin->id}'");
+            }
+        }
+    }
+
     public function buildAssets(): bool
     {
         try {
@@ -271,6 +283,8 @@ class PluginService
             $this->buildAssets();
 
             $this->runPluginMigrations($plugin);
+
+            $this->runPluginSeeder($plugin);
         } catch (Exception $exception) {
             $this->handlePluginException($plugin, $exception);
         }

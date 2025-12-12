@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static void manageComposerPackages(null|array<string, string> $newPackages = [], null|array<string, string> $oldPackages = null)
  * @method static void runPluginMigrations(Plugin $plugin)
  * @method static void rollbackPluginMigrations(Plugin $plugin)
+ * @method static void runPluginSeeder(Plugin $plugin)
+ * @method static void buildAssets()
  * @method static void installPlugin(Plugin $plugin, bool $enable = true)
  * @method static void uninstallPlugin(Plugin $plugin, bool $deleteFiles = false)
  * @method static void updatePlugin(Plugin $plugin)
