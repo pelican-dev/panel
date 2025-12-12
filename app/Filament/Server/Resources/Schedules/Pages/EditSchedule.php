@@ -53,8 +53,10 @@ class EditSchedule extends EditRecord
     {
         return [
             Action::make('run_now')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-run')
                 ->authorize(fn () => user()?->can(SubuserPermission::ScheduleUpdate, Filament::getTenant()))
-                ->label(fn (Schedule $schedule) => $schedule->tasks->count() === 0 ? trans('server/schedule.no_tasks') : ($schedule->status === ScheduleStatus::Processing ? ScheduleStatus::Processing->getLabel() : trans('server/schedule.run_now')))
+                ->tooltip(fn (Schedule $schedule) => $schedule->tasks->count() === 0 ? trans('server/schedule.no_tasks') : ($schedule->status === ScheduleStatus::Processing ? ScheduleStatus::Processing->getLabel() : trans('server/schedule.run_now')))
                 ->color(fn (Schedule $schedule) => $schedule->tasks->count() === 0 || $schedule->status === ScheduleStatus::Processing ? 'warning' : 'primary')
                 ->disabled(fn (Schedule $schedule) => $schedule->tasks->count() === 0 || $schedule->status === ScheduleStatus::Processing)
                 ->action(function (ProcessScheduleService $service, Schedule $schedule) {
