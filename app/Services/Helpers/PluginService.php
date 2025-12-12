@@ -236,7 +236,7 @@ class PluginService
     {
         $seeder = $plugin->getSeeder();
         if ($seeder) {
-            $success = Artisan::call('db:Seed', ['--class' => $seeder, '--force' => true]) === 0;
+            $success = Artisan::call('db:seed', ['--class' => $seeder, '--force' => true]) === 0;
 
             if (!$success) {
                 throw new Exception("Could not run seeder for plugin '{$plugin->id}'");

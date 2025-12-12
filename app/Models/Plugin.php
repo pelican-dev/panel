@@ -212,7 +212,7 @@ class Plugin extends Model implements HasPluginSettings
     {
         $currentPanelVersion = config('app.version', 'canary');
 
-        return !$this->panel_version || $currentPanelVersion === 'canary' || version_compare($currentPanelVersion, $this->panel_version, $this->isPanelVersionStrict() ? '=' : '>=');
+        return !$this->panel_version || $currentPanelVersion === 'canary' || version_compare($currentPanelVersion, str($this->panel_version)->trim('^'), $this->isPanelVersionStrict() ? '=' : '>=');
     }
 
     public function isPanelVersionStrict(): bool
