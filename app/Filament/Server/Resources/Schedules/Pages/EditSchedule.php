@@ -52,6 +52,15 @@ class EditSchedule extends EditRecord
     protected function getDefaultHeaderActions(): array
     {
         return [
+            DeleteAction::make()
+                ->hiddenLabel()
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->tooltip(trans('server/schedule.delete'))
+                ->after(function ($record) {
+                    Activity::event('server:schedule.delete')
+                        ->property('name', $record->name)
+                        ->log();
+                }),
             Action::make('run_now')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-run')
@@ -68,15 +77,6 @@ class EditSchedule extends EditRecord
                         ->log();
 
                     $this->fillForm();
-                }),
-            DeleteAction::make()
-                ->hiddenLabel()
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->tooltip(trans('server/schedule.delete'))
-                ->after(function ($record) {
-                    Activity::event('server:schedule.delete')
-                        ->property('name', $record->name)
-                        ->log();
                 }),
             ExportScheduleAction::make(),
             $this->getSaveFormAction()->formId('form')
