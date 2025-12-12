@@ -50,9 +50,7 @@ class Plugin extends Model implements HasPluginSettings
         'load_order',
     ];
 
-    /**
-     * @return string[]
-     */
+    /** @return string[] */
     public function getSchema(): array
     {
         return [
@@ -318,9 +316,7 @@ class Plugin extends Model implements HasPluginSettings
         return false;
     }
 
-    /**
-     * @return Component[]
-     */
+    /** @return Component[] */
     public function getSettingsForm(): array
     {
         try {
@@ -336,9 +332,7 @@ class Plugin extends Model implements HasPluginSettings
         return [];
     }
 
-    /**
-     * @param  array<mixed, mixed>  $data
-     */
+    /** @param  array<mixed, mixed>  $data */
     public function saveSettings(array $data): void
     {
         try {
@@ -352,9 +346,7 @@ class Plugin extends Model implements HasPluginSettings
         }
     }
 
-    /**
-     * @return string[]
-     */
+    /** @return string[] */
     public function getProviders(): array
     {
         $path = plugin_path($this->id, 'src', 'Providers');
@@ -366,9 +358,7 @@ class Plugin extends Model implements HasPluginSettings
         return array_map(fn ($provider) => $this->namespace . '\\Providers\\' . str($provider->getRelativePathname())->remove('.php', false), File::allFiles($path));
     }
 
-    /**
-     * @return string[]
-     */
+    /** @return string[] */
     public function getCommands(): array
     {
         $path = plugin_path($this->id, 'src', 'Console', 'Commands');
