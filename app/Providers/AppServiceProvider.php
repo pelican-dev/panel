@@ -10,6 +10,7 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
+use App\Facades\Plugins;
 use App\Models\Allocation;
 use App\Models\ApiKey;
 use App\Models\Backup;
@@ -125,5 +126,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         Scramble::ignoreDefaultRoutes();
+
+        Plugins::loadPlugins();
     }
 }

@@ -69,4 +69,9 @@ return [
     'webhook' => [
         'prune_days' => env('APP_WEBHOOK_PRUNE_DAYS', 30),
     ],
+
+    'plugin' => [
+        'dev_mode' => env('PANEL_PLUGIN_DEV_MODE', false),
+        'max_import_size' => env('PANEL_PLUGIN_MAX_IMPORT_SIZE', 1024 * 1024 * 100),
+    ],
 ];
