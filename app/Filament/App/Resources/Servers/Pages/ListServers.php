@@ -91,7 +91,7 @@ class ListServers extends ListRecords
                 ->label('')
                 ->warningThresholdPercent(static::WARNING_THRESHOLD)
                 ->dangerThresholdPercent(static::DANGER_THRESHOLD)
-                ->maxValue(fn (Server $server) => ServerResourceType::CPULimit->getResourceAmount($server) === 0 ? ($server->node->systemInformation()['cpu_count'] ?? 0 * 100) : ServerResourceType::CPULimit->getResourceAmount($server))
+                ->maxValue(fn (Server $server) => ServerResourceType::CPULimit->getResourceAmount($server) === 0 ? (($server->node->systemInformation()['cpu_count'] ?? 0) * 100) : ServerResourceType::CPULimit->getResourceAmount($server))
                 ->state(fn (Server $server) => $server->retrieveResources()['cpu_absolute'] ?? 0)
                 ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::CPU, 0) . ' / ' . $server->formatResource(ServerResourceType::CPULimit, 0)),
             ProgressBarColumn::make('memoryUsage')
