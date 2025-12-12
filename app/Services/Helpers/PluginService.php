@@ -54,6 +54,7 @@ class PluginService
                 $namespace = $plugin->namespace . '\\';
                 if (!array_key_exists($namespace, $classLoader->getPrefixesPsr4())) {
                     $classLoader->setPsr4($namespace, plugin_path($plugin->id, 'src/'));
+                    $classLoader->addPsr4('Database\Seeders\\', plugin_path($plugin->id, 'database/Seeders/'));
                 }
 
                 // Load config

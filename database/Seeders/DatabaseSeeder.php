@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             }
 
             $name = Str::studly($plugin->name);
-            $seeder = "\\{$plugin->namespace}\Database\Seeders\\{$name}Seeder";
+            $seeder = "\Database\Seeders\\{$name}Seeder";
 
             if (class_exists($seeder)) {
                 $this->call($seeder);
