@@ -49,7 +49,8 @@ class EditSchedule extends EditRecord
     {
         return [
             DeleteAction::make()
-                ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->hiddenLabel()
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->tooltip(trans('server/schedule.delete'))
                 ->after(function ($record) {
                     Activity::event('server:schedule.delete')
