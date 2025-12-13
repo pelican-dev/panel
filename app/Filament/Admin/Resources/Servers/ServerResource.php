@@ -58,9 +58,9 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use LogicException;
-use Illuminate\Support\Arr;
 use Predis\Connection\ConnectionException;
 
 class ServerResource extends Resource
