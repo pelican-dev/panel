@@ -22,6 +22,7 @@ class StoreUserRequest extends ApplicationApiRequest
 
         return collect($rules)->only([
             'external_id',
+            'is_managed_externally',
             'email',
             'username',
             'password',
@@ -39,6 +40,7 @@ class StoreUserRequest extends ApplicationApiRequest
     {
         return [
             'external_id' => 'Third Party Identifier',
+            'is_managed_externally' => 'Is managed by Third Party?',
         ];
     }
 }
