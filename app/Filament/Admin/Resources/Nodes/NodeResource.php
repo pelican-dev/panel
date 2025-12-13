@@ -606,7 +606,7 @@ class NodeResource extends Resource
                     Tab::make('config_file')
                         ->label(trans('admin/node.tabs.config_file'))
                         ->icon('tabler-code')
-                        ->hidden(fn (Node $node) => !user()?->can('edit node', $node))
+                        ->hidden(fn (Node $node) => !user()?->can('update node', $node))
                         ->schema([
                             TextEntry::make('instructions')
                                 ->label(trans('admin/node.instructions'))
@@ -688,7 +688,7 @@ class NodeResource extends Resource
                                 ]),
                         ]),
                     Tab::make('diagnostics')
-                        ->hidden(fn (Node $node) => !user()?->can('edit node', $node))
+                        ->hidden(fn (Node $node) => !user()?->can('update node', $node))
                         ->label(trans('admin/node.tabs.diagnostics'))
                         ->icon('tabler-heart-search')
                         ->schema([

@@ -28,7 +28,7 @@ class ListNodes extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->recordUrl(fn (Node $node) => user()?->can('edit node', $node) 
+            ->recordUrl(fn (Node $node) => user()?->can('update node', $node) 
                 ? NodeResource::getUrl('edit', ['record' => $node]) 
                 : NodeResource::getUrl('view', ['record' => $node])
             )
