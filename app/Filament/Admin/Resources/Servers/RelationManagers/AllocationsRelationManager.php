@@ -72,14 +72,17 @@ class AllocationsRelationManager extends RelationManager
                 Action::make('make-primary')
                     ->label(trans('admin/server.make_primary'))
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
+                    ->disabled(fn () => !user()?->can('edit server', $this->getOwnerRecord()))
                     ->hidden(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id),
                 Action::make('lock')
                     ->label(trans('admin/server.lock'))
                     ->action(fn (Allocation $allocation) => $allocation->update(['is_locked' => true]) && $this->deselectAllTableRecords())
+                    ->disabled(fn () => !user()?->can('edit server', $this->getOwnerRecord()))
                     ->hidden(fn (Allocation $allocation) => $allocation->is_locked),
                 Action::make('unlock')
                     ->label(trans('admin/server.unlock'))
                     ->action(fn (Allocation $allocation) => $allocation->update(['is_locked' => false]) && $this->deselectAllTableRecords())
+                    ->disabled(fn () => !user()?->can('edit server', $this->getOwnerRecord()))
                     ->visible(fn (Allocation $allocation) => $allocation->is_locked),
                 DissociateAction::make()
                     ->after(function (Allocation $allocation) {

@@ -12,20 +12,21 @@ use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Servers\ServerDeletionService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
 use Illuminate\Http\Client\ConnectionException;
-use Random\RandomException;
+use Predis\Connection\ConnectionException as PredisConnectionException;
 
-class EditServer extends EditRecord
+class ViewServer extends ViewRecord
 {
     use CanCustomizeHeaderActions;
     use CanCustomizeHeaderWidgets;
+
     protected static string $resource = ServerResource::class;
 
     private DaemonServerRepository $daemonServerRepository;
@@ -33,15 +34,24 @@ class EditServer extends EditRecord
     public function boot(DaemonServerRepository $daemonServerRepository): void
     {
         $this->daemonServerRepository = $daemonServerRepository;
+        
     }
 
     /**
-     * @throws RandomException
-     * @throws Exception
+     * @throws \Random\RandomException
+     * @throws \Exception
      */
     public function form(Schema $schema): Schema
     {
         return ServerResource::schema($schema);
+    }
+
+    public function getRelationManagers(): array
+    {
+        return [
+            AllocationsRelationManager::class,
+            DatabasesRelationManager::class,
+        ];
     }
 
     /** @return array<Action|ActionGroup> */
@@ -69,7 +79,7 @@ class EditServer extends EditRecord
                         $service->handle($server);
 
                         return redirect(ListServers::getUrl(panel: 'admin'));
-                    } catch (ConnectionException) {
+                    } catch (ConnectionException|PredisConnectionException) {
                         cache()->put("servers.$server->uuid.canForceDelete", true, now()->addMinutes(5));
 
                         return Notification::make()
@@ -82,6 +92,7 @@ class EditServer extends EditRecord
                     }
                 })
                 ->hidden(fn () => $canForceDelete)
+                ->authorize(fn (Server $server) => user()?->can('delete server', $server))
                 ->icon('tabler-trash')
                 ->iconButton()->iconSize(IconSize::ExtraLarge),
             Action::make('ForceDelete')
@@ -95,27 +106,15 @@ class EditServer extends EditRecord
                         $service->withForce()->handle($server);
 
                         return redirect(ListServers::getUrl(panel: 'admin'));
-                    } catch (ConnectionException) {
+                    } catch (ConnectionException|PredisConnectionException) {
                         return cache()->forget("servers.$server->uuid.canForceDelete");
                     }
                 })
                 ->visible(fn () => $canForceDelete)
                 ->authorize(fn (Server $server) => user()?->can('delete server', $server)),
-            $this->getSaveFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-device-floppy'),
-        ];
-    }
-
-    protected function getFormActions(): array
-    {
-        return [];
-    }
-    public function getRelationManagers(): array
-    {
-        return [
-            AllocationsRelationManager::class,
-            DatabasesRelationManager::class,
+            EditAction::make()
+                ->icon('tabler-pencil')
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
         ];
     }
 }

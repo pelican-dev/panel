@@ -11,6 +11,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\SelectColumn;
@@ -29,6 +30,10 @@ class ListServers extends ListRecords
     public function table(Table $table): Table
     {
         return $table
+            ->recordUrl(fn (Server $server) => user()?->can('edit server', $server) 
+                ? ServerResource::getUrl('edit', ['record' => $server]) 
+                : ServerResource::getUrl('view', ['record' => $server])
+            )
             ->searchable(false)
             ->defaultGroup('node.name')
             ->groups([
@@ -91,14 +96,21 @@ class ListServers extends ListRecords
                     ->sortable(),
             ])
             ->recordActions([
-                Action::make('View')
-                    ->label(trans('admin/server.view'))
+                Action::make('Console')
+                    ->label(trans('admin/server.console'))
                     ->iconButton()
                     ->icon('tabler-terminal')
                     ->iconSize(IconSize::Large)
                     ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
                     ->authorize(fn (Server $server) => user()?->canAccessTenant($server)),
-                EditAction::make(),
+                EditAction::make()
+                    ->icon('tabler-pencil')
+                    ->hiddenLabel()
+                    ->iconSize(IconSize::Large),
+                ViewAction::make()
+                    ->hiddenLabel()
+                    ->icon('tabler-eye')
+                    ->iconSize(IconSize::ExtraLarge),
             ])
             ->emptyStateIcon('tabler-brand-docker')
             ->searchable()
