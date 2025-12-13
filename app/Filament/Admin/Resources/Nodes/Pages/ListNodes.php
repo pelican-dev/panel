@@ -28,6 +28,10 @@ class ListNodes extends ListRecords
     public function table(Table $table): Table
     {
         return $table
+            ->recordUrl(fn (Node $node) => user()?->can('edit node', $node) 
+                ? NodeResource::getUrl('edit', ['record' => $node]) 
+                : NodeResource::getUrl('view', ['record' => $node])
+            )
             ->searchable(false)
             ->checkIfRecordIsSelectableUsing(fn (Node $node) => $node->servers_count <= 0)
             ->columns([
