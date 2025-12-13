@@ -60,15 +60,13 @@ use Filament\Support\Enums\IconSize;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 use LogicException;
-use Pest\Support\Arr;
+use Illuminate\Support\Arr;
 use Predis\Connection\ConnectionException;
 
 class ServerResource extends Resource
 {
     use CanCustomizePages;
     use CanCustomizeRelations;
-
-    protected DaemonServerRepository $daemonServerRepository;
 
     protected static ?string $model = Server::class;
 
