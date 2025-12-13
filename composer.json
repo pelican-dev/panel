@@ -82,6 +82,16 @@
         ],
         "post-install-cmd": [
             "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "dev-setup": [
+            "yarn install",
+            "composer install",
+            "php artisan p:environment:setup",
+            "php artisan migrate --force -n"
+        ],
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "npx concurrently -k -c \"#93c5fd,#c4b5fd,#d4d4d8,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail\" \"yarn run dev\" --names=server,queue,logs,vite"
         ]
     },
     "config": {
