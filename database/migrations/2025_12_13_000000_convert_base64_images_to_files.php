@@ -7,14 +7,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    private const EXTENSION_MAP = [
-        'jpeg' => 'jpg',
-        'svg+xml' => 'svg',
-        'png' => 'png',
-        'jpg' => 'jpg',
-        'webp' => 'webp',
-    ];
-
     /**
      * Run the migrations.
      */
@@ -77,8 +69,6 @@ return new class extends Migration
         if (!$data) {
             return;
         }
-
-        $extension = self::EXTENSION_MAP[$extension] ?? $extension;
 
         // Save the file
         $filename = "{$uuid}.{$extension}";
