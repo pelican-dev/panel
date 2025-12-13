@@ -225,7 +225,7 @@ class EggImporterService
      */
     private function saveEggImageFromBase64(string $base64String, Egg $egg): void
     {
-        if (!preg_match('/^data:image\/(\w+);base64,(.+)$/', $base64String, $matches)) {
+        if (!preg_match('/^data:image\/([\w+]+);base64,(.+)$/', $base64String, $matches)) {
             return;
         }
 
