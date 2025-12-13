@@ -106,18 +106,10 @@ class EditEgg extends EditRecord
                                                                                 throw new \Exception(trans('admin/egg.import.invalid_url'));
                                                                             }
 
-                                                                            $allowedExtensions = [
-                                                                                'png' => 'image/png',
-                                                                                'jpg' => 'image/jpeg',
-                                                                                'jpeg' => 'image/jpeg',
-                                                                                'webp' => 'image/webp',
-                                                                                'svg' => 'image/svg+xml',
-                                                                            ];
-
                                                                             $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
 
-                                                                            if (!array_key_exists($extension, $allowedExtensions)) {
-                                                                                throw new \Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', $allowedExtensions)]));
+                                                                            if (!array_key_exists($extension, Egg::IMAGE_FORMATS)) {
+                                                                                throw new \Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', Egg::IMAGE_FORMATS)]));
                                                                             }
 
                                                                             $host = parse_url($state, PHP_URL_HOST);
@@ -465,10 +457,11 @@ class EditEgg extends EditRecord
 
     /**
      * Save an image from URL download to a file.
+     *
+     * @throws Exception
      */
     private function saveImageFromUrl(string $imageUrl, string $extension, Egg $egg): void
     {
-        // Download the image from URL
         $context = stream_context_create([
             'http' => ['timeout' => 3],
             'https' => [
@@ -480,19 +473,18 @@ class EditEgg extends EditRecord
 
         $data = @file_get_contents($imageUrl, false, $context, 0, 1048576); // 1024KB
 
-        if ($data === false || empty($data)) {
-            return;
-        }
-
-        if (strlen($data) >= 1048576) {
-            return;
+        if (empty($data)) {
+            throw new \Exception(trans('admin/egg.import.invalid_url'));
         }
 
         $normalizedExtension = ($extension === 'jpeg') ? 'jpg' : $extension;
-
         $directory = public_path(Egg::ICON_STORAGE_PATH);
-        if (!file_exists($directory)) {
-            mkdir($directory, 0755, true);
+
+        foreach (array_keys(Egg::IMAGE_FORMATS) as $ext) {
+            $existingPath = "{$directory}/{$egg->uuid}.{$ext}";
+            if (file_exists($existingPath)) {
+                unlink($existingPath);
+            }
         }
 
         $filename = "{$egg->uuid}.{$normalizedExtension}";

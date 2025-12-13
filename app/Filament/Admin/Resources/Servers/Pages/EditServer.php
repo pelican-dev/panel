@@ -144,18 +144,10 @@ class EditServer extends EditRecord
                                                                                 throw new \Exception(trans('admin/egg.import.invalid_url'));
                                                                             }
 
-                                                                            $allowedExtensions = [
-                                                                                'png' => 'image/png',
-                                                                                'jpg' => 'image/jpeg',
-                                                                                'jpeg' => 'image/jpeg',
-                                                                                'webp' => 'image/webp',
-                                                                                'svg' => 'image/svg+xml',
-                                                                            ];
-
                                                                             $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
 
-                                                                            if (!array_key_exists($extension, $allowedExtensions)) {
-                                                                                throw new \Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', array_keys($allowedExtensions))]));
+                                                                            if (!array_key_exists($extension, Server::IMAGE_FORMATS)) {
+                                                                                throw new \Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', array_keys(Server::IMAGE_FORMATS))]));
                                                                             }
 
                                                                             $host = parse_url($state, PHP_URL_HOST);
@@ -1196,6 +1188,8 @@ class EditServer extends EditRecord
 
     /**
      * Save an icon from URL download to a file.
+     *
+     * @throws Exception
      */
     private function saveIconFromUrl(string $imageUrl, string $extension, Server $server): void
     {
@@ -1210,15 +1204,18 @@ class EditServer extends EditRecord
 
         $data = @file_get_contents($imageUrl, false, $context, 0, 262144); //256KB
 
-        if ($data === false || empty($data)) {
-            return;
+        if (empty($data)) {
+            throw new \Exception(trans('admin/egg.import.invalid_url'));
         }
 
         $normalizedExtension = ($extension === 'jpeg') ? 'jpg' : $extension;
         $directory = public_path(Server::ICON_STORAGE_PATH);
 
-        if (!file_exists($directory)) {
-            mkdir($directory, 0755, true);
+        foreach (array_keys(Server::IMAGE_FORMATS) as $ext) {
+            $existingPath = "{$directory}/{$server->uuid}.{$ext}";
+            if (file_exists($existingPath)) {
+                unlink($existingPath);
+            }
         }
 
         $filename = "{$server->uuid}.{$normalizedExtension}";

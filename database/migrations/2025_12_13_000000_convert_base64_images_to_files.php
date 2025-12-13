@@ -12,6 +12,7 @@ return new class extends Migration
         'svg+xml' => 'svg',
         'png' => 'png',
         'jpg' => 'jpg',
+        'webp' => 'webp',
     ];
 
     /**
@@ -66,7 +67,7 @@ return new class extends Migration
      */
     private function convertBase64ToFile(string $base64String, string $uuid, string $directory): void
     {
-        if (!preg_match('/^data:image\/(\w+);base64,(.+)$/', $base64String, $matches)) {
+        if (!preg_match('/^data:image\/([\w+]+);base64,(.+)$/', $base64String, $matches)) {
             return;
         }
 
