@@ -14,11 +14,10 @@ To start contributing to Pelican Panel, you need to have a basic understanding o
 
 1. Fork the Repository
 2. Clone your Fork
-3. Install Dependencies (PHP modules & composer, and run `composer install`)
-4. Configure your Environment (via `php artisan p:environment:setup`)
-5. Set up your Database (via `php artisan p:environment:database`) and run Migrations (via `php artisan migrate --seed --force`)
-6. Create your first Admin User (via `php artisan p:user:make`)
-7. Start your Webserver (e.g. Nginx or Apache)
+3. Install Dependencies (PHP modules & composer)
+4. Run development setup `composer run dev-setup`
+5. Create a use if you havent `php artisan p:user:make`
+6. Run `composer run dev`
 
 As IDE we recommend [Visual Studio](https://visualstudio.microsoft.com)/ [Visual Studio Code](https://code.visualstudio.com) (free) or [PhpStorm](https://www.jetbrains.com/phpstorm) (paid).
 
