@@ -902,7 +902,7 @@ class ServerResource extends Resource
                                                 Actions::make([
                                                     Action::make('toggleInstall')
                                                         ->label(trans('admin/server.toggle_install'))
-                                                        ->disabled(fn (Server $server) => $server->isSuspended())
+                                                        ->disabled(fn (Server $server) => $server->isSuspended() || !user()?->can('update server', $server))
                                                         ->modal(fn (Server $server) => $server->isFailedInstall())
                                                         ->modalHeading(trans('admin/server.toggle_install_failed_header'))
                                                         ->modalDescription(trans('admin/server.toggle_install_failed_desc'))
@@ -954,6 +954,7 @@ class ServerResource extends Resource
                                                     Action::make('toggleSuspend')
                                                         ->label(trans('admin/server.suspend'))
                                                         ->color('warning')
+                                                        ->disabled(fn (Server $server) => !user()?->can('update server', $server))
                                                         ->hidden(fn (Server $server) => $server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
                                                             try {
@@ -975,6 +976,7 @@ class ServerResource extends Resource
                                                     Action::make('toggleUnsuspend')
                                                         ->label(trans('admin/server.unsuspend'))
                                                         ->color('success')
+                                                        ->disabled(fn (Server $server) => !user()?->can('update server', $server))
                                                         ->hidden(fn (Server $server) => !$server->isSuspended())
                                                         ->action(function (SuspensionService $suspensionService, Server $server) {
                                                             try {
@@ -996,11 +998,11 @@ class ServerResource extends Resource
                                                 ])->fullWidth(),
                                                 ToggleButtons::make('server_suspend')
                                                     ->hiddenLabel()
-                                                    ->hidden(fn (Server $server) => $server->isSuspended())
+                                                    ->hidden(fn (Server $server) => $server->isSuspended()  && !user()?->can('update server', $server))
                                                     ->hint(trans('admin/server.notifications.server_suspend_help')),
                                                 ToggleButtons::make('server_unsuspend')
                                                     ->hiddenLabel()
-                                                    ->hidden(fn (Server $server) => !$server->isSuspended())
+                                                    ->hidden(fn (Server $server) => !$server->isSuspended()  && !user()?->can('update server', $server))
                                                     ->hint(trans('admin/server.notifications.server_unsuspend_help')),
                                             ]),
                                         Grid::make()
@@ -1009,7 +1011,7 @@ class ServerResource extends Resource
                                                 Actions::make([
                                                     Action::make('transfer')
                                                         ->label(trans('admin/server.transfer'))
-                                                        ->disabled(fn (Server $server) => user()?->accessibleNodes()->count() <= 1 || $server->isInConflictState())
+                                                        ->disabled(fn (Server $server) => user()?->accessibleNodes()->count() <= 1 || $server->isInConflictState()  || !user()?->can('update server', $server))
                                                         ->modalHeading(trans('admin/server.transfer'))
                                                         ->schema(fn () => self::transferServer())
                                                         ->action(function (TransferServerService $transfer, Server $server, $data) {
@@ -1043,7 +1045,7 @@ class ServerResource extends Resource
                                                         ->requiresConfirmation()
                                                         ->modalHeading(trans('admin/server.reinstall_modal_heading'))
                                                         ->modalDescription(trans('admin/server.reinstall_modal_description'))
-                                                        ->disabled(fn (Server $server) => $server->isSuspended())
+                                                        ->disabled(fn (Server $server) => $server->isSuspended()  || !user()?->can('update server', $server))
                                                         ->action(function (ReinstallServerService $service, Server $server) {
                                                             try {
                                                                 $service->handle($server);
@@ -1089,7 +1091,7 @@ class ServerResource extends Resource
                 ->options(fn (Server $server) => user()?->accessibleNodes()->whereNot('id', $server->node->id)->pluck('name', 'id')->all()),
             Select::make('allocation_id')
                 ->label(trans('admin/server.primary_allocation'))
-                ->disabled(fn (Get $get, Server $server) => !$get('node_id') || !$server->allocation_id)
+                ->disabled(fn (Get $get, Server $server) => !$get('node_id') || !$server->allocation_id  || !user()?->can('update server', $server))
                 ->required(fn (Server $server) => $server->allocation_id)
                 ->prefixIcon('tabler-network')
                 ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
@@ -1097,10 +1099,10 @@ class ServerResource extends Resource
                 ->placeholder(trans('admin/server.select_allocation')),
             Select::make('allocation_additional')
                 ->label(trans('admin/server.additional_allocations'))
-                ->disabled(fn (Get $get, Server $server) => !$get('node_id') || $server->allocations->count() <= 1)
+                ->disabled(fn (Get $get, Server $server) => !$get('node_id') || $server->allocations->count() <= 1  || !user()?->can('update server', $server))
                 ->multiple()
                 ->minItems(fn (Select $select) => $select->getMaxItems())
-                ->maxItems(fn (Select $select, Server $server) => $select->isDisabled() ? null : $server->allocations->count() - 1)
+                ->maxItems(fn (Select $select, Server $server) => $select->isDisabled() ? null : $server->allocations->count() - 1  || !user()?->can('update server', $server))
                 ->prefixIcon('tabler-network')
                 ->required(fn (Server $server) => $server->allocations->count() > 1)
                 ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->when($get('allocation_id'), fn ($query) => $query->whereNot('id', $get('allocation_id')))->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
