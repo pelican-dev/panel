@@ -53,7 +53,7 @@ services:
   panel:
     image: ghcr.io/pelican-dev/panel:latest
     build: .
-    restart: always
+    restart: unless-stopped
     networks:
       - default
     ports:
