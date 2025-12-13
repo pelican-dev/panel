@@ -144,6 +144,22 @@ class Server extends Model implements HasAvatar, Validatable
     public const RESOURCE_NAME = 'server';
 
     /**
+     * Path to store server icons relative to public path.
+     */
+    public const ICON_STORAGE_PATH = 'storage/icons/server';
+
+    /**
+     * Supported image formats: file extension => MIME type
+     */
+    public const IMAGE_FORMATS = [
+        'png' => 'image/png',
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'webp' => 'image/webp',
+        'svg' => 'image/svg+xml',
+    ];
+
+    /**
      * Default values when creating the model. We want to switch to disabling OOM killer
      * on server instances unless the user specifies otherwise in the request.
      */
@@ -183,7 +199,6 @@ class Server extends Model implements HasAvatar, Validatable
         'startup' => ['required', 'string'],
         'skip_scripts' => ['sometimes', 'boolean'],
         'image' => ['required', 'string', 'max:255'],
-        'icon' => ['sometimes', 'nullable', 'string'],
         'database_limit' => ['present', 'nullable', 'integer', 'min:0'],
         'allocation_limit' => ['sometimes', 'nullable', 'integer', 'min:0'],
         'backup_limit' => ['present', 'nullable', 'integer', 'min:0'],
@@ -517,9 +532,32 @@ class Server extends Model implements HasAvatar, Validatable
         );
     }
 
+    public function getIconAttribute(): ?string
+    {
+        foreach (array_keys(self::IMAGE_FORMATS) as $ext) {
+            $filename = "{$this->uuid}.{$ext}";
+            $path = self::ICON_STORAGE_PATH . "/{$filename}";
+
+            if (file_exists(public_path($path))) {
+                return asset($path);
+            }
+        }
+
+        return null;
+    }
+
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->icon ?? $this->egg->image;
+        foreach (array_keys(self::IMAGE_FORMATS) as $ext) {
+            $filename = "{$this->uuid}.{$ext}";
+            $path = self::ICON_STORAGE_PATH . "/{$filename}";
+
+            if (file_exists(public_path($path))) {
+                return asset($path);
+            }
+        }
+
+        return $this->egg->image;
 
     }
 }

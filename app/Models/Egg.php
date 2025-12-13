@@ -74,6 +74,22 @@ class Egg extends Model implements Validatable
     public const EXPORT_VERSION = 'PLCN_v3';
 
     /**
+     * Path to store egg icons relative to public path.
+     */
+    public const ICON_STORAGE_PATH = 'storage/icons/egg';
+
+    /**
+     * Supported image formats: file extension => MIME type
+     */
+    public const IMAGE_FORMATS = [
+        'png' => 'image/png',
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'webp' => 'image/webp',
+        'svg' => 'image/svg+xml',
+    ];
+
+    /**
      * Fields that are not mass assignable.
      */
     protected $fillable = [
@@ -81,7 +97,6 @@ class Egg extends Model implements Validatable
         'name',
         'author',
         'description',
-        'image',
         'features',
         'docker_images',
         'force_outgoing_ip',
@@ -106,7 +121,6 @@ class Egg extends Model implements Validatable
         'uuid' => ['required', 'string', 'size:36'],
         'name' => ['required', 'string', 'max:255'],
         'description' => ['string', 'nullable'],
-        'image' => ['string', 'nullable'],
         'features' => ['array', 'nullable'],
         'author' => ['required', 'string', 'email'],
         'file_denylist' => ['array', 'nullable'],
@@ -328,5 +342,19 @@ class Egg extends Model implements Validatable
     public function getKebabName(): string
     {
         return str($this->name)->kebab()->lower()->trim()->split('/[^\w\-]/')->join('');
+    }
+
+    public function getImageAttribute(): ?string
+    {
+        foreach (array_keys(self::IMAGE_FORMATS) as $ext) {
+            $filename = "{$this->uuid}.{$ext}";
+            $path = self::ICON_STORAGE_PATH . "/{$filename}";
+
+            if (file_exists(public_path($path))) {
+                return asset($path);
+            }
+        }
+
+        return null;
     }
 }

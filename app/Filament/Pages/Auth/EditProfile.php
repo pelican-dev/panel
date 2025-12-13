@@ -145,6 +145,7 @@ class EditProfile extends BaseEditProfile
                                 FileUpload::make('avatar')
                                     ->visible(fn () => config('panel.filament.uploadable-avatars'))
                                     ->avatar()
+                                    ->imageEditor()
                                     ->acceptedFileTypes(['image/png'])
                                     ->directory('avatars')
                                     ->disk('public')
