@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Application\Eggs;
 
 use App\Enums\EggFormat;
-use App\Exceptions\Service\InvalidFileUploadException;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Eggs\ExportEggRequest;
 use App\Http\Requests\Api\Application\Eggs\GetEggRequest;
