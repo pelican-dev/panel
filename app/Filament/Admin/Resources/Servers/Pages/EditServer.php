@@ -2,13 +2,11 @@
 
 namespace App\Filament\Admin\Resources\Servers\Pages;
 
-use App\Filament\Admin\Resources\Servers\Pages\ListServers;
 use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
 use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManager;
 use App\Filament\Admin\Resources\Servers\ServerResource;
 use App\Filament\Server\Pages\Console;
 use App\Models\Server;
-use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Servers\ServerDeletionService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
@@ -26,14 +24,8 @@ class EditServer extends EditRecord
 {
     use CanCustomizeHeaderActions;
     use CanCustomizeHeaderWidgets;
+
     protected static string $resource = ServerResource::class;
-
-    private DaemonServerRepository $daemonServerRepository;
-
-    public function boot(DaemonServerRepository $daemonServerRepository): void
-    {
-        $this->daemonServerRepository = $daemonServerRepository;
-    }
 
     /**
      * @throws RandomException
@@ -111,6 +103,7 @@ class EditServer extends EditRecord
     {
         return [];
     }
+
     public function getRelationManagers(): array
     {
         return [

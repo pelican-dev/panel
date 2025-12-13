@@ -4,7 +4,6 @@ namespace App\Filament\Admin\Resources\Servers;
 
 use App\Enums\CustomizationKey;
 use App\Enums\SuspendAction;
-use App\Filament\Admin\Resources\DatabaseHosts\RelationManagers\DatabasesRelationManager;
 use App\Filament\Admin\Resources\Servers\Pages\CreateServer;
 use App\Filament\Admin\Resources\Servers\Pages\EditServer;
 use App\Filament\Admin\Resources\Servers\Pages\ListServers;
@@ -13,35 +12,23 @@ use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationMan
 use App\Filament\Components\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Fields\StartupVariable;
 use App\Filament\Components\StateCasts\ServerConditionStateCast;
-use App\Models\Mount;
-use App\Models\Server;
-use App\Traits\Filament\CanCustomizePages;
-use App\Traits\Filament\CanCustomizeRelations;
-use Exception;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Resources\Pages\PageRegistration;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Resource;
-use Filament\Schemas\Components\Utilities\Get;
-use App\Filament\Server\Pages\Console;
 use App\Models\Allocation;
 use App\Models\Egg;
+use App\Models\Mount;
+use App\Models\Server;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Eggs\EggChangerService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ReinstallServerService;
-use App\Services\Servers\ServerDeletionService;
 use App\Services\Servers\SuspensionService;
 use App\Services\Servers\ToggleInstallService;
 use App\Services\Servers\TransferServerService;
-use App\Traits\Filament\CanCustomizeHeaderActions;
-use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use App\Traits\Filament\CanCustomizePages;
+use App\Traits\Filament\CanCustomizeRelations;
+use Exception;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -55,7 +42,9 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\PageRegistration;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Resource;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
@@ -63,25 +52,24 @@ use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
-use Filament\Tables\Columns\SelectColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Grouping\Group;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 use LogicException;
 use Pest\Support\Arr;
 use Predis\Connection\ConnectionException;
-use Filament\Schemas\Components\Utilities\Set;
 
 class ServerResource extends Resource
 {
     use CanCustomizePages;
     use CanCustomizeRelations;
+
     protected DaemonServerRepository $daemonServerRepository;
+
     protected static ?string $model = Server::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-brand-docker';
@@ -112,6 +100,7 @@ class ServerResource extends Resource
     {
         return (string) static::getEloquentQuery()->count() ?: null;
     }
+
     public static function schema(Schema $schema): Schema
     {
         return $schema
@@ -1022,7 +1011,7 @@ class ServerResource extends Resource
                                                         ->label(trans('admin/server.transfer'))
                                                         ->disabled(fn (Server $server) => user()?->accessibleNodes()->count() <= 1 || $server->isInConflictState())
                                                         ->modalHeading(trans('admin/server.transfer'))
-                                                        ->schema(static::transferServer())
+                                                        ->schema(fn () => self::transferServer())
                                                         ->action(function (TransferServerService $transfer, Server $server, $data) {
                                                             try {
                                                                 $transfer->handle($server, Arr::get($data, 'node_id'), Arr::get($data, 'allocation_id'), Arr::get($data, 'allocation_additional', []));
@@ -1082,7 +1071,9 @@ class ServerResource extends Resource
             ]);
     }
 
-    /** @return Component[]
+    /**
+     * @return array<\Filament\Forms\Components\Select>
+     *
      * @throws Exception
      */
     protected static function transferServer(): array
@@ -1118,122 +1109,6 @@ class ServerResource extends Resource
         ];
     }
 
-    /** @return array<Action|ActionGroup> */
-    public function getDefaultHeaderActions(): array
-    {
-        /** @var Server $server */
-        $server = $this->getRecord();
-
-        $canForceDelete = cache()->get("servers.$server->uuid.canForceDelete", false);
-
-        return [
-            Action::make('Delete')
-                ->color('danger')
-                ->label(trans('filament-actions::delete.single.label'))
-                ->modalHeading(trans('filament-actions::delete.single.modal.heading', ['label' => $server->name]))
-                ->modalSubmitActionLabel(trans('filament-actions::delete.single.label'))
-                ->requiresConfirmation()
-                ->action(function (Server $server, ServerDeletionService $service) {
-                    try {
-                        $service->handle($server);
-
-                        return redirect(ListServers::getUrl(panel: 'admin'));
-                    } catch (ConnectionException) {
-                        cache()->put("servers.$server->uuid.canForceDelete", true, now()->addMinutes(5));
-
-                        return Notification::make()
-                            ->title(trans('admin/server.notifications.error_server_delete'))
-                            ->body(trans('admin/server.notifications.error_server_delete_body'))
-                            ->color('warning')
-                            ->icon('tabler-database')
-                            ->warning()
-                            ->send();
-                    }
-                })
-                ->hidden(fn () => $canForceDelete)
-                ->authorize(fn (Server $server) => user()?->can('delete server', $server))
-                ->icon('tabler-trash')
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
-            Action::make('ForceDelete')
-                ->color('danger')
-                ->label(trans('filament-actions::force-delete.single.label'))
-                ->modalHeading(trans('filament-actions::force-delete.single.modal.heading', ['label' => $server->name]))
-                ->modalSubmitActionLabel(trans('filament-actions::force-delete.single.label'))
-                ->requiresConfirmation()
-                ->action(function (Server $server, ServerDeletionService $service) {
-                    try {
-                        $service->withForce()->handle($server);
-
-                        return redirect(ListServers::getUrl(panel: 'admin'));
-                    } catch (ConnectionException) {
-                        return cache()->forget("servers.$server->uuid.canForceDelete");
-                    }
-                })
-                ->visible(fn () => $canForceDelete)
-                ->authorize(fn (Server $server) => user()?->can('delete server', $server)),
-            Action::make('console')
-                ->label(trans('admin/server.console'))
-                ->icon('tabler-terminal')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)),
-            $this->getSaveFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-device-floppy'),
-        ];
-
-    }
-
-    protected function getFormActions(): array
-    {
-        return [];
-    }
-
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        if (!isset($data['description'])) {
-            $data['description'] = '';
-        }
-
-        unset($data['docker'], $data['status'], $data['allocation_id']);
-
-        return $data;
-    }
-
-    protected function afterSave(): void
-    {
-        /** @var Server $server */
-        $server = $this->getRecord();
-
-        $changed = collect($server->getChanges())->except(['updated_at', 'name', 'owner_id', 'condition', 'description', 'external_id', 'tags', 'cpu_pinning', 'allocation_limit', 'database_limit', 'backup_limit', 'skip_scripts'])->all();
-
-        try {
-            if ($changed) {
-                $this->daemonServerRepository->setServer($server)->sync();
-            }
-            parent::getSavedNotification()?->send();
-        } catch (ConnectionException) {
-            Notification::make()
-                ->title(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
-                ->body(trans('admin/server.notifications.error_connecting_description'))
-                ->color('warning')
-                ->icon('tabler-database')
-                ->warning()
-                ->send();
-        }
-    }
-
-    protected function getSavedNotification(): ?Notification
-    {
-        return null;
-    }
-
-    public function getRelationManagers(): array
-    {
-        return [
-            AllocationsRelationManager::class,
-            DatabasesRelationManager::class,
-        ];
-    }
     /**
      * @throws Exception
      */

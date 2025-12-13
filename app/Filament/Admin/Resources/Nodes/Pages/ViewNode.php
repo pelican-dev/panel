@@ -30,11 +30,14 @@ class ViewNode extends ViewRecord
             ServersRelationManager::class,
         ];
     }
+
     protected function getSavedNotification(): ?Notification
     {
         return null;
     }
-    protected function getColumnSpan() {
+
+    protected function getColumnSpan(): ?int
+    {
         return null;
     }
 

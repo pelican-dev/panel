@@ -39,8 +39,8 @@ class ListEggs extends ListRecords
     {
         return $table
             ->searchable(true)
-            ->recordUrl(fn (Egg $egg) => user()?->can('update egg', $egg) 
-                ? EggResource::getUrl('edit', ['record' => $egg]) 
+            ->recordUrl(fn (Egg $egg) => user()?->can('update egg', $egg)
+                ? EggResource::getUrl('edit', ['record' => $egg])
                 : EggResource::getUrl('view', ['record' => $egg])
             )
             ->defaultPaginationPageOption(25)

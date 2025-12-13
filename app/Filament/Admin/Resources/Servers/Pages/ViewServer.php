@@ -2,13 +2,11 @@
 
 namespace App\Filament\Admin\Resources\Servers\Pages;
 
-use App\Filament\Admin\Resources\Servers\Pages\ListServers;
 use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
 use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManager;
 use App\Filament\Admin\Resources\Servers\ServerResource;
 use App\Filament\Server\Pages\Console;
 use App\Models\Server;
-use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Servers\ServerDeletionService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
@@ -28,14 +26,6 @@ class ViewServer extends ViewRecord
     use CanCustomizeHeaderWidgets;
 
     protected static string $resource = ServerResource::class;
-
-    private DaemonServerRepository $daemonServerRepository;
-
-    public function boot(DaemonServerRepository $daemonServerRepository): void
-    {
-        $this->daemonServerRepository = $daemonServerRepository;
-        
-    }
 
     /**
      * @throws \Random\RandomException
@@ -116,5 +106,25 @@ class ViewServer extends ViewRecord
                 ->icon('tabler-pencil')
                 ->iconButton()->iconSize(IconSize::ExtraLarge),
         ];
+    }
+
+    /** @return array<mixed> */
+    protected function getFormActions(): array
+    {
+        return [];
+    }
+
+    /** @param array<mixed> $data
+     * @return array<mixed>
+     */
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (!isset($data['description'])) {
+            $data['description'] = '';
+        }
+
+        unset($data['docker'], $data['status'], $data['allocation_id']);
+
+        return $data;
     }
 }

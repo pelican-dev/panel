@@ -8,7 +8,6 @@ use App\Repositories\Daemon\DaemonSystemRepository;
 use App\Services\Nodes\NodeUpdateService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
@@ -25,12 +24,10 @@ class EditNode extends EditRecord
     protected static string $resource = NodeResource::class;
 
     private DaemonSystemRepository $daemonSystemRepository;
-    private NodeUpdateService $nodeUpdateService;
 
     public function boot(DaemonSystemRepository $daemonSystemRepository, NodeUpdateService $nodeUpdateService): void
     {
         $this->daemonSystemRepository = $daemonSystemRepository;
-        $this->nodeUpdateService = $nodeUpdateService;
     }
 
     public function form(Schema $schema): Schema
@@ -110,15 +107,18 @@ class EditNode extends EditRecord
                 ->send();
         }
     }
+
     protected function getSavedNotification(): ?Notification
     {
         return null;
     }
-    protected function getColumnSpan() {
+
+    protected function getColumnSpan(): ?int
+    {
         return null;
     }
 
-  protected function getColumnStart(): ?int
+    protected function getColumnStart(): ?int
     {
         return null;
     }

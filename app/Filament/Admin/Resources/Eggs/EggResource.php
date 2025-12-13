@@ -8,24 +8,13 @@ use App\Filament\Admin\Resources\Eggs\Pages\EditEgg;
 use App\Filament\Admin\Resources\Eggs\Pages\ListEggs;
 use App\Filament\Admin\Resources\Eggs\Pages\ViewEgg;
 use App\Filament\Admin\Resources\Eggs\RelationManagers\ServersRelationManager;
+use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Models\Egg;
+use App\Models\EggVariable;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
-use Filament\Resources\Pages\PageRegistration;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-
-use App\Filament\Components\Actions\ExportEggAction;
-use App\Filament\Components\Actions\ImportEggAction;
-use App\Filament\Components\Forms\Fields\CopyFrom;
-use App\Models\EggVariable;
-use App\Traits\Filament\CanCustomizeHeaderActions;
-use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\FileUpload;
@@ -39,7 +28,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\PageRegistration;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Resource;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid;
@@ -48,6 +39,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
 use Illuminate\Validation\Rules\Unique;
 
@@ -99,6 +91,7 @@ class EggResource extends Resource
             ServersRelationManager::class,
         ];
     }
+
     /**
      * @throws Exception
      */
@@ -496,6 +489,7 @@ class EggResource extends Resource
                 ])->columnSpanFull()->persistTabInQueryString(),
             ]);
     }
+
     /** @return array<string, PageRegistration> */
     public static function getDefaultPages(): array
     {

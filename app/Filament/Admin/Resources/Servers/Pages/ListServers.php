@@ -30,8 +30,8 @@ class ListServers extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->recordUrl(fn (Server $server) => user()?->can('update server', $server) 
-                ? ServerResource::getUrl('edit', ['record' => $server]) 
+            ->recordUrl(fn (Server $server) => user()?->can('update server', $server)
+                ? ServerResource::getUrl('edit', ['record' => $server])
                 : ServerResource::getUrl('view', ['record' => $server])
             )
             ->searchable(false)
