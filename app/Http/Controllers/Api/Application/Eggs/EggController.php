@@ -17,6 +17,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class EggController extends ApplicationApiController
 {
@@ -58,7 +59,7 @@ class EggController extends ApplicationApiController
     /**
      * Delete egg
      *
-     * Delete a egg host from the Panel.
+     * Delete an egg from the Panel.
      *
      * @throws Exception
      */
@@ -91,6 +92,8 @@ class EggController extends ApplicationApiController
      * Create a new egg on the Panel. Returns the created egg and an HTTP/201 status response on success
      * If no uuid is supplied a new one will be generated
      * If an uuid is supplied, and it already exists the old configuration get overwritten
+     *
+     * @throws Exception|Throwable
      */
     public function import(ImportEggRequest $request): JsonResponse
     {
@@ -98,22 +101,10 @@ class EggController extends ApplicationApiController
 
         $content = $request->getContent(false);
 
-        try {
-            $egg = $this->importService->fromContent($content, $format, null);
+        $egg = $this->importService->fromContent($content, $format, null);
 
-            return $this->fractal->item($egg)
-                ->transformWith($this->getTransformer(EggTransformer::class))
-                ->respond(201);
-        } catch (InvalidFileUploadException $e) {
-            return response()->json([
-                'error' => 'Invalid content',
-                'message' => $e->getMessage(),
-            ], 422);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'error' => 'Unable to import egg',
-                'message' => 'An unexpected error occurred. ' . $e->getMessage(),
-            ], 500);
-        }
+        return $this->fractal->item($egg)
+            ->transformWith($this->getTransformer(EggTransformer::class))
+            ->respond(201);
     }
 }
