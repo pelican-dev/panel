@@ -107,24 +107,4 @@ class ViewServer extends ViewRecord
                 ->iconButton()->iconSize(IconSize::ExtraLarge),
         ];
     }
-
-    /** @return array<mixed> */
-    protected function getFormActions(): array
-    {
-        return [];
-    }
-
-    /** @param array<mixed> $data
-     * @return array<mixed>
-     */
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        if (!isset($data['description'])) {
-            $data['description'] = '';
-        }
-
-        unset($data['docker'], $data['status'], $data['allocation_id']);
-
-        return $data;
-    }
 }
