@@ -2,12 +2,13 @@
 
 namespace App\Filament\Components\Actions;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 use App\Models\Schedule;
 use App\Models\Server;
 use App\Services\Schedules\Sharing\ScheduleExporterService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Support\Enums\IconSize;
 
 class ExportScheduleAction extends Action
 {
@@ -20,12 +21,22 @@ class ExportScheduleAction extends Action
     {
         parent::setUp();
 
+        $this->hiddenLabel();
+
+        $this->iconButton();
+
+        $this->iconSize(IconSize::ExtraLarge);
+
+        $this->icon('tabler-download');
+
+        $this->tooltip(trans('server/schedule.export'));
+
         /** @var Server $server */
         $server = Filament::getTenant();
 
         $this->label(trans('filament-actions::export.modal.actions.export.label'));
 
-        $this->authorize(fn () => user()?->can(Permission::ACTION_SCHEDULE_READ, $server));
+        $this->authorize(fn () => user()?->can(SubuserPermission::ScheduleRead, $server));
 
         $this->action(fn (ScheduleExporterService $service, Schedule $schedule) => response()->streamDownload(function () use ($service, $schedule) {
             echo $service->handle($schedule);

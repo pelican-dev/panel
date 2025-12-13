@@ -12,7 +12,6 @@ use App\Filament\Components\StateCasts\ServerConditionStateCast;
 use App\Filament\Server\Pages\Console;
 use App\Models\Allocation;
 use App\Models\Egg;
-use App\Models\Node;
 use App\Models\Server;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonServerRepository;
@@ -337,7 +336,7 @@ class EditServer extends EditRecord
                                                                 try {
                                                                     $logs = $serverRepository->setServer($server)->getInstallLogs();
 
-                                                                    return mb_convert_encoding($logs, 'UTF-8', ['UTF-8', 'UTF-16', 'ISO-8859-1', 'Windows-1252', 'ASCII']);
+                                                                    return mb_convert_encoding($logs, 'UTF-8', ['UTF-8', 'UTF-16', 'ISO-8859-1', 'ASCII']);
                                                                 } catch (ConnectionException) {
                                                                     Notification::make()
                                                                         ->title(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
@@ -799,37 +798,17 @@ class EditServer extends EditRecord
                                     ->label(trans('admin/server.startup_cmd'))
                                     ->required()
                                     ->live()
-                                    ->afterStateUpdated(function (Set $set, $state) {
-                                        $set('startup', $state);
-                                        $set('previewing', false);
-                                    })
-                                    ->options(function ($state, Get $get, Set $set) {
+                                    ->options(function (Get $get) {
                                         $egg = Egg::find($get('egg_id'));
-                                        $startups = $egg->startup_commands ?? [];
 
-                                        $currentStartup = $get('startup');
-                                        if (!$currentStartup && $startups) {
-                                            $currentStartup = collect($startups)->first();
-                                            $set('startup', $currentStartup);
-                                            $set('select_startup', $currentStartup);
-                                        }
-
-                                        return array_flip($startups) + ['custom' => 'Custom Startup'];
+                                        return array_flip($egg->startup_commands ?? []) + ['custom' => 'Custom Startup'];
                                     })
-                                    ->formatStateUsing(function (Server $server) {
-                                        $startups = $server->egg->startup_commands;
-
-                                        $currentStartup = $server->startup;
-                                        $matchingStartup = collect($startups)
-                                            ->filter(fn ($value, $key) => $value === $currentStartup)
-                                            ->keys()
-                                            ->first();
-
-                                        if (!$matchingStartup) {
-                                            return 'custom';
+                                    ->formatStateUsing(fn (Server $server) => in_array($server->startup, $server->egg->startup_commands) ? $server->startup : 'custom')
+                                    ->afterStateUpdated(function (Set $set, string $state) {
+                                        if ($state !== 'custom') {
+                                            $set('startup', $state);
                                         }
-
-                                        return $matchingStartup;
+                                        $set('previewing', false);
                                     })
                                     ->selectablePlaceholder(false)
                                     ->columnSpanFull()
@@ -1008,7 +987,7 @@ class EditServer extends EditRecord
                                                 Actions::make([
                                                     Action::make('transfer')
                                                         ->label(trans('admin/server.transfer'))
-                                                        ->disabled(fn (Server $server) => Node::count() <= 1 || $server->isInConflictState())
+                                                        ->disabled(fn (Server $server) => user()?->accessibleNodes()->count() <= 1 || $server->isInConflictState())
                                                         ->modalHeading(trans('admin/server.transfer'))
                                                         ->schema($this->transferServer())
                                                         ->action(function (TransferServerService $transfer, Server $server, $data) {
@@ -1080,10 +1059,10 @@ class EditServer extends EditRecord
                 ->label(trans('admin/server.node'))
                 ->prefixIcon('tabler-server-2')
                 ->selectablePlaceholder(false)
-                ->default(fn (Server $server) => Node::whereNot('id', $server->node->id)->first()?->id)
+                ->default(fn (Server $server) => user()?->accessibleNodes()->whereNot('id', $server->node->id)->first()?->id)
                 ->required()
                 ->live()
-                ->options(fn (Server $server) => Node::whereNot('id', $server->node->id)->pluck('name', 'id')->all()),
+                ->options(fn (Server $server) => user()?->accessibleNodes()->whereNot('id', $server->node->id)->pluck('name', 'id')->all()),
             Select::make('allocation_id')
                 ->label(trans('admin/server.primary_allocation'))
                 ->disabled(fn (Get $get, Server $server) => !$get('node_id') || !$server->allocation_id)

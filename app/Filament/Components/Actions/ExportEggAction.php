@@ -7,6 +7,7 @@ use App\Models\Egg;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\IconSize;
 
 class ExportEggAction extends Action
 {
@@ -23,9 +24,11 @@ class ExportEggAction extends Action
 
         $this->iconButton();
 
-        $this->icon('tabler-file-export');
+        $this->icon('tabler-download');
 
         $this->tableIcon('tabler-download');
+
+        $this->iconSize(IconSize::ExtraLarge);
 
         $this->authorize(fn () => user()?->can('export egg'));
 

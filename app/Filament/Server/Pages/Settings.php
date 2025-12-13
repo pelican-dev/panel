@@ -2,8 +2,8 @@
 
 namespace App\Filament\Server\Pages;
 
+use App\Enums\SubuserPermission;
 use App\Facades\Activity;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Servers\ReinstallServerService;
 use Exception;
@@ -60,7 +60,7 @@ class Settings extends ServerFormPage
                                             ->columnStart(1)
                                             ->columnSpanFull()
                                             ->label(trans('server/setting.server_info.name'))
-                                            ->disabled(fn (Server $server) => !user()?->can(Permission::ACTION_SETTINGS_RENAME, $server))
+                                            ->disabled(fn (Server $server) => !user()?->can(SubuserPermission::SettingsRename, $server))
                                             ->required()
                                             ->live(onBlur: true)
                                             ->afterStateUpdated(fn ($state, Server $server) => $this->updateName($state, $server)),
@@ -69,7 +69,7 @@ class Settings extends ServerFormPage
                                             ->columnSpanFull()
                                             ->label(trans('server/setting.server_info.description'))
                                             ->hidden(!config('panel.editable_server_descriptions'))
-                                            ->disabled(fn (Server $server) => !user()?->can(Permission::ACTION_SETTINGS_DESCRIPTION, $server))
+                                            ->disabled(fn (Server $server) => !user()?->can(SubuserPermission::SettingsDescription, $server))
                                             ->autosize()
                                             ->live(onBlur: true)
                                             ->afterStateUpdated(fn ($state, Server $server) => $this->updateDescription($state ?? '', $server)),
@@ -319,7 +319,7 @@ class Settings extends ServerFormPage
                             ]),
                         Fieldset::make(trans('server/setting.server_info.sftp.title'))
                             ->columnSpanFull()
-                            ->hidden(fn (Server $server) => !user()?->can(Permission::ACTION_FILE_SFTP, $server))
+                            ->hidden(fn (Server $server) => !user()?->can(SubuserPermission::FileSftp, $server))
                             ->columns([
                                 'default' => 1,
                                 'sm' => 1,
@@ -361,19 +361,19 @@ class Settings extends ServerFormPage
                             ]),
                     ]),
                 Section::make(trans('server/setting.reinstall.title'))
-                    ->hidden(fn (Server $server) => !user()?->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
+                    ->hidden(fn (Server $server) => !user()?->can(SubuserPermission::SettingsReinstall, $server))
                     ->columnSpanFull()
                     ->footerActions([
                         Action::make('reinstall')
                             ->label(trans('server/setting.reinstall.action'))
                             ->color('danger')
-                            ->disabled(fn (Server $server) => !user()?->can(Permission::ACTION_SETTINGS_REINSTALL, $server))
+                            ->disabled(fn (Server $server) => !user()?->can(SubuserPermission::SettingsReinstall, $server))
                             ->requiresConfirmation()
                             ->modalHeading(trans('server/setting.reinstall.modal'))
                             ->modalDescription(trans('server/setting.reinstall.modal_description'))
                             ->modalSubmitActionLabel(trans('server/setting.reinstall.yes'))
                             ->action(function (Server $server, ReinstallServerService $reinstallService) {
-                                abort_unless(user()?->can(Permission::ACTION_SETTINGS_REINSTALL, $server), 403);
+                                abort_unless(user()?->can(SubuserPermission::SettingsReinstall, $server), 403);
 
                                 try {
                                     $reinstallService->handle($server);
@@ -412,7 +412,7 @@ class Settings extends ServerFormPage
 
     public function updateName(string $name, Server $server): void
     {
-        abort_unless(user()?->can(Permission::ACTION_SETTINGS_RENAME, $server), 403);
+        abort_unless(user()?->can(SubuserPermission::SettingsRename, $server), 403);
 
         $original = $server->name;
 
@@ -443,7 +443,7 @@ class Settings extends ServerFormPage
 
     public function updateDescription(string $description, Server $server): void
     {
-        abort_unless(user()?->can(Permission::ACTION_SETTINGS_DESCRIPTION, $server) && config('panel.editable_server_descriptions'), 403);
+        abort_unless(user()?->can(SubuserPermission::SettingsDescription, $server) && config('panel.editable_server_descriptions'), 403);
 
         $original = $server->description;
 

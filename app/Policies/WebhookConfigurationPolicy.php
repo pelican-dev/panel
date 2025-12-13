@@ -4,7 +4,7 @@ namespace App\Policies;
 
 class WebhookConfigurationPolicy
 {
-    use DefaultPolicies;
+    use DefaultAdminPolicies;
 
     protected string $modelName = 'webhook';
 }

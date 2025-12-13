@@ -7,7 +7,7 @@ use App\Models\User;
 
 class DatabaseHostPolicy
 {
-    use DefaultPolicies;
+    use DefaultAdminPolicies;
 
     protected string $modelName = 'databaseHost';
 

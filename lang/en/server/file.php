@@ -67,8 +67,8 @@ return [
             'title' => 'New folder',
             'folder_name' => 'New folder name',
         ],
-        'global_search' => [
-            'title' => 'Global Search',
+        'nested_search' => [
+            'title' => 'Nested Search',
             'search_term' => 'Search term',
             'search_term_placeholder' => 'Enter a search term, ex. *.txt',
             'search' => 'Search',

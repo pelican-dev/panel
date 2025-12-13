@@ -14,7 +14,7 @@ tags:
   - voice
 features: {  }
 docker_images:
-  Mumble: 'ghcr.io/parkervcp/yolks:voice_mumble'
+  Mumble: 'ghcr.io/pelican-eggs/yolks:voice_mumble'
 file_denylist: {  }
 startup_commands:
   Default: 'mumble-server -fg -ini murmur.ini'
@@ -53,7 +53,7 @@ scripts:
           apk del murmur
       fi
       echo "done"
-    container: 'ghcr.io/parkervcp/installers:alpine'
+    container: 'ghcr.io/pelican-eggs/installers:alpine'
     entrypoint: ash
 variables:
   -

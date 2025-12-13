@@ -4,13 +4,12 @@ namespace App\Http\Controllers\Api\Client;
 
 use App\Http\Requests\Api\Client\GetServersRequest;
 use App\Models\Filters\MultiFieldServerFilter;
-use App\Models\Permission;
 use App\Models\Server;
+use App\Models\Subuser;
 use App\Transformers\Api\Client\ServerTransformer;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -81,14 +80,14 @@ class ClientController extends ClientApiController
      *
      * Returns all the subuser permissions available on the system.
      *
-     * @return array{object: string, attributes: array{permissions: Collection}}
+     * @return array{object: string, attributes: array{permissions: string[]}}
      */
     public function permissions(): array
     {
         return [
             'object' => 'system_permissions',
             'attributes' => [
-                'permissions' => Permission::permissions(),
+                'permissions' => Subuser::allPermissionKeys(),
             ],
         ];
     }

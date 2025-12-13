@@ -3,7 +3,6 @@
 use App\Enums\RolePermissionModels;
 use App\Filament\Admin\Resources\Eggs\Pages\ListEggs;
 use App\Models\Egg;
-use App\Models\Permission;
 use App\Models\Role;
 
 use function Pest\Livewire\livewire;

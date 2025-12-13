@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Filament\Actions\DeleteAction;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Select;
@@ -84,9 +85,11 @@ class FilamentServiceProvider extends ServiceProvider
         });
 
         Select::configureUsing(fn (Select $select) => $select->native(false));
+        DeleteAction::configureUsing(fn (DeleteAction $action) => $action->icon('tabler-trash'));
 
         FilamentIcon::register([
             ActionsIconAlias::DELETE_ACTION => 'tabler-trash',
+            ActionsIconAlias::DETACH_ACTION => 'tabler-trash',
             ActionsIconAlias::EDIT_ACTION => 'tabler-pencil',
             ActionsIconAlias::VIEW_ACTION => 'tabler-eye',
             ActionsIconAlias::REPLICATE_ACTION => 'tabler-copy-plus',
@@ -110,7 +113,7 @@ class FilamentServiceProvider extends ServiceProvider
             NotificationsIconAlias::DATABASE_MODAL_EMPTY_STATE => 'tabler-bell-off',
             NotificationsIconAlias::NOTIFICATION_CLOSE_BUTTON => 'tabler-x',
             NotificationsIconAlias::NOTIFICATION_INFO => 'tabler-info-circle',
-            NotificationsIconAlias::NOTIFICATION_SUCCESS => 'tabler-check-circle',
+            NotificationsIconAlias::NOTIFICATION_SUCCESS => 'tabler-circle-check',
             NotificationsIconAlias::NOTIFICATION_WARNING => 'tabler-alert-triangle',
             NotificationsIconAlias::NOTIFICATION_DANGER => 'tabler-alert-circle',
 

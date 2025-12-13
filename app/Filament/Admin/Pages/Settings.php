@@ -297,11 +297,13 @@ class Settings extends Page implements HasSchemas
                     Actions::make([
                         Action::make("disable_captcha_$id")
                             ->visible(fn (Get $get) => $get("CAPTCHA_{$id}_ENABLED"))
+                            ->disabled(fn () => !user()?->can('update settings'))
                             ->label(trans('admin/setting.captcha.disable'))
                             ->color('danger')
                             ->action(fn (Set $set) => $set("CAPTCHA_{$id}_ENABLED", false)),
                         Action::make("enable_captcha_$id")
                             ->visible(fn (Get $get) => !$get("CAPTCHA_{$id}_ENABLED"))
+                            ->disabled(fn () => !user()?->can('update settings'))
                             ->label(trans('admin/setting.captcha.enable'))
                             ->color('success')
                             ->action(fn (Set $set) => $set("CAPTCHA_{$id}_ENABLED", true)),
@@ -568,11 +570,13 @@ class Settings extends Page implements HasSchemas
                     Actions::make([
                         Action::make("disable_oauth_$id")
                             ->visible(fn (Get $get) => $get($key))
+                            ->disabled(fn () => !user()?->can('update settings'))
                             ->label(trans('admin/setting.oauth.disable'))
                             ->color('danger')
                             ->action(fn (Set $set) => $set($key, false)),
                         Action::make("enable_oauth_$id")
                             ->visible(fn (Get $get) => !$get($key))
+                            ->disabled(fn () => !user()?->can('update settings'))
                             ->label(trans('admin/setting.oauth.enable'))
                             ->color('success')
                             ->steps($schema->getSetupSteps())
@@ -623,6 +627,18 @@ class Settings extends Page implements HasSchemas
                         ->columnSpanFull()
                         ->stateCast(new BooleanStateCast(false))
                         ->default(env('PANEL_CLIENT_ALLOCATIONS_ENABLED', config('panel.client_features.allocations.enabled'))),
+                    Toggle::make('PANEL_CLIENT_ALLOCATIONS_CREATE_NEW')
+                        ->label(trans('admin/setting.misc.auto_allocation.create_new'))
+                        ->helperText(trans('admin/setting.misc.auto_allocation.create_new_help'))
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->columnSpanFull()
+                        ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
+                        ->stateCast(new BooleanStateCast(false))
+                        ->default(env('PANEL_CLIENT_ALLOCATIONS_CREATE_NEW', config('panel.client_features.allocations.create_new'))),
                     TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_START')
                         ->label(trans('admin/setting.misc.auto_allocation.start'))
                         ->required()
