@@ -52,7 +52,7 @@ export SUPERVISORD_CADDY=false
 export PARSED_APP_URL=${APP_URL}
 
 # checking if app url is using https
-if [ $(echo ${APP_URL} | grep -q '(https?|ftp|file)://[-A-Z0-9\+&@#/%?=~_|!:,.;]*[-A-Z0-9\+&@#/%=~_|]') ]; then
+if echo "${APP_URL}" | grep -qE '^https://';; then
   echo "https domain found setting email var"
   export PARSED_LE_EMAIL="email ${LE_EMAIL}"
 fi
