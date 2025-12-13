@@ -17,6 +17,7 @@ class EggExporterService
     public function handle(int $egg, EggFormat $format): string
     {
         $egg = Egg::with(['scriptFrom', 'configFrom', 'variables'])->findOrFail($egg);
+        $imageBase64 = $this->getEggImageAsBase64($egg);
 
         $struct = [
             '_comment' => 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL',
@@ -29,7 +30,7 @@ class EggExporterService
             'author' => $egg->author,
             'uuid' => $egg->uuid,
             'description' => $egg->description,
-            'image' => $egg->image,
+            'image' => $imageBase64,
             'tags' => $egg->tags,
             'features' => $egg->features,
             'docker_images' => $egg->docker_images,
@@ -58,6 +59,26 @@ class EggExporterService
             EggFormat::JSON => json_encode($struct, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
             EggFormat::YAML => Yaml::dump($this->yamlExport($struct), 10, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK | Yaml::DUMP_OBJECT_AS_MAP),
         };
+    }
+
+    /**
+     * Get the egg image as base64 for export.
+     */
+    private function getEggImageAsBase64(Egg $egg): ?string
+    {
+        foreach (array_keys(Egg::IMAGE_FORMATS) as $ext) {
+            $filename = "{$egg->uuid}.{$ext}";
+            $path = public_path(Egg::ICON_STORAGE_PATH . "/{$filename}");
+
+            if (file_exists($path)) {
+                $data = file_get_contents($path);
+                $mimeType = Egg::IMAGE_FORMATS[$ext];
+
+                return 'data:' . $mimeType . ';base64,' . base64_encode($data);
+            }
+        }
+
+        return null;
     }
 
     protected function yamlExport(mixed $data): mixed

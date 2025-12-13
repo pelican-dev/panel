@@ -196,10 +196,14 @@ class EggImporterService
      */
     protected function fillFromParsed(Egg $model, array $parsed): Egg
     {
+        // Handle image data if present
+        if (!empty($parsed['image']) && str_starts_with($parsed['image'], 'data:')) {
+            $this->saveEggImageFromBase64($parsed['image'], $model);
+        }
+
         return $model->forceFill([
             'name' => Arr::get($parsed, 'name'),
             'description' => Arr::get($parsed, 'description'),
-            'image' => Arr::get($parsed, 'image'),
             'tags' => Arr::get($parsed, 'tags', []),
             'features' => Arr::get($parsed, 'features'),
             'docker_images' => Arr::get($parsed, 'docker_images'),
@@ -214,6 +218,47 @@ class EggImporterService
             'script_entry' => Arr::get($parsed, 'scripts.installation.entrypoint'),
             'script_container' => Arr::get($parsed, 'scripts.installation.container'),
         ]);
+    }
+
+    /**
+     * Save an egg image from base64 data to a file.
+     */
+    private function saveEggImageFromBase64(string $base64String, Egg $egg): void
+    {
+        if (!preg_match('/^data:image\/(\w+);base64,(.+)$/', $base64String, $matches)) {
+            return;
+        }
+
+        $extension = $matches[1];
+        $data = base64_decode($matches[2]);
+
+        if (!$data) {
+            return;
+        }
+
+        $normalizedExtension = match ($extension) {
+            'svg+xml' => 'svg',
+            'jpeg' => 'jpg',
+            default => $extension,
+        };
+
+        foreach (array_keys(Egg::IMAGE_FORMATS) as $ext) {
+            $filename = "{$egg->uuid}.{$ext}";
+            $path = public_path(Egg::ICON_STORAGE_PATH . "/{$filename}");
+            if (file_exists($path)) {
+                unlink($path);
+            }
+        }
+
+        $directory = public_path(Egg::ICON_STORAGE_PATH);
+        if (!file_exists($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        $filename = "{$egg->uuid}.{$normalizedExtension}";
+        $filepath = "{$directory}/{$filename}";
+
+        file_put_contents($filepath, $data);
     }
 
     /**
