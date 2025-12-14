@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Exceptions\Service\HasActiveServersException;
+use App\Models\NodeRole;
 use App\Repositories\Daemon\DaemonSystemRepository;
 use App\Traits\HasValidation;
 use Carbon\Carbon;
@@ -278,7 +279,7 @@ class Node extends Model implements Validatable
 
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class, 'node_role', 'node_id', 'role_id');
+        return $this->belongsToMany(Role::class, NodeRole::class);
     }
 
     /**
