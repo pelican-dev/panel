@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Exceptions\Service\HasActiveServersException;
-use App\Models\NodeRole;
 use App\Repositories\Daemon\DaemonSystemRepository;
 use App\Traits\HasValidation;
 use Carbon\Carbon;
