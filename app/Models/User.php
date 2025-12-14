@@ -266,7 +266,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function accessibleServers(): Builder
     {
-        if ($this->canned('viewAny', Server::class)) {
+        if ($this->canViewServers()) {
             return Server::select('servers.*')
                 ->leftJoin('subusers', 'subusers.server_id', '=', 'servers.id')
                 ->where(function (Builder $builder) {
@@ -276,6 +276,22 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         return $this->directAccessibleServers();
+    }
+
+    /**
+     * Check if the user has permission to view servers via role permissions.
+     */
+    public function canViewServers(): bool
+    {
+        if ($this->isRootAdmin()) {
+            return true;
+        }
+
+        try {
+            return $this->hasPermissionTo('viewList server');
+        } catch (\Spatie\Permission\Exceptions\PermissionDoesNotExist) {
+            return false;
+        }
     }
 
     /**
@@ -438,13 +454,21 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function canAccessTenant(Model $tenant): bool
     {
         if ($tenant instanceof Server) {
-            if ($this->canned('view', $tenant) || $tenant->owner_id === $this->id) {
+            if ($tenant->owner_id === $this->id) {
                 return true;
             }
 
             $subuser = $tenant->subusers->where('user_id', $this->id)->first();
+            if ($subuser !== null) {
+                return true;
+            }
 
-            return $subuser !== null;
+            // Check if user has role-based access to this server's node
+            if ($this->canViewServers() && $this->canTarget($tenant->node)) {
+                return true;
+            }
+
+            return false;
         }
 
         return false;

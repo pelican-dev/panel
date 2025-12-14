@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Http;
@@ -277,9 +276,9 @@ class Node extends Model implements Validatable
         return $this->belongsToMany(DatabaseHost::class);
     }
 
-    public function roles(): HasManyThrough
+    public function roles(): BelongsToMany
     {
-        return $this->hasManyThrough(Role::class, NodeRole::class, 'node_id', 'id', 'id', 'role_id');
+        return $this->belongsToMany(Role::class, 'node_role', 'node_id', 'role_id');
     }
 
     /**

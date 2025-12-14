@@ -22,12 +22,12 @@ class ServerPolicy
             return null;
         }
 
-        if (Subuser::doesPermissionExist($ability)) {
-            // Owner has full server permissions
-            if ($server->owner_id === $user->id) {
-                return true;
-            }
+        // Owner has full server permissions
+        if ($server->owner_id === $user->id) {
+            return true;
+        }
 
+        if (Subuser::doesPermissionExist($ability)) {
             $subuser = $server->subusers->where('user_id', $user->id)->first();
             // If the user is a subuser check their permissions
             if ($subuser && in_array($ability, $subuser->permissions)) {
@@ -38,6 +38,16 @@ class ServerPolicy
         // Make sure user can target node of the server
         if (!$user->canTarget($server->node)) {
             return false;
+        }
+
+        // Check if user has role-based permission for this specific ability
+        $permissionName = $ability . ' ' . $this->modelName;
+        try {
+            if ($user->hasPermissionTo($permissionName)) {
+                return true;
+            }
+        } catch (\Spatie\Permission\Exceptions\PermissionDoesNotExist) {
+            // Permission doesn't exist, continue to default policies
         }
 
         // Return null to let default policies take over
