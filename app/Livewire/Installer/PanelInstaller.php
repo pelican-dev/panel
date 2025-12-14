@@ -2,13 +2,16 @@
 
 namespace App\Livewire\Installer;
 
+use App\Jobs\InstallEgg;
 use App\Livewire\Installer\Steps\CacheStep;
 use App\Livewire\Installer\Steps\DatabaseStep;
+use App\Livewire\Installer\Steps\EggSelectionStep;
 use App\Livewire\Installer\Steps\EnvironmentStep;
 use App\Livewire\Installer\Steps\QueueStep;
 use App\Livewire\Installer\Steps\RequirementsStep;
 use App\Livewire\Installer\Steps\SessionStep;
 use App\Models\User;
+use App\Services\Eggs\Sharing\EggImporterService;
 use App\Services\Helpers\LanguageService;
 use App\Services\Users\UserCreationService;
 use App\Traits\CheckMigrationsTrait;
@@ -30,6 +33,7 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\HtmlString;
 
 /**
@@ -53,7 +57,7 @@ class PanelInstaller extends SimplePage implements HasForms
 
     public function getMaxContentWidth(): Width|string
     {
-        return Width::SevenExtraLarge;
+        return Width::ScreenTwoExtraLarge;
     }
 
     public static function isInstalled(): bool
@@ -82,6 +86,7 @@ class PanelInstaller extends SimplePage implements HasForms
                 RequirementsStep::make(),
                 EnvironmentStep::make($this),
                 DatabaseStep::make($this),
+                EggSelectionStep::make(),
                 CacheStep::make($this),
                 QueueStep::make($this),
                 SessionStep::make(),
@@ -99,7 +104,7 @@ class PanelInstaller extends SimplePage implements HasForms
                         wire:loading.attr="disabled"
                     >
                         {{ trans('installer.finish') }}
-                        <span wire:loading><x-filament::loading-indicator class="h-4 w-4" /></span>
+                        <x-filament::loading-indicator wire:loading class="h-4 w-4" />
                     </x-filament::button>
                 BLADE))),
         ];
@@ -125,7 +130,7 @@ class PanelInstaller extends SimplePage implements HasForms
         return 'data';
     }
 
-    public function submit(UserCreationService $userCreationService): void
+    public function submit(UserCreationService $userCreationService, EggImporterService $eggImporterService): void
     {
         try {
             // Disable installer
@@ -140,6 +145,9 @@ class PanelInstaller extends SimplePage implements HasForms
 
             // Write session data at the very end to avoid "page expired" errors
             $this->writeToEnv('env_session');
+
+            // Install selected eggs
+            $this->installEggs($eggImporterService);
 
             // Redirect to admin panel
             $this->redirect(Filament::getPanel('admin')->getUrl());
@@ -174,7 +182,6 @@ class PanelInstaller extends SimplePage implements HasForms
         try {
             Artisan::call('migrate', [
                 '--force' => true,
-                '--seed' => true,
             ]);
         } catch (Exception $exception) {
             report($exception);
@@ -218,6 +225,56 @@ class PanelInstaller extends SimplePage implements HasForms
                 ->send();
 
             throw new Halt(trans('installer.exceptions.create_user'));
+        }
+    }
+
+    public function installEggs(EggImporterService $eggImporterService): void
+    {
+        try {
+            $selectedEggs = array_get($this->data, 'eggs', []);
+            $queueDriver = Config::get('queue.default');
+
+            if ($queueDriver !== 'sync') {
+                foreach ($selectedEggs as $category => $eggs) {
+                    foreach ($eggs as $downloadUrl) {
+                        InstallEgg::dispatch($downloadUrl);
+                    }
+                }
+
+                Notification::make()
+                    ->title(trans('installer.egg.background_install_started', ['count' => array_sum(array_map('count', $selectedEggs))]))
+                    ->body(trans('installer.egg.background_install_description'))
+                    ->success()
+                    ->persistent()
+                    ->send();
+
+                return;
+            }
+
+            // For synchronous installs we need to increase PHP execution time limits
+            if (function_exists('set_time_limit')) {
+                @set_time_limit(0);
+            }
+
+            @ini_set('max_execution_time', '0');
+            @ignore_user_abort(true);
+
+            foreach ($selectedEggs as $category => $eggs) {
+                foreach ($eggs as $downloadUrl) {
+                    $eggImporterService->fromUrl($downloadUrl);
+                }
+            }
+        } catch (\Throwable $t) {
+            report($t);
+
+            Notification::make()
+                ->title(trans('installer.egg.exceptions.installation_failed'))
+                ->body($t->getMessage())
+                ->danger()
+                ->persistent()
+                ->send();
+
+            throw new Halt(trans('installer.exceptions.installation_failed'));
         }
     }
 }

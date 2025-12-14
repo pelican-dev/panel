@@ -61,6 +61,19 @@ return [
             'migration' => 'Migrations failed',
         ],
     ],
+    'egg' => [
+        'title' => 'Eggs',
+        'install_eggs' => 'Install Default Eggs',
+        'install_eggs_help' => 'Would you like to install the default set of eggs provided by Pelican?',
+        'no_eggs_selected' => 'No eggs were selected for installation. Are you sure you want to continue?',
+        'no_eggs' => 'No Eggs Available',
+        'background_install_started' => 'Egg Installation Started',
+        'background_install_description' => 'Egg installation has been queued and will continue in the background.',
+        'exceptions' => [
+            'failed_to_update' => 'Failed to update egg index',
+            'no_eggs' => 'No eggs are available to install at this time.',
+        ],
+    ],
     'session' => [
         'title' => 'Session',
         'driver' => 'Session Driver',
