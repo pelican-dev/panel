@@ -70,7 +70,10 @@ return new class extends Migration
             return;
         }
 
-        // Save the file
+        if ($extension === 'svg+xml') {
+            $extension = 'svg';
+        }
+
         $filename = "{$uuid}.{$extension}";
         $filepath = "{$directory}/{$filename}";
 
