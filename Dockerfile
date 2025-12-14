@@ -2,7 +2,7 @@
 # Pelican Production Dockerfile
 
 ##
-#  If you want to build this locally you want to run `docker build -f Dockerfile.dev`
+#  If you want to build this locally you want to run `docker build -f Dockerfile.dev .`
 ##
 
 # ================================
