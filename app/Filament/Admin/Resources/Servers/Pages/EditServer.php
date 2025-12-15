@@ -6,6 +6,7 @@ use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
 use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManager;
 use App\Filament\Admin\Resources\Servers\ServerResource;
+use App\Filament\Components\Actions\DeleteServerIcon;
 use App\Filament\Components\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Fields\StartupVariable;
 use App\Filament\Components\StateCasts\ServerConditionStateCast;
@@ -233,27 +234,7 @@ class EditServer extends EditRecord
                                                         ->send();
                                                 }
                                             }),
-                                        Action::make('delete_icon')
-                                            ->visible(fn ($record) => $record->icon)
-                                            ->hiddenLabel()
-                                            ->icon('tabler-trash')
-                                            ->iconButton()->iconSize(IconSize::Large)
-                                            ->color('danger')
-                                            ->action(function ($record) {
-                                                foreach (array_keys(Server::IMAGE_FORMATS) as $ext) {
-                                                    $path = Server::ICON_STORAGE_PATH . "/$record->uuid.$ext";
-                                                    if (Storage::disk('public')->exists($path)) {
-                                                        Storage::disk('public')->delete($path);
-                                                    }
-                                                }
-
-                                                Notification::make()
-                                                    ->title(trans('server/setting.server_info.icon.deleted'))
-                                                    ->success()
-                                                    ->send();
-
-                                                $record->refresh();
-                                            }),
+                                        DeleteServerIcon::make(),
                                     ]),
                                 Grid::make()
                                     ->columns(3)

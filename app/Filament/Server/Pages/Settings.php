@@ -4,6 +4,7 @@ namespace App\Filament\Server\Pages;
 
 use App\Enums\SubuserPermission;
 use App\Facades\Activity;
+use App\Filament\Components\Actions\DeleteServerIcon;
 use App\Models\Server;
 use App\Services\Servers\ReinstallServerService;
 use Exception;
@@ -209,27 +210,7 @@ class Settings extends ServerFormPage
                                                         ->send();
                                                 }
                                             }),
-                                        Action::make('delete_icon')
-                                            ->visible(fn ($record) => $record->icon)
-                                            ->label('')
-                                            ->icon('tabler-trash')
-                                            ->iconButton()->iconSize(IconSize::Large)
-                                            ->color('danger')
-                                            ->action(function ($record) {
-                                                foreach (array_keys(Server::IMAGE_FORMATS) as $ext) {
-                                                    $path = Server::ICON_STORAGE_PATH . "/$record->uuid.$ext";
-                                                    if (Storage::disk('public')->exists($path)) {
-                                                        Storage::disk('public')->delete($path);
-                                                    }
-                                                }
-
-                                                Notification::make()
-                                                    ->title(trans('server/setting.server_info.icon.deleted'))
-                                                    ->success()
-                                                    ->send();
-
-                                                $record->refresh();
-                                            }),
+                                        DeleteServerIcon::make(),
                                     ]),
                                 TextInput::make('uuid')
                                     ->label(trans('server/setting.server_info.uuid'))
