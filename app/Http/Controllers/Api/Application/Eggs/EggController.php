@@ -96,11 +96,7 @@ class EggController extends ApplicationApiController
      */
     public function import(ImportEggRequest $request): JsonResponse
     {
-        $format = EggFormat::tryFrom($request->input('format')) ?? EggFormat::YAML;
-
-        $content = $request->getContent(false);
-
-        $egg = $this->importService->fromContent($content, $format, null);
+        $egg = $this->importService->fromContent($request->getContent());
 
         return $this->fractal->item($egg)
             ->transformWith($this->getTransformer(EggTransformer::class))

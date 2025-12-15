@@ -11,11 +11,4 @@ class ImportEggRequest extends ApplicationApiRequest
     protected ?string $resource = Egg::RESOURCE_NAME;
 
     protected int $permission = AdminAcl::WRITE;
-
-    public function rules(): array
-    {
-        return [
-            'format' => 'nullable|string|in:yaml,json',
-        ];
-    }
 }
