@@ -2,34 +2,34 @@
 
 namespace App\Tests\Seeders;
 
+use App\Exceptions\Service\InvalidFileUploadException;
 use App\Services\Eggs\Sharing\EggImporterService;
+use DirectoryIterator;
 use Illuminate\Http\UploadedFile;
+use Throwable;
 
 class EggSeeder
 {
+    /**
+     * @throws InvalidFileUploadException|Throwable
+     */
     public function run(): void
     {
-        $dir = base_path('tests/_fixtures');
-
-        if (!is_dir($dir)) {
-            throw new \RuntimeException('Egg fixtures directory not found at: ' . $dir);
-        }
-
-        $files = glob($dir . DIRECTORY_SEPARATOR . '*.yaml') ?: [];
-
-        if (empty($files)) {
-            throw new \RuntimeException('No egg fixtures found in: ' . $dir);
-        }
-
-        /** @var EggImporterService $importer */
+        // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
         $importer = app(EggImporterService::class);
 
-        foreach ($files as $filePath) {
-            if (!is_file($filePath)) {
+        $path = base_path('tests/_fixtures');
+        $files = new DirectoryIterator($path);
+
+        /** @var DirectoryIterator $file */
+        foreach ($files as $file) {
+            if (!$file->isFile() || !$file->isReadable()) {
                 continue;
             }
 
-            $uploaded = new UploadedFile($filePath, basename($filePath), 'application/yaml', UPLOAD_ERR_OK, true);
+            $filePath = $file->getRealPath();
+            $uploaded = new UploadedFile($filePath, basename($filePath));
+
             $importer->fromFile($uploaded);
         }
     }

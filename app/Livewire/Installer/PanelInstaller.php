@@ -33,7 +33,6 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\HtmlString;
 
 /**
@@ -233,7 +232,7 @@ class PanelInstaller extends SimplePage implements HasForms
     {
         try {
             $selectedEggs = array_get($this->data, 'eggs', []);
-            $queueDriver = Config::get('queue.default');
+            $queueDriver = config('queue.default');
 
             if ($queueDriver !== 'sync') {
                 foreach ($selectedEggs as $category => $eggs) {
@@ -243,8 +242,8 @@ class PanelInstaller extends SimplePage implements HasForms
                 }
 
                 Notification::make()
-                    ->title(trans('installer.egg.background_install_started', ['count' => array_sum(array_map('count', $selectedEggs))]))
-                    ->body(trans('installer.egg.background_install_description'))
+                    ->title(trans('installer.egg.background_install_started'))
+                    ->body(trans('installer.egg.background_install_description', ['count' => array_sum(array_map('count', $selectedEggs))]))
                     ->success()
                     ->persistent()
                     ->send();
@@ -265,17 +264,15 @@ class PanelInstaller extends SimplePage implements HasForms
                     $eggImporterService->fromUrl($downloadUrl);
                 }
             }
-        } catch (\Throwable $t) {
-            report($t);
+        } catch (Exception $exception) {
+            report($exception);
 
             Notification::make()
                 ->title(trans('installer.egg.exceptions.installation_failed'))
-                ->body($t->getMessage())
+                ->body($exception->getMessage())
                 ->danger()
                 ->persistent()
                 ->send();
-
-            throw new Halt(trans('installer.exceptions.installation_failed'));
         }
     }
 }

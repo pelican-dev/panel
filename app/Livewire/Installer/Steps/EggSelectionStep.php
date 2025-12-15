@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Installer\Steps;
 
+use App\Console\Commands\Egg\UpdateEggIndexCommand;
+use Exception;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Tabs;
@@ -14,35 +16,24 @@ class EggSelectionStep
     public static function make(): Step
     {
         try {
-            Artisan::call('p:egg:update-index');
-            $eggs = cache()->get('eggs.index', []);
-        } catch (\Throwable $t) {
+            Artisan::call(UpdateEggIndexCommand::class);
+        } catch (Exception $exception) {
             Notification::make()
                 ->title(trans('installer.egg.exceptions.failed_to_update'))
                 ->icon('tabler-egg')
-                ->body($t->getMessage())
+                ->body($exception->getMessage())
                 ->danger()
                 ->persistent()
                 ->send();
-            $eggs = [];
         }
+
+        $eggs = cache()->get('eggs.index', []);
 
         $categories = array_keys($eggs);
 
         $tabs = array_map(function (string $label) use ($eggs) {
-            $id = str()->slug($label, '_');
+            $id = str_slug($label, '_');
             $eggCount = count($eggs[$label]);
-
-            if ($eggCount === 0) {
-                return Tab::make($id)
-                    ->label($label)
-                    ->schema([
-                        CheckboxList::make("eggs.$id")
-                            ->label('')
-                            ->options(fn () => $eggs[$label])
-                            ->columns(4),
-                    ]);
-            }
 
             return Tab::make($id)
                 ->label($label)
@@ -50,9 +41,9 @@ class EggSelectionStep
                 ->schema([
                     CheckboxList::make("eggs.$id")
                         ->hiddenLabel()
-                        ->options(fn () => $eggs[$label])
-                        ->searchable()
-                        ->bulkToggleable()
+                        ->options(fn () => array_sort($eggs[$label]))
+                        ->searchable($eggCount > 0)
+                        ->bulkToggleable($eggCount > 0)
                         ->columns(4),
                 ]);
         }, $categories);

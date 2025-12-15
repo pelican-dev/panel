@@ -2,8 +2,10 @@
 
 namespace App\Tests;
 
+use App\Tests\Seeders\EggSeeder;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Exception;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -36,15 +38,11 @@ abstract class TestCase extends BaseTestCase
 
         $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        // Run test-only seeders (eggs) when in testing environment. Fail quietly if fixture missing
-        if (app()->environment('testing')) {
-            try {
-                /** @var \App\Tests\Seeders\EggSeeder $seeder */
-                $seeder = new \App\Tests\Seeders\EggSeeder();
-                $seeder->run();
-            } catch (\Throwable $e) {
-                // Don't fail all tests if the fixture/seeder isn't present or import fails.
-            }
+        try {
+            $seeder = new EggSeeder();
+            $seeder->run();
+        } catch (Exception) {
+            // Don't fail all tests if the fixture/ seeder isn't present or import fails.
         }
     }
 
