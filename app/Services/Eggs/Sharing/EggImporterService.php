@@ -10,6 +10,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use JsonException;
 use Ramsey\Uuid\Uuid;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
@@ -242,23 +243,7 @@ class EggImporterService
             default => $extension,
         };
 
-        foreach (array_keys(Egg::IMAGE_FORMATS) as $ext) {
-            $filename = "{$egg->uuid}.{$ext}";
-            $path = storage_path(Egg::ICON_STORAGE_PATH . "/{$filename}");
-            if (file_exists($path)) {
-                unlink($path);
-            }
-        }
-
-        $directory = storage_path(Egg::ICON_STORAGE_PATH);
-        if (!file_exists($directory)) {
-            mkdir($directory, 0755, true);
-        }
-
-        $filename = "{$egg->uuid}.{$normalizedExtension}";
-        $filepath = "{$directory}/{$filename}";
-
-        file_put_contents($filepath, $data);
+        Storage::disk('public')->put(Egg::ICON_STORAGE_PATH . "/$egg->uuid.$normalizedExtension", $data);
     }
 
     /**

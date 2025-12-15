@@ -7,6 +7,7 @@ use App\Models\Egg;
 use App\Models\EggVariable;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Yaml\Yaml;
 
 class EggExporterService
@@ -67,14 +68,12 @@ class EggExporterService
     private function getEggImageAsBase64(Egg $egg): ?string
     {
         foreach (array_keys(Egg::IMAGE_FORMATS) as $ext) {
-            $filename = "{$egg->uuid}.{$ext}";
-            $path = storage_path(Egg::ICON_STORAGE_PATH . "/{$filename}");
+            $path = Egg::ICON_STORAGE_PATH . "/$egg->uuid.$ext";
 
-            if (file_exists($path)) {
-                $data = file_get_contents($path);
+            if (Storage::disk('public')->exists($path)) {
                 $mimeType = Egg::IMAGE_FORMATS[$ext];
 
-                return 'data:' . $mimeType . ';base64,' . base64_encode($data);
+                return 'data:' . $mimeType . ';base64,' . base64_encode(Storage::disk('public')->get($path));
             }
         }
 

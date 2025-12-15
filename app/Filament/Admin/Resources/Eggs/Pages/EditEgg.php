@@ -38,6 +38,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Unique;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -103,13 +104,13 @@ class EditEgg extends EditRecord
 
                                                                         try {
                                                                             if (!filter_var($state, FILTER_VALIDATE_URL)) {
-                                                                                throw new \Exception(trans('admin/egg.import.invalid_url'));
+                                                                                throw new Exception(trans('admin/egg.import.invalid_url'));
                                                                             }
 
                                                                             $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
 
                                                                             if (!array_key_exists($extension, Egg::IMAGE_FORMATS)) {
-                                                                                throw new \Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', Egg::IMAGE_FORMATS)]));
+                                                                                throw new Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', Egg::IMAGE_FORMATS)]));
                                                                             }
 
                                                                             $host = parse_url($state, PHP_URL_HOST);
@@ -118,14 +119,14 @@ class EditEgg extends EditRecord
                                                                             if (
                                                                                 filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false
                                                                             ) {
-                                                                                throw new \Exception(trans('admin/egg.import.no_local_ip'));
+                                                                                throw new Exception(trans('admin/egg.import.no_local_ip'));
                                                                             }
 
                                                                             $set('imageUrl', $state);
                                                                             $set('imageExtension', $extension);
                                                                             $set('image_url_error', null);
 
-                                                                        } catch (\Exception $e) {
+                                                                        } catch (Exception $e) {
                                                                             $set('image_url_error', $e->getMessage());
                                                                             $set('imageUrl', null);
                                                                             $set('imageExtension', null);
@@ -154,7 +155,7 @@ class EditEgg extends EditRecord
                                                                     ->imageEditor()
                                                                     ->image()
                                                                     ->disk('public')
-                                                                    ->directory('icons/egg')
+                                                                    ->directory(Egg::ICON_STORAGE_PATH)
                                                                     ->acceptedFileTypes([
                                                                         'image/png',
                                                                         'image/jpeg',
@@ -195,19 +196,18 @@ class EditEgg extends EditRecord
                                                         ->send();
                                                 }
                                             }),
-                                        Action::make('deleteImage')
+                                        Action::make('delete_image')
                                             ->visible(fn ($record) => $record->image)
-                                            ->label('')
+                                            ->hiddenLabel()
                                             ->icon('tabler-trash')
                                             ->iconButton()
                                             ->iconSize(IconSize::Large)
                                             ->color('danger')
                                             ->action(function ($record) {
                                                 foreach (array_keys(Egg::IMAGE_FORMATS) as $ext) {
-                                                    $filename = "{$record->uuid}.{$ext}";
-                                                    $path = public_path(Egg::ICON_STORAGE_PATH . "/{$filename}");
-                                                    if (file_exists($path)) {
-                                                        unlink($path);
+                                                    $path = Egg::ICON_STORAGE_PATH . "/$record->uuid.$ext";
+                                                    if (Storage::disk('public')->exists($path)) {
+                                                        Storage::disk('public')->delete($path);
                                                     }
                                                 }
 
@@ -473,23 +473,16 @@ class EditEgg extends EditRecord
         $data = @file_get_contents($imageUrl, false, $context, 0, 1048576); // 1024KB
 
         if (empty($data)) {
-            throw new \Exception(trans('admin/egg.import.invalid_url'));
+            throw new Exception(trans('admin/egg.import.invalid_url'));
         }
 
-        $normalizedExtension = ($extension === 'jpeg') ? 'jpg' : $extension;
-        $directory = storage_path(Egg::ICON_STORAGE_PATH);
+        $normalizedExtension = match ($extension) {
+            'svg+xml' => 'svg',
+            'jpeg' => 'jpg',
+            default => $extension,
+        };
 
-        foreach (array_keys(Egg::IMAGE_FORMATS) as $ext) {
-            $existingPath = "{$directory}/{$egg->uuid}.{$ext}";
-            if (file_exists($existingPath)) {
-                unlink($existingPath);
-            }
-        }
-
-        $filename = "{$egg->uuid}.{$normalizedExtension}";
-        $filepath = "{$directory}/{$filename}";
-
-        file_put_contents($filepath, $data);
+        Storage::disk('public')->put(Egg::ICON_STORAGE_PATH . "/$egg->uuid.$normalizedExtension", $data);
     }
 
     protected function getFormActions(): array

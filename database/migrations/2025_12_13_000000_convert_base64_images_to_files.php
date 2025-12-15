@@ -1,9 +1,12 @@
 <?php
 
+use App\Models\Egg;
+use App\Models\Server;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 
 return new class extends Migration
 {
@@ -12,28 +15,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $eggIconsPath = public_path('storage/icons/egg');
-        $serverIconsPath = public_path('storage/icons/server');
-
-        if (!file_exists($eggIconsPath)) {
-            mkdir($eggIconsPath, 0755, true);
-        }
-
-        if (!file_exists($serverIconsPath)) {
-            mkdir($serverIconsPath, 0755, true);
-        }
-
         $eggs = DB::table('eggs')->whereNotNull('image')->get();
         foreach ($eggs as $egg) {
             if (!empty($egg->image) && str_starts_with($egg->image, 'data:')) {
-                $this->convertBase64ToFile($egg->image, $egg->uuid, $eggIconsPath);
+                $this->convertBase64ToFile($egg->image, $egg->uuid, Egg::ICON_STORAGE_PATH);
             }
         }
 
         $servers = DB::table('servers')->whereNotNull('icon')->get();
         foreach ($servers as $server) {
             if (!empty($server->icon) && str_starts_with($server->icon, 'data:')) {
-                $this->convertBase64ToFile($server->icon, $server->uuid, $serverIconsPath);
+                $this->convertBase64ToFile($server->icon, $server->uuid, Server::ICON_STORAGE_PATH);
             }
         }
 
@@ -70,13 +62,12 @@ return new class extends Migration
             return;
         }
 
-        if ($extension === 'svg+xml') {
-            $extension = 'svg';
-        }
+        $normalizedExtension = match ($extension) {
+            'svg+xml' => 'svg',
+            'jpeg' => 'jpg',
+            default => $extension,
+        };
 
-        $filename = "{$uuid}.{$extension}";
-        $filepath = "{$directory}/{$filename}";
-
-        file_put_contents($filepath, $data);
+        Storage::disk('public')->put("$directory/$uuid.$normalizedExtension", $data);
     }
 };

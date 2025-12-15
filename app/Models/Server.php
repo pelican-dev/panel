@@ -30,6 +30,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -146,7 +147,7 @@ class Server extends Model implements HasAvatar, Validatable
     /**
      * Path to store server icons relative to storage path.
      */
-    public const ICON_STORAGE_PATH = 'storage/icons/server';
+    public const ICON_STORAGE_PATH = 'icons/server';
 
     /**
      * Supported image formats: file extension => MIME type
@@ -535,12 +536,10 @@ class Server extends Model implements HasAvatar, Validatable
 
     public function getIconAttribute(): ?string
     {
-        foreach (array_keys(self::IMAGE_FORMATS) as $ext) {
-            $filename = "{$this->uuid}.{$ext}";
-            $path = self::ICON_STORAGE_PATH . "/{$filename}";
-
-            if (file_exists(public_path($path))) {
-                return asset($path);
+        foreach (array_keys(static::IMAGE_FORMATS) as $ext) {
+            $path = static::ICON_STORAGE_PATH . "/$this->uuid.$ext";
+            if (Storage::disk('public')->exists($path)) {
+                return url($path);
             }
         }
 
@@ -549,16 +548,6 @@ class Server extends Model implements HasAvatar, Validatable
 
     public function getFilamentAvatarUrl(): ?string
     {
-        foreach (array_keys(self::IMAGE_FORMATS) as $ext) {
-            $filename = "{$this->uuid}.{$ext}";
-            $path = self::ICON_STORAGE_PATH . "/{$filename}";
-
-            if (file_exists(public_path($path))) {
-                return asset($path);
-            }
-        }
-
-        return $this->egg->image;
-
+        return $this->icon ?? $this->egg->image;
     }
 }

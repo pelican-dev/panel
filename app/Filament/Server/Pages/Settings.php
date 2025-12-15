@@ -25,6 +25,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class Settings extends ServerFormPage
@@ -208,7 +209,7 @@ class Settings extends ServerFormPage
                                                         ->send();
                                                 }
                                             }),
-                                        Action::make('deleteIcon')
+                                        Action::make('delete_icon')
                                             ->visible(fn ($record) => $record->icon)
                                             ->label('')
                                             ->icon('tabler-trash')
@@ -216,10 +217,9 @@ class Settings extends ServerFormPage
                                             ->color('danger')
                                             ->action(function ($record) {
                                                 foreach (array_keys(Server::IMAGE_FORMATS) as $ext) {
-                                                    $filename = "{$record->uuid}.{$ext}";
-                                                    $path = public_path(Server::ICON_STORAGE_PATH . "/{$filename}");
-                                                    if (file_exists($path)) {
-                                                        unlink($path);
+                                                    $path = Server::ICON_STORAGE_PATH . "/$record->uuid.$ext";
+                                                    if (Storage::disk('public')->exists($path)) {
+                                                        Storage::disk('public')->delete($path);
                                                     }
                                                 }
 
@@ -485,20 +485,13 @@ class Settings extends ServerFormPage
             throw new \Exception(trans('admin/egg.import.invalid_url'));
         }
 
-        $normalizedExtension = ($extension === 'jpeg') ? 'jpg' : $extension;
-        $directory = public_path(Server::ICON_STORAGE_PATH);
+        $normalizedExtension = match ($extension) {
+            'svg+xml' => 'svg',
+            'jpeg' => 'jpg',
+            default => $extension,
+        };
 
-        foreach (array_keys(Server::IMAGE_FORMATS) as $ext) {
-            $existingPath = "{$directory}/{$server->uuid}.{$ext}";
-            if (file_exists($existingPath)) {
-                unlink($existingPath);
-            }
-        }
-
-        $filename = "{$server->uuid}.{$normalizedExtension}";
-        $filepath = "{$directory}/{$filename}";
-
-        file_put_contents($filepath, $data);
+        Storage::disk('public')->put(Server::ICON_STORAGE_PATH . "/$server->uuid.$normalizedExtension", $data);
     }
 
     public function getTitle(): string

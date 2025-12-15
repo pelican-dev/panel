@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -76,7 +77,7 @@ class Egg extends Model implements Validatable
     /**
      * Path to store egg icons relative to storage path.
      */
-    public const ICON_STORAGE_PATH = 'storage/icons/egg';
+    public const ICON_STORAGE_PATH = 'icons/egg';
 
     /**
      * Supported image formats: file extension => MIME type
@@ -346,12 +347,10 @@ class Egg extends Model implements Validatable
 
     public function getImageAttribute(): ?string
     {
-        foreach (array_keys(self::IMAGE_FORMATS) as $ext) {
-            $filename = "{$this->uuid}.{$ext}";
-            $path = self::ICON_STORAGE_PATH . "/{$filename}";
-
-            if (file_exists(public_path($path))) {
-                return asset($path);
+        foreach (array_keys(static::IMAGE_FORMATS) as $ext) {
+            $path = static::ICON_STORAGE_PATH . "/$this->uuid.$ext";
+            if (Storage::disk('public')->exists($path)) {
+                return url($path);
             }
         }
 
