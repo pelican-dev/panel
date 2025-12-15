@@ -74,7 +74,7 @@ class Egg extends Model implements Validatable
     public const EXPORT_VERSION = 'PLCN_v3';
 
     /**
-     * Path to store egg icons relative to public path.
+     * Path to store egg icons relative to storage path.
      */
     public const ICON_STORAGE_PATH = 'storage/icons/egg';
 

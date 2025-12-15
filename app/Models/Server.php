@@ -144,7 +144,7 @@ class Server extends Model implements HasAvatar, Validatable
     public const RESOURCE_NAME = 'server';
 
     /**
-     * Path to store server icons relative to public path.
+     * Path to store server icons relative to storage path.
      */
     public const ICON_STORAGE_PATH = 'storage/icons/server';
 

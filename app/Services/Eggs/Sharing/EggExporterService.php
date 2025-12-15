@@ -68,7 +68,7 @@ class EggExporterService
     {
         foreach (array_keys(Egg::IMAGE_FORMATS) as $ext) {
             $filename = "{$egg->uuid}.{$ext}";
-            $path = public_path(Egg::ICON_STORAGE_PATH . "/{$filename}");
+            $path = storage_path(Egg::ICON_STORAGE_PATH . "/{$filename}");
 
             if (file_exists($path)) {
                 $data = file_get_contents($path);

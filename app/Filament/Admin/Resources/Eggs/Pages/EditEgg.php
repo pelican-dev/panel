@@ -203,7 +203,6 @@ class EditEgg extends EditRecord
                                             ->iconSize(IconSize::Large)
                                             ->color('danger')
                                             ->action(function ($record) {
-                                                // Delete the image file
                                                 foreach (array_keys(Egg::IMAGE_FORMATS) as $ext) {
                                                     $filename = "{$record->uuid}.{$ext}";
                                                     $path = public_path(Egg::ICON_STORAGE_PATH . "/{$filename}");
@@ -478,7 +477,7 @@ class EditEgg extends EditRecord
         }
 
         $normalizedExtension = ($extension === 'jpeg') ? 'jpg' : $extension;
-        $directory = public_path(Egg::ICON_STORAGE_PATH);
+        $directory = storage_path(Egg::ICON_STORAGE_PATH);
 
         foreach (array_keys(Egg::IMAGE_FORMATS) as $ext) {
             $existingPath = "{$directory}/{$egg->uuid}.{$ext}";

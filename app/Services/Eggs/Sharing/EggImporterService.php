@@ -244,13 +244,13 @@ class EggImporterService
 
         foreach (array_keys(Egg::IMAGE_FORMATS) as $ext) {
             $filename = "{$egg->uuid}.{$ext}";
-            $path = public_path(Egg::ICON_STORAGE_PATH . "/{$filename}");
+            $path = storage_path(Egg::ICON_STORAGE_PATH . "/{$filename}");
             if (file_exists($path)) {
                 unlink($path);
             }
         }
 
-        $directory = public_path(Egg::ICON_STORAGE_PATH);
+        $directory = storage_path(Egg::ICON_STORAGE_PATH);
         if (!file_exists($directory)) {
             mkdir($directory, 0755, true);
         }
