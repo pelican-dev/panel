@@ -3,13 +3,13 @@
 namespace App\Jobs;
 
 use App\Services\Eggs\Sharing\EggImporterService;
-use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class InstallEgg implements ShouldQueue
 {
@@ -17,23 +17,26 @@ class InstallEgg implements ShouldQueue
 
     public string $downloadUrl;
 
-    public ?int $tries = 3;
-
-    public ?int $timeout = 60;
+    public int $timeout = 15;
 
     public function __construct(string $downloadUrl)
     {
         $this->downloadUrl = $downloadUrl;
     }
 
+    /**
+     * @throws Throwable
+     */
     public function handle(EggImporterService $eggImporterService): void
     {
         try {
             $eggImporterService->fromUrl($this->downloadUrl);
-        } catch (Exception $exception) {
-            Log::error('InstallEgg job failed for ' . $this->downloadUrl . ': ' . $exception->getMessage());
-
-            throw $exception;
+        } catch (Throwable $e) {
+            Log::error('InstallEgg job failed.', [
+                'downloadUrl' => $this->downloadUrl,
+                'exception' => $e->getMessage(),
+            ]);
+            throw $e;
         }
     }
 }

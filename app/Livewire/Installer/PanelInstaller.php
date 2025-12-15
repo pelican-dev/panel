@@ -182,6 +182,7 @@ class PanelInstaller extends SimplePage implements HasForms
         try {
             Artisan::call('migrate', [
                 '--force' => true,
+                '--seed' => true,
             ]);
         } catch (Exception $exception) {
             report($exception);
