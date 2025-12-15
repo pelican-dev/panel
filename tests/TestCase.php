@@ -35,6 +35,17 @@ abstract class TestCase extends BaseTestCase
         $this->setKnownUuidFactory();
 
         $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        // Run test-only seeders (eggs) when in testing environment. Fail quietly if fixture missing
+        if (app()->environment('testing')) {
+            try {
+                /** @var \App\Tests\Seeders\EggSeeder $seeder */
+                $seeder = new \App\Tests\Seeders\EggSeeder();
+                $seeder->run();
+            } catch (\Throwable $e) {
+                // Don't fail all tests if the fixture/seeder isn't present or import fails.
+            }
+        }
     }
 
     /**
