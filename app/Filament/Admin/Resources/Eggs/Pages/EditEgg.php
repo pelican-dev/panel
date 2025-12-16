@@ -110,7 +110,7 @@ class EditEgg extends EditRecord
                                                                             $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
 
                                                                             if (!array_key_exists($extension, Egg::IMAGE_FORMATS)) {
-                                                                                throw new Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', Egg::IMAGE_FORMATS)]));
+                                                                                throw new Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', array_keys(Egg::IMAGE_FORMATS))]));
                                                                             }
 
                                                                             $host = parse_url($state, PHP_URL_HOST);
