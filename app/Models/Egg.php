@@ -350,7 +350,7 @@ class Egg extends Model implements Validatable
         foreach (array_keys(static::IMAGE_FORMATS) as $ext) {
             $path = static::ICON_STORAGE_PATH . "/$this->uuid.$ext";
             if (Storage::disk('public')->exists($path)) {
-                return url($path);
+                return Storage::disk('public')->url($path);
             }
         }
 
