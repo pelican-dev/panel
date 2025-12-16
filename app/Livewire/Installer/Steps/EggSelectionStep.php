@@ -5,6 +5,7 @@ namespace App\Livewire\Installer\Steps;
 use App\Console\Commands\Egg\UpdateEggIndexCommand;
 use Exception;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -52,7 +53,9 @@ class EggSelectionStep
             $tabs[] = Tab::make('no_eggs')
                 ->label(trans('installer.egg.no_eggs'))
                 ->schema([
-                    trans('installer.egg.exceptions.no_eggs'),
+                    TextEntry::make('no_eggs')
+                        ->hiddenLabel()
+                        ->state(trans('installer.egg.exceptions.no_eggs')),
                 ]);
         }
 
