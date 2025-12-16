@@ -171,7 +171,7 @@ class Settings extends ServerFormPage
                                                                     ->imageEditor()
                                                                     ->image()
                                                                     ->disk('public')
-                                                                    ->directory('icons/server')
+                                                                    ->directory(Server::ICON_STORAGE_PATH)
                                                                     ->acceptedFileTypes([
                                                                         'image/png',
                                                                         'image/jpeg',
