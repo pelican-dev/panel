@@ -16,12 +16,13 @@ class SubUserAddedListener
         $event->subuser->loadMissing('user');
 
         Notification::make()
-            ->title(trans('notifications.user_added.title'))
-            ->body(trans('notifications.user_added.body', ['server' => $event->subuser->server->name]))
+            ->title(trans('notifications.user_added.title', locale: $event->subuser->user->language))
+            ->body(trans('notifications.user_added.body', ['server' => $event->subuser->server->name], $event->subuser->user->language))
             ->actions([
                 Action::make('view')
                     ->button()
-                    ->label(trans('notifications.open_server'))
+                    ->label('notifications.open_server')
+                    ->translateLabel()
                     ->markAsRead()
                     ->url(fn () => Console::getUrl(panel: 'server', tenant: $event->subuser->server)),
             ])

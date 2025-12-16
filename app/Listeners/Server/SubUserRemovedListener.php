@@ -11,8 +11,8 @@ class SubUserRemovedListener
     public function handle(SubUserRemoved $event): void
     {
         Notification::make()
-            ->title(trans('notifications.user_removed.title'))
-            ->body(trans('notifications.user_removed.body', ['server' => $event->server->name]))
+            ->title(trans('notifications.user_removed.title', locale: $event->user->language))
+            ->body(trans('notifications.user_removed.body', ['server' => $event->server->name], $event->user->language))
             ->sendToDatabase($event->user);
 
         $event->user->notify(new RemovedFromServer($event->server));

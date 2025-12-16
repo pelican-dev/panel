@@ -16,12 +16,13 @@ class ServerInstalledListener
 
         Notification::make()
             ->status($event->successful ? 'success' : 'danger')
-            ->title(trans('notifications.' . ($event->initialInstall ? 'installation' : 'reinstallation') . '_' . ($event->successful ? 'completed' : 'failed')))
-            ->body(trans('server/setting.server_info.server_name', ['name' => $event->server->name]))
+            ->title(trans('notifications.' . ($event->initialInstall ? 'installation' : 'reinstallation') . '_' . ($event->successful ? 'completed' : 'failed'), locale: $event->server->user->language))
+            ->body(trans('server/setting.server_info.server_name', ['name' => $event->server->name], $event->server->user->language))
             ->actions([
                 Action::make('view')
                     ->button()
-                    ->label(trans('notifications.open_server'))
+                    ->label('notifications.open_server')
+                    ->translateLabel()
                     ->markAsRead()
                     ->url(fn () => Console::getUrl(panel: 'server', tenant: $event->server)),
             ])
