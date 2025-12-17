@@ -13,7 +13,7 @@ enum EditorLanguages: string implements HasLabel
     case bat = 'bat';
     case bicep = 'bicep';
     case cameligo = 'cameligo';
-    case coljure = 'coljure';
+    case clojure = 'clojure';
     case coffeescript = 'coffeescript';
     case c = 'c';
     case cpp = 'cpp';

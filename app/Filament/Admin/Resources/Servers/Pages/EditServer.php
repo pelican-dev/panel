@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\Servers\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
-use App\Enums\EditorLanguages;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
 use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManager;
@@ -30,7 +29,6 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
@@ -305,8 +303,10 @@ class EditServer extends EditRecord
                                                     ->modalFooterActionsAlignment(Alignment::Right)
                                                     ->modalCancelActionLabel(trans('filament::components/modal.actions.close.label'))
                                                     ->schema([
-                                                        CodeEditor::make('logs')
+                                                        MonacoEditor::make('logs')
                                                             ->hiddenLabel()
+                                                            ->view('filament.components.monaco-editor')
+                                                            ->showFullScreenToggle(false) // Kinda buggy with Filament's layout
                                                             ->formatStateUsing(function (Server $server, DaemonServerRepository $serverRepository) {
                                                                 try {
                                                                     $logs = $serverRepository->setServer($server)->getInstallLogs();
