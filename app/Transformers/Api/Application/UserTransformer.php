@@ -31,6 +31,7 @@ class UserTransformer extends BaseTransformer
         return [
             'id' => $user->id,
             'external_id' => $user->external_id,
+            'is_managed_externally' => $user->is_managed_externally,
             'uuid' => $user->uuid,
             'username' => $user->username,
             'email' => $user->email,
