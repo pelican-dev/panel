@@ -2,6 +2,7 @@
 
 namespace App\Filament\Components\Forms\Fields;
 
+use App\Enums\EditorLanguages;
 use Closure;
 use Exception;
 use Filament\Forms\Components\Field;
@@ -16,7 +17,7 @@ class MonacoEditor extends Field
 
     public string|Closure $fontSize = '15px';
 
-    public string|Closure $language = 'html';
+    public EditorLanguages $language = EditorLanguages::html;
 
     public bool|Closure $enablePreview = true;
 
@@ -59,13 +60,8 @@ class MonacoEditor extends Field
      *
      * Set the language for the editor: html|javascript|css|php|vue|...
      */
-    public function language(string|Closure $lang = 'html'): static
+    public function language(EditorLanguages|Closure $lang = EditorLanguages::html): static
     {
-        if ($lang === 'blade' || $lang === 'blade.php') {
-            // Since Monaco does not ship with a Blade language, we rewrite it to HTML to get at least some highlighting.
-            $lang = 'html';
-        }
-
         $this->language = $lang;
 
         return $this;
@@ -154,7 +150,7 @@ class MonacoEditor extends Field
 
     // -----------------------
 
-    public function getLanguage(): string
+    public function getLanguage(): EditorLanguages
     {
         return $this->evaluate($this->language);
     }
@@ -164,7 +160,7 @@ class MonacoEditor extends Field
         return (bool) $this->evaluate($this->showLoader);
     }
 
-    public function getFontSize(): int
+    public function getFontSize(): string
     {
         return $this->evaluate($this->fontSize);
     }
