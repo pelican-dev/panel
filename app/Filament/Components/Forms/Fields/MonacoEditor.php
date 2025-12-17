@@ -17,7 +17,7 @@ class MonacoEditor extends Field
 
     public string|Closure $fontSize = '15px';
 
-    public EditorLanguages $language = EditorLanguages::html;
+    public EditorLanguages|Closure $language = EditorLanguages::html;
 
     public bool|Closure $enablePreview = true;
 
@@ -57,8 +57,6 @@ class MonacoEditor extends Field
 
     /**
      * @return $this
-     *
-     * Set the language for the editor: html|javascript|css|php|vue|...
      */
     public function language(EditorLanguages|Closure $lang = EditorLanguages::html): static
     {
