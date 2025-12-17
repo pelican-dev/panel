@@ -2,12 +2,12 @@
 
 namespace App\Filament\Admin\Resources\Eggs\Pages;
 
-use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\EditorLanguages;
 use App\Filament\Admin\Resources\Eggs\EggResource;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
 use App\Filament\Components\Forms\Fields\CopyFrom;
+use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Models\Egg;
 use App\Models\EggVariable;
 use App\Traits\Filament\CanCustomizeHeaderActions;

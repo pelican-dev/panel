@@ -2,11 +2,11 @@
 
 namespace App\Filament\Server\Resources\Files\Pages;
 
-use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\EditorLanguages;
 use App\Enums\SubuserPermission;
 use App\Exceptions\Repository\FileExistsException;
 use App\Facades\Activity;
+use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\Files\FileResource;

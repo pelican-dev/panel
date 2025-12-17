@@ -2,13 +2,13 @@
 
 namespace App\Filament\Admin\Resources\Servers\Pages;
 
-use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
 use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManager;
 use App\Filament\Admin\Resources\Servers\ServerResource;
 use App\Filament\Components\Actions\DeleteServerIcon;
 use App\Filament\Components\Actions\PreviewStartupAction;
+use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Filament\Components\Forms\Fields\StartupVariable;
 use App\Filament\Components\StateCasts\ServerConditionStateCast;
 use App\Filament\Server\Pages\Console;

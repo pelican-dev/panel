@@ -2,12 +2,12 @@
 
 namespace App\Filament\Server\Resources\Files\Pages;
 
-use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\EditorLanguages;
 use App\Enums\SubuserPermission;
 use App\Exceptions\Http\Server\FileSizeTooLargeException;
 use App\Exceptions\Repository\FileNotEditableException;
 use App\Facades\Activity;
+use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Filament\Server\Resources\Files\FileResource;
 use App\Livewire\AlertBanner;
 use App\Models\File;

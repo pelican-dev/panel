@@ -9,7 +9,6 @@
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "ext-zip": "*",
-        "abdelhamiderrahmouni/filament-monaco-editor": "dev-main",
         "aws/aws-sdk-php": "^3.356",
         "calebporzio/sushi": "^2.5",
         "dedoc/scramble": "^0.12.10",
