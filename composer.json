@@ -32,6 +32,7 @@
         "socialiteproviders/authentik": "^5.2",
         "socialiteproviders/discord": "^4.2",
         "socialiteproviders/steam": "^4.3",
+        "kovah/laravel-socialite-oidc": "^0.5",
         "spatie/laravel-data": "^4.17",
         "spatie/laravel-fractal": "^6.3",
         "spatie/laravel-health": "^1.34",

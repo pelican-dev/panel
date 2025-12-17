@@ -7,6 +7,7 @@ use App\Extensions\OAuth\Schemas\AuthentikSchema;
 use App\Extensions\OAuth\Schemas\BitbucketSchema;
 use App\Extensions\OAuth\Schemas\DiscordSchema;
 use App\Extensions\OAuth\Schemas\FacebookSchema;
+use App\Extensions\OAuth\Schemas\GenericOidcSchema;
 use App\Extensions\OAuth\Schemas\GithubSchema;
 use App\Extensions\OAuth\Schemas\GitlabSchema;
 use App\Extensions\OAuth\Schemas\GoogleSchema;
@@ -37,6 +38,9 @@ class OAuthServiceProvider extends ServiceProvider
             $service->register(new AuthentikSchema());
             $service->register(new DiscordSchema());
             $service->register(new SteamSchema());
+
+            // Generic OIDC provider
+            $service->register(new GenericOidcSchema());
 
             return $service;
         });
