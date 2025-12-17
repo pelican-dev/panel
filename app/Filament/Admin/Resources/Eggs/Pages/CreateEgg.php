@@ -273,7 +273,7 @@ class CreateEgg extends CreateRecord
                                 ->label(trans('admin/egg.script_install'))
                                 ->view('filament.components.monaco-editor')
                                 ->showFullScreenToggle(false) // Kinda buggy with Filament's layout
-                                ->language(EditorLanguages::shell->value)
+                                ->language(EditorLanguages::shell)
                                 ->columnSpanFull()
                                 ->lazy(),
                         ]),
