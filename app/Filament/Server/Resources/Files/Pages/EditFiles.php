@@ -144,6 +144,8 @@ class EditFiles extends Page
                         MonacoEditor::make('editor')
                             ->hiddenLabel()
                             ->language(fn (Get $get) => $get('lang'))
+                            ->view('filament.components.monaco-editor')
+                            ->showFullScreenToggle(true) // Broken
                             ->default(function () {
                                 try {
                                     $contents = $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
