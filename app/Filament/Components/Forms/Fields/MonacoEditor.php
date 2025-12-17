@@ -40,7 +40,7 @@ class MonacoEditor extends Field
     /*
      *  Default theme for the editor, change theme from config.
      */
-    public function editorTheme()
+    public function editorTheme(): string
     {
         if (!isset(config('monaco-editor.themes')[$this->theme])) {
             throw new Exception("Theme {$this->theme} not found in config file.");
@@ -72,7 +72,6 @@ class MonacoEditor extends Field
     }
 
     /**
-     * @param  bool|Closure  $show
      * @return $this
      *
      * Show/Hide loader when editor is loading.
@@ -121,7 +120,6 @@ class MonacoEditor extends Field
     }
 
     /**
-     * @param  bool|Closure  $value
      * @return $this
      *
      * Enable/Disable automatic layout.
@@ -140,7 +138,7 @@ class MonacoEditor extends Field
         return $this;
     }
 
-    public function hideFullScreenButton()
+    public function hideFullScreenButton(): static
     {
         $this->showFullScreenToggle = false;
 
@@ -156,32 +154,32 @@ class MonacoEditor extends Field
 
     // -----------------------
 
-    public function getLanguage()
+    public function getLanguage(): string
     {
         return $this->evaluate($this->language);
     }
 
-    public function getShowLoader()
+    public function getShowLoader(): bool
     {
         return (bool) $this->evaluate($this->showLoader);
     }
 
-    public function getFontSize()
+    public function getFontSize(): int
     {
         return $this->evaluate($this->fontSize);
     }
 
-    public function getLineNumbersMinChars()
+    public function getLineNumbersMinChars(): int
     {
         return (int) $this->evaluate($this->lineNumbersMinChars);
     }
 
-    public function getAutomaticLayout()
+    public function getAutomaticLayout(): bool
     {
         return (bool) $this->evaluate($this->automaticLayout);
     }
 
-    public function getShowFullScreenToggle()
+    public function getShowFullScreenToggle(): bool
     {
         return (bool) $this->evaluate($this->showFullScreenToggle);
     }

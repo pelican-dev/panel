@@ -95,7 +95,7 @@
                             verticalScrollbarSize: 15
                         },
                         wordWrap: 'on',
-                        WrappingIndent: 'same',
+                        wrappingIndent: 'same',
                     });
                     $el.style.zIndex = '1';
                     monacoEditor(document.getElementById(monacoId).editor);
