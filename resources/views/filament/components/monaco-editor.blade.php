@@ -19,8 +19,6 @@
         fullScreenModeEnabled: false,
         showPreview: false,
         monacoLanguage: '{{ $getLanguage() }}',
-        monacoPlaceholder: {{ (int) $getShowPlaceholder() }},
-        monacoPlaceholderText: '{{ $getPlaceholderText() }}',
         monacoLoader: {{ (int) $getShowLoader() }},
         monacoFontSize: '{{ $getFontSize() }}',
         lineNumbersMinChars: {{ $getLineNumbersMinChars() }},
@@ -38,24 +36,7 @@
         monacoEditor(editor){
             editor.onDidChangeModelContent((e) => {
                 this.monacoContent = editor.getValue();
-                this.updatePlaceholder(editor.getValue());
             });
-
-            editor.onDidBlurEditorWidget(() => {
-                this.updatePlaceholder(editor.getValue());
-            });
-
-            editor.onDidFocusEditorWidget(() => {
-                this.updatePlaceholder(editor.getValue());
-            });
-        },
-
-        updatePlaceholder: function(value) {
-            if (value == '') {
-                this.monacoPlaceholder = true;
-                return;
-            }
-            this.monacoPlaceholder = false;
         },
 
         monacoEditorFocus(){
@@ -71,12 +52,7 @@
         },
 
         wrapPreview(value){
-            return `<head>{{ $getPreviewHeadEndContent() }}</head>` +
-            `&lt;body {{ $getPreviewBodyAttributes() }}&gt;` +
-            `{{ $getPreviewBodyStartContent() }}` +
-            `${value}` +
-            `{{ $getPreviewBodyEndContent() }}` +
-            `&lt;/body&gt;`;
+            return `${value}`;
         },
 
     }" x-init="
