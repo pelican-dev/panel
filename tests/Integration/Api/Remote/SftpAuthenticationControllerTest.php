@@ -3,8 +3,8 @@
 namespace App\Tests\Integration\Api\Remote;
 
 use App\Enums\ServerState;
+use App\Enums\SubuserPermission;
 use App\Models\Node;
-use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Server;
 use App\Models\User;
@@ -135,7 +135,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
 
     public function test_request_is_denied_if_user_lacks_sftp_permission(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_FILE_READ]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::FileRead]);
 
         $user->update(['password' => password_hash('foobar', PASSWORD_DEFAULT)]);
 
@@ -163,7 +163,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
      */
     public function test_user_permissions_are_returned_correctly(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_FILE_READ, Permission::ACTION_FILE_SFTP]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::FileRead, SubuserPermission::FileSftp]);
 
         $user->update(['password' => password_hash('foobar', PASSWORD_DEFAULT)]);
 
@@ -176,7 +176,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
 
         $this->postJson('/api/remote/sftp/auth', $data)
             ->assertOk()
-            ->assertJsonPath('permissions', [Permission::ACTION_FILE_READ, Permission::ACTION_FILE_SFTP]);
+            ->assertJsonPath('permissions', [SubuserPermission::FileRead->value, SubuserPermission::FileSftp->value]);
 
         $user->syncRoles(Role::getRootAdmin());
 

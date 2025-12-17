@@ -413,6 +413,7 @@ class CreateServer extends CreateRecord
                             Select::make('select_startup')
                                 ->label(trans('admin/server.startup_cmd'))
                                 ->hidden(fn (Get $get) => $get('egg_id') === null)
+                                ->required()
                                 ->live()
                                 ->afterStateUpdated(fn (Set $set, $state) => $set('startup', $state))
                                 ->options(function ($state, Get $get, Set $set) {
@@ -426,7 +427,7 @@ class CreateServer extends CreateRecord
                                         $set('select_startup', $currentStartup);
                                     }
 
-                                    return array_flip($startups) + ['' => 'Custom Startup'];
+                                    return array_flip($startups) + ['custom' => 'Custom Startup'];
                                 })
                                 ->selectablePlaceholder(false)
                                 ->columnSpanFull(),
@@ -444,7 +445,7 @@ class CreateServer extends CreateRecord
                                     if (in_array($state, $startups)) {
                                         $set('select_startup', $state);
                                     } else {
-                                        $set('select_startup', '');
+                                        $set('select_startup', 'custom');
                                     }
                                 })
                                 ->placeholder(trans('admin/server.startup_placeholder'))

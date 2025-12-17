@@ -10,6 +10,8 @@ return [
     'username' => 'Username',
     'password' => 'Password',
     'external_id' => 'External ID',
+    'is_managed_externally' => 'Is managed externally?',
+    'is_managed_externally_helper' => 'If your users are managed by external software (e.g. a billing software) you may enable this to prevent users from changing their username, e-mail and password from within the panel.',
     'password_help' => 'Providing a user password is optional. New user email will prompt users to create a password the first time they login.',
     'admin_roles' => 'Admin Roles',
     'roles' => 'Roles',

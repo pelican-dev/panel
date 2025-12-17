@@ -8,13 +8,13 @@ use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
 use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManager;
 use App\Filament\Admin\Resources\Servers\ServerResource;
+use App\Filament\Components\Actions\DeleteServerIcon;
 use App\Filament\Components\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Fields\StartupVariable;
 use App\Filament\Components\StateCasts\ServerConditionStateCast;
 use App\Filament\Server\Pages\Console;
 use App\Models\Allocation;
 use App\Models\Egg;
-use App\Models\Node;
 use App\Models\Server;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonServerRepository;
@@ -30,6 +30,8 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\CodeEditor;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
@@ -39,12 +41,14 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -52,10 +56,13 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\IconSize;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use LogicException;
 use Random\RandomException;
 
@@ -95,93 +102,235 @@ class EditServer extends EditRecord
                             ->label(trans('admin/server.tabs.information'))
                             ->icon('tabler-info-circle')
                             ->schema([
-                                TextInput::make('name')
-                                    ->prefixIcon('tabler-server')
-                                    ->label(trans('admin/server.name'))
-                                    ->suffixAction(Action::make('random')
-                                        ->icon('tabler-dice-' . random_int(1, 6))
-                                        ->action(function (Set $set, Get $get) {
-                                            $egg = Egg::find($get('egg_id'));
-                                            $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
-
-                                            $word = (new RandomWordService())->word();
-
-                                            $set('name', $prefix . $word);
-                                        }))
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 1,
-                                        'md' => 2,
-                                        'lg' => 3,
-                                    ])
-                                    ->required()
-                                    ->maxLength(255),
-                                Select::make('owner_id')
-                                    ->prefixIcon('tabler-user')
-                                    ->label(trans('admin/server.owner'))
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 1,
-                                        'md' => 2,
-                                        'lg' => 2,
-                                    ])
-                                    ->relationship('user', 'username')
-                                    ->searchable(['username', 'email'])
-                                    ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->username ($user->email)")
-                                    ->preload()
-                                    ->required(),
-                                ToggleButtons::make('condition')
-                                    ->label(trans('admin/server.server_status'))
-                                    ->formatStateUsing(fn (Server $server) => $server->condition)
-                                    ->options(fn ($state) => [$state->value => $state->getLabel()])
-                                    ->colors(fn ($state) => [$state->value => $state->getColor()])
-                                    ->icons(fn ($state) => [$state->value => $state->getIcon()])
-                                    ->stateCast(new ServerConditionStateCast())
-                                    ->columnSpan([
-                                        'default' => 2,
-                                        'sm' => 1,
-                                        'md' => 1,
-                                        'lg' => 1,
-                                    ])
-                                    ->hintAction(
-                                        Action::make('view_install_log')
-                                            ->label(trans('admin/server.view_install_log'))
-                                            //->visible(fn (Server $server) => $server->isFailedInstall())
-                                            ->modalHeading('')
-                                            ->modalSubmitAction(false)
-                                            ->modalFooterActionsAlignment(Alignment::Right)
-                                            ->modalCancelActionLabel(trans('filament::components/modal.actions.close.label'))
+                                Grid::make()
+                                    ->columns(2)
+                                    ->columnStart(1)
+                                    ->schema([
+                                        Image::make('', 'icon')
+                                            ->hidden(fn ($record) => !$record->icon && !$record->egg->image)
+                                            ->url(fn ($record) => $record->icon ?: $record->egg->image)
+                                            ->tooltip(fn ($record) => $record->icon ? '' : trans('server/setting.server_info.icon.tooltip'))
+                                            ->columnSpan(2)
+                                            ->alignJustify(),
+                                        Action::make('uploadIcon')
+                                            ->iconButton()->iconSize(IconSize::Large)
+                                            ->icon('tabler-photo-up')
+                                            ->modal()
+                                            ->modalSubmitActionLabel(trans('server/setting.server_info.icon.upload'))
                                             ->schema([
-                                                MonacoEditor::make('logs')
-                                                    ->hiddenLabel()
-                                                    ->disabled()
-                                                    ->language(EditorLanguages::shell->value)
-                                                    ->placeholderText(trans('admin/server.no_log'))
-                                                    ->formatStateUsing(function (Server $server, DaemonServerRepository $serverRepository) {
-                                                        try {
-                                                            $logs = $serverRepository->setServer($server)->getInstallLogs();
+                                                Tabs::make()
+                                                    ->contained(false)
+                                                    ->tabs([
+                                                        Tab::make(trans('admin/egg.import.url'))
+                                                            ->schema([
+                                                                Hidden::make('imageUrl'),
+                                                                Hidden::make('imageExtension'),
+                                                                TextInput::make('image_url')
+                                                                    ->label(trans('admin/egg.import.image_url'))
+                                                                    ->reactive()
+                                                                    ->autocomplete(false)
+                                                                    ->debounce(500)
+                                                                    ->afterStateUpdated(function ($state, Set $set) {
+                                                                        if (!$state) {
+                                                                            $set('image_url_error', null);
+                                                                            $set('imageUrl', null);
+                                                                            $set('imageExtension', null);
 
-                                                            return mb_convert_encoding($logs, 'UTF-8', ['UTF-8', 'UTF-16', 'ISO-8859-1', 'Windows-1252', 'ASCII']);
-                                                        } catch (ConnectionException) {
-                                                            Notification::make()
-                                                                ->title(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
-                                                                ->body(trans('admin/server.notifications.log_failed'))
-                                                                ->color('warning')
-                                                                ->warning()
-                                                                ->send();
-                                                        } catch (Exception) {
-                                                            return '';
-                                                        }
+                                                                            return;
+                                                                        }
 
-                                                        return '';
-                                                    }),
+                                                                        try {
+                                                                            if (!in_array(parse_url($state, PHP_URL_SCHEME), ['http', 'https'], true)) {
+                                                                                throw new \Exception(trans('admin/egg.import.invalid_url'));
+                                                                            }
+
+                                                                            if (!filter_var($state, FILTER_VALIDATE_URL)) {
+                                                                                throw new \Exception(trans('admin/egg.import.invalid_url'));
+                                                                            }
+
+                                                                            $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
+
+                                                                            if (!array_key_exists($extension, Server::IMAGE_FORMATS)) {
+                                                                                throw new \Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', array_keys(Server::IMAGE_FORMATS))]));
+                                                                            }
+
+                                                                            $host = parse_url($state, PHP_URL_HOST);
+                                                                            $ip = gethostbyname($host);
+
+                                                                            if (
+                                                                                filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false
+                                                                            ) {
+                                                                                throw new \Exception(trans('admin/egg.import.no_local_ip'));
+                                                                            }
+
+                                                                            $set('imageUrl', $state);
+                                                                            $set('imageExtension', $extension);
+                                                                            $set('image_url_error', null);
+
+                                                                        } catch (\Exception $e) {
+                                                                            $set('image_url_error', $e->getMessage());
+                                                                            $set('imageUrl', null);
+                                                                            $set('imageExtension', null);
+                                                                        }
+                                                                    }),
+                                                                TextEntry::make('image_url_error')
+                                                                    ->hiddenLabel()
+                                                                    ->visible(fn (Get $get) => $get('image_url_error') !== null)
+                                                                    ->afterStateHydrated(fn (Get $get) => $get('image_url_error')),
+                                                                Image::make(fn (Get $get) => $get('image_url'), '')
+                                                                    ->imageSize(150)
+                                                                    ->visible(fn (Get $get) => $get('image_url') && !$get('image_url_error'))
+                                                                    ->alignCenter(),
+                                                            ]),
+                                                        Tab::make(trans('admin/egg.import.file'))
+                                                            ->schema([
+                                                                FileUpload::make('image')
+                                                                    ->hiddenLabel()
+                                                                    ->previewable()
+                                                                    ->openable(false)
+                                                                    ->downloadable(false)
+                                                                    ->maxSize(256)
+                                                                    ->maxFiles(1)
+                                                                    ->columnSpanFull()
+                                                                    ->alignCenter()
+                                                                    ->imageEditor()
+                                                                    ->image()
+                                                                    ->disk('public')
+                                                                    ->directory(Server::ICON_STORAGE_PATH)
+                                                                    ->acceptedFileTypes([
+                                                                        'image/png',
+                                                                        'image/jpeg',
+                                                                        'image/webp',
+                                                                        'image/svg+xml',
+                                                                    ])
+                                                                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
+                                                                        return $record->uuid . '.' . $file->getClientOriginalExtension();
+                                                                    }),
+                                                            ]),
+                                                    ]),
                                             ])
-                                    ),
+                                            ->action(function (array $data, $record): void {
+                                                if (!empty($data['imageUrl']) && !empty($data['imageExtension'])) {
+                                                    $this->saveIconFromUrl($data['imageUrl'], $data['imageExtension'], $record);
+                                                    Notification::make()
+                                                        ->title(trans('server/setting.server_info.icon.updated'))
+                                                        ->success()
+                                                        ->send();
 
+                                                    return;
+                                                }
+
+                                                if (!empty($data['image'])) {
+                                                    Notification::make()
+                                                        ->title(trans('server/setting.server_info.icon.updated'))
+                                                        ->success()
+                                                        ->send();
+
+                                                    return;
+                                                }
+
+                                                if (empty($data['imageUrl']) && empty($data['image'])) {
+                                                    Notification::make()
+                                                        ->title(trans('admin/egg.import.no_image'))
+                                                        ->warning()
+                                                        ->send();
+                                                }
+                                            }),
+                                        DeleteServerIcon::make(),
+                                    ]),
+                                Grid::make()
+                                    ->columns(3)
+                                    ->columnStart(2)
+                                    ->columnSpan([
+                                        'default' => 2,
+                                        'sm' => 2,
+                                        'md' => 3,
+                                        'lg' => 5,
+                                    ])
+                                    ->schema([
+                                        TextInput::make('name')
+                                            ->prefixIcon('tabler-server')
+                                            ->label(trans('admin/server.name'))
+                                            ->suffixAction(Action::make('random')
+                                                ->icon('tabler-dice-' . random_int(1, 6))
+                                                ->action(function (Set $set, Get $get) {
+                                                    $egg = Egg::find($get('egg_id'));
+                                                    $prefix = $egg ? str($egg->name)->lower()->kebab() . '-' : '';
+
+                                                    $word = (new RandomWordService())->word();
+
+                                                    $set('name', $prefix . $word);
+                                                }))
+                                            ->columnSpan([
+                                                'default' => 2,
+                                                'sm' => 1,
+                                                'md' => 2,
+                                                'lg' => 3,
+                                            ])
+                                            ->required()
+                                            ->maxLength(255),
+                                        Select::make('owner_id')
+                                            ->prefixIcon('tabler-user')
+                                            ->label(trans('admin/server.owner'))
+                                            ->columnSpan([
+                                                'default' => 2,
+                                                'sm' => 1,
+                                                'md' => 2,
+                                                'lg' => 2,
+                                            ])
+                                            ->relationship('user', 'username')
+                                            ->searchable(['username', 'email'])
+                                            ->getOptionLabelFromRecordUsing(fn (User $user) => "$user->username ($user->email)")
+                                            ->preload()
+                                            ->required(),
+                                        ToggleButtons::make('condition')
+                                            ->label(trans('admin/server.server_status'))
+                                            ->formatStateUsing(fn (Server $server) => $server->condition)
+                                            ->options(fn ($state) => [$state->value => $state->getLabel()])
+                                            ->colors(fn ($state) => [$state->value => $state->getColor()])
+                                            ->icons(fn ($state) => [$state->value => $state->getIcon()])
+                                            ->stateCast(new ServerConditionStateCast())
+                                            ->columnSpan([
+                                                'default' => 2,
+                                                'sm' => 1,
+                                                'md' => 1,
+                                                'lg' => 1,
+                                            ])
+                                            ->hintAction(
+                                                Action::make('view_install_log')
+                                                    ->label(trans('admin/server.view_install_log'))
+                                                    //->visible(fn (Server $server) => $server->isFailedInstall())
+                                                    ->modalHeading('')
+                                                    ->modalSubmitAction(false)
+                                                    ->modalFooterActionsAlignment(Alignment::Right)
+                                                    ->modalCancelActionLabel(trans('filament::components/modal.actions.close.label'))
+                                                    ->schema([
+                                                        CodeEditor::make('logs')
+                                                            ->hiddenLabel()
+                                                            ->formatStateUsing(function (Server $server, DaemonServerRepository $serverRepository) {
+                                                                try {
+                                                                    $logs = $serverRepository->setServer($server)->getInstallLogs();
+
+                                                                    return mb_convert_encoding($logs, 'UTF-8', ['UTF-8', 'UTF-16', 'ISO-8859-1', 'ASCII']);
+                                                                } catch (ConnectionException) {
+                                                                    Notification::make()
+                                                                        ->title(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
+                                                                        ->body(trans('admin/server.notifications.log_failed'))
+                                                                        ->color('warning')
+                                                                        ->warning()
+                                                                        ->send();
+                                                                } catch (Exception) {
+                                                                    return '';
+                                                                }
+
+                                                                return '';
+                                                            }),
+                                                    ])
+                                            ),
+                                    ]),
                                 Textarea::make('description')
                                     ->label(trans('admin/server.description'))
                                     ->columnSpanFull(),
-
                                 TextInput::make('uuid')
                                     ->label(trans('admin/server.uuid'))
                                     ->copyable()
@@ -622,23 +771,19 @@ class EditServer extends EditRecord
 
                                 Select::make('select_startup')
                                     ->label(trans('admin/server.startup_cmd'))
+                                    ->required()
                                     ->live()
-                                    ->afterStateUpdated(function (Set $set, $state) {
-                                        $set('startup', $state);
-                                        $set('previewing', false);
-                                    })
-                                    ->options(function ($state, Get $get, Set $set) {
+                                    ->options(function (Get $get) {
                                         $egg = Egg::find($get('egg_id'));
-                                        $startups = $egg->startup_commands ?? [];
 
-                                        $currentStartup = $get('startup');
-                                        if (!$currentStartup && $startups) {
-                                            $currentStartup = collect($startups)->first();
-                                            $set('startup', $currentStartup);
-                                            $set('select_startup', $currentStartup);
+                                        return array_flip($egg->startup_commands ?? []) + ['custom' => 'Custom Startup'];
+                                    })
+                                    ->formatStateUsing(fn (Server $server) => in_array($server->startup, $server->egg->startup_commands) ? $server->startup : 'custom')
+                                    ->afterStateUpdated(function (Set $set, string $state) {
+                                        if ($state !== 'custom') {
+                                            $set('startup', $state);
                                         }
-
-                                        return array_flip($startups) + ['' => 'Custom Startup'];
+                                        $set('previewing', false);
                                     })
                                     ->selectablePlaceholder(false)
                                     ->columnSpanFull()
@@ -656,7 +801,7 @@ class EditServer extends EditRecord
                                         if (in_array($state, $startups)) {
                                             $set('select_startup', $state);
                                         } else {
-                                            $set('select_startup', '');
+                                            $set('select_startup', 'custom');
                                         }
                                     })
                                     ->placeholder(trans('admin/server.startup_placeholder'))
@@ -817,7 +962,7 @@ class EditServer extends EditRecord
                                                 Actions::make([
                                                     Action::make('transfer')
                                                         ->label(trans('admin/server.transfer'))
-                                                        ->disabled(fn (Server $server) => Node::count() <= 1 || $server->isInConflictState())
+                                                        ->disabled(fn (Server $server) => user()?->accessibleNodes()->count() <= 1 || $server->isInConflictState())
                                                         ->modalHeading(trans('admin/server.transfer'))
                                                         ->schema($this->transferServer())
                                                         ->action(function (TransferServerService $transfer, Server $server, $data) {
@@ -889,10 +1034,10 @@ class EditServer extends EditRecord
                 ->label(trans('admin/server.node'))
                 ->prefixIcon('tabler-server-2')
                 ->selectablePlaceholder(false)
-                ->default(fn (Server $server) => Node::whereNot('id', $server->node->id)->first()?->id)
+                ->default(fn (Server $server) => user()?->accessibleNodes()->whereNot('id', $server->node->id)->first()?->id)
                 ->required()
                 ->live()
-                ->options(fn (Server $server) => Node::whereNot('id', $server->node->id)->pluck('name', 'id')->all()),
+                ->options(fn (Server $server) => user()?->accessibleNodes()->whereNot('id', $server->node->id)->pluck('name', 'id')->all()),
             Select::make('allocation_id')
                 ->label(trans('admin/server.primary_allocation'))
                 ->disabled(fn (Get $get, Server $server) => !$get('node_id') || !$server->allocation_id)
@@ -948,7 +1093,9 @@ class EditServer extends EditRecord
                     }
                 })
                 ->hidden(fn () => $canForceDelete)
-                ->authorize(fn (Server $server) => user()?->can('delete server', $server)),
+                ->authorize(fn (Server $server) => user()?->can('delete server', $server))
+                ->icon('tabler-trash')
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
             Action::make('ForceDelete')
                 ->color('danger')
                 ->label(trans('filament-actions::force-delete.single.label'))
@@ -969,8 +1116,11 @@ class EditServer extends EditRecord
             Action::make('console')
                 ->label(trans('admin/server.console'))
                 ->icon('tabler-terminal')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)),
-            $this->getSaveFormAction()->formId('form'),
+            $this->getSaveFormAction()->formId('form')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-device-floppy'),
         ];
 
     }
@@ -1017,6 +1167,37 @@ class EditServer extends EditRecord
     protected function getSavedNotification(): ?Notification
     {
         return null;
+    }
+
+    /**
+     * Save an icon from URL download to a file.
+     *
+     * @throws Exception
+     */
+    private function saveIconFromUrl(string $imageUrl, string $extension, Server $server): void
+    {
+        $context = stream_context_create([
+            'http' => ['timeout' => 3],
+            'https' => [
+                'timeout' => 3,
+                'verify_peer' => true,
+                'verify_peer_name' => true,
+            ],
+        ]);
+
+        $data = @file_get_contents($imageUrl, false, $context, 0, 262144); //256KB
+
+        if (empty($data)) {
+            throw new \Exception(trans('admin/egg.import.invalid_url'));
+        }
+
+        $normalizedExtension = match ($extension) {
+            'svg+xml' => 'svg',
+            'jpeg' => 'jpg',
+            default => $extension,
+        };
+
+        Storage::disk('public')->put(Server::ICON_STORAGE_PATH . "/$server->uuid.$normalizedExtension", $data);
     }
 
     public function getRelationManagers(): array

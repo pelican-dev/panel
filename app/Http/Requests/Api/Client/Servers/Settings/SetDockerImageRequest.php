@@ -3,17 +3,17 @@
 namespace App\Http\Requests\Api\Client\Servers\Settings;
 
 use App\Contracts\Http\ClientPermissionsRequest;
+use App\Enums\SubuserPermission;
 use App\Http\Requests\Api\Client\ClientApiRequest;
-use App\Models\Permission;
 use App\Models\Server;
 use Illuminate\Validation\Rule;
 use Webmozart\Assert\Assert;
 
 class SetDockerImageRequest extends ClientApiRequest implements ClientPermissionsRequest
 {
-    public function permission(): string
+    public function permission(): SubuserPermission
     {
-        return Permission::ACTION_STARTUP_DOCKER_IMAGE;
+        return SubuserPermission::StartupDockerImage;
     }
 
     public function rules(): array

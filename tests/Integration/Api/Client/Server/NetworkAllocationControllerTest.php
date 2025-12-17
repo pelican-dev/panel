@@ -2,8 +2,8 @@
 
 namespace App\Tests\Integration\Api\Client\Server;
 
+use App\Enums\SubuserPermission;
 use App\Models\Allocation;
-use App\Models\Permission;
 use App\Models\User;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Illuminate\Http\Response;
@@ -41,7 +41,7 @@ class NetworkAllocationControllerTest extends ClientApiIntegrationTestCase
         $this->actingAs($user)->getJson($this->link($server, '/network/allocations'))
             ->assertNotFound();
 
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_ALLOCATION_CREATE]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::AllocationCreate]);
 
         $this->actingAs($user)->getJson($this->link($server, '/network/allocations'))
             ->assertForbidden();
@@ -91,7 +91,7 @@ class NetworkAllocationControllerTest extends ClientApiIntegrationTestCase
 
         $this->actingAs($user)->postJson($this->link($server->allocation))->assertNotFound();
 
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_ALLOCATION_CREATE]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::AllocationCreate]);
 
         $this->actingAs($user)->postJson($this->link($server->allocation))->assertForbidden();
     }
@@ -125,7 +125,7 @@ class NetworkAllocationControllerTest extends ClientApiIntegrationTestCase
         $this->actingAs($user)->postJson($this->link($server->allocation, '/primary'))
             ->assertNotFound();
 
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_ALLOCATION_CREATE]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::AllocationCreate]);
 
         $this->actingAs($user)->postJson($this->link($server->allocation, '/primary'))
             ->assertForbidden();
@@ -133,6 +133,6 @@ class NetworkAllocationControllerTest extends ClientApiIntegrationTestCase
 
     public static function updatePermissionsDataProvider(): array
     {
-        return [[[]], [[Permission::ACTION_ALLOCATION_UPDATE]]];
+        return [[[]], [[SubuserPermission::AllocationUpdate]]];
     }
 }

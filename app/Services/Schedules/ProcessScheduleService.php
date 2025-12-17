@@ -21,8 +21,7 @@ class ProcessScheduleService
      */
     public function handle(Schedule $schedule, bool $now = false): void
     {
-        /** @var ?Task $task */
-        $task = $schedule->tasks()->orderBy('sequence_id')->first();
+        $task = $schedule->firstTask();
 
         if (!$task) {
             throw new DisplayException('Cannot process schedule for task execution: no tasks are registered.');

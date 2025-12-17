@@ -37,9 +37,9 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
@@ -93,12 +93,14 @@ class EditProfile extends BaseEditProfile
                             ->icon('tabler-user-cog')
                             ->schema([
                                 TextInput::make('username')
+                                    ->disabled(fn (User $user) => $user->is_managed_externally)
                                     ->prefixIcon('tabler-user')
                                     ->label(trans('profile.username'))
                                     ->required()
                                     ->maxLength(255)
                                     ->unique(),
                                 TextInput::make('email')
+                                    ->disabled(fn (User $user) => $user->is_managed_externally)
                                     ->prefixIcon('tabler-mail')
                                     ->label(trans('profile.email'))
                                     ->email()
@@ -106,6 +108,7 @@ class EditProfile extends BaseEditProfile
                                     ->maxLength(255)
                                     ->unique(),
                                 TextInput::make('password')
+                                    ->hidden(fn (User $user) => $user->is_managed_externally)
                                     ->label(trans('profile.password'))
                                     ->password()
                                     ->prefixIcon('tabler-password')
@@ -145,6 +148,7 @@ class EditProfile extends BaseEditProfile
                                 FileUpload::make('avatar')
                                     ->visible(fn () => config('panel.filament.uploadable-avatars'))
                                     ->avatar()
+                                    ->imageEditor()
                                     ->acceptedFileTypes(['image/png'])
                                     ->directory('avatars')
                                     ->disk('public')
@@ -455,6 +459,7 @@ class EditProfile extends BaseEditProfile
                                             ->minValue(1)
                                             ->numeric()
                                             ->required()
+                                            ->live()
                                             ->default(14),
                                         Select::make('console_font')
                                             ->label(trans('profile.font'))
@@ -479,9 +484,8 @@ class EditProfile extends BaseEditProfile
 
                                                 return $fonts;
                                             })
-                                            ->reactive()
-                                            ->default('monospace')
-                                            ->afterStateUpdated(fn ($state, Set $set) => $set('font_preview', $state)),
+                                            ->live()
+                                            ->default('monospace'),
                                         TextEntry::make('font_preview')
                                             ->label(trans('profile.font_preview'))
                                             ->columnSpan(2)
@@ -534,7 +538,6 @@ class EditProfile extends BaseEditProfile
                                     ]),
                             ]),
                     ]),
-
             ])
             ->operation('edit')
             ->model($this->getUser())
@@ -551,8 +554,12 @@ class EditProfile extends BaseEditProfile
     protected function getDefaultHeaderActions(): array
     {
         return [
-            $this->getSaveFormAction()->formId('form'),
-            $this->getCancelFormAction()->formId('form'),
+            $this->getCancelFormAction()->formId('form')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-arrow-left'),
+            $this->getSaveFormAction()->formId('form')
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon('tabler-device-floppy'),
         ];
 
     }

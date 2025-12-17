@@ -4,13 +4,13 @@ namespace App\Filament\Server\Resources\Files\Pages;
 
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\EditorLanguages;
+use App\Enums\SubuserPermission;
 use App\Exceptions\Http\Server\FileSizeTooLargeException;
 use App\Exceptions\Repository\FileNotEditableException;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\Files\FileResource;
 use App\Livewire\AlertBanner;
 use App\Models\File;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -83,7 +83,7 @@ class EditFiles extends Page
                     ->footerActions([
                         Action::make('save_and_close')
                             ->label(trans('server/file.actions.edit.save_close'))
-                            ->authorize(fn () => user()?->can(Permission::ACTION_FILE_UPDATE, $server))
+                            ->authorize(fn () => user()?->can(SubuserPermission::FileUpdate, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+shift+s')
                             ->action(function () {
@@ -103,7 +103,7 @@ class EditFiles extends Page
                             }),
                         Action::make('save')
                             ->label(trans('server/file.actions.edit.save'))
-                            ->authorize(fn () => user()?->can(Permission::ACTION_FILE_UPDATE, $server))
+                            ->authorize(fn () => user()?->can(SubuserPermission::FileUpdate, $server))
                             ->icon('tabler-device-floppy')
                             ->keyBindings('mod+s')
                             ->action(function () {
@@ -148,7 +148,7 @@ class EditFiles extends Page
                                 try {
                                     $contents = $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
 
-                                    return mb_convert_encoding($contents, 'UTF-8', ['UTF-8', 'UTF-16', 'ISO-8859-1', 'Windows-1252', 'ASCII']);
+                                    return mb_convert_encoding($contents, 'UTF-8', ['UTF-8', 'UTF-16', 'ISO-8859-1', 'ASCII']);
                                 } catch (FileSizeTooLargeException) {
                                     AlertBanner::make('file_too_large')
                                         ->title(trans('server/file.alerts.file_too_large.title', ['name' => basename($this->path)]))
@@ -209,7 +209,7 @@ class EditFiles extends Page
 
     protected function authorizeAccess(): void
     {
-        abort_unless(user()?->can(Permission::ACTION_FILE_READ_CONTENT, Filament::getTenant()), 403);
+        abort_unless(user()?->can(SubuserPermission::FileReadContent, Filament::getTenant()), 403);
     }
 
     /**
@@ -243,7 +243,7 @@ class EditFiles extends Page
         $previousParts = '';
         foreach (explode('/', $this->path) as $part) {
             $previousParts = $previousParts . '/' . $part;
-            $breadcrumbs[self::getUrl(['path' => ltrim($previousParts, '/')])] = $part;
+            $breadcrumbs[ListFiles::getUrl(['path' => ltrim($previousParts, '/')])] = $part;
         }
 
         return $breadcrumbs;

@@ -54,6 +54,12 @@ class Role extends BaseRole
         ],
     ];
 
+    public const MODEL_ICONS = [
+        'health' => 'tabler-heart',
+        'activityLog' => 'tabler-stack',
+        'panelLog' => 'tabler-file-info',
+    ];
+
     /** @var array<string, array<string>> */
     protected static array $customPermissions = [];
 
@@ -77,6 +83,14 @@ class Role extends BaseRole
         static::registerCustomPermissions([
             $model => $permissions,
         ]);
+    }
+
+    /** @var array<string, string> */
+    protected static array $customModelIcons = [];
+
+    public static function registerCustomModelIcon(string $model, string $icon): void
+    {
+        static::$customModelIcons[$model] = $icon;
     }
 
     /** @return array<string, array<string>> */
@@ -122,6 +136,31 @@ class Role extends BaseRole
         }
 
         return $allPermissions;
+    }
+
+    public static function getModelIcon(string $model): ?string
+    {
+        $customModels = array_merge(static::MODEL_ICONS, static::$customModelIcons);
+
+        if (array_key_exists($model, $customModels)) {
+            return $customModels[$model];
+        }
+
+        $model = ucwords($model);
+
+        if (class_exists($class = '\\App\\Filament\\Admin\\Resources\\' . $model . 's\\' . $model . 'Resource')) {
+            return $class::getNavigationIcon();
+        }
+
+        if (class_exists($class = '\\App\\Filament\\Admin\\Pages\\' . $model)) {
+            return $class::getNavigationIcon();
+        }
+
+        if (class_exists($class = '\\App\\Filament\\Server\\Resources\\' . $model . 's\\' . $model . 'Resource')) {
+            return $class::getNavigationIcon();
+        }
+
+        return null;
     }
 
     public function isRootAdmin(): bool

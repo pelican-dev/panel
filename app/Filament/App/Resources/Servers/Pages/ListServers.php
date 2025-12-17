@@ -4,10 +4,11 @@ namespace App\Filament\App\Resources\Servers\Pages;
 
 use App\Enums\CustomizationKey;
 use App\Enums\ServerResourceType;
+use App\Enums\SubuserPermission;
 use App\Filament\App\Resources\Servers\ServerResource;
+use App\Filament\Components\Tables\Columns\ProgressBarColumn;
 use App\Filament\Components\Tables\Columns\ServerEntryColumn;
 use App\Filament\Server\Pages\Console;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -20,6 +21,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -33,11 +35,11 @@ class ListServers extends ListRecords
     use CanCustomizeHeaderActions;
     use CanCustomizeHeaderWidgets;
 
-    protected static string $resource = ServerResource::class;
+    public const WARNING_THRESHOLD = 0.7;
 
     public const DANGER_THRESHOLD = 0.9;
 
-    public const WARNING_THRESHOLD = 0.7;
+    protected static string $resource = ServerResource::class;
 
     private DaemonServerRepository $daemonServerRepository;
 
@@ -53,6 +55,8 @@ class ListServers extends ListRecords
         return [
             Stack::make([
                 ServerEntryColumn::make('server_entry')
+                    ->warningThresholdPercent(static::WARNING_THRESHOLD)
+                    ->dangerThresholdPercent(static::DANGER_THRESHOLD)
                     ->searchable(['name']),
             ]),
         ];
@@ -62,10 +66,14 @@ class ListServers extends ListRecords
     protected function tableColumns(): array
     {
         return [
+            ImageColumn::make('icon')
+                ->label('')
+                ->imageSize(46)
+                ->state(fn (Server $server) => $server->icon ?: $server->egg->image),
             TextColumn::make('condition')
                 ->label(trans('server/dashboard.status'))
                 ->badge()
-                ->tooltip(fn (Server $server) => $server->formatResource(ServerResourceType::Uptime))
+                ->tooltip(fn (Server $server) => $server->formatResource(ServerResourceType::Uptime, 2))
                 ->icon(fn (Server $server) => $server->condition->getIcon())
                 ->color(fn (Server $server) => $server->condition->getColor()),
             TextColumn::make('name')
@@ -79,24 +87,27 @@ class ListServers extends ListRecords
                 ->visibleFrom('md')
                 ->copyable()
                 ->state(fn (Server $server) => $server->allocation->address ?? 'None'),
-            TextColumn::make('cpuUsage')
-                ->label(trans('server/dashboard.resources'))
-                ->icon('tabler-cpu')
-                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::CPULimit)]))
-                ->state(fn (Server $server) => $server->formatResource(ServerResourceType::CPU))
-                ->color(fn (Server $server) => $this->getResourceColor($server, 'cpu')),
-            TextColumn::make('memoryUsage')
+            ProgressBarColumn::make('cpuUsage')
                 ->label('')
-                ->icon('tabler-device-desktop-analytics')
-                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::MemoryLimit)]))
-                ->state(fn (Server $server) => $server->formatResource(ServerResourceType::Memory))
-                ->color(fn (Server $server) => $this->getResourceColor($server, 'memory')),
-            TextColumn::make('diskUsage')
+                ->warningThresholdPercent(static::WARNING_THRESHOLD)
+                ->dangerThresholdPercent(static::DANGER_THRESHOLD)
+                ->maxValue(fn (Server $server) => ServerResourceType::CPULimit->getResourceAmount($server) === 0 ? (($server->node->systemInformation()['cpu_count'] ?? 0) * 100) : ServerResourceType::CPULimit->getResourceAmount($server))
+                ->state(fn (Server $server) => $server->retrieveResources()['cpu_absolute'] ?? 0)
+                ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::CPU, 0) . ' / ' . $server->formatResource(ServerResourceType::CPULimit, 0)),
+            ProgressBarColumn::make('memoryUsage')
                 ->label('')
-                ->icon('tabler-device-sd-card')
-                ->tooltip(fn (Server $server) => trans('server/dashboard.usage_limit', ['resource' => $server->formatResource(ServerResourceType::DiskLimit)]))
-                ->state(fn (Server $server) => $server->formatResource(ServerResourceType::Disk))
-                ->color(fn (Server $server) => $this->getResourceColor($server, 'disk')),
+                ->warningThresholdPercent(static::WARNING_THRESHOLD)
+                ->dangerThresholdPercent(static::DANGER_THRESHOLD)
+                ->maxValue(fn (Server $server) => ServerResourceType::MemoryLimit->getResourceAmount($server) === 0 ? $server->node->statistics()['memory_total'] : ServerResourceType::MemoryLimit->getResourceAmount($server))
+                ->state(fn (Server $server) => $server->retrieveResources()['memory_bytes'] ?? 0)
+                ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::Memory) . ' / ' . $server->formatResource(ServerResourceType::MemoryLimit)),
+            ProgressBarColumn::make('diskUsage')
+                ->label('')
+                ->warningThresholdPercent(static::WARNING_THRESHOLD)
+                ->dangerThresholdPercent(static::DANGER_THRESHOLD)
+                ->maxValue(fn (Server $server) => ServerResourceType::DiskLimit->getResourceAmount($server) === 0 ? $server->node->statistics()['disk_total'] : ServerResourceType::DiskLimit->getResourceAmount($server))
+                ->state(fn (Server $server) => $server->retrieveResources()['disk_bytes'] ?? 0)
+                ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::Disk) . ' / ' . $server->formatResource(ServerResourceType::DiskLimit)),
         ];
     }
 
@@ -107,7 +118,8 @@ class ListServers extends ListRecords
         $usingGrid = user()?->getCustomization(CustomizationKey::DashboardLayout) === 'grid';
 
         return $table
-            ->paginated(false)
+            ->paginated($usingGrid ? [10, 20, 30, 40] : [10, 20, 50, 100])
+            ->defaultPaginationPageOption($usingGrid ? 10 : 20)
             ->query(fn () => $baseQuery)
             ->poll('15s')
             ->columns($usingGrid ? $this->gridColumns() : $this->tableColumns())
@@ -232,21 +244,21 @@ class ListServers extends ListRecords
                 ->label(trans('server/console.power_actions.start'))
                 ->color('primary')
                 ->icon('tabler-player-play-filled')
-                ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_START, $server))
+                ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlStart, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isStartable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'start']),
             Action::make('restart')
                 ->label(trans('server/console.power_actions.restart'))
                 ->color('gray')
                 ->icon('tabler-reload')
-                ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_RESTART, $server))
+                ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlRestart, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isRestartable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'restart']),
             Action::make('stop')
                 ->label(trans('server/console.power_actions.stop'))
                 ->color('danger')
                 ->icon('tabler-player-stop-filled')
-                ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_STOP, $server))
+                ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlStop, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isStoppable() && !$server->retrieveStatus()->isKillable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'stop']),
             Action::make('kill')
@@ -254,7 +266,7 @@ class ListServers extends ListRecords
                 ->color('danger')
                 ->icon('tabler-alert-square')
                 ->tooltip(trans('server/console.power_actions.kill_tooltip'))
-                ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_STOP, $server))
+                ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlStop, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isKillable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'kill']),
         ])

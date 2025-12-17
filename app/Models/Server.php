@@ -12,6 +12,7 @@ use App\Services\Subusers\SubuserDeletionService;
 use App\Traits\HasValidation;
 use Carbon\CarbonInterface;
 use Database\Factories\ServerFactory;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -29,6 +30,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -55,6 +57,7 @@ use Psr\Http\Message\ResponseInterface;
  * @property int $egg_id
  * @property string $startup
  * @property string $image
+ * @property string|null $icon
  * @property int|null $allocation_limit
  * @property int|null $database_limit
  * @property int|null $backup_limit
@@ -70,7 +73,7 @@ use Psr\Http\Message\ResponseInterface;
  * @property int|null $backups_count
  * @property Collection|Database[] $databases
  * @property int|null $databases_count
- * @property Egg|null $egg
+ * @property Egg $egg
  * @property Collection|Mount[] $mounts
  * @property int|null $mounts_count
  * @property Node $node
@@ -129,7 +132,7 @@ use Psr\Http\Message\ResponseInterface;
  * @method static Builder|Server wherePorts($value)
  * @method static Builder|Server whereUuidShort($value)
  */
-class Server extends Model implements Validatable
+class Server extends Model implements HasAvatar, Validatable
 {
     use HasFactory;
     use HasValidation;
@@ -140,6 +143,22 @@ class Server extends Model implements Validatable
      * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'server';
+
+    /**
+     * Path to store server icons relative to storage path.
+     */
+    public const ICON_STORAGE_PATH = 'icons/server';
+
+    /**
+     * Supported image formats: file extension => MIME type
+     */
+    public const IMAGE_FORMATS = [
+        'png' => 'image/png',
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'webp' => 'image/webp',
+        'svg' => 'image/svg+xml',
+    ];
 
     /**
      * Default values when creating the model. We want to switch to disabling OOM killer
@@ -479,7 +498,7 @@ class Server extends Model implements Validatable
         });
     }
 
-    public function formatResource(ServerResourceType $resourceType): string
+    public function formatResource(ServerResourceType $resourceType, int $precision = 2): string
     {
         $resourceAmount = $resourceType->getResourceAmount($this);
 
@@ -501,10 +520,10 @@ class Server extends Model implements Validatable
         }
 
         if ($resourceType->isPercentage()) {
-            return format_number($resourceAmount, precision: 2) . '%';
+            return format_number($resourceAmount, precision: $precision) . '%';
         }
 
-        return convert_bytes_to_readable($resourceAmount, base: 3);
+        return convert_bytes_to_readable($resourceAmount, decimals: $precision, base: 3);
     }
 
     public function condition(): Attribute
@@ -512,5 +531,22 @@ class Server extends Model implements Validatable
         return Attribute::make(
             get: fn () => $this->status ?? $this->retrieveStatus(),
         );
+    }
+
+    public function getIconAttribute(): ?string
+    {
+        foreach (array_keys(static::IMAGE_FORMATS) as $ext) {
+            $path = static::ICON_STORAGE_PATH . "/$this->uuid.$ext";
+            if (Storage::disk('public')->exists($path)) {
+                return Storage::disk('public')->url($path);
+            }
+        }
+
+        return null;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->icon ?? $this->egg->image;
     }
 }

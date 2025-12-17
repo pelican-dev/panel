@@ -18,6 +18,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -33,11 +34,11 @@ class AllocationsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->heading('')
             ->selectCurrentPageOnly()
             ->recordTitleAttribute('address')
             ->recordTitle(fn (Allocation $allocation) => $allocation->address)
             ->inverseRelationship('server')
-            ->heading(trans('admin/server.allocations'))
             ->columns([
                 TextColumn::make('ip')
                     ->label(trans('admin/server.ip_address')),
@@ -92,8 +93,22 @@ class AllocationsRelationManager extends RelationManager
                         }
                     }),
             ])
-            ->headerActions([
-                CreateAction::make()->label(trans('admin/server.create_allocation'))
+            ->toolbarActions([
+                DissociateBulkAction::make()
+                    ->after(function () {
+                        Allocation::whereNull('server_id')->update([
+                            'notes' => null,
+                            'is_locked' => false,
+                        ]);
+
+                        if (!$this->getOwnerRecord()->allocation_id) {
+                            $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id]);
+                        }
+                    }),
+                CreateAction::make()
+                    ->label(trans('admin/server.create_allocation'))
+                    ->icon('tabler-network')
+                    ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->createAnother(false)
                     ->schema(fn () => [
                         Select::make('allocation_ip')
@@ -132,6 +147,8 @@ class AllocationsRelationManager extends RelationManager
                     ])
                     ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
                 AssociateAction::make()
+                    ->icon('tabler-file-plus')
+                    ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->multiple()
                     ->associateAnother(false)
                     ->preloadRecordSelect()
@@ -143,19 +160,6 @@ class AllocationsRelationManager extends RelationManager
 
                         if (!$this->getOwnerRecord()->allocation_id) {
                             $this->getOwnerRecord()->update(['allocation_id' => $data['recordId'][0]]);
-                        }
-                    }),
-            ])
-            ->groupedBulkActions([
-                DissociateBulkAction::make()
-                    ->after(function () {
-                        Allocation::whereNull('server_id')->update([
-                            'notes' => null,
-                            'is_locked' => false,
-                        ]);
-
-                        if (!$this->getOwnerRecord()->allocation_id) {
-                            $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id]);
                         }
                     }),
             ]);

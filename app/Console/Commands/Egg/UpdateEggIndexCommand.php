@@ -4,6 +4,7 @@ namespace App\Console\Commands\Egg;
 
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
 
 class UpdateEggIndexCommand extends Command
 {
@@ -12,8 +13,7 @@ class UpdateEggIndexCommand extends Command
     public function handle(): int
     {
         try {
-            $data = file_get_contents('https://raw.githubusercontent.com/pelican-eggs/pelican-eggs.github.io/refs/heads/main/content/pelican.json');
-            $data = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+            $data = Http::timeout(5)->connectTimeout(1)->get('https://raw.githubusercontent.com/pelican-eggs/pelican-eggs.github.io/refs/heads/main/content/pelican.json')->throw()->json();
         } catch (Exception $exception) {
             $this->error($exception->getMessage());
 

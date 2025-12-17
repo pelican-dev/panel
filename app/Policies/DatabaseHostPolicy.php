@@ -7,9 +7,9 @@ use App\Models\User;
 
 class DatabaseHostPolicy
 {
-    use DefaultPolicies;
+    use DefaultAdminPolicies;
 
-    protected string $modelName = 'databasehost';
+    protected string $modelName = 'databaseHost';
 
     public function before(User $user, string $ability, string|DatabaseHost $databaseHost): ?bool
     {
