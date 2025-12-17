@@ -107,7 +107,7 @@
                     monaco.editor.defineTheme('custom', {{ $editorTheme() }});
                     document.getElementById(monacoId).editor = monaco.editor.create($refs.monacoEditorElement, {
                         value: monacoContent,
-                        theme: 'custom',
+                        theme: localStorage.getItem('theme') === 'light' ? 'iPlastic' : 'custom',
                         fontSize: monacoFontSize,
                         lineNumbersMinChars: lineNumbersMinChars,
                         automaticLayout: automaticLayout,
@@ -121,6 +121,7 @@
                         wordWrap: 'on',
                         WrappingIndent: 'same',
                     });
+                    $el.style.zIndex = '1';
                     monacoEditor(document.getElementById(monacoId).editor);
                     document.getElementById(monacoId).addEventListener('monaco-editor-focused', (event) => {
                         document.getElementById(monacoId).editor.focus();
@@ -169,17 +170,14 @@
                 @endif
             </div>
         </div>
-        <div class="h-full w-full">
-            <div class="fme-container">
-                <div x-show="!monacoLoader" class="fme-element-wrapper">
-                    <div x-ref="monacoEditorElement" class="fme-element" wire:ignore style="height: 100%"></div>
-                    <div x-ref="monacoPlaceholderElement" x-show="monacoPlaceholder" @click="monacoEditorFocus()"
-                         :style="'font-size: ' + monacoFontSize" class="fme-placeholder"
-                         x-text="monacoPlaceholderText"></div>
-                </div>
+        <div class="fme-container">
+            <div x-show="!monacoLoader" class="fme-element-wrapper">
+                <div x-ref="monacoEditorElement" class="fme-element" wire:ignore style="height: 100%"></div>
+                <div x-ref="monacoPlaceholderElement" x-show="monacoPlaceholder" @click="monacoEditorFocus()"
+                     :style="'font-size: ' + monacoFontSize" class="fme-placeholder"
+                     x-text="monacoPlaceholderText"></div>
             </div>
         </div>
     </div>
 
 </x-dynamic-component>
-
