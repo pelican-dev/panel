@@ -2,9 +2,9 @@
 
 namespace App\Filament\Server\Resources\Files\Pages;
 
-use App\Enums\SubuserPermission;
 use AbdelhamidErrahmouni\FilamentMonacoEditor\MonacoEditor;
 use App\Enums\EditorLanguages;
+use App\Enums\SubuserPermission;
 use App\Exceptions\Repository\FileExistsException;
 use App\Facades\Activity;
 use App\Filament\Components\Tables\Columns\BytesColumn;
@@ -506,6 +506,7 @@ class ListFiles extends ListRecords
                             ->default(EditorLanguages::plaintext->value),
                         MonacoEditor::make('editor')
                             ->hiddenLabel()
+                            ->showFullScreenToggle(false) // Kinda buggy with Filament's layout
                             ->language(fn (Get $get) => $get('lang') ?? 'plaintext'),
                     ]),
                 Action::make('new_folder')

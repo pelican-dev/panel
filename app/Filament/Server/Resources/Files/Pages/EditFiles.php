@@ -145,7 +145,7 @@ class EditFiles extends Page
                             ->hiddenLabel()
                             ->language(fn (Get $get) => $get('lang'))
                             ->view('filament.components.monaco-editor')
-                            ->showFullScreenToggle(true) // Broken
+                            ->showFullScreenToggle(false) // Kinda buggy with Filament's layout
                             ->default(function () {
                                 try {
                                     $contents = $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));

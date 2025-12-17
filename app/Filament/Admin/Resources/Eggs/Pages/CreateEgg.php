@@ -271,6 +271,7 @@ class CreateEgg extends CreateRecord
                                 ->required(),
                             MonacoEditor::make('script_install')
                                 ->label(trans('admin/egg.script_install'))
+                                ->showFullScreenToggle(false) // Kinda buggy with Filament's layout
                                 ->language(EditorLanguages::shell->value)
                                 ->columnSpanFull()
                                 ->lazy(),
