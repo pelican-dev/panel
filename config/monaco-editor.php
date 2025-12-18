@@ -3,9 +3,7 @@
 return [
     'general' => [
         'enable-preview' => false,
-        'show-full-screen-toggle' => true,
-        'show-placeholder' => false,
-        'placeholder-text' => '',
+        'show-full-screen-toggle' => false,
         'show-loader' => false,
         'font-size' => '15px',
         'line-numbers-min-chars' => 3,

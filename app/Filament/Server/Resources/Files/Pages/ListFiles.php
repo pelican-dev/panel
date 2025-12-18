@@ -506,7 +506,6 @@ class ListFiles extends ListRecords
                             ->default(EditorLanguages::plaintext->value),
                         MonacoEditor::make('editor')
                             ->hiddenLabel()
-                            ->showFullScreenToggle(false) // Kinda buggy with Filament's layout
                             ->language(fn (Get $get) => $get('lang') ?? 'plaintext'),
                     ]),
                 Action::make('new_folder')

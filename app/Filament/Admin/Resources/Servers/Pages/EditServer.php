@@ -305,8 +305,6 @@ class EditServer extends EditRecord
                                                     ->schema([
                                                         MonacoEditor::make('logs')
                                                             ->hiddenLabel()
-                                                            ->view('filament.components.monaco-editor')
-                                                            ->showFullScreenToggle(false) // Kinda buggy with Filament's layout
                                                             ->formatStateUsing(function (Server $server, DaemonServerRepository $serverRepository) {
                                                                 try {
                                                                     $logs = $serverRepository->setServer($server)->getInstallLogs();
