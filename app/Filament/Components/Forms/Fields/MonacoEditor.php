@@ -19,7 +19,7 @@ class MonacoEditor extends Field
 
     public EditorLanguages|Closure $language = EditorLanguages::html;
 
-    public string|Closure $theme = 'blackboard';
+    public string $theme = 'blackboard';
 
     protected string $view = 'filament.components.monaco-editor';
 
@@ -34,15 +34,17 @@ class MonacoEditor extends Field
 
     public function editorTheme(): string
     {
-        if (!isset(config('monaco-editor.themes')[$this->theme])) {
-            throw new Exception("Theme {$this->theme} not found in config file.");
+        $theme = $this->evaluate($this->theme);
+
+        if (!isset(config('monaco-editor.themes')[$theme])) {
+            throw new Exception("Theme {$theme} not found in config file.");
         }
 
         return json_encode([
-            'base' => config("monaco-editor.themes.{$this->theme}.base"),
-            'inherit' => config("monaco-editor.themes.{$this->theme}.inherit"),
-            'rules' => config("monaco-editor.themes.{$this->theme}.rules"),
-            'colors' => config("monaco-editor.themes.{$this->theme}.colors"),
+            'base' => config("monaco-editor.themes.{$theme}.base"),
+            'inherit' => config("monaco-editor.themes.{$theme}.inherit"),
+            'rules' => config("monaco-editor.themes.{$theme}.rules"),
+            'colors' => config("monaco-editor.themes.{$theme}.colors"),
         ], JSON_THROW_ON_ERROR);
     }
 
