@@ -19,7 +19,6 @@ class MonacoEditor extends Field
 
     public EditorLanguages|Closure $language = EditorLanguages::html;
 
-
     public string|Closure $theme = 'blackboard';
 
     protected string $view = 'filament.components.monaco-editor';
