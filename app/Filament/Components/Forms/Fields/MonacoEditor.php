@@ -19,9 +19,6 @@ class MonacoEditor extends Field
 
     public EditorLanguages|Closure $language = EditorLanguages::html;
 
-    public bool|Closure $enablePreview = true;
-
-    public bool|Closure $showFullScreenToggle = true;
 
     public string|Closure $theme = 'blackboard';
 
@@ -34,13 +31,8 @@ class MonacoEditor extends Field
         $this->lineNumbersMinChars = config('monaco-editor.general.line-numbers-min-chars');
         $this->automaticLayout = config('monaco-editor.general.automatic-layout');
         $this->theme = config('monaco-editor.general.default-theme');
-        $this->enablePreview = config('monaco-editor.general.enable-preview');
-        $this->showFullScreenToggle = config('monaco-editor.general.show-full-screen-toggle');
     }
 
-    /*
-     *  Default theme for the editor, change theme from config.
-     */
     public function editorTheme(): string
     {
         if (!isset(config('monaco-editor.themes')[$this->theme])) {
@@ -55,9 +47,6 @@ class MonacoEditor extends Field
         ], JSON_THROW_ON_ERROR);
     }
 
-    /**
-     * @return $this
-     */
     public function language(EditorLanguages|Closure $lang = EditorLanguages::html): static
     {
         $this->language = $lang;
@@ -65,11 +54,6 @@ class MonacoEditor extends Field
         return $this;
     }
 
-    /**
-     * @return $this
-     *
-     * Show/Hide loader when editor is loading.
-     */
     public function showLoader(bool|Closure $condition = true): static
     {
         $this->showLoader = $condition;
@@ -77,11 +61,6 @@ class MonacoEditor extends Field
         return $this;
     }
 
-    /**
-     * @return $this
-     *
-     * Hide the loader when editor is loading.
-     */
     public function hideLoader(): static
     {
         $this->showLoader = false;
@@ -89,11 +68,6 @@ class MonacoEditor extends Field
         return $this;
     }
 
-    /**
-     * @return $this
-     *
-     * Change the font size of the editor's content.
-     */
     public function fontSize(string|Closure $size = '15px'): static
     {
         $this->fontSize = $size;
@@ -101,11 +75,6 @@ class MonacoEditor extends Field
         return $this;
     }
 
-    /**
-     * @return $this
-     *
-     * Change the line numbers min characters
-     */
     public function lineNumbersMinChars(int|Closure $value = 3): static
     {
         $this->lineNumbersMinChars = $value;
@@ -113,28 +82,9 @@ class MonacoEditor extends Field
         return $this;
     }
 
-    /**
-     * @return $this
-     *
-     * Enable/Disable automatic layout.
-     */
     public function automaticLayout(bool|Closure $condition = true): static
     {
         $this->automaticLayout = $condition;
-
-        return $this;
-    }
-
-    public function showFullScreenToggle(bool|Closure $condition = true): static
-    {
-        $this->showFullScreenToggle = $condition;
-
-        return $this;
-    }
-
-    public function hideFullScreenButton(): static
-    {
-        $this->showFullScreenToggle = false;
 
         return $this;
     }
@@ -145,8 +95,6 @@ class MonacoEditor extends Field
 
         return $this;
     }
-
-    // -----------------------
 
     public function getLanguage(): EditorLanguages
     {
@@ -171,10 +119,5 @@ class MonacoEditor extends Field
     public function getAutomaticLayout(): bool
     {
         return (bool) $this->evaluate($this->automaticLayout);
-    }
-
-    public function getShowFullScreenToggle(): bool
-    {
-        return (bool) $this->evaluate($this->showFullScreenToggle);
     }
 }

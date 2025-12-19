@@ -17,7 +17,6 @@
         monacoContent: $wire.$entangle('{{ $getStatePath() }}'),
         previewContent: '',
         fullScreenModeEnabled: false,
-        showPreview: false,
         monacoLanguage: '{{ $getLanguage() }}',
         monacoLoader: {{ (int) $getShowLoader() }},
         monacoFontSize: '{{ $getFontSize() }}',
