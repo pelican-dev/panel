@@ -2,10 +2,12 @@
 
 namespace App\Filament\Admin\Resources\Eggs\Pages;
 
+use App\Enums\EditorLanguages;
 use App\Filament\Admin\Resources\Eggs\EggResource;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
 use App\Filament\Components\Forms\Fields\CopyFrom;
+use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Models\Egg;
 use App\Models\EggVariable;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -15,7 +17,6 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
@@ -424,8 +425,9 @@ class EditEgg extends EditRecord
                                     '/bin/bash' => '/bin/bash',
                                 ])
                                 ->required(),
-                            CodeEditor::make('script_install')
+                            MonacoEditor::make('script_install')
                                 ->hiddenLabel()
+                                ->language(EditorLanguages::shell)
                                 ->columnSpanFull(),
                         ]),
                 ])->columnSpanFull()->persistTabInQueryString(),
