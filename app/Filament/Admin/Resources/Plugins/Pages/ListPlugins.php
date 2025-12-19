@@ -3,9 +3,9 @@
 namespace App\Filament\Admin\Resources\Plugins\Pages;
 
 use App\Enums\PluginCategory;
-use App\Facades\Plugins;
 use App\Filament\Admin\Resources\Plugins\PluginResource;
 use App\Models\Plugin;
+use App\Services\Helpers\PluginService;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 
@@ -15,7 +15,10 @@ class ListPlugins extends ListRecords
 
     public function reorderTable(array $order, int|string|null $draggedRecordKey = null): void
     {
-        Plugins::updateLoadOrder($order);
+        /** @var PluginService $pluginService */
+        $pluginService = app(PluginService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+
+        $pluginService->updateLoadOrder($order);
     }
 
     public function getTabs(): array

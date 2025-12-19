@@ -3,9 +3,9 @@
 namespace App\Filament\Admin\Resources\Plugins;
 
 use App\Enums\PluginStatus;
-use App\Facades\Plugins;
 use App\Filament\Admin\Resources\Plugins\Pages\ListPlugins;
 use App\Models\Plugin;
+use App\Services\Helpers\PluginService;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -118,8 +118,8 @@ class PluginResource extends Resource
                         ->icon('tabler-terminal')
                         ->color('success')
                         ->hidden(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled)
-                        ->action(function (Plugin $plugin, $livewire) {
-                            Plugins::installPlugin($plugin, !$plugin->isTheme() || !Plugins::hasThemePluginEnabled());
+                        ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
+                            $pluginService->installPlugin($plugin, !$plugin->isTheme() || !$pluginService->hasThemePluginEnabled());
 
                             redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
@@ -134,8 +134,8 @@ class PluginResource extends Resource
                         ->icon('tabler-download')
                         ->color('success')
                         ->visible(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled && $plugin->isUpdateAvailable())
-                        ->action(function (Plugin $plugin, $livewire) {
-                            Plugins::updatePlugin($plugin);
+                        ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
+                            $pluginService->updatePlugin($plugin);
 
                             redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
@@ -150,11 +150,11 @@ class PluginResource extends Resource
                         ->icon('tabler-check')
                         ->color('success')
                         ->visible(fn (Plugin $plugin) => $plugin->canEnable())
-                        ->requiresConfirmation(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled())
-                        ->modalHeading(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled() ? trans('admin/plugin.enable_theme_modal.heading') : null)
-                        ->modalDescription(fn (Plugin $plugin) => $plugin->isTheme() && Plugins::hasThemePluginEnabled() ? trans('admin/plugin.enable_theme_modal.description') : null)
-                        ->action(function (Plugin $plugin, $livewire) {
-                            Plugins::enablePlugin($plugin);
+                        ->requiresConfirmation(fn (Plugin $plugin, PluginService $pluginService) => $plugin->isTheme() && $pluginService->hasThemePluginEnabled())
+                        ->modalHeading(fn (Plugin $plugin, PluginService $pluginService) => $plugin->isTheme() && $pluginService->hasThemePluginEnabled() ? trans('admin/plugin.enable_theme_modal.heading') : null)
+                        ->modalDescription(fn (Plugin $plugin, PluginService $pluginService) => $plugin->isTheme() && $pluginService->hasThemePluginEnabled() ? trans('admin/plugin.enable_theme_modal.description') : null)
+                        ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
+                            $pluginService->enablePlugin($plugin);
 
                             redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
@@ -169,8 +169,8 @@ class PluginResource extends Resource
                         ->icon('tabler-x')
                         ->color('warning')
                         ->visible(fn (Plugin $plugin) => $plugin->canDisable())
-                        ->action(function (Plugin $plugin, $livewire) {
-                            Plugins::disablePlugin($plugin);
+                        ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
+                            $pluginService->disablePlugin($plugin);
 
                             redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
@@ -186,8 +186,8 @@ class PluginResource extends Resource
                         ->color('danger')
                         ->requiresConfirmation()
                         ->visible(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled)
-                        ->action(function (Plugin $plugin, $livewire) {
-                            Plugins::deletePlugin($plugin);
+                        ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
+                            $pluginService->deletePlugin($plugin);
 
                             redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
@@ -203,8 +203,8 @@ class PluginResource extends Resource
                         ->color('danger')
                         ->requiresConfirmation()
                         ->hidden(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled)
-                        ->action(function (Plugin $plugin, $livewire) {
-                            Plugins::uninstallPlugin($plugin);
+                        ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
+                            $pluginService->uninstallPlugin($plugin);
 
                             redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
@@ -231,7 +231,7 @@ class PluginResource extends Resource
                             ->previewable(false)
                             ->storeFiles(false),
                     ])
-                    ->action(function ($data, $livewire) {
+                    ->action(function ($data, $livewire, PluginService $pluginService) {
                         try {
                             /** @var UploadedFile $file */
                             $file = $data['file'];
@@ -242,7 +242,7 @@ class PluginResource extends Resource
                                 throw new Exception(trans('admin/plugin.notifications.import_exists'));
                             }
 
-                            Plugins::downloadPluginFromFile($file);
+                            $pluginService->downloadPluginFromFile($file);
 
                             Notification::make()
                                 ->success()
@@ -272,7 +272,7 @@ class PluginResource extends Resource
                             ->url()
                             ->endsWith('.zip'),
                     ])
-                    ->action(function ($data, $livewire) {
+                    ->action(function ($data, $livewire, PluginService $pluginService) {
                         try {
                             $pluginName = str($data['url'])->before('.zip')->explode('/')->last();
 
@@ -280,7 +280,7 @@ class PluginResource extends Resource
                                 throw new Exception(trans('admin/plugin.notifications.import_exists'));
                             }
 
-                            Plugins::downloadPluginFromUrl($data['url']);
+                            $pluginService->downloadPluginFromUrl($data['url']);
 
                             Notification::make()
                                 ->success()

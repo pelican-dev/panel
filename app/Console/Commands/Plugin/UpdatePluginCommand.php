@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Plugin;
 
-use App\Facades\Plugins;
 use App\Models\Plugin;
+use App\Services\Helpers\PluginService;
 use Illuminate\Console\Command;
 
 class UpdatePluginCommand extends Command
@@ -12,7 +12,7 @@ class UpdatePluginCommand extends Command
 
     protected $description = 'Updates a plugin';
 
-    public function handle(): void
+    public function handle(PluginService $pluginService): void
     {
         $id = $this->argument('id') ?? $this->choice('Plugin', Plugin::pluck('name', 'id')->toArray());
 
@@ -30,7 +30,7 @@ class UpdatePluginCommand extends Command
             return;
         }
 
-        Plugins::updatePlugin($plugin);
+        $pluginService->updatePlugin($plugin);
 
         $this->info('Plugin updated.');
     }

@@ -147,7 +147,7 @@ class Plugin extends Model implements HasPluginSettings
 
                 $plugins[] = $data;
             } catch (Exception $exception) {
-                if (Plugins::isDevModeActive()) {
+                if (config('panel.plugin.dev_mode', false)) {
                     throw ($exception);
                 }
 

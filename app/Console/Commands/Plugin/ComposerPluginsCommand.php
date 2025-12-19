@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Plugin;
 
-use App\Facades\Plugins;
+use App\Services\Helpers\PluginService;
 use Exception;
 use Illuminate\Console\Command;
 
@@ -12,10 +12,10 @@ class ComposerPluginsCommand extends Command
 
     protected $description = 'Makes sure the needed composer packages for all installed plugins are available.';
 
-    public function handle(): void
+    public function handle(PluginService $pluginService): void
     {
         try {
-            Plugins::manageComposerPackages();
+            $pluginService->manageComposerPackages();
         } catch (Exception $exception) {
             report($exception);
 

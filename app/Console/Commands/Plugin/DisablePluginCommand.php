@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\Plugin;
 
-use App\Facades\Plugins;
 use App\Models\Plugin;
+use App\Services\Helpers\PluginService;
 use Illuminate\Console\Command;
 
 class DisablePluginCommand extends Command
@@ -12,7 +12,7 @@ class DisablePluginCommand extends Command
 
     protected $description = 'Disables a plugin';
 
-    public function handle(): void
+    public function handle(PluginService $pluginService): void
     {
         $id = $this->argument('id') ?? $this->choice('Plugin', Plugin::pluck('name', 'id')->toArray());
 
@@ -30,7 +30,7 @@ class DisablePluginCommand extends Command
             return;
         }
 
-        Plugins::disablePlugin($plugin);
+        $pluginService->disablePlugin($plugin);
 
         $this->info('Plugin disabled.');
     }

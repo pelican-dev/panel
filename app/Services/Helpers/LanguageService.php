@@ -2,7 +2,6 @@
 
 namespace App\Services\Helpers;
 
-use App\Facades\Plugins;
 use Illuminate\Support\Facades\File;
 use Locale;
 
@@ -11,6 +10,8 @@ class LanguageService
     public const TRANSLATED_COMPLETELY = [
         'en',
     ];
+
+    public function __construct(protected PluginService $pluginService) {}
 
     public function isLanguageTranslated(string $countryCode = 'en'): bool
     {
@@ -36,7 +37,7 @@ class LanguageService
             return [$code => $this->getLanguageDisplayName($code)];
         })->toArray();
 
-        $pluginLanguages = collect(Plugins::getPluginLanguages())->mapWithKeys(fn ($code) => [$code => $this->getLanguageDisplayName($code)])->toArray();
+        $pluginLanguages = collect($this->pluginService->getPluginLanguages())->mapWithKeys(fn ($code) => [$code => $this->getLanguageDisplayName($code)])->toArray();
 
         return array_sort(array_unique(array_merge($baseLanguages, $pluginLanguages)));
     }

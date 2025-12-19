@@ -3,8 +3,8 @@
 namespace App\Console\Commands\Plugin;
 
 use App\Enums\PluginStatus;
-use App\Facades\Plugins;
 use App\Models\Plugin;
+use App\Services\Helpers\PluginService;
 use Illuminate\Console\Command;
 
 class InstallPluginCommand extends Command
@@ -13,7 +13,7 @@ class InstallPluginCommand extends Command
 
     protected $description = 'Installs a plugin';
 
-    public function handle(): void
+    public function handle(PluginService $pluginService): void
     {
         $id = $this->argument('id') ?? $this->choice('Plugin', Plugin::pluck('name', 'id')->toArray());
 
@@ -31,7 +31,7 @@ class InstallPluginCommand extends Command
             return;
         }
 
-        Plugins::installPlugin($plugin);
+        $pluginService->installPlugin($plugin);
 
         $this->info('Plugin installed and enabled.');
     }

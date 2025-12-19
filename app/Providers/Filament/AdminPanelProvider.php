@@ -2,9 +2,9 @@
 
 namespace App\Providers\Filament;
 
-use App\Facades\Plugins;
 use App\Filament\Admin\Pages\ListLogs;
 use App\Filament\Admin\Pages\ViewLogs;
+use App\Services\Helpers\PluginService;
 use Boquizo\FilamentLogViewer\FilamentLogViewerPlugin;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -47,7 +47,10 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationIcon('tabler-file-info'),
             ]);
 
-        Plugins::loadPanelPlugins($panel);
+        /** @var PluginService $pluginService */
+        $pluginService = app(PluginService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+
+        $pluginService->loadPanelPlugins($panel);
 
         return $panel;
     }
