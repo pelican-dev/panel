@@ -265,7 +265,7 @@ class PluginService
                 throw ($exception);
             }
 
-            Log::warning($exception->getMessage());
+            Log::warning($exception->getMessage(), ['exception' => $exception]);
         }
 
         return false;
