@@ -7,6 +7,7 @@ use App\Exceptions\Service\InvalidFileUploadException;
 use App\Models\Plugin;
 use Composer\Autoload\ClassLoader;
 use Exception;
+use Filament\Facades\Filament;
 use Filament\Panel;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Console\Command;
@@ -287,6 +288,10 @@ class PluginService
             $this->runPluginMigrations($plugin);
 
             $this->runPluginSeeder($plugin);
+
+            foreach (Filament::getPanels() as $panel) {
+                $panel->clearCachedComponents();
+            }
         } catch (Exception $exception) {
             $this->handlePluginException($plugin, $exception);
         }
