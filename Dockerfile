@@ -83,6 +83,7 @@ RUN chown root:www-data ./ \
     && ln -sf /var/www/html/storage/app/public /var/www/html/public/storage \
     && ln -s  /pelican-data/storage/avatars /var/www/html/storage/app/public/avatars \
     && ln -s  /pelican-data/storage/fonts /var/www/html/storage/app/public/fonts \
+    && rm -r  /var/www/html/plugins \
     && ln -s  /pelican-data/plugins /var/www/html/plugins \
     # Allow www-data write permissions where necessary
     && chown -R www-data:www-data /pelican-data ./storage ./bootstrap/cache /var/run/supervisord /var/www/html/public/storage \
