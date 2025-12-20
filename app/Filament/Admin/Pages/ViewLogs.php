@@ -22,7 +22,7 @@ class ViewLogs extends BaseViewLog
             BackAction::make()
                 ->icon('tabler-arrow-left')->iconSize(IconSize::ExtraLarge)->iconButton(),
             DeleteAction::make(withTooltip: true)
-                ->icon('tabler-trash')->iconSize(IconSize::ExtraLarge)->iconButton(),
+                ->iconSize(IconSize::ExtraLarge)->iconButton(),
             DownloadAction::make(withTooltip: true)
                 ->icon('tabler-file-download')->iconSize(IconSize::ExtraLarge)->iconButton(),
             Action::make('uploadLogs')

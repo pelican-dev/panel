@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Enums\CustomizationKey;
+use App\Enums\SubuserPermission;
 use App\Exceptions\DisplayException;
 use App\Extensions\Avatar\AvatarService;
 use App\Models\Traits\HasAccessTokens;
@@ -48,6 +49,7 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @property int $id
  * @property string|null $external_id
+ * @property bool $is_managed_externally
  * @property string $uuid
  * @property string $username
  * @property string $email
@@ -117,6 +119,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     protected $fillable = [
         'external_id',
+        'is_managed_externally',
         'username',
         'email',
         'password',
@@ -139,6 +142,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     protected $attributes = [
         'external_id' => null,
+        'is_managed_externally' => false,
         'language' => 'en',
         'timezone' => 'UTC',
         'mfa_app_secret' => null,
@@ -153,6 +157,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'uuid' => ['nullable', 'string', 'size:36', 'unique:users,uuid'],
         'email' => ['required', 'email', 'between:1,255', 'unique:users,email'],
         'external_id' => ['sometimes', 'nullable', 'string', 'max:255', 'unique:users,external_id'],
+        'is_managed_externally' => ['boolean'],
         'username' => ['required', 'between:1,255', 'unique:users,username'],
         'password' => ['sometimes', 'nullable', 'string'],
         'language' => ['string'],
@@ -174,6 +179,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected function casts(): array
     {
         return [
+            'is_managed_externally' => 'boolean',
             'mfa_app_secret' => 'encrypted',
             'mfa_app_recovery_codes' => 'encrypted:array',
             'oauth' => 'array',
@@ -327,14 +333,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return !$key ? $customization : $customization[$key->value];
     }
 
-    protected function checkPermission(Server $server, string $permission = ''): bool
+    protected function checkPermission(Server $server, string|SubuserPermission $permission = ''): bool
     {
+        if ($permission instanceof SubuserPermission) {
+            $permission = $permission->value;
+        }
+
         if ($this->canned('update', $server) || $server->owner_id === $this->id) {
             return true;
         }
 
         // If the user only has "view" permissions allow viewing the console
-        if ($permission === Permission::ACTION_WEBSOCKET_CONNECT && $this->canned('view', $server)) {
+        if ($permission === SubuserPermission::WebsocketConnect->value && $this->canned('view', $server)) {
             return true;
         }
 
@@ -356,13 +366,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      */
     public function can($abilities, mixed $arguments = []): bool
     {
-        if (is_string($abilities) && str_contains($abilities, '.')) {
-            [$permission, $key] = str($abilities)->explode('.', 2);
-
-            if (isset(Permission::permissions()[$permission]['keys'][$key])) {
-                if ($arguments instanceof Server) {
-                    return $this->checkPermission($arguments, $abilities);
-                }
+        if ($arguments instanceof Server) {
+            if ($abilities instanceof SubuserPermission || Subuser::doesPermissionExist($abilities)) {
+                return $this->checkPermission($arguments, $abilities);
             }
         }
 

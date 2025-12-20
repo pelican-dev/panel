@@ -2,7 +2,7 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Subuser;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 use App\Models\Subuser;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonServerRepository;
@@ -39,7 +39,7 @@ class DeleteSubuserTest extends ClientApiIntegrationTestCase
         Subuser::query()->forceCreate([
             'user_id' => $subuser->id,
             'server_id' => $server->id,
-            'permissions' => [Permission::ACTION_WEBSOCKET_CONNECT],
+            'permissions' => [SubuserPermission::WebsocketConnect],
         ]);
 
         $mock->expects('setServer->revokeUserJTI')->with($subuser->id)->andReturnUndefined();
@@ -55,7 +55,7 @@ class DeleteSubuserTest extends ClientApiIntegrationTestCase
         Subuser::query()->forceCreate([
             'user_id' => $subuser->id,
             'server_id' => $server->id,
-            'permissions' => [Permission::ACTION_WEBSOCKET_CONNECT],
+            'permissions' => [SubuserPermission::WebsocketConnect],
         ]);
 
         $mock->expects('setServer->revokeUserJTI')->with($subuser->id)->andReturnUndefined();

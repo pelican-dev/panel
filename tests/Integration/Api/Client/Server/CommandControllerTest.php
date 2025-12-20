@@ -2,9 +2,9 @@
 
 namespace App\Tests\Integration\Api\Client\Server;
 
+use App\Enums\SubuserPermission;
 use App\Http\Controllers\Api\Client\Servers\CommandController;
 use App\Http\Requests\Api\Client\Servers\SendCommandRequest;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use GuzzleHttp\Exception\BadResponseException;
@@ -38,7 +38,7 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_subuser_without_permission_receives_error(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::WebsocketConnect]);
 
         $response = $this->actingAs($user)->postJson("/api/client/servers/$server->uuid/command", [
             'command' => 'say Test',
@@ -52,7 +52,7 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_command_can_send_to_server(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_CONTROL_CONSOLE]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::ControlConsole]);
 
         $server = \Mockery::mock($server)->makePartial();
 

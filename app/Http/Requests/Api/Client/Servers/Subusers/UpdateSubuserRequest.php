@@ -2,13 +2,13 @@
 
 namespace App\Http\Requests\Api\Client\Servers\Subusers;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 
 class UpdateSubuserRequest extends SubuserRequest
 {
-    public function permission(): string
+    public function permission(): SubuserPermission
     {
-        return Permission::ACTION_USER_UPDATE;
+        return SubuserPermission::UserUpdate;
     }
 
     public function rules(): array

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\Remote;
 
+use App\Enums\SubuserPermission;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Facades\Activity;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Remote\SftpAuthenticationFormRequest;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Models\User;
 use App\Services\Servers\GetUserPermissionsService;
@@ -141,7 +141,7 @@ class SftpAuthenticationController extends Controller
         if ($user->cannot('update server', $server) && $server->owner_id !== $user->id) {
             $permissions = $this->permissions->handle($server, $user);
 
-            if (!in_array(Permission::ACTION_FILE_SFTP, $permissions)) {
+            if (!in_array(SubuserPermission::FileSftp->value, $permissions)) {
                 Activity::event('server:sftp.denied')->actor($user)->subject($server)->log();
 
                 throw new HttpForbiddenException('You do not have permission to access SFTP for this server.');

@@ -2,7 +2,7 @@ _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
   version: PLCN_v3
   update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/minecraft/egg-paper.yaml'
-exported_at: '2025-10-31T12:25:02+00:00'
+exported_at: '2025-12-11T12:51:20+00:00'
 name: Paper
 author: parker@example.com
 uuid: 5da37ef6-58da-4169-90a6-e683e1721247
@@ -48,8 +48,8 @@ scripts:
       	echo -e "Using supplied download url: ${DL_PATH}"
       	DOWNLOAD_URL=`eval echo $(echo ${DL_PATH} | sed -e 's/{{/${/g' -e 's/}}/}/g')`
       else
-      	VER_EXISTS=`curl -s https://api.papermc.io/v2/projects/${PROJECT} | jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep -m1 true`
-      	LATEST_VERSION=`curl -s https://api.papermc.io/v2/projects/${PROJECT} | jq -r '.versions' | jq -r '.[-1]'`
+      	VER_EXISTS=`curl -s https://fill.papermc.io/v3/projects/${PROJECT} | jq -r --arg VERSION $MINECRAFT_VERSION '.versions | any(.[]; index($VERSION))' | grep -m1 true`
+      	LATEST_VERSION=`curl -s https://fill.papermc.io/v3/projects/${PROJECT} | jq -r '.versions | to_entries | .[0].value[0]'`
 
       	if [ "${VER_EXISTS}" == "true" ]; then
       		echo -e "Version is valid. Using version ${MINECRAFT_VERSION}"
@@ -58,8 +58,8 @@ scripts:
       		MINECRAFT_VERSION=${LATEST_VERSION}
       	fi
 
-      	BUILD_EXISTS=`curl -s https://api.papermc.io/v2/projects/${PROJECT}/versions/${MINECRAFT_VERSION} | jq -r --arg BUILD ${BUILD_NUMBER} '.builds[] | tostring | contains($BUILD)' | grep -m1 true`
-      	LATEST_BUILD=`curl -s https://api.papermc.io/v2/projects/${PROJECT}/versions/${MINECRAFT_VERSION} | jq -r '.builds' | jq -r '.[-1]'`
+      	BUILD_EXISTS=`curl -s https://fill.papermc.io/v3/projects/${PROJECT}/versions/${MINECRAFT_VERSION} | jq -r --arg BUILD ${BUILD_NUMBER} '.builds[] | tostring | contains($BUILD)' | grep -m1 true`
+      	LATEST_BUILD=`curl -s https://fill.papermc.io/v3/projects/${PROJECT}/versions/${MINECRAFT_VERSION} | jq -r '.builds' | jq -r '.[0]'`
 
       	if [ "${BUILD_EXISTS}" == "true" ]; then
       		echo -e "Build is valid for version ${MINECRAFT_VERSION}. Using build ${BUILD_NUMBER}"
@@ -68,13 +68,11 @@ scripts:
       		BUILD_NUMBER=${LATEST_BUILD}
       	fi
 
-      	JAR_NAME=${PROJECT}-${MINECRAFT_VERSION}-${BUILD_NUMBER}.jar
-
       	echo "Version being downloaded"
+      	echo -e "Project: ${PROJECT}"
       	echo -e "MC Version: ${MINECRAFT_VERSION}"
       	echo -e "Build: ${BUILD_NUMBER}"
-      	echo -e "JAR Name of Build: ${JAR_NAME}"
-      	DOWNLOAD_URL=https://api.papermc.io/v2/projects/${PROJECT}/versions/${MINECRAFT_VERSION}/builds/${BUILD_NUMBER}/downloads/${JAR_NAME}
+      	DOWNLOAD_URL=`curl -s https://fill.papermc.io/v3/projects/${PROJECT}/versions/${MINECRAFT_VERSION}/builds/${BUILD_NUMBER} | jq -r '.downloads."server:default".url'`
       fi
 
       cd /mnt/server
@@ -89,7 +87,7 @@ scripts:
 
       if [ ! -f server.properties ]; then
           echo -e "Downloading MC server.properties"
-          curl -o server.properties https://raw.githubusercontent.com/parkervcp/eggs/master/minecraft/java/server.properties
+          curl -o server.properties https://raw.githubusercontent.com/pelican-eggs/minecraft/refs/heads/main/java/server.properties
       fi
     container: 'ghcr.io/pelican-eggs/installers:alpine'
     entrypoint: ash

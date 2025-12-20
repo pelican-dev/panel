@@ -2,10 +2,12 @@
 
 namespace App\Filament\Admin\Resources\Eggs\Pages;
 
+use App\Enums\EditorLanguages;
 use App\Filament\Admin\Resources\Eggs\EggResource;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
 use App\Filament\Components\Forms\Fields\CopyFrom;
+use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Models\Egg;
 use App\Models\EggVariable;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -15,7 +17,6 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
@@ -38,7 +39,9 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Unique;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class EditEgg extends EditRecord
 {
@@ -84,7 +87,8 @@ class EditEgg extends EditRecord
                                                     ->tabs([
                                                         Tab::make(trans('admin/egg.import.url'))
                                                             ->schema([
-                                                                Hidden::make('base64Image'),
+                                                                Hidden::make('imageUrl'),
+                                                                Hidden::make('imageExtension'),
                                                                 TextInput::make('image_url')
                                                                     ->label(trans('admin/egg.import.image_url'))
                                                                     ->reactive()
@@ -93,28 +97,21 @@ class EditEgg extends EditRecord
                                                                     ->afterStateUpdated(function ($state, Set $set) {
                                                                         if (!$state) {
                                                                             $set('image_url_error', null);
+                                                                            $set('imageUrl', null);
+                                                                            $set('imageExtension', null);
 
                                                                             return;
                                                                         }
 
                                                                         try {
                                                                             if (!filter_var($state, FILTER_VALIDATE_URL)) {
-                                                                                throw new \Exception(trans('admin/egg.import.invalid_url'));
+                                                                                throw new Exception(trans('admin/egg.import.invalid_url'));
                                                                             }
-
-                                                                            $allowedExtensions = [
-                                                                                'png' => 'image/png',
-                                                                                'jpg' => 'image/jpeg',
-                                                                                'jpeg' => 'image/jpeg',
-                                                                                'gif' => 'image/gif',
-                                                                                'webp' => 'image/webp',
-                                                                                'svg' => 'image/svg+xml',
-                                                                            ];
 
                                                                             $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
 
-                                                                            if (!array_key_exists($extension, $allowedExtensions)) {
-                                                                                throw new \Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', $allowedExtensions)]));
+                                                                            if (!array_key_exists($extension, Egg::IMAGE_FORMATS)) {
+                                                                                throw new Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', array_keys(Egg::IMAGE_FORMATS))]));
                                                                             }
 
                                                                             $host = parse_url($state, PHP_URL_HOST);
@@ -123,37 +120,17 @@ class EditEgg extends EditRecord
                                                                             if (
                                                                                 filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false
                                                                             ) {
-                                                                                throw new \Exception(trans('admin/egg.import.no_local_ip'));
+                                                                                throw new Exception(trans('admin/egg.import.no_local_ip'));
                                                                             }
 
-                                                                            $context = stream_context_create([
-                                                                                'http' => ['timeout' => 3],
-                                                                                'https' => [
-                                                                                    'timeout' => 3,
-                                                                                    'verify_peer' => true,
-                                                                                    'verify_peer_name' => true,
-                                                                                ],
-                                                                            ]);
-
-                                                                            $imageContent = @file_get_contents($state, false, $context, 0, 1048576); // 1024KB
-
-                                                                            if (!$imageContent) {
-                                                                                throw new \Exception(trans('admin/egg.import.image_error'));
-                                                                            }
-
-                                                                            if (strlen($imageContent) >= 1048576) {
-                                                                                throw new \Exception(trans('admin/egg.import.image_too_large'));
-                                                                            }
-
-                                                                            $mimeType = $allowedExtensions[$extension];
-                                                                            $base64 = 'data:' . $mimeType . ';base64,' . base64_encode($imageContent);
-
-                                                                            $set('base64Image', $base64);
+                                                                            $set('imageUrl', $state);
+                                                                            $set('imageExtension', $extension);
                                                                             $set('image_url_error', null);
 
-                                                                        } catch (\Exception $e) {
+                                                                        } catch (Exception $e) {
                                                                             $set('image_url_error', $e->getMessage());
-                                                                            $set('base64Image', null);
+                                                                            $set('imageUrl', null);
+                                                                            $set('imageExtension', null);
                                                                         }
                                                                     }),
                                                                 TextEntry::make('image_url_error')
@@ -172,57 +149,68 @@ class EditEgg extends EditRecord
                                                                     ->previewable()
                                                                     ->openable(false)
                                                                     ->downloadable(false)
-                                                                    ->maxSize(1024)
+                                                                    ->maxSize(256)
                                                                     ->maxFiles(1)
                                                                     ->columnSpanFull()
                                                                     ->alignCenter()
                                                                     ->imageEditor()
-                                                                    ->saveUploadedFileUsing(function ($file, Set $set) {
-                                                                        $base64 = "data:{$file->getMimeType()};base64,". base64_encode(file_get_contents($file->getRealPath()));
-                                                                        $set('base64Image', $base64);
-
-                                                                        return $base64;
+                                                                    ->image()
+                                                                    ->disk('public')
+                                                                    ->directory(Egg::ICON_STORAGE_PATH)
+                                                                    ->acceptedFileTypes([
+                                                                        'image/png',
+                                                                        'image/jpeg',
+                                                                        'image/webp',
+                                                                        'image/svg+xml',
+                                                                    ])
+                                                                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
+                                                                        return $record->uuid . '.' . $file->getClientOriginalExtension();
                                                                     }),
                                                             ]),
                                                     ]),
                                             ])
                                             ->action(function (array $data, $record): void {
-                                                $base64 = $data['base64Image'] ?? null;
-
-                                                if (empty($base64) && !empty($data['image'])) {
-                                                    $base64 = $data['image'];
-                                                }
-
-                                                if (!empty($base64)) {
-                                                    $record->update([
-                                                        'image' => $base64,
-                                                    ]);
+                                                if (!empty($data['imageUrl']) && !empty($data['imageExtension'])) {
+                                                    $this->saveImageFromUrl($data['imageUrl'], $data['imageExtension'], $record);
 
                                                     Notification::make()
                                                         ->title(trans('admin/egg.import.image_updated'))
                                                         ->success()
                                                         ->send();
 
-                                                    $record->refresh();
-                                                } else {
+                                                    return;
+                                                }
+
+                                                if (!empty($data['image'])) {
+                                                    Notification::make()
+                                                        ->title(trans('admin/egg.import.image_updated'))
+                                                        ->success()
+                                                        ->send();
+
+                                                    return;
+                                                }
+
+                                                if (empty($data['imageUrl']) && empty($data['image'])) {
                                                     Notification::make()
                                                         ->title(trans('admin/egg.import.no_image'))
                                                         ->warning()
                                                         ->send();
                                                 }
                                             }),
-                                        Action::make('deleteImage')
+                                        Action::make('delete_image')
                                             ->visible(fn ($record) => $record->image)
-                                            ->label('')
+                                            ->hiddenLabel()
                                             ->icon('tabler-trash')
                                             ->iconButton()
                                             ->iconSize(IconSize::Large)
                                             ->color('danger')
                                             ->action(function ($record) {
-
-                                                $record->update([
-                                                    'image' => null,
-                                                ]);
+                                                foreach (array_keys(Egg::IMAGE_FORMATS) as $ext) {
+                                                    $path = Egg::ICON_STORAGE_PATH . "/$record->uuid.$ext";
+                                                    if (Storage::disk('public')->exists($path)) {
+                                                        Storage::disk('public')->delete($path);
+                                                    }
+                                                }
 
                                                 Notification::make()
                                                     ->title(trans('admin/egg.import.image_deleted'))
@@ -437,8 +425,9 @@ class EditEgg extends EditRecord
                                     '/bin/bash' => '/bin/bash',
                                 ])
                                 ->required(),
-                            CodeEditor::make('script_install')
+                            MonacoEditor::make('script_install')
                                 ->hiddenLabel()
+                                ->language(EditorLanguages::shell)
                                 ->columnSpanFull(),
                         ]),
                 ])->columnSpanFull()->persistTabInQueryString(),
@@ -465,6 +454,37 @@ class EditEgg extends EditRecord
     public function refreshForm(): void
     {
         $this->fillForm();
+    }
+
+    /**
+     * Save an image from URL download to a file.
+     *
+     * @throws Exception
+     */
+    private function saveImageFromUrl(string $imageUrl, string $extension, Egg $egg): void
+    {
+        $context = stream_context_create([
+            'http' => ['timeout' => 3],
+            'https' => [
+                'timeout' => 3,
+                'verify_peer' => true,
+                'verify_peer_name' => true,
+            ],
+        ]);
+
+        $data = @file_get_contents($imageUrl, false, $context, 0, 1048576); // 1024KB
+
+        if (empty($data)) {
+            throw new Exception(trans('admin/egg.import.invalid_url'));
+        }
+
+        $normalizedExtension = match ($extension) {
+            'svg+xml' => 'svg',
+            'jpeg' => 'jpg',
+            default => $extension,
+        };
+
+        Storage::disk('public')->put(Egg::ICON_STORAGE_PATH . "/$egg->uuid.$normalizedExtension", $data);
     }
 
     protected function getFormActions(): array

@@ -9,6 +9,9 @@ export default defineConfig({
             input: [
                 ...globSync('resources/css/**/*.css'),
                 ...globSync('resources/js/**/*.js'),
+
+                ...globSync('plugins/*/resources/css/**/*.css'),
+                ...globSync('plugins/*/resources/js/**/*.js'),
             ],
             refresh: true,
         }),

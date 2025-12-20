@@ -2,7 +2,7 @@
 
 namespace App\Tests\Integration\Api\Client\Server\Schedule;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 use App\Models\Schedule;
 use App\Models\Task;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
@@ -76,7 +76,7 @@ class GetServerSchedulesTest extends ClientApiIntegrationTestCase
      */
     public function test_user_without_permission_cannot_view_schedules(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::WebsocketConnect]);
 
         $this->actingAs($user)
             ->getJson("/api/client/servers/$server->uuid/schedules")
@@ -94,8 +94,8 @@ class GetServerSchedulesTest extends ClientApiIntegrationTestCase
         return [
             [[], false],
             [[], true],
-            [[Permission::ACTION_SCHEDULE_READ], false],
-            [[Permission::ACTION_SCHEDULE_READ], true],
+            [[SubuserPermission::ScheduleRead], false],
+            [[SubuserPermission::ScheduleRead], true],
         ];
     }
 }

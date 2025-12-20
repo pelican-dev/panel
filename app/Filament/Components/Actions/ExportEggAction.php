@@ -24,7 +24,7 @@ class ExportEggAction extends Action
 
         $this->iconButton();
 
-        $this->icon('tabler-file-export');
+        $this->icon('tabler-download');
 
         $this->tableIcon('tabler-download');
 

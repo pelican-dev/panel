@@ -123,7 +123,7 @@ class ListLogs extends BaseListLogs
                         }
                     }),
                 DeleteAction::make()
-                    ->icon('tabler-trash')->iconSize(IconSize::Medium)->iconButton(),
+                    ->iconSize(IconSize::Medium)->iconButton(),
             ]);
     }
 }

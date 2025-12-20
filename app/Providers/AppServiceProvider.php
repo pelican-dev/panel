@@ -22,11 +22,11 @@ use App\Models\Server;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\UserSSHKey;
+use App\Services\Helpers\PluginService;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
-use Filament\Facades\Filament;
 use Illuminate\Config\Repository;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
@@ -109,21 +109,6 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::before(fn (User $user, $ability) => $user->isRootAdmin() ? true : null);
 
-        Gate::guessPolicyNamesUsing(function (string $modelClass) {
-            $panelId = mb_ucfirst(Filament::getCurrentOrDefaultPanel()->getId());
-
-            if ($panelId === 'App') {
-                return;
-            }
-
-            $modelName = class_basename($modelClass);
-            $class = "App\\Policies\\{$panelId}\\{$modelName}Policy";
-
-            if (class_exists($class)) {
-                return $class;
-            }
-        });
-
         AboutCommand::add('Pelican', [
             'Panel Version' => $versionService->currentPanelVersion(),
             'Latest Version' => $versionService->latestPanelVersion(),
@@ -141,5 +126,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         Scramble::ignoreDefaultRoutes();
+
+        /** @var PluginService $pluginService */
+        $pluginService = app(PluginService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+
+        $pluginService->loadPlugins();
     }
 }

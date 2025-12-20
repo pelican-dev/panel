@@ -2,28 +2,28 @@
 
 namespace App\Http\Requests\Api\Client\Servers;
 
+use App\Enums\SubuserPermission;
 use App\Http\Requests\Api\Client\ClientApiRequest;
-use App\Models\Permission;
 
 class SendPowerRequest extends ClientApiRequest
 {
     /**
      * Determine if the user has permission to send a power command to a server.
      */
-    public function permission(): string
+    public function permission(): SubuserPermission
     {
         switch ($this->input('signal')) {
             case 'start':
-                return Permission::ACTION_CONTROL_START;
+                return SubuserPermission::ControlStart;
             case 'stop':
             case 'kill':
-                return Permission::ACTION_CONTROL_STOP;
+                return SubuserPermission::ControlStop;
             case 'restart':
-                return Permission::ACTION_CONTROL_RESTART;
+                return SubuserPermission::ControlRestart;
         }
 
         // Fallback for invalid signals
-        return Permission::ACTION_WEBSOCKET_CONNECT;
+        return SubuserPermission::WebsocketConnect;
     }
 
     /**

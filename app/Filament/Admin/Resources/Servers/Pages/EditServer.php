@@ -6,7 +6,9 @@ use App\Enums\SuspendAction;
 use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
 use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManager;
 use App\Filament\Admin\Resources\Servers\ServerResource;
+use App\Filament\Components\Actions\DeleteServerIcon;
 use App\Filament\Components\Actions\PreviewStartupAction;
+use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Filament\Components\Forms\Fields\StartupVariable;
 use App\Filament\Components\StateCasts\ServerConditionStateCast;
 use App\Filament\Server\Pages\Console;
@@ -27,7 +29,6 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
@@ -57,7 +58,9 @@ use Filament\Support\Enums\IconSize;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use LogicException;
 use Random\RandomException;
 
@@ -113,155 +116,125 @@ class EditServer extends EditRecord
                                             ->modal()
                                             ->modalSubmitActionLabel(trans('server/setting.server_info.icon.upload'))
                                             ->schema([
-                                                Tabs::make()->tabs([
-                                                    Tab::make(trans('admin/egg.import.url'))
-                                                        ->schema([
-                                                            Hidden::make('base64Image'),
-                                                            TextInput::make('image_url')
-                                                                ->label(trans('admin/egg.import.image_url'))
-                                                                ->reactive()
-                                                                ->autocomplete(false)
-                                                                ->debounce(500)
-                                                                ->afterStateUpdated(function ($state, Set $set) {
-                                                                    if (!$state) {
-                                                                        $set('image_url_error', null);
+                                                Tabs::make()
+                                                    ->contained(false)
+                                                    ->tabs([
+                                                        Tab::make(trans('admin/egg.import.url'))
+                                                            ->schema([
+                                                                Hidden::make('imageUrl'),
+                                                                Hidden::make('imageExtension'),
+                                                                TextInput::make('image_url')
+                                                                    ->label(trans('admin/egg.import.image_url'))
+                                                                    ->reactive()
+                                                                    ->autocomplete(false)
+                                                                    ->debounce(500)
+                                                                    ->afterStateUpdated(function ($state, Set $set) {
+                                                                        if (!$state) {
+                                                                            $set('image_url_error', null);
+                                                                            $set('imageUrl', null);
+                                                                            $set('imageExtension', null);
 
-                                                                        return;
-                                                                    }
-
-                                                                    try {
-                                                                        if (!in_array(parse_url($state, PHP_URL_SCHEME), ['http', 'https'], true)) {
-                                                                            throw new \Exception(trans('admin/egg.import.invalid_url'));
+                                                                            return;
                                                                         }
 
-                                                                        if (!filter_var($state, FILTER_VALIDATE_URL)) {
-                                                                            throw new \Exception(trans('admin/egg.import.invalid_url'));
+                                                                        try {
+                                                                            if (!in_array(parse_url($state, PHP_URL_SCHEME), ['http', 'https'], true)) {
+                                                                                throw new \Exception(trans('admin/egg.import.invalid_url'));
+                                                                            }
+
+                                                                            if (!filter_var($state, FILTER_VALIDATE_URL)) {
+                                                                                throw new \Exception(trans('admin/egg.import.invalid_url'));
+                                                                            }
+
+                                                                            $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
+
+                                                                            if (!array_key_exists($extension, Server::IMAGE_FORMATS)) {
+                                                                                throw new \Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', array_keys(Server::IMAGE_FORMATS))]));
+                                                                            }
+
+                                                                            $host = parse_url($state, PHP_URL_HOST);
+                                                                            $ip = gethostbyname($host);
+
+                                                                            if (
+                                                                                filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false
+                                                                            ) {
+                                                                                throw new \Exception(trans('admin/egg.import.no_local_ip'));
+                                                                            }
+
+                                                                            $set('imageUrl', $state);
+                                                                            $set('imageExtension', $extension);
+                                                                            $set('image_url_error', null);
+
+                                                                        } catch (\Exception $e) {
+                                                                            $set('image_url_error', $e->getMessage());
+                                                                            $set('imageUrl', null);
+                                                                            $set('imageExtension', null);
                                                                         }
-
-                                                                        $allowedExtensions = [
-                                                                            'png' => 'image/png',
-                                                                            'jpg' => 'image/jpeg',
-                                                                            'jpeg' => 'image/jpeg',
-                                                                            'gif' => 'image/gif',
-                                                                            'webp' => 'image/webp',
-                                                                            'svg' => 'image/svg+xml',
-                                                                        ];
-
-                                                                        $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
-
-                                                                        if (!array_key_exists($extension, $allowedExtensions)) {
-                                                                            throw new \Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', array_keys($allowedExtensions))]));
-                                                                        }
-
-                                                                        $host = parse_url($state, PHP_URL_HOST);
-                                                                        $ip = gethostbyname($host);
-
-                                                                        if (
-                                                                            filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false
-                                                                        ) {
-                                                                            throw new \Exception(trans('admin/egg.import.no_local_ip'));
-                                                                        }
-
-                                                                        $context = stream_context_create([
-                                                                            'http' => ['timeout' => 3],
-                                                                            'https' => [
-                                                                                'timeout' => 3,
-                                                                                'verify_peer' => true,
-                                                                                'verify_peer_name' => true,
-                                                                            ],
-                                                                        ]);
-
-                                                                        $imageContent = @file_get_contents($state, false, $context, 0, 262144); //256KB
-
-                                                                        if (!$imageContent) {
-                                                                            throw new \Exception(trans('admin/egg.import.image_error'));
-                                                                        }
-
-                                                                        $mimeType = $allowedExtensions[$extension];
-                                                                        $base64 = 'data:' . $mimeType . ';base64,' . base64_encode($imageContent);
-
-                                                                        $set('base64Image', $base64);
-                                                                        $set('image_url_error', null);
-
-                                                                    } catch (\Exception $e) {
-                                                                        $set('image_url_error', $e->getMessage());
-                                                                        $set('base64Image', null);
-                                                                    }
-                                                                }),
-                                                            TextEntry::make('image_url_error')
-                                                                ->hiddenLabel()
-                                                                ->visible(fn (Get $get) => $get('image_url_error') !== null)
-                                                                ->afterStateHydrated(fn (Get $get) => $get('image_url_error')),
-                                                            Image::make(fn (Get $get) => $get('image_url'), '')
-                                                                ->imageSize(150)
-                                                                ->visible(fn (Get $get) => $get('image_url') && !$get('image_url_error'))
-                                                                ->alignCenter(),
-                                                        ]),
-                                                    Tab::make(trans('admin/egg.import.file'))
-                                                        ->schema([
-                                                            FileUpload::make('image')
-                                                                ->hiddenLabel()
-                                                                ->previewable()
-                                                                ->openable(false)
-                                                                ->downloadable(false)
-                                                                ->maxSize(256)
-                                                                ->maxFiles(1)
-                                                                ->columnSpanFull()
-                                                                ->alignCenter()
-                                                                ->imageEditor()
-                                                                ->image()
-                                                                ->saveUploadedFileUsing(function ($file, Set $set) {
-                                                                    $base64 = "data:{$file->getMimeType()};base64,". base64_encode(file_get_contents($file->getRealPath()));
-                                                                    $set('base64Image', $base64);
-
-                                                                    return $base64;
-                                                                }),
-                                                        ]),
-                                                ]),
+                                                                    }),
+                                                                TextEntry::make('image_url_error')
+                                                                    ->hiddenLabel()
+                                                                    ->visible(fn (Get $get) => $get('image_url_error') !== null)
+                                                                    ->afterStateHydrated(fn (Get $get) => $get('image_url_error')),
+                                                                Image::make(fn (Get $get) => $get('image_url'), '')
+                                                                    ->imageSize(150)
+                                                                    ->visible(fn (Get $get) => $get('image_url') && !$get('image_url_error'))
+                                                                    ->alignCenter(),
+                                                            ]),
+                                                        Tab::make(trans('admin/egg.import.file'))
+                                                            ->schema([
+                                                                FileUpload::make('image')
+                                                                    ->hiddenLabel()
+                                                                    ->previewable()
+                                                                    ->openable(false)
+                                                                    ->downloadable(false)
+                                                                    ->maxSize(256)
+                                                                    ->maxFiles(1)
+                                                                    ->columnSpanFull()
+                                                                    ->alignCenter()
+                                                                    ->imageEditor()
+                                                                    ->image()
+                                                                    ->disk('public')
+                                                                    ->directory(Server::ICON_STORAGE_PATH)
+                                                                    ->acceptedFileTypes([
+                                                                        'image/png',
+                                                                        'image/jpeg',
+                                                                        'image/webp',
+                                                                        'image/svg+xml',
+                                                                    ])
+                                                                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
+                                                                        return $record->uuid . '.' . $file->getClientOriginalExtension();
+                                                                    }),
+                                                            ]),
+                                                    ]),
                                             ])
                                             ->action(function (array $data, $record): void {
-                                                $base64 = $data['base64Image'] ?? null;
-
-                                                if (empty($base64) && !empty($data['image'])) {
-                                                    $base64 = $data['image'];
-                                                }
-
-                                                if (!empty($base64)) {
-                                                    $record->update([
-                                                        'icon' => $base64,
-                                                    ]);
-
+                                                if (!empty($data['imageUrl']) && !empty($data['imageExtension'])) {
+                                                    $this->saveIconFromUrl($data['imageUrl'], $data['imageExtension'], $record);
                                                     Notification::make()
                                                         ->title(trans('server/setting.server_info.icon.updated'))
                                                         ->success()
                                                         ->send();
 
-                                                    $record->refresh();
-                                                } else {
+                                                    return;
+                                                }
+
+                                                if (!empty($data['image'])) {
+                                                    Notification::make()
+                                                        ->title(trans('server/setting.server_info.icon.updated'))
+                                                        ->success()
+                                                        ->send();
+
+                                                    return;
+                                                }
+
+                                                if (empty($data['imageUrl']) && empty($data['image'])) {
                                                     Notification::make()
                                                         ->title(trans('admin/egg.import.no_image'))
                                                         ->warning()
                                                         ->send();
                                                 }
                                             }),
-                                        Action::make('deleteIcon')
-                                            ->visible(fn ($record) => $record->icon)
-                                            ->label('')
-                                            ->icon('tabler-trash')
-                                            ->iconButton()->iconSize(IconSize::Large)
-                                            ->color('danger')
-                                            ->action(function ($record) {
-                                                $record->update([
-                                                    'icon' => null,
-                                                ]);
-
-                                                Notification::make()
-                                                    ->title(trans('server/setting.server_info.icon.deleted'))
-                                                    ->success()
-                                                    ->send();
-
-                                                $record->refresh();
-                                            }),
+                                        DeleteServerIcon::make(),
                                     ]),
                                 Grid::make()
                                     ->columns(3)
@@ -330,13 +303,13 @@ class EditServer extends EditRecord
                                                     ->modalFooterActionsAlignment(Alignment::Right)
                                                     ->modalCancelActionLabel(trans('filament::components/modal.actions.close.label'))
                                                     ->schema([
-                                                        CodeEditor::make('logs')
+                                                        MonacoEditor::make('logs')
                                                             ->hiddenLabel()
                                                             ->formatStateUsing(function (Server $server, DaemonServerRepository $serverRepository) {
                                                                 try {
                                                                     $logs = $serverRepository->setServer($server)->getInstallLogs();
 
-                                                                    return mb_convert_encoding($logs, 'UTF-8', ['UTF-8', 'UTF-16', 'ISO-8859-1', 'Windows-1252', 'ASCII']);
+                                                                    return mb_convert_encoding($logs, 'UTF-8', ['UTF-8', 'UTF-16', 'ISO-8859-1', 'ASCII']);
                                                                 } catch (ConnectionException) {
                                                                     Notification::make()
                                                                         ->title(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
@@ -798,37 +771,17 @@ class EditServer extends EditRecord
                                     ->label(trans('admin/server.startup_cmd'))
                                     ->required()
                                     ->live()
-                                    ->afterStateUpdated(function (Set $set, $state) {
-                                        $set('startup', $state);
-                                        $set('previewing', false);
-                                    })
-                                    ->options(function ($state, Get $get, Set $set) {
+                                    ->options(function (Get $get) {
                                         $egg = Egg::find($get('egg_id'));
-                                        $startups = $egg->startup_commands ?? [];
 
-                                        $currentStartup = $get('startup');
-                                        if (!$currentStartup && $startups) {
-                                            $currentStartup = collect($startups)->first();
-                                            $set('startup', $currentStartup);
-                                            $set('select_startup', $currentStartup);
-                                        }
-
-                                        return array_flip($startups) + ['custom' => 'Custom Startup'];
+                                        return array_flip($egg->startup_commands ?? []) + ['custom' => 'Custom Startup'];
                                     })
-                                    ->formatStateUsing(function (Server $server) {
-                                        $startups = $server->egg->startup_commands;
-
-                                        $currentStartup = $server->startup;
-                                        $matchingStartup = collect($startups)
-                                            ->filter(fn ($value, $key) => $value === $currentStartup)
-                                            ->keys()
-                                            ->first();
-
-                                        if (!$matchingStartup) {
-                                            return 'custom';
+                                    ->formatStateUsing(fn (Server $server) => in_array($server->startup, $server->egg->startup_commands) ? $server->startup : 'custom')
+                                    ->afterStateUpdated(function (Set $set, string $state) {
+                                        if ($state !== 'custom') {
+                                            $set('startup', $state);
                                         }
-
-                                        return $matchingStartup;
+                                        $set('previewing', false);
                                     })
                                     ->selectablePlaceholder(false)
                                     ->columnSpanFull()
@@ -1212,6 +1165,37 @@ class EditServer extends EditRecord
     protected function getSavedNotification(): ?Notification
     {
         return null;
+    }
+
+    /**
+     * Save an icon from URL download to a file.
+     *
+     * @throws Exception
+     */
+    private function saveIconFromUrl(string $imageUrl, string $extension, Server $server): void
+    {
+        $context = stream_context_create([
+            'http' => ['timeout' => 3],
+            'https' => [
+                'timeout' => 3,
+                'verify_peer' => true,
+                'verify_peer_name' => true,
+            ],
+        ]);
+
+        $data = @file_get_contents($imageUrl, false, $context, 0, 262144); //256KB
+
+        if (empty($data)) {
+            throw new \Exception(trans('admin/egg.import.invalid_url'));
+        }
+
+        $normalizedExtension = match ($extension) {
+            'svg+xml' => 'svg',
+            'jpeg' => 'jpg',
+            default => $extension,
+        };
+
+        Storage::disk('public')->put(Server::ICON_STORAGE_PATH . "/$server->uuid.$normalizedExtension", $data);
     }
 
     public function getRelationManagers(): array
