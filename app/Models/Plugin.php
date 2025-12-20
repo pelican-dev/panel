@@ -205,7 +205,7 @@ class Plugin extends Model implements HasPluginSettings
 
     public function canDisable(): bool
     {
-        return $this->status !== PluginStatus::Disabled && $this->status !== PluginStatus::NotInstalled && $this->isCompatible();
+        return $this->status === PluginStatus::Enabled || $this->status === PluginStatus::Incompatible;
     }
 
     public function isCompatible(): bool

@@ -202,7 +202,7 @@ class PluginResource extends Resource
                         ->icon('tabler-terminal')
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->hidden(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled)
+                        ->hidden(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled || $plugin->status === PluginStatus::Errored)
                         ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
                             $pluginService->uninstallPlugin($plugin);
 
