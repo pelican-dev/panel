@@ -226,7 +226,7 @@ class PluginService
     {
         $migrations = plugin_path($plugin->id, 'database', 'migrations');
         if (file_exists($migrations)) {
-            $success = Artisan::call('migrate:rollback', ['--realpath' => true, '--path' => $migrations, '--force' => true]) === 0;
+            $success = Artisan::call('migrate:reset', ['--realpath' => true, '--path' => $migrations, '--force' => true]) === 0;
 
             if (!$success) {
                 throw new Exception("Could not rollback migrations for plugin '{$plugin->id}'");
@@ -330,6 +330,13 @@ class PluginService
             $this->buildAssets();
 
             $this->manageComposerPackages(oldPackages: $pluginPackages);
+
+            // This throws an error when not called with qualifier
+            foreach (\Filament\Facades\Filament::getPanels() as $panel) {
+                $panel->clearCachedComponents();
+            }
+
+            Artisan::call('optimize:clear');
         } catch (Exception $exception) {
             $this->handlePluginException($plugin, $exception);
         }
