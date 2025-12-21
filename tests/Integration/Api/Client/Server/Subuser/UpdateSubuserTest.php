@@ -44,7 +44,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
 
         // When running the tests, the context is function-scoped instead of request-scoped, so we have to flush it
         Context::flush();
-        
+
         $server->subusers()->where('user_id', $user->id)->update([
             'permissions' => [
                 SubuserPermission::UserUpdate,
