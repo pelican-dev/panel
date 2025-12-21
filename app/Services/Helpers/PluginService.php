@@ -217,7 +217,11 @@ class PluginService
         if (file_exists($migrations)) {
             try {
                 $migrator = $this->app->make(Migrator::class);
-                $migrator->run($migrations);
+                $ranMigrations = $migrator->run($migrations);
+
+                if (empty($ranMigrations)) {
+                    throw new Exception('No migrations did run');
+                }
             } catch (Exception) {
                 throw new Exception("Could not run migrations for plugin '{$plugin->id}'");
             }
@@ -245,8 +249,9 @@ class PluginService
                 $seederObject = $this->app->make($seeder)->setContainer($this->app);
 
                 Model::unguarded(fn () => $seederObject->__invoke());
-            } catch (Exception) {
-                throw new Exception("Could not run seeder for plugin '{$plugin->id}'");
+            } catch (Exception $exception) {
+                throw $exception;
+                //throw new Exception("Could not run seeder for plugin '{$plugin->id}'");
             }
         }
     }
