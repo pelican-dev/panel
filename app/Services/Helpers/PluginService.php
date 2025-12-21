@@ -16,6 +16,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -264,7 +265,7 @@ class PluginService
                 throw ($exception);
             }
 
-            report($exception);
+            Log::warning($exception->getMessage(), ['exception' => $exception]);
         }
 
         return false;
