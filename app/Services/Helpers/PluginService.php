@@ -250,8 +250,7 @@ class PluginService
 
                 Model::unguarded(fn () => $seederObject->__invoke());
             } catch (Exception $exception) {
-                throw $exception;
-                //throw new Exception("Could not run seeder for plugin '{$plugin->id}'");
+                throw new Exception("Could not run seeder for plugin '{$plugin->id}'");
             }
         }
     }
