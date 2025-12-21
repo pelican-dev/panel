@@ -222,8 +222,8 @@ class PluginService
                 if (empty($ranMigrations)) {
                     throw new Exception('No migrations did run');
                 }
-            } catch (Exception) {
-                throw new Exception("Could not run migrations for plugin '{$plugin->id}'");
+            } catch (Exception $exception) {
+                throw new Exception("Could not run migrations': " . $exception->getMessage());
             }
         }
     }
@@ -235,8 +235,8 @@ class PluginService
             try {
                 $migrator = $this->app->make(Migrator::class);
                 $migrator->rollback($migrations);
-            } catch (Exception) {
-                throw new Exception("Could not rollback migrations for plugin '{$plugin->id}'");
+            } catch (Exception $exception) {
+                throw new Exception("Could not rollback migrations': " . $exception->getMessage());
             }
         }
     }
@@ -249,8 +249,8 @@ class PluginService
                 $seederObject = $this->app->make($seeder)->setContainer($this->app);
 
                 Model::unguarded(fn () => $seederObject->__invoke());
-            } catch (Exception) {
-                throw new Exception("Could not run seeder for plugin '{$plugin->id}'");
+            } catch (Exception $exception) {
+                throw new Exception('Could not run seeder: ' . $exception->getMessage());
             }
         }
     }
