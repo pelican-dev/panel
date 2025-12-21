@@ -39,6 +39,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\In;
 use ResourceBundle;
@@ -333,12 +334,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return !$key ? $customization : $customization[$key->value];
     }
 
-    protected function checkPermission(Server $server, string|SubuserPermission $permission = ''): bool
+    protected function hasPermission(Server $server, string $permission = ''): bool
     {
-        if ($permission instanceof SubuserPermission) {
-            $permission = $permission->value;
-        }
-
         if ($this->canned('update', $server) || $server->owner_id === $this->id) {
             return true;
         }
@@ -354,6 +351,24 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         return in_array($permission, $subuser->permissions);
+    }
+
+    protected function checkPermission(Server $server, string|SubuserPermission $permission = ''): bool
+    {
+        if ($permission instanceof SubuserPermission) {
+            $permission = $permission->value;
+        }
+
+        $context_key = "permission.{$this->id}.{$server->id}.{$permission}";
+        if (Context::has($context_key)) {
+            return Context::get($context_key);
+        }
+
+        $check_result = $this->hasPermission($server, $permission);
+
+        Context::add($context_key, $check_result);
+
+        return $check_result;
     }
 
     /**
