@@ -21,7 +21,7 @@ class ListPluginsCommand extends Command
             return;
         }
 
-        $this->table(['id', 'Name', 'Author', 'Status', 'Version', 'Panels', 'Category'], $plugins->toArray());
+        $this->table(['ID', 'Name', 'Author', 'Status', 'Version', 'Panels', 'Category'], $plugins->toArray());
 
         $this->output->newLine();
     }
