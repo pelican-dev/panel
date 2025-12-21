@@ -62,9 +62,13 @@ FROM --platform=$TARGETOS/$TARGETARCH localhost:5000/base-php:$TARGETARCH AS fin
 
 WORKDIR /var/www/html
 
-# Install additional required libraries
+# Install additional required libraries and runtime dependencies for plugins
 RUN apk add --no-cache \
-    caddy ca-certificates supervisor supercronic fcgi
+    caddy ca-certificates supervisor supercronic fcgi \
+    nodejs npm yarn bash
+
+# Copy composer binary for runtime plugin dependency management
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 COPY --chown=root:www-data --chmod=640 --from=composerbuild /build .
 COPY --chown=root:www-data --chmod=640 --from=yarnbuild /build/public ./public
