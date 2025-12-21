@@ -217,11 +217,7 @@ class PluginService
         if (file_exists($migrations)) {
             try {
                 $migrator = $this->app->make(Migrator::class);
-                $ranMigrations = $migrator->run($migrations);
-
-                if (empty($ranMigrations)) {
-                    throw new Exception('No migrations did run');
-                }
+                $migrator->run($migrations);
             } catch (Exception $exception) {
                 throw new Exception("Could not run migrations': " . $exception->getMessage());
             }
