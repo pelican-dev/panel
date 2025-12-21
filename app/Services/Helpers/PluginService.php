@@ -249,7 +249,7 @@ class PluginService
                 $seederObject = $this->app->make($seeder)->setContainer($this->app);
 
                 Model::unguarded(fn () => $seederObject->__invoke());
-            } catch (Exception $exception) {
+            } catch (Exception) {
                 throw new Exception("Could not run seeder for plugin '{$plugin->id}'");
             }
         }
