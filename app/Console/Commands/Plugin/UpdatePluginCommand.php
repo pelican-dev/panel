@@ -4,6 +4,7 @@ namespace App\Console\Commands\Plugin;
 
 use App\Models\Plugin;
 use App\Services\Helpers\PluginService;
+use Exception;
 use Illuminate\Console\Command;
 
 class UpdatePluginCommand extends Command
@@ -30,8 +31,12 @@ class UpdatePluginCommand extends Command
             return;
         }
 
-        $pluginService->updatePlugin($plugin);
+        try {
+            $pluginService->updatePlugin($plugin);
 
-        $this->info('Plugin updated.');
+            $this->info('Plugin updated.');
+        } catch (Exception $exception) {
+            $this->error('Could not update plugin: ' . $exception->getMessage());
+        }
     }
 }
