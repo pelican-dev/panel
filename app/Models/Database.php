@@ -36,6 +36,7 @@ class Database extends Model implements Validatable
      * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'server_database';
+
     public mixed $databaseHost;
 
     /**
