@@ -68,7 +68,8 @@ RUN apk add --no-cache \
     nodejs npm yarn bash
 
 # Copy composer binary for runtime plugin dependency management
-COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+# Reuse the composer binary from the composer stage (line 15) for consistency
+COPY --from=composer /usr/local/bin/composer /usr/local/bin/composer
 
 COPY --chown=root:www-data --chmod=640 --from=composerbuild /build .
 COPY --chown=root:www-data --chmod=640 --from=yarnbuild /build/public ./public
