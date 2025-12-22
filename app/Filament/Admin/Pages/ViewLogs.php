@@ -50,18 +50,12 @@ class ViewLogs extends BaseViewLog
                     $uploadLines = $totalLines <= 1000 ? $lines : array_slice($lines, -1000);
                     $content = implode("\n", $uploadLines);
 
-                    $logUrl = 'https://logs.pelican.dev';
                     try {
-                        $response = Http::timeout(10)->asMultipart()->post($logUrl, [
-                            [
-                                'name' => 'c',
-                                'contents' => $content,
-                            ],
-                            [
-                                'name' => 'e',
-                                'contents' => '14d',
-                            ],
-                        ]);
+                        $response = Http::timeout(10)
+                            ->asMultipart()
+                            ->attach('c', $content)
+                            ->attach('e', '14d')
+                            ->post('https://logs.pelican.dev');
 
                         if ($response->failed()) {
                             Notification::make()
