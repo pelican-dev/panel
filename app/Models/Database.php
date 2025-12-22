@@ -37,8 +37,6 @@ class Database extends Model implements Validatable
      */
     public const RESOURCE_NAME = 'server_database';
 
-    public mixed $databaseHost;
-
     /**
      * The attributes excluded from the model's JSON form.
      */

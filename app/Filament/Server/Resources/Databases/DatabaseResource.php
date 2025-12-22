@@ -138,9 +138,9 @@ class DatabaseResource extends Resource
                 Action::make('open_webui')
                     ->label(trans('server/database.open_webui'))
                     ->icon('tabler-external-link')
-                    ->url(fn (Database $database) => $database->databaseHost->webui_url)
+                    ->url(fn (Database $database) => $database->host->webui_url)
                     ->openUrlInNewTab()
-                    ->hidden(fn (Database $database) => empty($database->databaseHost->webui_url)),
+                    ->hidden(fn (Database $database) => empty($database->host->webui_url)),
                 ViewAction::make()
                     ->modalHeading(fn (Database $database) => trans('server/database.viewing', ['database' => $database->database])),
                 DeleteAction::make()
