@@ -340,8 +340,6 @@ class PluginService
             foreach (\Filament\Facades\Filament::getPanels() as $panel) {
                 $panel->clearCachedComponents();
             }
-
-            Artisan::call('optimize:clear');
         } catch (Exception $exception) {
             $this->handlePluginException($plugin, $exception);
         }
