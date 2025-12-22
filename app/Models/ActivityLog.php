@@ -143,66 +143,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         });
     }
 
-    /**
-     * Icon mapping for activity event groups.
-     * Consistent with icons used throughout the panel (SubuserPermission, Resources, etc.)
-     */
-    private const EVENT_ICON_MAP = [
-        'backup' => 'tabler-file-zip',
-        'file' => 'tabler-files',
-        'database' => 'tabler-database',
-        'schedule' => 'tabler-clock',
-        'allocation' => 'tabler-network',
-        'startup' => 'tabler-player-play',
-        'settings' => 'tabler-settings',
-        'subuser' => 'tabler-users',
-        'console' => 'tabler-terminal-2',
-        'control' => 'tabler-terminal-2',
-        'power' => 'tabler-power',
-        'sftp' => 'tabler-folder-share',
-        'server' => 'tabler-server',
-        'auth' => 'tabler-shield',
-        'user' => 'tabler-user',
-        'api-key' => 'tabler-key',
-        'reset-password' => 'tabler-key',
-        'ssh' => 'tabler-terminal',
-    ];
-
-    /**
-     * Get the icon for this activity log entry based on the event type.
-     *
-     * Parses the event string to extract the event group and returns the
-     * corresponding icon from EVENT_ICON_MAP. Falls back to actor-based
-     * icon if no specific mapping exists.
-     *
-     * @return string The tabler icon name for this activity
-     */
     public function getIcon(): string
-    {
-        // Extract the event group (e.g., "server:backup.create" → "backup")
-        $eventParts = explode(':', $this->event);
-        $group = count($eventParts) > 1
-            ? explode('.', $eventParts[1])[0]
-            : explode('.', $eventParts[0])[0];
-
-        // Return event-specific icon if available
-        if (isset(self::EVENT_ICON_MAP[$group])) {
-            return self::EVENT_ICON_MAP[$group];
-        }
-
-        // Fallback to actor-based icon
-        return $this->getActorIcon();
-    }
-
-    /**
-     * Get icon based on the actor type.
-     *
-     * Returns an icon representing who performed the action when the event
-     * group doesn't have a specific icon mapping.
-     *
-     * @return string The tabler icon name based on actor type
-     */
-    private function getActorIcon(): string
     {
         if ($this->apiKey) {
             return 'tabler-api';
@@ -219,7 +160,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
     {
         $properties = $this->wrapProperties();
 
-        return trans_choice('activity.' . str($this->event)->replace(':', '.'), array_key_exists('count', $properties) ? $properties['count'] : 1, $properties);
+        return trans_choice('activity.'.str($this->event)->replace(':', '.'), array_key_exists('count', $properties) ? $properties['count'] : 1, $properties);
     }
 
     public function getIp(): ?string
@@ -308,7 +249,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         }
 
         $properties = $this->wrapProperties();
-        $event = trans_choice('activity.' . str($this->event)->replace(':', '.'), array_key_exists('count', $properties) ? $properties['count'] : 1);
+        $event = trans_choice('activity.'.str($this->event)->replace(':', '.'), array_key_exists('count', $properties) ? $properties['count'] : 1);
 
         preg_match_all('/:(?<key>[\w.-]+\w)(?:[^\w:]?|$)/', $event, $matches);
 
