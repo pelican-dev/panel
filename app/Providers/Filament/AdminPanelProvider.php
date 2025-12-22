@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Admin\Pages\ListLogs;
 use App\Filament\Admin\Pages\ViewLogs;
+use App\Services\Helpers\PluginService;
 use Boquizo\FilamentLogViewer\FilamentLogViewerPlugin;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -14,7 +15,7 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return parent::panel($panel)
+        $panel = parent::panel($panel)
             ->id('admin')
             ->path('admin')
             ->homeUrl('/')
@@ -45,5 +46,12 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationGroup(fn () => trans('admin/dashboard.advanced'))
                     ->navigationIcon('tabler-file-info'),
             ]);
+
+        /** @var PluginService $pluginService */
+        $pluginService = app(PluginService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+
+        $pluginService->loadPanelPlugins($panel);
+
+        return $panel;
     }
 }

@@ -2,10 +2,12 @@
 
 namespace App\Filament\Server\Resources\Files\Pages;
 
+use App\Enums\EditorLanguages;
 use App\Enums\SubuserPermission;
 use App\Exceptions\Http\Server\FileSizeTooLargeException;
 use App\Exceptions\Repository\FileNotEditableException;
 use App\Facades\Activity;
+use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Filament\Server\Resources\Files\FileResource;
 use App\Livewire\AlertBanner;
 use App\Models\File;
@@ -16,8 +18,6 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\CodeEditor;
-use Filament\Forms\Components\CodeEditor\Enums\Language;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
@@ -137,36 +137,11 @@ class EditFiles extends Page
                             ->label(trans('server/file.actions.new_file.syntax'))
                             ->searchable()
                             ->live()
-                            ->options(Language::class)
+                            ->options(EditorLanguages::class)
                             ->selectablePlaceholder(false)
-                            ->default(fn () => match (pathinfo($this->path, PATHINFO_EXTENSION)) {
-                                'cc', 'hpp' => Language::Cpp,
-
-                                'css', 'scss' => Language::Css,
-
-                                'go' => Language::Go,
-
-                                'html' => Language::Html,
-
-                                'class', 'kt', 'kts' => Language::Java,
-
-                                'js', 'mjs', 'cjs', 'ts', 'tsx' => Language::JavaScript,
-
-                                'json', 'json5' => Language::Json,
-
-                                'md' => Language::Markdown,
-
-                                'php3', 'php4', 'php5', 'phtml', 'php' => Language::Php,
-
-                                'py', 'pyc', 'pyo', 'pyi' => Language::Python,
-
-                                'xml' => Language::Xml,
-
-                                'yml', 'yaml' => Language::Yaml,
-
-                                default => null,
-                            }),
-                        CodeEditor::make('editor')
+                            ->afterStateUpdated(fn ($state) => $this->dispatch('setLanguage', lang: $state))
+                            ->default(fn () => EditorLanguages::fromWithAlias(pathinfo($this->path, PATHINFO_EXTENSION))),
+                        MonacoEditor::make('editor')
                             ->hiddenLabel()
                             ->language(fn (Get $get) => $get('lang'))
                             ->default(function () {
@@ -196,6 +171,7 @@ class EditFiles extends Page
                                 } catch (ConnectionException) {
                                     // Alert banner for this one will be handled by ListFiles
                                 }
+
                                 $this->redirectToList();
                             }),
                     ])

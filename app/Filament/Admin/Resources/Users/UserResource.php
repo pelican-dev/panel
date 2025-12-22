@@ -33,6 +33,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\PageRegistration;
@@ -224,65 +225,71 @@ class UserResource extends Resource
                                         'md' => 1,
                                         'lg' => 1,
                                     ]),
-                                Select::make('timezone')
-                                    ->label(trans('profile.timezone'))
+                                Toggle::make('is_managed_externally')
+                                    ->label(trans('admin/user.is_managed_externally'))
+                                    ->hintIcon('tabler-question-mark', trans('admin/user.is_managed_externally_helper'))
+                                    ->inline(false)
                                     ->columnSpan([
                                         'default' => 1,
                                         'md' => 1,
                                         'lg' => 1,
-                                    ])
-                                    ->required()
-                                    ->prefixIcon('tabler-clock-pin')
-                                    ->default(fn () => config('app.timezone', 'UTC'))
-                                    ->selectablePlaceholder(false)
-                                    ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
-                                    ->searchable(),
-                                Select::make('language')
-                                    ->label(trans('profile.language'))
-                                    ->columnSpan([
-                                        'default' => 1,
-                                        'md' => 1,
-                                        'lg' => 1,
-                                    ])
-                                    ->required()
-                                    ->prefixIcon('tabler-flag')
-                                    ->live()
-                                    ->default('en')
-                                    ->searchable()
-                                    ->selectablePlaceholder(false)
-                                    ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
-                                FileUpload::make('avatar')
-                                    ->visible(fn (?User $user, FileUpload $fileUpload) => $user ? $fileUpload->getDisk()->exists($fileUpload->getDirectory() . '/' . $user->id . '.png') : false)
-                                    ->avatar()
-                                    ->directory('avatars')
-                                    ->disk('public')
-                                    ->formatStateUsing(function (FileUpload $fileUpload, ?User $user) {
-                                        if (!$user) {
-                                            return null;
-                                        }
-                                        $path = $fileUpload->getDirectory() . '/' . $user->id . '.png';
-                                        if ($fileUpload->getDisk()->exists($path)) {
-                                            return $path;
-                                        }
-                                    })
-                                    ->deleteUploadedFileUsing(function (FileUpload $fileUpload, $file) {
-                                        if ($file instanceof TemporaryUploadedFile) {
-                                            return $file->delete();
-                                        }
+                                    ]),
+                                Section::make(trans('profile.tabs.customization'))
+                                    ->collapsible()
+                                    ->columnSpanFull()
+                                    ->columns(2)
+                                    ->schema([
+                                        Select::make('timezone')
+                                            ->label(trans('profile.timezone'))
+                                            ->required()
+                                            ->prefixIcon('tabler-clock-pin')
+                                            ->default(fn () => config('app.timezone', 'UTC'))
+                                            ->selectablePlaceholder(false)
+                                            ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
+                                            ->searchable(),
+                                        Select::make('language')
+                                            ->label(trans('profile.language'))
+                                            ->required()
+                                            ->prefixIcon('tabler-flag')
+                                            ->live()
+                                            ->default('en')
+                                            ->searchable()
+                                            ->selectablePlaceholder(false)
+                                            ->options(fn (LanguageService $languageService) => $languageService->getAvailableLanguages()),
+                                        FileUpload::make('avatar')
+                                            ->visible(fn (?User $user, FileUpload $fileUpload) => $user ? $fileUpload->getDisk()->exists($fileUpload->getDirectory() . '/' . $user->id . '.png') : false)
+                                            ->columnSpanFull()
+                                            ->avatar()
+                                            ->directory('avatars')
+                                            ->disk('public')
+                                            ->formatStateUsing(function (FileUpload $fileUpload, ?User $user) {
+                                                if (!$user) {
+                                                    return null;
+                                                }
+                                                $path = $fileUpload->getDirectory() . '/' . $user->id . '.png';
+                                                if ($fileUpload->getDisk()->exists($path)) {
+                                                    return $path;
+                                                }
+                                            })
+                                            ->deleteUploadedFileUsing(function (FileUpload $fileUpload, $file) {
+                                                if ($file instanceof TemporaryUploadedFile) {
+                                                    return $file->delete();
+                                                }
 
-                                        if ($fileUpload->getDisk()->exists($file)) {
-                                            return $fileUpload->getDisk()->delete($file);
-                                        }
-                                    }),
+                                                if ($fileUpload->getDisk()->exists($file)) {
+                                                    return $fileUpload->getDisk()->delete($file);
+                                                }
+                                            }),
+                                    ]),
                                 Section::make(trans('profile.tabs.oauth'))
                                     ->visible(fn (?User $user) => $user)
                                     ->collapsible()
                                     ->columnSpanFull()
                                     ->schema(function (OAuthService $oauthService, ?User $user) {
-
                                         if (!$user) {
                                             return;
                                         }
+
                                         $actions = [];
                                         foreach ($user->oauth ?? [] as $schema => $_) {
                                             $schema = $oauthService->get($schema);
