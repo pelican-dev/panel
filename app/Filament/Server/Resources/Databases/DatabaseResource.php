@@ -17,6 +17,7 @@ use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use App\Traits\Filament\HasLimitBadge;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -134,6 +135,12 @@ class DatabaseResource extends Resource
                     ->sortable(),
             ])
             ->recordActions([
+                Action::make('open_webui')
+                    ->label(trans('server/database.open_webui'))
+                    ->icon('tabler-external-link')
+                    ->url(fn (Database $database) => $database->databaseHost->webui_url)
+                    ->openUrlInNewTab()
+                    ->hidden(fn (Database $database) => empty($database->databaseHost->webui_url)),
                 ViewAction::make()
                     ->modalHeading(fn (Database $database) => trans('server/database.viewing', ['database' => $database->database])),
                 DeleteAction::make()
