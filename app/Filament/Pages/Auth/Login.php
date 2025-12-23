@@ -76,10 +76,13 @@ class Login extends BaseLogin
 
             $id = $schema->getId();
 
+            $color = $schema->getHexColor();
+            $color = is_string($color) ? Color::hex($color) : null;
+
             $actions[] = Action::make("oauth_$id")
                 ->label($schema->getName())
                 ->icon($schema->getIcon())
-                ->color(Color::hex($schema->getHexColor()))
+                ->color($color)
                 ->url(route('auth.oauth.redirect', ['driver' => $id], false));
         }
 
