@@ -56,7 +56,9 @@ class ListLogs extends BaseListLogs
                     ->modalHeading(trans('admin/log.actions.upload_logs'))
                     ->modalDescription(fn ($record) => trans('admin/log.actions.upload_logs_description', ['file' => $record['date'], 'url' => 'https://logs.pelican.dev']))
                     ->action(function ($record) {
-                        $logPath = storage_path('logs/' . $record['date']);
+                        $prefix = config('filament-log-viewer.pattern.prefix', 'laravel-');
+                        $extension = config('filament-log-viewer.pattern.extension', '.log');
+                        $logPath = storage_path('logs/' . $prefix . $record['date'] . $extension);
 
                         if (!file_exists($logPath)) {
                             Notification::make()

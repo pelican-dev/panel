@@ -33,7 +33,9 @@ class ViewLogs extends BaseViewLog
                 ->modalHeading(trans('admin/log.actions.upload_logs'))
                 ->modalDescription(fn () => trans('admin/log.actions.upload_logs_description', ['file' => $this->resolveRecordDate(), 'url' => 'https://logs.pelican.dev']))
                 ->action(function () {
-                    $logPath = storage_path('logs/' . $this->resolveRecordDate());
+                    $prefix = config('filament-log-viewer.pattern.prefix', 'laravel-');
+                    $extension = config('filament-log-viewer.pattern.extension', '.log');
+                    $logPath = storage_path('logs/' . $prefix . $this->resolveRecordDate() . $extension);
 
                     if (!file_exists($logPath)) {
                         Notification::make()
