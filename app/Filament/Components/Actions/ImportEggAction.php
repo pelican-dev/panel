@@ -99,7 +99,7 @@ class ImportEggAction extends Action
                     ->title(trans('admin/egg.import.import_result', [
                         'success' => $success->count(),
                         'failed' => $failed->count(),
-                        'total' => $success->count() + $failed->count()
+                        'total' => $success->count() + $failed->count(),
                     ]))
                     ->body($bodyParts->join(' | '))
                     ->status($failed->isEmpty() ? 'success' : ($success->isEmpty() ? 'danger' : 'warning'))
