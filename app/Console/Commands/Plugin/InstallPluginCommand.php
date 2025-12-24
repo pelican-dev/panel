@@ -5,6 +5,7 @@ namespace App\Console\Commands\Plugin;
 use App\Enums\PluginStatus;
 use App\Models\Plugin;
 use App\Services\Helpers\PluginService;
+use Exception;
 use Illuminate\Console\Command;
 
 class InstallPluginCommand extends Command
@@ -31,8 +32,12 @@ class InstallPluginCommand extends Command
             return;
         }
 
-        $pluginService->installPlugin($plugin);
+        try {
+            $pluginService->installPlugin($plugin);
 
-        $this->info('Plugin installed and enabled.');
+            $this->info('Plugin installed and enabled.');
+        } catch (Exception $exception) {
+            $this->error('Could not install plugin: ' . $exception->getMessage());
+        }
     }
 }

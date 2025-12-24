@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use JsonException;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use ZipArchive;
 
@@ -159,6 +160,8 @@ class PluginService
     /**
      * @param  null|array<string, string>  $newPackages
      * @param  null|array<string, string>  $oldPackages
+     *
+     * @throws Exception
      */
     public function manageComposerPackages(?array $newPackages = [], ?array $oldPackages = null): void
     {
@@ -210,6 +213,7 @@ class PluginService
         }
     }
 
+    /** @throws Exception */
     public function runPluginMigrations(Plugin $plugin): void
     {
         $migrations = plugin_path($plugin->id, 'database', 'migrations');
@@ -222,6 +226,7 @@ class PluginService
         }
     }
 
+    /** @throws Exception */
     public function rollbackPluginMigrations(Plugin $plugin): void
     {
         $migrations = plugin_path($plugin->id, 'database', 'migrations');
@@ -234,6 +239,7 @@ class PluginService
         }
     }
 
+    /** @throws Exception */
     public function runPluginSeeder(Plugin $plugin): void
     {
         $seeder = $plugin->getSeeder();
@@ -271,70 +277,64 @@ class PluginService
         return false;
     }
 
+    /** @throws Exception */
     public function installPlugin(Plugin $plugin, bool $enable = true): void
     {
-        try {
-            $this->manageComposerPackages(json_decode($plugin->composer_packages, true, 512));
+        $this->manageComposerPackages(json_decode($plugin->composer_packages, true, 512));
 
-            if ($enable) {
-                $this->enablePlugin($plugin);
-            } else {
-                if ($plugin->status === PluginStatus::NotInstalled) {
-                    $this->disablePlugin($plugin);
-                }
+        if ($enable) {
+            $this->enablePlugin($plugin);
+        } else {
+            if ($plugin->status === PluginStatus::NotInstalled) {
+                $this->disablePlugin($plugin);
             }
+        }
 
-            $this->buildAssets();
+        $this->buildAssets();
 
-            $this->runPluginMigrations($plugin);
+        $this->runPluginMigrations($plugin);
 
-            $this->runPluginSeeder($plugin);
+        $this->runPluginSeeder($plugin);
 
-            foreach (Filament::getPanels() as $panel) {
-                $panel->clearCachedComponents();
-            }
-        } catch (Exception $exception) {
-            $this->handlePluginException($plugin, $exception);
+        foreach (Filament::getPanels() as $panel) {
+            $panel->clearCachedComponents();
         }
     }
 
+    /** @throws Exception */
     public function updatePlugin(Plugin $plugin): void
     {
-        try {
-            $downloadUrl = $plugin->getDownloadUrlForUpdate();
-            if ($downloadUrl) {
-                $this->downloadPluginFromUrl($downloadUrl, true);
-
-                $this->installPlugin($plugin, false);
-
-                cache()->forget("plugins.$plugin->id.update");
-            }
-        } catch (Exception $exception) {
-            $this->handlePluginException($plugin, $exception);
+        $downloadUrl = $plugin->getDownloadUrlForUpdate();
+        if (!$downloadUrl) {
+            throw new Exception('No download url found.');
         }
+
+        $this->downloadPluginFromUrl($downloadUrl, true);
+
+        $this->installPlugin($plugin, false);
+
+        cache()->forget("plugins.$plugin->id.update");
     }
 
+    /** @throws Exception */
     public function uninstallPlugin(Plugin $plugin, bool $deleteFiles = false): void
     {
-        try {
-            $pluginPackages = json_decode($plugin->composer_packages, true, 512);
+        $pluginPackages = json_decode($plugin->composer_packages, true, 512);
 
-            $this->rollbackPluginMigrations($plugin);
+        $this->rollbackPluginMigrations($plugin);
 
-            if ($deleteFiles) {
-                $this->deletePlugin($plugin);
-            } else {
-                $this->setStatus($plugin, PluginStatus::NotInstalled);
-            }
-
-            $this->buildAssets();
-
-            $this->manageComposerPackages(oldPackages: $pluginPackages);
-        } catch (Exception $exception) {
-            $this->handlePluginException($plugin, $exception);
+        if ($deleteFiles) {
+            $this->deletePlugin($plugin);
+        } else {
+            $this->setStatus($plugin, PluginStatus::NotInstalled);
         }
+
+        $this->buildAssets();
+
+        $this->manageComposerPackages(oldPackages: $pluginPackages);
     }
 
+    /** @throws Exception */
     public function downloadPluginFromFile(UploadedFile $file, bool $cleanDownload = false): void
     {
         // Validate file size to prevent zip bombs
@@ -374,6 +374,7 @@ class PluginService
         $zip->close();
     }
 
+    /** @throws Exception */
     public function downloadPluginFromUrl(string $url, bool $cleanDownload = false): void
     {
         $info = pathinfo($url);
@@ -435,7 +436,11 @@ class PluginService
         ]);
     }
 
-    /** @param array<int, string> $order */
+    /**
+     * @param  array<int, string>  $order
+     *
+     * @throws JsonException
+     */
     public function updateLoadOrder(array $order): void
     {
         foreach ($order as $i => $plugin) {
