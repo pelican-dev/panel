@@ -165,8 +165,6 @@ class PanelInstaller extends SimplePage implements HasForms
 
             throw new Halt(trans('installer.exceptions.write_env'));
         }
-
-        Artisan::call('config:clear');
     }
 
     public function runMigrations(): void
