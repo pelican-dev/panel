@@ -181,12 +181,15 @@ class EditProfile extends BaseEditProfile
                                     $id = $schema->getId();
                                     $name = $schema->getName();
 
+                                    $color = $schema->getHexColor();
+                                    $color = is_string($color) ? Color::hex($color) : null;
+
                                     $unlink = array_key_exists($id, $this->getUser()->oauth ?? []);
 
                                     $actions[] = Action::make("oauth_$id")
                                         ->label(trans('profile.' . ($unlink ? 'unlink' : 'link'), ['name' => $name]))
                                         ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
-                                        ->color(Color::hex($schema->getHexColor()))
+                                        ->color($color)
                                         ->action(function (UserUpdateService $updateService) use ($id, $name, $unlink) {
                                             if ($unlink) {
                                                 $oauth = user()?->oauth;
