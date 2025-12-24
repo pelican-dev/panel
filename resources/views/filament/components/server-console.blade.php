@@ -111,7 +111,7 @@
                 searchAddonBar.show();
                 return false;
             } else if (event.key === 'Escape') {
-                searchAddonBar.hidden();
+                searchAddonBar.hide();
             }
             return true;
         });
