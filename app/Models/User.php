@@ -360,15 +360,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         $contextKey = "permission.{$this->id}.{$server->id}.{$permission}";
-        if (Context::has($contextKey)) {
-            return Context::get($contextKey);
-        }
-
-        $checkResult = $this->hasPermission($server, $permission);
-
-        Context::add($contextKey, $checkResult);
-
-        return $checkResult;
+        return Context::remember($contextKey, fn () => $this->hasPermission($server, $permission);
     }
 
     /**
