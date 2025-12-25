@@ -65,7 +65,7 @@ WORKDIR /var/www/html
 # Install additional required libraries and runtime dependencies for plugins
 RUN apk add --no-cache \
     caddy ca-certificates supervisor supercronic fcgi \
-    nodejs npm yarn bash 7zip bzip2-dev
+    nodejs npm yarn bash p7zip bzip2-dev
 
 # Copy composer binary for runtime plugin dependency management
 # Reuse the composer binary from the composer stage (line 15) for consistency

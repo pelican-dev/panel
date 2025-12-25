@@ -71,7 +71,7 @@ WORKDIR /var/www/html
 # Install additional required libraries
 RUN apk add --no-cache \
     caddy ca-certificates supervisor supercronic fcgi coreutils \
-    nodejs npm yarn bash 7zip bzip2-dev
+    nodejs npm yarn bash p7zip bzip2-dev
 
 COPY --from=composer /usr/local/bin/composer /usr/local/bin/composer
 
