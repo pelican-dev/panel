@@ -823,7 +823,6 @@ class Settings extends Page implements HasSchemas
 
             $this->writeToEnvironment($data);
 
-            Artisan::call('config:clear');
             Artisan::call('queue:restart');
 
             $this->redirect($this->getUrl());
