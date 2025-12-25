@@ -32,7 +32,7 @@ return [
     'password' => 'Password',
     'password_help' => 'The password for the database user.',
     'webui_url' => 'WebUI URL',
-    'webui_url_help' => 'Optional URL to a database management interface (e.g., phpMyAdmin). If provided, users will see an "Open" button to access it.',
+    'webui_url_help' => 'Optional URL to a database management interface (e.g., phpMyAdmin). If provided, users will see an "Open" button to access it. Supports placeholders: {{ database }}, {{ username }}',
     'linked_nodes' => 'Linked Nodes',
     'linked_nodes_help' => 'This setting only defaults to this database host when adding a database to a server on the selected Node.',
     'connection_error' => 'Error connecting to database host',
