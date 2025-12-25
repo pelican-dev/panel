@@ -141,6 +141,12 @@ class CreateDatabaseHost extends CreateRecord
                         ->default(3306)
                         ->minValue(0)
                         ->maxValue(65535),
+                    TextInput::make('webui_url')
+                        ->columnSpan(2)
+                        ->label(trans('admin/databasehost.webui_url'))
+                        ->helperText(trans('admin/databasehost.webui_url_help'))
+                        ->url()
+                        ->maxLength(255),
                     TextInput::make('max_databases')
                         ->label(trans('admin/databasehost.max_database'))
                         ->helperText(trans('admin/databasehost.max_databases_help'))

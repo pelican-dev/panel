@@ -119,7 +119,7 @@ class DatabaseHostResource extends Resource
                     ])
                     ->schema([
                         TextInput::make('host')
-                            ->columnSpan(2)
+                            ->columnSpan(1)
                             ->label(trans('admin/databasehost.host'))
                             ->helperText(trans('admin/databasehost.host_help'))
                             ->required()
@@ -135,6 +135,12 @@ class DatabaseHostResource extends Resource
                             ->default(3306)
                             ->minValue(0)
                             ->maxValue(65535),
+                        TextInput::make('webui_url')
+                            ->columnSpan(2)
+                            ->label(trans('admin/databasehost.webui_url'))
+                            ->helperText(trans('admin/databasehost.webui_url_help'))
+                            ->url()
+                            ->maxLength(255),
                         TextInput::make('max_databases')
                             ->label(trans('admin/databasehost.max_database'))
                             ->helperText(trans('admin/databasehost.max_databases_help'))

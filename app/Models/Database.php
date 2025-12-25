@@ -99,6 +99,25 @@ class Database extends Model implements Validatable
     }
 
     /**
+     * Replace placeholders in the webui URL with actual database values.
+     */
+    public function getWebuiUrl(): ?string
+    {
+        $url = $this->host->webui_url;
+
+        if (empty($url)) {
+            return null;
+        }
+
+        $replacements = [
+            '{{ database }}' => $this->database,
+            '{{ username }}' => $this->username,
+        ];
+
+        return str_replace(array_keys($replacements), array_values($replacements), $url);
+    }
+
+    /**
      * @throws PDOException
      *
      * Run the provided statement against the database on a given connection.

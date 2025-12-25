@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
  * @property string $username
  * @property string $password
  * @property int|null $max_databases
+ * @property string|null $webui_url
  * @property int|null $node_id
  * @property CarbonImmutable $created_at
  * @property CarbonImmutable $updated_at
@@ -49,7 +50,7 @@ class DatabaseHost extends Model implements Validatable
      * Fields that are mass assignable.
      */
     protected $fillable = [
-        'name', 'host', 'port', 'username', 'password', 'max_databases',
+        'name', 'host', 'port', 'username', 'password', 'max_databases', 'webui_url',
     ];
 
     /** @var array<array-key, string[]> */
@@ -59,6 +60,7 @@ class DatabaseHost extends Model implements Validatable
         'port' => ['required', 'numeric', 'between:1,65535'],
         'username' => ['required', 'string', 'max:32'],
         'password' => ['nullable', 'string'],
+        'webui_url' => ['nullable', 'string', 'url', 'max:255'],
         'node_ids' => ['nullable', 'array'],
         'node_ids.*' => ['required', 'integer', 'exists:nodes,id'],
     ];
