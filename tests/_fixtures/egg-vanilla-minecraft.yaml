@@ -24,7 +24,7 @@ docker_images:
   'Java 16': 'ghcr.io/pelican-eggs/yolks:java_16'
   'Java 11': 'ghcr.io/pelican-eggs/yolks:java_11'
   'Java 8': 'ghcr.io/pelican-eggs/yolks:java_8'
-file_denylist: {  }
+file_denylist: { }
 startup_commands:
   Default: 'java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}'
 config:
@@ -37,7 +37,7 @@ config:
         query.port: '{{server.allocations.default.port}}'
   startup:
     done: ')! For help, type '
-  logs: {  }
+  logs: { }
   stop: stop
 scripts:
   installation:
@@ -72,8 +72,7 @@ scripts:
     container: 'ghcr.io/pelican-eggs/installers:alpine'
     entrypoint: ash
 variables:
-  -
-    name: 'Server Jar File'
+  - name: 'Server Jar File'
     description: 'The name of the server jarfile to run the server with.'
     env_variable: SERVER_JARFILE
     default_value: server.jar
@@ -83,8 +82,7 @@ variables:
       - required
       - 'regex:/^([\w\d._-]+)(\.jar)$/'
     sort: 1
-  -
-    name: 'Server Version'
+  - name: 'Server Version'
     description: |-
       The version of Minecraft Vanilla to install. Use "latest" to install the latest version, or use
       "snapshot" to install the latest snapshot. Go to Settings > Reinstall Server to apply.
