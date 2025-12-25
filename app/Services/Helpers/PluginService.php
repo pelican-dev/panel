@@ -11,9 +11,10 @@ use Filament\Facades\Filament;
 use Filament\Panel;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -218,10 +219,11 @@ class PluginService
     {
         $migrations = plugin_path($plugin->id, 'database', 'migrations');
         if (file_exists($migrations)) {
-            $success = Artisan::call('migrate', ['--realpath' => true, '--path' => $migrations, '--force' => true]) === 0;
-
-            if (!$success) {
-                throw new Exception("Could not run migrations for plugin '{$plugin->id}'");
+            try {
+                $migrator = $this->app->make(Migrator::class);
+                $migrator->run($migrations);
+            } catch (Exception $exception) {
+                throw new Exception("Could not run migrations': " . $exception->getMessage());
             }
         }
     }
@@ -231,10 +233,11 @@ class PluginService
     {
         $migrations = plugin_path($plugin->id, 'database', 'migrations');
         if (file_exists($migrations)) {
-            $success = Artisan::call('migrate:rollback', ['--realpath' => true, '--path' => $migrations, '--force' => true]) === 0;
-
-            if (!$success) {
-                throw new Exception("Could not rollback migrations for plugin '{$plugin->id}'");
+            try {
+                $migrator = $this->app->make(Migrator::class);
+                $migrator->rollback($migrations);
+            } catch (Exception $exception) {
+                throw new Exception("Could not rollback migrations': " . $exception->getMessage());
             }
         }
     }
@@ -244,10 +247,12 @@ class PluginService
     {
         $seeder = $plugin->getSeeder();
         if ($seeder) {
-            $success = Artisan::call('db:seed', ['--class' => $seeder, '--force' => true]) === 0;
+            try {
+                $seederObject = $this->app->make($seeder)->setContainer($this->app);
 
-            if (!$success) {
-                throw new Exception("Could not run seeder for plugin '{$plugin->id}'");
+                Model::unguarded(fn () => $seederObject->__invoke());
+            } catch (Exception $exception) {
+                throw new Exception('Could not run seeder: ' . $exception->getMessage());
             }
         }
     }
