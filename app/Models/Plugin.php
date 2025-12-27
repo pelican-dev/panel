@@ -205,7 +205,7 @@ class Plugin extends Model implements HasPluginSettings
 
     public function canDisable(): bool
     {
-        return $this->status !== PluginStatus::Disabled && $this->status !== PluginStatus::NotInstalled && $this->isCompatible();
+        return $this->status === PluginStatus::Enabled || $this->status === PluginStatus::Incompatible;
     }
 
     public function isCompatible(): bool
@@ -306,11 +306,10 @@ class Plugin extends Model implements HasPluginSettings
     public function hasSettings(): bool
     {
         try {
-            $pluginObject = filament($this->id);
+            $pluginObject = new ($this->fullClass());
 
             return $pluginObject instanceof HasPluginSettings;
         } catch (Exception) {
-            // Plugin is not loaded on the current panel, so no settings
         }
 
         return false;
@@ -320,13 +319,12 @@ class Plugin extends Model implements HasPluginSettings
     public function getSettingsForm(): array
     {
         try {
-            $pluginObject = filament($this->id);
+            $pluginObject = new ($this->fullClass());
 
             if ($pluginObject instanceof HasPluginSettings) {
                 return $pluginObject->getSettingsForm();
             }
         } catch (Exception) {
-            // Plugin is not loaded on the current panel, so no settings
         }
 
         return [];
@@ -336,13 +334,12 @@ class Plugin extends Model implements HasPluginSettings
     public function saveSettings(array $data): void
     {
         try {
-            $pluginObject = filament($this->id);
+            $pluginObject = new ($this->fullClass());
 
             if ($pluginObject instanceof HasPluginSettings) {
                 $pluginObject->saveSettings($data);
             }
         } catch (Exception) {
-            // Plugin is not loaded on the current panel, so no settings
         }
     }
 

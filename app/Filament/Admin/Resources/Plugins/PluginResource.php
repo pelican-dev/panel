@@ -119,14 +119,22 @@ class PluginResource extends Resource
                         ->color('success')
                         ->hidden(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled)
                         ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
-                            $pluginService->installPlugin($plugin, !$plugin->isTheme() || !$pluginService->hasThemePluginEnabled());
+                            try {
+                                $pluginService->installPlugin($plugin, !$plugin->isTheme() || !$pluginService->hasThemePluginEnabled());
 
-                            redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
+                                redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
-                            Notification::make()
-                                ->success()
-                                ->title(trans('admin/plugin.notifications.installed'))
-                                ->send();
+                                Notification::make()
+                                    ->success()
+                                    ->title(trans('admin/plugin.notifications.installed'))
+                                    ->send();
+                            } catch (Exception $exception) {
+                                Notification::make()
+                                    ->danger()
+                                    ->title(trans('admin/plugin.notifications.install_error'))
+                                    ->body($exception->getMessage())
+                                    ->send();
+                            }
                         }),
                     Action::make('update')
                         ->label(trans('admin/plugin.update'))
@@ -135,14 +143,22 @@ class PluginResource extends Resource
                         ->color('success')
                         ->visible(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled && $plugin->isUpdateAvailable())
                         ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
-                            $pluginService->updatePlugin($plugin);
+                            try {
+                                $pluginService->updatePlugin($plugin);
 
-                            redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
+                                redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
-                            Notification::make()
-                                ->success()
-                                ->title(trans('admin/plugin.notifications.updated'))
-                                ->send();
+                                Notification::make()
+                                    ->success()
+                                    ->title(trans('admin/plugin.notifications.updated'))
+                                    ->send();
+                            } catch (Exception $exception) {
+                                Notification::make()
+                                    ->danger()
+                                    ->title(trans('admin/plugin.notifications.update_error'))
+                                    ->body($exception->getMessage())
+                                    ->send();
+                            }
                         }),
                     Action::make('enable')
                         ->label(trans('admin/plugin.enable'))
@@ -160,7 +176,7 @@ class PluginResource extends Resource
 
                             Notification::make()
                                 ->success()
-                                ->title(trans('admin/plugin.notifications.updated'))
+                                ->title(trans('admin/plugin.notifications.enabled'))
                                 ->send();
                         }),
                     Action::make('disable')
@@ -202,16 +218,24 @@ class PluginResource extends Resource
                         ->icon('tabler-terminal')
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->hidden(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled)
+                        ->hidden(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled || $plugin->status === PluginStatus::Errored)
                         ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
-                            $pluginService->uninstallPlugin($plugin);
+                            try {
+                                $pluginService->uninstallPlugin($plugin);
 
-                            redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
+                                redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
 
-                            Notification::make()
-                                ->success()
-                                ->title(trans('admin/plugin.notifications.uninstalled'))
-                                ->send();
+                                Notification::make()
+                                    ->success()
+                                    ->title(trans('admin/plugin.notifications.uninstalled'))
+                                    ->send();
+                            } catch (Exception $exception) {
+                                Notification::make()
+                                    ->danger()
+                                    ->title(trans('admin/plugin.notifications.uninstall_error'))
+                                    ->body($exception->getMessage())
+                                    ->send();
+                            }
                         }),
                 ]),
             ])

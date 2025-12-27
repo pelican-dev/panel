@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\Servers\Pages\CreateServer;
 use App\Filament\Admin\Resources\Servers\Pages\EditServer;
 use App\Filament\Admin\Resources\Servers\Pages\ListServers;
 use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
+use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManager;
 use App\Models\Mount;
 use App\Models\Server;
 use App\Traits\Filament\CanCustomizePages;
@@ -86,6 +87,7 @@ class ServerResource extends Resource
     {
         return [
             AllocationsRelationManager::class,
+            DatabasesRelationManager::class,
         ];
     }
 
