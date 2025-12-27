@@ -1,0 +1,39 @@
+name: Sync Crowdin
+
+on:
+  schedule:
+    - cron: "0 17 * * 6" # At 17:00 on Saturday
+  workflow_dispatch:
+
+jobs:
+  sync-crowdin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Crowdin
+        uses: crowdin/github-action@1.4.11
+        with:
+          config: crowdin.yml
+          upload_translations: true
+          download_translations: true
+          push_translations: true
+          create_pull_request: false
+          localization_branch_name: crowdin-sync
+          commit_message: 'Sync translations'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_TOKEN }}
+
+      - name: Merge
+        run: |
+          sudo chmod -R ugo+rwX .
+          git checkout main
+          git add *
+          git merge crowdin-sync
+          git push
+          git push origin --delete crowdin-sync
