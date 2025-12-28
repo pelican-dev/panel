@@ -359,7 +359,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             $permission = $permission->value;
         }
 
-        $contextKey = "permission.{$this->id}.{$server->id}.{$permission}";
+        $contextKey = "users.$this->id.servers.$server->id.$permission";
 
         return Context::remember($contextKey, fn () => $this->hasPermission($server, $permission));
     }
