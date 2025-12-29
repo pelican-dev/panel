@@ -8,21 +8,15 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class InstallEgg implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public string $downloadUrl;
-
     public int $timeout = 15;
 
-    public function __construct(string $downloadUrl)
-    {
-        $this->downloadUrl = $downloadUrl;
-    }
+    public function __construct(public string $downloadUrl) {}
 
     /**
      * @throws Throwable
@@ -32,11 +26,7 @@ class InstallEgg implements ShouldQueue
         try {
             $eggImporterService->fromUrl($this->downloadUrl);
         } catch (Throwable $e) {
-            Log::error('InstallEgg job failed.', [
-                'downloadUrl' => $this->downloadUrl,
-                'exception' => $e->getMessage(),
-            ]);
-            throw $e;
+            Log::error('Failed to install egg from URL: ' . $this->downloadUrl, ['exception' => $e]);
         }
     }
 }

@@ -230,38 +230,21 @@ class PanelInstaller extends SimplePage implements HasForms
     {
         try {
             $selectedEggs = array_get($this->data, 'eggs', []);
-            $queueDriver = config('queue.default');
-
-            if ($queueDriver !== 'sync') {
-                foreach ($selectedEggs as $category => $eggs) {
-                    foreach ($eggs as $downloadUrl) {
-                        InstallEgg::dispatch($downloadUrl);
-                    }
-                }
-
-                Notification::make()
-                    ->title(trans('installer.egg.background_install_started'))
-                    ->body(trans('installer.egg.background_install_description', ['count' => array_sum(array_map('count', $selectedEggs))]))
-                    ->success()
-                    ->persistent()
-                    ->send();
-
-                return;
-            }
-
-            // For synchronous installs we need to increase PHP execution time limits
-            if (function_exists('set_time_limit')) {
-                @set_time_limit(0);
-            }
-
-            @ini_set('max_execution_time', '0');
-            @ignore_user_abort(true);
 
             foreach ($selectedEggs as $category => $eggs) {
                 foreach ($eggs as $downloadUrl) {
-                    $eggImporterService->fromUrl($downloadUrl);
+                    InstallEgg::dispatch($downloadUrl);
                 }
             }
+
+            Notification::make()
+                ->title(trans('installer.egg.background_install_started'))
+                ->body(trans('installer.egg.background_install_description', ['count' => array_sum(array_map('count', $selectedEggs))]))
+                ->success()
+                ->persistent()
+                ->send();
+
+            return;
         } catch (Exception $exception) {
             report($exception);
 
