@@ -2,7 +2,7 @@ _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
   version: PLCN_v3
   update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/minecraft/egg-bungeecord.yaml'
-exported_at: '2025-10-31T12:25:34+00:00'
+exported_at: '2025-12-28T12:14:41+00:00'
 name: Bungeecord
 author: panel@example.com
 uuid: 9e6b409e-4028-4947-aea8-50a2c404c271
@@ -56,7 +56,7 @@ scripts:
           BUNGEE_VERSION="lastStableBuild"
       fi
 
-      curl -o ${SERVER_JARFILE} https://ci.md-5.net/job/BungeeCord/${BUNGEE_VERSION}/artifact/bootstrap/target/BungeeCord.jar
+      curl -sSL -o ${SERVER_JARFILE} https://ci.md-5.net/job/BungeeCord/${BUNGEE_VERSION}/artifact/bootstrap/target/BungeeCord.jar
     container: 'ghcr.io/pelican-eggs/installers:alpine'
     entrypoint: ash
 variables:

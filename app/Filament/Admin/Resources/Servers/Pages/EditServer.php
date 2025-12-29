@@ -3,8 +3,6 @@
 namespace App\Filament\Admin\Resources\Servers\Pages;
 
 use App\Enums\SuspendAction;
-use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
-use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManager;
 use App\Filament\Admin\Resources\Servers\ServerResource;
 use App\Filament\Components\Actions\DeleteServerIcon;
 use App\Filament\Components\Actions\PreviewStartupAction;
@@ -1196,13 +1194,5 @@ class EditServer extends EditRecord
         };
 
         Storage::disk('public')->put(Server::ICON_STORAGE_PATH . "/$server->uuid.$normalizedExtension", $data);
-    }
-
-    public function getRelationManagers(): array
-    {
-        return [
-            AllocationsRelationManager::class,
-            DatabasesRelationManager::class,
-        ];
     }
 }
