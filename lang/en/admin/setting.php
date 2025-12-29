@@ -118,6 +118,7 @@ return [
             'helper' => 'Toggle which mail notifications should be sent to Users.',
             'server_installed' => 'Server Installed',
             'server_reinstalled' => 'Server Reinstalled',
+            'backup_completed' => 'Backup Completed',
         ],
         'connections' => [
             'title' => 'Connections',

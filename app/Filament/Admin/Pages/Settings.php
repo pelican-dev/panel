@@ -682,6 +682,16 @@ class Settings extends Page implements HasSchemas
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REINSTALL_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
+                    Toggle::make('PANEL_SEND_BACKUP_NOTIFICATION')
+                        ->label(trans('admin/setting.misc.mail_notifications.backup_completed'))
+                        ->onIcon('tabler-check')
+                        ->offIcon('tabler-x')
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_BACKUP_NOTIFICATION', (bool) $state))
+                        ->default(env('PANEL_SEND_BACKUP_NOTIFICATION', config('panel.email.send_backup_notification'))),
                 ]),
             Section::make(trans('admin/setting.misc.connections.title'))
                 ->description(trans('admin/setting.misc.connections.helper'))
