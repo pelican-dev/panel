@@ -26,7 +26,7 @@ docker_images:
   'Java 16': 'ghcr.io/pelican-eggs/yolks:java_16'
   'Java 11': 'ghcr.io/pelican-eggs/yolks:java_11'
   'Java 8': 'ghcr.io/pelican-eggs/yolks:java_8'
-file_denylist: {  }
+file_denylist: { }
 startup_commands:
   Default: 'java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}'
 config:
@@ -40,7 +40,7 @@ config:
           'regex:^(127\.0\.0\.1|localhost)(:\d{1,5})?$': '{{config.docker.interface}}$2'
   startup:
     done: 'Listening on '
-  logs: {  }
+  logs: { }
   stop: end
 scripts:
   installation:
@@ -60,8 +60,7 @@ scripts:
     container: 'ghcr.io/pelican-eggs/installers:alpine'
     entrypoint: ash
 variables:
-  -
-    name: 'Bungeecord Jar File'
+  - name: 'Bungeecord Jar File'
     description: 'The name of the Jarfile to use when running Bungeecord.'
     env_variable: SERVER_JARFILE
     default_value: bungeecord.jar
@@ -71,8 +70,7 @@ variables:
       - required
       - 'regex:/^([\w\d._-]+)(\.jar)$/'
     sort: 2
-  -
-    name: 'Bungeecord Version'
+  - name: 'Bungeecord Version'
     description: 'The version of Bungeecord to download and use.'
     env_variable: BUNGEE_VERSION
     default_value: latest
