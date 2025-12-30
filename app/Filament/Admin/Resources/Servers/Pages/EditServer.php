@@ -2,8 +2,6 @@
 
 namespace App\Filament\Admin\Resources\Servers\Pages;
 
-use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
-use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManager;
 use App\Filament\Admin\Resources\Servers\ServerResource;
 use App\Filament\Server\Pages\Console;
 use App\Models\Server;
@@ -18,6 +16,7 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Storage;
 use Random\RandomException;
 
 class EditServer extends EditRecord
@@ -104,11 +103,29 @@ class EditServer extends EditRecord
         return [];
     }
 
-    public function getRelationManagers(): array
+    private function saveIconFromUrl(string $imageUrl, string $extension, Server $server): void
     {
-        return [
-            AllocationsRelationManager::class,
-            DatabasesRelationManager::class,
-        ];
+        $context = stream_context_create([
+            'http' => ['timeout' => 3],
+            'https' => [
+                'timeout' => 3,
+                'verify_peer' => true,
+                'verify_peer_name' => true,
+            ],
+        ]);
+
+        $data = @file_get_contents($imageUrl, false, $context, 0, 262144); //256KB
+
+        if (empty($data)) {
+            throw new \Exception(trans('admin/egg.import.invalid_url'));
+        }
+
+        $normalizedExtension = match ($extension) {
+            'svg+xml' => 'svg',
+            'jpeg' => 'jpg',
+            default => $extension,
+        };
+
+        Storage::disk('public')->put(Server::ICON_STORAGE_PATH . "/$server->uuid.$normalizedExtension", $data);
     }
 }

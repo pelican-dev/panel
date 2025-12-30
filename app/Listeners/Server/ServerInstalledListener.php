@@ -14,14 +14,16 @@ class ServerInstalledListener
     {
         $event->server->loadMissing('user');
 
+        $locale = $event->server->user->language ?? 'en';
+
         Notification::make()
             ->status($event->successful ? 'success' : 'danger')
-            ->title(trans('notifications.' . ($event->initialInstall ? 'installation' : 'reinstallation') . '_' . ($event->successful ? 'completed' : 'failed')))
-            ->body(trans('server/setting.server_info.server_name', ['name' => $event->server->name]))
+            ->title(trans('notifications.' . ($event->initialInstall ? 'installation' : 'reinstallation') . '_' . ($event->successful ? 'completed' : 'failed'), locale: $locale))
+            ->body(trans('server/setting.server_info.server_name', ['name' => $event->server->name], $locale))
             ->actions([
                 Action::make('view')
                     ->button()
-                    ->label(trans('notifications.open_server'))
+                    ->label(trans('notifications.open_server', locale: $locale))
                     ->markAsRead()
                     ->url(fn () => Console::getUrl(panel: 'server', tenant: $event->server)),
             ])

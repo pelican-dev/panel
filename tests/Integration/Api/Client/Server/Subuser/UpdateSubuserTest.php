@@ -6,6 +6,7 @@ use App\Enums\SubuserPermission;
 use App\Models\Subuser;
 use App\Models\User;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Http;
 
 class UpdateSubuserTest extends ClientApiIntegrationTestCase
@@ -40,6 +41,9 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
 
         $this->actingAs($subuser->user)->postJson($endpoint, $data)->assertForbidden();
         $this->actingAs($user)->postJson($endpoint, $data)->assertForbidden();
+
+        // When running the tests, the context is function-scoped instead of request-scoped, so we have to flush it
+        Context::flush();
 
         $server->subusers()->where('user_id', $user->id)->update([
             'permissions' => [

@@ -1,7 +1,7 @@
 x-common:
   panel:
     &panel-environment
-    APP_URL: "https://localhost" # can be set to 'http://localhost' on port 80 only
+    APP_URL: "http://localhost"
     LE_EMAIL: "USEYOUROWNEMAILHERE@example.com" # email to be used for let's encrypt certificates
     APP_DEBUG: "false"
     APP_ENV: "production"
@@ -31,7 +31,7 @@ services:
   panel:
     image: ghcr.io/pelican-dev/panel:latest
     build: .
-    restart: always
+    restart: unless-stopped
     networks:
       - default
     ports:

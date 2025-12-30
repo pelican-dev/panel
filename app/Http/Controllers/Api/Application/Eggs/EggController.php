@@ -7,15 +7,22 @@ use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Eggs\ExportEggRequest;
 use App\Http\Requests\Api\Application\Eggs\GetEggRequest;
 use App\Http\Requests\Api\Application\Eggs\GetEggsRequest;
+use App\Http\Requests\Api\Application\Eggs\ImportEggRequest;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggExporterService;
+use App\Services\Eggs\Sharing\EggImporterService;
 use App\Transformers\Api\Application\EggTransformer;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class EggController extends ApplicationApiController
 {
     public function __construct(
         private EggExporterService $exporterService,
+        private EggImporterService $importService
     ) {
         parent::__construct();
     }
@@ -49,6 +56,20 @@ class EggController extends ApplicationApiController
     }
 
     /**
+     * Delete egg
+     *
+     * Delete an egg from the Panel.
+     *
+     * @throws Exception
+     */
+    public function delete(GetEggRequest $request, Egg $egg): Response
+    {
+        $egg->delete();
+
+        return $this->returnNoContent();
+    }
+
+    /**
      * Export egg
      *
      * Return a single egg as yaml or json file (defaults to YAML)
@@ -62,5 +83,23 @@ class EggController extends ApplicationApiController
         }, 'egg-' . $egg->getKebabName() . '.' . $format->value, [
             'Content-Type' => 'application/' . $format->value,
         ]);
+    }
+
+    /**
+     * Import egg
+     *
+     * Create a new egg on the Panel. Returns the created egg and an HTTP/201 status response on success
+     * If no uuid is supplied a new one will be generated
+     * If an uuid is supplied, and it already exists the old configuration get overwritten
+     *
+     * @throws Exception|Throwable
+     */
+    public function import(ImportEggRequest $request): JsonResponse
+    {
+        $egg = $this->importService->fromContent($request->getContent());
+
+        return $this->fractal->item($egg)
+            ->transformWith($this->getTransformer(EggTransformer::class))
+            ->respond(201);
     }
 }

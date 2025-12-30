@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Services\Helpers\PluginService;
 use Boquizo\FilamentLogViewer\FilamentLogViewerPlugin;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -11,7 +12,7 @@ class AppPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return parent::panel($panel)
+        $panel = parent::panel($panel)
             ->id('app')
             ->default()
             ->breadcrumbs(false)
@@ -29,5 +30,12 @@ class AppPanelProvider extends PanelProvider
                 FilamentLogViewerPlugin::make()
                     ->authorize(false),
             ]);
+
+        /** @var PluginService $pluginService */
+        $pluginService = app(PluginService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+
+        $pluginService->loadPanelPlugins($panel);
+
+        return $panel;
     }
 }

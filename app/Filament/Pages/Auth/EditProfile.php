@@ -93,12 +93,14 @@ class EditProfile extends BaseEditProfile
                             ->icon('tabler-user-cog')
                             ->schema([
                                 TextInput::make('username')
+                                    ->disabled(fn (User $user) => $user->is_managed_externally)
                                     ->prefixIcon('tabler-user')
                                     ->label(trans('profile.username'))
                                     ->required()
                                     ->maxLength(255)
                                     ->unique(),
                                 TextInput::make('email')
+                                    ->disabled(fn (User $user) => $user->is_managed_externally)
                                     ->prefixIcon('tabler-mail')
                                     ->label(trans('profile.email'))
                                     ->email()
@@ -106,6 +108,7 @@ class EditProfile extends BaseEditProfile
                                     ->maxLength(255)
                                     ->unique(),
                                 TextInput::make('password')
+                                    ->hidden(fn (User $user) => $user->is_managed_externally)
                                     ->label(trans('profile.password'))
                                     ->password()
                                     ->prefixIcon('tabler-password')
@@ -145,6 +148,7 @@ class EditProfile extends BaseEditProfile
                                 FileUpload::make('avatar')
                                     ->visible(fn () => config('panel.filament.uploadable-avatars'))
                                     ->avatar()
+                                    ->imageEditor()
                                     ->acceptedFileTypes(['image/png'])
                                     ->directory('avatars')
                                     ->disk('public')
@@ -177,12 +181,15 @@ class EditProfile extends BaseEditProfile
                                     $id = $schema->getId();
                                     $name = $schema->getName();
 
+                                    $color = $schema->getHexColor();
+                                    $color = is_string($color) ? Color::hex($color) : null;
+
                                     $unlink = array_key_exists($id, $this->getUser()->oauth ?? []);
 
                                     $actions[] = Action::make("oauth_$id")
                                         ->label(trans('profile.' . ($unlink ? 'unlink' : 'link'), ['name' => $name]))
                                         ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
-                                        ->color(Color::hex($schema->getHexColor()))
+                                        ->color($color)
                                         ->action(function (UserUpdateService $updateService) use ($id, $name, $unlink) {
                                             if ($unlink) {
                                                 $oauth = user()?->oauth;
@@ -534,7 +541,6 @@ class EditProfile extends BaseEditProfile
                                     ]),
                             ]),
                     ]),
-
             ])
             ->operation('edit')
             ->model($this->getUser())

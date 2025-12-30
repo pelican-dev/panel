@@ -30,6 +30,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -144,6 +145,22 @@ class Server extends Model implements HasAvatar, Validatable
     public const RESOURCE_NAME = 'server';
 
     /**
+     * Path to store server icons relative to storage path.
+     */
+    public const ICON_STORAGE_PATH = 'icons/server';
+
+    /**
+     * Supported image formats: file extension => MIME type
+     */
+    public const IMAGE_FORMATS = [
+        'png' => 'image/png',
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'webp' => 'image/webp',
+        'svg' => 'image/svg+xml',
+    ];
+
+    /**
      * Default values when creating the model. We want to switch to disabling OOM killer
      * on server instances unless the user specifies otherwise in the request.
      */
@@ -183,7 +200,6 @@ class Server extends Model implements HasAvatar, Validatable
         'startup' => ['required', 'string'],
         'skip_scripts' => ['sometimes', 'boolean'],
         'image' => ['required', 'string', 'max:255'],
-        'icon' => ['sometimes', 'nullable', 'string'],
         'database_limit' => ['present', 'nullable', 'integer', 'min:0'],
         'allocation_limit' => ['sometimes', 'nullable', 'integer', 'min:0'],
         'backup_limit' => ['present', 'nullable', 'integer', 'min:0'],
@@ -517,9 +533,20 @@ class Server extends Model implements HasAvatar, Validatable
         );
     }
 
+    public function getIconAttribute(): ?string
+    {
+        foreach (array_keys(static::IMAGE_FORMATS) as $ext) {
+            $path = static::ICON_STORAGE_PATH . "/$this->uuid.$ext";
+            if (Storage::disk('public')->exists($path)) {
+                return Storage::disk('public')->url($path);
+            }
+        }
+
+        return null;
+    }
+
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->icon ?? $this->egg->image;
-
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Eggs\Sharing;
 
+use App\Enums\EggFormat;
 use App\Exceptions\Service\InvalidFileUploadException;
 use App\Models\Egg;
 use App\Models\EggVariable;
@@ -10,9 +11,9 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use JsonException;
 use Ramsey\Uuid\Uuid;
-use Spatie\TemporaryDirectory\TemporaryDirectory;
 use stdClass;
 use Symfony\Component\Yaml\Yaml;
 use Throwable;
@@ -33,14 +34,74 @@ class EggImporterService
     public function __construct(protected ConnectionInterface $connection) {}
 
     /**
+     * Take a JSON or YAML as string and parse it into a new egg.
+     *
+     * @throws InvalidFileUploadException|Throwable
+     */
+    public function fromContent(string $content, EggFormat $format = EggFormat::YAML, ?Egg $egg = null): Egg
+    {
+        $parsed = $this->parse($content, $format);
+
+        return $this->fromParsed($parsed, $egg);
+    }
+
+    /**
      * Take an uploaded JSON or YAML file and parse it into a new egg.
      *
      * @throws InvalidFileUploadException|Throwable
      */
     public function fromFile(UploadedFile $file, ?Egg $egg = null): Egg
     {
-        $parsed = $this->parseFile($file);
+        if ($file->getError() !== UPLOAD_ERR_OK) {
+            throw new InvalidFileUploadException('The selected file was not uploaded successfully');
+        }
 
+        $extension = strtolower($file->getClientOriginalExtension());
+        $mime = $file->getMimeType();
+
+        try {
+            $content = $file->getContent();
+
+            if (in_array($extension, ['yaml', 'yml']) || str_contains($mime, 'yaml')) {
+                return $this->fromContent($content, EggFormat::YAML, $egg);
+            }
+
+            return $this->fromContent($content, EggFormat::JSON, $egg);
+        } catch (Throwable $e) {
+            throw new InvalidFileUploadException('File parse failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Take a URL (YAML or JSON) and parse it into a new egg or update an existing one.
+     *
+     * @throws InvalidFileUploadException|Throwable
+     */
+    public function fromUrl(string $url, ?Egg $egg = null): Egg
+    {
+        $info = pathinfo($url);
+        $extension = strtolower($info['extension']);
+
+        $format = match ($extension) {
+            'yaml', 'yml' => EggFormat::YAML,
+            'json' => EggFormat::JSON,
+            default => throw new InvalidFileUploadException('Unsupported file format.'),
+        };
+
+        $content = Http::timeout(5)->connectTimeout(1)->get($url)->throw()->body();
+
+        return $this->fromContent($content, $format, $egg);
+    }
+
+    /**
+     * Take an array and parse it into a new egg.
+     *
+     * @param  array<array-key, mixed>  $parsed
+     *
+     * @throws InvalidFileUploadException|Throwable
+     */
+    protected function fromParsed(array $parsed, ?Egg $egg = null): Egg
+    {
         return $this->connection->transaction(function () use ($egg, $parsed) {
             $uuid = $parsed['uuid'] ?? Uuid::uuid4()->toString();
             $egg = $egg ?? Egg::where('uuid', $uuid)->first() ?? new Egg();
@@ -76,55 +137,17 @@ class EggImporterService
     }
 
     /**
-     * Take a URL (YAML or JSON) and parse it into a new egg or update an existing one.
-     *
-     * @throws InvalidFileUploadException|Throwable
-     */
-    public function fromUrl(string $url, ?Egg $egg = null): Egg
-    {
-        $info = pathinfo($url);
-        $extension = strtolower($info['extension']);
-
-        $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
-        $tmpPath = $tmpDir->path($info['basename']);
-
-        $fileContents = Http::timeout(5)->connectTimeout(1)->get($url)->throw()->body();
-
-        if (!$fileContents || !file_put_contents($tmpPath, $fileContents)) {
-            throw new InvalidFileUploadException('Could not download or write temporary file.');
-        }
-
-        $mime = match ($extension) {
-            'yaml', 'yml' => 'application/yaml',
-            'json' => 'application/json',
-            default => throw new InvalidFileUploadException('Unsupported file format.'),
-        };
-
-        return $this->fromFile(new UploadedFile($tmpPath, $info['basename'], $mime), $egg);
-    }
-
-    /**
-     * Takes an uploaded file and parses out the egg configuration from within.
+     * Takes a string and parses out the egg configuration from within.
      *
      * @return array<array-key, mixed>
      *
      * @throws InvalidFileUploadException|JsonException
      */
-    protected function parseFile(UploadedFile $file): array
+    protected function parse(string $content, EggFormat $format): array
     {
-        if ($file->getError() !== UPLOAD_ERR_OK) {
-            throw new InvalidFileUploadException('The selected file was not uploaded successfully');
-        }
-
-        $extension = strtolower($file->getClientOriginalExtension());
-        $mime = $file->getMimeType();
-
         try {
-            $content = $file->getContent();
-
-            $parsed = match (true) {
-                in_array($extension, ['yaml', 'yml']),
-                str_contains($mime, 'yaml') => Yaml::parse($content),
+            $parsed = match ($format) {
+                EggFormat::YAML => Yaml::parse($content),
                 default => json_decode($content, true, 512, JSON_THROW_ON_ERROR),
             };
         } catch (Throwable $e) {
@@ -196,10 +219,14 @@ class EggImporterService
      */
     protected function fillFromParsed(Egg $model, array $parsed): Egg
     {
+        // Handle image data if present
+        if (!empty($parsed['image']) && str_starts_with($parsed['image'], 'data:')) {
+            $this->saveEggImageFromBase64($parsed['image'], $model);
+        }
+
         return $model->forceFill([
             'name' => Arr::get($parsed, 'name'),
             'description' => Arr::get($parsed, 'description'),
-            'image' => Arr::get($parsed, 'image'),
             'tags' => Arr::get($parsed, 'tags', []),
             'features' => Arr::get($parsed, 'features'),
             'docker_images' => Arr::get($parsed, 'docker_images'),
@@ -214,6 +241,31 @@ class EggImporterService
             'script_entry' => Arr::get($parsed, 'scripts.installation.entrypoint'),
             'script_container' => Arr::get($parsed, 'scripts.installation.container'),
         ]);
+    }
+
+    /**
+     * Save an egg image from base64 data to a file.
+     */
+    private function saveEggImageFromBase64(string $base64String, Egg $egg): void
+    {
+        if (!preg_match('/^data:image\/([\w+]+);base64,(.+)$/', $base64String, $matches)) {
+            return;
+        }
+
+        $extension = $matches[1];
+        $data = base64_decode($matches[2]);
+
+        if (!$data) {
+            return;
+        }
+
+        $normalizedExtension = match ($extension) {
+            'svg+xml' => 'svg',
+            'jpeg' => 'jpg',
+            default => $extension,
+        };
+
+        Storage::disk('public')->put(Egg::ICON_STORAGE_PATH . "/$egg->uuid.$normalizedExtension", $data);
     }
 
     /**

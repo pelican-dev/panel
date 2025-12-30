@@ -61,6 +61,18 @@ class NodeResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'tabler-server-2';
 
+    protected static string $resource = NodeResource::class;
+
+    private DaemonSystemRepository $daemonSystemRepository;
+
+    private NodeUpdateService $nodeUpdateService;
+
+    public function boot(DaemonSystemRepository $daemonSystemRepository, NodeUpdateService $nodeUpdateService): void
+    {
+        $this->daemonSystemRepository = $daemonSystemRepository;
+        $this->nodeUpdateService = $nodeUpdateService;
+    }
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function getNavigationLabel(): string
@@ -604,7 +616,6 @@ class NodeResource extends Resource
                     Tab::make('config_file')
                         ->label(trans('admin/node.tabs.config_file'))
                         ->icon('tabler-code')
-                        ->hidden(fn (Node $node) => !user()?->can('update node', $node))
                         ->schema([
                             TextEntry::make('instructions')
                                 ->label(trans('admin/node.instructions'))
@@ -666,9 +677,9 @@ class NodeResource extends Resource
                                             ->requiresConfirmation()
                                             ->modalHeading(trans('admin/node.reset_token'))
                                             ->modalDescription(trans('admin/node.reset_help'))
-                                            ->action(function (Node $node, NodeUpdateService $nodeUpdateService, $livewire) {
+                                            ->action(function (Node $node) {
                                                 try {
-                                                    $nodeUpdateService->handle($node, [], true);
+                                                    $this->nodeUpdateService->handle($node, [], true);
                                                 } catch (Exception) {
                                                     Notification::make()
                                                         ->title(trans('admin/node.error_connecting', ['node' => $node->name]))
@@ -680,13 +691,12 @@ class NodeResource extends Resource
 
                                                 }
                                                 Notification::make()->success()->title(trans('admin/node.token_reset'))->send();
-                                                $livewire->refresh();
+                                                $this->fillForm();
                                             }),
                                     ])->fullWidth(),
                                 ]),
                         ]),
                     Tab::make('diagnostics')
-                        ->hidden(fn (Node $node) => !user()?->can('update node', $node))
                         ->label(trans('admin/node.tabs.diagnostics'))
                         ->icon('tabler-heart-search')
                         ->schema([
@@ -700,13 +710,13 @@ class NodeResource extends Resource
                                         ->label(trans('admin/node.diagnostics.pull'))
                                         ->icon('tabler-cloud-download')->iconButton()->iconSize(IconSize::ExtraLarge)
                                         ->hidden(fn (Get $get) => $get('pulled'))
-                                        ->action(function (Get $get, Set $set, Node $node, DaemonSystemRepository $daemonSystemRepository) {
+                                        ->action(function (Get $get, Set $set, Node $node) {
                                             $includeEndpoints = $get('include_endpoints') ?? true;
                                             $includeLogs = $get('include_logs') ?? true;
                                             $logLines = $get('log_lines') ?? 200;
 
                                             try {
-                                                $response = $daemonSystemRepository->setNode($node)->getDiagnostics($logLines, $includeEndpoints, $includeLogs);
+                                                $response = $this->daemonSystemRepository->setNode($node)->getDiagnostics($logLines, $includeEndpoints, $includeLogs);
 
                                                 if ($response->status() === 404) {
                                                     Notification::make()
@@ -740,16 +750,10 @@ class NodeResource extends Resource
                                         ->icon('tabler-cloud-upload')->iconButton()->iconSize(IconSize::ExtraLarge)
                                         ->action(function (Get $get, Set $set) {
                                             try {
-                                                $response = Http::asMultipart()->post('https://logs.pelican.dev', [
-                                                    [
-                                                        'name' => 'c',
-                                                        'contents' => $get('log'),
-                                                    ],
-                                                    [
-                                                        'name' => 'e',
-                                                        'contents' => '14d',
-                                                    ],
-                                                ]);
+                                                $response = Http::asMultipart()
+                                                    ->attach('c', $get('log'))
+                                                    ->attach('e', '14d')
+                                                    ->post('https://logs.pelican.dev');
 
                                                 if ($response->failed()) {
                                                     Notification::make()
@@ -792,11 +796,11 @@ class NodeResource extends Resource
                                         ->label(trans('admin/node.diagnostics.clear'))
                                         ->visible(fn (Get $get) => $get('pulled') ?? false)
                                         ->icon('tabler-trash')->iconButton()->iconSize(IconSize::ExtraLarge)->color('danger')
-                                        ->action(function (Get $get, Set $set, $livewire) {
+                                        ->action(function (Get $get, Set $set) {
                                             $set('pulled', false);
                                             $set('uploaded', false);
                                             $set('log', null);
-                                            $livewire->refresh();
+                                            $this->refresh();
                                         }
                                         ),
                                 ])

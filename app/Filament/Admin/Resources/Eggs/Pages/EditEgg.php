@@ -8,12 +8,14 @@ use App\Filament\Components\Actions\ImportEggAction;
 use App\Models\Egg;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
+use Illuminate\Support\Facades\Storage;
 
 class EditEgg extends EditRecord
 {
@@ -47,6 +49,37 @@ class EditEgg extends EditRecord
     public function refreshForm(): void
     {
         $this->fillForm();
+    }
+
+    /**
+     * Save an image from URL download to a file.
+     *
+     * @throws Exception
+     */
+    private function saveImageFromUrl(string $imageUrl, string $extension, Egg $egg): void
+    {
+        $context = stream_context_create([
+            'http' => ['timeout' => 3],
+            'https' => [
+                'timeout' => 3,
+                'verify_peer' => true,
+                'verify_peer_name' => true,
+            ],
+        ]);
+
+        $data = @file_get_contents($imageUrl, false, $context, 0, 1048576); // 1024KB
+
+        if (empty($data)) {
+            throw new Exception(trans('admin/egg.import.invalid_url'));
+        }
+
+        $normalizedExtension = match ($extension) {
+            'svg+xml' => 'svg',
+            'jpeg' => 'jpg',
+            default => $extension,
+        };
+
+        Storage::disk('public')->put(Egg::ICON_STORAGE_PATH . "/$egg->uuid.$normalizedExtension", $data);
     }
 
     protected function getFormActions(): array
