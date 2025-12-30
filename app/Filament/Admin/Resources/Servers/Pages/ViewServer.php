@@ -2,24 +2,25 @@
 
 namespace App\Filament\Admin\Resources\Servers\Pages;
 
+use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
+use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManager;
 use App\Filament\Admin\Resources\Servers\ServerResource;
 use App\Filament\Server\Pages\Console;
 use App\Models\Server;
 use App\Services\Servers\ServerDeletionService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
 use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Support\Facades\Storage;
-use Random\RandomException;
+use Predis\Connection\ConnectionException as PredisConnectionException;
 
-class EditServer extends EditRecord
+class ViewServer extends ViewRecord
 {
     use CanCustomizeHeaderActions;
     use CanCustomizeHeaderWidgets;
@@ -27,12 +28,20 @@ class EditServer extends EditRecord
     protected static string $resource = ServerResource::class;
 
     /**
-     * @throws RandomException
-     * @throws Exception
+     * @throws \Random\RandomException
+     * @throws \Exception
      */
     public function form(Schema $schema): Schema
     {
         return ServerResource::schema($schema);
+    }
+
+    public function getRelationManagers(): array
+    {
+        return [
+            AllocationsRelationManager::class,
+            DatabasesRelationManager::class,
+        ];
     }
 
     /** @return array<Action|ActionGroup> */
@@ -60,7 +69,7 @@ class EditServer extends EditRecord
                         $service->handle($server);
 
                         return redirect(ListServers::getUrl(panel: 'admin'));
-                    } catch (ConnectionException) {
+                    } catch (ConnectionException|PredisConnectionException) {
                         cache()->put("servers.$server->uuid.canForceDelete", true, now()->addMinutes(5));
 
                         return Notification::make()
@@ -73,6 +82,7 @@ class EditServer extends EditRecord
                     }
                 })
                 ->hidden(fn () => $canForceDelete)
+                ->authorize(fn (Server $server) => user()?->can('delete server', $server))
                 ->icon('tabler-trash')
                 ->iconButton()->iconSize(IconSize::ExtraLarge),
             Action::make('ForceDelete')
@@ -86,46 +96,15 @@ class EditServer extends EditRecord
                         $service->withForce()->handle($server);
 
                         return redirect(ListServers::getUrl(panel: 'admin'));
-                    } catch (ConnectionException) {
+                    } catch (ConnectionException|PredisConnectionException) {
                         return cache()->forget("servers.$server->uuid.canForceDelete");
                     }
                 })
                 ->visible(fn () => $canForceDelete)
                 ->authorize(fn (Server $server) => user()?->can('delete server', $server)),
-            $this->getSaveFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-device-floppy'),
+            EditAction::make()
+                ->icon('tabler-pencil')
+                ->iconButton()->iconSize(IconSize::ExtraLarge),
         ];
-    }
-
-    protected function getFormActions(): array
-    {
-        return [];
-    }
-
-    private function saveIconFromUrl(string $imageUrl, string $extension, Server $server): void
-    {
-        $context = stream_context_create([
-            'http' => ['timeout' => 3],
-            'https' => [
-                'timeout' => 3,
-                'verify_peer' => true,
-                'verify_peer_name' => true,
-            ],
-        ]);
-
-        $data = @file_get_contents($imageUrl, false, $context, 0, 262144); //256KB
-
-        if (empty($data)) {
-            throw new \Exception(trans('admin/egg.import.invalid_url'));
-        }
-
-        $normalizedExtension = match ($extension) {
-            'svg+xml' => 'svg',
-            'jpeg' => 'jpg',
-            default => $extension,
-        };
-
-        Storage::disk('public')->put(Server::ICON_STORAGE_PATH . "/$server->uuid.$normalizedExtension", $data);
     }
 }
