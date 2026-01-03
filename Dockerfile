@@ -62,9 +62,11 @@ FROM --platform=$TARGETOS/$TARGETARCH localhost:5000/base-php:$TARGETARCH AS fin
 
 WORKDIR /var/www/html
 
-# Install additional required libraries
 RUN apk add --no-cache \
-    caddy ca-certificates supervisor supercronic fcgi
+    # packages for running the panel
+    caddy ca-certificates supervisor supercronic fcgi \
+    # required for installing plugins. Pulled from https://github.com/pelican-dev/panel/pull/2034
+    zip unzip 7zip bzip2-dev yarn
 
 COPY --chown=root:www-data --chmod=640 --from=composerbuild /build .
 COPY --chown=root:www-data --chmod=640 --from=yarnbuild /build/public ./public
@@ -78,12 +80,15 @@ RUN chown root:www-data ./ \
     # Create necessary directories
     && mkdir -p /pelican-data/storage /pelican-data/plugins /var/www/html/storage/app/public /var/run/supervisord /etc/supercronic \
     # Symlinks for env, database, storage, and plugins
-    && ln -s /pelican-data/.env ./.env \
-    && ln -s /pelican-data/database/database.sqlite ./database/database.sqlite \
+    && ln -s  /pelican-data/.env ./.env \
+    && ln -s  /pelican-data/database/database.sqlite ./database/database.sqlite \
     && ln -sf /var/www/html/storage/app/public /var/www/html/public/storage \
     && ln -s  /pelican-data/storage/avatars /var/www/html/storage/app/public/avatars \
     && ln -s  /pelican-data/storage/fonts /var/www/html/storage/app/public/fonts \
-    && ln -s  /pelican-data/plugins /var/www/html/plugins \
+    && ln -s  /pelican-data/storage/icons /var/www/html/storage/app/public/icons \
+    && rmdir  /var/www/html/plugins \
+    # fix from https://github.com/pelican-dev/panel/pull/2051
+    && ln -s  /pelican-data/plugins /var/www/html \
     # Allow www-data write permissions where necessary
     && chown -R www-data:www-data /pelican-data ./storage ./bootstrap/cache /var/run/supervisord /var/www/html/public/storage \
     && chmod -R u+rwX,g+rwX,o-rwx /pelican-data ./storage ./bootstrap/cache /var/run/supervisord \
