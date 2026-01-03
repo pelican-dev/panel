@@ -46,9 +46,12 @@ return [
 
     'notifications' => [
         'installed' => 'Plugin installed',
+        'install_error' => 'Could not install plugin',
         'uninstalled' => 'Plugin uninstalled',
+        'uninstall_error' => 'Could not uninstall plugin',
         'deleted' => 'Plugin deleted',
         'updated' => 'Plugin updated',
+        'update_error' => 'Could not update plugin',
         'enabled' => 'Plugin enabled',
         'disabled' => 'Plugin disabled',
         'imported' => 'Plugin imported',

@@ -33,7 +33,9 @@ class ViewLogs extends BaseViewLog
                 ->modalHeading(trans('admin/log.actions.upload_logs'))
                 ->modalDescription(fn () => trans('admin/log.actions.upload_logs_description', ['file' => $this->resolveRecordDate(), 'url' => 'https://logs.pelican.dev']))
                 ->action(function () {
-                    $logPath = storage_path('logs/' . $this->resolveRecordDate());
+                    $prefix = config('filament-log-viewer.pattern.prefix', 'laravel-');
+                    $extension = config('filament-log-viewer.pattern.extension', '.log');
+                    $logPath = storage_path('logs/' . $prefix . $this->resolveRecordDate() . $extension);
 
                     if (!file_exists($logPath)) {
                         Notification::make()
@@ -50,18 +52,12 @@ class ViewLogs extends BaseViewLog
                     $uploadLines = $totalLines <= 1000 ? $lines : array_slice($lines, -1000);
                     $content = implode("\n", $uploadLines);
 
-                    $logUrl = 'https://logs.pelican.dev';
                     try {
-                        $response = Http::timeout(10)->asMultipart()->post($logUrl, [
-                            [
-                                'name' => 'c',
-                                'contents' => $content,
-                            ],
-                            [
-                                'name' => 'e',
-                                'contents' => '14d',
-                            ],
-                        ]);
+                        $response = Http::timeout(10)
+                            ->asMultipart()
+                            ->attach('c', $content)
+                            ->attach('e', '14d')
+                            ->post('https://logs.pelican.dev');
 
                         if ($response->failed()) {
                             Notification::make()
