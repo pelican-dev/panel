@@ -235,7 +235,7 @@ class PluginService
         if (file_exists($migrations)) {
             try {
                 $migrator = $this->app->make(Migrator::class);
-                $migrator->rollback($migrations);
+                $migrator->reset($migrations);
             } catch (Exception $exception) {
                 throw new Exception("Could not rollback migrations': " . $exception->getMessage());
             }
@@ -337,6 +337,11 @@ class PluginService
         $this->buildAssets();
 
         $this->manageComposerPackages(oldPackages: $pluginPackages);
+
+        // This throws an error when not called with qualifier
+        foreach (\Filament\Facades\Filament::getPanels() as $panel) {
+            $panel->clearCachedComponents();
+        }
     }
 
     /** @throws Exception */
