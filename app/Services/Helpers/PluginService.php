@@ -235,7 +235,7 @@ class PluginService
         if (file_exists($migrations)) {
             try {
                 $migrator = $this->app->make(Migrator::class);
-                $migrator->reset([$migrations]);
+                $migrator->reset($migrations);
             } catch (Exception $exception) {
                 throw new Exception("Could not rollback migrations': " . $exception->getMessage());
             }
