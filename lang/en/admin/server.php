@@ -110,6 +110,8 @@ return [
     'add_allocation' => 'Add Allocation',
     'view' => 'View',
     'no_log' => 'No Log Available',
+    'select_backups' => 'Select Backups',
+    'warning_backups' => 'Be aware, not transfered backups will be deleted.',
     'tabs' => [
         'information' => 'Information',
         'egg_configuration' => 'Egg Configuration',

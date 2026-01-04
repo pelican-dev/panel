@@ -963,7 +963,7 @@ class EditServer extends EditRecord
                                                         ->schema($this->transferServer())
                                                         ->action(function (TransferServerService $transfer, Server $server, $data) {
                                                             try {
-                                                                $transfer->handle($server, Arr::get($data, 'node_id'), Arr::get($data, 'allocation_id'), Arr::get($data, 'allocation_additional', []));
+                                                                $transfer->handle($server, Arr::get($data, 'node_id'), Arr::get($data, 'allocation_id'), Arr::get($data, 'allocation_additional', []), Arr::get($data, 'backups', []));
 
                                                                 Notification::make()
                                                                     ->title(trans('admin/server.notifications.transfer_started'))
@@ -1053,6 +1053,14 @@ class EditServer extends EditRecord
                 ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->when($get('allocation_id'), fn ($query) => $query->whereNot('id', $get('allocation_id')))->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
                 ->searchable(['ip', 'port', 'ip_alias'])
                 ->placeholder(trans('admin/server.select_additional')),
+            Select::make('backups')
+                ->label(trans('admin/server.backups'))
+                ->multiple()
+                ->helperText(trans('admin/server.warning_backups'))
+                ->prefixIcon('tabler-copy-check')
+                ->disabled(fn (Server $server) => $server->backups->count() === 0)
+                ->options(fn (Server $server) => $server->backups->mapWithKeys(fn ($backup) => [$backup->id => $backup->name ?: $backup->uuid]))
+                ->placeholder(trans('admin/server.select_backups')),
         ];
     }
 

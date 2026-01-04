@@ -23,11 +23,19 @@ class TransferServerService
         private NodeJWTService $nodeJWTService,
     ) {}
 
-    private function notify(ServerTransfer $transfer, UnencryptedToken $token): void
+    /**
+     * @param  int[]  $backup_ids
+     */
+    private function notify(ServerTransfer $transfer, UnencryptedToken $token, array $backup_ids = []): void
     {
+        $backups = [];
+        if (config('backups.default') === 'wings') {
+            $backups = $transfer->server->backups->whereIn('id', $backup_ids)->pluck('uuid')->toArray();
+        }
         Http::daemon($transfer->oldNode)->post("/api/servers/{$transfer->server->uuid}/transfer", [
             'url' => $transfer->newNode->getConnectionAddress() . '/api/transfers',
             'token' => 'Bearer ' . $token->toString(),
+            'backups' => $backups,
             'server' => [
                 'uuid' => $transfer->server->uuid,
                 'start_on_completion' => false,
@@ -39,11 +47,13 @@ class TransferServerService
      * Starts a transfer of a server to a new node.
      *
      * @param  int[]  $additional_allocations
+     * @param  int[]  $backup_ids
      *
      * @throws Throwable
      */
-    public function handle(Server $server, int $node_id, ?int $allocation_id = null, ?array $additional_allocations = []): bool
+    public function handle(Server $server, int $node_id, ?int $allocation_id = null, ?array $additional_allocations = [], ?array $backup_ids = []): bool
     {
+
         $additional_allocations = array_map(intval(...), $additional_allocations);
 
         // Check if the node is viable for the transfer.
@@ -93,7 +103,7 @@ class TransferServerService
             ->handle($transfer->newNode, $server->uuid, 'sha256');
 
         // Notify the source node of the pending outgoing transfer.
-        $this->notify($transfer, $token);
+        $this->notify($transfer, $token, $backup_ids);
 
         return true;
     }
