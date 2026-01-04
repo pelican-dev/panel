@@ -1,21 +1,21 @@
 <?php
 
 return [
-    'title' => '健康狀態',
-    'results_refreshed' => '健康狀態已更新',
-    'checked' => '檢查時間：:time',
+    'title' => '健康狀況',
+    'results_refreshed' => '健康檢查結果已更新',
+    'checked' => '檢查結果來自 :time',
     'refresh' => '重新整理',
     'results' => [
         'cache' => [
             'label' => '快取',
-            'ok' => '確定',
+            'ok' => '正常',
             'failed_retrieve' => '無法設定或讀取應用程式快取值。',
-            'failed' => '應用程式快取發生錯誤：:error',
+            'failed' => '應用程式快取發生異常：:error',
         ],
         'database' => [
             'label' => '資料庫',
-            'ok' => '確定',
-            'failed' => '無法連接到資料庫：:error',
+            'ok' => '正常',
+            'failed' => '無法連線到資料庫：:error',
         ],
         'debugmode' => [
             'label' => '除錯模式',
@@ -24,28 +24,28 @@ return [
         ],
         'environment' => [
             'label' => '環境',
-            'ok' => '已成功設為 :actual',
-            'failed' => '系統環境設定為 :actual，但預期為 :expected',
+            'ok' => '正常，設定為 :actual',
+            'failed' => '環境設定為 :actual，預期為 :expected',
         ],
         'nodeversions' => [
             'label' => '節點版本',
-            'ok' => '節點已是最新版本',
-            'failed' => ':outdated/:all 個節點不是最新版本',
-            'no_nodes_created' => '沒有建立任何節點',
-            'no_nodes' => '沒有節點',
-            'all_up_to_date' => '全部為最新版本',
-            'outdated' => ':outdated／:all 已過時',
+            'ok' => '節點已是最新狀態',
+            'failed' => ':outdated/:all 節點版本過舊',
+            'no_nodes_created' => '未建立節點',
+            'no_nodes' => '無節點',
+            'all_up_to_date' => '全部最新',
+            'outdated' => ':outdated/:all 過舊',
         ],
         'panelversion' => [
             'label' => '面板版本',
-            'ok' => '面板已是最新版本',
-            'failed' => '目前安裝的版本為 :currentVersion，最新版本為 :latestVersion',
-            'up_to_date' => '已是最新',
-            'outdated' => '已過時',
+            'ok' => '面板已是最新狀態',
+            'failed' => '安裝版本為 :currentVersion，但最新版本為 :latestVersion',
+            'up_to_date' => '最新',
+            'outdated' => '過舊',
         ],
         'schedule' => [
             'label' => '排程',
-            'ok' => '確定',
+            'ok' => '正常',
             'failed_last_ran' => '排程上次執行是在 :time 分鐘前',
             'failed_not_ran' => '排程尚未執行。',
         ],
@@ -55,6 +55,6 @@ return [
     ],
     'checks' => [
         'successful' => '成功',
-        'failed' => '失敗',
+        'failed' => '失敗 :checks',
     ],
 ];
