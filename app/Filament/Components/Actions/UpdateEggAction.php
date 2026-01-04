@@ -41,15 +41,13 @@ class UpdateEggAction extends Action
         $this->modalSubmitAction(fn (Action $action) => $action->color('danger'));
 
         $this->action(function (Egg $egg, EggImporterService $eggImporterService) {
-            $eggName = $egg->name;
-
             try {
                 $eggImporterService->fromUrl($egg->update_url, $egg);
 
                 cache()->forget("eggs.$egg->uuid.update");
             } catch (Exception $exception) {
                 Notification::make()
-                    ->title(trans('admin/egg.update_failed', ['egg' => $eggName]))
+                    ->title(trans('admin/egg.update_failed', ['egg' => $egg->name]))
                     ->body(trans('admin/egg.update_error', ['error' => $exception->getMessage()]))
                     ->danger()
                     ->send();
@@ -60,7 +58,7 @@ class UpdateEggAction extends Action
             }
 
             Notification::make()
-                ->title(trans('admin/egg.update_success', ['egg' => $eggName]))
+                ->title(trans('admin/egg.update_success', ['egg' => $egg->name]))
                 ->body(trans('admin/egg.updated_from', ['url' => $egg->update_url]))
                 ->success()
                 ->send();
