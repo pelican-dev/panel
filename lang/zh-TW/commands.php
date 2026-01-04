@@ -34,7 +34,7 @@ return [
         'disk_overallocate' => '輸入允許超額分配的磁碟量，-1 將停用檢查，0 將阻止建立新伺服器',
         'cpu' => '輸入 CPU 最大量',
         'cpu_overallocate' => '輸入允許超額分配的 CPU 量，-1 將停用檢查，0 將阻止建立新伺服器',
-        'upload_size' => "'輸入最大檔案上傳大小",
+        'upload_size' => '輸入最大檔案上傳大小',
         'daemonListen' => '輸入守護程序監聽埠',
         'daemonConnect' => '輸入守護程序連接埠 (可與監聽埠相同)',
         'daemonSFTP' => '輸入守護程序 SFTP 監聽埠',

@@ -22,6 +22,6 @@ return [
     'permissions' => [
         'none' => '無',
         'read' => '讀取',
-        'read_write' => '讀取和寫入',
+        'read_write' => '讀取/寫入',
     ],
 ];
