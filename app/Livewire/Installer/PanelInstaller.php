@@ -245,8 +245,6 @@ class PanelInstaller extends SimplePage implements HasForms
                 ->success()
                 ->persistent()
                 ->send();
-
-            return;
         } catch (Exception $exception) {
             report($exception);
 
