@@ -11,7 +11,6 @@ use App\Livewire\Installer\Steps\QueueStep;
 use App\Livewire\Installer\Steps\RequirementsStep;
 use App\Livewire\Installer\Steps\SessionStep;
 use App\Models\User;
-use App\Services\Eggs\Sharing\EggImporterService;
 use App\Services\Helpers\LanguageService;
 use App\Services\Users\UserCreationService;
 use App\Traits\CheckMigrationsTrait;
@@ -129,7 +128,7 @@ class PanelInstaller extends SimplePage implements HasForms
         return 'data';
     }
 
-    public function submit(UserCreationService $userCreationService, EggImporterService $eggImporterService): void
+    public function submit(UserCreationService $userCreationService): void
     {
         try {
             // Disable installer
@@ -146,7 +145,7 @@ class PanelInstaller extends SimplePage implements HasForms
             $this->writeToEnv('env_session');
 
             // Install selected eggs
-            $this->installEggs($eggImporterService);
+            $this->installEggs();
 
             // Redirect to admin panel
             $this->redirect(Filament::getPanel('admin')->getUrl());
@@ -226,10 +225,13 @@ class PanelInstaller extends SimplePage implements HasForms
         }
     }
 
-    public function installEggs(EggImporterService $eggImporterService): void
+    public function installEggs(): void
     {
         try {
             $selectedEggs = array_get($this->data, 'eggs', []);
+            if (!$selectedEggs) {
+                return;
+            }
 
             foreach ($selectedEggs as $category => $eggs) {
                 foreach ($eggs as $downloadUrl) {
@@ -243,8 +245,6 @@ class PanelInstaller extends SimplePage implements HasForms
                 ->success()
                 ->persistent()
                 ->send();
-
-            return;
         } catch (Exception $exception) {
             report($exception);
 
