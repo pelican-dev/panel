@@ -1056,6 +1056,7 @@ class EditServer extends EditRecord
             Select::make('backups')
                 ->label(trans('admin/server.backups'))
                 ->multiple()
+                ->searchable()
                 ->helperText(trans('admin/server.warning_backups'))
                 ->prefixIcon('tabler-copy-check')
                 ->disabled(fn (Server $server) => $server->backups->count() === 0)
