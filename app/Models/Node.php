@@ -81,7 +81,7 @@ class Node extends Model implements Validatable
      * Fields that are mass assignable.
      */
     protected $fillable = [
-        'public', 'name', 'description',
+        'public', 'name',
         'fqdn', 'scheme', 'behind_proxy',
         'memory', 'memory_overallocate', 'disk',
         'disk_overallocate', 'cpu', 'cpu_overallocate',
