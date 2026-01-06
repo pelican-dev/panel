@@ -259,7 +259,6 @@ class CreateNode extends CreateRecord
                                 ->numeric()->required()
                                 ->default(256)
                                 ->minValue(1)
-                                ->maxValue(1024)
                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB'),
                             TextInput::make('daemon_sftp')
                                 ->columnSpan(1)
