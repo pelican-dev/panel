@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use App\Events\ActivityLogged;
 use App\Traits\HasValidation;
 use Carbon\Carbon;
@@ -108,7 +109,8 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         return $this->hasOne(ApiKey::class, 'id', 'api_key_id');
     }
 
-    public function scopeForEvent(Builder $builder, string $action): Builder
+    #[Scope]
+    protected function forEvent(Builder $builder, string $action): Builder
     {
         return $builder->where('event', $action);
     }
@@ -116,7 +118,8 @@ class ActivityLog extends Model implements HasIcon, HasLabel
     /**
      * Scopes a query to only return results where the actor is a given model.
      */
-    public function scopeForActor(Builder $builder, Model $actor): Builder
+    #[Scope]
+    protected function forActor(Builder $builder, Model $actor): Builder
     {
         return $builder->whereMorphedTo('actor', $actor);
     }
