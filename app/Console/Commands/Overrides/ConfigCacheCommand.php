@@ -9,7 +9,7 @@ class ConfigCacheCommand extends BaseConfigCacheCommand
     /**
      * Prevent config from being cached
      */
-    public function handle()
+    public function handle(): void
     {
         $this->components->warn('Configuration caching has been disabled.');
 
