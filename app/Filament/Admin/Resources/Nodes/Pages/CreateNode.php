@@ -253,8 +253,7 @@ class CreateNode extends CreateRecord
                                 ->columnSpan(2),
                             TextInput::make('upload_size')
                                 ->label(trans('admin/node.upload_limit'))
-                                ->helperText(trans('admin/node.upload_limit_help.0'))
-                                ->hintIcon('tabler-question-mark', trans('admin/node.upload_limit_help.1'))
+                                ->hintIcon('tabler-question-mark', trans('admin/node.upload_limit_help'))
                                 ->columnSpan(1)
                                 ->numeric()->required()
                                 ->default(256)
