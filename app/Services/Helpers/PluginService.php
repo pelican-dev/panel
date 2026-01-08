@@ -311,9 +311,7 @@ class PluginService
                 $panel->clearCachedComponents();
             }
         } catch (Exception $exception) {
-            $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
-
-            throw $exception;
+            $this->handlePluginException($plugin, $exception, true);
         }
     }
 
@@ -332,9 +330,7 @@ class PluginService
 
             cache()->forget("plugins.$plugin->id.update");
         } catch (Exception $exception) {
-            $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
-
-            throw $exception;
+            $this->handlePluginException($plugin, $exception, true);
         }
     }
 
@@ -361,9 +357,7 @@ class PluginService
                 $panel->clearCachedComponents();
             }
         } catch (Exception $exception) {
-            $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
-
-            throw $exception;
+            $this->handlePluginException($plugin, $exception, true);
         }
     }
 
@@ -517,14 +511,14 @@ class PluginService
         return config('panel.plugin.dev_mode', false);
     }
 
-    private function handlePluginException(string|Plugin $plugin, Exception $exception): void
+    private function handlePluginException(string|Plugin $plugin, Exception $exception, bool $throw = false): void
     {
-        if ($this->isDevModeActive()) {
+        $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
+
+        if ($throw || $this->isDevModeActive()) {
             throw ($exception);
         }
 
         report($exception);
-
-        $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
     }
 }
