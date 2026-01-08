@@ -2,8 +2,10 @@
 
 namespace App\Extensions\OAuth;
 
+use App\Models\User;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Wizard\Step;
+use Laravel\Socialite\Contracts\User as OAuthUser;
 
 interface OAuthSchemaInterface
 {
@@ -33,7 +35,7 @@ interface OAuthSchemaInterface
 
     public function isEnabled(): bool;
 
-    public function shouldCreateMissingUsers(): bool;
+    public function shouldCreateMissingUser(OAuthUser $user): bool;
 
-    public function shouldLinkMissingUsers(): bool;
+    public function shouldLinkMissingUser(User $user, OAuthUser $oauthUser): bool;
 }
