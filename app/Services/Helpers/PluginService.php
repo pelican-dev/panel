@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -221,10 +220,8 @@ class PluginService
         $migrations = plugin_path($plugin->id, 'database', 'migrations');
         if (file_exists($migrations)) {
             try {
-                DB::transaction(function () use ($migrations) {
-                    $migrator = $this->app->make(Migrator::class);
-                    $migrator->run($migrations);
-                });
+                $migrator = $this->app->make(Migrator::class);
+                $migrator->run($migrations);
             } catch (Exception $exception) {
                 throw new Exception("Could not run migrations': " . $exception->getMessage());
             }
@@ -237,10 +234,8 @@ class PluginService
         $migrations = plugin_path($plugin->id, 'database', 'migrations');
         if (file_exists($migrations)) {
             try {
-                DB::transaction(function () use ($migrations) {
-                    $migrator = $this->app->make(Migrator::class);
-                    $migrator->reset($migrations);
-                });
+                $migrator = $this->app->make(Migrator::class);
+                $migrator->reset($migrations);
             } catch (Exception $exception) {
                 throw new Exception("Could not rollback migrations': " . $exception->getMessage());
             }
