@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Remote\Backups;
 
+use App\Events\Backup\BackupCompleted;
 use App\Exceptions\DisplayException;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Extensions\Backups\BackupManager;
@@ -57,9 +58,9 @@ class BackupStatusController extends Controller
         $action = $request->boolean('successful') ? 'server:backup.complete' : 'server:backup.fail';
         $log = Activity::event($action)->subject($model, $model->server)->property('name', $model->name);
 
-        $log->transaction(function () use ($model, $request) {
-            $successful = $request->boolean('successful');
+        $successful = $request->boolean('successful');
 
+        $log->transaction(function () use ($model, $request, $successful) {
             $model->fill([
                 'is_successful' => $successful,
                 // Change the lock state to unlocked if this was a failed backup so that it can be
@@ -78,6 +79,8 @@ class BackupStatusController extends Controller
                 $this->completeMultipartUpload($model, $adapter, $successful, $request->input('parts'));
             }
         });
+
+        event(new BackupCompleted($model, $successful));
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
     }
