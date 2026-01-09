@@ -3,7 +3,7 @@
 if [ -f /var/www/html/.env ]; then
   echo "external vars exist."
   # load env vars from .env
-  export $(grep -v '^#' .env | xargs)
+  export $(grep -v '^#' .env | xargs -d '\n') # Fix is from https://github.com/pelican-dev/panel/pull/2045
 else
   echo "external vars don't exist."
   # webroot .env is symlinked to this path
@@ -25,7 +25,7 @@ else
 fi
 
 # create directories for volumes
-mkdir -p /pelican-data/database /pelican-data/storage/avatars /pelican-data/storage/fonts /var/www/html/storage/logs/supervisord 2>/dev/null
+mkdir -p /pelican-data/database /pelican-data/storage/avatars /pelican-data/storage/fonts /pelican-data/storage/icons /var/www/html/storage/logs/supervisord 2>/dev/null
 
 # if the app is installed then we need to run migrations on start. New installs will run migrations when you run the installer.
 if [ "${APP_INSTALLED}" == "true" ];  then
