@@ -64,6 +64,6 @@ class AllocationPolicy
         /** @var ?Server $server */
         $server = Filament::getTenant();
 
-        return $server ? $user->can(SubuserPermission::AllocationDelete, $server) : $this->deleteAny($user);
+        return $server ? $user->can(SubuserPermission::AllocationDelete, $server) : $this->adminDeleteAny($user);
     }
 }
