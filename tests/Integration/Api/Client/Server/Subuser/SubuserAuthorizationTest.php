@@ -37,7 +37,7 @@ class SubuserAuthorizationTest extends ClientApiIntegrationTestCase
 
         $this->instance(DaemonServerRepository::class, $mock = \Mockery::mock(DaemonServerRepository::class));
         if ($method === 'DELETE') {
-            $mock->expects('setServer->revokeUserJTI')->with($internal->id)->andReturnUndefined();
+            $mock->expects('setServer->deauthorize')->with($internal->uuid)->andReturnUndefined();
         }
 
         // This route is acceptable since they're accessing a subuser on their own server.

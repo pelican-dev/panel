@@ -44,6 +44,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'node.maintenance' => \App\Http\Middleware\MaintenanceMiddleware::class,
         ]);
+
+        $middleware->priority([
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ]);
     })
     ->withSingletons([
         \Illuminate\Contracts\Console\Kernel::class => \App\Console\Kernel::class,

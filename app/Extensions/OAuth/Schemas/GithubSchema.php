@@ -18,11 +18,11 @@ final class GithubSchema extends OAuthSchema
     public function getSetupSteps(): array
     {
         return array_merge([
-            Step::make('Register new Github OAuth App')
+            Step::make('Register new GitHub OAuth App')
                 ->schema([
                     TextEntry::make('create_application')
                         ->hiddenLabel()
-                        ->state(new HtmlString(Blade::render('<p>Visit the <x-filament::link href="https://github.com/settings/developers" target="_blank">Github Developer Dashboard</x-filament::link>, go to <b>OAuth Apps</b> and click on <b>New OAuth App</b>.</p><p>Enter an <b>Application name</b> (e.g. your panel name), set <b>Homepage URL</b> to your panel url and enter the below url as <b>Authorization callback URL</b>.</p>'))),
+                        ->state(new HtmlString(Blade::render('<p>Visit the <x-filament::link href="https://github.com/settings/developers" target="_blank">GitHub Developer Dashboard</x-filament::link>, go to <b>OAuth Apps</b> and click on <b>New OAuth App</b>.</p><p>Enter an <b>Application name</b> (e.g. your panel name), set <b>Homepage URL</b> to your panel url and enter the below url as <b>Authorization callback URL</b>.</p>'))),
                     TextInput::make('_noenv_callback')
                         ->label('Authorization callback URL')
                         ->dehydrated()

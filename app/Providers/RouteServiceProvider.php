@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enums\ResourceLimit;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Http\Middleware\TrimStrings;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -98,5 +99,7 @@ class RouteServiceProvider extends ServiceProvider
                 config('http.rate_limit.application')
             )->by($key);
         });
+
+        ResourceLimit::boot();
     }
 }

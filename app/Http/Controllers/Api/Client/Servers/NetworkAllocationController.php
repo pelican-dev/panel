@@ -107,16 +107,19 @@ class NetworkAllocationController extends ClientApiController
      */
     public function store(NewAllocationRequest $request, Server $server): array
     {
-        if ($server->allocations()->count() >= $server->allocation_limit) {
-            throw new DisplayException('Cannot assign additional allocations to this server: limit has been reached.');
-        }
+        $allocation = Activity::event('server:allocation.create')->transaction(function ($log) use ($server) {
+            $server->allocations()->lockForUpdate();
 
-        $allocation = $this->assignableAllocationService->handle($server);
+            if ($server->allocations->count() >= $server->allocation_limit) {
+                throw new DisplayException('Cannot assign additional allocations to this server: limit has been reached.');
+            }
 
-        Activity::event('server:allocation.create')
-            ->subject($allocation)
-            ->property('allocation', $allocation->address)
-            ->log();
+            $allocation = $this->assignableAllocationService->handle($server);
+
+            $log->subject($allocation)->property('allocation', $allocation->address);
+
+            return $allocation;
+        });
 
         return $this->fractal->item($allocation)
             ->transformWith($this->getTransformer(AllocationTransformer::class))

@@ -133,6 +133,9 @@ class DaemonServerRepository extends DaemonRepository
      * make it easier to revoke tokens on the fly. This ensures that the JTI key is formatted
      * correctly and avoids any costly mistakes in the codebase.
      *
+     * @deprecated
+     * @see self::deauthorize()
+     *
      * @throws ConnectionException
      */
     public function revokeUserJTI(int $id): void
@@ -141,6 +144,21 @@ class DaemonServerRepository extends DaemonRepository
             ->post("/api/servers/{$this->server->uuid}/ws/deny", [
                 'jtis' => [md5($id . $this->server->uuid)],
             ]);
+    }
+
+    /**
+     * Deauthorizes a user (disconnects websockets and SFTP) on the Wings instance for the server.
+     *
+     * @throws ConnectionException
+     */
+    public function deauthorize(string $user): void
+    {
+        $this->getHttpClient()->post('/api/deauthorize-user', [
+            'json' => [
+                'user' => $user,
+                'servers' => [$this->server->uuid],
+            ],
+        ]);
     }
 
     public function getInstallLogs(): string
