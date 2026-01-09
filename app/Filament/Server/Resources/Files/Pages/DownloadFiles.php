@@ -50,7 +50,9 @@ class DownloadFiles extends Page
             ->property('file', $path)
             ->log();
 
-        redirect()->away($server->node->getConnectionAddress() . '/download/file?token=' . $token->toString());
+        $url = $server->node->getConnectionAddress() . '/download/file?token=' . $token->toString();
+
+        $this->redirect($url);
     }
 
     protected function authorizeAccess(): void
