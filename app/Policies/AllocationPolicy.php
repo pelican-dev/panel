@@ -19,6 +19,8 @@ class AllocationPolicy
         deleteAny as adminDeleteAny;
     }
 
+    protected string $modelName = 'allocation';
+
     public function viewAny(User $user): bool
     {
         /** @var ?Server $server */
