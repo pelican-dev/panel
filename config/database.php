@@ -3,7 +3,7 @@
 use Illuminate\Support\Str;
 
 $database = env('DB_DATABASE', 'database.sqlite');
-$datapasePath = database_path($database);
+$databasePath = database_path($database);
 
 if (str_starts_with($database, '/') || $database === ':memory:') {
     $databasePath = $database;
@@ -41,7 +41,7 @@ return [
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),
-            'database' => $datapasePath,
+            'database' => $databasePath,
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
             'busy_timeout' => null,
