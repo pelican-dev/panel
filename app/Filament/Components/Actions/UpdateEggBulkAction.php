@@ -47,39 +47,40 @@ class UpdateEggBulkAction extends BulkAction
                 return;
             }
 
-            $success = 0;
-            $failed = 0;
-            $skipped = 0;
+            $successEggs = collect();
+            $failedEggs = collect();
+            $skippedEggs = collect();
 
             /** @var Egg $egg */
             foreach ($records as $egg) {
                 if ($egg->update_url === null) {
-                    $skipped++;
+                    $skippedEggs->push($egg->name);
 
                     continue;
                 }
                 try {
                     $eggImporterService->fromUrl($egg->update_url, $egg);
 
-                    $success++;
+                    $successEggs->push($egg->name);
 
                     cache()->forget("eggs.$egg->uuid.update");
                 } catch (Exception $exception) {
-                    $failed++;
+                    $failedEggs->push($egg->name);
 
                     report($exception);
                 }
             }
 
+            $bodyParts = collect([
+                $successEggs->isNotEmpty() ? trans('admin/egg.updated_eggs', ['eggs' => $successEggs->join(', ')]) : null,
+                $failedEggs->isNotEmpty() ? trans('admin/egg.failed_eggs', ['eggs' => $failedEggs->join(', ')]) : null,
+                $skippedEggs->isNotEmpty() ? trans('admin/egg.skipped_eggs', ['eggs' => $skippedEggs->join(', ')]) : null,
+            ])->filter();
+
             Notification::make()
-                ->title(trans_choice('admin/egg.updated', 2, ['count' => $success, 'total' => $records->count()]))
-                ->body(
-                    collect([
-                        $failed > 0 ? trans('admin/egg.updated_failed', ['count' => $failed]) : null,
-                        $skipped > 0 ? trans('admin/egg.updated_skipped', ['count' => $skipped]) : null,
-                    ])->filter()->join(' ')
-                )
-                ->status($failed > 0 ? 'warning' : 'success')
+                ->title(trans_choice('admin/egg.updated', 2, ['count' => $successEggs->count(), 'total' => $records->count()]))
+                ->body($bodyParts->join(' | '))
+                ->status($failedEggs->isNotEmpty() ? 'warning' : 'success')
                 ->persistent()
                 ->send();
         });
