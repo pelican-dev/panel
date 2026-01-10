@@ -968,6 +968,7 @@ class EditServer extends EditRecord
                                                         ->action(function (TransferServerService $transfer, DeleteBackupService $deleteBackup, Server $server, $data) {
                                                             try {
                                                                 $selectedBackupUuids = Arr::get($data, 'backups', []);
+                                                                $transfer->handle($server, Arr::get($data, 'node_id'), Arr::get($data, 'allocation_id'), Arr::get($data, 'allocation_additional', []), $selectedBackupUuids);
 
                                                                 $server->backups
                                                                     ->whereNotIn('uuid', $selectedBackupUuids)
@@ -983,8 +984,6 @@ class EditServer extends EditRecord
                                                                                 ->send();
                                                                         }
                                                                     });
-
-                                                                $transfer->handle($server, Arr::get($data, 'node_id'), Arr::get($data, 'allocation_id'), Arr::get($data, 'allocation_additional', []), $selectedBackupUuids);
 
                                                                 Notification::make()
                                                                     ->title(trans('admin/server.notifications.transfer_started'))
