@@ -110,6 +110,8 @@ return [
     'add_allocation' => 'Add Allocation',
     'view' => 'View',
     'no_log' => 'No Log Available',
+    'select_backups' => 'Select Backups',
+    'warning_backups' => 'Be aware, not transferred backups will be deleted.',
     'tabs' => [
         'information' => 'Information',
         'egg_configuration' => 'Egg Configuration',
@@ -143,6 +145,7 @@ return [
         'transfer_started' => 'Transfer started',
         'transfer_failed' => 'Transfer failed',
         'already_transfering' => 'Server is currently being transferred.',
+        'backup_transfer_failed' => 'Backup Transfer Failed',
     ],
     'notes' => 'Notes',
     'no_notes' => 'No Notes',
