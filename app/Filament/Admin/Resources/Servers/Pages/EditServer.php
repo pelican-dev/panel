@@ -11,10 +11,12 @@ use App\Filament\Components\Forms\Fields\StartupVariable;
 use App\Filament\Components\StateCasts\ServerConditionStateCast;
 use App\Filament\Server\Pages\Console;
 use App\Models\Allocation;
+use App\Models\Backup;
 use App\Models\Egg;
 use App\Models\Server;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonServerRepository;
+use App\Services\Backups\DeleteBackupService;
 use App\Services\Eggs\EggChangerService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ReinstallServerService;
@@ -27,6 +29,7 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
@@ -48,6 +51,7 @@ use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -961,9 +965,25 @@ class EditServer extends EditRecord
                                                         ->disabled(fn (Server $server) => user()?->accessibleNodes()->count() <= 1 || $server->isInConflictState())
                                                         ->modalHeading(trans('admin/server.transfer'))
                                                         ->schema($this->transferServer())
-                                                        ->action(function (TransferServerService $transfer, Server $server, $data) {
+                                                        ->action(function (TransferServerService $transfer, DeleteBackupService $deleteBackup, Server $server, $data) {
                                                             try {
-                                                                $transfer->handle($server, Arr::get($data, 'node_id'), Arr::get($data, 'allocation_id'), Arr::get($data, 'allocation_additional', []), Arr::get($data, 'backups', []));
+                                                                $selectedBackupUuids = Arr::get($data, 'backups', []);
+
+                                                                $server->backups
+                                                                    ->whereNotIn('uuid', $selectedBackupUuids)
+                                                                    ->each(function ($backup) use ($deleteBackup) {
+                                                                        try {
+                                                                            $deleteBackup->handle($backup);
+                                                                        } catch (Exception $exception) {
+                                                                            Notification::make()
+                                                                                ->title(trans('admin/server.notifications.backup_transfer_failed'))
+                                                                                ->body($exception->getMessage())
+                                                                                ->danger()
+                                                                                ->send();
+                                                                        }
+                                                                    });
+
+                                                                $transfer->handle($server, Arr::get($data, 'node_id'), Arr::get($data, 'allocation_id'), Arr::get($data, 'allocation_additional', []), $selectedBackupUuids);
 
                                                                 Notification::make()
                                                                     ->title(trans('admin/server.notifications.transfer_started'))
@@ -1053,15 +1073,19 @@ class EditServer extends EditRecord
                 ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->when($get('allocation_id'), fn ($query) => $query->whereNot('id', $get('allocation_id')))->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
                 ->searchable(['ip', 'port', 'ip_alias'])
                 ->placeholder(trans('admin/server.select_additional')),
-            Select::make('backups')
-                ->label(trans('admin/server.backups'))
-                ->multiple()
-                ->searchable()
-                ->helperText(trans('admin/server.warning_backups'))
-                ->prefixIcon('tabler-copy-check')
-                ->disabled(fn (Server $server) => $server->backups->count() === 0)
-                ->options(fn (Server $server) => $server->backups->mapWithKeys(fn ($backup) => [$backup->id => $backup->name ?: $backup->uuid]))
-                ->placeholder(trans('admin/server.select_backups')),
+            Grid::make()
+                ->columnSpanFull()
+                ->schema([
+                    CheckboxList::make('backups')
+                        ->label(trans('admin/server.backups'))
+                        ->bulkToggleable()
+                        ->options(fn (Server $server) => $server->backups->where('disk', Backup::ADAPTER_DAEMON)->mapWithKeys(fn ($backup) => [$backup->uuid => $backup->name]))
+                        ->columns(fn (Server $record) => (int) ceil($record->backups->where('disk', Backup::ADAPTER_DAEMON)->count() / 4)),
+                    Text::make('backup_helper')
+                        ->columnSpanFull()
+                        ->content(trans('admin/server.warning_backups')),
+                ])
+                ->hidden(fn (Server $server) => $server->backups->where('disk', Backup::ADAPTER_DAEMON)->count() === 0),
         ];
     }
 

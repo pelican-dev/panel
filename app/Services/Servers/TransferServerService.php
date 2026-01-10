@@ -3,6 +3,7 @@
 namespace App\Services\Servers;
 
 use App\Models\Allocation;
+use App\Models\Backup;
 use App\Models\Node;
 use App\Models\Server;
 use App\Models\ServerTransfer;
@@ -24,13 +25,13 @@ class TransferServerService
     ) {}
 
     /**
-     * @param  int[]  $backup_ids
+     * @param  string[]  $backup_uuids
      */
-    private function notify(ServerTransfer $transfer, UnencryptedToken $token, array $backup_ids = []): void
+    private function notify(ServerTransfer $transfer, UnencryptedToken $token, array $backup_uuids = []): void
     {
         $backups = [];
-        if (config('backups.default') === 'wings') {
-            $backups = $transfer->server->backups->whereIn('id', $backup_ids)->pluck('uuid')->toArray();
+        if (config('backups.default') === Backup::ADAPTER_DAEMON) {
+            $backups = $backup_uuids;
         }
         Http::daemon($transfer->oldNode)->post("/api/servers/{$transfer->server->uuid}/transfer", [
             'url' => $transfer->newNode->getConnectionAddress() . '/api/transfers',
@@ -47,13 +48,12 @@ class TransferServerService
      * Starts a transfer of a server to a new node.
      *
      * @param  int[]  $additional_allocations
-     * @param  int[]  $backup_ids
+     * @param  string[]  $backup_uuid
      *
      * @throws Throwable
      */
-    public function handle(Server $server, int $node_id, ?int $allocation_id = null, ?array $additional_allocations = [], ?array $backup_ids = []): bool
+    public function handle(Server $server, int $node_id, ?int $allocation_id = null, ?array $additional_allocations = [], ?array $backup_uuid = []): bool
     {
-
         $additional_allocations = array_map(intval(...), $additional_allocations);
 
         // Check if the node is viable for the transfer.
@@ -103,7 +103,7 @@ class TransferServerService
             ->handle($transfer->newNode, $server->uuid, 'sha256');
 
         // Notify the source node of the pending outgoing transfer.
-        $this->notify($transfer, $token, $backup_ids);
+        $this->notify($transfer, $token, $backup_uuid);
 
         return true;
     }
