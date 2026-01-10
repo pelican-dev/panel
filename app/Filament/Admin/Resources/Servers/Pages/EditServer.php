@@ -971,6 +971,7 @@ class EditServer extends EditRecord
 
                                                                 $server->backups
                                                                     ->whereNotIn('uuid', $selectedBackupUuids)
+                                                                    ->where('disk', Backup::ADAPTER_DAEMON)
                                                                     ->each(function ($backup) use ($deleteBackup) {
                                                                         try {
                                                                             $deleteBackup->handle($backup);
