@@ -41,7 +41,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use LogicException;
-use Random\RandomException;
 
 class CreateServer extends CreateRecord
 {
@@ -61,10 +60,6 @@ class CreateServer extends CreateRecord
         $this->serverCreationService = $serverCreationService;
     }
 
-    /**
-     * @throws RandomException
-     * @throws Exception
-     */
     public function form(Schema $schema): Schema
     {
         return $schema
