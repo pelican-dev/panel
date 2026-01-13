@@ -319,10 +319,10 @@ class EditNode extends EditRecord
                                     'lg' => 1,
                                 ])
                                 ->label(trans('admin/node.upload_limit'))
-                                ->hintIcon('tabler-question-mark', trans('admin/node.upload_limit_help.0') . trans('admin/node.upload_limit_help.1'))
-                                ->numeric()->required()
+                                ->hintIcon('tabler-question-mark', trans('admin/node.upload_limit_help'))
+                                ->numeric()
+                                ->required()
                                 ->minValue(1)
-                                ->maxValue(1024)
                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB'),
                             TextInput::make('daemon_sftp')
                                 ->columnSpan([

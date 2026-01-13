@@ -28,7 +28,7 @@ class SubuserDeletionService
             event(new SubUserRemoved($subuser->server, $subuser->user));
 
             try {
-                $this->serverRepository->setServer($server)->revokeUserJTI($subuser->user_id);
+                $this->serverRepository->setServer($server)->deauthorize($subuser->user->uuid);
             } catch (ConnectionException $exception) {
                 // Don't block this request if we can't connect to the daemon instance.
                 logger()->warning($exception, ['user_id' => $subuser->user_id, 'server_id' => $server->id]);

@@ -59,12 +59,15 @@ class DatabaseController extends ClientApiController
      */
     public function store(StoreDatabaseRequest $request, Server $server): array
     {
-        $database = $this->deployDatabaseService->handle($server, $request->validated());
+        $database = Activity::event('server:database.create')->transaction(function ($log) use ($request, $server) {
+            $server->databases()->lockForUpdate();
 
-        Activity::event('server:database.create')
-            ->subject($database)
-            ->property('name', $database->database)
-            ->log();
+            $database = $this->deployDatabaseService->handle($server, $request->validated());
+
+            $log->subject($database)->property('name', $database->database);
+
+            return $database;
+        });
 
         return $this->fractal->item($database)
             ->parseIncludes(['password'])
