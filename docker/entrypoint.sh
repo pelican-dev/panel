@@ -3,7 +3,7 @@
 if [ -f /var/www/html/.env ]; then
   echo "external vars exist."
   # load env vars from .env
-  export $(grep -v '^#' .env | xargs -d '\n') # Fix is from https://github.com/pelican-dev/panel/pull/2045
+  export $(awk -F[=] 'NF {gsub("\042", "\000"); print $1"="$2}' .env)
 else
   echo "external vars don't exist."
   # webroot .env is symlinked to this path
