@@ -46,7 +46,7 @@ class SubuserUpdateService
                 $subuser->update(['permissions' => $cleanedPermissions]);
 
                 try {
-                    $this->serverRepository->setServer($server)->revokeUserJTI($subuser->user_id);
+                    $this->serverRepository->setServer($server)->deauthorize($subuser->user->uuid);
                 } catch (ConnectionException $exception) {
                     // Don't block this request if we can't connect to the daemon instance. Chances are it is
                     // offline and the token will be invalid once daemon boots back.
