@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Enums\TablerIcon;
 use App\Extensions\Avatar\AvatarService;
 use App\Extensions\Captcha\CaptchaService;
 use App\Extensions\OAuth\OAuthService;
@@ -287,7 +288,7 @@ class Settings extends Page implements HasSchemas
 
             $formFields[] = Section::make($schema->getName())
                 ->columns(5)
-                ->icon($schema->getIcon() ?? 'tabler-shield')
+                ->icon($schema->getIcon() ?? TablerIcon::Shield)
                 ->collapsed(fn () => !$schema->isEnabled())
                 ->collapsible()
                 ->schema([

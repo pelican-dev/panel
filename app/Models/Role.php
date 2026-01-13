@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Enums\RolePermissionModels;
 use App\Enums\RolePermissionPrefixes;
+use App\Enums\TablerIcon;
+use BackedEnum;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -61,9 +63,9 @@ class Role extends BaseRole
     ];
 
     public const MODEL_ICONS = [
-        'health' => 'tabler-heart',
-        'activityLog' => 'tabler-stack',
-        'panelLog' => 'tabler-file-info',
+        'health' => TablerIcon::Heart,
+        'activityLog' => TablerIcon::Stack,
+        'panelLog' => TablerIcon::FileInfo,
     ];
 
     /** @var array<string, array<string>> */
@@ -91,10 +93,10 @@ class Role extends BaseRole
         ]);
     }
 
-    /** @var array<string, string> */
+    /** @var array<string, string|BackedEnum> */
     protected static array $customModelIcons = [];
 
-    public static function registerCustomModelIcon(string $model, string $icon): void
+    public static function registerCustomModelIcon(string $model, string|BackedEnum $icon): void
     {
         static::$customModelIcons[$model] = $icon;
     }
@@ -144,7 +146,7 @@ class Role extends BaseRole
         return $allPermissions;
     }
 
-    public static function getModelIcon(string $model): ?string
+    public static function getModelIcon(string $model): null|string|BackedEnum
     {
         $customModels = array_merge(static::MODEL_ICONS, static::$customModelIcons);
 

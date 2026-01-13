@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\TablerIcon;
 use App\Livewire\AlertBanner;
 use App\Repositories\Daemon\DaemonFileRepository;
+use BackedEnum;
 use Carbon\Carbon;
 use Closure;
 use Exception;
@@ -100,21 +102,21 @@ class File extends Model
         return preg_match('/^image\/(?!svg\+xml)/', $this->mime_type);
     }
 
-    public function getIcon(): string
+    public function getIcon(): BackedEnum
     {
         if ($this->is_directory) {
-            return 'tabler-folder';
+            return TablerIcon::Folder;
         }
 
         if ($this->isArchive()) {
-            return 'tabler-file-zip';
+            return TablerIcon::FileZip;
         }
 
         if ($this->isImage()) {
-            return 'tabler-photo';
+            return TablerIcon::Photo;
         }
 
-        return $this->is_symlink ? 'tabler-file-symlink' : 'tabler-file';
+        return $this->is_symlink ? TablerIcon::FileSymlink : TablerIcon::File;
     }
 
     public function canEdit(): bool

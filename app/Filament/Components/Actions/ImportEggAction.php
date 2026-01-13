@@ -3,6 +3,7 @@
 namespace App\Filament\Components\Actions;
 
 use App\Console\Commands\Egg\UpdateEggIndexCommand;
+use App\Enums\TablerIcon;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Closure;
@@ -38,7 +39,7 @@ class ImportEggAction extends Action
 
         $this->iconButton();
 
-        $this->icon('tabler-file-import');
+        $this->icon(TablerIcon::FileImport);
 
         $this->iconSize(IconSize::ExtraLarge);
 
@@ -117,7 +118,7 @@ class ImportEggAction extends Action
                 ->tabs([
                     Tab::make('file')
                         ->label(trans('admin/egg.import.file'))
-                        ->icon('tabler-file-upload')
+                        ->icon(TablerIcon::FileUpload)
                         ->schema([
                             FileUpload::make('files')
                                 ->label(trans('admin/egg.model_label'))
@@ -130,7 +131,7 @@ class ImportEggAction extends Action
                         ]),
                     Tab::make('url')
                         ->label(trans('admin/egg.import.url'))
-                        ->icon('tabler-world-upload')
+                        ->icon(TablerIcon::WorldUpload)
                         ->schema([
                             Select::make('github')
                                 ->label(trans('admin/egg.import.github'))
@@ -142,7 +143,7 @@ class ImportEggAction extends Action
                                 ->hintAction(
                                     Action::make('refresh')
                                         ->iconButton()
-                                        ->icon('tabler-refresh')
+                                        ->icon(TablerIcon::Refresh)
                                         ->tooltip(trans('admin/egg.import.refresh'))
                                         ->action(function () {
                                             Artisan::call(UpdateEggIndexCommand::class);

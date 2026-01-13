@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Pages\ListLogs;
 use App\Filament\Admin\Pages\ViewLogs;
 use App\Services\Helpers\PluginService;
@@ -25,7 +26,7 @@ class AdminPanelProvider extends PanelProvider
                 Action::make('exit_admin')
                     ->label(fn () => trans('profile.exit_admin'))
                     ->url(fn () => Filament::getPanel('app')->getUrl())
-                    ->icon('tabler-arrow-back'),
+                    ->icon(TablerIcon::ArrowBack),
             ])
             ->navigationGroups([
                 NavigationGroup::make(fn () => trans('admin/dashboard.server'))
@@ -44,7 +45,7 @@ class AdminPanelProvider extends PanelProvider
                     ->viewLog(ViewLogs::class)
                     ->navigationLabel(fn () => trans('admin/log.navigation.panel_logs'))
                     ->navigationGroup(fn () => trans('admin/dashboard.advanced'))
-                    ->navigationIcon('tabler-file-info'),
+                    ->navigationIcon(TablerIcon::FileInfo),
             ]);
 
         /** @var PluginService $pluginService */
