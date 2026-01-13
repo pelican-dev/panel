@@ -2,7 +2,7 @@ _comment: 'DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL'
 meta:
   version: PLCN_v3
   update_url: 'https://github.com/pelican-dev/panel/raw/main/database/Seeders/eggs/minecraft/egg-bungeecord.yaml'
-exported_at: '2025-10-31T12:25:34+00:00'
+exported_at: '2025-12-28T12:14:41+00:00'
 name: Bungeecord
 author: panel@example.com
 uuid: 9e6b409e-4028-4947-aea8-50a2c404c271
@@ -26,7 +26,7 @@ docker_images:
   'Java 16': 'ghcr.io/pelican-eggs/yolks:java_16'
   'Java 11': 'ghcr.io/pelican-eggs/yolks:java_11'
   'Java 8': 'ghcr.io/pelican-eggs/yolks:java_8'
-file_denylist: {  }
+file_denylist: { }
 startup_commands:
   Default: 'java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}'
 config:
@@ -40,7 +40,7 @@ config:
           'regex:^(127\.0\.0\.1|localhost)(:\d{1,5})?$': '{{config.docker.interface}}$2'
   startup:
     done: 'Listening on '
-  logs: {  }
+  logs: { }
   stop: end
 scripts:
   installation:
@@ -56,12 +56,11 @@ scripts:
           BUNGEE_VERSION="lastStableBuild"
       fi
 
-      curl -o ${SERVER_JARFILE} https://ci.md-5.net/job/BungeeCord/${BUNGEE_VERSION}/artifact/bootstrap/target/BungeeCord.jar
+      curl -sSL -o ${SERVER_JARFILE} https://ci.md-5.net/job/BungeeCord/${BUNGEE_VERSION}/artifact/bootstrap/target/BungeeCord.jar
     container: 'ghcr.io/pelican-eggs/installers:alpine'
     entrypoint: ash
 variables:
-  -
-    name: 'Bungeecord Jar File'
+  - name: 'Bungeecord Jar File'
     description: 'The name of the Jarfile to use when running Bungeecord.'
     env_variable: SERVER_JARFILE
     default_value: bungeecord.jar
@@ -71,8 +70,7 @@ variables:
       - required
       - 'regex:/^([\w\d._-]+)(\.jar)$/'
     sort: 2
-  -
-    name: 'Bungeecord Version'
+  - name: 'Bungeecord Version'
     description: 'The version of Bungeecord to download and use.'
     env_variable: BUNGEE_VERSION
     default_value: latest

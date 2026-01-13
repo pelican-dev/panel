@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Installer;
 
+use App\Jobs\InstallEgg;
 use App\Livewire\Installer\Steps\CacheStep;
 use App\Livewire\Installer\Steps\DatabaseStep;
+use App\Livewire\Installer\Steps\EggSelectionStep;
 use App\Livewire\Installer\Steps\EnvironmentStep;
 use App\Livewire\Installer\Steps\QueueStep;
 use App\Livewire\Installer\Steps\RequirementsStep;
@@ -53,7 +55,7 @@ class PanelInstaller extends SimplePage implements HasForms
 
     public function getMaxContentWidth(): Width|string
     {
-        return Width::SevenExtraLarge;
+        return Width::ScreenTwoExtraLarge;
     }
 
     public static function isInstalled(): bool
@@ -82,6 +84,7 @@ class PanelInstaller extends SimplePage implements HasForms
                 RequirementsStep::make(),
                 EnvironmentStep::make($this),
                 DatabaseStep::make($this),
+                EggSelectionStep::make(),
                 CacheStep::make($this),
                 QueueStep::make($this),
                 SessionStep::make(),
@@ -99,7 +102,7 @@ class PanelInstaller extends SimplePage implements HasForms
                         wire:loading.attr="disabled"
                     >
                         {{ trans('installer.finish') }}
-                        <span wire:loading><x-filament::loading-indicator class="h-4 w-4" /></span>
+                        <x-filament::loading-indicator wire:loading class="h-4 w-4" />
                     </x-filament::button>
                 BLADE))),
         ];
@@ -141,6 +144,9 @@ class PanelInstaller extends SimplePage implements HasForms
             // Write session data at the very end to avoid "page expired" errors
             $this->writeToEnv('env_session');
 
+            // Install selected eggs
+            $this->installEggs();
+
             // Redirect to admin panel
             $this->redirect(Filament::getPanel('admin')->getUrl());
         } catch (Halt) {
@@ -165,8 +171,6 @@ class PanelInstaller extends SimplePage implements HasForms
 
             throw new Halt(trans('installer.exceptions.write_env'));
         }
-
-        Artisan::call('config:clear');
     }
 
     public function runMigrations(): void
@@ -218,6 +222,38 @@ class PanelInstaller extends SimplePage implements HasForms
                 ->send();
 
             throw new Halt(trans('installer.exceptions.create_user'));
+        }
+    }
+
+    public function installEggs(): void
+    {
+        try {
+            $selectedEggs = array_get($this->data, 'eggs', []);
+            if (!$selectedEggs) {
+                return;
+            }
+
+            foreach ($selectedEggs as $category => $eggs) {
+                foreach ($eggs as $downloadUrl) {
+                    InstallEgg::dispatch($downloadUrl);
+                }
+            }
+
+            Notification::make()
+                ->title(trans('installer.egg.background_install_started'))
+                ->body(trans('installer.egg.background_install_description', ['count' => array_sum(array_map('count', $selectedEggs))]))
+                ->success()
+                ->persistent()
+                ->send();
+        } catch (Exception $exception) {
+            report($exception);
+
+            Notification::make()
+                ->title(trans('installer.egg.exceptions.installation_failed'))
+                ->body($exception->getMessage())
+                ->danger()
+                ->persistent()
+                ->send();
         }
     }
 }

@@ -39,6 +39,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\In;
 use ResourceBundle;
@@ -215,7 +216,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         $rules = self::getValidationRules();
 
-        $rules['language'][] = new In(array_values(array_filter(ResourceBundle::getLocales(''), fn ($lang) => preg_match('/^[a-z]{2}$/', $lang))));
+        $rules['language'][] = new In(ResourceBundle::getLocales(''));
         $rules['timezone'][] = new In(DateTimeZone::listIdentifiers());
 
         return $rules;
@@ -333,12 +334,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return !$key ? $customization : $customization[$key->value];
     }
 
-    protected function checkPermission(Server $server, string|SubuserPermission $permission = ''): bool
+    protected function hasPermission(Server $server, string $permission = ''): bool
     {
-        if ($permission instanceof SubuserPermission) {
-            $permission = $permission->value;
-        }
-
         if ($this->canned('update', $server) || $server->owner_id === $this->id) {
             return true;
         }
@@ -354,6 +351,17 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         return in_array($permission, $subuser->permissions);
+    }
+
+    protected function checkPermission(Server $server, string|SubuserPermission $permission = ''): bool
+    {
+        if ($permission instanceof SubuserPermission) {
+            $permission = $permission->value;
+        }
+
+        $contextKey = "users.$this->id.servers.$server->id.$permission";
+
+        return Context::remember($contextKey, fn () => $this->hasPermission($server, $permission));
     }
 
     /**

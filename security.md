@@ -8,8 +8,9 @@ While Pelican is in beta, we only provide security fixes for the most recent bet
 ## Reporting a Vulnerability
 
 Please report any vulnerabilities via _one_ of the following methods:
-- [Create a security advisory on Github](https://github.com/pelican-dev/panel/security/advisories/new)
-- Send an e-mail to team@pelican.dev
+
+- [Create a security advisory on GitHub](https://github.com/pelican-dev/panel/security/advisories/new)
+- Send an e-mail to <team@pelican.dev>
 
 Include steps to reproduce, affected versions, impact, and a proof of concept if available.
 
