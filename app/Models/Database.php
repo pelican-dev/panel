@@ -19,7 +19,7 @@ use PDOException;
  * @property string $username
  * @property string $remote
  * @property string $password
- * @property int $max_connections
+ * @property ?int $max_connections
  * @property string $jdbc
  * @property Carbon $created_at
  * @property Carbon $updated_at
