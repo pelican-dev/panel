@@ -5,7 +5,7 @@ FROM --platform=$TARGETOS/$TARGETARCH php:8.4-fpm-alpine AS base
 
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-RUN install-php-extensions bcmath gd intl zip pcntl pdo_mysql pdo_pgsql
+RUN install-php-extensions bcmath gd intl zip pcntl pdo_mysql pdo_pgsql bz2
 
 RUN rm /usr/local/bin/install-php-extensions
 
@@ -71,7 +71,7 @@ RUN apk add --no-cache \
     # packages for running the panel
     caddy ca-certificates supervisor supercronic fcgi coreutils \
     # required for installing plugins. Pulled from https://github.com/pelican-dev/panel/pull/2034
-    zip unzip 7zip bzip2-dev yarn 
+    zip unzip 7zip bzip2-dev yarn git
 
 COPY --chown=root:www-data --chmod=770 --from=composerbuild /build .
 COPY --chown=root:www-data --chmod=770 --from=yarnbuild /build/public ./public
@@ -86,9 +86,9 @@ RUN mkdir -p /pelican-data/storage /pelican-data/plugins /var/run/supervisord \
     && ln -s  /pelican-data/storage /var/www/html/storage/app/public \
     && ln -s  /pelican-data/plugins /var/www/html \
 # Allow www-data write permissions where necessary
-    && chown -R :www-data /pelican-data .env ./storage ./plugins ./bootstrap/cache /var/run/supervisord /var/www/html/public/storage \
+    && chown -R www-data: /pelican-data .env ./storage ./plugins ./bootstrap/cache /var/run/supervisord /var/www/html/public/storage \
     && chmod -R 770 /pelican-data ./storage ./bootstrap/cache /var/run/supervisord \
-    && chown -R :www-data /usr/local/etc/php/ /usr/local/etc/php-fpm.d/
+    && chown -R www-data: /usr/local/etc/php/ /usr/local/etc/php-fpm.d/
 
 # Configure Supervisor
 COPY docker/supervisord.conf /etc/supervisord.conf

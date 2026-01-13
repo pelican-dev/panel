@@ -66,7 +66,7 @@ RUN apk add --no-cache \
     # packages for running the panel
     caddy ca-certificates supervisor supercronic fcgi \
     # required for installing plugins. Pulled from https://github.com/pelican-dev/panel/pull/2034
-    zip unzip 7zip bzip2-dev yarn
+    zip unzip 7zip bzip2-dev yarn git
 
 COPY --chown=root:www-data --chmod=770 --from=composerbuild /build .
 COPY --chown=root:www-data --chmod=770 --from=yarnbuild /build/public ./public
