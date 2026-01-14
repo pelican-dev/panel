@@ -68,7 +68,7 @@ jobs:
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration
+        run: vendor/bin/pest tests/Integration --parallel
 
   mysql:
     name: MySQL
@@ -127,7 +127,7 @@ jobs:
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration
+        run: vendor/bin/pest tests/Integration --parallel
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -189,7 +189,7 @@ jobs:
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration
+        run: vendor/bin/pest tests/Integration --parallel
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -257,4 +257,4 @@ jobs:
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration
+        run: vendor/bin/pest tests/Integration --parallel
