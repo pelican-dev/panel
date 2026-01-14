@@ -37,13 +37,20 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+// Filament Tables imports
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Socialite\Facades\Socialite;
@@ -52,10 +59,11 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 /**
  * @method User getUser()
  */
-class EditProfile extends BaseEditProfile
+class EditProfile extends BaseEditProfile implements HasTable
 {
     use CanCustomizeHeaderActions;
     use CanCustomizeHeaderWidgets;
+    use InteractsWithTable;
 
     protected OAuthService $oauthService;
 
@@ -158,15 +166,22 @@ class EditProfile extends BaseEditProfile
                                         if ($fileUpload->getDisk()->exists($path)) {
                                             return $path;
                                         }
+
+                                        return null; // explicit return to satisfy static analysis
                                     })
                                     ->deleteUploadedFileUsing(function (FileUpload $fileUpload, $file) {
                                         if ($file instanceof TemporaryUploadedFile) {
-                                            return $file->delete();
+                                            // Ensure we return a boolean even if delete() doesn't return one
+                                            $file->delete();
+
+                                            return true;
                                         }
 
                                         if ($fileUpload->getDisk()->exists($file)) {
                                             return $fileUpload->getDisk()->delete($file);
                                         }
+
+                                        return false; // explicit return
                                     }),
                             ]),
                         Tab::make('oauth')
@@ -412,19 +427,8 @@ class EditProfile extends BaseEditProfile
                             ->label(trans('profile.tabs.activity'))
                             ->icon('tabler-history')
                             ->schema([
-                                Repeater::make('activity')
-                                    ->hiddenLabel()
-                                    ->inlineLabel(false)
-                                    ->deletable(false)
-                                    ->addable(false)
-                                    ->relationship(null, function (Builder $query) {
-                                        $query->orderBy('timestamp', 'desc');
-                                    })
-                                    ->schema([
-                                        TextEntry::make('log')
-                                            ->hiddenLabel()
-                                            ->state(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
-                                    ]),
+                                View::make('filament.pages.profile.activity-table')
+                                    ->columnSpanFull(),
                             ]),
                         Tab::make('customization')
                             ->label(trans('profile.tabs.customization'))
@@ -546,6 +550,64 @@ class EditProfile extends BaseEditProfile
             ->model($this->getUser())
             ->statePath('data')
             ->inlineLabel(!static::isSimple());
+    }
+
+    /**
+     * Configure the Filament Table that will be rendered in the Activity tab.
+     */
+    public function table(Table $table): Table
+    {
+        $user = $this->getUser();
+
+        return $table
+            ->query(fn () => ActivityLog::query()
+                ->with('actor')
+                ->whereHas('subjects', fn ($q) => $q->where('subject_id', $user->getKey())->where('subject_type', $user->getMorphClass()))
+                ->orderBy('timestamp', 'desc')
+            )
+            ->columns([
+                ImageColumn::make('avatar')
+                    ->label('')
+                    ->getStateUsing(fn ($record) => Filament::getUserAvatarUrl($record->actor ?? $user))
+                    ->circular()
+                    ->imageWidth(50)->imageHeight(50)
+                    ->toggleable()
+                    ->alignCenter(),
+                TextColumn::make('timestamp')
+                    ->label(trans('profile.activity.timestamp'))
+                    ->tooltip(fn ($state) => $state->format('M j, Y g:ia'))
+                    ->formatStateUsing(fn ($state) => $state->diffForHumans())
+                    ->toggleable(),
+                TextColumn::make('actor.username')
+                    ->label(trans('profile.activity.actor'))
+                    ->formatStateUsing(fn ($state, $record) => $record->actor?->username ?? trans('activity.system'))
+                    ->toggleable()
+                    ->searchable(),
+                TextColumn::make('ip')
+                    ->label(trans('profile.activity.ip'))
+                    ->visible(fn () => user()?->can('seeIps activityLog'))
+                    ->toggleable()
+                    ->searchable(),
+                TextColumn::make('event')
+                    ->label(trans('profile.activity.event'))
+                    ->toggleable()
+                    ->toggledHiddenByDefault(true)
+                    ->searchable(),
+                TextColumn::make('properties')
+                    ->label(trans('activity.metadata'))
+                    ->formatStateUsing(function ($state, $record) {
+                        $label = strip_tags(($record->getLabel() ?? ''));
+
+                        if (trim($label) !== '') {
+                            return $label;
+                        }
+                    })
+                     ->limit(200)
+                     ->wrap()
+                     ->searchable(),
+            ])
+            ->defaultSort('timestamp', 'desc')
+            ->paginated();
     }
 
     protected function getFormActions(): array

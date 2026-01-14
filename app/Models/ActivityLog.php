@@ -168,33 +168,33 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         return user()?->can('seeIps activityLog') ? $this->ip : null;
     }
 
-    public function htmlable(): string
-    {
-        $user = $this->actor;
-        if (!$user instanceof User) {
-            $user = new User([
-                'email' => 'system@pelican.dev',
-                'username' => 'system',
-            ]);
-        }
-
-        $avatarUrl = Filament::getUserAvatarUrl($user);
-        $username = str($user->username)->stripTags();
-        $ip = $this->getIp();
-        $ip = $ip ? $ip . ' — ' : '';
-
-        return "
-            <div style='display: flex; align-items: center;'>
-                <img width='50px' height='50px' src='{$avatarUrl}' style='margin-right: 15px; border-radius: 50%;' />
-
-                <div>
-                    <p>$username — $this->event</p>
-                    <p>{$this->getLabel()}</p>
-                    <p>$ip<span title='{$this->timestamp->format('M j, Y g:ia')}'>{$this->timestamp->diffForHumans()}</span></p>
-                </div>
-            </div>
-        ";
-    }
+//    public function htmlable(): string
+//    {
+//        $user = $this->actor;
+//        if (!$user instanceof User) {
+//            $user = new User([
+//                'email' => 'system@pelican.dev',
+//                'username' => 'system',
+//            ]);
+//        }
+//
+//        $avatarUrl = Filament::getUserAvatarUrl($user);
+//        $username = str($user->username)->stripTags();
+//        $ip = $this->getIp();
+//        $ip = $ip ? $ip . ' — ' : '';
+//
+//        return "
+//            <div style='display: flex; align-items: center;'>
+//                <img width='50px' height='50px' src='{$avatarUrl}' style='margin-right: 15px; border-radius: 50%;' />
+//
+//                <div>
+//                    <p>$username — $this->event</p>
+//                    <p>{$this->getLabel()}</p>
+//                    <p>$ip<span title='{$this->timestamp->format('M j, Y g:ia')}'>{$this->timestamp->diffForHumans()}</span></p>
+//                </div>
+//            </div>
+//        ";
+//    }
 
     /**
      * @return array<string, string>

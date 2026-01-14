@@ -12,6 +12,13 @@ return [
         '2fa' => '2FA',
         'customization' => 'Customization',
     ],
+    'activity' => [
+        'timestamp' => 'Timestamp',
+        'actor' => 'Actor',
+        'ip' => 'IP Address',
+        'event' => 'Event',
+        'metadata' => 'Metadata',
+    ],
     'username' => 'Username',
     'admin' => 'Admin',
     'exit_admin' => 'Exit Admin',
