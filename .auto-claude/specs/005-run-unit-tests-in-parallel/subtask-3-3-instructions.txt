@@ -1,0 +1,281 @@
+SUBTASK 3-3: Compare CI Execution Time Before and After
+=================================================================
+Date: 2026-01-14
+Status: PENDING - Awaiting PR Creation and CI Execution
+
+OVERVIEW:
+This subtask requires comparing CI execution times before and after implementing
+parallel test execution to verify the performance improvement target (30-50% reduction).
+
+PREREQUISITES:
+✅ Code changes completed (Phase 1)
+✅ Changes pushed to branch: auto-claude/005-run-unit-tests-in-parallel
+❌ PR not created yet (BLOCKING)
+❌ CI not triggered yet (BLOCKING)
+
+DEPENDENCIES:
+This subtask CANNOT be completed until:
+1. Pull request is created (see subtask-3-2-blocker.txt)
+2. CI workflow runs on the PR
+3. All database jobs complete
+
+================================================================================
+STEP 1: OBTAIN BASELINE CI EXECUTION TIMES (Before Parallel Tests)
+================================================================================
+
+Since parallel test execution was not enabled before, we need baseline timing
+data from a recent CI run on the main branch WITHOUT the --parallel flags.
+
+Method A: Get timing from recent main branch CI run
+----------------------------------------------------
+1. Visit: https://github.com/pelican-dev/panel/actions
+2. Filter by: "Branch: main"
+3. Select a recent successful CI workflow run (before our changes)
+4. For EACH database job (SQLite, MySQL, MariaDB, PostgreSQL), record:
+   - Total job duration
+   - Unit test step duration
+   - Integration test step duration
+   - PHP version (8.2, 8.3, 8.4, 8.5)
+
+Method B: Use GitHub API (if available)
+----------------------------------------------------
+gh api repos/pelican-dev/panel/actions/workflows/ci.yaml/runs \
+  --field branch=main \
+  --field status=success \
+  --field per_page=5 \
+  --jq '.workflow_runs[0] | {id, created_at, html_url}'
+
+Then get detailed timing for that run:
+gh run view <RUN_ID> --json jobs --jq '.jobs[] | {name, conclusion, steps}'
+
+Expected Baseline Data to Collect:
+-----------------------------------
+For EACH matrix combination (4 databases × 4 PHP versions = 16 jobs minimum):
+
+Job: tests-sqlite (PHP 8.2)
+  - Total job duration: ____ minutes ____ seconds
+  - Unit tests step: ____ minutes ____ seconds
+  - Integration tests step: ____ minutes ____ seconds
+  - Tests run: ____ tests
+
+Job: tests-mysql (PHP 8.2)
+  - Total job duration: ____ minutes ____ seconds
+  - Unit tests step: ____ minutes ____ seconds
+  - Integration tests step: ____ minutes ____ seconds
+  - Tests run: ____ tests
+
+[Repeat for all 16+ combinations]
+
+IMPORTANT: Record the ENTIRE job duration, not just individual test steps,
+because parallel execution affects overall CI throughput.
+
+================================================================================
+STEP 2: GET NEW CI EXECUTION TIMES (After Parallel Tests)
+================================================================================
+
+After PR is created and CI runs with parallel test execution:
+
+1. Visit the PR page
+2. Click "Checks" tab or "Details" on CI status
+3. Wait for ALL jobs to complete
+4. For EACH database job (matching the baseline jobs), record:
+   - Total job duration
+   - Unit tests step duration (with --parallel)
+   - Integration tests step duration (with --parallel)
+   - PHP version
+5. Check logs for parallel execution indicators (e.g., "Running with X processes")
+
+New Data to Collect:
+--------------------
+For EACH matrix combination (matching baseline):
+
+Job: tests-sqlite (PHP 8.2)
+  - Total job duration: ____ minutes ____ seconds
+  - Unit tests step: ____ minutes ____ seconds
+  - Integration tests step: ____ minutes ____ seconds
+  - Parallel processes used: ____ processes
+  - Tests run: ____ tests
+
+Job: tests-mysql (PHP 8.2)
+  - Total job duration: ____ minutes ____ seconds
+  - Unit tests step: ____ minutes ____ seconds
+  - Integration tests step: ____ minutes ____ seconds
+  - Parallel processes used: ____ processes
+  - Tests run: ____ tests
+
+[Repeat for all 16+ combinations]
+
+================================================================================
+STEP 3: CALCULATE PERFORMANCE IMPROVEMENT
+================================================================================
+
+For each job type, calculate the reduction:
+
+Formula:
+  Reduction % = ((Baseline Time - New Time) / Baseline Time) × 100
+
+Example Calculation:
+--------------------
+Baseline Unit tests: 120 seconds
+New Unit tests:      60 seconds
+Reduction = ((120 - 60) / 120) × 100 = 50% faster ✅
+
+Baseline Integration tests: 180 seconds
+New Integration tests:      135 seconds
+Reduction = ((180 - 135) / 180) × 100 = 25% faster
+
+Baseline Total job: 400 seconds
+New Total job:      280 seconds
+Reduction = ((400 - 280) / 400) × 100 = 30% faster ✅
+
+Metrics to Calculate:
+---------------------
+1. Average Unit test reduction across all jobs
+2. Average Integration test reduction across all jobs
+3. Average total job duration reduction
+4. Best improvement (which database/PHP combo benefited most)
+5. Worst improvement (which combo benefited least)
+
+TARGET VALIDATION:
+✅ Unit tests: 30-50% reduction
+✅ Integration tests: 20-40% reduction
+✅ Total job: Measurable reduction
+
+================================================================================
+STEP 4: ANALYZE RESULTS
+================================================================================
+
+Check for Issues:
+-----------------
+❌ No improvement or regression: Investigate why
+   - Tests may already be fast (I/O bound, not CPU bound)
+   - Parallel overhead exceeds benefits for small test suites
+   - Database locking/contention issues
+
+❌ Significant improvement on some databases but not others:
+   - SQLite may show less improvement due to locking
+   - SQL databases may show more improvement
+
+✅ Consistent improvement across all jobs:
+   - Parallel execution is working as expected
+   - Target achieved
+
+Parallel Process Detection:
+---------------------------
+Check logs for indicators like:
+  "Running tests in 2 processes"
+  "Running tests in 4 processes"
+  "Parallel testing enabled"
+
+If parallel indicators are missing:
+  - Verify --parallel flag is in commands
+  - Check Pest version supports parallel execution
+
+================================================================================
+STEP 5: DOCUMENT FINDINGS IN PR DESCRIPTION
+================================================================================
+
+Add a "Performance Results" section to the PR description with:
+
+Performance Results
+-------------------
+
+### Execution Time Comparison
+
+| Database   | PHP  | Baseline (s) | Parallel (s) | Improvement |
+|------------|------|--------------|--------------|-------------|
+| SQLite     | 8.2  | XXX          | XXX          | XX%        |
+| SQLite     | 8.3  | XXX          | XXX          | XX%        |
+| MySQL      | 8.2  | XXX          | XXX          | XX%        |
+| PostgreSQL | 8.2  | XXX          | XXX          | XX%        |
+| ...        | ...  | ...          | ...          | ...        |
+
+### Summary
+
+- **Average Unit test improvement**: XX%
+- **Average Integration test improvement**: XX%
+- **Average total job improvement**: XX%
+- **Best improvement**: [Database] on PHP [version] (XX% faster)
+- **Parallel processes used**: X processes (auto-detected)
+- **Target achieved**: ✅/❌ (30-50% reduction target)
+
+### Analysis
+
+[Brief explanation of results, any unexpected findings, and verification
+that parallel execution is working correctly across all matrix combinations]
+
+### Test Reliability
+
+- All XX jobs passed successfully ✅
+- No database locking errors ✅
+- No resource exhaustion (OOM) errors ✅
+- No flaky tests introduced ✅
+
+================================================================================
+COMPLETION CRITERIA
+================================================================================
+
+This subtask is COMPLETE when:
+
+✅ Baseline CI timing data collected from main branch
+✅ New CI timing data collected from PR with parallel tests
+✅ Performance improvement calculated for all job types
+✅ Results show 30-50% reduction in test execution time (target met)
+✅ Findings documented in PR description with detailed table
+✅ Analysis explains any variations across databases/PHP versions
+✅ Verification confirms parallel execution is working (logs checked)
+
+If target is NOT met (<30% improvement):
+  - Document actual improvement achieved
+  - Explain why target was not met (test suite characteristics, etc.)
+  - Provide justification for whether to proceed or adjust approach
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Issue: Cannot find baseline CI runs on main branch
+Solution: Use the most recent successful CI run before commit 0e810f311
+          (the commit before our changes)
+
+Issue: CI runs show different number of tests before/after
+Solution: Verify no tests were skipped. Same test count = fair comparison.
+
+Issue: Timing varies significantly between runs
+Solution: Average multiple runs or use median value for reliability.
+
+Issue: Some jobs timeout or fail
+Solution: Check if parallel execution is causing resource exhaustion.
+          Consider reducing process count or investigating test isolation.
+
+================================================================================
+NOTES FOR IMPLEMENTATION
+================================================================================
+
+- This is a MANUAL VERIFICATION task (cannot be automated)
+- Requires GitHub access to view Actions workflow runs
+- May need to wait several minutes for all CI jobs to complete
+- Document ALL findings, even if unexpected
+- Be honest about results - if improvement is less than target, explain why
+- Consider that some test suites may not benefit from parallelization
+  (e.g., if they're I/O bound rather than CPU bound)
+
+================================================================================
+BLOCKING STATUS
+================================================================================
+
+CURRENT BLOCKER: Pull request not created
+
+TO UNBLOCK:
+1. Create PR at: https://github.com/pelican-dev/panel/compare/main...auto-claude/005-run-unit-tests-in-parallel
+2. Wait for CI to complete (all 24+ jobs)
+3. Then proceed with steps above
+
+Once unblocked, this task should take 15-30 minutes to complete:
+- 5 min: Collect baseline data
+- 5 min: Collect new data
+- 5 min: Calculate improvements
+- 10 min: Document findings in PR
+- 5 min: Verify and update implementation_plan.json
+
+================================================================================

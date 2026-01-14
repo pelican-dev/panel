@@ -173,8 +173,9 @@
               "No resource exhaustion (OOM) errors in logs"
             ]
           },
-          "status": "pending",
-          "notes": "Total of 16+ jobs to verify (SQLite: 4, MySQL: 4, MariaDB: 12, PostgreSQL: 4). SQLite is highest risk for locking issues. Look for 'PARALLEL' or process indicators in test output."
+          "status": "in_progress",
+          "notes": "AWAITING MANUAL ACTION: Cannot verify database jobs until PR is created. The CI workflow only triggers on pull_request events. All code changes are ready and pushed to origin/auto-claude/005-run-unit-tests-in-parallel. NEXT STEP: Create PR at https://github.com/pelican-dev/panel/compare/main...auto-claude/005-run-unit-tests-in-parallel to trigger CI. Then monitor https://github.com/pelican-dev/panel/actions to verify all 24 jobs pass (SQLite: 4, MySQL: 4, MariaDB: 12, PostgreSQL: 4 across PHP versions 8.2-8.5). Verification checklist: (1) All database jobs pass, (2) Logs show parallel execution, (3) No DB locking errors, (4) No OOM errors. See subtask-3-2-blocker.txt for details.",
+          "updated_at": "2026-01-14T20:45:03.854732+00:00"
         },
         {
           "id": "subtask-3-3",
@@ -188,7 +189,8 @@
             "instructions": "1. Note execution time of a baseline CI run (before parallel changes)\n2. Note execution time of CI run with parallel tests\n3. Calculate reduction percentage\n4. Target: 30-50% reduction in test execution time\n5. Document findings in PR description"
           },
           "status": "pending",
-          "notes": "Compare total job duration, not just test step. Expected improvement: Unit tests 30-50% faster, Integration tests 20-40% faster. If no improvement, may indicate tests already fast or overhead from parallelization."
+          "notes": "BLOCKED - Awaiting PR creation and CI execution. Created comprehensive instructions in subtask-3-3-instructions.txt. This manual verification task requires: (1) PR to be created at https://github.com/pelican-dev/panel/compare/main...auto-claude/005-run-unit-tests-in-parallel, (2) CI workflow to run on that PR, (3) Baseline timing data from recent main branch CI run, (4) New timing data from PR CI run with --parallel flags, (5) Calculate improvement percentage for all database/PHP combinations, (6) Document findings in PR description. Target: 30-50% reduction in test execution time. Cannot proceed until subtask-3-2 is unblocked (PR creation). See subtask-3-3-instructions.txt for complete step-by-step guide including data collection templates, calculation formulas, and documentation format.",
+          "updated_at": "2026-01-14T20:47:24.719615+00:00"
         }
       ]
     },
@@ -366,6 +368,6 @@
   "qa_signoff": null,
   "status": "in_progress",
   "planStatus": "in_progress",
-  "updated_at": "2026-01-14T20:12:31.121Z",
-  "last_updated": "2026-01-14T20:13:19.841982+00:00"
+  "updated_at": "2026-01-14T20:45:32.331Z",
+  "last_updated": "2026-01-14T20:47:24.719624+00:00"
 }
