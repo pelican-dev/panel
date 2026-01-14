@@ -6,6 +6,9 @@ return [
     'installation_failed' => 'Server Installation Failed',
     'reinstallation_completed' => 'Server Reinstallation Completed',
     'reinstallation_failed' => 'Server Reinstallation Failed',
+    'backup_completed' => 'Backup Completed',
+    'backup_name_and_server' => 'Backup :backup on server :server has completed.',
+    'view_backups' => 'View Backups',
     'failed' => 'Failed',
     'user_added' => [
         'title' => 'Added to Server',
