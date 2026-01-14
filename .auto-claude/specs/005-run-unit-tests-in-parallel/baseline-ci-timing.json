@@ -1,0 +1,79 @@
+{
+  "baseline_run": {
+    "run_id": 20985925148,
+    "date": "2026-01-14T07:23:27Z",
+    "branch": "main",
+    "url": "https://github.com/pelican-dev/panel/actions/runs/20985925148",
+    "total_duration_seconds": 338,
+    "status": "success",
+    "description": "Baseline CI run before parallel test changes"
+  },
+  "job_timing_by_database": {
+    "sqlite": {
+      "jobs": [
+        {"name": "SQLite (8.2)", "duration_seconds": 132, "php_version": "8.2"},
+        {"name": "SQLite (8.3)", "duration_seconds": 134, "php_version": "8.3"},
+        {"name": "SQLite (8.4)", "duration_seconds": 162, "php_version": "8.4"},
+        {"name": "SQLite (8.5)", "duration_seconds": 128, "php_version": "8.5"}
+      ],
+      "average_seconds": 139,
+      "average_minutes": 2.3
+    },
+    "mysql": {
+      "jobs": [
+        {"name": "MySQL (8.2, mysql:8)", "duration_seconds": 212, "php_version": "8.2"},
+        {"name": "MySQL (8.3, mysql:8)", "duration_seconds": 189, "php_version": "8.3"},
+        {"name": "MySQL (8.4, mysql:8)", "duration_seconds": 200, "php_version": "8.4"},
+        {"name": "MySQL (8.5, mysql:8)", "duration_seconds": 218, "php_version": "8.5"}
+      ],
+      "average_seconds": 205,
+      "average_minutes": 3.4
+    },
+    "mariadb": {
+      "jobs": [
+        {"name": "MariaDB (8.2, mariadb:10.6)", "duration_seconds": 176, "php_version": "8.2", "db_version": "10.6"},
+        {"name": "MariaDB (8.2, mariadb:10.11)", "duration_seconds": 153, "php_version": "8.2", "db_version": "10.11"},
+        {"name": "MariaDB (8.2, mariadb:11.4)", "duration_seconds": 173, "php_version": "8.2", "db_version": "11.4"},
+        {"name": "MariaDB (8.3, mariadb:10.6)", "duration_seconds": 179, "php_version": "8.3", "db_version": "10.6"},
+        {"name": "MariaDB (8.3, mariadb:10.11)", "duration_seconds": 177, "php_version": "8.3", "db_version": "10.11"},
+        {"name": "MariaDB (8.3, mariadb:11.4)", "duration_seconds": 198, "php_version": "8.3", "db_version": "11.4"},
+        {"name": "MariaDB (8.4, mariadb:10.6)", "duration_seconds": 163, "php_version": "8.4", "db_version": "10.6"},
+        {"name": "MariaDB (8.4, mariadb:10.11)", "duration_seconds": 167, "php_version": "8.4", "db_version": "10.11"},
+        {"name": "MariaDB (8.4, mariadb:11.4)", "duration_seconds": 169, "php_version": "8.4", "db_version": "11.4"},
+        {"name": "MariaDB (8.5, mariadb:10.6)", "duration_seconds": 194, "php_version": "8.5", "db_version": "10.6"},
+        {"name": "MariaDB (8.5, mariadb:10.11)", "duration_seconds": 144, "php_version": "8.5", "db_version": "10.11"},
+        {"name": "MariaDB (8.5, mariadb:11.4)", "duration_seconds": 158, "php_version": "8.5", "db_version": "11.4"}
+      ],
+      "average_seconds": 171,
+      "average_minutes": 2.8
+    },
+    "postgresql": {
+      "jobs": [
+        {"name": "PostgreSQL (8.2, postgres:14)", "duration_seconds": 174, "php_version": "8.2"},
+        {"name": "PostgreSQL (8.3, postgres:14)", "duration_seconds": 198, "php_version": "8.3"},
+        {"name": "PostgreSQL (8.4, postgres:14)", "duration_seconds": 186, "php_version": "8.4"},
+        {"name": "PostgreSQL (8.5, postgres:14)", "duration_seconds": 177, "php_version": "8.5"}
+      ],
+      "average_seconds": 184,
+      "average_minutes": 3.1
+    }
+  },
+  "summary": {
+    "total_jobs": 24,
+    "overall_average_seconds": 173,
+    "overall_average_minutes": 2.9,
+    "database_performance_ranking": [
+      {"database": "sqlite", "avg_seconds": 139},
+      {"database": "mariadb", "avg_seconds": 171},
+      {"database": "postgresql", "avg_seconds": 184},
+      {"database": "mysql", "avg_seconds": 205}
+    ]
+  },
+  "target_improvement": {
+    "minimum_reduction_percent": 30,
+    "target_reduction_percent": 40,
+    "maximum_reduction_percent": 50,
+    "target_new_average_seconds": 104,
+    "target_new_average_minutes": 1.7
+  }
+}

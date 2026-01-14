@@ -1,0 +1,593 @@
+{
+  "project_root": "/Users/lance/sites/panel",
+  "project_type": "single",
+  "services": {
+    "main": {
+      "name": "main",
+      "path": "/Users/lance/sites/panel",
+      "language": "JavaScript",
+      "framework": null,
+      "type": "unknown",
+      "package_manager": "yarn",
+      "build_tool": "Vite",
+      "default_port": 5173,
+      "styling": "Tailwind CSS",
+      "dev_command": "npm run dev",
+      "key_directories": {
+        "app": {
+          "path": "app",
+          "purpose": "Application code"
+        },
+        "routes": {
+          "path": "routes",
+          "purpose": "Route handlers"
+        },
+        "tests": {
+          "path": "tests",
+          "purpose": "Tests"
+        },
+        "config": {
+          "path": "config",
+          "purpose": "Configuration"
+        }
+      },
+      "dependencies": [
+        "@xterm/addon-fit",
+        "@xterm/addon-search",
+        "@xterm/addon-web-links",
+        "@xterm/addon-webgl",
+        "@xterm/xterm",
+        "glob",
+        "xterm-addon-search-bar"
+      ],
+      "dev_dependencies": [
+        "@tailwindcss/forms",
+        "@tailwindcss/typography",
+        "@tailwindcss/vite",
+        "autoprefixer",
+        "concurrently",
+        "laravel-vite-plugin",
+        "prettier",
+        "tailwindcss",
+        "vite"
+      ],
+      "test_directory": "tests",
+      "dockerfile": "Dockerfile",
+      "environment": {
+        "variables": {
+          "APP_ENV": {
+            "value": "local",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": true
+          },
+          "APP_DEBUG": {
+            "value": "true",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": true
+          },
+          "APP_KEY": {
+            "value": "<REDACTED>",
+            "source": ".env",
+            "type": "string",
+            "sensitive": true,
+            "required": true
+          },
+          "APP_TIMEZONE": {
+            "value": "UTC",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "APP_URL": {
+            "value": "https://panel.test",
+            "source": ".env",
+            "type": "url",
+            "sensitive": false,
+            "required": true
+          },
+          "APP_LOCALE": {
+            "value": "en",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": true
+          },
+          "APP_ENVIRONMENT_ONLY": {
+            "value": "true",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": false
+          },
+          "RECAPTCHA_ENABLED": {
+            "value": "false",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": false
+          },
+          "APP_INSTALLED": {
+            "value": "false",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": true
+          },
+          "LOG_CHANNEL": {
+            "value": "daily",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "LOG_STACK": {
+            "value": "single",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "LOG_DEPRECATIONS_CHANNEL": {
+            "value": "null",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "LOG_LEVEL": {
+            "value": "debug",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "PELICAN_CLOUD_DOMAIN": {
+            "value": "https://staging-hub.pelican.dev",
+            "source": ".env",
+            "type": "url",
+            "sensitive": false,
+            "required": false
+          },
+          "DB_CONNECTION": {
+            "value": "sqlite",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "CACHE_STORE": {
+            "value": "file",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "QUEUE_CONNECTION": {
+            "value": "sync",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "SESSION_DRIVER": {
+            "value": "file",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "MAIL_MAILER": {
+            "value": "log",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "MAIL_HOST": {
+            "value": "smtp.example.com",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "MAIL_PORT": {
+            "value": "25",
+            "source": ".env",
+            "type": "number",
+            "sensitive": false,
+            "required": false
+          },
+          "MAIL_USERNAME": {
+            "value": "",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "MAIL_PASSWORD": {
+            "value": "<REDACTED>",
+            "source": ".env",
+            "type": "string",
+            "sensitive": true,
+            "required": false
+          },
+          "MAIL_ENCRYPTION": {
+            "value": "tls",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "MAIL_SCHEME": {
+            "value": "tls",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "MAIL_FROM_ADDRESS": {
+            "value": "no-reply@example.com",
+            "source": ".env",
+            "type": "email",
+            "sensitive": false,
+            "required": false
+          },
+          "MAIL_FROM_NAME": {
+            "value": "Pelican Admin",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "SESSION_ENCRYPT": {
+            "value": "false",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": false
+          },
+          "SESSION_PATH": {
+            "value": "/",
+            "source": ".env",
+            "type": "path",
+            "sensitive": false,
+            "required": false
+          },
+          "SESSION_DOMAIN": {
+            "value": "null",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "PANEL_CLIENT_ALLOCATIONS_ENABLED": {
+            "value": "false",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": false
+          },
+          "PANEL_CLIENT_ALLOCATIONS_RANGE_START": {
+            "value": "",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "PANEL_CLIENT_ALLOCATIONS_RANGE_END": {
+            "value": "",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "FILAMENT_TOP_NAVIGATION": {
+            "value": "true",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": false
+          },
+          "APP_NAME": {
+            "value": "Pelican",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "SESSION_SECURE_COOKIE": {
+            "value": "true",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": false
+          },
+          "DB_DATABASE": {
+            "value": "database.sqlite",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "DB_HOST": {
+            "value": "",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "DB_PORT": {
+            "value": "",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "DB_USERNAME": {
+            "value": "",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "DB_PASSWORD": {
+            "value": "<REDACTED>",
+            "source": ".env",
+            "type": "string",
+            "sensitive": true,
+            "required": false
+          },
+          "APP_LOGO": {
+            "value": "",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "APP_FAVICON": {
+            "value": "/pelican.ico",
+            "source": ".env",
+            "type": "path",
+            "sensitive": false,
+            "required": false
+          },
+          "FILAMENT_AVATAR_PROVIDER": {
+            "value": "local",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "PANEL_USE_BINARY_PREFIX": {
+            "value": "true",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": false
+          },
+          "APP_2FA_REQUIRED": {
+            "value": "0",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": false
+          },
+          "TRUSTED_PROXIES": {
+            "value": "",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "FILAMENT_WIDTH": {
+            "value": "screen-2xl",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "CAPTCHA_TURNSTILE_ENABLED": {
+            "value": "",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "APP_BACKUP_DRIVER": {
+            "value": "wings",
+            "source": ".env",
+            "type": "string",
+            "sensitive": false,
+            "required": false
+          },
+          "BACKUP_THROTTLE_LIMIT": {
+            "value": "2",
+            "source": ".env",
+            "type": "number",
+            "sensitive": false,
+            "required": false
+          },
+          "BACKUP_THROTTLE_PERIOD": {
+            "value": "600",
+            "source": ".env",
+            "type": "number",
+            "sensitive": false,
+            "required": false
+          },
+          "OAUTH_FACEBOOK_ENABLED": {
+            "value": "<REDACTED>",
+            "source": ".env",
+            "type": "string",
+            "sensitive": true,
+            "required": false
+          },
+          "OAUTH_X_ENABLED": {
+            "value": "<REDACTED>",
+            "source": ".env",
+            "type": "string",
+            "sensitive": true,
+            "required": false
+          },
+          "OAUTH_LINKEDIN_ENABLED": {
+            "value": "<REDACTED>",
+            "source": ".env",
+            "type": "string",
+            "sensitive": true,
+            "required": false
+          },
+          "OAUTH_GOOGLE_ENABLED": {
+            "value": "<REDACTED>",
+            "source": ".env",
+            "type": "string",
+            "sensitive": true,
+            "required": false
+          },
+          "OAUTH_GITHUB_ENABLED": {
+            "value": "<REDACTED>",
+            "source": ".env",
+            "type": "string",
+            "sensitive": true,
+            "required": false
+          },
+          "OAUTH_GITLAB_ENABLED": {
+            "value": "<REDACTED>",
+            "source": ".env",
+            "type": "string",
+            "sensitive": true,
+            "required": false
+          },
+          "OAUTH_BITBUCKET_ENABLED": {
+            "value": "<REDACTED>",
+            "source": ".env",
+            "type": "string",
+            "sensitive": true,
+            "required": false
+          },
+          "OAUTH_SLACK_ENABLED": {
+            "value": "<REDACTED>",
+            "source": ".env",
+            "type": "string",
+            "sensitive": true,
+            "required": false
+          },
+          "OAUTH_AUTHENTIK_ENABLED": {
+            "value": "<REDACTED>",
+            "source": ".env",
+            "type": "string",
+            "sensitive": true,
+            "required": false
+          },
+          "OAUTH_DISCORD_ENABLED": {
+            "value": "<REDACTED>",
+            "source": ".env",
+            "type": "string",
+            "sensitive": true,
+            "required": false
+          },
+          "OAUTH_STEAM_ENABLED": {
+            "value": "<REDACTED>",
+            "source": ".env",
+            "type": "string",
+            "sensitive": true,
+            "required": false
+          },
+          "PANEL_SEND_INSTALL_NOTIFICATION": {
+            "value": "true",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": false
+          },
+          "PANEL_SEND_REINSTALL_NOTIFICATION": {
+            "value": "true",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": false
+          },
+          "GUZZLE_TIMEOUT": {
+            "value": "15",
+            "source": ".env",
+            "type": "number",
+            "sensitive": false,
+            "required": false
+          },
+          "GUZZLE_CONNECT_TIMEOUT": {
+            "value": "5",
+            "source": ".env",
+            "type": "number",
+            "sensitive": false,
+            "required": false
+          },
+          "APP_ACTIVITY_PRUNE_DAYS": {
+            "value": "90",
+            "source": ".env",
+            "type": "number",
+            "sensitive": false,
+            "required": false
+          },
+          "APP_ACTIVITY_HIDE_ADMIN": {
+            "value": "false",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": false
+          },
+          "APP_API_CLIENT_RATELIMIT": {
+            "value": "720",
+            "source": ".env",
+            "type": "number",
+            "sensitive": false,
+            "required": false
+          },
+          "APP_API_APPLICATION_RATELIMIT": {
+            "value": "240",
+            "source": ".env",
+            "type": "number",
+            "sensitive": false,
+            "required": false
+          },
+          "PANEL_EDITABLE_SERVER_DESCRIPTIONS": {
+            "value": "true",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": false
+          },
+          "APP_WEBHOOK_PRUNE_DAYS": {
+            "value": "30",
+            "source": ".env",
+            "type": "number",
+            "sensitive": false,
+            "required": false
+          },
+          "FILAMENT_UPLOADABLE_AVATARS": {
+            "value": "true",
+            "source": ".env",
+            "type": "boolean",
+            "sensitive": false,
+            "required": false
+          }
+        },
+        "required_count": 6,
+        "optional_count": 0,
+        "detected_count": 74
+      }
+    }
+  },
+  "infrastructure": {
+    "dockerfile": "Dockerfile",
+    "ci": "GitHub Actions",
+    "ci_workflows": [
+      "docker-publish.yml"
+    ]
+  },
+  "conventions": {
+    "formatting": "Prettier"
+  }
+}

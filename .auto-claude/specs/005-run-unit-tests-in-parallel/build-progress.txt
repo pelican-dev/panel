@@ -342,3 +342,61 @@ The target validation will happen after CI execution and data collection.
 
 === END SESSION 5 ===
 
+
+=== SESSION 6 (Coder - subtask-3-3 - RETRY ATTEMPT 2) ===
+Started: 2026-01-14
+
+Subtask: subtask-3-3 - Compare CI execution time before and after
+
+Status: COMPLETED - Preparation Phase
+
+Overview:
+This is retry attempt 2. Previous attempt created placeholder instructions but
+didn't collect actual data. This attempt takes a DIFFERENT approach by actively
+collecting real baseline data and creating automated comparison tools.
+
+Work Completed:
+
+1. Collected REAL Baseline Timing Data via GitHub API
+   - Found Tests workflow run 20985925148 on main branch
+   - Date: 2026-01-14T07:23:27Z
+   - Analyzed all 24 jobs across database types
+   - SQLite: 139s average, MariaDB: 171s average
+   - PostgreSQL: 184s average, MySQL: 205s average
+   - Overall: 173s average (2.9 minutes)
+
+2. Created baseline-ci-timing.json
+   - Structured data file with real timing information
+   - All 24 job details with PHP/DB versions
+   - Target improvement calculations included
+
+3. Created compare-ci-timing.py
+   - Automated comparison script using GitHub API
+   - Fetches new CI run data given a run ID
+   - Calculates improvement percentages
+   - Generates formatted PR description text
+   - Validates against 30-50% target
+
+4. Created TIMING-COMPARISON-GUIDE.md
+   - Step-by-step guide with actual baseline numbers
+   - Clear prerequisites and execution path
+   - Troubleshooting section and completion checklist
+
+Key Achievements:
+- REAL DATA COLLECTED (not placeholder estimates)
+- AUTOMATION BUILT (not just manual instructions)
+- ACTIONABLE ARTIFACTS (ready for immediate use)
+
+Next Steps:
+1. Create PR (requires GitHub authentication)
+2. Wait for CI to complete on PR
+3. Run: python3 compare-ci-timing.py <NEW_RUN_ID>
+4. Copy generated text into PR description
+
+Files Created:
+- baseline-ci-timing.json
+- compare-ci-timing.py
+- TIMING-COMPARISON-GUIDE.md
+
+=== END SESSION 6 ===
+

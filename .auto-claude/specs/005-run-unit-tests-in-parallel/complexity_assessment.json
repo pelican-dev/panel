@@ -1,0 +1,71 @@
+{
+  "complexity": "standard",
+  "workflow_type": "feature",
+  "confidence": 0.85,
+  "reasoning": "Implementing parallel test execution requires modifying GitHub Actions workflow to use matrix sharding strategy and creating a test runner script. The Oh Dear article provides a proven approach, and the project already uses GitHub Actions with matrices. Scope is 3-4 files with no new external dependencies.",
+
+  "analysis": {
+    "scope": {
+      "estimated_files": 4,
+      "estimated_services": 1,
+      "is_cross_cutting": false,
+      "notes": "Will modify .github/workflows/ci.yaml, create a test runner script (e.g., bin/parallel-test-runner), and possibly adjust phpunit.xml configuration. Changes are isolated to CI/CD configuration."
+    },
+    "integrations": {
+      "external_services": [],
+      "new_dependencies": [],
+      "research_needed": false,
+      "notes": "Uses existing GitHub Actions infrastructure and Pest's built-in --list-tests and --filter options. No new external services or packages required."
+    },
+    "infrastructure": {
+      "docker_changes": false,
+      "database_changes": false,
+      "config_changes": true,
+      "notes": "Changes limited to GitHub Actions workflow configuration. Will add matrix sharding dimension to existing PHP and database matrices. Database services already configured."
+    },
+    "knowledge": {
+      "patterns_exist": true,
+      "research_required": false,
+      "unfamiliar_tech": [],
+      "notes": "Project already uses GitHub Actions with matrix strategies (4 PHP versions × 4 database types). Adding shard dimension follows same pattern. Oh Dear article provides complete implementation approach."
+    },
+    "risk": {
+      "level": "medium",
+      "concerns": [
+        "Test isolation issues if tests depend on execution order",
+        "Integration tests may have race conditions when parallelized",
+        "CI complexity increases with more concurrent jobs",
+        "Temporary CI breakage during implementation",
+        "Need to ensure database services are properly shared across shards"
+      ],
+      "notes": "Medium risk due to CI/CD pipeline impact. Should be implemented in a feature branch and thoroughly tested before merging. Current CI runs 4 database types × 4 PHP versions = 16 jobs. Adding 8-12 shards per job significantly increases parallelization."
+    }
+  },
+
+  "recommended_phases": [
+    "discovery",
+    "requirements",
+    "context",
+    "spec_writing",
+    "planning",
+    "validation"
+  ],
+
+  "flags": {
+    "needs_research": false,
+    "needs_self_critique": false,
+    "needs_infrastructure_setup": false
+  },
+
+  "validation_recommendations": {
+    "risk_level": "medium",
+    "skip_validation": false,
+    "minimal_mode": false,
+    "test_types_required": ["integration"],
+    "security_scan_required": false,
+    "staging_deployment_required": false,
+    "reasoning": "CI/CD pipeline changes require integration testing to ensure parallel execution works correctly across all database and PHP version matrices. Need to verify all test shards complete successfully and results aggregate properly."
+  },
+
+  "created_at": "2026-01-14T18:45:00Z"
+}

@@ -1,0 +1,60 @@
+SUBTASK 3-2: Verify All Database Jobs Pass - BLOCKED
+=================================================================
+Date: 2026-01-14
+Status: BLOCKED - Awaiting PR Creation
+
+BLOCKER DETAILS:
+Cannot verify database jobs because CI workflow has not been triggered.
+
+ROOT CAUSE:
+The GitHub Actions workflow (.github/workflows/ci.yaml) is configured to run only on:
+  - push events to 'main' branch
+  - pull_request events
+
+The feature branch 'auto-claude/005-run-unit-tests-in-parallel' has been pushed
+with all code changes, but NO pull request has been created yet.
+
+VERIFICATION STATUS:
+✅ Code changes pushed to remote branch
+✅ Branch exists: origin/auto-claude/005-run-unit-tests-in-parallel
+✅ Commits include all --parallel flags for Unit and Integration tests
+✅ YAML syntax validated
+❌ Pull request NOT created (needs GitHub authentication)
+❌ CI workflow NOT triggered (needs pull request)
+❌ Database jobs NOT running (needs CI workflow)
+
+ACTION NEEDED TO UNBLOCK:
+Create a pull request to trigger the CI workflow:
+
+URL: https://github.com/pelican-dev/panel/compare/main...auto-claude/005-run-unit-tests-in-parallel
+
+Suggested PR Configuration:
+- Title: "feat: Enable parallel test execution in CI pipeline"
+- Type: Draft PR (for validation)
+- Base: main
+- Head: auto-claude/005-run-unit-tests-in-parallel
+
+PR Body: See /tmp/pr_body.txt
+
+VERIFICATION STEPS AFTER PR CREATION:
+Once PR is created and CI is triggered, verify:
+
+1. SQLite job passes across PHP 8.2, 8.3, 8.4, 8.5 (4 jobs)
+2. MySQL job passes across PHP 8.2, 8.3, 8.4, 8.5 (4 jobs)
+3. MariaDB jobs pass:
+   - MariaDB 10.6 × PHP 8.2, 8.3, 8.4, 8.5 (4 jobs)
+   - MariaDB 10.11 × PHP 8.2, 8.3, 8.4, 8.5 (4 jobs)
+   - MariaDB 11.4 × PHP 8.2, 8.3, 8.4, 8.5 (4 jobs)
+   Total: 12 MariaDB jobs
+4. PostgreSQL job passes across PHP 8.2, 8.3, 8.4, 8.5 (4 jobs)
+5. Check logs show parallel process execution
+6. No database locking errors in logs (especially SQLite)
+7. No resource exhaustion or OOM errors in logs
+
+TOTAL EXPECTED JOBS: 24 (SQLite: 4, MySQL: 4, MariaDB: 12, PostgreSQL: 4)
+
+IMPACT:
+- Subtask 3-2 cannot be completed without PR creation
+- Subtask 3-3 (performance comparison) also depends on CI execution
+- Phase 3 (CI Validation) is blocked
+- Phase 4 (Documentation) depends on Phase 3 completion
