@@ -238,6 +238,7 @@ jobs:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
+            ${{ runner.os }}-composer-${{ matrix.php }}-
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
