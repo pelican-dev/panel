@@ -684,7 +684,7 @@ class EditNode extends EditRecord
                                         ->icon('tabler-cloud-upload')->iconButton()->iconSize(IconSize::ExtraLarge)
                                         ->action(function (Get $get, Set $set) {
                                             try {
-                                                $response = Http::asMultipart()->post('https://logs.pelican.dev', [
+                                                $multipart = [
                                                     [
                                                         'name' => 'c',
                                                         'contents' => $get('log'),
@@ -693,7 +693,12 @@ class EditNode extends EditRecord
                                                         'name' => 'e',
                                                         'contents' => '14d',
                                                     ],
-                                                ]);
+                                                ];
+
+                                                $response = Http::timeout(10)
+                                                    ->asMultipart()
+                                                    ->withOptions(['multipart' => $multipart])
+                                                    ->post('https://logs.pelican.dev');
 
                                                 if ($response->failed()) {
                                                     Notification::make()

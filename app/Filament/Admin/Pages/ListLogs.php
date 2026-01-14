@@ -19,7 +19,7 @@ class ListLogs extends BaseListLogs
 {
     protected string $view = 'filament.components.list-logs';
 
-    public function getHeading(): string|null|\Illuminate\Contracts\Support\Htmlable
+    public function getHeading(): string
     {
         return trans('admin/log.navigation.panel_logs');
     }
@@ -73,9 +73,8 @@ class ListLogs extends BaseListLogs
                         $uploadLines = $totalLines <= 1000 ? $lines : array_slice($lines, -1000);
                         $content = implode("\n", $uploadLines);
 
-                        $logUrl = 'https://logs.pelican.dev';
                         try {
-                            $response = Http::timeout(10)->asMultipart()->post($logUrl, [
+                            $multipart = [
                                 [
                                     'name' => 'c',
                                     'contents' => $content,
@@ -84,7 +83,12 @@ class ListLogs extends BaseListLogs
                                     'name' => 'e',
                                     'contents' => '14d',
                                 ],
-                            ]);
+                            ];
+
+                            $response = Http::timeout(10)
+                                ->asMultipart()
+                                ->withOptions(['multipart' => $multipart])
+                                ->post('https://logs.pelican.dev');
 
                             if ($response->failed()) {
                                 Notification::make()

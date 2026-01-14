@@ -31,11 +31,11 @@ class DaemonFileRepository extends DaemonRepository
             throw new FileSizeTooLargeException();
         }
 
-        if ($response->getStatusCode() === 400) {
+        if ($response->status() === 400) {
             throw new FileNotEditableException();
         }
 
-        if ($response->getStatusCode() === 404) {
+        if ($response->status() === 404) {
             throw new FileNotFoundException();
         }
 
@@ -56,7 +56,7 @@ class DaemonFileRepository extends DaemonRepository
             ->withBody($content)
             ->post("/api/servers/{$this->server->uuid}/files/write");
 
-        if ($response->getStatusCode() === 400) {
+        if ($response->status() === 400) {
             throw new FileExistsException();
         }
 
@@ -92,7 +92,7 @@ class DaemonFileRepository extends DaemonRepository
             ]
         );
 
-        if ($response->getStatusCode() === 400) {
+        if ($response->status() === 400) {
             throw new FileExistsException();
         }
 
