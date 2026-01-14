@@ -12,7 +12,7 @@
         "aws/aws-sdk-php": "^3.356",
         "calebporzio/sushi": "^2.5",
         "dedoc/scramble": "^0.12.10",
-        "filament/filament": "v5.0.0-beta5",
+        "filament/filament": "v5.0.0-beta9",
         "gboquizosanchez/filament-log-viewer": "^2.1",
         "guzzlehttp/guzzle": "^7.10",
         "laravel/framework": "^12.37",
