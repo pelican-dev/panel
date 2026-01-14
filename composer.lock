@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7e3b7a6d76379c27c3ae02cafbf0e63e",
+    "content-hash": "96dc01cc6bc18e13b55aa9f3495670b1",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -4264,16 +4264,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v4.0.0-beta.6",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "c7c195c96acf45c449bf33118be6e4edabbd86f7"
+                "reference": "7c66e50218be801d6d257714c6642e9024f8a183"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/c7c195c96acf45c449bf33118be6e4edabbd86f7",
-                "reference": "c7c195c96acf45c449bf33118be6e4edabbd86f7",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/7c66e50218be801d6d257714c6642e9024f8a183",
+                "reference": "7c66e50218be801d6d257714c6642e9024f8a183",
                 "shasum": ""
             },
             "require": {
@@ -4328,7 +4328,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v4.0.0-beta.6"
+                "source": "https://github.com/livewire/livewire/tree/v4.0.0"
             },
             "funding": [
                 {
@@ -4336,7 +4336,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-08T16:45:48+00:00"
+            "time": "2026-01-14T10:40:38+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -15383,7 +15383,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.2 || ^8.3 || ^8.4",
+        "php": "^8.2 || ^8.3 || ^8.4 || ^8.5",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
