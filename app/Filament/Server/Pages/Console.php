@@ -4,6 +4,7 @@ namespace App\Filament\Server\Pages;
 
 use App\Enums\ConsoleWidgetPosition;
 use App\Enums\ContainerStatus;
+use App\Enums\SubuserPermission;
 use App\Exceptions\Http\Server\ServerStateConflictException;
 use App\Extensions\Features\FeatureService;
 use App\Filament\Server\Widgets\ServerConsole;
@@ -12,7 +13,6 @@ use App\Filament\Server\Widgets\ServerMemoryChart;
 use App\Filament\Server\Widgets\ServerNetworkChart;
 use App\Filament\Server\Widgets\ServerOverview;
 use App\Livewire\AlertBanner;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use Filament\Actions\Action;
@@ -164,7 +164,7 @@ class Console extends Page
                     ->label(trans('server/console.power_actions.start'))
                     ->color('primary')
                     ->icon('tabler-player-play-filled')
-                    ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_START, $server))
+                    ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlStart, $server))
                     ->disabled(fn (Server $server) => $server->isInConflictState() || !$this->status->isStartable())
                     ->action(fn (Server $server) => $this->dispatch('setServerState', uuid: $server->uuid, state: 'start'))
                     ->size(Size::ExtraLarge),
@@ -172,7 +172,7 @@ class Console extends Page
                     ->label(trans('server/console.power_actions.restart'))
                     ->color('gray')
                     ->icon('tabler-reload')
-                    ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_RESTART, $server))
+                    ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlRestart, $server))
                     ->disabled(fn (Server $server) => $server->isInConflictState() || !$this->status->isRestartable())
                     ->action(fn (Server $server) => $this->dispatch('setServerState', uuid: $server->uuid, state: 'restart'))
                     ->size(Size::ExtraLarge),
@@ -180,7 +180,7 @@ class Console extends Page
                     ->label(trans('server/console.power_actions.stop'))
                     ->color('danger')
                     ->icon('tabler-player-stop-filled')
-                    ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_STOP, $server))
+                    ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlStop, $server))
                     ->visible(fn () => !$this->status->isKillable())
                     ->disabled(fn (Server $server) => $server->isInConflictState() || !$this->status->isStoppable())
                     ->action(fn (Server $server) => $this->dispatch('setServerState', uuid: $server->uuid, state: 'stop'))
@@ -191,7 +191,7 @@ class Console extends Page
                     ->icon('tabler-alert-square')
                     ->tooltip(trans('server/console.power_actions.kill_tooltip'))
                     ->requiresConfirmation()
-                    ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_STOP, $server))
+                    ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlStop, $server))
                     ->visible(fn () => $this->status->isKillable())
                     ->disabled(fn (Server $server) => $server->isInConflictState() || !$this->status->isKillable())
                     ->action(fn (Server $server) => $this->dispatch('setServerState', uuid: $server->uuid, state: 'kill'))

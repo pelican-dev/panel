@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api\Client\Servers;
 
 use App\Enums\ServerState;
+use App\Enums\SubuserPermission;
 use App\Facades\Activity;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\Backups\RenameBackupRequest;
 use App\Http\Requests\Api\Client\Servers\Backups\RestoreBackupRequest;
 use App\Http\Requests\Api\Client\Servers\Backups\StoreBackupRequest;
 use App\Models\Backup;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Services\Backups\DeleteBackupService;
@@ -48,7 +48,7 @@ class BackupController extends ClientApiController
      */
     public function index(Request $request, Server $server): array
     {
-        if (!$request->user()->can(Permission::ACTION_BACKUP_READ, $server)) {
+        if (!$request->user()->can(SubuserPermission::BackupRead, $server)) {
             throw new AuthorizationException();
         }
 
@@ -82,16 +82,22 @@ class BackupController extends ClientApiController
         // otherwise ignore this status. This gets a little funky since it isn't clear
         // how best to allow a user to create a backup that is locked without also preventing
         // them from just filling up a server with backups that can never be deleted?
-        if ($request->user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {
-            $action->setIsLocked((bool) $request->input('is_locked'));
+        if ($request->user()->can(SubuserPermission::BackupDelete, $server)) {
+            $action->setIsLocked($request->boolean('is_locked'));
         }
 
-        $backup = $action->handle($server, $request->input('name'));
+        $backup = Activity::event('server:backup.start')->transaction(function ($log) use ($action, $server, $request) {
+            $server->backups()->lockForUpdate();
 
-        Activity::event('server:backup.start')
-            ->subject($backup)
-            ->property(['name' => $backup->name, 'locked' => (bool) $request->input('is_locked')])
-            ->log();
+            $backup = $action->handle($server, $request->input('name'));
+
+            $log->subject($backup)->property([
+                'name' => $backup->name,
+                'locked' => $request->boolean('is_locked'),
+            ]);
+
+            return $backup;
+        });
 
         return $this->fractal->item($backup)
             ->transformWith($this->getTransformer(BackupTransformer::class))
@@ -110,7 +116,7 @@ class BackupController extends ClientApiController
      */
     public function toggleLock(Request $request, Server $server, Backup $backup): array
     {
-        if (!$request->user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {
+        if (!$request->user()->can(SubuserPermission::BackupDelete, $server)) {
             throw new AuthorizationException();
         }
 
@@ -136,7 +142,7 @@ class BackupController extends ClientApiController
      */
     public function view(Request $request, Server $server, Backup $backup): array
     {
-        if (!$request->user()->can(Permission::ACTION_BACKUP_READ, $server)) {
+        if (!$request->user()->can(SubuserPermission::BackupRead, $server)) {
             throw new AuthorizationException();
         }
 
@@ -155,7 +161,7 @@ class BackupController extends ClientApiController
      */
     public function delete(Request $request, Server $server, Backup $backup): JsonResponse
     {
-        if (!$request->user()->can(Permission::ACTION_BACKUP_DELETE, $server)) {
+        if (!$request->user()->can(SubuserPermission::BackupDelete, $server)) {
             throw new AuthorizationException();
         }
 
@@ -181,7 +187,7 @@ class BackupController extends ClientApiController
      */
     public function download(Request $request, Server $server, Backup $backup): JsonResponse
     {
-        if (!$request->user()->can(Permission::ACTION_BACKUP_DOWNLOAD, $server)) {
+        if (!$request->user()->can(SubuserPermission::BackupDownload, $server)) {
             throw new AuthorizationException();
         }
 

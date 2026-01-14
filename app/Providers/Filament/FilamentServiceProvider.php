@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Filament\Actions\DeleteAction;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Select;
@@ -84,6 +85,7 @@ class FilamentServiceProvider extends ServiceProvider
         });
 
         Select::configureUsing(fn (Select $select) => $select->native(false));
+        DeleteAction::configureUsing(fn (DeleteAction $action) => $action->icon('tabler-trash'));
 
         FilamentIcon::register([
             ActionsIconAlias::DELETE_ACTION => 'tabler-trash',

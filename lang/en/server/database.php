@@ -11,6 +11,7 @@ return [
     'username' => 'Username',
     'password' => 'Password',
     'remote' => 'Remote',
+    'unlimited' => 'Unlimited',
     'created_at' => 'Created at',
     'name' => 'Database Name',
     'name_hint' => 'Leaving this blank will auto generate a random name',

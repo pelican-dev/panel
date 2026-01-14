@@ -2,7 +2,7 @@
 
 namespace App\Tests\Integration\Api\Client\Server;
 
-use App\Models\Permission;
+use App\Enums\SubuserPermission;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Response;
@@ -16,7 +16,7 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
 {
     public function test_subuser_without_websocket_permission_receives_error(): void
     {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_CONTROL_RESTART]);
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::ControlRestart]);
 
         $this->actingAs($user)->getJson("/api/client/servers/$server->uuid/websocket")
             ->assertStatus(Response::HTTP_FORBIDDEN)
@@ -29,8 +29,8 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_user_without_permission_for_server_receives_error(): void
     {
-        [, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
-        [$user] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
+        [, $server] = $this->generateTestAccount([SubuserPermission::WebsocketConnect]);
+        [$user] = $this->generateTestAccount([SubuserPermission::WebsocketConnect]);
 
         $this->actingAs($user)->getJson("/api/client/servers/$server->uuid/websocket")
             ->assertStatus(Response::HTTP_NOT_FOUND);
@@ -86,7 +86,7 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
 
     public function test_jwt_is_configured_correctly_for_server_subuser(): void
     {
-        $permissions = [Permission::ACTION_WEBSOCKET_CONNECT, Permission::ACTION_CONTROL_CONSOLE];
+        $permissions = [SubuserPermission::WebsocketConnect->value, SubuserPermission::ControlConsole->value];
 
         /** @var \App\Models\User $user */
         /** @var \App\Models\Server $server */

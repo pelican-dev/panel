@@ -319,10 +319,10 @@ class EditNode extends EditRecord
                                     'lg' => 1,
                                 ])
                                 ->label(trans('admin/node.upload_limit'))
-                                ->hintIcon('tabler-question-mark', trans('admin/node.upload_limit_help.0') . trans('admin/node.upload_limit_help.1'))
-                                ->numeric()->required()
+                                ->hintIcon('tabler-question-mark', trans('admin/node.upload_limit_help'))
+                                ->numeric()
+                                ->required()
                                 ->minValue(1)
-                                ->maxValue(1024)
                                 ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB'),
                             TextInput::make('daemon_sftp')
                                 ->columnSpan([
@@ -684,20 +684,9 @@ class EditNode extends EditRecord
                                         ->icon('tabler-cloud-upload')->iconButton()->iconSize(IconSize::ExtraLarge)
                                         ->action(function (Get $get, Set $set) {
                                             try {
-                                                $multipart = [
-                                                    [
-                                                        'name' => 'c',
-                                                        'contents' => $get('log'),
-                                                    ],
-                                                    [
-                                                        'name' => 'e',
-                                                        'contents' => '14d',
-                                                    ],
-                                                ];
-
-                                                $response = Http::timeout(10)
-                                                    ->asMultipart()
-                                                    ->withOptions(['multipart' => $multipart])
+                                                $response = Http::asMultipart()
+                                                    ->attach('c', $get('log'))
+                                                    ->attach('e', '14d')
                                                     ->post('https://logs.pelican.dev');
 
                                                 if ($response->failed()) {

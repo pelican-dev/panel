@@ -4,11 +4,11 @@ namespace App\Filament\App\Resources\Servers\Pages;
 
 use App\Enums\CustomizationKey;
 use App\Enums\ServerResourceType;
+use App\Enums\SubuserPermission;
 use App\Filament\App\Resources\Servers\ServerResource;
 use App\Filament\Components\Tables\Columns\ProgressBarColumn;
 use App\Filament\Components\Tables\Columns\ServerEntryColumn;
 use App\Filament\Server\Pages\Console;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -91,7 +91,7 @@ class ListServers extends ListRecords
                 ->label('')
                 ->warningThresholdPercent(static::WARNING_THRESHOLD)
                 ->dangerThresholdPercent(static::DANGER_THRESHOLD)
-                ->maxValue(fn (Server $server) => ServerResourceType::CPULimit->getResourceAmount($server) === 0 ? ($server->node->systemInformation()['cpu_count'] ?? 0 * 100) : ServerResourceType::CPULimit->getResourceAmount($server))
+                ->maxValue(fn (Server $server) => ServerResourceType::CPULimit->getResourceAmount($server) === 0 ? (($server->node->systemInformation()['cpu_count'] ?? 0) * 100) : ServerResourceType::CPULimit->getResourceAmount($server))
                 ->state(fn (Server $server) => $server->retrieveResources()['cpu_absolute'] ?? 0)
                 ->helperLabel(fn (Server $server) => $server->formatResource(ServerResourceType::CPU, 0) . ' / ' . $server->formatResource(ServerResourceType::CPULimit, 0)),
             ProgressBarColumn::make('memoryUsage')
@@ -244,21 +244,21 @@ class ListServers extends ListRecords
                 ->label(trans('server/console.power_actions.start'))
                 ->color('primary')
                 ->icon('tabler-player-play-filled')
-                ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_START, $server))
+                ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlStart, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isStartable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'start']),
             Action::make('restart')
                 ->label(trans('server/console.power_actions.restart'))
                 ->color('gray')
                 ->icon('tabler-reload')
-                ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_RESTART, $server))
+                ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlRestart, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isRestartable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'restart']),
             Action::make('stop')
                 ->label(trans('server/console.power_actions.stop'))
                 ->color('danger')
                 ->icon('tabler-player-stop-filled')
-                ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_STOP, $server))
+                ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlStop, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isStoppable() && !$server->retrieveStatus()->isKillable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'stop']),
             Action::make('kill')
@@ -266,7 +266,7 @@ class ListServers extends ListRecords
                 ->color('danger')
                 ->icon('tabler-alert-square')
                 ->tooltip(trans('server/console.power_actions.kill_tooltip'))
-                ->authorize(fn (Server $server) => user()?->can(Permission::ACTION_CONTROL_STOP, $server))
+                ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlStop, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isKillable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'kill']),
         ])

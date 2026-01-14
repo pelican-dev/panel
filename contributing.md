@@ -8,7 +8,7 @@ To start contributing to Pelican Panel, you need to have a basic understanding o
 
 * [PHP](https://php.net) & [Laravel](https://laravel.com)
 * [Livewire](https://laravel-livewire.com) & [Filament](https://filamentphp.com)
-* [Git](https://git-scm.com) & [Github](https://github.com)
+* [Git](https://git-scm.com) & [GitHub](https://github.com)
 
 ## Dev Environment Setup
 

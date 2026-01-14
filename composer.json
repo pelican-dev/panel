@@ -3,7 +3,7 @@
     "description": "The free, open-source game management panel. Supporting Minecraft, Spigot, BungeeCord, and SRCDS servers.",
     "license": "AGPL-3.0-only",
     "require": {
-        "php": "^8.2 || ^8.3 || ^8.4",
+        "php": "^8.2 || ^8.3 || ^8.4 || ^8.5",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
@@ -80,7 +80,8 @@
             "@php artisan filament:upgrade"
         ],
         "post-install-cmd": [
-            "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+            "php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "php artisan p:plugin:composer"
         ]
     },
     "config": {

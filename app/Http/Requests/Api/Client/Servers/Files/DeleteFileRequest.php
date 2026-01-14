@@ -3,14 +3,14 @@
 namespace App\Http\Requests\Api\Client\Servers\Files;
 
 use App\Contracts\Http\ClientPermissionsRequest;
+use App\Enums\SubuserPermission;
 use App\Http\Requests\Api\Client\ClientApiRequest;
-use App\Models\Permission;
 
 class DeleteFileRequest extends ClientApiRequest implements ClientPermissionsRequest
 {
-    public function permission(): string
+    public function permission(): SubuserPermission
     {
-        return Permission::ACTION_FILE_DELETE;
+        return SubuserPermission::FileDelete;
     }
 
     /**

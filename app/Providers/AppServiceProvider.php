@@ -22,6 +22,7 @@ use App\Models\Server;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\UserSSHKey;
+use App\Services\Helpers\PluginService;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
@@ -106,9 +107,7 @@ class AppServiceProvider extends ServiceProvider
             ]);
         }
 
-        Gate::before(function (User $user, $ability) {
-            return $user->isRootAdmin() ? true : null;
-        });
+        Gate::before(fn (User $user, $ability) => $user->isRootAdmin() ? true : null);
 
         AboutCommand::add('Pelican', [
             'Panel Version' => $versionService->currentPanelVersion(),
@@ -127,5 +126,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         Scramble::ignoreDefaultRoutes();
+
+        /** @var PluginService $pluginService */
+        $pluginService = app(PluginService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+
+        $pluginService->loadPlugins();
     }
 }

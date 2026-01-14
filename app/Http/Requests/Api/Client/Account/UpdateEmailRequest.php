@@ -26,7 +26,7 @@ class UpdateEmailRequest extends ClientApiRequest
             throw new InvalidPasswordProvidedException(trans('validation.internal.invalid_password'));
         }
 
-        return true;
+        return !$this->user()->is_managed_externally;
     }
 
     public function rules(): array

@@ -22,7 +22,7 @@ class ViewLogs extends BaseViewLog
             BackAction::make()
                 ->icon('tabler-arrow-left')->iconSize(IconSize::ExtraLarge)->iconButton(),
             DeleteAction::make(withTooltip: true)
-                ->icon('tabler-trash')->iconSize(IconSize::ExtraLarge)->iconButton(),
+                ->iconSize(IconSize::ExtraLarge)->iconButton(),
             DownloadAction::make(withTooltip: true)
                 ->icon('tabler-file-download')->iconSize(IconSize::ExtraLarge)->iconButton(),
             Action::make('uploadLogs')
@@ -33,7 +33,9 @@ class ViewLogs extends BaseViewLog
                 ->modalHeading(trans('admin/log.actions.upload_logs'))
                 ->modalDescription(fn () => trans('admin/log.actions.upload_logs_description', ['file' => $this->resolveRecordDate(), 'url' => 'https://logs.pelican.dev']))
                 ->action(function () {
-                    $logPath = storage_path('logs/' . $this->resolveRecordDate());
+                    $prefix = config('filament-log-viewer.pattern.prefix', 'laravel-');
+                    $extension = config('filament-log-viewer.pattern.extension', '.log');
+                    $logPath = storage_path('logs/' . $prefix . $this->resolveRecordDate() . $extension);
 
                     if (!file_exists($logPath)) {
                         Notification::make()
@@ -49,21 +51,12 @@ class ViewLogs extends BaseViewLog
                     $totalLines = count($lines);
                     $uploadLines = $totalLines <= 1000 ? $lines : array_slice($lines, -1000);
                     $content = implode("\n", $uploadLines);
-                    try {
-                        $multipart = [
-                            [
-                                'name' => 'c',
-                                'contents' => $content,
-                            ],
-                            [
-                                'name' => 'e',
-                                'contents' => '14d',
-                            ],
-                        ];
 
+                    try {
                         $response = Http::timeout(10)
                             ->asMultipart()
-                            ->withOptions(['multipart' => $multipart])
+                            ->attach('c', $content)
+                            ->attach('e', '14d')
                             ->post('https://logs.pelican.dev');
 
                         if ($response->failed()) {

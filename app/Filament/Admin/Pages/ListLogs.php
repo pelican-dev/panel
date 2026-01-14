@@ -56,7 +56,9 @@ class ListLogs extends BaseListLogs
                     ->modalHeading(trans('admin/log.actions.upload_logs'))
                     ->modalDescription(fn ($record) => trans('admin/log.actions.upload_logs_description', ['file' => $record['date'], 'url' => 'https://logs.pelican.dev']))
                     ->action(function ($record) {
-                        $logPath = storage_path('logs/' . $record['date']);
+                        $prefix = config('filament-log-viewer.pattern.prefix', 'laravel-');
+                        $extension = config('filament-log-viewer.pattern.extension', '.log');
+                        $logPath = storage_path('logs/' . $prefix . $record['date'] . $extension);
 
                         if (!file_exists($logPath)) {
                             Notification::make()
@@ -74,20 +76,10 @@ class ListLogs extends BaseListLogs
                         $content = implode("\n", $uploadLines);
 
                         try {
-                            $multipart = [
-                                [
-                                    'name' => 'c',
-                                    'contents' => $content,
-                                ],
-                                [
-                                    'name' => 'e',
-                                    'contents' => '14d',
-                                ],
-                            ];
-
                             $response = Http::timeout(10)
                                 ->asMultipart()
-                                ->withOptions(['multipart' => $multipart])
+                                ->attach('c', $content)
+                                ->attach('e', '14d')
                                 ->post('https://logs.pelican.dev');
 
                             if ($response->failed()) {
@@ -127,7 +119,7 @@ class ListLogs extends BaseListLogs
                         }
                     }),
                 DeleteAction::make()
-                    ->icon('tabler-trash')->iconSize(IconSize::Medium)->iconButton(),
+                    ->iconSize(IconSize::Medium)->iconButton(),
             ]);
     }
 }

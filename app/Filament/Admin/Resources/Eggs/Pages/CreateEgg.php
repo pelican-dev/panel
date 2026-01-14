@@ -2,8 +2,10 @@
 
 namespace App\Filament\Admin\Resources\Eggs\Pages;
 
+use App\Enums\EditorLanguages;
 use App\Filament\Admin\Resources\Eggs\EggResource;
 use App\Filament\Components\Forms\Fields\CopyFrom;
+use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Models\EggVariable;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
@@ -11,7 +13,6 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
@@ -127,7 +128,7 @@ class CreateEgg extends CreateRecord
                                 ->keyLabel(trans('admin/egg.docker_name'))
                                 ->keyPlaceholder('Java 21')
                                 ->valueLabel(trans('admin/egg.docker_uri'))
-                                ->valuePlaceholder('ghcr.io/parkervcp/yolks:java_21')
+                                ->valuePlaceholder('ghcr.io/pelican-eggs/yolks:java_21')
                                 ->helperText(trans('admin/egg.docker_help')),
                         ]),
 
@@ -268,8 +269,9 @@ class CreateEgg extends CreateRecord
                                     '/bin/bash' => '/bin/bash',
                                 ])
                                 ->required(),
-                            CodeEditor::make('script_install')
+                            MonacoEditor::make('script_install')
                                 ->label(trans('admin/egg.script_install'))
+                                ->language(EditorLanguages::shell)
                                 ->columnSpanFull()
                                 ->lazy(),
                         ]),

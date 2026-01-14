@@ -23,6 +23,6 @@ trait CanCustomizeRelations
     /** @return class-string<RelationManager>[] */
     public static function getRelations(): array
     {
-        return array_unique(array_merge(static::getDefaultRelations(), static::$customRelations));
+        return array_unique(array_merge(static::$customRelations, static::getDefaultRelations()));
     }
 }

@@ -36,7 +36,7 @@ class SearchFiles extends ListRecords
 
         return [
             $resource::getUrl() => $resource::getBreadcrumb(),
-            self::getUrl(['searchTerm' => $this->searchTerm]) => trans('server/file.actions.global_search.search_for_term', ['term' => ' "' . $this->searchTerm . '"']),
+            self::getUrl(['searchTerm' => $this->searchTerm]) => trans('server/file.actions.nested_search.search_for_term', ['term' => ' "' . $this->searchTerm . '"']),
         ];
     }
 
@@ -67,15 +67,15 @@ class SearchFiles extends ListRecords
             ])
             ->recordUrl(function (File $file) {
                 if ($file->is_directory) {
-                    return ListFiles::getUrl(['path' => join_paths($this->path, $file->name)]);
+                    return ListFiles::getUrl(['path' => $file->name]);
                 }
 
-                return $file->canEdit() ? EditFiles::getUrl(['path' => join_paths($this->path, $file->name)]) : null;
+                return $file->canEdit() ? EditFiles::getUrl(['path' => $file->name]) : null;
             });
     }
 
     public function getTitle(): string|Htmlable
     {
-        return trans('server/file.actions.global_search.title');
+        return trans('server/file.actions.nested_search.title');
     }
 }

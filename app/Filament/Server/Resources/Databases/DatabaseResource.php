@@ -2,12 +2,12 @@
 
 namespace App\Filament\Server\Resources\Databases;
 
+use App\Enums\SubuserPermission;
 use App\Filament\Components\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\Databases\Pages\ListDatabases;
 use App\Models\Database;
 use App\Models\DatabaseHost;
-use App\Models\Permission;
 use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
 use App\Traits\Filament\BlockAccessInConflict;
@@ -31,7 +31,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class DatabaseResource extends Resource
@@ -88,10 +87,10 @@ class DatabaseResource extends Resource
                 TextInput::make('password')
                     ->label(trans('server/database.password'))
                     ->password()->revealable()
-                    ->hidden(fn () => !user()?->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
+                    ->hidden(fn () => !user()?->can(SubuserPermission::DatabaseViewPassword, $server))
                     ->hintAction(
                         RotateDatabasePasswordAction::make()
-                            ->authorize(fn () => user()?->can(Permission::ACTION_DATABASE_UPDATE, $server))
+                            ->authorize(fn () => user()?->can(SubuserPermission::DatabaseUpdate, $server))
                     )
                     ->copyable()
                     ->formatStateUsing(fn (Database $database) => $database->password),
@@ -99,11 +98,11 @@ class DatabaseResource extends Resource
                     ->label(trans('server/database.remote')),
                 TextInput::make('max_connections')
                     ->label(trans('server/database.max_connections'))
-                    ->formatStateUsing(fn (Database $database) => $database->max_connections === 0 ? $database->max_connections : 'Unlimited'),
+                    ->formatStateUsing(fn (Database $database) => $database->max_connections ?: trans('server/database.unlimited')),
                 TextInput::make('jdbc')
                     ->label(trans('server/database.jdbc'))
                     ->password()->revealable()
-                    ->hidden(!user()?->can(Permission::ACTION_DATABASE_VIEW_PASSWORD, $server))
+                    ->hidden(!user()?->can(SubuserPermission::DatabaseViewPassword, $server))
                     ->copyable()
                     ->columnSpanFull()
                     ->formatStateUsing(fn (Database $database) => $database->jdbc),
@@ -208,31 +207,6 @@ class DatabaseResource extends Resource
                         }
                     }),
             ]);
-    }
-
-    public static function canViewAny(): bool
-    {
-        return user()?->can(Permission::ACTION_DATABASE_READ, Filament::getTenant());
-    }
-
-    public static function canView(Model $record): bool
-    {
-        return user()?->can(Permission::ACTION_DATABASE_READ, Filament::getTenant());
-    }
-
-    public static function canCreate(): bool
-    {
-        return user()?->can(Permission::ACTION_DATABASE_CREATE, Filament::getTenant());
-    }
-
-    public static function canEdit(Model $record): bool
-    {
-        return user()?->can(Permission::ACTION_DATABASE_UPDATE, Filament::getTenant());
-    }
-
-    public static function canDelete(Model $record): bool
-    {
-        return user()?->can(Permission::ACTION_DATABASE_DELETE, Filament::getTenant());
     }
 
     /** @return array<string, PageRegistration> */
