@@ -62,7 +62,7 @@ jobs:
         run: touch database/testing.sqlite
 
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit
+        run: vendor/bin/pest tests/Unit --parallel
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
@@ -121,7 +121,7 @@ jobs:
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit
+        run: vendor/bin/pest tests/Unit --parallel
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
@@ -183,7 +183,7 @@ jobs:
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit
+        run: vendor/bin/pest tests/Unit --parallel
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
@@ -251,7 +251,7 @@ jobs:
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit
+        run: vendor/bin/pest tests/Unit --parallel
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
