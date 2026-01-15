@@ -27,8 +27,52 @@ The (paid) Pro version of Laravel Herd also offers easy MySQL and Redis hosting,
 
 ## Coding Standards
 
-We use PHPStan/ [Larastan](https://github.com/larastan/larastan) and PHP-CS-Fixer/ [Pint](https://laravel.com/docs/12.x/pint) to enforce certain code styles and standards.  
+We use PHPStan/ [Larastan](https://github.com/larastan/larastan) and PHP-CS-Fixer/ [Pint](https://laravel.com/docs/12.x/pint) to enforce certain code styles and standards.
 You can run PHPStan via `\vendor\bin\phpstan analyse` and Pint via `\vendor\bin\pint`.
+
+## Testing
+
+### Running Tests
+
+By default, tests run in parallel to speed up the test suite execution:
+
+```bash
+# Run all tests in parallel (default behavior)
+php artisan test
+
+# Run with explicit process count
+php artisan test --processes=4
+
+# Run tests sequentially (disable parallel execution)
+php artisan test --processes=1
+```
+
+### Writing Parallel-Safe Tests
+
+When writing tests, follow these guidelines to ensure they run correctly in parallel:
+
+* **Avoid shared state**: Each test should be independent and not rely on data created by other tests
+* **Use unique identifiers**: Generate unique names, emails, or other identifiers to avoid conflicts between parallel processes
+* **Clean up after yourself**: Use database transactions or ensure proper cleanup in tearDown methods
+* **Avoid race conditions**: Be careful with file system operations, external services, or global state
+
+### Debugging Test Isolation Issues
+
+If you encounter flaky tests or failures that only occur in parallel execution:
+
+1. **Run tests sequentially** to confirm the issue is parallel-related:
+   ```bash
+   php artisan test --processes=1
+   ```
+
+2. **Run a specific test in isolation**:
+   ```bash
+   php artisan test --filter=YourTestName
+   ```
+
+3. **Check for shared resources**: Look for database records, files, or cache entries that might be shared between tests
+
+4. **Add database transactions**: Ensure your tests use database transactions to isolate database changes
 
 ## Making Contributions
 
