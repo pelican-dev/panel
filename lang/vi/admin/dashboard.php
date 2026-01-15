@@ -25,7 +25,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Không phát hiện thấy nhánh nào',
-            'content' => "Có vẻ như bạn chưa thiết lập bất kỳ Nhánh nào, nhưng đừng lo lắng vì bạn đã nhấp vào nút hành động để tạo Nhánh đầu tiên!",
+            'content' => 'Có vẻ như bạn chưa thiết lập bất kỳ Nhánh nào, nhưng đừng lo lắng vì bạn đã nhấp vào nút hành động để tạo Nhánh đầu tiên!',
             'extra_note' => 'Nếu bạn gặp bất kỳ sự cố nào, vui lòng báo cáo trên GitHub.',
             'button_label' => 'Tạo Nhánh đầu tiên trong Pelican',
         ],

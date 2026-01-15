@@ -5,8 +5,8 @@ return [
         'comment' => [
             'author' => '请提供预设导出中作者所使用的有效电子邮箱地址。',
             'url' => '应用程序的URL必须根据您是否使用SSL，以https://（如果使用SSL）或http://（如果不使用SSL）开头。如果不包含协议部分，您的电子邮件和其他内容将会链接到错误的地址。',
-            'timezone' => "时区应该与 PHP 支持的时区之一相匹配。如果您不确定，请参考
-https://php.net/manual/zh/timezones.php。",
+            'timezone' => '时区应该与 PHP 支持的时区之一相匹配。如果您不确定，请参考
+https://php.net/manual/zh/timezones.php。',
         ],
         'redis' => [
             'note' => '您为一个或多个选项选择了Redis驱动程序，请在下方提供有效的连接信息。在大多数情况下，除非您修改了设置，否则您可以使用提供的默认值。',
@@ -16,7 +16,7 @@ https://php.net/manual/zh/timezones.php。",
     ],
     'database_settings' => [
         'DB_HOST_note' => '强烈建议不要使用“localhost”作为您的数据库主机，因为我们经常遇到socket连接问题。如果您想使用本地连接，您应该使用“127.0.0.1”。',
-        'DB_USERNAME_note' => "使用MySQL的root账户进行连接是极其不推荐的做法，而且本应用程序也不允许这样做。您需要为此面板专门创建一个MySQL用户。",
+        'DB_USERNAME_note' => '使用MySQL的root账户进行连接是极其不推荐的做法，而且本应用程序也不允许这样做。您需要为此面板专门创建一个MySQL用户。',
         'DB_PASSWORD_note' => '似乎您已经设置了MySQL连接密码，您想更改它吗？',
         'DB_error_2' => '您的连接凭据尚未保存。在继续之前，您需要提供有效的连接信息。',
         'go_back' => '返回并重试',
@@ -35,7 +35,7 @@ https://php.net/manual/zh/timezones.php。",
         'disk_overallocate' => '请输入要过度分配的存储空间百分比，要禁用检查过度分配，请输入 -1 于此处. 如果输入 0 这将在可能超出节点的最大存储空间总量时阻止创建新服务器',
         'cpu' => '输入可用于新服务器的内存总量',
         'cpu_overallocate' => '请输入要过度分配的存储空间百分比，要禁用检查过度分配，请输入 -1 于此处. 如果输入 0 这将在可能超出节点的最大存储空间总量时阻止创建新服务器',
-        'upload_size' => "输入文件上传大小上限",
+        'upload_size' => '输入文件上传大小上限',
         'daemonListen' => '输入后端程序的监听端口',
         'daemonConnect' => '输入守护进程连接端口 (可以与监听端口相同)',
         'daemonSFTP' => '输入 SFTP 后端的监听端口',

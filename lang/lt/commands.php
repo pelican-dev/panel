@@ -5,7 +5,7 @@ return [
         'comment' => [
             'author' => 'Nurodykite el. pašto adresą, iš kurio turėtų būti siunčiami „eggs“ iš valdymo punkto. Tai turi būti galiojantis el. pašto adresas.',
             'url' => 'Programos nuoroda PRIVALO prasidėti su https:// arba http://, priklausomai nuo to, ar naudojate „SSL“, ar ne. Jei nenurodysite schemos, jūsų el. laiškai ir kitas turinys nukreips į neteisingą vietą.',
-            'timezone' => "Laiko zona turėtų atitikti vieną iš „PHP“ palaikomų laiko zonų. Jei nesate tikri, peržiūrėkite https://php.net/manual/en/timezones.php.",
+            'timezone' => 'Laiko zona turėtų atitikti vieną iš „PHP“ palaikomų laiko zonų. Jei nesate tikri, peržiūrėkite https://php.net/manual/en/timezones.php.',
         ],
         'redis' => [
             'note' => 'Pasirinkote „Redis“ tvarkyklę vienai ar kelioms parinktim, pateikite tinkamą prisijungimo informaciją žemiau. Daugeliu atvejų galite naudoti numatytas reikšmes, nebent pakeitėte savo sąranką.',
@@ -15,7 +15,7 @@ return [
     ],
     'database_settings' => [
         'DB_HOST_note' => 'Geriausia nenaudoti „localhost“ kaip jūsų duomenų bazės šeimininko, nes pastebėta dažnų lizdo prisijungimo problemų. Jei norite naudoti vietinį prisijungimą, turėtumėte naudoti „127.0.0.1“.',
-        'DB_USERNAME_note' => "Naudoti „root“ paskyrą „MySQL“ prisijungimams ne tik yra labai nepageidaujama, bet ir šiai programai draudžiama. Turėsite sukurti „MySQL“ vartotoją šiai programai.",
+        'DB_USERNAME_note' => 'Naudoti „root“ paskyrą „MySQL“ prisijungimams ne tik yra labai nepageidaujama, bet ir šiai programai draudžiama. Turėsite sukurti „MySQL“ vartotoją šiai programai.',
         'DB_PASSWORD_note' => 'Atrodo, kad jau nustatytas „MySQL“ prisijungimo slaptažodis, ar norėtumėte jį pakeisti?',
         'DB_error_2' => 'Jūsų prisijungimo duomenys NEBUVO išsaugoti. Prieš tęsdami turėsite pateikti tinkamą prisijungimo informaciją.',
         'go_back' => 'Grįžkite atgal ir bandykite dar kartą',
@@ -34,7 +34,7 @@ return [
         'disk_overallocate' => 'Įveskite, kiek disko vietos perviršiai skiriama, -1 išjungs patikrinimą, o 0 neleis kurti naujo serverio',
         'cpu' => 'Įveskite didžiausią „CPU“ kiekį',
         'cpu_overallocate' => 'Įveskite, kiek „CPU“ perviršiai skiriama, -1 išjungs patikrinimą, o 0 neleis kurti naujo serverio',
-        'upload_size' => "Įveskite didžiausią failo įkėlimo dydį",
+        'upload_size' => 'Įveskite didžiausią failo įkėlimo dydį',
         'daemonListen' => 'Įveskite „daemon“ klausymo prievadą',
         'daemonConnect' => 'Įveskite „daemon“ prisijungimo prievadą (gali būti toks pat kaip klausymosi prievadas)',
         'daemonSFTP' => 'Įveskite „daemon“ „SFTP“ klausymo prievadą',

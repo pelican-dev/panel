@@ -25,7 +25,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Nėra jokių „node“',
-            'content' => "Dar neturite sukonfigūruotų „node“, tačiau nesijaudinkite – galite paspausti veiksmų mygtuką, kad sukurtumėte pirmąjį!",
+            'content' => 'Dar neturite sukonfigūruotų „node“, tačiau nesijaudinkite – galite paspausti veiksmų mygtuką, kad sukurtumėte pirmąjį!',
             'extra_note' => 'Jei susidūrėte su kokiomis nors problemomis, prašome pranešti apie jas „GitHub“ platformoje.',
             'button_label' => 'Sukurti pirmąjį „Pelican“ „node“',
         ],

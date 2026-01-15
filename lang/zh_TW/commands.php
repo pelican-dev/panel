@@ -5,7 +5,7 @@ return [
         'comment' => [
             'author' => '請提供此面板匯出 Eggs 時所使用的寄件人電子郵件。這必須是一個有效的電子郵件。',
             'url' => '應用程式網址必須以 https:// 或 http:// 開頭，依照你是否使用 SSL 而定。如果未包含這個開頭，郵件與其他內容中的連結將會導向錯誤的位置。',
-            'timezone' => "時區應符合 PHP 支援的時區格式。如不確定，請參考：https://php.net/manual/en/timezones.php。",
+            'timezone' => '時區應符合 PHP 支援的時區格式。如不確定，請參考：https://php.net/manual/en/timezones.php。',
         ],
         'redis' => [
             'note' => '「你已為一個或多個選項選擇使用 Redis ，請在下方提供有效的連線資訊。大多數情況下，除非你有自行修改設定，否則可使用預設值。',
@@ -15,7 +15,7 @@ return [
     ],
     'database_settings' => [
         'DB_HOST_note' => '強烈建議不要將資料庫主機設定為 \'localhost\'，因為這常會導致 Socket 連線問題。如果你要使用本機連線，應改用 "127.0.0.1"。',
-        'DB_USERNAME_note' => "使用 root 帳號連接 MySQL 是極度不建議的做法，且本應用程式也不允許這麼做。你必須為此面板專門建立一個 MySQL 使用者帳號。",
+        'DB_USERNAME_note' => '使用 root 帳號連接 MySQL 是極度不建議的做法，且本應用程式也不允許這麼做。你必須為此面板專門建立一個 MySQL 使用者帳號。',
         'DB_PASSWORD_note' => '你似乎已經設定了 MySQL 連線密碼，是否要變更它？',
         'DB_error_2' => '你的連線憑證尚未儲存。請先提供有效的連線資訊才能繼續。',
         'go_back' => '返回並重試',
@@ -34,7 +34,7 @@ return [
         'disk_overallocate' => '輸入要超額分配的磁碟空間容量百分比。若要停用超額分配檢查，請輸入 -1；若輸入 0，則當可能超出此節點的磁碟空間總上限時，將會阻止建立新伺服器。',
         'cpu' => '輸入可用的最大cpu使用率',
         'cpu_overallocate' => '輸入要超額分配的cpu使用率百分比。若要停用超額分配檢查，請輸入 -1；若輸入 0，則當可能超出此節點的cpu使用率總上限時，將會阻止建立新伺服器。',
-        'upload_size' => "輸入最大上傳檔案大小",
+        'upload_size' => '輸入最大上傳檔案大小',
         'daemonListen' => '輸入守護程式監聽的連接埠',
         'daemonConnect' => '輸入守護進程連接阜（可與監聽連接阜相同）',
         'daemonSFTP' => '輸入守護程式 SFTP 監聽的連接埠',

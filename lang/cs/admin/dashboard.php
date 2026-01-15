@@ -25,7 +25,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Nebyly nalezeny žádné uzly',
-            'content' => "Vypadá to že nemáš žádné Nodes nastavené, ale kliknutím na tlačítko akce můžete vytvořit váš první!",
+            'content' => 'Vypadá to že nemáš žádné Nodes nastavené, ale kliknutím na tlačítko akce můžete vytvořit váš první!',
             'extra_note' => 'Pokud naleznete bugy nahlaste je na GitHub',
             'button_label' => 'Vytvořte první Node v Pelican',
         ],

@@ -15,7 +15,7 @@ return [
     ],
     'database_settings' => [
         'DB_HOST_note' => 'Veritabanı ana bilgisayarı olarak "localhost" kullanmanız şiddetle tavsiye edilmez çünkü sık sık soket bağlantı sorunları yaşanmaktadır. Yerel bir bağlantı kullanmak istiyorsanız "127.0.0.1" kullanmalısınız.',
-        'DB_USERNAME_note' => "MySQL bağlantıları için root hesabı kullanmak sadece tavsiye edilmez, aynı zamanda bu uygulama tarafından da izin verilmez. Bu yazılım için bir MySQL kullanıcısı oluşturmuş olmanız gerekiyor.",
+        'DB_USERNAME_note' => 'MySQL bağlantıları için root hesabı kullanmak sadece tavsiye edilmez, aynı zamanda bu uygulama tarafından da izin verilmez. Bu yazılım için bir MySQL kullanıcısı oluşturmuş olmanız gerekiyor.',
         'DB_PASSWORD_note' => 'Görünüşe göre zaten bir MySQL bağlantı şifreniz tanımlanmış, değiştirmek ister misiniz?',
         'DB_error_2' => 'Bağlantı bilgileriniz KAYDEDİLMEDİ. Devam etmeden önce geçerli bağlantı bilgileri sağlamanız gerekecek.',
         'go_back' => 'Geri dön ve tekrar dene',
@@ -34,7 +34,7 @@ return [
         'disk_overallocate' => 'Fazla tahsis edilecek disk miktarını girin, -1 kontrolü devre dışı bırakır ve 0 yeni sunucu oluşturmayı engeller',
         'cpu' => 'Maksimum CPU miktarını girin',
         'cpu_overallocate' => 'Fazla tahsis edilecek CPU miktarını girin, -1 kontrolü devre dışı bırakır ve 0 yeni sunucu oluşturmayı engeller',
-        'upload_size' => "Maksimum dosya yükleme boyutunu girin",
+        'upload_size' => 'Maksimum dosya yükleme boyutunu girin',
         'daemonListen' => 'Daemon dinleme portunu girin',
         'daemonConnect' => 'Daemon bağlantı portunu girin (dinleme portuyla aynı olabilir)',
         'daemonSFTP' => 'Daemon SFTP dinleme portunu girin',

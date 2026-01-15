@@ -5,7 +5,7 @@ return [
         'comment' => [
             'author' => 'Indique la dirección de correo electrónico desde la cual deberían enviarse los huevos exportados por este Panel. Debe ser una dirección de email válida.',
             'url' => 'La URL de la aplicación DEBE comenzar con https:// o http:// dependiendo de si estás utilizando SSL o no. Si no incluyes el esquema, tus correos electrónicos y otros contenidos se vincularán al lugar incorrecto.',
-            'timezone' => "La zona horaria debe coincidir con una de las zonas horarias soportadas por PHP\\. Si no estás seguro, por favor consulta https://php.net/manual/en/timezones.php.",
+            'timezone' => 'La zona horaria debe coincidir con una de las zonas horarias soportadas por PHP\\. Si no estás seguro, por favor consulta https://php.net/manual/en/timezones.php.',
         ],
         'redis' => [
             'note' => 'Has seleccionado el controlador Redis para una o más opciones, por favor proporciona información de conexión válida a continuación. En la mayoría de los casos, puedes utilizar los valores predeterminados proporcionados a menos que hayas modificado tu configuración.',
@@ -15,7 +15,7 @@ return [
     ],
     'database_settings' => [
         'DB_HOST_note' => 'Se recomienda encarecidamente no utilizar "localhost" como el hospedaje de tu base de datos, ya que hemos observado problemas frecuentes de conexión de socket. Si deseas utilizar una conexión local, deberías estar utilizando "127.0.0.1".',
-        'DB_USERNAME_note' => "El uso de la cuenta \"root\", o raíz, para conexiones MySQL no sólo está muy mal visto, sino que además no está permitido por esta aplicación. Necesitarás haber creado un usuario MySQL para este software.",
+        'DB_USERNAME_note' => 'El uso de la cuenta "root", o raíz, para conexiones MySQL no sólo está muy mal visto, sino que además no está permitido por esta aplicación. Necesitarás haber creado un usuario MySQL para este software.',
         'DB_PASSWORD_note' => 'Parece que ya tienes definida una contraseña de conexión MySQL, ¿te gustaría cambiarla?',
         'DB_error_2' => 'Tus credenciales de conexión NO han sido guardadas. Necesitarás proporcionar información de conexión válida antes de continuar.',
         'go_back' => 'Regresa e inténtalo de nuevo',

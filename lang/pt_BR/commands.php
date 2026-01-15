@@ -5,8 +5,7 @@ return [
         'comment' => [
             'author' => 'Forneça o endereço de email que os Eggs exportados por esse painel devem ter. Esse deve ser um endereço de email válido.',
             'url' => 'A URL da aplicação DEVE começar com https:// ou http://, dependendo se você está usando SSL ou não. Se você não incluir o esquema, seus e-mails e outros conteúdos irão apontar para o local incorreto.',
-            'timezone' => "O fuso horário deve corresponder a um dos fusos horários suportados pelo PHP. Se você não tiver certeza, consulte: https://php.net/manual/en/timezones.php.
-",
+            'timezone' => 'O fuso horário deve corresponder a um dos fusos horários suportados pelo PHP. Se você não tiver certeza, consulte: https://php.net/manual/en/timezones.php.',
         ],
         'redis' => [
             'note' => 'Você selecionou o driver Redis para uma ou mais opções, por favor forneça as informações de conexão válidas abaixo. Na maioria dos casos, você pode usar os valores padrão fornecidos, a menos que tenha modificado sua configuração.',
@@ -16,7 +15,7 @@ return [
     ],
     'database_settings' => [
         'DB_HOST_note' => 'É altamente recomendável não usar "localhost" como host do banco de dados, pois observamos problemas frequentes de conexão via socket. Se quiser usar uma conexão local, utilize "127.0.0.1".',
-        'DB_USERNAME_note' => "Usar a conta root para conexões MySQL não é apenas altamente desencorajado, como também não é permitido por este aplicativo. Você precisará criar um usuário MySQL específico para este software.",
+        'DB_USERNAME_note' => 'Usar a conta root para conexões MySQL não é apenas altamente desencorajado, como também não é permitido por este aplicativo. Você precisará criar um usuário MySQL específico para este software.',
         'DB_PASSWORD_note' => 'Parece que você já tem uma senha de conexão MySQL definida, gostaria de alterá-la?',
         'DB_error_2' => 'Suas credenciais de conexão NÃO foram salvas. Você precisará fornecer informações de conexão válidas antes de prosseguir.',
         'go_back' => 'Voltar e tentar novamente',
