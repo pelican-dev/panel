@@ -94,7 +94,7 @@ class ListEggs extends ListRecords
                         $eggsWithServers = $records->filter(fn (Egg $egg) => $egg->servers_count > 0);
 
                         if ($eggsWithServers->isNotEmpty()) {
-                            $eggNames = $eggsWithServers->map(fn(Egg $egg) => sprintf('%s (%d server%s)', $egg->name, $egg->servers_count, $egg->servers_count > 1 ? 's' : ''))
+                            $eggNames = $eggsWithServers->map(fn (Egg $egg) => sprintf('%s (%d server%s)', $egg->name, $egg->servers_count, $egg->servers_count > 1 ? 's' : ''))
                                 ->join(', ');
                             Notification::make()
                                 ->danger()
