@@ -1,0 +1,25 @@
+{
+  "active": true,
+  "spec": "005-run-unit-tests-in-parallel",
+  "state": "building",
+  "subtasks": {
+    "completed": 8,
+    "total": 10,
+    "in_progress": 1,
+    "failed": 0
+  },
+  "phase": {
+    "current": "CI Validation",
+    "id": null,
+    "total": 3
+  },
+  "workers": {
+    "active": 0,
+    "max": 1
+  },
+  "session": {
+    "number": 1,
+    "started_at": "2026-01-14T20:04:27.269744"
+  },
+  "last_update": "2026-01-14T20:04:27.334294"
+}

@@ -1,0 +1,39 @@
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read(./**)",
+      "Write(./**)",
+      "Edit(./**)",
+      "Glob(./**)",
+      "Grep(./**)",
+      "Read(/Users/lance/sites/panel/.auto-claude/worktrees/tasks/005-run-unit-tests-in-parallel/**)",
+      "Write(/Users/lance/sites/panel/.auto-claude/worktrees/tasks/005-run-unit-tests-in-parallel/**)",
+      "Edit(/Users/lance/sites/panel/.auto-claude/worktrees/tasks/005-run-unit-tests-in-parallel/**)",
+      "Glob(/Users/lance/sites/panel/.auto-claude/worktrees/tasks/005-run-unit-tests-in-parallel/**)",
+      "Grep(/Users/lance/sites/panel/.auto-claude/worktrees/tasks/005-run-unit-tests-in-parallel/**)",
+      "Read(/Users/lance/sites/panel/.auto-claude/worktrees/tasks/005-run-unit-tests-in-parallel/.auto-claude/specs/005-run-unit-tests-in-parallel/**)",
+      "Write(/Users/lance/sites/panel/.auto-claude/worktrees/tasks/005-run-unit-tests-in-parallel/.auto-claude/specs/005-run-unit-tests-in-parallel/**)",
+      "Edit(/Users/lance/sites/panel/.auto-claude/worktrees/tasks/005-run-unit-tests-in-parallel/.auto-claude/specs/005-run-unit-tests-in-parallel/**)",
+      "Read(/Users/lance/sites/panel/.auto-claude/**)",
+      "Write(/Users/lance/sites/panel/.auto-claude/**)",
+      "Edit(/Users/lance/sites/panel/.auto-claude/**)",
+      "Glob(/Users/lance/sites/panel/.auto-claude/**)",
+      "Grep(/Users/lance/sites/panel/.auto-claude/**)",
+      "Bash(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "mcp__context7__resolve-library-id(*)",
+      "mcp__context7__get-library-docs(*)",
+      "mcp__graphiti-memory__search_nodes(*)",
+      "mcp__graphiti-memory__search_facts(*)",
+      "mcp__graphiti-memory__add_episode(*)",
+      "mcp__graphiti-memory__get_episodes(*)",
+      "mcp__graphiti-memory__get_entity_edge(*)"
+    ]
+  }
+}
