@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'قواعد البيانات',
+    'empty' => 'لا يوجد قواعد بيانات',
+    'create_database' => 'إنشاء قاعدة بيانات',
+    'limit' => 'تم الوصول إلى حد قاعدة البيانات',
+    'viewing' => 'عرض: :databas',
+    'host' => 'المضيف',
+    'database' => 'قاعدة البيانات',
+    'username' => 'اسم المستخدم',
+    'password' => 'كلمة المرور',
+    'remote' => 'بعيد',
+    'created_at' => 'تاريخ الانشاء',
+    'name' => 'اسم قاعدة البيانات',
+    'name_hint' => 'ترك هذا الحقل فارغًا سيؤدي إلى إنشاء اسم عشوائي تلقائيًا',
+    'connections_from' => 'الاتصالات من',
+    'max_connections' => 'الحد الأقصى للاتصالات',
+    'database_host' => 'مضيف قاعدة بيانات',
+    'database_host_select' => 'اختر مضيف قاعدة البيانات',
+    'jdbc' => 'سلسلة اتصال JDBC',
+    'create_notification' => 'تم إنشاء :database',
+    'create_notification_fail' => 'فشل إنشاء :database',
+    'delete_notification' => 'تم حذف :database',
+    'delete_notification_fail' => 'فشل في حذف :database',
+];

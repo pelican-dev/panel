@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'Bancos de Dados',
+    'empty' => 'Nenhum banco de dados',
+    'create_database' => 'Criar Banco de Dados',
+    'limit' => 'Limite do banco de dados atingido',
+    'viewing' => 'Visualizando: :database',
+    'host' => 'Host',
+    'database' => 'Banco de dados',
+    'username' => 'Nome de Usuário',
+    'password' => 'Senha',
+    'remote' => 'Remoto',
+    'created_at' => 'Criado em',
+    'name' => 'Nome do Banco de Dados',
+    'name_hint' => 'Deixar este campo em branco irá gerar um nome aleatório automaticamente',
+    'connections_from' => 'Conexões De',
+    'max_connections' => 'Máximo de Conexões',
+    'database_host' => 'Host do Banco de Dados',
+    'database_host_select' => 'Selecionar Host do Banco de Dados',
+    'jdbc' => 'String de Conexão JDBC',
+    'create_notification' => ':database criado',
+    'create_notification_fail' => 'Falha ao criar :database',
+    'delete_notification' => ':database deletado',
+    'delete_notification_fail' => 'Falha ao deletar :database',
+];

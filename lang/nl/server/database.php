@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'Database',
+    'empty' => 'Geen Databases',
+    'create_database' => 'Database aanmaken',
+    'limit' => 'Database limiet bereikt',
+    'viewing' => 'Weergeven: :database',
+    'host' => 'Host',
+    'database' => 'Databanken',
+    'username' => 'Gebruikersnaam',
+    'password' => 'Wachtwoord',
+    'remote' => 'Extern',
+    'created_at' => 'Aangemaakt op',
+    'name' => 'Databasenaam',
+    'name_hint' => 'Als u dit leeg laat, wordt er automatisch een willekeurige naam gegenereerd',
+    'connections_from' => 'Verbindingen vanaf',
+    'max_connections' => 'Max. Aantal verbindingen',
+    'database_host' => 'Database Host',
+    'database_host_select' => 'Selecteer Database Host',
+    'jdbc' => 'JDBC Verbinding Koppeling',
+    'create_notification' => ':database aangemaakt',
+    'create_notification_fail' => 'Aanmaken :database mislukt',
+    'delete_notification' => ':database verwijderd',
+    'delete_notification_fail' => 'Kan :database niet verwijderen',
+];
