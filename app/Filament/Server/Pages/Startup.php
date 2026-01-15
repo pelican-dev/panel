@@ -147,12 +147,15 @@ class Startup extends ServerFormPage
         return parent::canAccess() && user()?->can(SubuserPermission::StartupRead, Filament::getTenant());
     }
 
-    public function update(?string $state, ServerVariable $serverVariable): null
+    public function update(?string $state, ServerVariable $serverVariable): void
     {
+        if (!$serverVariable->variable->user_editable) {
+            return;
+        }
+
         $original = $serverVariable->variable_value;
 
         try {
-
             $validator = Validator::make(
                 ['variable_value' => $state],
                 ['variable_value' => $serverVariable->variable->rules]
@@ -165,7 +168,7 @@ class Startup extends ServerFormPage
                     ->danger()
                     ->send();
 
-                return null;
+                return;
             }
 
             ServerVariable::query()->updateOrCreate([
@@ -184,6 +187,7 @@ class Startup extends ServerFormPage
                     ])
                     ->log();
             }
+
             Notification::make()
                 ->title(trans('server/startup.update', ['variable' => $serverVariable->variable->name]))
                 ->body(fn () => $original . ' -> ' . $state)
@@ -196,8 +200,6 @@ class Startup extends ServerFormPage
                 ->danger()
                 ->send();
         }
-
-        return null;
     }
 
     public function getTitle(): string

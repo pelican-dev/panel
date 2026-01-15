@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'Baze de date',
+    'empty' => 'Nicio bază de date',
+    'create_database' => 'Creare bază de date',
+    'limit' => 'Limita bazelor de date atinsă',
+    'viewing' => 'Vizualizare: :database',
+    'host' => 'Host',
+    'database' => 'Bază de Date',
+    'username' => 'Nume de utilizator',
+    'password' => 'Parola',
+    'remote' => 'Remote',
+    'created_at' => 'Creat pe',
+    'name' => 'Numele bazei de date',
+    'name_hint' => 'Lăsând acest câmp gol se va genera automat un nume aleatoriu',
+    'connections_from' => 'Conexiuni de la',
+    'max_connections' => 'Conexiuni maxime',
+    'database_host' => 'Gazda bazei de date',
+    'database_host_select' => 'Selectați Gazda Bazei de Date',
+    'jdbc' => 'Șirul de conexiune JDBC',
+    'create_notification' => 'Creat :database',
+    'create_notification_fail' => 'Crearea :database a eșuat',
+    'delete_notification' => ':database șters',
+    'delete_notification_fail' => 'Ștergerea :database a eșuat',
+];

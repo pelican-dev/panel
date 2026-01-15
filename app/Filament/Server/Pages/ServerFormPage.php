@@ -44,7 +44,7 @@ abstract class ServerFormPage extends Page
 
     protected function authorizeAccess(): void {}
 
-    protected function fillform(): void
+    protected function fillForm(): void
     {
         $data = $this->getRecord()->attributesToArray();
 

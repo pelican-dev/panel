@@ -21,7 +21,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Schema;
@@ -151,30 +150,32 @@ class MountResource extends Resource
                         ->label(trans('admin/mount.description'))
                         ->helperText(trans('admin/mount.description_help'))
                         ->columnSpanFull(),
-                ])->columnSpan(1)->columns([
-                    'default' => 1,
-                    'lg' => 2,
-                ]),
-                Group::make()->schema([
-                    Section::make()->schema([
-                        Select::make('eggs')->multiple()
-                            ->label(trans('admin/mount.eggs'))
-                            // Selecting only non-json fields to prevent Postgres from choking on DISTINCT JSON columns
-                            ->relationship('eggs', 'name', fn (Builder $query) => $query->select(['eggs.id', 'eggs.name']))
-                            ->preload(),
-                        Select::make('nodes')->multiple()
-                            ->label(trans('admin/mount.nodes'))
-                            ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', user()?->accessibleNodes()->pluck('id')))
-                            ->searchable(['name', 'fqdn'])
-                            ->preload(),
+                ])
+                    ->columnSpan([
+                        'default' => 1,
+                        'lg' => 2,
+                    ])
+                    ->columns([
+                        'default' => 1,
+                        'xl' => 2,
                     ]),
-                ])->columns([
-                    'default' => 1,
-                    'lg' => 2,
+                Section::make()->schema([
+                    Select::make('eggs')
+                        ->multiple()
+                        ->label(trans('admin/mount.eggs'))
+                        // Selecting only non-json fields to prevent Postgres from choking on DISTINCT JSON columns
+                        ->relationship('eggs', 'name', fn (Builder $query) => $query->select(['eggs.id', 'eggs.name']))
+                        ->preload(),
+                    Select::make('nodes')
+                        ->multiple()
+                        ->label(trans('admin/mount.nodes'))
+                        ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', user()?->accessibleNodes()->pluck('id')))
+                        ->searchable(['name', 'fqdn'])
+                        ->preload(),
                 ]),
             ])->columns([
                 'default' => 1,
-                'lg' => 2,
+                'lg' => 3,
             ]);
     }
 

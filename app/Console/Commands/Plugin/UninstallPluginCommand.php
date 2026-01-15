@@ -5,6 +5,7 @@ namespace App\Console\Commands\Plugin;
 use App\Enums\PluginStatus;
 use App\Models\Plugin;
 use App\Services\Helpers\PluginService;
+use Exception;
 use Illuminate\Console\Command;
 
 class UninstallPluginCommand extends Command
@@ -36,8 +37,12 @@ class UninstallPluginCommand extends Command
             $deleteFiles = $this->confirm('Do you also want to delete the plugin files?');
         }
 
-        $pluginService->uninstallPlugin($plugin, $deleteFiles);
+        try {
+            $pluginService->uninstallPlugin($plugin, $deleteFiles);
 
-        $this->info('Plugin uninstalled' . ($deleteFiles ? ' and files deleted' : '') . '.');
+            $this->info('Plugin uninstalled' . ($deleteFiles ? ' and files deleted' : '') . '.');
+        } catch (Exception $exception) {
+            $this->error('Could not uninstall plugin: ' . $exception->getMessage());
+        }
     }
 }

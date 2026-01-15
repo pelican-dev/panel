@@ -49,7 +49,7 @@ class DatabasesRelationManager extends RelationManager
                     ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? trans('admin/databasehost.anywhere'). ' ( % )' : $record->remote),
                 TextInput::make('max_connections')
                     ->label(trans('admin/databasehost.table.max_connections'))
-                    ->formatStateUsing(fn (Database $record) => $record->max_connections === 0 ? trans('admin/databasehost.unlimited') : $record->max_connections),
+                    ->formatStateUsing(fn (Database $record) => $record->max_connections ?: trans('admin/databasehost.unlimited')),
                 TextInput::make('jdbc')
                     ->label(trans('admin/databasehost.table.connection_string'))
                     ->columnSpanFull()
@@ -75,7 +75,7 @@ class DatabasesRelationManager extends RelationManager
                     ->url(fn (Database $database) => route('filament.admin.resources.servers.edit', ['record' => $database->server_id])),
                 TextColumn::make('max_connections')
                     ->label(trans('admin/databasehost.table.max_connections'))
-                    ->formatStateUsing(fn ($record) => $record->max_connections === 0 ? trans('admin/databasehost.unlimited') : $record->max_connections),
+                    ->formatStateUsing(fn ($record) => $record->max_connections ?: trans('admin/databasehost.unlimited')),
                 DateTimeColumn::make('created_at')
                     ->label(trans('admin/databasehost.table.created_at')),
             ])

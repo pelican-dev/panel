@@ -299,11 +299,15 @@ class UserResource extends Resource
 
                                             $id = $schema->getId();
                                             $name = $schema->getName();
+
+                                            $color = $schema->getHexColor();
+                                            $color = is_string($color) ? Color::hex($color) : null;
+
                                             $actions[] = Action::make("oauth_$id")
                                                 ->label(trans('profile.unlink', ['name' => $name]))
                                                 ->icon('tabler-unlink')
                                                 ->requiresConfirmation()
-                                                ->color(Color::hex($schema->getHexColor()))
+                                                ->color($color)
                                                 ->action(function ($livewire) use ($oauthService, $user, $name, $schema) {
                                                     $oauthService->unlinkUser($user, $schema);
                                                     $livewire->form->fill($user->attributesToArray());

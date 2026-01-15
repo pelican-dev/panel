@@ -61,6 +61,17 @@ return [
             'migration' => 'Migrations failed',
         ],
     ],
+    'egg' => [
+        'title' => 'Eggs',
+        'no_eggs' => 'No Eggs Available',
+        'background_install_started' => 'Egg Install Started',
+        'background_install_description' => 'Install of :count eggs has been queued and will continue in the background.',
+        'exceptions' => [
+            'failed_to_update' => 'Failed to update egg index',
+            'no_eggs' => 'No eggs are available to install at this time.',
+            'installation_failed' => 'Failed to install selected eggs. Please import them after the installation via the egg list.',
+        ],
+    ],
     'session' => [
         'title' => 'Session',
         'driver' => 'Session Driver',

@@ -256,7 +256,7 @@ class Settings extends Page implements HasSchemas
                                     ->connectTimeout(3)
                                     ->get('https://api.cloudflare.com/client/v4/ips');
 
-                                if ($response->getStatusCode() === 200) {
+                                if ($response->status() === 200) {
                                     $result = $response->json('result');
                                     foreach (['ipv4_cidrs', 'ipv6_cidrs'] as $value) {
                                         $ips->push(...data_get($result, $value));
@@ -823,7 +823,6 @@ class Settings extends Page implements HasSchemas
 
             $this->writeToEnvironment($data);
 
-            Artisan::call('config:clear');
             Artisan::call('queue:restart');
 
             $this->redirect($this->getUrl());
