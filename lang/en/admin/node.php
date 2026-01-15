@@ -104,7 +104,6 @@ return [
     'used' => 'Used',
     'unused' => 'Unused',
 
-    'next_step' => 'Next Step',
     'node_has_servers' => 'Node Has Servers',
     'create_allocation' => 'Create Allocation',
     'primary_allocation' => 'Primary Allocation',
