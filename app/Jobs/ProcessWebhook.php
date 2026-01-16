@@ -30,7 +30,13 @@ class ProcessWebhook implements ShouldQueue
     public function handle(): void
     {
         $data = $this->data[0] ?? [];
-        if (count($data) === 1) {
+
+        // Convert event objects to arrays
+        if (is_object($data)) {
+            $data = get_object_vars($data);
+        }
+
+        if (is_array($data) && count($data) === 1) {
             $data = reset($data);
         }
 
