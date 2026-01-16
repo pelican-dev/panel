@@ -18,11 +18,13 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class ListEggs extends ListRecords
@@ -88,15 +90,45 @@ class ListEggs extends ListRecords
             ])
             ->groupedBulkActions([
                 DeleteBulkAction::make()
-                    ->before(fn (&$records) => $records = $records->filter(function ($egg) {
-                        /** @var Egg $egg */
-                        return $egg->servers_count <= 0;
-                    })),
+                    ->before(function (Collection &$records) {
+                        $eggsWithServers = $records->filter(fn (Egg $egg) => $egg->servers_count > 0);
+
+                        if ($eggsWithServers->isNotEmpty()) {
+                            $eggNames = $eggsWithServers->map(fn (Egg $egg) => sprintf('%s (%d server%s)', $egg->name, $egg->servers_count, $egg->servers_count > 1 ? 's' : ''))
+                                ->join(', ');
+                            Notification::make()
+                                ->danger()
+                                ->title(trans('admin/egg.cannot_delete', ['count' => $eggsWithServers->count()]))
+                                ->body(trans('admin/egg.eggs_have_servers', ['eggs' => $eggNames]))
+                                ->send();
+                        }
+
+                        $records = $records->filter(fn (Egg $egg) => $egg->servers_count <= 0);
+
+                        if ($records->isEmpty()) {
+                            $this->halt();
+                        }
+                    }),
                 UpdateEggBulkAction::make()
-                    ->before(fn (&$records) => $records = $records->filter(function ($egg) {
-                        /** @var Egg $egg */
-                        return cache()->get("eggs.$egg->uuid.update", false);
-                    })),
+                    ->before(function (Collection &$records) {
+                        $eggsWithoutUpdateUrl = $records->filter(fn (Egg $egg) => $egg->update_url === null);
+
+                        if ($eggsWithoutUpdateUrl->isNotEmpty()) {
+                            $eggNames = $eggsWithoutUpdateUrl->pluck('name')->join(', ');
+
+                            Notification::make()
+                                ->warning()
+                                ->title(trans('admin/egg.cannot_update', ['count' => $eggsWithoutUpdateUrl->count()]))
+                                ->body(trans('admin/egg.no_update_url', ['eggs' => $eggNames]))
+                                ->send();
+                        }
+
+                        $records = $records->filter(fn (Egg $egg) => $egg->update_url !== null);
+
+                        if ($records->isEmpty()) {
+                            $this->halt();
+                        }
+                    }),
             ])
             ->emptyStateIcon('tabler-eggs')
             ->emptyStateDescription('')

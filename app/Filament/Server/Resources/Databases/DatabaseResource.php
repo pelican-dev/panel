@@ -98,7 +98,7 @@ class DatabaseResource extends Resource
                     ->label(trans('server/database.remote')),
                 TextInput::make('max_connections')
                     ->label(trans('server/database.max_connections'))
-                    ->formatStateUsing(fn (Database $database) => $database->max_connections === 0 ? $database->max_connections : 'Unlimited'),
+                    ->formatStateUsing(fn (Database $database) => $database->max_connections ?: trans('server/database.unlimited')),
                 TextInput::make('jdbc')
                     ->label(trans('server/database.jdbc'))
                     ->password()->revealable()
