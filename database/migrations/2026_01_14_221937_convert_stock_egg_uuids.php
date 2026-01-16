@@ -10,7 +10,7 @@ return new class extends Migration
             // Forge Minecraft
             'ed072427-f209-4603-875c-f540c6dd5a65' => [
                 'new_uuid' => 'd6018085-eecc-42bf-bf8c-51ea45a69ace',
-                'new_update_url' => 'https://raw.githubusercontent.com/pelican-eggs/minecraft/refs/heads/main/java/forge/egg-forge.yaml',
+                'new_update_url' => 'https://raw.githubusercontent.com/pelican-eggs/minecraft/refs/heads/main/java/forge/egg-forge-minecraft.yaml',
             ],
 
             // Paper
