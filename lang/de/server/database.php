@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'Datenbanken',
+    'empty' => 'Keine Datenbank',
+    'create_database' => 'Datenbank erstellen',
+    'limit' => 'Datenbank Limit erreicht',
+    'viewing' => 'Du siehst: :database',
+    'host' => 'Host',
+    'database' => 'Datenbank',
+    'username' => 'Benutzername',
+    'password' => 'Passwort',
+    'remote' => 'Fernzugriff',
+    'created_at' => 'Erstellt am',
+    'name' => 'Datenbank Name',
+    'name_hint' => 'Leer lassen, um einen zufälligen Namen generieren zu lassen',
+    'connections_from' => 'Verbindungen von',
+    'max_connections' => 'Max. Verbindungen',
+    'database_host' => 'Datenbank Host',
+    'database_host_select' => 'Wähle einen Datenbank Host',
+    'jdbc' => '',
+    'create_notification' => 'Erstellt :database',
+    'create_notification_fail' => 'Fehler bei der Erstellung von :database',
+    'delete_notification' => 'Löschte :database',
+    'delete_notification_fail' => 'Fehler bei der Löschung von :database',
+];

@@ -257,12 +257,12 @@ class PluginService
         }
     }
 
-    public function buildAssets(): bool
+    public function buildAssets(bool $throw = false): bool
     {
         try {
             $result = Process::path(base_path())->timeout(300)->run('yarn install');
             if ($result->failed()) {
-                throw new Exception('Could not install dependencies: ' . $result->errorOutput());
+                throw new Exception('Could not install yarn dependencies: ' . $result->errorOutput());
             }
 
             $result = Process::path(base_path())->timeout(600)->run('yarn build');
@@ -272,7 +272,7 @@ class PluginService
 
             return true;
         } catch (Exception $exception) {
-            if ($this->isDevModeActive()) {
+            if ($throw || $this->isDevModeActive()) {
                 throw ($exception);
             }
 
@@ -296,7 +296,7 @@ class PluginService
                 }
             }
 
-            $this->buildAssets();
+            $this->buildAssets($plugin->isTheme());
 
             $this->runPluginMigrations($plugin);
 

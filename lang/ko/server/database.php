@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => '데이터베이스',
+    'empty' => '데이터베이스 없음',
+    'create_database' => '데이터베이스 생성',
+    'limit' => '데이터베이스 제한에 도달했습니다',
+    'viewing' => '보기: :database',
+    'host' => '호스트',
+    'database' => '데이터베이스',
+    'username' => '사용자 이름',
+    'password' => '비밀번호',
+    'remote' => '원격',
+    'created_at' => '생성 시간',
+    'name' => '데이터베이스 이름',
+    'name_hint' => '비워두면 무작위 이름이 자동으로 생성됩니다',
+    'connections_from' => '연결 출처',
+    'max_connections' => '최대 연결 수',
+    'database_host' => '데이터베이스 호스트',
+    'database_host_select' => '데이터베이스 호스트 선택',
+    'jdbc' => 'JDBC 연결 문자열',
+    'create_notification' => ':database 생성됨',
+    'create_notification_fail' => ':database 생성 실패',
+    'delete_notification' => ':database 삭제됨',
+    'delete_notification_fail' => ':database 삭제 실패',
+];
