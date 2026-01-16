@@ -8,7 +8,7 @@ return [
 
     'version' => 'canary',
 
-    'timezone' => 'UTC',
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     'installed' => env('APP_INSTALLED', true),
 
