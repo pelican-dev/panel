@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "96dc01cc6bc18e13b55aa9f3495670b1",
+    "content-hash": "4fd745132a871290ab16f3078055bf82",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -128,16 +128,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.369.12",
+            "version": "3.369.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "36ee8894743a254ae2650bad4968c874b76bc7de"
+                "reference": "b40eb1177d2e621c18cd797ca6cc9efb5a0e99d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/36ee8894743a254ae2650bad4968c874b76bc7de",
-                "reference": "36ee8894743a254ae2650bad4968c874b76bc7de",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b40eb1177d2e621c18cd797ca6cc9efb5a0e99d9",
+                "reference": "b40eb1177d2e621c18cd797ca6cc9efb5a0e99d9",
                 "shasum": ""
             },
             "require": {
@@ -219,9 +219,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.12"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.14"
             },
-            "time": "2026-01-13T19:12:08+00:00"
+            "time": "2026-01-15T19:10:54+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -1323,16 +1323,16 @@
         },
         {
             "name": "filament/actions",
-            "version": "v5.0.0-beta9",
+            "version": "v5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/actions.git",
-                "reference": "de303608e0b4e4c60df8ba2f35741fc2cc530fc3"
+                "reference": "2df954798fa30cb90b24b0a74682bcd459d124ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/actions/zipball/de303608e0b4e4c60df8ba2f35741fc2cc530fc3",
-                "reference": "de303608e0b4e4c60df8ba2f35741fc2cc530fc3",
+                "url": "https://api.github.com/repos/filamentphp/actions/zipball/2df954798fa30cb90b24b0a74682bcd459d124ff",
+                "reference": "2df954798fa30cb90b24b0a74682bcd459d124ff",
                 "shasum": ""
             },
             "require": {
@@ -1368,20 +1368,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-01-09T15:15:03+00:00"
+            "time": "2026-01-16T09:55:08+00:00"
         },
         {
             "name": "filament/filament",
-            "version": "v5.0.0-beta9",
+            "version": "v5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/panels.git",
-                "reference": "83852393a3cc750f7e66f5b7ec03902117f98d3f"
+                "reference": "709018b9dc6ccca1d85599b9ef2489a5fbb31325"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/panels/zipball/83852393a3cc750f7e66f5b7ec03902117f98d3f",
-                "reference": "83852393a3cc750f7e66f5b7ec03902117f98d3f",
+                "url": "https://api.github.com/repos/filamentphp/panels/zipball/709018b9dc6ccca1d85599b9ef2489a5fbb31325",
+                "reference": "709018b9dc6ccca1d85599b9ef2489a5fbb31325",
                 "shasum": ""
             },
             "require": {
@@ -1425,20 +1425,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-01-09T15:15:05+00:00"
+            "time": "2026-01-16T09:55:19+00:00"
         },
         {
             "name": "filament/forms",
-            "version": "v5.0.0-beta9",
+            "version": "v5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/forms.git",
-                "reference": "c97c94768c0217400e41cac5948ca21adfb4c51c"
+                "reference": "11d815a812f0d23f7fd96de51e8887a3e2ab5e23"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/forms/zipball/c97c94768c0217400e41cac5948ca21adfb4c51c",
-                "reference": "c97c94768c0217400e41cac5948ca21adfb4c51c",
+                "url": "https://api.github.com/repos/filamentphp/forms/zipball/11d815a812f0d23f7fd96de51e8887a3e2ab5e23",
+                "reference": "11d815a812f0d23f7fd96de51e8887a3e2ab5e23",
                 "shasum": ""
             },
             "require": {
@@ -1475,20 +1475,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-01-09T15:12:30+00:00"
+            "time": "2026-01-16T09:55:10+00:00"
         },
         {
             "name": "filament/infolists",
-            "version": "v5.0.0-beta9",
+            "version": "v5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/infolists.git",
-                "reference": "5fcd7065ccbf726e7c29ed9dfcb85c972e6a1d19"
+                "reference": "663288bfa13bf1c474de134540c6a5684e746c8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/infolists/zipball/5fcd7065ccbf726e7c29ed9dfcb85c972e6a1d19",
-                "reference": "5fcd7065ccbf726e7c29ed9dfcb85c972e6a1d19",
+                "url": "https://api.github.com/repos/filamentphp/infolists/zipball/663288bfa13bf1c474de134540c6a5684e746c8a",
+                "reference": "663288bfa13bf1c474de134540c6a5684e746c8a",
                 "shasum": ""
             },
             "require": {
@@ -1520,11 +1520,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-01-09T15:14:46+00:00"
+            "time": "2026-01-16T09:55:10+00:00"
         },
         {
             "name": "filament/notifications",
-            "version": "v5.0.0-beta9",
+            "version": "v5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/notifications.git",
@@ -1571,16 +1571,16 @@
         },
         {
             "name": "filament/query-builder",
-            "version": "v5.0.0-beta9",
+            "version": "v5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/query-builder.git",
-                "reference": "9ea5c71bc7f42b6f0d9ab4cf0c9824a2c504a09d"
+                "reference": "83f34ec2050330b1582529cb102fc1790d56736b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/query-builder/zipball/9ea5c71bc7f42b6f0d9ab4cf0c9824a2c504a09d",
-                "reference": "9ea5c71bc7f42b6f0d9ab4cf0c9824a2c504a09d",
+                "url": "https://api.github.com/repos/filamentphp/query-builder/zipball/83f34ec2050330b1582529cb102fc1790d56736b",
+                "reference": "83f34ec2050330b1582529cb102fc1790d56736b",
                 "shasum": ""
             },
             "require": {
@@ -1613,11 +1613,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2025-12-30T13:09:52+00:00"
+            "time": "2026-01-16T09:55:08+00:00"
         },
         {
             "name": "filament/schemas",
-            "version": "v5.0.0-beta9",
+            "version": "v5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/schemas.git",
@@ -1662,16 +1662,16 @@
         },
         {
             "name": "filament/support",
-            "version": "v5.0.0-beta9",
+            "version": "v5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/support.git",
-                "reference": "8a86bd3c000154f3536cedff155b17d19604f597"
+                "reference": "5f603195ac4e27dfc8fa54a7ebf63359acd25d85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/support/zipball/8a86bd3c000154f3536cedff155b17d19604f597",
-                "reference": "8a86bd3c000154f3536cedff155b17d19604f597",
+                "url": "https://api.github.com/repos/filamentphp/support/zipball/5f603195ac4e27dfc8fa54a7ebf63359acd25d85",
+                "reference": "5f603195ac4e27dfc8fa54a7ebf63359acd25d85",
                 "shasum": ""
             },
             "require": {
@@ -1681,7 +1681,7 @@
                 "illuminate/contracts": "^11.28|^12.0",
                 "kirschbaum-development/eloquent-power-joins": "^4.0",
                 "league/uri-components": "^7.0",
-                "livewire/livewire": "^4.0@beta",
+                "livewire/livewire": "^4.0",
                 "nette/php-generator": "^4.0",
                 "php": "^8.2",
                 "ryangjchandler/blade-capture-directive": "^1.0",
@@ -1716,20 +1716,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-01-09T15:14:46+00:00"
+            "time": "2026-01-16T09:55:14+00:00"
         },
         {
             "name": "filament/tables",
-            "version": "v5.0.0-beta9",
+            "version": "v5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/tables.git",
-                "reference": "21fb6f5822bca1527de1b5023a52ac568c6894b0"
+                "reference": "1c90cec2afae7495b0c106f89485d81834cfefde"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/tables/zipball/21fb6f5822bca1527de1b5023a52ac568c6894b0",
-                "reference": "21fb6f5822bca1527de1b5023a52ac568c6894b0",
+                "url": "https://api.github.com/repos/filamentphp/tables/zipball/1c90cec2afae7495b0c106f89485d81834cfefde",
+                "reference": "1c90cec2afae7495b0c106f89485d81834cfefde",
                 "shasum": ""
             },
             "require": {
@@ -1762,20 +1762,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-01-09T15:12:49+00:00"
+            "time": "2026-01-16T09:55:07+00:00"
         },
         {
             "name": "filament/widgets",
-            "version": "v5.0.0-beta9",
+            "version": "v5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/widgets.git",
-                "reference": "7ed5b02a6623b15bfabd420a3c69a911b8178f6d"
+                "reference": "7e40bfd8b6077c6a2364eccc444d6f985703c188"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/widgets/zipball/7ed5b02a6623b15bfabd420a3c69a911b8178f6d",
-                "reference": "7ed5b02a6623b15bfabd420a3c69a911b8178f6d",
+                "url": "https://api.github.com/repos/filamentphp/widgets/zipball/7e40bfd8b6077c6a2364eccc444d6f985703c188",
+                "reference": "7e40bfd8b6077c6a2364eccc444d6f985703c188",
                 "shasum": ""
             },
             "require": {
@@ -1806,7 +1806,7 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-01-09T15:15:06+00:00"
+            "time": "2026-01-16T09:55:09+00:00"
         },
         {
             "name": "firebase/php-jwt",
@@ -2823,16 +2823,16 @@
         },
         {
             "name": "laravel/prompts",
-            "version": "v0.3.9",
+            "version": "v0.3.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/prompts.git",
-                "reference": "5c41bf0555b7cfefaad4e66d3046675829581ac4"
+                "reference": "360ba095ef9f51017473505191fbd4ab73e1cab3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/prompts/zipball/5c41bf0555b7cfefaad4e66d3046675829581ac4",
-                "reference": "5c41bf0555b7cfefaad4e66d3046675829581ac4",
+                "url": "https://api.github.com/repos/laravel/prompts/zipball/360ba095ef9f51017473505191fbd4ab73e1cab3",
+                "reference": "360ba095ef9f51017473505191fbd4ab73e1cab3",
                 "shasum": ""
             },
             "require": {
@@ -2876,9 +2876,9 @@
             "description": "Add beautiful and user-friendly forms to your command-line applications.",
             "support": {
                 "issues": "https://github.com/laravel/prompts/issues",
-                "source": "https://github.com/laravel/prompts/tree/v0.3.9"
+                "source": "https://github.com/laravel/prompts/tree/v0.3.10"
             },
-            "time": "2026-01-07T21:00:29+00:00"
+            "time": "2026-01-13T20:29:29+00:00"
         },
         {
             "name": "laravel/sanctum",
@@ -3997,20 +3997,20 @@
         },
         {
             "name": "league/uri",
-            "version": "7.7.0",
+            "version": "7.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/uri.git",
-                "reference": "8d587cddee53490f9b82bf203d3a9aa7ea4f9807"
+                "reference": "4436c6ec8d458e4244448b069cc572d088230b76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/uri/zipball/8d587cddee53490f9b82bf203d3a9aa7ea4f9807",
-                "reference": "8d587cddee53490f9b82bf203d3a9aa7ea4f9807",
+                "url": "https://api.github.com/repos/thephpleague/uri/zipball/4436c6ec8d458e4244448b069cc572d088230b76",
+                "reference": "4436c6ec8d458e4244448b069cc572d088230b76",
                 "shasum": ""
             },
             "require": {
-                "league/uri-interfaces": "^7.7",
+                "league/uri-interfaces": "^7.8",
                 "php": "^8.1",
                 "psr/http-factory": "^1"
             },
@@ -4024,11 +4024,11 @@
                 "ext-gmp": "to improve IPV4 host parsing",
                 "ext-intl": "to handle IDN host with the best performance",
                 "ext-uri": "to use the PHP native URI class",
-                "jeremykendall/php-domain-parser": "to resolve Public Suffix and Top Level Domain",
-                "league/uri-components": "Needed to easily manipulate URI objects components",
-                "league/uri-polyfill": "Needed to backport the PHP URI extension for older versions of PHP",
+                "jeremykendall/php-domain-parser": "to further parse the URI host and resolve its Public Suffix and Top Level Domain",
+                "league/uri-components": "to provide additional tools to manipulate URI objects components",
+                "league/uri-polyfill": "to backport the PHP URI extension for older versions of PHP",
                 "php-64bit": "to improve IPV4 host parsing",
-                "rowbot/url": "to handle WHATWG URL",
+                "rowbot/url": "to handle URLs using the WHATWG URL Living Standard specification",
                 "symfony/polyfill-intl-idn": "to handle IDN host via the Symfony polyfill if ext-intl is not present"
             },
             "type": "library",
@@ -4083,7 +4083,7 @@
                 "docs": "https://uri.thephpleague.com",
                 "forum": "https://thephpleague.slack.com",
                 "issues": "https://github.com/thephpleague/uri-src/issues",
-                "source": "https://github.com/thephpleague/uri/tree/7.7.0"
+                "source": "https://github.com/thephpleague/uri/tree/7.8.0"
             },
             "funding": [
                 {
@@ -4091,37 +4091,36 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-12-07T16:02:06+00:00"
+            "time": "2026-01-14T17:24:56+00:00"
         },
         {
             "name": "league/uri-components",
-            "version": "7.7.0",
+            "version": "7.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/uri-components.git",
-                "reference": "005f8693ce8c1f16f80e88a05cbf08da04c1c374"
+                "reference": "8b5ffcebcc0842b76eb80964795bd56a8333b2ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/uri-components/zipball/005f8693ce8c1f16f80e88a05cbf08da04c1c374",
-                "reference": "005f8693ce8c1f16f80e88a05cbf08da04c1c374",
+                "url": "https://api.github.com/repos/thephpleague/uri-components/zipball/8b5ffcebcc0842b76eb80964795bd56a8333b2ba",
+                "reference": "8b5ffcebcc0842b76eb80964795bd56a8333b2ba",
                 "shasum": ""
             },
             "require": {
-                "league/uri": "^7.7",
+                "league/uri": "^7.8",
                 "php": "^8.1"
             },
             "suggest": {
-                "bakame/aide-uri": "A polyfill for PHP8.1 until PHP8.4 to add support to PHP Native URI parser",
                 "ext-bcmath": "to improve IPV4 host parsing",
                 "ext-fileinfo": "to create Data URI from file contennts",
                 "ext-gmp": "to improve IPV4 host parsing",
                 "ext-intl": "to handle IDN host with the best performance",
                 "ext-mbstring": "to use the sorting algorithm of URLSearchParams",
-                "jeremykendall/php-domain-parser": "to resolve Public Suffix and Top Level Domain",
-                "league/uri-polyfill": "Needed to backport the PHP URI extension for older versions of PHP",
+                "jeremykendall/php-domain-parser": "to further parse the URI host and resolve its Public Suffix and Top Level Domain",
+                "league/uri-polyfill": "to backport the PHP URI extension for older versions of PHP",
                 "php-64bit": "to improve IPV4 host parsing",
-                "rowbot/url": "to handle WHATWG URL",
+                "rowbot/url": "to handle URLs using the WHATWG URL Living Standard specification",
                 "symfony/polyfill-intl-idn": "to handle IDN host via the Symfony polyfill if ext-intl is not present"
             },
             "type": "library",
@@ -4168,7 +4167,7 @@
                 "docs": "https://uri.thephpleague.com",
                 "forum": "https://thephpleague.slack.com",
                 "issues": "https://github.com/thephpleague/uri-src/issues",
-                "source": "https://github.com/thephpleague/uri-components/tree/7.7.0"
+                "source": "https://github.com/thephpleague/uri-components/tree/7.8.0"
             },
             "funding": [
                 {
@@ -4176,20 +4175,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-12-07T16:02:56+00:00"
+            "time": "2026-01-14T17:24:56+00:00"
         },
         {
             "name": "league/uri-interfaces",
-            "version": "7.7.0",
+            "version": "7.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/uri-interfaces.git",
-                "reference": "62ccc1a0435e1c54e10ee6022df28d6c04c2946c"
+                "reference": "c5c5cd056110fc8afaba29fa6b72a43ced42acd4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/uri-interfaces/zipball/62ccc1a0435e1c54e10ee6022df28d6c04c2946c",
-                "reference": "62ccc1a0435e1c54e10ee6022df28d6c04c2946c",
+                "url": "https://api.github.com/repos/thephpleague/uri-interfaces/zipball/c5c5cd056110fc8afaba29fa6b72a43ced42acd4",
+                "reference": "c5c5cd056110fc8afaba29fa6b72a43ced42acd4",
                 "shasum": ""
             },
             "require": {
@@ -4202,7 +4201,7 @@
                 "ext-gmp": "to improve IPV4 host parsing",
                 "ext-intl": "to handle IDN host with the best performance",
                 "php-64bit": "to improve IPV4 host parsing",
-                "rowbot/url": "to handle WHATWG URL",
+                "rowbot/url": "to handle URLs using the WHATWG URL Living Standard specification",
                 "symfony/polyfill-intl-idn": "to handle IDN host via the Symfony polyfill if ext-intl is not present"
             },
             "type": "library",
@@ -4252,7 +4251,7 @@
                 "docs": "https://uri.thephpleague.com",
                 "forum": "https://thephpleague.slack.com",
                 "issues": "https://github.com/thephpleague/uri-src/issues",
-                "source": "https://github.com/thephpleague/uri-interfaces/tree/7.7.0"
+                "source": "https://github.com/thephpleague/uri-interfaces/tree/7.8.0"
             },
             "funding": [
                 {
@@ -4260,20 +4259,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-12-07T16:03:21+00:00"
+            "time": "2026-01-15T06:54:53+00:00"
         },
         {
             "name": "livewire/livewire",
-            "version": "v4.0.0",
+            "version": "v4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "7c66e50218be801d6d257714c6642e9024f8a183"
+                "reference": "c7539589d5af82691bef17da17ce4e289269f8d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/7c66e50218be801d6d257714c6642e9024f8a183",
-                "reference": "7c66e50218be801d6d257714c6642e9024f8a183",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/c7539589d5af82691bef17da17ce4e289269f8d9",
+                "reference": "c7539589d5af82691bef17da17ce4e289269f8d9",
                 "shasum": ""
             },
             "require": {
@@ -4328,7 +4327,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v4.0.0"
+                "source": "https://github.com/livewire/livewire/tree/v4.0.1"
             },
             "funding": [
                 {
@@ -4336,7 +4335,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-14T10:40:38+00:00"
+            "time": "2026-01-14T18:40:41+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -15376,10 +15375,8 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "beta",
-    "stability-flags": {
-        "filament/filament": 10
-    },
+    "minimum-stability": "stable",
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
