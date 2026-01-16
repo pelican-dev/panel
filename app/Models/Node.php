@@ -55,6 +55,7 @@ use Symfony\Component\Yaml\Yaml;
  * @property int|null $allocations_count
  * @property Role[]|Collection $roles
  * @property int|null $roles_count
+ * @property BackupHost[]|Collection $backupHosts
  */
 class Node extends Model implements Validatable
 {
@@ -269,12 +270,15 @@ class Node extends Model implements Validatable
         return $this->hasMany(Allocation::class);
     }
 
-    /**
-     * @return BelongsToMany<DatabaseHost, $this>
-     */
+    /** @return BelongsToMany<DatabaseHost, $this> */
     public function databaseHosts(): BelongsToMany
     {
         return $this->belongsToMany(DatabaseHost::class);
+    }
+
+    public function backupHosts(): BelongsToMany
+    {
+        return $this->BelongsToMany(BackupHost::class);
     }
 
     public function roles(): HasManyThrough

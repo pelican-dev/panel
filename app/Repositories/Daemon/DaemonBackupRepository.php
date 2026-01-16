@@ -8,14 +8,14 @@ use Illuminate\Http\Client\Response;
 
 class DaemonBackupRepository extends DaemonRepository
 {
-    protected ?string $adapter;
+    protected ?string $schema;
 
     /**
-     * Sets the backup adapter for this execution instance.
+     * Sets the backup schema for this execution instance.
      */
-    public function setBackupAdapter(string $adapter): self
+    public function setBackupSchema(string $schema): self
     {
-        $this->adapter = $adapter;
+        $this->schema = $schema;
 
         return $this;
     }
@@ -25,11 +25,11 @@ class DaemonBackupRepository extends DaemonRepository
      *
      * @throws ConnectionException
      */
-    public function backup(Backup $backup): Response
+    public function create(Backup $backup): Response
     {
         return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/backup",
             [
-                'adapter' => $this->adapter ?? config('backups.default'),
+                'adapter' => $this->schema ?? config('backups.default'),
                 'uuid' => $backup->uuid,
                 'ignore' => implode("\n", $backup->ignored_files),
             ]

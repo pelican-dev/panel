@@ -3,8 +3,6 @@
 namespace App\Tests\Integration\Services\Backups;
 
 use App\Exceptions\Service\Backup\BackupLockedException;
-use App\Extensions\Backups\BackupManager;
-use App\Extensions\Filesystem\S3Filesystem;
 use App\Models\Backup;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Services\Backups\DeleteBackupService;
@@ -76,29 +74,5 @@ class DeleteBackupServiceTest extends IntegrationTestCase
         $backup->refresh();
 
         $this->assertNull($backup->deleted_at);
-    }
-
-    public function test_s3_object_can_be_deleted(): void
-    {
-        $server = $this->createServerModel();
-        $backup = Backup::factory()->create([
-            'disk' => Backup::ADAPTER_AWS_S3,
-            'server_id' => $server->id,
-        ]);
-
-        $manager = $this->mock(BackupManager::class);
-        $adapter = $this->mock(S3Filesystem::class);
-
-        $manager->expects('adapter')->with(Backup::ADAPTER_AWS_S3)->andReturn($adapter);
-
-        $adapter->expects('getBucket')->andReturn('foobar');
-        $adapter->expects('getClient->deleteObject')->with([
-            'Bucket' => 'foobar',
-            'Key' => sprintf('%s/%s.tar.gz', $server->uuid, $backup->uuid),
-        ]);
-
-        $this->app->make(DeleteBackupService::class)->handle($backup);
-
-        $this->assertSoftDeleted($backup);
     }
 }
