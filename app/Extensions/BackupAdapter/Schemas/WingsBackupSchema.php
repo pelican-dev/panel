@@ -8,11 +8,13 @@ use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Services\Nodes\NodeJWTService;
 use Carbon\CarbonImmutable;
 use Exception;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Component;
 use Illuminate\Http\Response;
 
 final class WingsBackupSchema extends BackupAdapterSchema
 {
-    public function __construct(protected DaemonBackupRepository $repository, private NodeJWTService $jwtService)
+    public function __construct(private readonly DaemonBackupRepository $repository, private readonly NodeJWTService $jwtService)
     {
         $this->repository->setBackupSchema($this->getId());
     }
@@ -27,6 +29,7 @@ final class WingsBackupSchema extends BackupAdapterSchema
         $this->repository->setServer($backup->server)->create($backup);
     }
 
+    /** @throws Exception */
     public function deleteBackup(Backup $backup): void
     {
         try {
@@ -52,5 +55,13 @@ final class WingsBackupSchema extends BackupAdapterSchema
             ->handle($backup->server->node, $user->id . $backup->server->uuid);
 
         return $backup->server->node->getConnectionAddress() . '/download/backup?token=' . $token->toString();
+    }
+
+    /** @return Component[] */
+    public function getConfigurationForm(): array
+    {
+        return [
+            TextEntry::make(trans('admin/backuphost.no_configuration')),
+        ];
     }
 }

@@ -11,7 +11,7 @@ use Throwable;
 
 class DeleteBackupService
 {
-    public function __construct(private ConnectionInterface $connection, private BackupAdapterService $backupService) {}
+    public function __construct(private readonly ConnectionInterface $connection, private readonly BackupAdapterService $backupService) {}
 
     /**
      * Deletes a backup from the system. If the backup is stored in S3 a request
@@ -31,9 +31,9 @@ class DeleteBackupService
             throw new BackupLockedException();
         }
 
-        $schema = $this->backupService->get($backup->disk);
+        $schema = $this->backupService->get($backup->backupHost->schema ?? config('backups.default'));
         if (!$schema) {
-            throw new Exception("Backup uses unknown disk $backup->disk.");
+            throw new Exception('Backup uses unknown backup adapter.');
         }
 
         $this->connection->transaction(function () use ($schema, $backup) {

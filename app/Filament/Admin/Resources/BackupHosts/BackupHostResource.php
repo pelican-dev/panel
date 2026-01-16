@@ -24,6 +24,7 @@ use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -83,7 +84,6 @@ class BackupHostResource extends Resource
                 TextColumn::make('nodes.name')
                     ->badge()
                     ->placeholder(trans('admin/backuphost.no_nodes')),
-                Section::make(trans('admin/backuphost.schema')),
             ])
             ->checkIfRecordIsSelectableUsing(fn (BackupHost $backupHost) => $backupHost->backups_count <= 0)
             ->recordActions([
@@ -114,13 +114,32 @@ class BackupHostResource extends Resource
                     ->required()
                     ->selectablePlaceholder(false)
                     ->searchable()
-                    ->options(fn (BackupAdapterService $service) => $service->getMappings()),
+                    ->options(fn (BackupAdapterService $service) => $service->getMappings())
+                    ->live(onBlur: true),
                 Select::make('node_ids')
                     ->label(trans('admin/backuphost.linked_nodes'))
                     ->multiple()
                     ->searchable()
                     ->preload()
                     ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', user()?->accessibleNodes()->pluck('id'))),
+                Section::make(trans('admin/backuphost.configuration'))
+                    ->columnSpanFull()
+                    ->columns()
+                    ->schema(function (?BackupHost $backupHost, Get $get, BackupAdapterService $service) {
+                        $schema = $backupHost ? $backupHost->schema : $get('schema');
+
+                        if (!$schema) {
+                            return [];
+                        }
+
+                        $schema = $service->get($schema);
+
+                        if ($schema) {
+                            return $schema->getConfigurationForm();
+                        }
+
+                        return [];
+                    }),
             ]);
     }
 

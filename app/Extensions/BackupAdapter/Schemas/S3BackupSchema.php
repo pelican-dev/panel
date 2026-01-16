@@ -4,6 +4,7 @@ namespace App\Extensions\BackupAdapter\Schemas;
 
 use App\Http\Controllers\Api\Remote\Backups\BackupRemoteUploadController;
 use App\Models\Backup;
+use App\Models\BackupHost;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use Aws\S3\S3Client;
@@ -19,15 +20,15 @@ final class S3BackupSchema extends BackupAdapterSchema
 {
     private ?S3Client $client = null;
 
-    public function __construct(private DaemonBackupRepository $repository)
+    public function __construct(private readonly DaemonBackupRepository $repository)
     {
         $this->repository->setBackupSchema($this->getId());
     }
 
-    private function createClient(): void
+    private function createClient(BackupHost $backupHost): void
     {
         if (!$this->client) {
-            $config = $this->getConfiguration();
+            $config = $backupHost->configuration;
             $config['version'] = 'latest';
 
             if (!empty($config['key']) && !empty($config['secret'])) {
@@ -50,22 +51,22 @@ final class S3BackupSchema extends BackupAdapterSchema
 
     public function deleteBackup(Backup $backup): void
     {
-        $this->createClient();
+        $this->createClient($backup->backupHost);
 
         $this->client->deleteObject([
-            'Bucket' => config('backups.disks.s3.bucket'),
-            'Key' => "{$backup->server->uuid}/{$backup->uuid}.tar.gz",
+            'Bucket' => $backup->backupHost->configuration['bucket'],
+            'Key' => "{$backup->server->uuid}/$backup->uuid.tar.gz",
         ]);
     }
 
     public function getDownloadLink(Backup $backup, User $user): string
     {
-        $this->createClient();
+        $this->createClient($backup->backupHost);
 
         $request = $this->client->createPresignedRequest(
             $this->client->getCommand('GetObject', [
-                'Bucket' => config('backups.disks.s3.bucket'),
-                'Key' => "{$backup->server->uuid}/{$backup->uuid}.tar.gz",
+                'Bucket' => $backup->backupHost->configuration['bucket'],
+                'Key' => "{$backup->server->uuid}/$backup->uuid.tar.gz",
                 'ContentType' => 'application/x-gzip',
             ]),
             CarbonImmutable::now()->addMinutes(5)
@@ -74,39 +75,26 @@ final class S3BackupSchema extends BackupAdapterSchema
         return $request->getUri()->__toString();
     }
 
-    /** @param array<mixed> $configuration */
-    public function saveConfiguration(array $configuration): void
-    {
-        parent::saveConfiguration($configuration);
-
-        $this->client = null;
-    }
-
     /** @return Component[] */
     public function getConfigurationForm(): array
     {
         return [
-            TextInput::make('AWS_DEFAULT_REGION')
+            TextInput::make('configuration.default_region')
                 ->label(trans('admin/setting.backup.s3.default_region'))
-                ->required()
-                ->default(config('backups.disks.s3.region')),
-            TextInput::make('AWS_ACCESS_KEY_ID')
+                ->required(),
+            TextInput::make('configuration.access_key')
                 ->label(trans('admin/setting.backup.s3.access_key'))
-                ->required()
-                ->default(config('backups.disks.s3.key')),
-            TextInput::make('AWS_SECRET_ACCESS_KEY')
+                ->required(),
+            TextInput::make('configuration.secret_key')
                 ->label(trans('admin/setting.backup.s3.secret_key'))
-                ->required()
-                ->default(config('backups.disks.s3.secret')),
-            TextInput::make('AWS_BACKUPS_BUCKET')
+                ->required(),
+            TextInput::make('configuration.bucket')
                 ->label(trans('admin/setting.backup.s3.bucket'))
-                ->required()
-                ->default(config('backups.disks.s3.bucket')),
-            TextInput::make('AWS_ENDPOINT')
+                ->required(),
+            TextInput::make('configuration.endpoint')
                 ->label(trans('admin/setting.backup.s3.endpoint'))
-                ->required()
-                ->default(config('backups.disks.s3.endpoint')),
-            Toggle::make('AWS_USE_PATH_STYLE_ENDPOINT')
+                ->required(),
+            Toggle::make('configuration.use_path_style_endpoint')
                 ->label(trans('admin/setting.backup.s3.use_path_style_endpoint'))
                 ->inline(false)
                 ->onIcon('tabler-check')
@@ -114,8 +102,7 @@ final class S3BackupSchema extends BackupAdapterSchema
                 ->onColor('success')
                 ->offColor('danger')
                 ->live()
-                ->stateCast(new BooleanStateCast(false))
-                ->default(config('backups.disks.s3.use_path_style_endpoint')),
+                ->stateCast(new BooleanStateCast(false)),
         ];
     }
 
@@ -126,17 +113,17 @@ final class S3BackupSchema extends BackupAdapterSchema
 
         // Params for generating the presigned urls
         $params = [
-            'Bucket' => config('backups.disks.s3.bucket'),
-            'Key' => "{$backup->server->uuid}/{$backup->uuid}.tar.gz",
+            'Bucket' => $backup->backupHost->configuration['bucket'],
+            'Key' => "{$backup->server->uuid}/$backup->uuid.tar.gz",
             'ContentType' => 'application/x-gzip',
         ];
 
-        $storageClass = config('backups.disks.s3.storage_class');
+        $storageClass = $backup->backupHost->configuration['storage_class'];
         if (!is_null($storageClass)) {
             $params['StorageClass'] = $storageClass;
         }
 
-        $this->createClient();
+        $this->createClient($backup->backupHost);
 
         // Execute the CreateMultipartUpload request
         $result = $this->client->execute($this->client->getCommand('CreateMultipartUpload', $params));
@@ -192,12 +179,12 @@ final class S3BackupSchema extends BackupAdapterSchema
         }
 
         $params = [
-            'Bucket' => config('backups.disks.s3.bucket'),
-            'Key' => "{$backup->server->uuid}/{$backup->uuid}.tar.gz",
+            'Bucket' => $backup->backupHost->configuration['bucket'],
+            'Key' => "{$backup->server->uuid}/$backup->uuid.tar.gz",
             'UploadId' => $backup->upload_id,
         ];
 
-        $this->createClient();
+        $this->createClient($backup->backupHost);
 
         if (!$successful) {
             $this->client->execute($this->client->getCommand('AbortMultipartUpload', $params));

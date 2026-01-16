@@ -18,12 +18,6 @@ interface BackupAdapterSchemaInterface
 
     public function getDownloadLink(Backup $backup, User $user): string;
 
-    /** @return array<mixed> */
-    public function getConfiguration(): array;
-
-    /** @param array<mixed> $configuration */
-    public function saveConfiguration(array $configuration): void;
-
     /** @return Component[] */
     public function getConfigurationForm(): array;
 }

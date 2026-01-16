@@ -193,7 +193,7 @@ class BackupController extends ClientApiController
             throw new AuthorizationException();
         }
 
-        $schema = $this->backupService->get($backup->disk);
+        $schema = $this->backupService->get($backup->backupHost->schema ?? config('backups.default'));
         if (!$schema) {
             throw new BadRequestHttpException('The backup requested references an unknown disk driver type and cannot be downloaded.');
         }

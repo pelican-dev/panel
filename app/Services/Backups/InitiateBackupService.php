@@ -6,7 +6,6 @@ use App\Exceptions\Service\Backup\TooManyBackupsException;
 use App\Extensions\BackupAdapter\BackupAdapterService;
 use App\Models\Backup;
 use App\Models\Server;
-use Exception;
 use Illuminate\Database\ConnectionInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
@@ -109,15 +108,16 @@ class InitiateBackupService
             $this->deleteBackupService->handle($oldest);
         }
 
-        $schema = $this->backupService->get(collect($server->node->backupHosts)->first()->schema ?? config('backups.default'));
+        $backupHost = collect($server->node->backupHosts)->first();
+        $schema = $this->backupService->get($backupHost->schema ?? config('backups.default'));
 
-        return $this->connection->transaction(function () use ($schema, $server, $name) {
+        return $this->connection->transaction(function () use ($backupHost, $schema, $server, $name) {
             $backup = Backup::create([
                 'server_id' => $server->id,
                 'uuid' => Uuid::uuid4()->toString(),
                 'name' => trim($name) ?: sprintf('Backup at %s', now()->toDateTimeString()),
                 'ignored_files' => array_values($this->ignoredFiles ?? []),
-                'disk' => $schema->getId(),
+                'backup_host_id' => $backupHost->id,
                 'is_locked' => $this->isLocked,
             ]);
 

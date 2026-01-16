@@ -30,6 +30,13 @@ return new class extends Migration
 
             $table->unique(['node_id']);
         });
+
+        Schema::table('backups', function (Blueprint $table) {
+            $table->unsignedInteger('backup_host_id')->nullable()->after('disk');
+            $table->foreign('backup_host_id')->references('id')->on('backup_hosts');
+
+            $table->dropColumn('disk');
+        });
     }
 
     /**
@@ -40,5 +47,11 @@ return new class extends Migration
         Schema::dropIfExists('backup_hosts');
 
         Schema::dropIfExists('backup_host_node');
+
+        Schema::table('backups', function (Blueprint $table) {
+            $table->string('disk')->after('backup_host_id');
+
+            $table->dropColumn('backup_host_id');
+        });
     }
 };

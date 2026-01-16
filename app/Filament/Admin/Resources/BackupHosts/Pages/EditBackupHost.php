@@ -12,6 +12,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Enums\IconSize;
 
+/** @property BackupHost $record */
 class EditBackupHost extends EditRecord
 {
     use CanCustomizeHeaderActions;
@@ -28,7 +29,8 @@ class EditBackupHost extends EditRecord
                 ->disabled(fn (BackupHost $backupHost) => $backupHost->backups()->count() > 0)
                 ->iconButton()
                 ->iconSize(IconSize::ExtraLarge),
-            $this->getSaveFormAction()->formId('form')
+            $this->getSaveFormAction()
+                ->formId('form')
                 ->iconButton()
                 ->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),

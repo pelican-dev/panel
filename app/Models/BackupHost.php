@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $id
  * @property string $name
  * @property string $schema
- * @property array<mixed> $configuration
+ * @property array<string, mixed> $configuration
  * @property CarbonImmutable $created_at
  * @property CarbonImmutable $updated_at
  * @property Collection|Node[] $nodes
@@ -57,6 +57,6 @@ class BackupHost extends Model implements Validatable
 
     public function backups(): HasMany
     {
-        return $this->hasMany(Backup::class, 'disk', 'schema');
+        return $this->hasMany(Backup::class);
     }
 }
