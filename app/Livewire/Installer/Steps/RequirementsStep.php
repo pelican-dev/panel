@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Installer\Steps;
 
+use App\Enums\TablerIcon;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
@@ -20,7 +21,7 @@ class RequirementsStep
         $fields = [
             Section::make(trans('installer.requirements.sections.version.title'))
                 ->description(trans('installer.requirements.sections.version.or_newer', ['version' => self::MIN_PHP_VERSION]))
-                ->icon($correctPhpVersion ? 'tabler-check' : 'tabler-x')
+                ->icon($correctPhpVersion ? TablerIcon::Check : TablerIcon::X)
                 ->iconColor($correctPhpVersion ? 'success' : 'danger')
                 ->schema([
                     TextEntry::make('php_version')
@@ -44,7 +45,7 @@ class RequirementsStep
 
         $fields[] = Section::make(trans('installer.requirements.sections.extensions.title'))
             ->description(implode(', ', array_keys($phpExtensions)))
-            ->icon($allExtensionsInstalled ? 'tabler-check' : 'tabler-x')
+            ->icon($allExtensionsInstalled ? TablerIcon::Check : TablerIcon::X)
             ->iconColor($allExtensionsInstalled ? 'success' : 'danger')
             ->schema([
                 TextEntry::make('all_extensions_installed')
@@ -65,7 +66,7 @@ class RequirementsStep
 
         $fields[] = Section::make(trans('installer.requirements.sections.permissions.title'))
             ->description(implode(', ', array_keys($folderPermissions)))
-            ->icon($correctFolderPermissions ? 'tabler-check' : 'tabler-x')
+            ->icon($correctFolderPermissions ? TablerIcon::Check : TablerIcon::X)
             ->iconColor($correctFolderPermissions ? 'success' : 'danger')
             ->schema([
                 TextEntry::make('correct_folder_permissions')

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\TablerIcon;
 use App\Models\Node;
 use Filament\Support\Enums\IconSize;
 use Filament\Tables\View\Components\Columns\IconColumnComponent\IconComponent;
@@ -28,7 +29,7 @@ class NodeSystemInformation extends Component
 
         $tooltip = $exception ? 'Error connecting to node!<br>Check browser console for details.' : $version;
 
-        $icon = 'tabler-heart' . ($exception ? '-off' : 'beat');
+        $icon = $exception ? TablerIcon::HeartOff : TablerIcon::Heartbeat;
         $color = $exception ? 'danger' : 'success';
 
         return generate_icon_html($icon, attributes: (new ComponentAttributeBag())
@@ -46,7 +47,7 @@ class NodeSystemInformation extends Component
 
     public function placeholder(): string
     {
-        return generate_icon_html('tabler-heart-question', attributes: (new ComponentAttributeBag())
+        return generate_icon_html(TablerIcon::HeartQuestion, attributes: (new ComponentAttributeBag())
             ->color(IconComponent::class, 'warning'), size: IconSize::Large)
             ->toHtml();
     }

@@ -2,6 +2,7 @@
 
 namespace App\Extensions\Features\Schemas;
 
+use App\Enums\TablerIcon;
 use App\Extensions\Features\FeatureSchemaInterface;
 use Filament\Actions\Action;
 use Illuminate\Support\Facades\Blade;
@@ -31,7 +32,7 @@ class PIDLimitSchema implements FeatureSchemaInterface
     {
         return Action::make($this->getId())
             ->requiresConfirmation()
-            ->icon('tabler-alert-triangle')
+            ->icon(TablerIcon::AlertTriangle)
             ->modalHeading(fn () => user()?->isAdmin() ? 'Memory or process limit reached...' : 'Possible resource limit reached...')
             ->modalDescription(new HtmlString(Blade::render(
                 user()?->isAdmin() ? <<<'HTML'

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\TablerIcon;
 use App\Events\ActivityLogged;
 use App\Traits\HasValidation;
+use BackedEnum;
 use Carbon\Carbon;
 use Filament\Facades\Filament;
 use Filament\Support\Contracts\HasIcon;
@@ -143,17 +145,17 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         });
     }
 
-    public function getIcon(): string
+    public function getIcon(): BackedEnum
     {
         if ($this->apiKey) {
-            return 'tabler-api';
+            return TablerIcon::Api;
         }
 
         if ($this->actor instanceof User) {
-            return 'tabler-user';
+            return TablerIcon::User;
         }
 
-        return $this->actor_id === null ? 'tabler-device-desktop' : 'tabler-user-off';
+        return $this->actor_id === null ? TablerIcon::DeviceDesktop : TablerIcon::UserOff;
     }
 
     public function getLabel(): string

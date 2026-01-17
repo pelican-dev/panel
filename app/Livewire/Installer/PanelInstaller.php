@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Installer;
 
+use App\Enums\TablerIcon;
 use App\Jobs\InstallEgg;
 use App\Livewire\Installer\Steps\CacheStep;
 use App\Livewire\Installer\Steps\DatabaseStep;
@@ -120,7 +121,7 @@ class PanelInstaller extends SimplePage implements HasForms
         return Select::make('language')
             ->hiddenLabel()
             ->prefix(trans('profile.language'))
-            ->prefixIcon('tabler-flag')
+            ->prefixIcon(TablerIcon::Flag)
             ->required()
             ->live()
             ->default('en')

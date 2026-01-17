@@ -2,8 +2,10 @@
 
 namespace App\Extensions\Captcha\Schemas\Turnstile;
 
+use App\Enums\TablerIcon;
 use App\Extensions\Captcha\Schemas\BaseSchema;
 use App\Extensions\Captcha\Schemas\CaptchaSchemaInterface;
+use BackedEnum;
 use Exception;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
@@ -49,8 +51,8 @@ class TurnstileSchema extends BaseSchema implements CaptchaSchemaInterface
                 ->label(trans('admin/setting.captcha.verify'))
                 ->columnSpan(2)
                 ->inline(false)
-                ->onIcon('tabler-check')
-                ->offIcon('tabler-x')
+                ->onIcon(TablerIcon::Check)
+                ->offIcon(TablerIcon::X)
                 ->onColor('success')
                 ->offColor('danger')
                 ->default(env('CAPTCHA_TURNSTILE_VERIFY_DOMAIN', true)),
@@ -61,9 +63,9 @@ class TurnstileSchema extends BaseSchema implements CaptchaSchemaInterface
         ]);
     }
 
-    public function getIcon(): ?string
+    public function getIcon(): BackedEnum
     {
-        return 'tabler-brand-cloudflare';
+        return TablerIcon::BrandCloudflare;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Installer\Steps;
 
+use App\Enums\TablerIcon;
 use App\Livewire\Installer\PanelInstaller;
 use Exception;
 use Filament\Forms\Components\TextInput;
@@ -30,7 +31,7 @@ class QueueStep
             ->schema([
                 ToggleButtons::make('env_queue.QUEUE_CONNECTION')
                     ->label(trans('installer.queue.driver'))
-                    ->hintIcon('tabler-question-mark', trans('installer.queue.driver_help'))
+                    ->hintIcon(TablerIcon::QuestionMark, trans('installer.queue.driver_help'))
                     ->required()
                     ->inline()
                     ->options(self::QUEUE_DRIVERS)

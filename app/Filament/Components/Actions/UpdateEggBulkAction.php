@@ -2,6 +2,7 @@
 
 namespace App\Filament\Components\Actions;
 
+use App\Enums\TablerIcon;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
@@ -23,7 +24,7 @@ class UpdateEggBulkAction extends BulkAction
 
         $this->label(trans_choice('admin/egg.update', 2));
 
-        $this->icon('tabler-cloud-download');
+        $this->icon(TablerIcon::CloudDownload);
 
         $this->color('success');
 

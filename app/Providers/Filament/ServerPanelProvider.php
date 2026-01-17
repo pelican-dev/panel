@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Servers\Pages\EditServer;
 use App\Filament\App\Resources\Servers\Pages\ListServers;
 use App\Http\Middleware\Activity\ServerSubject;
@@ -24,11 +25,11 @@ class ServerPanelProvider extends PanelProvider
             ->userMenuItems([
                 Action::make('to_serverList')
                     ->label(trans('profile.server_list'))
-                    ->icon('tabler-brand-docker')
+                    ->icon(TablerIcon::BrandDocker)
                     ->url(fn () => ListServers::getUrl(panel: 'app')),
                 Action::make('to_admin')
                     ->label(trans('profile.admin'))
-                    ->icon('tabler-arrow-forward')
+                    ->icon(TablerIcon::ArrowForward)
                     ->url(fn () => Filament::getPanel('admin')->getUrl())
                     ->visible(fn () => user()?->canAccessPanel(Filament::getPanel('admin'))),
             ])
@@ -36,7 +37,7 @@ class ServerPanelProvider extends PanelProvider
                 NavigationItem::make(trans('server/console.open_in_admin'))
                     ->url(fn () => EditServer::getUrl(['record' => Filament::getTenant()], panel: 'admin'))
                     ->visible(fn () => user()?->canAccessPanel(Filament::getPanel('admin')) && user()->can('view server', Filament::getTenant()))
-                    ->icon('tabler-arrow-back')
+                    ->icon(TablerIcon::ArrowBack)
                     ->sort(99),
             ])
             ->discoverResources(in: app_path('Filament/Server/Resources'), for: 'App\\Filament\\Server\\Resources')
