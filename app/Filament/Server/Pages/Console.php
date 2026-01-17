@@ -65,7 +65,12 @@ class Console extends Page
         /** @var Server $server */
         $server = Filament::getTenant();
         foreach ($featureService->getActiveSchemas($server->egg->features) as $feature) {
-            $this->cacheAction($feature->getAction());
+            $action = $feature->getAction();
+
+            // Clear mounted action state to allow next modal to mount
+            $action->after(fn () => $this->unmountAction());
+
+            $this->cacheAction($action);
         }
     }
 
@@ -76,11 +81,19 @@ class Console extends Page
         $feature = data_get($data, 'key');
 
         $feature = $this->featureService->get($feature);
-        if (!$feature || $this->getMountedAction()) {
+        if (!$feature) {
             return;
         }
+
+        // If a modal is already mounted, replace it with the new one
+        // This allows sequential egg features (ex. Java version → EULA) to work correctly
+        if ($this->getMountedAction()) {
+            $this->replaceMountedAction($feature->getId());
+
+            return;
+        }
+
         $this->mountAction($feature->getId());
-        sleep(2); // TODO find a better way
     }
 
     public function getWidgetData(): array

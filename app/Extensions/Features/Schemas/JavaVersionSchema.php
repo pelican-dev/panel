@@ -13,6 +13,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
+use Filament\Support\Exceptions\Halt;
 
 class JavaVersionSchema implements FeatureSchemaInterface
 {
@@ -83,6 +84,8 @@ class JavaVersionSchema implements FeatureSchemaInterface
                         ->body($exception->getMessage())
                         ->danger()
                         ->send();
+
+                    throw new Halt();
                 }
             });
     }

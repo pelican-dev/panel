@@ -10,6 +10,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
@@ -55,6 +56,8 @@ class MinecraftEulaSchema implements FeatureSchemaInterface
                         ->body($exception->getMessage())
                         ->danger()
                         ->send();
+
+                    throw new Halt();
                 }
             });
     }

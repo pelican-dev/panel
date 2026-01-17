@@ -1,4 +1,4 @@
-<x-filament::widget>
+<x-filament::widget wire:key="server-console-{{ $this->server->uuid }}">
     @assets
     @php
         $userFont = (string) user()?->getCustomization(\App\Enums\CustomizationKey::ConsoleFont);
