@@ -94,9 +94,10 @@ class ListFiles extends ListRecords
         $server = Filament::getTenant();
 
         return $table
-            ->paginated([25, 50, 100, 150, 200])
+            ->paginated([25, 50, 100, 150, 200, 'all'])
             ->paginationMode(PaginationMode::Simple)
             ->defaultPaginationPageOption(50)
+            ->selectCurrentPageOnly(false)
             ->deferLoading()
             ->searchable()
             ->query(fn () => File::get($server, $this->path)->orderByDesc('is_directory'))
@@ -589,8 +590,15 @@ class ListFiles extends ListRecords
 
     private function refreshPage(bool $oneBack = false): void
     {
-        $url = self::getUrl(['path' => $oneBack ? dirname($this->path) : $this->path]);
-        $this->redirect($url, FilamentView::hasSpaMode($url));
+        if ($oneBack) {
+            $url = self::getUrl(['path' => dirname($this->path)]);
+            $this->redirect($url, FilamentView::hasSpaMode($url));
+
+            return;
+        }
+
+        $this->flushCachedTableRecords();
+        $this->dispatch('$refresh');
     }
 
     /**
