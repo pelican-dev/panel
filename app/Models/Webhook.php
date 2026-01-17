@@ -33,6 +33,11 @@ class Webhook extends Model
         ];
     }
 
+    /**
+     * Get the prunable model query.
+     *
+     * @return Builder
+     */
     public function prunable(): Builder
     {
         return static::where('created_at', '<=', Carbon::now()->subDays(config('panel.webhook.prune_days')));

@@ -19,6 +19,10 @@ class ProcessWebhook implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
+     * Create a new job instance.
+     *
+     * @param  WebhookConfiguration  $webhookConfiguration
+     * @param  string  $eventName
      * @param  array<mixed>  $data
      */
     public function __construct(
@@ -27,6 +31,11 @@ class ProcessWebhook implements ShouldQueue
         private array $data
     ) {}
 
+    /**
+     * Process and send the webhook, capturing HTTP response details.
+     * 
+     * @return void
+     */
     public function handle(): void
     {
         $data = $this->data[0] ?? [];

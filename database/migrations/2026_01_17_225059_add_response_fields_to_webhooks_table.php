@@ -6,6 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * Adds response tracking columns to the webhooks table to capture HTTP response metadata.
+     *
+     * @return void
+     */
     public function up(): void
     {
         Schema::table('webhooks', function (Blueprint $table) {
@@ -15,6 +22,13 @@ return new class extends Migration
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * Removes the response tracking columns from the webhooks table.
+     *
+     * @return void
+     */
     public function down(): void
     {
         Schema::table('webhooks', function (Blueprint $table) {
