@@ -34,9 +34,18 @@ class ProcessWebhook implements ShouldQueue
             $data = reset($data);
         }
 
+        if (is_object($data)) {
+            $data = method_exists($data, 'toArray') ? $data->toArray() : (array) $data;
+        }
+
         if (is_string($data)) {
             $data = Arr::wrap(json_decode($data, true) ?? []);
         }
+        
+        if (!is_array($data)) {
+            $data = [];
+        }
+        
         $data['event'] = $this->webhookConfiguration->transformClassName($this->eventName);
 
         if ($this->webhookConfiguration->type === WebhookType::Discord) {
@@ -56,6 +65,11 @@ class ProcessWebhook implements ShouldQueue
             }
         }
 
+        $successful = null;
+        $responseCode = null;
+        $responseBody = null;
+        $errorMessage = null;
+
         try {
             $headers = [];
 
@@ -64,11 +78,15 @@ class ProcessWebhook implements ShouldQueue
                     $headers[$key] = $this->webhookConfiguration->replaceVars($data, $value);
                 }
             }
-            Http::withHeaders($headers)->post($this->webhookConfiguration->endpoint, $data)->throw();
+            
+            $response = Http::withHeaders($headers)->post($this->webhookConfiguration->endpoint, $data);
+            $responseCode = $response->status();
+            $responseBody = $response->body();
+            $response->throw();
             $successful = now();
         } catch (Exception $exception) {
-            report($exception->getMessage());
-            $successful = null;
+            report($exception);
+            $errorMessage = $exception->getMessage();
         }
 
         $this->webhookConfiguration->webhooks()->create([
@@ -76,6 +94,9 @@ class ProcessWebhook implements ShouldQueue
             'successful_at' => $successful,
             'event' => $this->eventName,
             'endpoint' => $this->webhookConfiguration->endpoint,
+            'response_code' => $responseCode,
+            'response' => $responseBody,
+            'error' => $errorMessage,
         ]);
     }
 }

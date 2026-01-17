@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $endpoint
  * @property \Illuminate\Support\Carbon|null $successful_at
  * @property array<array-key, mixed> $payload
+ * @property int|null $response_code
+ * @property string|null $response
+ * @property string|null $error
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  */
@@ -20,7 +23,7 @@ class Webhook extends Model
 {
     use HasFactory, MassPrunable;
 
-    protected $fillable = ['payload', 'successful_at', 'event', 'endpoint'];
+    protected $fillable = ['payload', 'successful_at', 'event', 'endpoint', 'response_code', 'response', 'error'];
 
     public function casts()
     {
