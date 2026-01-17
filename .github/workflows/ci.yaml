@@ -61,14 +61,17 @@ jobs:
       - name: Create SQLite file
         run: touch database/testing.sqlite
 
+      - name: Run Migrations
+        run: php artisan migrate --force --seed
+
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit
+        run: vendor/bin/pest tests/Unit --parallel
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration
+        run: vendor/bin/pest tests/Integration --parallel
 
   mysql:
     name: MySQL
@@ -120,14 +123,20 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
+      - name: Run Migrations
+        run: php artisan migrate --force --seed
+        env:
+          DB_PORT: ${{ job.services.database.ports[3306] }}
+          DB_USERNAME: root
+
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit
+        run: vendor/bin/pest tests/Unit --parallel
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration
+        run: vendor/bin/pest tests/Integration --parallel
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -182,14 +191,20 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
+      - name: Run Migrations
+        run: php artisan migrate --force --seed
+        env:
+          DB_PORT: ${{ job.services.database.ports[3306] }}
+          DB_USERNAME: root
+
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit
+        run: vendor/bin/pest tests/Unit --parallel
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration
+        run: vendor/bin/pest tests/Integration --parallel
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -238,6 +253,7 @@ jobs:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
+            ${{ runner.os }}-composer-${{ matrix.php }}-
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -250,11 +266,14 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
+      - name: Run Migrations
+        run: php artisan migrate --force --seed
+
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit
+        run: vendor/bin/pest tests/Unit --parallel
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration
+        run: vendor/bin/pest tests/Integration --parallel
