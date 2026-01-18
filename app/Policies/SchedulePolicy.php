@@ -14,7 +14,7 @@ class SchedulePolicy
         return $user->can(SubuserPermission::ScheduleRead, Filament::getTenant());
     }
 
-    public function view(User $user, Model $record): bool
+    public function view(User $user, Model $model): bool
     {
         return $user->can(SubuserPermission::ScheduleRead, Filament::getTenant());
     }
@@ -24,12 +24,12 @@ class SchedulePolicy
         return $user->can(SubuserPermission::ScheduleCreate, Filament::getTenant());
     }
 
-    public function edit(User $user, Model $record): bool
+    public function update(User $user, Model $model): bool
     {
         return $user->can(SubuserPermission::ScheduleUpdate, Filament::getTenant());
     }
 
-    public function delete(User $user, Model $record): bool
+    public function delete(User $user, Model $model): bool
     {
         return $user->can(SubuserPermission::ScheduleDelete, Filament::getTenant());
     }

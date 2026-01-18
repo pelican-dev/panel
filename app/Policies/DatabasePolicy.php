@@ -14,7 +14,7 @@ class DatabasePolicy
         return $user->can(SubuserPermission::DatabaseRead, Filament::getTenant());
     }
 
-    public function view(User $user, Model $record): bool
+    public function view(User $user, Model $model): bool
     {
         return $user->can(SubuserPermission::DatabaseRead, Filament::getTenant());
     }
@@ -24,12 +24,12 @@ class DatabasePolicy
         return $user->can(SubuserPermission::DatabaseCreate, Filament::getTenant());
     }
 
-    public function edit(User $user, Model $record): bool
+    public function update(User $user, Model $model): bool
     {
         return $user->can(SubuserPermission::DatabaseUpdate, Filament::getTenant());
     }
 
-    public function delete(User $user, Model $record): bool
+    public function delete(User $user, Model $model): bool
     {
         return $user->can(SubuserPermission::DatabaseDelete, Filament::getTenant());
     }
