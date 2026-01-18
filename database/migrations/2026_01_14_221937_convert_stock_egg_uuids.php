@@ -22,7 +22,7 @@ return new class extends Migration
             // Garrys Mod
             '60ef81d4-30a2-4d98-ab64-f59c69e2f915' => [
                 'new_uuid' => 'c0b2f96a-f753-4d82-a73e-6e5be2bbadd5',
-                'new_update_url' => 'https://raw.githubusercontent.com/pelican-eggs/games-steamcmd/refs/heads/main/gmod/egg-garry-s-mod.yaml',
+                'new_update_url' => 'https://raw.githubusercontent.com/pelican-eggs/games-steamcmd/refs/heads/main/gmod/egg-garrys-mod.yaml',
             ],
         ];
 
