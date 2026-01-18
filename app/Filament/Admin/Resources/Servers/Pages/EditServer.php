@@ -16,7 +16,6 @@ use App\Models\Egg;
 use App\Models\Server;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonServerRepository;
-use App\Services\Backups\DeleteBackupService;
 use App\Services\Eggs\EggChangerService;
 use App\Services\Servers\RandomWordService;
 use App\Services\Servers\ReinstallServerService;
@@ -975,17 +974,17 @@ class EditServer extends EditRecord
                                             ->disabled(fn (Server $server) => user()?->accessibleNodes()->count() <= 1 || $server->isInConflictState())
                                             ->modalHeading(trans('admin/server.transfer'))
                                             ->schema($this->transferServer())
-                                            ->action(function (TransferServerService $transfer, DeleteBackupService $deleteBackup, Server $server, $data) {
+                                            ->action(function (TransferServerService $transfer, Server $server, $data) {
                                                 try {
-                                                                $selectedBackupUuids = Arr::get($data, 'backups', []);
+                                                    $selectedBackupUuids = Arr::get($data, 'backups', []);
                                                     $transfer->handle($server, Arr::get($data, 'node_id'), Arr::get($data, 'allocation_id'), Arr::get($data, 'allocation_additional', []), $selectedBackupUuids);
 
-                                                                $server->backups
-                                                                    ->whereNotIn('uuid', $selectedBackupUuids)
-                                                                    ->where('disk', Backup::ADAPTER_DAEMON)
-                                                                    ->each(function ($backup) {
-                                                                        $backup->delete();
-                                                                    });
+                                                    $server->backups
+                                                        ->whereNotIn('uuid', $selectedBackupUuids)
+                                                        ->where('disk', Backup::ADAPTER_DAEMON)
+                                                        ->each(function ($backup) {
+                                                            $backup->delete();
+                                                        });
 
                                                     Notification::make()
                                                         ->title(trans('admin/server.notifications.transfer_started'))
