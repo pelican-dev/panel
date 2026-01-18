@@ -3,6 +3,7 @@
 namespace App\Filament\Components\Actions;
 
 use App\Console\Commands\Egg\UpdateEggIndexCommand;
+use App\Jobs\InstallEgg;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Closure;
@@ -46,7 +47,26 @@ class ImportEggAction extends Action
         $this->authorize(fn () => user()?->can('import egg'));
 
         $this->action(function (array $data, EggImporterService $eggImportService): void {
+
+            $gitHubEggs = array_get($this->data, 'eggs', []);
             $eggs = array_merge(collect($data['urls'])->flatten()->whereNotNull()->unique()->all(), Arr::wrap($data['files']));
+
+            if ($gitHubEggs) {
+                foreach ($gitHubEggs as $category => $eggs) {
+                    foreach ($eggs as $downloadUrl) {
+                        InstallEgg::dispatch($downloadUrl);
+                    }
+                }
+
+                Notification::make()
+                    ->title(trans('installer.egg.background_install_started'))
+                    ->body(trans('installer.egg.background_install_description', ['count' => array_sum(array_map('count', $gitHubEggs))]))
+                    ->success()
+                    ->persistent()
+                    ->send();
+
+            }
+
             if (empty($eggs)) {
                 return;
             }
@@ -195,7 +215,7 @@ class ImportEggAction extends Action
                 ]);
         }
 
-        return Tab::make('')
+        return Tab::make('github')
             ->label(trans('admin/egg.import.github'))
             ->icon('tabler-brand-github')
             ->columnSpanFull()

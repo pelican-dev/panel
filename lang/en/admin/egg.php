@@ -24,7 +24,7 @@ return [
         'import_result' => 'Imported :success of :total eggs',
         'imported_eggs' => 'Imported: :eggs',
         'failed_import_eggs' => 'Failed: :eggs',
-        'github' => 'Github',
+        'github' => 'GitHub',
         'refresh' => 'Refresh',
         'import_image' => 'Import Image',
         'no_local_ip' => 'Local IP Addresses are not allowed',
