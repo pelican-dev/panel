@@ -47,8 +47,8 @@ class UpdateEggAction extends Action
                 cache()->forget("eggs.$egg->uuid.update");
             } catch (Exception $exception) {
                 Notification::make()
-                    ->title(trans('admin/egg.update_failed'))
-                    ->body($exception->getMessage())
+                    ->title(trans('admin/egg.update_failed', ['egg' => $egg->name]))
+                    ->body(trans('admin/egg.update_error', ['error' => $exception->getMessage()]))
                     ->danger()
                     ->send();
 
@@ -58,8 +58,8 @@ class UpdateEggAction extends Action
             }
 
             Notification::make()
-                ->title(trans_choice('admin/egg.updated', 1))
-                ->body($egg->name)
+                ->title(trans('admin/egg.update_success', ['egg' => $egg->name]))
+                ->body(trans('admin/egg.updated_from', ['url' => $egg->update_url]))
                 ->success()
                 ->send();
         });

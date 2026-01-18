@@ -44,4 +44,4 @@ Some of our popular eggs include:
 ## Repository Activity
 ![Stats](https://repobeats.axiom.co/api/embed/4d8cc7012b325141e6fae9c34a22b3669ad5753b.svg "Repobeats analytics image")
 
-*Copyright Pelican® 2024-2025*
+*Copyright Pelican® 2024-2026*

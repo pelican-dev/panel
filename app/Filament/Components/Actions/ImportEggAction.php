@@ -89,18 +89,20 @@ class ImportEggAction extends Action
                 }
             }
 
-            if ($failed->count() > 0) {
+            $bodyParts = collect([
+                $success->isNotEmpty() ? trans('admin/egg.import.imported_eggs', ['eggs' => $success->join(', ')]) : null,
+                $failed->isNotEmpty() ? trans('admin/egg.import.failed_import_eggs', ['eggs' => $failed->join(', ')]) : null,
+            ])->filter();
+
+            if ($bodyParts->isNotEmpty()) {
                 Notification::make()
-                    ->title(trans('admin/egg.import.import_failed'))
-                    ->body($failed->join(', '))
-                    ->danger()
-                    ->send();
-            }
-            if ($success->count() > 0) {
-                Notification::make()
-                    ->title(trans('admin/egg.import.import_success'))
-                    ->body($success->join(', '))
-                    ->success()
+                    ->title(trans('admin/egg.import.import_result', [
+                        'success' => $success->count(),
+                        'failed' => $failed->count(),
+                        'total' => $success->count() + $failed->count(),
+                    ]))
+                    ->body($bodyParts->join(' | '))
+                    ->status($failed->isEmpty() ? 'success' : ($success->isEmpty() ? 'danger' : 'warning'))
                     ->send();
             }
         });

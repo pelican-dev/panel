@@ -11,11 +11,11 @@ use App\Livewire\Installer\Steps\QueueStep;
 use App\Livewire\Installer\Steps\RequirementsStep;
 use App\Livewire\Installer\Steps\SessionStep;
 use App\Models\User;
-use App\Services\Eggs\Sharing\EggImporterService;
 use App\Services\Helpers\LanguageService;
 use App\Services\Users\UserCreationService;
 use App\Traits\CheckMigrationsTrait;
 use App\Traits\EnvironmentWriterTrait;
+use App\Traits\Filament\CanCustomizeSteps;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -27,6 +27,7 @@ use Filament\Pages\SimplePage;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Exceptions\Halt;
@@ -40,6 +41,7 @@ use Illuminate\Support\HtmlString;
  */
 class PanelInstaller extends SimplePage implements HasForms
 {
+    use CanCustomizeSteps;
     use CheckMigrationsTrait;
     use EnvironmentWriterTrait;
     use InteractsWithForms;
@@ -71,9 +73,7 @@ class PanelInstaller extends SimplePage implements HasForms
         $this->form->fill();
     }
 
-    /** @return Component[]
-     * @throws Exception
-     */
+    /** @return Component[] */
     protected function getFormSchema(): array
     {
         return [
@@ -81,21 +81,9 @@ class PanelInstaller extends SimplePage implements HasForms
                 ->schema([
                     $this->getLanguageComponent(),
                 ]),
-            Wizard::make([
-                RequirementsStep::make(),
-                EnvironmentStep::make($this),
-                DatabaseStep::make($this),
-                EggSelectionStep::make(),
-                CacheStep::make($this),
-                QueueStep::make($this),
-                SessionStep::make(),
-            ])
+            Wizard::make($this->getSteps())
                 ->persistStepInQueryString()
-                ->nextAction(function (Action $action) {
-                    $action
-                        ->label(trans('installer.next_step'))
-                        ->keyBindings('enter');
-                })
+                ->nextAction(fn (Action $action) => $action->keyBindings('enter'))
                 ->submitAction(new HtmlString(Blade::render(<<<'BLADE'
                     <x-filament::button
                         type="submit"
@@ -106,6 +94,24 @@ class PanelInstaller extends SimplePage implements HasForms
                         <x-filament::loading-indicator wire:loading class="h-4 w-4" />
                     </x-filament::button>
                 BLADE))),
+        ];
+    }
+
+    /**
+     * @return Step[]
+     *
+     * @throws Exception
+     */
+    protected function getDefaultSteps(): array
+    {
+        return [
+            RequirementsStep::make(),
+            EnvironmentStep::make($this),
+            DatabaseStep::make($this),
+            EggSelectionStep::make(),
+            CacheStep::make($this),
+            QueueStep::make($this),
+            SessionStep::make(),
         ];
     }
 
@@ -129,7 +135,7 @@ class PanelInstaller extends SimplePage implements HasForms
         return 'data';
     }
 
-    public function submit(UserCreationService $userCreationService, EggImporterService $eggImporterService): void
+    public function submit(UserCreationService $userCreationService): void
     {
         try {
             // Disable installer
@@ -146,7 +152,7 @@ class PanelInstaller extends SimplePage implements HasForms
             $this->writeToEnv('env_session');
 
             // Install selected eggs
-            $this->installEggs($eggImporterService);
+            $this->installEggs();
 
             // Redirect to admin panel
             $this->redirect(Filament::getPanel('admin')->getUrl());
@@ -226,10 +232,13 @@ class PanelInstaller extends SimplePage implements HasForms
         }
     }
 
-    public function installEggs(EggImporterService $eggImporterService): void
+    public function installEggs(): void
     {
         try {
             $selectedEggs = array_get($this->data, 'eggs', []);
+            if (!$selectedEggs) {
+                return;
+            }
 
             foreach ($selectedEggs as $category => $eggs) {
                 foreach ($eggs as $downloadUrl) {
@@ -243,8 +252,6 @@ class PanelInstaller extends SimplePage implements HasForms
                 ->success()
                 ->persistent()
                 ->send();
-
-            return;
         } catch (Exception $exception) {
             report($exception);
 

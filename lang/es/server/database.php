@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'Bases de datos',
+    'empty' => 'Sin bases de datos',
+    'create_database' => 'Crear Base de Datos',
+    'limit' => 'Límite de bases de datos alcanzado',
+    'viewing' => 'Visualizando: :database',
+    'host' => 'Host',
+    'database' => 'Base de datos',
+    'username' => 'Nombre de usuario',
+    'password' => 'Contraseña',
+    'remote' => 'Remoto',
+    'created_at' => 'Creado el',
+    'name' => 'Nombre de la base de datos',
+    'name_hint' => 'Dejar este espacio en blanco generará automáticamente un nombre aleatorio',
+    'connections_from' => 'Conexiones desde',
+    'max_connections' => 'Número máximo de conexiones',
+    'database_host' => 'Host de base de datos',
+    'database_host_select' => 'Seleccionar host de base de datos',
+    'jdbc' => 'Cadena de conexión JDBC',
+    'create_notification' => 'Creado :database',
+    'create_notification_fail' => 'No se pudo crear :database',
+    'delete_notification' => 'Eliminado :database',
+    'delete_notification_fail' => 'No se pudo eliminar :database',
+];

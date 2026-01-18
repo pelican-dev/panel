@@ -216,7 +216,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         $rules = self::getValidationRules();
 
-        $rules['language'][] = new In(array_values(array_filter(ResourceBundle::getLocales(''), fn ($lang) => preg_match('/^[a-z]{2}$/', $lang))));
+        $rules['language'][] = new In(ResourceBundle::getLocales(''));
         $rules['timezone'][] = new In(DateTimeZone::listIdentifiers());
 
         return $rules;

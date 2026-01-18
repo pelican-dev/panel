@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => '資料庫',
+    'empty' => '無資料庫',
+    'create_database' => '建立資料庫',
+    'limit' => '已達到資料庫上限',
+    'viewing' => '正在檢視：:database',
+    'host' => '主機',
+    'database' => '資料庫',
+    'username' => '使用者名稱',
+    'password' => '密碼',
+    'remote' => '遠端',
+    'created_at' => '創建於',
+    'name' => '資料庫名稱',
+    'name_hint' => '此欄位留空會自動產生隨機名稱',
+    'connections_from' => '連線來自',
+    'max_connections' => '最大連線數',
+    'database_host' => '資料庫主機',
+    'database_host_select' => '選擇資料庫主機',
+    'jdbc' => 'JDBC 連接字串',
+    'create_notification' => '已建立 :database',
+    'create_notification_fail' => '建立 :database 失敗',
+    'delete_notification' => '已刪除 :database',
+    'delete_notification_fail' => '刪除 :database 失敗',
+];
