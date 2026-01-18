@@ -974,16 +974,8 @@ class EditServer extends EditRecord
                                                                 $server->backups
                                                                     ->whereNotIn('uuid', $selectedBackupUuids)
                                                                     ->where('disk', Backup::ADAPTER_DAEMON)
-                                                                    ->each(function ($backup) use ($deleteBackup) {
-                                                                        try {
-                                                                            $deleteBackup->handle($backup);
-                                                                        } catch (Exception $exception) {
-                                                                            Notification::make()
-                                                                                ->title(trans('admin/server.notifications.backup_transfer_failed'))
-                                                                                ->body($exception->getMessage())
-                                                                                ->danger()
-                                                                                ->send();
-                                                                        }
+                                                                    ->each(function ($backup) {
+                                                                        $backup->delete();
                                                                     });
 
                                                                 Notification::make()
