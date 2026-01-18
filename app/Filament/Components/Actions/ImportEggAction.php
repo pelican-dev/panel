@@ -52,8 +52,8 @@ class ImportEggAction extends Action
             $eggs = array_merge(collect($data['urls'])->flatten()->whereNotNull()->unique()->all(), Arr::wrap($data['files']));
 
             if ($gitHubEggs) {
-                foreach ($gitHubEggs as $category => $eggs) {
-                    foreach ($eggs as $downloadUrl) {
+                foreach ($gitHubEggs as $category => $sortedEggs) {
+                    foreach ($sortedEggs as $downloadUrl) {
                         InstallEgg::dispatch($downloadUrl);
                     }
                 }
