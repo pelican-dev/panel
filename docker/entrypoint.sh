@@ -25,7 +25,7 @@ else
 fi
 
 # create directories for volumes
-mkdir -p /pelican-data/database /pelican-data/storage/avatars /pelican-data/storage/fonts /pelican-data/storage/icons /var/www/html/storage/logs/supervisord 2>/dev/null
+mkdir -p /pelican-data/database /pelican-data/storage/avatars /pelican-data/storage/fonts /pelican-data/storage/icons /pelican-data/plugins /var/www/html/storage/logs/supervisord 2>/dev/null
 
 # if the app is installed then we need to run migrations on start. New installs will run migrations when you run the installer.
 if [ "${APP_INSTALLED}" == "true" ];  then
