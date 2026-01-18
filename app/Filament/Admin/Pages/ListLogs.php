@@ -19,7 +19,7 @@ class ListLogs extends BaseListLogs
 {
     protected string $view = 'filament.components.list-logs';
 
-    public function getHeading(): string
+    public function getHeading(): string|null|\Illuminate\Contracts\Support\Htmlable
     {
         return trans('admin/log.navigation.panel_logs');
     }
