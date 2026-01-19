@@ -34,4 +34,9 @@ return [
         'server_name' => 'Server Name: :server_name',
         'action' => 'Login and Begin Using',
     ],
+    'mail_tested' => [
+        'subject' => 'Panel Test Message',
+        'greeting' => 'Hello :username!',
+        'body' => 'This is a test of the Panel mail system. You\'re good to go!',
+    ],
 ];

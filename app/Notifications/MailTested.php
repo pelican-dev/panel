@@ -23,11 +23,11 @@ class MailTested extends Notification
         return $notifiable->language ?? 'en';
     }
 
-    public function toMail(): MailMessage
+    public function toMail(User $notifiable): MailMessage
     {
         return (new MailMessage())
-            ->subject('Panel Test Message')
-            ->greeting('Hello ' . $this->user->username . '!')
-            ->line('This is a test of the Panel mail system. You\'re good to go!');
+            ->subject(__('notifications.mail_tested.subject'))
+            ->greeting(__('notifications.mail_tested.greeting', ['username' => $notifiable->username]))
+            ->line(__('notifications.mail_tested.body'));
     }
 }
