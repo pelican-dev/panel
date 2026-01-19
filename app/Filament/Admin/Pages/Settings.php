@@ -11,6 +11,7 @@ use App\Notifications\MailTested;
 use App\Traits\EnvironmentWriterTrait;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use App\Traits\Filament\CanCustomizeTabs;
 use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
@@ -54,6 +55,7 @@ class Settings extends Page implements HasSchemas
         CanCustomizeHeaderActions::getHeaderActions insteadof InteractsWithHeaderActions;
     }
     use CanCustomizeHeaderWidgets;
+    use CanCustomizeTabs;
     use EnvironmentWriterTrait;
     use InteractsWithForms;
 
@@ -97,11 +99,7 @@ class Settings extends Page implements HasSchemas
         return trans('admin/setting.title');
     }
 
-    /**
-     * @return array<Component>
-     *
-     * @throws Exception
-     */
+    /** @return array<Component> */
     protected function getFormSchema(): array
     {
         return [
@@ -109,34 +107,44 @@ class Settings extends Page implements HasSchemas
                 ->columns()
                 ->persistTabInQueryString()
                 ->disabled(fn () => !user()?->can('update settings'))
-                ->tabs([
-                    Tab::make('general')
-                        ->label(trans('admin/setting.navigation.general'))
-                        ->icon('tabler-home')
-                        ->schema($this->generalSettings()),
-                    Tab::make('captcha')
-                        ->label(trans('admin/setting.navigation.captcha'))
-                        ->icon('tabler-shield')
-                        ->schema($this->captchaSettings())
-                        ->columns(1),
-                    Tab::make('mail')
-                        ->label(trans('admin/setting.navigation.mail'))
-                        ->icon('tabler-mail')
-                        ->schema($this->mailSettings()),
-                    Tab::make('backup')
-                        ->label(trans('admin/setting.navigation.backup'))
-                        ->icon('tabler-box')
-                        ->schema($this->backupSettings()),
-                    Tab::make('oauth')
-                        ->label(trans('admin/setting.navigation.oauth'))
-                        ->icon('tabler-brand-oauth')
-                        ->schema($this->oauthSettings())
-                        ->columns(1),
-                    Tab::make('misc')
-                        ->label(trans('admin/setting.navigation.misc'))
-                        ->icon('tabler-tool')
-                        ->schema($this->miscSettings()),
-                ]),
+                ->tabs($this->getTabs()),
+        ];
+    }
+
+    /**
+     * @return Tab[]
+     *
+     * @throws Exception
+     */
+    protected function getDefaultTabs(): array
+    {
+        return [
+            Tab::make('general')
+                ->label(trans('admin/setting.navigation.general'))
+                ->icon('tabler-home')
+                ->schema($this->generalSettings()),
+            Tab::make('captcha')
+                ->label(trans('admin/setting.navigation.captcha'))
+                ->icon('tabler-shield')
+                ->schema($this->captchaSettings())
+                ->columns(1),
+            Tab::make('mail')
+                ->label(trans('admin/setting.navigation.mail'))
+                ->icon('tabler-mail')
+                ->schema($this->mailSettings()),
+            Tab::make('backup')
+                ->label(trans('admin/setting.navigation.backup'))
+                ->icon('tabler-box')
+                ->schema($this->backupSettings()),
+            Tab::make('oauth')
+                ->label(trans('admin/setting.navigation.oauth'))
+                ->icon('tabler-brand-oauth')
+                ->schema($this->oauthSettings())
+                ->columns(1),
+            Tab::make('misc')
+                ->label(trans('admin/setting.navigation.misc'))
+                ->icon('tabler-tool')
+                ->schema($this->miscSettings()),
         ];
     }
 

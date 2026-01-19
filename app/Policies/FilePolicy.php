@@ -14,7 +14,7 @@ class FilePolicy
         return $user->can(SubuserPermission::FileRead, Filament::getTenant());
     }
 
-    public function view(User $user, Model $record): bool
+    public function view(User $user, Model $model): bool
     {
         return $user->can(SubuserPermission::FileReadContent, Filament::getTenant());
     }
@@ -24,12 +24,12 @@ class FilePolicy
         return $user->can(SubuserPermission::FileCreate, Filament::getTenant());
     }
 
-    public function edit(User $user, Model $record): bool
+    public function update(User $user, Model $model): bool
     {
         return $user->can(SubuserPermission::FileUpdate, Filament::getTenant());
     }
 
-    public function delete(User $user, Model $record): bool
+    public function delete(User $user, Model $model): bool
     {
         return $user->can(SubuserPermission::FileDelete, Filament::getTenant());
     }
