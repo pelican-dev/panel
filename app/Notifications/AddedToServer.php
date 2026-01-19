@@ -22,6 +22,11 @@ class AddedToServer extends Notification implements ShouldQueue
         return ['mail'];
     }
 
+    public function locale(User $notifiable): string
+    {
+        return $notifiable->language ?? 'en';
+    }
+
     public function toMail(User $notifiable): MailMessage
     {
         return (new MailMessage())
