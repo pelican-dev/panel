@@ -79,7 +79,7 @@ RUN mkdir -p /pelican-data/storage /pelican-data/plugins /var/run/supervisord \
     && ln -s  /pelican-data/database/database.sqlite ./database/database.sqlite \
     && ln -s  /pelican-data/storage /var/www/html/public/storage \
     && ln -s  /pelican-data/storage /var/www/html/storage/app/public \
-    && ln -s  /pelican-data/plugins /var/www/html \
+    && ln -s  /pelican-data/plugins /var/www/html/plugins \
 # Allow www-data write permissions where necessary
     && chown -R www-data: /pelican-data .env ./storage ./plugins ./bootstrap/cache /var/run/supervisord /var/www/html/public/storage \
     && chmod -R 770 /pelican-data ./storage ./bootstrap/cache /var/run/supervisord \
