@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Eggs\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Eggs\EggResource;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
@@ -130,7 +131,7 @@ class ListEggs extends ListRecords
                         }
                     }),
             ])
-            ->emptyStateIcon('tabler-eggs')
+            ->emptyStateIcon(TablerIcon::Eggs)
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/egg.no_eggs'))
             ->filters([
@@ -148,7 +149,7 @@ class ListEggs extends ListRecords
             ImportEggAction::make()
                 ->multiple(),
             CreateAction::make()
-                ->icon('tabler-file-plus')
+                ->icon(TablerIcon::FilePlus)
                 ->iconButton()->iconSize(IconSize::ExtraLarge),
         ];
     }

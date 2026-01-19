@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Roles\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Roles\RoleResource;
 use App\Models\Role;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -34,7 +35,7 @@ class CreateRole extends CreateRecord
         return [
             $this->getCreateFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-plus'),
+                ->icon(TablerIcon::Plus),
         ];
     }
 

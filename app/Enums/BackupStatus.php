@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use BackedEnum;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
@@ -12,12 +13,12 @@ enum BackupStatus: string implements HasColor, HasIcon, HasLabel
     case Successful = 'successful';
     case Failed = 'failed';
 
-    public function getIcon(): string
+    public function getIcon(): BackedEnum
     {
         return match ($this) {
-            self::InProgress => 'tabler-circle-dashed',
-            self::Successful => 'tabler-circle-check',
-            self::Failed => 'tabler-circle-x',
+            self::InProgress => TablerIcon::CircleDashed,
+            self::Successful => TablerIcon::CircleCheck,
+            self::Failed => TablerIcon::CircleX,
         };
     }
 

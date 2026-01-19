@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Nodes\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Nodes\NodeResource;
 use App\Models\Node;
 use App\Repositories\Daemon\DaemonSystemRepository;
@@ -84,7 +85,7 @@ class EditNode extends EditRecord
         return [
             Tab::make('overview')
                 ->label(trans('admin/node.tabs.overview'))
-                ->icon('tabler-chart-area-line-filled')
+                ->icon(TablerIcon::ChartAreaLineFilled)
                 ->columns([
                     'default' => 4,
                     'sm' => 2,
@@ -129,7 +130,7 @@ class EditNode extends EditRecord
                 ]),
             Tab::make('basic_settings')
                 ->label(trans('admin/node.tabs.basic_settings'))
-                ->icon('tabler-server')
+                ->icon(TablerIcon::Server)
                 ->schema([
                     TextInput::make('fqdn')
                         ->columnSpan(2)
@@ -253,9 +254,9 @@ class EditNode extends EditRecord
                             'https_proxy' => 'success',
                         ])
                         ->icons([
-                            'http' => 'tabler-lock-open-off',
-                            'https' => 'tabler-lock',
-                            'https_proxy' => 'tabler-shield-lock',
+                            'http' => TablerIcon::LockOpenOff,
+                            'https' => TablerIcon::Lock,
+                            'https_proxy' => TablerIcon::ShieldLock,
                         ])
                         ->formatStateUsing(fn (Get $get) => $get('scheme') === 'http' ? 'http' : ($get('behind_proxy') ? 'https_proxy' : 'https'))
                         ->live()
@@ -286,7 +287,7 @@ class EditNode extends EditRecord
                     'md' => 4,
                     'lg' => 6,
                 ])
-                ->icon('tabler-server-cog')
+                ->icon(TablerIcon::ServerCog)
                 ->schema([
                     TextInput::make('id')
                         ->label(trans('admin/node.node_id'))
@@ -324,7 +325,7 @@ class EditNode extends EditRecord
                             'lg' => 1,
                         ])
                         ->label(trans('admin/node.upload_limit'))
-                        ->hintIcon('tabler-question-mark', trans('admin/node.upload_limit_help'))
+                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/node.upload_limit_help'))
                         ->numeric()
                         ->required()
                         ->minValue(1)
@@ -378,7 +379,7 @@ class EditNode extends EditRecord
                         ])
                         ->label(trans('admin/node.maintenance_mode'))
                         ->inline()
-                        ->hintIcon('tabler-question-mark', trans('admin/node.maintenance_mode_help'))
+                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/node.maintenance_mode_help'))
                         ->stateCast(new BooleanStateCast(false, true))
                         ->options([
                             1 => trans('admin/node.enabled'),
@@ -554,7 +555,7 @@ class EditNode extends EditRecord
                 ]),
             Tab::make('config_file')
                 ->label(trans('admin/node.tabs.config_file'))
-                ->icon('tabler-code')
+                ->icon(TablerIcon::Code)
                 ->schema([
                     TextEntry::make('instructions')
                         ->label(trans('admin/node.instructions'))
@@ -576,7 +577,7 @@ class EditNode extends EditRecord
                                     ->label(trans('admin/node.auto_deploy'))
                                     ->color('primary')
                                     ->modalHeading(trans('admin/node.auto_deploy'))
-                                    ->icon('tabler-rocket')
+                                    ->icon(TablerIcon::Rocket)
                                     ->modalSubmitAction(false)
                                     ->modalCancelAction(false)
                                     ->modalFooterActionsAlignment(Alignment::Center)
@@ -624,7 +625,7 @@ class EditNode extends EditRecord
                                                 ->title(trans('admin/node.error_connecting', ['node' => $node->name]))
                                                 ->body(trans('admin/node.error_connecting_description'))
                                                 ->color('warning')
-                                                ->icon('tabler-database')
+                                                ->icon(TablerIcon::Database)
                                                 ->warning()
                                                 ->send();
 
@@ -637,7 +638,7 @@ class EditNode extends EditRecord
                 ]),
             Tab::make('diagnostics')
                 ->label(trans('admin/node.tabs.diagnostics'))
-                ->icon('tabler-heart-search')
+                ->icon(TablerIcon::HeartSearch)
                 ->schema([
                     Section::make('diag')
                         ->heading(trans('admin/node.tabs.diagnostics'))
@@ -647,7 +648,7 @@ class EditNode extends EditRecord
                         ->headerActions([
                             Action::make('pull')
                                 ->label(trans('admin/node.diagnostics.pull'))
-                                ->icon('tabler-cloud-download')->iconButton()->iconSize(IconSize::ExtraLarge)
+                                ->icon(TablerIcon::CloudDownload)->iconButton()->iconSize(IconSize::ExtraLarge)
                                 ->hidden(fn (Get $get) => $get('pulled'))
                                 ->action(function (Get $get, Set $set, Node $node) {
                                     $includeEndpoints = $get('include_endpoints') ?? true;
@@ -686,7 +687,7 @@ class EditNode extends EditRecord
                             Action::make('upload')
                                 ->label(trans('admin/node.diagnostics.upload'))
                                 ->visible(fn (Get $get) => $get('pulled') ?? false)
-                                ->icon('tabler-cloud-upload')->iconButton()->iconSize(IconSize::ExtraLarge)
+                                ->icon(TablerIcon::CloudUpload)->iconButton()->iconSize(IconSize::ExtraLarge)
                                 ->action(function (Get $get, Set $set) {
                                     try {
                                         $response = Http::asMultipart()
@@ -734,7 +735,7 @@ class EditNode extends EditRecord
                             Action::make('clear')
                                 ->label(trans('admin/node.diagnostics.clear'))
                                 ->visible(fn (Get $get) => $get('pulled') ?? false)
-                                ->icon('tabler-trash')->iconButton()->iconSize(IconSize::ExtraLarge)->color('danger')
+                                ->icon(TablerIcon::Trash)->iconButton()->iconSize(IconSize::ExtraLarge)->color('danger')
                                 ->action(function (Get $get, Set $set) {
                                     $set('pulled', false);
                                     $set('uploaded', false);
@@ -745,13 +746,13 @@ class EditNode extends EditRecord
                         ])
                         ->schema([
                             ToggleButtons::make('include_endpoints')
-                                ->hintIcon('tabler-question-mark')->inline()
+                                ->hintIcon(TablerIcon::QuestionMark)->inline()
                                 ->hintIconTooltip(trans('admin/node.diagnostics.include_endpoints_hint'))
                                 ->formatStateUsing(fn () => 1)
                                 ->boolean(),
                             ToggleButtons::make('include_logs')
                                 ->live()
-                                ->hintIcon('tabler-question-mark')->inline()
+                                ->hintIcon(TablerIcon::QuestionMark)->inline()
                                 ->hintIconTooltip(trans('admin/node.diagnostics.include_logs_hint'))
                                 ->formatStateUsing(fn () => 1)
                                 ->boolean(),
@@ -812,7 +813,7 @@ class EditNode extends EditRecord
                 ->iconButton()->iconSize(IconSize::ExtraLarge),
             $this->getSaveFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-device-floppy'),
+                ->icon(TablerIcon::DeviceFloppy),
         ];
     }
 
@@ -844,7 +845,7 @@ class EditNode extends EditRecord
                 ->title(trans('admin/node.error_connecting', ['node' => $node->name]))
                 ->body(trans('admin/node.error_connecting_description'))
                 ->color('warning')
-                ->icon('tabler-database')
+                ->icon(TablerIcon::Database)
                 ->warning()
                 ->send();
         }

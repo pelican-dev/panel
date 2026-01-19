@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Enums\TablerIcon;
 use Boquizo\FilamentLogViewer\Actions\DeleteAction;
 use Boquizo\FilamentLogViewer\Actions\DownloadAction;
 use Boquizo\FilamentLogViewer\Actions\ViewLogAction;
@@ -28,7 +29,7 @@ class ListLogs extends BaseListLogs
     {
         return parent::table($table)
             ->emptyStateHeading(trans('admin/log.empty_table'))
-            ->emptyStateIcon('tabler-check')
+            ->emptyStateIcon(TablerIcon::Check)
             ->columns([
                 NameColumn::make('date'),
                 LevelColumn::make(Level::ALL)
@@ -46,12 +47,12 @@ class ListLogs extends BaseListLogs
             ])
             ->recordActions([
                 ViewLogAction::make()
-                    ->icon('tabler-file-description')->iconSize(IconSize::Large)->iconButton(),
+                    ->icon(TablerIcon::FileDescription)->iconSize(IconSize::Large)->iconButton(),
                 DownloadAction::make()
-                    ->icon('tabler-file-download')->iconSize(IconSize::Large)->iconButton(),
+                    ->icon(TablerIcon::FileDownload)->iconSize(IconSize::Large)->iconButton(),
                 Action::make('uploadLogs')
                     ->hiddenLabel()
-                    ->icon('tabler-world-upload')->iconSize(IconSize::Large)->iconButton()
+                    ->icon(TablerIcon::WorldUpload)->iconSize(IconSize::Large)->iconButton()
                     ->requiresConfirmation()
                     ->modalHeading(trans('admin/log.actions.upload_logs'))
                     ->modalDescription(fn ($record) => trans('admin/log.actions.upload_logs_description', ['file' => $record['date'], 'url' => 'https://logs.pelican.dev']))

@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use BackedEnum;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
@@ -14,14 +15,13 @@ enum ServerState: string implements HasColor, HasIcon, HasLabel
     case Suspended = 'suspended';
     case RestoringBackup = 'restoring_backup';
 
-    public function getIcon(): string
+    public function getIcon(): BackedEnum
     {
         return match ($this) {
-            self::Installing => 'tabler-heart-bolt',
-            self::InstallFailed => 'tabler-heart-x',
-            self::ReinstallFailed => 'tabler-heart-x',
-            self::Suspended => 'tabler-heart-cancel',
-            self::RestoringBackup => 'tabler-heart-up',
+            self::Installing => TablerIcon::HeartBolt,
+            self::InstallFailed, self::ReinstallFailed => TablerIcon::HeartX,
+            self::Suspended => TablerIcon::HeartCancel,
+            self::RestoringBackup => TablerIcon::HeartUp,
         };
     }
 

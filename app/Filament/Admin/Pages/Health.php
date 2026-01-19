@@ -2,6 +2,8 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Enums\TablerIcon;
+use BackedEnum;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -14,7 +16,7 @@ use Spatie\Health\ResultStores\ResultStore;
 
 class Health extends Page
 {
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-heart';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Heart;
 
     protected string $view = 'filament.pages.health';
 
@@ -49,7 +51,7 @@ class Health extends Page
             Action::make('refresh')
                 ->label(trans('admin/health.refresh'))
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-refresh')
+                ->icon(TablerIcon::Refresh)
                 ->action('refresh'),
         ];
     }
@@ -128,16 +130,16 @@ class Health extends Page
         return trans('admin/health.checks.failed', ['checks' => implode(', ', $failedNames)]);
     }
 
-    public static function getNavigationIcon(): string
+    public static function getNavigationIcon(): BackedEnum
     {
         // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
         $results = app(ResultStore::class)->latestResults();
 
         if ($results === null) {
-            return 'tabler-heart-question';
+            return TablerIcon::HeartQuestion;
         }
 
-        return $results->containsFailingCheck() ? 'tabler-heart-exclamation' : 'tabler-heart-check';
+        return $results->containsFailingCheck() ? TablerIcon::HeartExclamation : TablerIcon::HeartCheck;
     }
 
     public function backgroundColor(string $str): string
@@ -162,14 +164,14 @@ class Health extends Page
         };
     }
 
-    public function icon(string $str): string
+    public function icon(string $str): BackedEnum
     {
         return match ($str) {
-            Status::ok()->value => 'tabler-circle-check',
-            Status::warning()->value => 'tabler-exclamation-circle',
-            Status::skipped()->value => 'tabler-circle-chevron-right',
-            Status::failed()->value, Status::crashed()->value => 'tabler-circle-x',
-            default => 'tabler-help-circle'
+            Status::ok()->value => TablerIcon::CircleCheck,
+            Status::warning()->value => TablerIcon::ExclamationCircle,
+            Status::skipped()->value => TablerIcon::CircleChevronRight,
+            Status::failed()->value, Status::crashed()->value => TablerIcon::CircleX,
+            default => TablerIcon::HelpCircle
         };
     }
 }

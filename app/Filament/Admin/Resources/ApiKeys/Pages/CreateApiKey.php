@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\ApiKeys\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\ApiKeys\ApiKeyResource;
 use App\Models\ApiKey;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -28,7 +29,7 @@ class CreateApiKey extends CreateRecord
         return [
             $this->getCreateFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-file-plus'),
+                ->icon(TablerIcon::FilePlus),
         ];
     }
 

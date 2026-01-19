@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Roles\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Roles\RoleResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
@@ -23,7 +24,7 @@ class ListRoles extends ListRecords
     {
         return [
             CreateAction::make()
-                ->icon('tabler-file-plus')
+                ->icon(TablerIcon::FilePlus)
                 ->iconButton()->iconSize(IconSize::ExtraLarge),
         ];
     }

@@ -3,11 +3,13 @@
 namespace App\Filament\Server\Pages;
 
 use App\Enums\SubuserPermission;
+use App\Enums\TablerIcon;
 use App\Facades\Activity;
 use App\Filament\Components\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Fields\StartupVariable;
 use App\Models\Server;
 use App\Models\ServerVariable;
+use BackedEnum;
 use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Hidden;
@@ -24,7 +26,7 @@ use Illuminate\Support\Facades\Validator;
 
 class Startup extends ServerFormPage
 {
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-player-play';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::PlayerPlay;
 
     protected static ?int $navigationSort = 9;
 

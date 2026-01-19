@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Mounts;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Mounts\Pages\CreateMount;
 use App\Filament\Admin\Resources\Mounts\Pages\EditMount;
 use App\Filament\Admin\Resources\Mounts\Pages\ListMounts;
@@ -11,6 +12,7 @@ use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
+use BackedEnum;
 use Exception;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -37,7 +39,7 @@ class MountResource extends Resource
 
     protected static ?string $model = Mount::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-layers-linked';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::LayersLinked;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -88,7 +90,7 @@ class MountResource extends Resource
                 TextColumn::make('read_only')
                     ->label(trans('admin/mount.table.read_only'))
                     ->badge()
-                    ->icon(fn ($state) => $state ? 'tabler-writing-off' : 'tabler-writing')
+                    ->icon(fn ($state) => $state ? TablerIcon::WritingOff : TablerIcon::Writing)
                     ->color(fn ($state) => $state ? 'success' : 'warning')
                     ->formatStateUsing(fn ($state) => $state ? trans('admin/mount.toggles.read_only') : trans('admin/mount.toggles.writable')),
             ])
@@ -100,7 +102,7 @@ class MountResource extends Resource
             ->groupedBulkActions([
                 DeleteBulkAction::make(),
             ])
-            ->emptyStateIcon('tabler-layers-linked')
+            ->emptyStateIcon(TablerIcon::LayersLinked)
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/mount.no_mounts'));
     }
@@ -127,8 +129,8 @@ class MountResource extends Resource
                             true => trans('admin/mount.toggles.read_only'),
                         ])
                         ->icons([
-                            false => 'tabler-writing',
-                            true => 'tabler-writing-off',
+                            false => TablerIcon::Writing,
+                            true => TablerIcon::WritingOff,
                         ])
                         ->colors([
                             false => 'warning',

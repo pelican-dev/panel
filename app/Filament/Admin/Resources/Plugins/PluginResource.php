@@ -3,9 +3,11 @@
 namespace App\Filament\Admin\Resources\Plugins;
 
 use App\Enums\PluginStatus;
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Plugins\Pages\ListPlugins;
 use App\Models\Plugin;
 use App\Services\Helpers\PluginService;
+use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -23,7 +25,7 @@ class PluginResource extends Resource
 {
     protected static ?string $model = Plugin::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-packages';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Packages;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -59,7 +61,7 @@ class PluginResource extends Resource
                 TextColumn::make('name')
                     ->label(trans('admin/plugin.name'))
                     ->description(fn (Plugin $plugin) => (strlen($plugin->description) > 80) ? substr($plugin->description, 0, 80).'...' : $plugin->description)
-                    ->icon(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? 'tabler-versions-off' : 'tabler-versions')
+                    ->icon(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? TablerIcon::VersionsOff : TablerIcon::Versions)
                     ->iconColor(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? 'danger' : 'success')
                     ->tooltip(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? trans('admin/plugin.update_available') : null)
                     ->sortable()
@@ -84,7 +86,7 @@ class PluginResource extends Resource
             ->recordActions([
                 Action::make('view')
                     ->label(trans('filament-actions::view.single.label'))
-                    ->icon(fn (Plugin $plugin) => $plugin->getReadme() ? 'tabler-eye' : 'tabler-eye-share')
+                    ->icon(fn (Plugin $plugin) => $plugin->getReadme() ? TablerIcon::Eye : TablerIcon::EyeShare)
                     ->color('gray')
                     ->visible(fn (Plugin $plugin) => $plugin->getReadme() || $plugin->url)
                     ->url(fn (Plugin $plugin) => !$plugin->getReadme() ? $plugin->url : null, true)
@@ -105,7 +107,7 @@ class PluginResource extends Resource
                 Action::make('settings')
                     ->label(trans('admin/plugin.settings'))
                     ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                    ->icon('tabler-settings')
+                    ->icon(TablerIcon::Settings)
                     ->color('primary')
                     ->visible(fn (Plugin $plugin) => $plugin->status === PluginStatus::Enabled && $plugin->hasSettings())
                     ->schema(fn (Plugin $plugin) => $plugin->getSettingsForm())
@@ -115,7 +117,7 @@ class PluginResource extends Resource
                     Action::make('install')
                         ->label(trans('admin/plugin.install'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                        ->icon('tabler-terminal')
+                        ->icon(TablerIcon::Terminal)
                         ->color('success')
                         ->hidden(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled)
                         ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
@@ -139,7 +141,7 @@ class PluginResource extends Resource
                     Action::make('update')
                         ->label(trans('admin/plugin.update'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                        ->icon('tabler-download')
+                        ->icon(TablerIcon::Download)
                         ->color('success')
                         ->visible(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled && $plugin->isUpdateAvailable())
                         ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
@@ -163,7 +165,7 @@ class PluginResource extends Resource
                     Action::make('enable')
                         ->label(trans('admin/plugin.enable'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                        ->icon('tabler-check')
+                        ->icon(TablerIcon::Check)
                         ->color('success')
                         ->visible(fn (Plugin $plugin) => $plugin->canEnable())
                         ->requiresConfirmation(fn (Plugin $plugin, PluginService $pluginService) => $plugin->isTheme() && $pluginService->hasThemePluginEnabled())
@@ -182,7 +184,7 @@ class PluginResource extends Resource
                     Action::make('disable')
                         ->label(trans('admin/plugin.disable'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                        ->icon('tabler-x')
+                        ->icon(TablerIcon::X)
                         ->color('warning')
                         ->visible(fn (Plugin $plugin) => $plugin->canDisable())
                         ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
@@ -198,7 +200,7 @@ class PluginResource extends Resource
                     Action::make('delete')
                         ->label(trans('filament-actions::delete.single.label'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('delete', $plugin))
-                        ->icon('tabler-trash')
+                        ->icon(TablerIcon::Trash)
                         ->color('danger')
                         ->requiresConfirmation()
                         ->visible(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled)
@@ -215,7 +217,7 @@ class PluginResource extends Resource
                     Action::make('uninstall')
                         ->label(trans('admin/plugin.uninstall'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                        ->icon('tabler-terminal')
+                        ->icon(TablerIcon::Terminal)
                         ->color('danger')
                         ->requiresConfirmation()
                         ->hidden(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled || $plugin->status === PluginStatus::Errored)
@@ -243,7 +245,7 @@ class PluginResource extends Resource
                 Action::make('import_from_file')
                     ->label(trans('admin/plugin.import_from_file'))
                     ->authorize(fn () => user()?->can('create', Plugin::class))
-                    ->icon('tabler-file-download')
+                    ->icon(TablerIcon::FileDownload)
                     ->iconButton()
                     ->iconSize(IconSize::ExtraLarge)
                     ->schema([
@@ -287,7 +289,7 @@ class PluginResource extends Resource
                 Action::make('import_from_url')
                     ->label(trans('admin/plugin.import_from_url'))
                     ->authorize(fn () => user()?->can('create', Plugin::class))
-                    ->icon('tabler-world-download')
+                    ->icon(TablerIcon::WorldDownload)
                     ->iconButton()
                     ->iconSize(IconSize::ExtraLarge)
                     ->schema([
@@ -323,7 +325,7 @@ class PluginResource extends Resource
                         }
                     }),
             ])
-            ->emptyStateIcon('tabler-packages')
+            ->emptyStateIcon(TablerIcon::Packages)
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/plugin.no_plugins'));
     }
