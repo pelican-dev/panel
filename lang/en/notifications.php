@@ -16,7 +16,10 @@ return [
     ],
     'user_removed' => [
         'title' => 'Removed from Server',
-        'body' => 'You have been removed as a subuser from :server.',
+        'greeting' => 'Hello :username.',
+        'body' => 'You have been removed as a subuser for the following server.',
+        'server_name' => 'Server Name: :server_name',
+        'action' => 'Visit Panel',
     ],
     'account_created' => [
         'greeting' => 'Hello :username!',
