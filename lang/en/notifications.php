@@ -22,4 +22,10 @@ return [
         'email' => 'Email: :email',
         'action' => 'Setup Your Account',
     ],
+    'server_installed' => [
+        'greeting' => 'Hello :username.',
+        'body' => 'Your server has finished installing and is now ready for you to use.',
+        'server_name' => 'Server Name: :server_name',
+        'action' => 'Login and Begin Using',
+    ],
 ];
