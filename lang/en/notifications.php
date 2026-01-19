@@ -15,4 +15,11 @@ return [
         'title' => 'Removed from Server',
         'body' => 'You have been removed as a subuser from :server.',
     ],
+    'account_created' => [
+        'greeting' => 'Hello :username!',
+        'body' => 'You are receiving this email because an account has been created for you on :app_name.',
+        'username' => 'Username: :username',
+        'email' => 'Email: :email',
+        'action' => 'Setup Your Account',
+    ],
 ];

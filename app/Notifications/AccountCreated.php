@@ -29,13 +29,13 @@ class AccountCreated extends Notification implements ShouldQueue
     public function toMail(User $notifiable): MailMessage
     {
         $message = (new MailMessage())
-            ->greeting('Hello ' . $notifiable->username . '!')
-            ->line('You are receiving this email because an account has been created for you on ' . config('app.name') . '.')
-            ->line('Username: ' . $notifiable->username)
-            ->line('Email: ' . $notifiable->email);
+            ->greeting(__('notifications.account_created.greeting', ['username' => $notifiable->username]))
+            ->line(__('notifications.account_created.body', ['app_name' => config('app.name')]))
+            ->line(__('notifications.account_created.username', ['username' => $notifiable->username]))
+            ->line(__('notifications.account_created.email', ['email' => $notifiable->email]));
 
         if (!is_null($this->token)) {
-            return $message->action('Setup Your Account', Filament::getPanel('app')->getResetPasswordUrl($this->token, $notifiable));
+            return $message->action(__('notifications.account_created.action'), Filament::getPanel('app')->getResetPasswordUrl($this->token, $notifiable));
         }
 
         return $message;
