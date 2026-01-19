@@ -35,7 +35,7 @@ class CreateRole extends CreateRecord
         return [
             $this->getCreateFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon(TablerIcon::Plus),
+                ->icon(TablerIcon::FilePlus),
         ];
     }
 
