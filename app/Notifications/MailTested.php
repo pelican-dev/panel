@@ -18,6 +18,11 @@ class MailTested extends Notification
         return ['mail'];
     }
 
+    public function locale(User $notifiable): string
+    {
+        return $notifiable->language ?? 'en';
+    }
+
     public function toMail(): MailMessage
     {
         return (new MailMessage())
