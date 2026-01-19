@@ -9,7 +9,10 @@ return [
     'failed' => 'Failed',
     'user_added' => [
         'title' => 'Added to Server',
-        'body' => 'You have been added as a subuser to :server.',
+        'greeting' => 'Hello :username!',
+        'body' => 'You have been added as a subuser for the following server, allowing you certain control over the server.',
+        'server_name' => 'Server Name: :server_name',
+        'action' => 'Visit Server',
     ],
     'user_removed' => [
         'title' => 'Removed from Server',

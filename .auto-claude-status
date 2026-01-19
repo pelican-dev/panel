@@ -3,7 +3,7 @@
   "spec": "036-feat-localize-emails",
   "state": "building",
   "subtasks": {
-    "completed": 5,
+    "completed": 7,
     "total": 12,
     "in_progress": 1,
     "failed": 0
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 6,
+    "number": 8,
     "started_at": "2026-01-19T12:13:54.574335"
   },
-  "last_update": "2026-01-19T12:19:14.311879"
+  "last_update": "2026-01-19T12:21:48.494595"
 }
