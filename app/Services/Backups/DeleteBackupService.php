@@ -31,9 +31,9 @@ class DeleteBackupService
             throw new BackupLockedException();
         }
 
-        $schema = $this->backupService->get($backup->backupHost->schema ?? config('backups.default'));
+        $schema = $this->backupService->get($backup->backupHost->schema);
         if (!$schema) {
-            throw new Exception('Backup uses unknown backup adapter.');
+            throw new Exception('Backup has unknown backup adapter.');
         }
 
         $this->connection->transaction(function () use ($schema, $backup) {

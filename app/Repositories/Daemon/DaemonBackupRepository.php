@@ -8,18 +8,6 @@ use Illuminate\Http\Client\Response;
 
 class DaemonBackupRepository extends DaemonRepository
 {
-    protected ?string $schema;
-
-    /**
-     * Sets the backup schema for this execution instance.
-     */
-    public function setBackupSchema(string $schema): self
-    {
-        $this->schema = $schema;
-
-        return $this;
-    }
-
     /**
      * Tells the remote Daemon to begin generating a backup for the server.
      *
@@ -29,7 +17,7 @@ class DaemonBackupRepository extends DaemonRepository
     {
         return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/backup",
             [
-                'adapter' => $this->schema ?? config('backups.default'),
+                'adapter' => $backup->backupHost->schema,
                 'uuid' => $backup->uuid,
                 'ignore' => implode("\n", $backup->ignored_files),
             ]
@@ -45,7 +33,7 @@ class DaemonBackupRepository extends DaemonRepository
     {
         return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/backup/$backup->uuid/restore",
             [
-                'adapter' => $backup->backupHost->schema ?? config('backups.default'),
+                'adapter' => $backup->backupHost->schema,
                 'truncate_directory' => $truncate,
                 'download_url' => $url ?? '',
             ]

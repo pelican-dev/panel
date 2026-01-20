@@ -3,6 +3,8 @@
 namespace App\Filament\Admin\Resources\Servers\Pages;
 
 use App\Enums\SuspendAction;
+use App\Extensions\BackupAdapter\BackupAdapterService;
+use App\Extensions\BackupAdapter\Schemas\WingsBackupSchema;
 use App\Filament\Admin\Resources\Servers\ServerResource;
 use App\Filament\Components\Actions\DeleteServerIcon;
 use App\Filament\Components\Actions\PreviewStartupAction;
@@ -11,7 +13,6 @@ use App\Filament\Components\Forms\Fields\StartupVariable;
 use App\Filament\Components\StateCasts\ServerConditionStateCast;
 use App\Filament\Server\Pages\Console;
 use App\Models\Allocation;
-use App\Models\Backup;
 use App\Models\Egg;
 use App\Models\Server;
 use App\Models\User;
@@ -974,16 +975,19 @@ class EditServer extends EditRecord
                                             ->disabled(fn (Server $server) => user()?->accessibleNodes()->count() <= 1 || $server->isInConflictState())
                                             ->modalHeading(trans('admin/server.transfer'))
                                             ->schema($this->transferServer())
-                                            ->action(function (TransferServerService $transfer, Server $server, $data) {
+                                            ->action(function (TransferServerService $transfer, BackupAdapterService $backupService, Server $server, $data) {
                                                 try {
                                                     $selectedBackupUuids = Arr::get($data, 'backups', []);
                                                     $transfer->handle($server, Arr::get($data, 'node_id'), Arr::get($data, 'allocation_id'), Arr::get($data, 'allocation_additional', []), $selectedBackupUuids);
 
                                                     $server->backups
                                                         ->whereNotIn('uuid', $selectedBackupUuids)
-                                                        ->where('disk', Backup::ADAPTER_DAEMON)
-                                                        ->each(function ($backup) {
-                                                            $backup->delete();
+                                                        ->each(function ($backup) use ($backupService) {
+                                                            $schema = $backupService->get($backup->backupHost->schema);
+
+                                                            if ($schema instanceof WingsBackupSchema) {
+                                                                $backup->delete();
+                                                            }
                                                         });
 
                                                     Notification::make()
@@ -1075,17 +1079,17 @@ class EditServer extends EditRecord
                 ->placeholder(trans('admin/server.select_additional')),
             Grid::make()
                 ->columnSpanFull()
-                ->schema([
+                ->schema(fn (BackupAdapterService $backupService) => [
                     CheckboxList::make('backups')
                         ->label(trans('admin/server.backups'))
                         ->bulkToggleable()
-                        ->options(fn (Server $server) => $server->backups->where('disk', Backup::ADAPTER_DAEMON)->mapWithKeys(fn ($backup) => [$backup->uuid => $backup->name]))
-                        ->columns(fn (Server $record) => (int) ceil($record->backups->where('disk', Backup::ADAPTER_DAEMON)->count() / 4)),
+                        ->options(fn (Server $server) => $server->backups->filter(fn ($backup) => $backupService->get($backup->backupHost->schema) instanceof WingsBackupSchema)->mapWithKeys(fn ($backup) => [$backup->uuid => $backup->name]))
+                        ->columns(fn (Server $record) => (int) ceil($record->backups->filter(fn ($backup) => $backupService->get($backup->backupHost->schema) instanceof WingsBackupSchema)->count() / 4)),
                     Text::make('backup_helper')
                         ->columnSpanFull()
                         ->content(trans('admin/server.warning_backups')),
                 ])
-                ->hidden(fn (Server $server) => $server->backups->where('disk', Backup::ADAPTER_DAEMON)->count() === 0),
+                ->hidden(fn (Server $server, BackupAdapterService $backupService) => $server->backups->filter(fn ($backup) => $backupService->get($backup->backupHost->schema) instanceof WingsBackupSchema)->count() === 0),
         ];
     }
 

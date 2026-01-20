@@ -24,7 +24,7 @@ class BackupFactory extends Factory
         return [
             'uuid' => Uuid::uuid4()->toString(),
             'name' => $this->faker->sentence(),
-            'disk' => Backup::ADAPTER_DAEMON,
+            'disk' => 'wings',
             'is_successful' => true,
             'created_at' => CarbonImmutable::now(),
             'completed_at' => CarbonImmutable::now(),

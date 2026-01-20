@@ -19,9 +19,9 @@ class DownloadLinkService
      */
     public function handle(Backup $backup, User $user): string
     {
-        $schema = $this->backupService->get($backup->backupHost->schema ?? config('backups.default'));
+        $schema = $this->backupService->get($backup->backupHost->schema);
         if (!$schema) {
-            throw new Exception('Backup uses unknown backup adapter.');
+            throw new Exception('Backup has unknown backup adapter.');
         }
 
         return $schema->getDownloadLink($backup, $user);

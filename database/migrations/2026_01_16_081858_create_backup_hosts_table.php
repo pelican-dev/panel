@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\BackupHost;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -32,11 +34,36 @@ return new class extends Migration
         });
 
         Schema::table('backups', function (Blueprint $table) {
-            $table->unsignedInteger('backup_host_id')->nullable()->after('disk');
+            $table->unsignedInteger('backup_host_id')->after('disk');
             $table->foreign('backup_host_id')->references('id')->on('backup_hosts');
 
             $table->dropColumn('disk');
         });
+
+        $oldDriver = env('APP_BACKUP_DRIVER', 'wings');
+
+        $oldConfiguration = null;
+        if ($oldDriver === 's3') {
+            $oldConfiguration = [
+                'region' => env('AWS_DEFAULT_REGION'),
+                'key' => env('AWS_ACCESS_KEY_ID'),
+                'secret' => env('AWS_SECRET_ACCESS_KEY'),
+                'bucket' => env('AWS_BACKUPS_BUCKET'),
+                'prefix' => env('AWS_BACKUPS_BUCKET', ''),
+                'endpoint' => env('AWS_ENDPOINT'),
+                'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+                'use_accelerate_endpoint' => env('AWS_BACKUPS_USE_ACCELERATE', false),
+                'storage_class' => env('AWS_BACKUPS_STORAGE_CLASS'),
+            ];
+        }
+
+        $backupHost = BackupHost::create([
+            'name' => $oldDriver,
+            'schema' => $oldDriver,
+            'configuration' => $oldConfiguration,
+        ]);
+
+        DB::table('backups')->update(['backup_host_id' => $backupHost->id]);
     }
 
     /**

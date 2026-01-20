@@ -20,10 +20,7 @@ final class S3BackupSchema extends BackupAdapterSchema
 {
     private ?S3Client $client = null;
 
-    public function __construct(private readonly DaemonBackupRepository $repository)
-    {
-        $this->repository->setBackupSchema($this->getId());
-    }
+    public function __construct(private readonly DaemonBackupRepository $repository) {}
 
     private function createClient(BackupHost $backupHost): void
     {

@@ -14,10 +14,7 @@ use Illuminate\Http\Response;
 
 final class WingsBackupSchema extends BackupAdapterSchema
 {
-    public function __construct(private readonly DaemonBackupRepository $repository, private readonly NodeJWTService $jwtService)
-    {
-        $this->repository->setBackupSchema($this->getId());
-    }
+    public function __construct(private readonly DaemonBackupRepository $repository, private readonly NodeJWTService $jwtService) {}
 
     public function getId(): string
     {

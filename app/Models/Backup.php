@@ -22,8 +22,8 @@ use Illuminate\Database\Query\Builder;
  * @property bool $is_locked
  * @property string $name
  * @property string[] $ignored_files
- * @property ?int $backup_host_id
- * @property ?BackupHost $backupHost
+ * @property int $backup_host_id
+ * @property BackupHost $backupHost
  * @property string|null $checksum
  * @property int $bytes
  * @property string|null $upload_id
@@ -41,10 +41,6 @@ class Backup extends Model implements Validatable
     use SoftDeletes;
 
     public const RESOURCE_NAME = 'backup';
-
-    public const ADAPTER_DAEMON = 'wings';
-
-    public const ADAPTER_AWS_S3 = 's3';
 
     protected $attributes = [
         'is_successful' => false,
@@ -64,7 +60,7 @@ class Backup extends Model implements Validatable
         'is_locked' => ['boolean'],
         'name' => ['required', 'string'],
         'ignored_files' => ['array'],
-        'backup_host_id' => ['nullable', 'numeric', 'exists:backup_hosts,id'],
+        'backup_host_id' => ['required', 'numeric', 'exists:backup_hosts,id'],
         'checksum' => ['nullable', 'string'],
         'bytes' => ['numeric'],
         'upload_id' => ['nullable', 'string'],

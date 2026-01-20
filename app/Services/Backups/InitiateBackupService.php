@@ -5,6 +5,7 @@ namespace App\Services\Backups;
 use App\Exceptions\Service\Backup\TooManyBackupsException;
 use App\Extensions\BackupAdapter\BackupAdapterService;
 use App\Models\Backup;
+use App\Models\BackupHost;
 use App\Models\Server;
 use Illuminate\Database\ConnectionInterface;
 use Ramsey\Uuid\Uuid;
@@ -108,8 +109,10 @@ class InitiateBackupService
             $this->deleteBackupService->handle($oldest);
         }
 
-        $backupHost = collect($server->node->backupHosts)->first();
-        $schema = $this->backupService->get($backupHost->schema ?? config('backups.default'));
+        /** @var BackupHost $backupHost */
+        $backupHost = $server->node->backupHosts()->firstOrFail(); // TODO: selectable backup host
+
+        $schema = $this->backupService->get($backupHost->schema);
 
         return $this->connection->transaction(function () use ($backupHost, $schema, $server, $name) {
             $backup = Backup::create([

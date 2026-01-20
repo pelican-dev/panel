@@ -3,7 +3,6 @@
 namespace App\Services\Servers;
 
 use App\Models\Allocation;
-use App\Models\Backup;
 use App\Models\Node;
 use App\Models\Server;
 use App\Models\ServerTransfer;
@@ -29,10 +28,8 @@ class TransferServerService
      */
     private function notify(ServerTransfer $transfer, UnencryptedToken $token, array $backup_uuids = []): void
     {
-        $backups = [];
-        if (config('backups.default') === Backup::ADAPTER_DAEMON) {
-            $backups = $backup_uuids;
-        }
+        $backups = []; // TODO
+
         Http::daemon($transfer->oldNode)->post("/api/servers/{$transfer->server->uuid}/transfer", [
             'url' => $transfer->newNode->getConnectionAddress() . '/api/transfers',
             'token' => 'Bearer ' . $token->toString(),
