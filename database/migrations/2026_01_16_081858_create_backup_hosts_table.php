@@ -14,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('backup_hosts', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('name');
             $table->string('schema');
             $table->json('configuration')->nullable();
