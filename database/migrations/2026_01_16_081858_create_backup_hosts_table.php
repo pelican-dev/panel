@@ -58,7 +58,7 @@ return new class extends Migration
         }
 
         $backupHost = BackupHost::create([
-            'name' => $oldDriver,
+            'name' => $oldDriver === 's3' ? 'Remote' : 'Local',
             'schema' => $oldDriver,
             'configuration' => $oldConfiguration,
         ]);

@@ -15,7 +15,6 @@ use App\Traits\Filament\CanModifyTable;
 use BackedEnum;
 use Exception;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -85,16 +84,12 @@ class BackupHostResource extends Resource
                     ->badge()
                     ->placeholder(trans('admin/backuphost.no_nodes')),
             ])
-            ->checkIfRecordIsSelectableUsing(fn (BackupHost $backupHost) => $backupHost->backups_count <= 0)
             ->recordActions([
                 ViewAction::make()
                     ->hidden(fn ($record) => static::getEditAuthorizationResponse($record)->allowed()),
                 EditAction::make(),
                 DeleteAction::make()
-                    ->hidden(fn (BackupHost $backupHost) => $backupHost->backups_count > 0),
-            ])
-            ->groupedBulkActions([
-                DeleteBulkAction::make(),
+                    ->hidden(fn (BackupHost $backupHost) => $backupHost->backups_count > 0 || BackupHost::count() === 1),
             ])
             ->emptyStateIcon('tabler-file-zip')
             ->emptyStateDescription(trans('admin/backuphost.local_backups_only'))
