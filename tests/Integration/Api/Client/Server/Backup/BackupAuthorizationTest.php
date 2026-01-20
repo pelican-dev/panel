@@ -3,6 +3,7 @@
 namespace App\Tests\Integration\Api\Client\Server\Backup;
 
 use App\Models\Backup;
+use App\Models\BackupHost;
 use App\Models\Subuser;
 use App\Services\Backups\DeleteBackupService;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
@@ -25,9 +26,11 @@ class BackupAuthorizationTest extends ClientApiIntegrationTestCase
         // to do anything with the backups for that server.
         Subuser::factory()->create(['server_id' => $server2->id, 'user_id' => $user->id]);
 
-        $backup1 = Backup::factory()->create(['server_id' => $server1->id, 'completed_at' => CarbonImmutable::now()]);
-        $backup2 = Backup::factory()->create(['server_id' => $server2->id, 'completed_at' => CarbonImmutable::now()]);
-        $backup3 = Backup::factory()->create(['server_id' => $server3->id, 'completed_at' => CarbonImmutable::now()]);
+        $backupHost = BackupHost::factory()->create();
+
+        $backup1 = Backup::factory()->create(['server_id' => $server1->id, 'backup_host_id' => $backupHost->id, 'completed_at' => CarbonImmutable::now()]);
+        $backup2 = Backup::factory()->create(['server_id' => $server2->id, 'backup_host_id' => $backupHost->id, 'completed_at' => CarbonImmutable::now()]);
+        $backup3 = Backup::factory()->create(['server_id' => $server3->id, 'backup_host_id' => $backupHost->id, 'completed_at' => CarbonImmutable::now()]);
 
         $this->instance(DeleteBackupService::class, $mock = \Mockery::mock(DeleteBackupService::class));
 
