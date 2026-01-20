@@ -7,6 +7,7 @@ use App\Extensions\BackupAdapter\BackupAdapterService;
 use App\Models\Backup;
 use App\Models\BackupHost;
 use App\Models\Server;
+use Exception;
 use Illuminate\Database\ConnectionInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
@@ -110,9 +111,12 @@ class InitiateBackupService
         }
 
         /** @var BackupHost $backupHost */
-        $backupHost = $server->node->backupHosts()->firstOrFail(); // TODO: selectable backup host
+        $backupHost = BackupHost::doesntHave('nodes')->orWhereHas('nodes', fn ($query) => $query->where('id', $server->node->id))->firstOrFail(); // TODO: selectable backup host
 
         $schema = $this->backupService->get($backupHost->schema);
+        if (!$schema) {
+            throw new Exception('Backup host has unknown backup adapter.');
+        }
 
         return $this->connection->transaction(function () use ($backupHost, $schema, $server, $name) {
             $backup = Backup::create([

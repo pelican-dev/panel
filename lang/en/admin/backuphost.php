@@ -7,7 +7,7 @@ return [
     'schema' => 'Schema',
     'backups' => 'Backups',
     'linked_nodes' => 'Linked Nodes',
-    'no_nodes' => 'No Nodes',
+    'all_nodes' => 'All Nodes',
     'configuration' => 'Configuration',
     'no_configuration' => 'No additional configuration required',
     'no_backup_hosts' => 'No Backup Hosts',

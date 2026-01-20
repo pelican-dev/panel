@@ -82,7 +82,7 @@ class BackupHostResource extends Resource
                     ->label(trans('admin/backuphost.backups')),
                 TextColumn::make('nodes.name')
                     ->badge()
-                    ->placeholder(trans('admin/backuphost.no_nodes')),
+                    ->placeholder(trans('admin/backuphost.all_nodes')),
             ])
             ->recordActions([
                 ViewAction::make()
