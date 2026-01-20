@@ -18,22 +18,18 @@ use Illuminate\Support\Arr;
 
 final class S3BackupSchema extends BackupAdapterSchema
 {
-    private ?S3Client $client = null;
-
     public function __construct(private readonly DaemonBackupRepository $repository) {}
 
-    private function createClient(BackupHost $backupHost): void
+    private function createClient(BackupHost $backupHost): S3Client
     {
-        if (!$this->client) {
-            $config = $backupHost->configuration;
-            $config['version'] = 'latest';
+        $config = $backupHost->configuration;
+        $config['version'] = 'latest';
 
-            if (!empty($config['key']) && !empty($config['secret'])) {
-                $config['credentials'] = Arr::only($config, ['key', 'secret', 'token']);
-            }
-
-            $this->client = new S3Client($config);
+        if (!empty($config['key']) && !empty($config['secret'])) {
+            $config['credentials'] = Arr::only($config, ['key', 'secret', 'token']);
         }
+
+        return new S3Client($config);
     }
 
     public function getId(): string
@@ -48,9 +44,9 @@ final class S3BackupSchema extends BackupAdapterSchema
 
     public function deleteBackup(Backup $backup): void
     {
-        $this->createClient($backup->backupHost);
+        $client = $this->createClient($backup->backupHost);
 
-        $this->client->deleteObject([
+        $client->deleteObject([
             'Bucket' => $backup->backupHost->configuration['bucket'],
             'Key' => "{$backup->server->uuid}/$backup->uuid.tar.gz",
         ]);
@@ -58,10 +54,10 @@ final class S3BackupSchema extends BackupAdapterSchema
 
     public function getDownloadLink(Backup $backup, User $user): string
     {
-        $this->createClient($backup->backupHost);
+        $client = $this->createClient($backup->backupHost);
 
-        $request = $this->client->createPresignedRequest(
-            $this->client->getCommand('GetObject', [
+        $request = $client->createPresignedRequest(
+            $client->getCommand('GetObject', [
                 'Bucket' => $backup->backupHost->configuration['bucket'],
                 'Key' => "{$backup->server->uuid}/$backup->uuid.tar.gz",
                 'ContentType' => 'application/x-gzip',
@@ -76,13 +72,13 @@ final class S3BackupSchema extends BackupAdapterSchema
     public function getConfigurationForm(): array
     {
         return [
-            TextInput::make('configuration.default_region')
+            TextInput::make('configuration.region')
                 ->label(trans('admin/setting.backup.s3.default_region'))
                 ->required(),
-            TextInput::make('configuration.access_key')
+            TextInput::make('configuration.key')
                 ->label(trans('admin/setting.backup.s3.access_key'))
                 ->required(),
-            TextInput::make('configuration.secret_key')
+            TextInput::make('configuration.secret')
                 ->label(trans('admin/setting.backup.s3.secret_key'))
                 ->required(),
             TextInput::make('configuration.bucket')
@@ -120,10 +116,10 @@ final class S3BackupSchema extends BackupAdapterSchema
             $params['StorageClass'] = $storageClass;
         }
 
-        $this->createClient($backup->backupHost);
+        $client = $this->createClient($backup->backupHost);
 
         // Execute the CreateMultipartUpload request
-        $result = $this->client->execute($this->client->getCommand('CreateMultipartUpload', $params));
+        $result = $client->execute($client->getCommand('CreateMultipartUpload', $params));
 
         // Get the UploadId from the CreateMultipartUpload request, this is needed to create
         // the other presigned urls.
@@ -138,8 +134,8 @@ final class S3BackupSchema extends BackupAdapterSchema
         // Create as many UploadPart presigned urls as needed
         $parts = [];
         for ($i = 0; $i < ($size / $maxPartSize); $i++) {
-            $parts[] = $this->client->createPresignedRequest(
-                $this->client->getCommand('UploadPart', array_merge($params, ['PartNumber' => $i + 1])),
+            $parts[] = $client->createPresignedRequest(
+                $client->getCommand('UploadPart', array_merge($params, ['PartNumber' => $i + 1])),
                 $expires
             )->getUri()->__toString();
         }
@@ -181,10 +177,10 @@ final class S3BackupSchema extends BackupAdapterSchema
             'UploadId' => $backup->upload_id,
         ];
 
-        $this->createClient($backup->backupHost);
+        $client = $this->createClient($backup->backupHost);
 
         if (!$successful) {
-            $this->client->execute($this->client->getCommand('AbortMultipartUpload', $params));
+            $client->execute($client->getCommand('AbortMultipartUpload', $params));
 
             return;
         }
@@ -195,7 +191,7 @@ final class S3BackupSchema extends BackupAdapterSchema
         ];
 
         if (is_null($parts)) {
-            $params['MultipartUpload']['Parts'] = $this->client->execute($this->client->getCommand('ListParts', $params))['Parts'];
+            $params['MultipartUpload']['Parts'] = $client->execute($client->getCommand('ListParts', $params))['Parts'];
         } else {
             foreach ($parts as $part) {
                 $params['MultipartUpload']['Parts'][] = [
@@ -205,6 +201,6 @@ final class S3BackupSchema extends BackupAdapterSchema
             }
         }
 
-        $this->client->execute($this->client->getCommand('CompleteMultipartUpload', $params));
+        $client->execute($client->getCommand('CompleteMultipartUpload', $params));
     }
 }

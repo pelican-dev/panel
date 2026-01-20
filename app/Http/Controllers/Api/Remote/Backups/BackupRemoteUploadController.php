@@ -55,7 +55,7 @@ class BackupRemoteUploadController extends Controller
         }
 
         // Ensure we are using the S3 schema.
-        $schema = $this->backupService->get(collect($node->backupHosts)->first()->schema);
+        $schema = $this->backupService->get($backup->backupHost->schema);
         if (!$schema instanceof S3BackupSchema) {
             throw new BadRequestHttpException('The configured backup schema is not an S3 compatible.');
         }

@@ -71,14 +71,15 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('backup_hosts');
-
-        Schema::dropIfExists('backup_host_node');
-
         Schema::table('backups', function (Blueprint $table) {
             $table->string('disk')->after('backup_host_id');
 
+            $table->dropForeign(['backup_host_id']);
             $table->dropColumn('backup_host_id');
         });
+
+        Schema::dropIfExists('backup_hosts');
+
+        Schema::dropIfExists('backup_host_node');
     }
 };

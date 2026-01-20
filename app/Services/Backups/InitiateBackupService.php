@@ -110,8 +110,11 @@ class InitiateBackupService
             $this->deleteBackupService->handle($oldest);
         }
 
-        /** @var BackupHost $backupHost */
-        $backupHost = BackupHost::doesntHave('nodes')->orWhereHas('nodes', fn ($query) => $query->where('id', $server->node->id))->firstOrFail(); // TODO: selectable backup host
+        // TODO: select backup host via frontend
+        $backupHost = $server->node->backupHosts()->first();
+        if (!$backupHost) {
+            $backupHost = BackupHost::doesntHave('nodes')->firstOrFail();
+        }
 
         $schema = $this->backupService->get($backupHost->schema);
         if (!$schema) {

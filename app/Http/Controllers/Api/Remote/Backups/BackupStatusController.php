@@ -55,7 +55,7 @@ class BackupStatusController extends Controller
         $action = $request->boolean('successful') ? 'server:backup.complete' : 'server:backup.fail';
         $log = Activity::event($action)->subject($model, $model->server)->property('name', $model->name);
 
-        $log->transaction(function () use ($node, $model, $request) {
+        $log->transaction(function () use ($model, $request) {
             $successful = $request->boolean('successful');
 
             $model->fill([
@@ -71,7 +71,7 @@ class BackupStatusController extends Controller
 
             // Check if we are using the s3 backup adapter. If so, make sure we mark the backup as
             // being completed in S3 correctly.
-            $schema = $this->backupService->get(collect($node->backupHosts)->first()->schema);
+            $schema = $this->backupService->get($model->backupHost->schema);
             if ($schema instanceof S3BackupSchema) {
                 $schema->completeMultipartUpload($model, $successful, $request->input('parts'));
             }

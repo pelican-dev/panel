@@ -2,7 +2,6 @@
 
 return [
     'model_label' => 'Backup Host|Backup Hosts',
-    'model_label_plural' => 'Database Hosts',
     'name' => 'Name',
     'schema' => 'Schema',
     'backups' => 'Backups',
