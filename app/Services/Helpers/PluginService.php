@@ -334,10 +334,10 @@ class PluginService
 
         $this->rollbackPluginMigrations($plugin);
 
+        $this->setStatus($plugin, PluginStatus::NotInstalled);
+
         if ($deleteFiles) {
             $this->deletePlugin($plugin);
-        } else {
-            $this->setStatus($plugin, PluginStatus::NotInstalled);
         }
 
         $this->buildAssets();
