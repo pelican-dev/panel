@@ -12,8 +12,6 @@ use App\Models\Egg;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
@@ -93,8 +91,8 @@ class ListEggs extends ListRecords
                 ImportEggAction::make()
                     ->multiple(),
                 CreateAction::make()
-                    ->icon('tabler-plus')
-                    ->iconButton()->iconSize(IconSize::ExtraLarge),
+                    ->hiddenLabel()
+                    ->icon('tabler-plus'),
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->before(function (Collection &$records) {

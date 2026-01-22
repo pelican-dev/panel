@@ -121,7 +121,7 @@ class EditServer extends EditRecord
                                 ->columnSpan(2)
                                 ->alignJustify(),
                             Action::make('uploadIcon')
-                                ->iconButton()->iconSize(IconSize::Large)
+                                ->iconSize(IconSize::Large)
                                 ->icon('tabler-photo-up')
                                 ->modal()
                                 ->modalSubmitActionLabel(trans('server/setting.server_info.icon.upload'))
@@ -1100,6 +1100,7 @@ class EditServer extends EditRecord
         return [
             Action::make('Delete')
                 ->color('danger')
+                ->hiddenLabel()
                 ->tooltip(trans('filament-actions::delete.single.label'))
                 ->modalHeading(trans('filament-actions::delete.single.modal.heading', ['label' => $this->getRecordTitle()]))
                 ->modalSubmitActionLabel(trans('filament-actions::delete.single.label'))
@@ -1123,8 +1124,7 @@ class EditServer extends EditRecord
                 })
                 ->hidden(fn () => $canForceDelete)
                 ->authorize(fn (Server $server) => user()?->can('delete server', $server))
-                ->icon('tabler-trash')
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
+                ->icon('tabler-trash'),
             Action::make('ForceDelete')
                 ->color('danger')
                 ->label(trans('filament-actions::force-delete.single.label'))
@@ -1143,13 +1143,15 @@ class EditServer extends EditRecord
                 ->visible(fn () => $canForceDelete)
                 ->authorize(fn (Server $server) => user()?->can('delete server', $server)),
             Action::make('console')
+                ->hiddenLabel()
                 ->tooltip(trans('admin/server.console'))
                 ->icon('tabler-terminal')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)),
-            $this->getSaveFormAction()->formId('form')
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
                 ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),
         ];
 

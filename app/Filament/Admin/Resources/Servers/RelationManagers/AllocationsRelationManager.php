@@ -106,9 +106,9 @@ class AllocationsRelationManager extends RelationManager
                         }
                     }),
                 CreateAction::make()
+                    ->hiddenLabel()
                     ->tooltip(trans('admin/server.create_allocation'))
                     ->icon('tabler-network')
-                    ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->createAnother(false)
                     ->schema(fn () => [
                         Select::make('allocation_ip')
@@ -119,7 +119,6 @@ class AllocationsRelationManager extends RelationManager
                             ->live()
                             ->hintAction(
                                 Action::make('refresh')
-                                    ->iconButton()
                                     ->icon('tabler-refresh')
                                     ->tooltip(trans('admin/node.refresh'))
                                     ->action(function () {

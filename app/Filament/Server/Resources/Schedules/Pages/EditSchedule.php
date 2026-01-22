@@ -16,7 +16,6 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Enums\IconSize;
 
 class EditSchedule extends EditRecord
 {
@@ -54,14 +53,13 @@ class EditSchedule extends EditRecord
         return [
             DeleteAction::make()
                 ->hiddenLabel()
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->after(function ($record) {
                     Activity::event('server:schedule.delete')
                         ->property('name', $record->name)
                         ->log();
                 }),
             Action::make('run_now')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->hiddenLabel()
                 ->icon('tabler-run')
                 ->authorize(fn () => user()?->can(SubuserPermission::ScheduleUpdate, Filament::getTenant()))
                 ->tooltip(fn (Schedule $schedule) => $schedule->tasks->count() === 0 ? trans('server/schedule.no_tasks') : ($schedule->status === ScheduleStatus::Processing ? ScheduleStatus::Processing->getLabel() : trans('server/schedule.run_now')))
@@ -78,8 +76,10 @@ class EditSchedule extends EditRecord
                     $this->fillForm();
                 }),
             ExportScheduleAction::make(),
-            $this->getSaveFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
                 ->icon('tabler-device-floppy')
                 ->tooltip(trans('server/schedule.save')),
         ];

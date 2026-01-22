@@ -31,7 +31,6 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -105,8 +104,8 @@ class RoleResource extends Resource
             ])
             ->toolbarActions([
                 CreateAction::make()
-                    ->icon('tabler-plus')
-                    ->iconButton()->iconSize(IconSize::ExtraLarge),
+                    ->hiddenLabel()
+                    ->icon('tabler-plus'),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

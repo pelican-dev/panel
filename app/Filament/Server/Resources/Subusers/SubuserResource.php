@@ -33,7 +33,6 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -216,7 +215,7 @@ class SubuserResource extends Resource
             ])
             ->toolbarActions([
                 CreateAction::make('invite')
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()
                     ->icon('tabler-user-plus')
                     ->tooltip(trans('server/user.invite_user'))
                     ->createAnother(false)

@@ -10,7 +10,6 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Permission;
@@ -59,11 +58,12 @@ class EditRole extends EditRecord
         return [
             DeleteAction::make()
                 ->tooltip(fn (Role $role) => $role->isRootAdmin() ? trans('admin/role.root_admin_delete') : ($role->users_count >= 1 ? trans('admin/role.in_use') : trans('filament-actions::delete.single.label')))
-                ->disabled(fn (Role $role) => $role->isRootAdmin() || $role->users_count >= 1)
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
-            $this->getSaveFormAction()->formId('form')
+                ->disabled(fn (Role $role) => $role->isRootAdmin() || $role->users_count >= 1),
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
                 ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),
         ];
     }

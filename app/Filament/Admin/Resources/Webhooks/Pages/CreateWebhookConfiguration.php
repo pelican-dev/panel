@@ -9,7 +9,6 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Support\Enums\IconSize;
 
 class CreateWebhookConfiguration extends CreateRecord
 {
@@ -25,12 +24,14 @@ class CreateWebhookConfiguration extends CreateRecord
     {
         return [
             $this->getCancelFormAction()->formId('form')
+                ->hiddenLabel()
                 ->tooltip(trans('filament-panels::resources/pages/create-record.form.actions.cancel.label'))
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-arrow-left'),
-            $this->getCreateFormAction()->formId('form')
-                ->tooltip(trans('filament-actions::create.single.modal.actions.create.label'))
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
+            Action::make('create')
+                ->hiddenLabel()
+                ->action('create')
+                ->keyBindings(['mod+s'])
+                ->tooltip(trans('filament-panels::resources/pages/create-record.form.actions.create.label'))
                 ->icon('tabler-plus'),
         ];
     }

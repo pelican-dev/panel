@@ -11,7 +11,6 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -65,7 +64,7 @@ class ListNodes extends ListRecords
             ])
             ->toolbarActions([
                 CreateAction::make()
-                    ->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()
                     ->icon('tabler-plus'),
             ])
             ->emptyStateIcon('tabler-server-2')

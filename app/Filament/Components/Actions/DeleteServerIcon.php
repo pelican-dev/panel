@@ -5,7 +5,6 @@ namespace App\Filament\Components\Actions;
 use App\Models\Server;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Facades\Storage;
 
 class DeleteServerIcon extends Action
@@ -24,10 +23,6 @@ class DeleteServerIcon extends Action
         $this->hiddenLabel();
 
         $this->icon('tabler-trash');
-
-        $this->iconButton();
-
-        $this->iconSize(IconSize::Large);
 
         $this->color('danger');
 

@@ -304,7 +304,7 @@
 }"
 >
     <x-filament::icon-button
-        iconSize="xl"
+        iconSize="{{ user()?->getCustomization(\App\Enums\CustomizationKey::ButtonStyle) ? 'xl' : 'md' }}"
         icon="tabler-upload"
         color="success"
         tooltip="{{ trans('server/file.actions.upload.title') }}"

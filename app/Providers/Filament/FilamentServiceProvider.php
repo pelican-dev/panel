@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Enums\CustomizationKey;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\View\ActionsIconAlias;
@@ -12,6 +14,7 @@ use Filament\Forms\View\FormsIconAlias;
 use Filament\Notifications\View\NotificationsIconAlias;
 use Filament\Schemas\View\SchemaIconAlias;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
@@ -89,9 +92,32 @@ class FilamentServiceProvider extends ServiceProvider
         DeleteAction::configureUsing(function (DeleteAction $action) {
             $action->icon('tabler-trash');
             $action->tooltip(trans('filament-actions::delete.single.modal.actions.delete.label'));
+            $action->hiddenLabel();
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
         });
+
         CreateAction::configureUsing(function (CreateAction $action) {
             $action->tooltip(fn (): string => trans('filament-actions::create.single.label', ['label' => $action->getModelLabel()]));
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
+        });
+
+        Action::configureUsing(function (Action $action) {
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
         });
 
         FilamentIcon::register([

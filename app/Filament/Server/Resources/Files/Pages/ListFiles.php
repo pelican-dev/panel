@@ -469,7 +469,7 @@ class ListFiles extends ListRecords
                 Action::make('new_file')
                     ->authorize(fn () => user()?->can(SubuserPermission::FileCreate, $server))
                     ->tooltip(trans('server/file.actions.new_file.title'))
-                    ->hiddenLabel()->icon('tabler-file-plus')->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()->icon('tabler-file-plus')
                     ->color('primary')
                     ->modalSubmitActionLabel(trans('server/file.actions.new_file.create'))
                     ->action(function ($data) {
@@ -510,7 +510,7 @@ class ListFiles extends ListRecords
                     ]),
                 Action::make('new_folder')
                     ->authorize(fn () => user()?->can(SubuserPermission::FileCreate, $server))
-                    ->hiddenLabel()->icon('tabler-folder-plus')->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()->icon('tabler-folder-plus')
                     ->tooltip(trans('server/file.actions.new_folder.title'))
                     ->color('primary')
                     ->action(function ($data) {
@@ -544,7 +544,7 @@ class ListFiles extends ListRecords
                     ->view('filament.server.pages.file-upload'),
                 Action::make('uploadURL')
                     ->authorize(fn () => user()?->can(SubuserPermission::FileCreate, $server))
-                    ->hiddenLabel()->icon('tabler-download')->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()->icon('tabler-download')
                     ->tooltip(trans('server/file.actions.upload.from_url'))
                     ->modalHeading(trans('server/file.actions.upload.from_url'))
                     ->color('success')
@@ -566,7 +566,7 @@ class ListFiles extends ListRecords
                     ]),
                 Action::make('search')
                     ->authorize(fn () => user()?->can(SubuserPermission::FileRead, $server))
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()
                     ->tooltip(trans('server/file.actions.nested_search.title'))
                     ->color('primary')
                     ->icon('tabler-world-search')

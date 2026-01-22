@@ -12,7 +12,6 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use PDOException;
@@ -37,11 +36,12 @@ class EditDatabaseHost extends EditRecord
         return [
             DeleteAction::make()
                 ->tooltip(fn (DatabaseHost $databaseHost) => $databaseHost->databases()->count() > 0 ? trans('admin/databasehost.delete_help') : trans('filament-actions::delete.single.modal.actions.delete.label'))
-                ->disabled(fn (DatabaseHost $databaseHost) => $databaseHost->databases()->count() > 0)
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
-            $this->getSaveFormAction()->formId('form')
+                ->disabled(fn (DatabaseHost $databaseHost) => $databaseHost->databases()->count() > 0),
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
                 ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),
         ];
     }

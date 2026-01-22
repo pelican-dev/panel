@@ -11,7 +11,6 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Database\Eloquent\Model;
 
 class EditUser extends EditRecord
@@ -34,11 +33,12 @@ class EditUser extends EditRecord
         return [
             DeleteAction::make()
                 ->tooltip(fn (User $user) => user()?->id === $user->id ? trans('admin/user.self_delete') : ($user->servers()->count() > 0 ? trans('admin/user.has_servers') : trans('filament-actions::delete.single.modal.actions.delete.label')))
-                ->disabled(fn (User $user) => user()?->id === $user->id || $user->servers()->count() > 0)
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
-            $this->getSaveFormAction()->formId('form')
+                ->disabled(fn (User $user) => user()?->id === $user->id || $user->servers()->count() > 0),
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
                 ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),
         ];
     }

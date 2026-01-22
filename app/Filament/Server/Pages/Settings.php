@@ -88,7 +88,8 @@ class Settings extends ServerFormPage
                                             ->columnSpan(2)
                                             ->alignJustify(),
                                         Action::make('uploadIcon')
-                                            ->iconButton()->iconSize(IconSize::Large)
+                                            ->hiddenLabel()
+                                            ->iconSize(IconSize::Large)
                                             ->icon('tabler-photo-up')
                                             ->modal()
                                             ->modalSubmitActionLabel(trans('server/setting.server_info.icon.upload'))

@@ -8,7 +8,6 @@ use App\Models\Server;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
@@ -93,7 +92,6 @@ class ListServers extends ListRecords
             ->recordActions([
                 Action::make('View')
                     ->tooltip(trans('admin/server.view'))
-                    ->iconButton()
                     ->icon('tabler-terminal')
                     ->iconSize(IconSize::Large)
                     ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
@@ -102,8 +100,7 @@ class ListServers extends ListRecords
             ])
             ->toolbarActions([
                 CreateAction::make()
-                    ->iconButton()
-                    ->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()
                     ->icon('tabler-plus'),
             ])
             ->emptyStateIcon('tabler-brand-docker')

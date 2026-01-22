@@ -17,7 +17,6 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
@@ -36,11 +35,9 @@ class ImportEggAction extends Action
 
         $this->tooltip(trans('filament-actions::import.modal.actions.import.label'));
 
-        $this->iconButton();
+        $this->hiddenLabel();
 
         $this->icon('tabler-file-import');
-
-        $this->iconSize(IconSize::ExtraLarge);
 
         $this->modalWidth(Width::ScreenExtraLarge);
 

@@ -84,7 +84,7 @@ class EditEgg extends EditRecord
                                 ->columnSpanFull(),
                             Flex::make([
                                 Action::make('uploadImage')
-                                    ->iconButton()
+                                    ->hiddenLabel()
                                     ->iconSize(IconSize::Large)
                                     ->icon('tabler-photo-up')
                                     ->modal()
@@ -210,7 +210,6 @@ class EditEgg extends EditRecord
                                     ->visible(fn ($record) => $record->image)
                                     ->hiddenLabel()
                                     ->icon('tabler-trash')
-                                    ->iconButton()
                                     ->iconSize(IconSize::Large)
                                     ->color('danger')
                                     ->action(function ($record) {
@@ -447,6 +446,7 @@ class EditEgg extends EditRecord
     {
         return [
             DeleteAction::make()
+                ->hiddenLabel()
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
                 ->tooltip(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use'))
                 ->successNotification(fn (Egg $egg) => Notification::make()
@@ -458,14 +458,15 @@ class EditEgg extends EditRecord
                     ->danger()
                     ->title(trans('admin/egg.delete_failed'))
                     ->body(trans('admin/egg.could_not_delete', ['egg' => $egg->name]))
-                )
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
+                ),
             ExportEggAction::make(),
             ImportEggAction::make()
                 ->multiple(false),
-            $this->getSaveFormAction()->formId('form')
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
                 ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),
         ];
     }

@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\Health\Commands\RunHealthChecksCommand;
 use Spatie\Health\Enums\Status;
@@ -47,8 +46,8 @@ class Health extends Page
     {
         return [
             Action::make('refresh')
+                ->hiddenLabel()
                 ->tooltip(trans('admin/health.refresh'))
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-refresh')
                 ->action('refresh'),
         ];

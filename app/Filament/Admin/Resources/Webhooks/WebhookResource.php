@@ -36,7 +36,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -112,8 +111,8 @@ class WebhookResource extends Resource
             ])
             ->toolbarActions([
                 CreateAction::make()
-                    ->icon('tabler-plus')
-                    ->iconButton()->iconSize(IconSize::ExtraLarge),
+                    ->hiddenLabel()
+                    ->icon('tabler-plus'),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

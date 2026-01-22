@@ -26,7 +26,6 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -99,7 +98,7 @@ class DatabaseHostResource extends Resource
             ])
             ->toolbarActions([
                 CreateAction::make()
-                    ->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()
                     ->icon('tabler-plus'),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

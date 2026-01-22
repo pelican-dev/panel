@@ -48,7 +48,6 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -144,7 +143,7 @@ class UserResource extends Resource
                     DeleteBulkAction::make(),
                 ]),
                 CreateAction::make()
-                    ->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()
                     ->icon('tabler-user-plus'),
             ])
             ->checkIfRecordIsSelectableUsing(fn (User $user) => user()?->id !== $user->id && !$user->servers_count);

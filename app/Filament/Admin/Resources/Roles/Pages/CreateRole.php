@@ -9,7 +9,6 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Permission;
@@ -32,9 +31,11 @@ class CreateRole extends CreateRecord
     protected function getDefaultHeaderActions(): array
     {
         return [
-            $this->getCreateFormAction()->formId('form')
-                ->tooltip(trans('filament-actions::create.single.modal.actions.create.label'))
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
+            Action::make('create')
+                ->hiddenLabel()
+                ->action('create')
+                ->keyBindings(['mod+s'])
+                ->tooltip(trans('filament-panels::resources/pages/create-record.form.actions.create.label'))
                 ->icon('tabler-plus'),
         ];
     }

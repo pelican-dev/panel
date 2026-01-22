@@ -808,11 +808,12 @@ class EditNode extends EditRecord
         return [
             DeleteAction::make()
                 ->disabled(fn (Node $node) => $node->servers()->count() > 0)
-                ->tooltip(fn (Node $node) => $node->servers()->count() > 0 ? trans('admin/node.node_has_servers') : trans('filament-actions::delete.single.label'))
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
-            $this->getSaveFormAction()->formId('form')
+                ->tooltip(fn (Node $node) => $node->servers()->count() > 0 ? trans('admin/node.node_has_servers') : trans('filament-actions::delete.single.label')),
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
                 ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),
         ];
     }
