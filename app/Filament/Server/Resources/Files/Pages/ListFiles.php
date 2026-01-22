@@ -545,7 +545,7 @@ class ListFiles extends ListRecords
                     ->view('filament.server.pages.file-upload'),
                 Action::make('uploadURL')
                     ->authorize(fn () => user()?->can(SubuserPermission::FileCreate, $server))
-                    ->hiddenLabel()->icon('tabler-download')
+                    ->hiddenLabel()->icon('tabler-world-download')
                     ->tooltip(trans('server/file.actions.upload.from_url'))
                     ->modalHeading(trans('server/file.actions.upload.from_url'))
                     ->color('success')
@@ -570,7 +570,7 @@ class ListFiles extends ListRecords
                     ->hiddenLabel()
                     ->tooltip(trans('server/file.actions.nested_search.title'))
                     ->color('primary')
-                    ->icon('tabler-world-search')
+                    ->icon('tabler-folder-search')
                     ->modalHeading(trans('server/file.actions.nested_search.title'))
                     ->modalSubmitActionLabel(trans('server/file.actions.nested_search.search'))
                     ->schema([
