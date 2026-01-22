@@ -15,6 +15,8 @@ use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
@@ -34,6 +36,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -107,8 +110,13 @@ class WebhookResource extends Resource
                     ->beforeReplicaSaved(fn (WebhookConfiguration $replica) => $replica->description .= ' Copy ' . now()->format('Y-m-d H:i:s'))
                     ->successRedirectUrl(fn (WebhookConfiguration $replica) => EditWebhookConfiguration::getUrl(['record' => $replica])),
             ])
-            ->groupedBulkActions([
-                DeleteBulkAction::make(),
+            ->toolbarActions([
+                CreateAction::make()
+                    ->icon('tabler-plus')
+                    ->iconButton()->iconSize(IconSize::ExtraLarge),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ])
             ->emptyStateIcon('tabler-webhook')
             ->emptyStateDescription('')

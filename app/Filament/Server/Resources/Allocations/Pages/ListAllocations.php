@@ -16,11 +16,6 @@ class ListAllocations extends ListRecords
 
     protected static string $resource = AllocationResource::class;
 
-    /** @return array<Action|ActionGroup> */
-    protected function getDefaultHeaderActions(): array
-    {
-        return [];
-    }
 
     public function getBreadcrumbs(): array
     {

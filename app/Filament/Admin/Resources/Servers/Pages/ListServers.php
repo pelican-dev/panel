@@ -100,19 +100,15 @@ class ListServers extends ListRecords
                     ->authorize(fn (Server $server) => user()?->canAccessTenant($server)),
                 EditAction::make(),
             ])
+            ->toolbarActions([
+                CreateAction::make()
+                    ->iconButton()
+                    ->iconSize(IconSize::ExtraLarge)
+                    ->icon('tabler-plus'),
+            ])
             ->emptyStateIcon('tabler-brand-docker')
             ->searchable()
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/server.no_servers'));
-    }
-
-    /** @return array<Action|ActionGroup> */
-    protected function getDefaultHeaderActions(): array
-    {
-        return [
-            CreateAction::make()
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-file-plus'),
-        ];
     }
 }

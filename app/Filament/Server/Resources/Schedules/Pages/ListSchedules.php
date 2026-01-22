@@ -16,11 +16,6 @@ class ListSchedules extends ListRecords
 
     protected static string $resource = ScheduleResource::class;
 
-    /** @return array<Action|ActionGroup> */
-    protected function getDefaultHeaderActions(): array
-    {
-        return [];
-    }
 
     public function getBreadcrumbs(): array
     {

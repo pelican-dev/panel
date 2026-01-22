@@ -24,6 +24,8 @@ use App\Traits\Filament\CanModifyTable;
 use DateTimeZone;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -46,6 +48,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -136,10 +139,15 @@ class UserResource extends Resource
                     ->hidden(fn ($record) => static::getEditAuthorizationResponse($record)->allowed()),
                 EditAction::make(),
             ])
-            ->checkIfRecordIsSelectableUsing(fn (User $user) => user()?->id !== $user->id && !$user->servers_count)
-            ->groupedBulkActions([
-                DeleteBulkAction::make(),
-            ]);
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+                CreateAction::make()
+                    ->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->icon('tabler-user-plus'),
+            ])
+            ->checkIfRecordIsSelectableUsing(fn (User $user) => user()?->id !== $user->id && !$user->servers_count);
     }
 
     public static function defaultForm(Schema $schema): Schema

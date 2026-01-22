@@ -16,11 +16,6 @@ class ListBackups extends ListRecords
 
     protected static string $resource = BackupResource::class;
 
-    /** @return array<Action|ActionGroup> */
-    protected function getDefaultHeaderActions(): array
-    {
-        return [];
-    }
 
     public function getBreadcrumbs(): array
     {

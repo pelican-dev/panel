@@ -50,7 +50,7 @@ class CreateEgg extends CreateRecord
             $this->getCreateFormAction()->formId('form')
                 ->tooltip(trans('filament-actions::create.single.modal.actions.create.label'))
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-file-plus'),
+                ->icon('tabler-plus'),
         ];
     }
 

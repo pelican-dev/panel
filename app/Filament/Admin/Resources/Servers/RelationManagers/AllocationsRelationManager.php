@@ -147,7 +147,7 @@ class AllocationsRelationManager extends RelationManager
                     ])
                     ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
                 AssociateAction::make()
-                    ->icon('tabler-file-plus')
+                    ->icon('tabler-plus')
                     ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->multiple()
                     ->associateAnother(false)

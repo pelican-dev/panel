@@ -12,6 +12,7 @@ use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use Exception;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -98,6 +99,14 @@ class ApiKeyResource extends Resource
             ->recordActions([
                 DeleteAction::make()
                     ->iconButton()->iconSize(IconSize::ExtraLarge),
+            ])
+            ->toolbarActions([
+                CreateAction::make()
+                    ->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->icon('tabler-plus'),
+                CreateAction::make()
+                    ->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->icon('tabler-file-plus'),
             ])
             ->emptyStateIcon('tabler-key')
             ->emptyStateDescription('')

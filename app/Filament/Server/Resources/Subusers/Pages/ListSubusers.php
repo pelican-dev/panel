@@ -17,11 +17,6 @@ class ListSubusers extends ListRecords
 
     protected static string $resource = SubuserResource::class;
 
-    /** @return array<Action|ActionGroup> */
-    protected function getDefaultHeaderActions(): array
-    {
-        return [];
-    }
 
     public function getBreadcrumbs(): array
     {

@@ -16,11 +16,6 @@ class ListDatabases extends ListRecords
 
     protected static string $resource = DatabaseResource::class;
 
-    /** @return array<Action|ActionGroup> */
-    protected function getDefaultHeaderActions(): array
-    {
-        return [];
-    }
 
     public function getBreadcrumbs(): array
     {
