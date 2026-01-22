@@ -162,17 +162,17 @@
 
                     if (failed.length === 0) {
                         new window.FilamentNotification()
-                            .title('{{ trans('server/file.actions.upload.success') }}')
+                            .title('{{ preg_replace("/'/", "\\'", trans('server/file.actions.upload.success')) }}')
                             .success()
                             .send();
                     } else if (failed.length === this.totalFiles) {
                         new window.FilamentNotification()
-                            .title('{{ trans('server/file.actions.upload.failed') }}')
+                            .title('{{ preg_replace("/'/", "\\'", trans('server/file.actions.upload.failed')) }}')
                             .danger()
                             .send();
                     } else {
                         new window.FilamentNotification()
-                            .title('{{ trans('server/file.actions.upload.failed') }}')
+                            .title('{{ preg_replace("/'/", "\\'", trans('server/file.actions.upload.failed')) }}')
                             .danger()
                             .send();
                     }
@@ -199,7 +199,7 @@
         } catch (error) {
             console.error('Upload error:', error);
             new window.FilamentNotification()
-                .title('{{ trans('server/file.actions.upload.error') }}')
+                .title('{{ preg_replace("/'/", "\\'", trans('server/file.actions.upload.failed')) }}')
                 .danger()
                 .send();
             this.isUploading = false;
