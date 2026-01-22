@@ -303,13 +303,8 @@
     },
 }"
 >
-    <x-filament::icon-button
-        iconSize="{{ user()?->getCustomization(\App\Enums\CustomizationKey::ButtonStyle) ? 'xl' : 'md' }}"
-        icon="tabler-upload"
-        color="success"
-        tooltip="{{ trans('server/file.actions.upload.title') }}"
-        @click="triggerBrowse">
-    </x-filament::icon-button>
+    {{ $this->fileUploadAction }}
+    <x-filament-actions::modals />
     <input type="file" x-ref="fileInput" class="hidden" multiple @change="handleFileSelect">
     <div
         x-show="isUploading"

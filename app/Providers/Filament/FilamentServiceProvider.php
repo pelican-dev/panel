@@ -127,6 +127,11 @@ class FilamentServiceProvider extends ServiceProvider
                 $excludeActions = [
                     'profile',
                     'logout',
+                    'start',
+                    'stop',
+                    'restart',
+                    'kill',
+                    'fileUpload',
                 ];
 
                 foreach ($excludedPrefixes as $prefix) {

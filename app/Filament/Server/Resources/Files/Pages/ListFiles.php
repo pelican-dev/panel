@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\Files\Pages;
 
+use App\Enums\CustomizationKey;
 use App\Enums\EditorLanguages;
 use App\Enums\SubuserPermission;
 use App\Exceptions\Repository\FileExistsException;
@@ -703,5 +704,25 @@ class ListFiles extends ListRecords
                 ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
                 ->where('path', '.*'),
         );
+    }
+
+    public function fileUploadAction(): Action
+    {
+        if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+            return Action::make('fileUpload')
+                ->iconSize(IconSize::ExtraLarge)
+                ->iconButton()
+                ->color('success')
+                ->icon('tabler-upload')
+                ->tooltip(trans('server/file.actions.upload.title'))
+                ->extraAttributes(['@click' => 'triggerBrowse']);
+        }
+
+        return Action::make('fileUpload')
+            ->hiddenLabel()
+            ->color('success')
+            ->icon('tabler-upload')
+            ->tooltip(trans('server/file.actions.upload.title'))
+            ->extraAttributes(['@click' => 'triggerBrowse']);
     }
 }
