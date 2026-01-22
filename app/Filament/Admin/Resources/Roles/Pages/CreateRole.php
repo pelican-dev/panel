@@ -33,6 +33,7 @@ class CreateRole extends CreateRecord
     {
         return [
             $this->getCreateFormAction()->formId('form')
+                ->tooltip(trans('filament-actions::create.single.modal.actions.create.label'))
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-plus'),
         ];

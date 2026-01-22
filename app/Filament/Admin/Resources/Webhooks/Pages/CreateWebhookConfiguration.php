@@ -25,9 +25,11 @@ class CreateWebhookConfiguration extends CreateRecord
     {
         return [
             $this->getCancelFormAction()->formId('form')
+                ->tooltip(trans('filament-panels::resources/pages/create-record.form.actions.cancel.label'))
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-arrow-left'),
             $this->getCreateFormAction()->formId('form')
+                ->tooltip(trans('filament-actions::create.single.modal.actions.create.label'))
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-file-plus'),
         ];

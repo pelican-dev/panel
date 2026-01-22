@@ -567,6 +567,7 @@ class EditProfile extends BaseEditProfile
     {
         return [
             $this->getCancelFormAction()->formId('form')
+                ->tooltip(trans('filament-panels::resources/pages/create-record.form.actions.cancel.label'))
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-arrow-left'),
             $this->getSaveFormAction()->formId('form')
