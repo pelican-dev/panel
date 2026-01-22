@@ -570,6 +570,7 @@ class EditProfile extends BaseEditProfile
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-arrow-left'),
             $this->getSaveFormAction()->formId('form')
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),
         ];

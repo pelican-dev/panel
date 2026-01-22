@@ -20,7 +20,7 @@ class UpdateEggAction extends Action
     {
         parent::setUp();
 
-        $this->label(trans_choice('admin/egg.update', 1));
+        $this->tooltip(trans_choice('admin/egg.update', 1));
 
         $this->iconButton();
 

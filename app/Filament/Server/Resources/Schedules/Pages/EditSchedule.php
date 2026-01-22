@@ -55,7 +55,6 @@ class EditSchedule extends EditRecord
             DeleteAction::make()
                 ->hiddenLabel()
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->tooltip(trans('server/schedule.delete'))
                 ->after(function ($record) {
                     Activity::event('server:schedule.delete')
                         ->property('name', $record->name)
@@ -80,7 +79,7 @@ class EditSchedule extends EditRecord
                 }),
             ExportScheduleAction::make(),
             $this->getSaveFormAction()->formId('form')
-                ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy')
                 ->tooltip(trans('server/schedule.save')),
         ];

@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Forms\Components\Field;
@@ -11,6 +12,7 @@ use Filament\Forms\View\FormsIconAlias;
 use Filament\Notifications\View\NotificationsIconAlias;
 use Filament\Schemas\View\SchemaIconAlias;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
@@ -85,7 +87,13 @@ class FilamentServiceProvider extends ServiceProvider
         });
 
         Select::configureUsing(fn (Select $select) => $select->native(false));
-        DeleteAction::configureUsing(fn (DeleteAction $action) => $action->icon('tabler-trash'));
+        DeleteAction::configureUsing(function (DeleteAction $action) {
+            $action->icon('tabler-trash');
+            $action->tooltip(trans('filament-actions::delete.single.modal.actions.delete.label'));
+        });
+        CreateAction::configureUsing(function (CreateAction $action) {
+            $action->tooltip(fn (): string => trans('filament-actions::create.single.label', ['label' => $action->getModelLabel()]));
+        });
 
         FilamentIcon::register([
             ActionsIconAlias::DELETE_ACTION => 'tabler-trash',

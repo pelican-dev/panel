@@ -47,7 +47,7 @@ class Health extends Page
     {
         return [
             Action::make('refresh')
-                ->label(trans('admin/health.refresh'))
+                ->tooltip(trans('admin/health.refresh'))
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-refresh')
                 ->action('refresh'),

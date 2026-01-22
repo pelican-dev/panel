@@ -448,7 +448,7 @@ class EditEgg extends EditRecord
         return [
             DeleteAction::make()
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
-                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use'))
+                ->tooltip(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use'))
                 ->successNotification(fn (Egg $egg) => Notification::make()
                     ->success()
                     ->title(trans('admin/egg.delete_success'))
@@ -464,6 +464,7 @@ class EditEgg extends EditRecord
             ImportEggAction::make()
                 ->multiple(false),
             $this->getSaveFormAction()->formId('form')
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),
         ];

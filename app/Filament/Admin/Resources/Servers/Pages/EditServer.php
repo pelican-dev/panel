@@ -1100,7 +1100,7 @@ class EditServer extends EditRecord
         return [
             Action::make('Delete')
                 ->color('danger')
-                ->label(trans('filament-actions::delete.single.label'))
+                ->tooltip(trans('filament-actions::delete.single.label'))
                 ->modalHeading(trans('filament-actions::delete.single.modal.heading', ['label' => $this->getRecordTitle()]))
                 ->modalSubmitActionLabel(trans('filament-actions::delete.single.label'))
                 ->requiresConfirmation()
@@ -1143,11 +1143,12 @@ class EditServer extends EditRecord
                 ->visible(fn () => $canForceDelete)
                 ->authorize(fn (Server $server) => user()?->can('delete server', $server)),
             Action::make('console')
-                ->label(trans('admin/server.console'))
+                ->tooltip(trans('admin/server.console'))
                 ->icon('tabler-terminal')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)),
             $this->getSaveFormAction()->formId('form')
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),
         ];

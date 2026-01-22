@@ -646,7 +646,7 @@ class EditNode extends EditRecord
                         ->disabled(fn (Get $get) => $get('pulled'))
                         ->headerActions([
                             Action::make('pull')
-                                ->label(trans('admin/node.diagnostics.pull'))
+                                ->tooltip(trans('admin/node.diagnostics.pull'))
                                 ->icon('tabler-cloud-download')->iconButton()->iconSize(IconSize::ExtraLarge)
                                 ->hidden(fn (Get $get) => $get('pulled'))
                                 ->action(function (Get $get, Set $set, Node $node) {
@@ -684,7 +684,7 @@ class EditNode extends EditRecord
                                     }
                                 }),
                             Action::make('upload')
-                                ->label(trans('admin/node.diagnostics.upload'))
+                                ->tooltip(trans('admin/node.diagnostics.upload'))
                                 ->visible(fn (Get $get) => $get('pulled') ?? false)
                                 ->icon('tabler-cloud-upload')->iconButton()->iconSize(IconSize::ExtraLarge)
                                 ->action(function (Get $get, Set $set) {
@@ -732,7 +732,7 @@ class EditNode extends EditRecord
                                     }
                                 }),
                             Action::make('clear')
-                                ->label(trans('admin/node.diagnostics.clear'))
+                                ->tooltip(trans('admin/node.diagnostics.clear'))
                                 ->visible(fn (Get $get) => $get('pulled') ?? false)
                                 ->icon('tabler-trash')->iconButton()->iconSize(IconSize::ExtraLarge)->color('danger')
                                 ->action(function (Get $get, Set $set) {
@@ -808,9 +808,10 @@ class EditNode extends EditRecord
         return [
             DeleteAction::make()
                 ->disabled(fn (Node $node) => $node->servers()->count() > 0)
-                ->label(fn (Node $node) => $node->servers()->count() > 0 ? trans('admin/node.node_has_servers') : trans('filament-actions::delete.single.label'))
+                ->tooltip(fn (Node $node) => $node->servers()->count() > 0 ? trans('admin/node.node_has_servers') : trans('filament-actions::delete.single.label'))
                 ->iconButton()->iconSize(IconSize::ExtraLarge),
             $this->getSaveFormAction()->formId('form')
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),
         ];

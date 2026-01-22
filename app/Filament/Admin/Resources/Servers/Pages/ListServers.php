@@ -92,7 +92,7 @@ class ListServers extends ListRecords
             ])
             ->recordActions([
                 Action::make('View')
-                    ->label(trans('admin/server.view'))
+                    ->tooltip(trans('admin/server.view'))
                     ->iconButton()
                     ->icon('tabler-terminal')
                     ->iconSize(IconSize::Large)

@@ -106,7 +106,7 @@ class DatabasesRelationManager extends RelationManager
             ->toolbarActions([
                 CreateAction::make()
                     ->disabled(fn () => DatabaseHost::count() < 1)
-                    ->label(fn () => DatabaseHost::count() < 1 ? trans('admin/server.no_db_hosts') : trans('admin/server.create_database'))
+                    ->tooltip(fn () => DatabaseHost::count() < 1 ? trans('admin/server.no_db_hosts') : trans('admin/server.create_database'))
                     ->color(fn () => DatabaseHost::count() < 1 ? 'danger' : 'primary')
                     ->icon(fn () => DatabaseHost::count() < 1 ? 'tabler-database-x' : 'tabler-database-plus')
                     ->iconButton()->iconSize(IconSize::ExtraLarge)

@@ -20,7 +20,7 @@ class ExportEggAction extends Action
     {
         parent::setUp();
 
-        $this->label(trans('filament-actions::export.modal.actions.export.label'));
+        $this->tooltip(trans('filament-actions::export.modal.actions.export.label'));
 
         $this->iconButton();
 

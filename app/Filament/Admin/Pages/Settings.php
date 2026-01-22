@@ -856,6 +856,7 @@ class Settings extends Page implements HasSchemas
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy')
                 ->action('save')
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
                 ->authorize(fn () => user()?->can('update settings'))
                 ->keyBindings(['mod+s']),
         ];

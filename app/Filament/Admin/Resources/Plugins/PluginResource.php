@@ -241,7 +241,7 @@ class PluginResource extends Resource
             ])
             ->headerActions([
                 Action::make('import_from_file')
-                    ->label(trans('admin/plugin.import_from_file'))
+                    ->tooltip(trans('admin/plugin.import_from_file'))
                     ->authorize(fn () => user()?->can('create', Plugin::class))
                     ->icon('tabler-file-download')
                     ->iconButton()
@@ -285,7 +285,7 @@ class PluginResource extends Resource
                         }
                     }),
                 Action::make('import_from_url')
-                    ->label(trans('admin/plugin.import_from_url'))
+                    ->tooltip(trans('admin/plugin.import_from_url'))
                     ->authorize(fn () => user()?->can('create', Plugin::class))
                     ->icon('tabler-world-download')
                     ->iconButton()

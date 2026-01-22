@@ -86,7 +86,7 @@ class AllocationsRelationManager extends RelationManager
                 DeleteBulkAction::make()
                     ->authorize(fn () => user()?->can('update', $this->getOwnerRecord())),
                 Action::make('create new allocation')
-                    ->label(trans('admin/node.create_allocation'))
+                    ->tooltip(trans('admin/node.create_allocation'))
                     ->icon('tabler-world-plus')
                     ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->schema(fn () => [

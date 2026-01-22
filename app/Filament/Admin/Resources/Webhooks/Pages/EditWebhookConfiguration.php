@@ -33,6 +33,7 @@ class EditWebhookConfiguration extends EditRecord
                 ->action(fn (WebhookConfiguration $webhookConfiguration) => $webhookConfiguration->run())
                 ->tooltip(trans('admin/webhook.test_now_help')),
             $this->getSaveFormAction()->formId('form')
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->icon('tabler-device-floppy'),
         ];

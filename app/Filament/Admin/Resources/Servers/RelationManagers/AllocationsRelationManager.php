@@ -106,7 +106,7 @@ class AllocationsRelationManager extends RelationManager
                         }
                     }),
                 CreateAction::make()
-                    ->label(trans('admin/server.create_allocation'))
+                    ->tooltip(trans('admin/server.create_allocation'))
                     ->icon('tabler-network')
                     ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->createAnother(false)
@@ -154,7 +154,7 @@ class AllocationsRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
                     ->recordSelectSearchColumns(['ip', 'port'])
-                    ->label(trans('admin/server.add_allocation'))
+                    ->tooltip(trans('admin/server.add_allocation'))
                     ->after(function (array $data) {
                         Allocation::whereIn('id', array_values(array_unique($data['recordId'])))->update(['is_locked' => true]);
 

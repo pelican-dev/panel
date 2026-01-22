@@ -34,7 +34,7 @@ class ImportEggAction extends Action
     {
         parent::setUp();
 
-        $this->label(trans('filament-actions::import.modal.actions.import.label'));
+        $this->tooltip(trans('filament-actions::import.modal.actions.import.label'));
 
         $this->iconButton();
 
