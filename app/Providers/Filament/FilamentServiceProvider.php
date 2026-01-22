@@ -115,6 +115,30 @@ class FilamentServiceProvider extends ServiceProvider
             $action->iconSize(IconSize::Large);
 
             if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $name = $action->getName();
+
+                $excludedPrefixes = [
+                    'enable_oauth_',
+                    'disable_oauth_',
+                    'enable_captcha_',
+                    'disable_captcha_',
+                ];
+
+                $excludeActions = [
+                    'profile',
+                    'logout',
+                ];
+
+                foreach ($excludedPrefixes as $prefix) {
+                    if (str_starts_with($name, $prefix)) {
+                        return;
+                    }
+                }
+
+                if (in_array($name, $excludeActions, true)) {
+                    return;
+                }
+
                 $action->iconButton();
                 $action->iconSize(IconSize::ExtraLarge);
             }
