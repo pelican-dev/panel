@@ -142,7 +142,7 @@ class ListFiles extends ListRecords
                     ->visible(fn (File $file) => $file->canEdit())
                     ->url(fn (File $file) => EditFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))])),
                 ActionGroup::make([
-                    Action::make('rename')
+                    Action::make('fm_rename')
                         ->authorize(fn () => user()?->can(SubuserPermission::FileUpdate, $server))
                         ->label(trans('server/file.actions.rename.title'))
                         ->icon('tabler-forms')->iconSize(IconSize::Large)
@@ -172,7 +172,7 @@ class ListFiles extends ListRecords
 
                             $this->refreshPage();
                         }),
-                    Action::make('copy')
+                    Action::make('fm_copy')
                         ->authorize(fn () => user()?->can(SubuserPermission::FileCreate, $server))
                         ->label(trans('server/file.actions.copy.title'))
                         ->icon('tabler-copy')->iconSize(IconSize::Large)
@@ -191,13 +191,13 @@ class ListFiles extends ListRecords
 
                             $this->refreshPage();
                         }),
-                    Action::make('download')
+                    Action::make('fm_download')
                         ->authorize(fn () => user()?->can(SubuserPermission::FileReadContent, $server))
                         ->label(trans('server/file.actions.download'))
                         ->icon('tabler-download')->iconSize(IconSize::Large)
                         ->visible(fn (File $file) => $file->is_file)
                         ->url(fn (File $file) => DownloadFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]), true),
-                    Action::make('move')
+                    Action::make('fm_move')
                         ->authorize(fn () => user()?->can(SubuserPermission::FileUpdate, $server))
                         ->label(trans('server/file.actions.move.title'))
                         ->icon('tabler-replace')->iconSize(IconSize::Large)
@@ -234,7 +234,7 @@ class ListFiles extends ListRecords
 
                             $this->refreshPage();
                         }),
-                    Action::make('permissions')
+                    Action::make('fm_permissions')
                         ->authorize(fn () => user()?->can(SubuserPermission::FileUpdate, $server))
                         ->label(trans('server/file.actions.permissions.title'))
                         ->icon('tabler-license')->iconSize(IconSize::Large)
@@ -296,7 +296,7 @@ class ListFiles extends ListRecords
                                 ->success()
                                 ->send();
                         }),
-                    Action::make('archive')
+                    Action::make('fm_archive')
                         ->authorize(fn () => user()?->can(SubuserPermission::FileArchive, $server))
                         ->label(trans('server/file.actions.archive.title'))
                         ->icon('tabler-archive')->iconSize(IconSize::Large)
@@ -336,7 +336,7 @@ class ListFiles extends ListRecords
 
                             $this->refreshPage();
                         }),
-                    Action::make('unarchive')
+                    Action::make('fm_unarchive')
                         ->authorize(fn () => user()?->can(SubuserPermission::FileArchive, $server))
                         ->label(trans('server/file.actions.unarchive.title'))
                         ->icon('tabler-archive')->iconSize(IconSize::Large)
@@ -377,7 +377,9 @@ class ListFiles extends ListRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    BulkAction::make('move')
+                    BulkAction::make('fm_move')
+                        ->label(trans('server/file.actions.move.title'))
+                        ->icon('tabler-replace')->iconSize(IconSize::Large)
                         ->authorize(fn () => user()?->can(SubuserPermission::FileUpdate, $server))
                         ->schema([
                             TextInput::make('location')
@@ -406,7 +408,9 @@ class ListFiles extends ListRecords
 
                             $this->refreshPage();
                         }),
-                    BulkAction::make('archive')
+                    BulkAction::make('fm_archive')
+                        ->label(trans('server/file.actions.archive.title'))
+                        ->icon('tabler-archive')->iconSize(IconSize::Large)
                         ->authorize(fn () => user()?->can(SubuserPermission::FileArchive, $server))
                         ->schema([
                             Grid::make(3)
@@ -446,7 +450,7 @@ class ListFiles extends ListRecords
 
                             $this->refreshPage();
                         }),
-                    DeleteBulkAction::make()
+                    DeleteBulkAction::make('fm_delete')
                         ->successNotificationTitle(null)
                         ->authorize(fn () => user()?->can(SubuserPermission::FileDelete, $server))
                         ->action(function (Collection $files) {

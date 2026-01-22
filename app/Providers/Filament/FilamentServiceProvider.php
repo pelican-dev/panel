@@ -122,6 +122,7 @@ class FilamentServiceProvider extends ServiceProvider
                     'disable_oauth_',
                     'enable_captcha_',
                     'disable_captcha_',
+                    'fm_',
                 ];
 
                 $excludeActions = [
@@ -132,6 +133,8 @@ class FilamentServiceProvider extends ServiceProvider
                     'restart',
                     'kill',
                     'fileUpload',
+                    'save',
+                    'save_and_close',
                 ];
 
                 foreach ($excludedPrefixes as $prefix) {
