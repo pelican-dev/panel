@@ -5,6 +5,7 @@ namespace App\Enums;
 enum RolePermissionModels: string
 {
     case ApiKey = 'apiKey';
+    case Allocation = 'allocation';
     case DatabaseHost = 'databaseHost';
     case Database = 'database';
     case Egg = 'egg';
@@ -33,5 +34,10 @@ enum RolePermissionModels: string
     public function update(): string
     {
         return RolePermissionPrefixes::Update->value . ' ' . $this->value;
+    }
+
+    public function delete(): string
+    {
+        return RolePermissionPrefixes::Delete->value . ' ' . $this->value;
     }
 }
