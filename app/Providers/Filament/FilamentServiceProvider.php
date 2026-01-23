@@ -91,9 +91,22 @@ class FilamentServiceProvider extends ServiceProvider
         });
 
         Select::configureUsing(fn (Select $select) => $select->native(false));
-        Copyaction::configureUsing(fn (CopyAction $action) => $action->iconSize(IconSize::Large));
-        KeyValue::configureUsing(fn (KeyValue $keyValue) => $keyValue->deleteAction(fn (Action $action) => $action->iconSize(IconSize::Large)));
-        Repeater::configureUsing(fn (Repeater $repeater) => $repeater->deleteAction(fn (Action $action) => $action->iconSize(IconSize::Large)));
+
+        Copyaction::configureUsing(function (CopyAction $action) {
+            $action->tooltip(trans('filament-forms::components.text_input.actions.copy.label'));
+            $action->iconSize(IconSize::Large);
+        });
+
+        KeyValue::configureUsing(fn (KeyValue $keyValue) => $keyValue->deleteAction(function (Action $action) {
+            $action->tooltip(trans('filament-forms::components.key_value.actions.delete.label'));
+            $action->iconSize(IconSize::Large);
+
+        }));
+
+        Repeater::configureUsing(fn (Repeater $repeater) => $repeater->deleteAction(function (Action $action) {
+            $action->tooltip(trans('filament-forms::components.key_value.actions.delete.label'));
+            $action->iconSize(IconSize::Large);
+        }));
 
         DeleteAction::configureUsing(function (DeleteAction $action) {
             $action->icon('tabler-trash');
