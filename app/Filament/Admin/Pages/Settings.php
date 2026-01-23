@@ -348,7 +348,7 @@ class Settings extends Page implements HasSchemas
                 ->live()
                 ->default(env('MAIL_MAILER', config('mail.default')))
                 ->hintAction(
-                    Action::make('test')
+                    Action::make('hint_test')
                         ->label(trans('admin/setting.mail.test_mail'))
                         ->icon('tabler-send')
                         ->hidden(fn (Get $get) => $get('MAIL_MAILER') === 'log')

@@ -254,7 +254,7 @@ class CreateServer extends CreateRecord
                                     ->ip()
                                     ->live()
                                     ->hintAction(
-                                        Action::make('refresh')
+                                        Action::make('hint_refresh')
                                             ->iconButton()
                                             ->icon('tabler-refresh')
                                             ->tooltip(trans('admin/node.refresh'))

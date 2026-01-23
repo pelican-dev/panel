@@ -97,7 +97,7 @@ class AllocationsRelationManager extends RelationManager
                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                             ->live()
                             ->hintAction(
-                                Action::make('refresh')
+                                Action::make('hint_refresh')
                                     ->icon('tabler-refresh')
                                     ->tooltip(trans('admin/node.refresh'))
                                     ->action(function () {

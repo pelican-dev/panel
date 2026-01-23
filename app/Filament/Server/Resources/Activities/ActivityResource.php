@@ -116,7 +116,7 @@ class ActivityResource extends Resource
                                 return $user;
                             })
                             ->hintAction(
-                                Action::make('edit')
+                                Action::make('hint_edit')
                                     ->label(trans('filament-actions::edit.single.label'))
                                     ->icon('tabler-edit')
                                     ->visible(fn (ActivityLog $activityLog) => $activityLog->actor instanceof User && user()?->can('update', $activityLog->actor))

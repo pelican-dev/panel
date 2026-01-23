@@ -259,7 +259,7 @@ class EditServer extends EditRecord
                             TextInput::make('name')
                                 ->prefixIcon('tabler-server')
                                 ->label(trans('admin/server.name'))
-                                ->suffixAction(Action::make('random')
+                                ->suffixAction(Action::make('hint_random')
                                     ->icon('tabler-dice-' . random_int(1, 6))
                                     ->action(function (Set $set, Get $get) {
                                         $egg = Egg::find($get('egg_id'));
@@ -728,7 +728,7 @@ class EditServer extends EditRecord
                         ->preload()
                         ->required()
                         ->hintAction(
-                            Action::make('change_egg')
+                            Action::make('hint_change_egg')
                                 ->label(trans('admin/server.change_egg'))
                                 ->action(function (array $data, Server $server, EggChangerService $service) {
                                     $service->handle($server, $data['egg_id'], $data['keep_old_variables']);
@@ -795,7 +795,7 @@ class EditServer extends EditRecord
                         })
                         ->selectablePlaceholder(false)
                         ->columnSpanFull()
-                        ->hintAction(PreviewStartupAction::make('preview')),
+                        ->hintAction(PreviewStartupAction::make('hint_preview')),
 
                     Textarea::make('startup')
                         ->hiddenLabel()

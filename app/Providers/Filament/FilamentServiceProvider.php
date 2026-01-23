@@ -8,6 +8,8 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput\Actions\CopyAction;
 use Filament\Forms\View\FormsIconAlias;
@@ -89,6 +91,10 @@ class FilamentServiceProvider extends ServiceProvider
         });
 
         Select::configureUsing(fn (Select $select) => $select->native(false));
+        Copyaction::configureUsing(fn (CopyAction $action) => $action->iconSize(IconSize::Large));
+        KeyValue::configureUsing(fn (KeyValue $keyValue) => $keyValue->deleteAction(fn (Action $action) => $action->iconSize(IconSize::Large)));
+        Repeater::configureUsing(fn (Repeater $repeater) => $repeater->deleteAction(fn (Action $action) => $action->iconSize(IconSize::Large)));
+
         DeleteAction::configureUsing(function (DeleteAction $action) {
             $action->icon('tabler-trash');
             $action->tooltip(trans('filament-actions::delete.single.modal.actions.delete.label'));
@@ -123,6 +129,7 @@ class FilamentServiceProvider extends ServiceProvider
                     'enable_captcha_',
                     'disable_captcha_',
                     'fm_',
+                    'hint_',
                 ];
 
                 $excludeActions = [
@@ -133,8 +140,6 @@ class FilamentServiceProvider extends ServiceProvider
                     'restart',
                     'kill',
                     'fileUpload',
-                    'save',
-                    'save_and_close',
                 ];
 
                 foreach ($excludedPrefixes as $prefix) {

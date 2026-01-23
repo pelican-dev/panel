@@ -306,7 +306,7 @@ class Settings extends ServerFormPage
                                     ->disabled()
                                     ->copyable()
                                     ->hintAction(
-                                        Action::make('connect_sftp')
+                                        Action::make('hint_connect_sftp')
                                             ->label(trans('server/setting.server_info.sftp.action'))
                                             ->color('success')
                                             ->icon('tabler-plug')

@@ -204,7 +204,7 @@ class UserResource extends Resource
                         ->hintIcon(fn ($operation) => $operation === 'create' ? 'tabler-question-mark' : null, fn ($operation) => $operation === 'create' ? trans('admin/user.password_help') : null)
                         ->password()
                         ->hintAction(
-                            Action::make('password_reset')
+                            Action::make('hint_password_reset')
                                 ->label(trans('admin/user.password_reset'))
                                 ->hidden(fn (string $operation) => $operation === 'create' || config('mail.default', 'log') === 'log')
                                 ->icon('tabler-send')
