@@ -288,6 +288,12 @@ class PluginService
         try {
             $this->manageComposerPackages(json_decode($plugin->composer_packages, true, 512));
 
+            $this->buildAssets($plugin->isTheme());
+
+            $this->runPluginMigrations($plugin);
+
+            $this->runPluginSeeder($plugin);
+
             if ($enable) {
                 $this->enablePlugin($plugin);
             } else {
@@ -296,63 +302,51 @@ class PluginService
                 }
             }
 
-            $this->buildAssets($plugin->isTheme());
-
-            $this->runPluginMigrations($plugin);
-
-            $this->runPluginSeeder($plugin);
-
             foreach (Filament::getPanels() as $panel) {
                 $panel->clearCachedComponents();
             }
         } catch (Exception $exception) {
-            $this->handlePluginException($plugin, $exception, true);
+            $this->setStatus($plugin, PluginStatus::NotInstalled, $exception->getMessage());
+
+            throw $exception;
         }
     }
 
     /** @throws Exception */
     public function updatePlugin(Plugin $plugin): void
     {
-        try {
-            $downloadUrl = $plugin->getDownloadUrlForUpdate();
-            if (!$downloadUrl) {
-                throw new Exception('No download url found.');
-            }
-
-            $this->downloadPluginFromUrl($downloadUrl, true);
-
-            $this->installPlugin($plugin, false);
-
-            cache()->forget("plugins.$plugin->id.update");
-        } catch (Exception $exception) {
-            $this->handlePluginException($plugin, $exception, true);
+        $downloadUrl = $plugin->getDownloadUrlForUpdate();
+        if (!$downloadUrl) {
+            throw new Exception('No download url found.');
         }
+
+        $this->downloadPluginFromUrl($downloadUrl, true);
+
+        $this->installPlugin($plugin, false);
+
+        cache()->forget("plugins.$plugin->id.update");
     }
 
     /** @throws Exception */
     public function uninstallPlugin(Plugin $plugin, bool $deleteFiles = false): void
     {
-        try {
-            $pluginPackages = json_decode($plugin->composer_packages, true, 512);
+        $pluginPackages = json_decode($plugin->composer_packages, true, 512);
 
-            $this->rollbackPluginMigrations($plugin);
+        $this->rollbackPluginMigrations($plugin);
 
-            if ($deleteFiles) {
-                $this->deletePlugin($plugin);
-            } else {
-                $this->setStatus($plugin, PluginStatus::NotInstalled);
-            }
+        $this->setStatus($plugin, PluginStatus::NotInstalled);
 
-            $this->buildAssets();
+        if ($deleteFiles) {
+            $this->deletePlugin($plugin);
+        }
 
-            $this->manageComposerPackages(oldPackages: $pluginPackages);
+        $this->buildAssets();
 
-            // This throws an error when not called with qualifier
-            foreach (\Filament\Facades\Filament::getPanels() as $panel) {
-                $panel->clearCachedComponents();
-            }
-        } catch (Exception $exception) {
-            $this->handlePluginException($plugin, $exception, true);
+        $this->manageComposerPackages(oldPackages: $pluginPackages);
+
+        // This throws an error when not called with qualifier
+        foreach (\Filament\Facades\Filament::getPanels() as $panel) {
+            $panel->clearCachedComponents();
         }
     }
 
@@ -506,14 +500,14 @@ class PluginService
         return config('panel.plugin.dev_mode', false);
     }
 
-    private function handlePluginException(string|Plugin $plugin, Exception $exception, bool $throw = false): void
+    private function handlePluginException(string|Plugin $plugin, Exception $exception): void
     {
-        $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
-
-        if ($throw || $this->isDevModeActive()) {
+        if ($this->isDevModeActive()) {
             throw ($exception);
         }
 
         report($exception);
+
+        $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
     }
 }
