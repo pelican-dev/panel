@@ -30,7 +30,7 @@ class HelpWidget extends FormWidget
                             ->state(trans('admin/dashboard.sections.intro-help.content')),
                     ])
                     ->headerActions([
-                        Action::make('docs')
+                        Action::make('db_docs')
                             ->label(trans('admin/dashboard.sections.intro-help.button_docs'))
                             ->icon('tabler-speedboat')
                             ->url('https://pelican.dev/docs', true),

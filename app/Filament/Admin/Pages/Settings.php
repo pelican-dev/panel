@@ -243,14 +243,14 @@ class Settings extends Page implements HasSchemas
                 ->placeholder(trans('admin/setting.general.trusted_proxies_help'))
                 ->default(env('TRUSTED_PROXIES', implode(',', Arr::wrap(config('trustedproxy.proxies')))))
                 ->hintActions([
-                    Action::make('clear')
+                    Action::make('hint_clear')
                         ->label(trans('admin/setting.general.clear'))
                         ->color('danger')
                         ->icon('tabler-trash')
                         ->requiresConfirmation()
                         ->authorize(fn () => user()?->can('update settings'))
                         ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [])),
-                    Action::make('cloudflare')
+                    Action::make('hint_cloudflare')
                         ->label(trans('admin/setting.general.set_to_cf'))
                         ->icon('tabler-brand-cloudflare')
                         ->authorize(fn () => user()?->can('update settings'))

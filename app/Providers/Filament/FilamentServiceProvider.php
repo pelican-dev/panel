@@ -12,6 +12,8 @@ use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput\Actions\CopyAction;
+use Filament\Forms\Components\TextInput\Actions\HidePasswordAction;
+use Filament\Forms\Components\TextInput\Actions\ShowPasswordAction;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Notifications\View\NotificationsIconAlias;
 use Filament\Schemas\View\SchemaIconAlias;
@@ -92,21 +94,29 @@ class FilamentServiceProvider extends ServiceProvider
 
         Select::configureUsing(fn (Select $select) => $select->native(false));
 
-        Copyaction::configureUsing(function (CopyAction $action) {
-            $action->tooltip(trans('filament-forms::components.text_input.actions.copy.label'));
-            $action->iconSize(IconSize::Large);
-        });
-
         KeyValue::configureUsing(fn (KeyValue $keyValue) => $keyValue->deleteAction(function (Action $action) {
             $action->tooltip(trans('filament-forms::components.key_value.actions.delete.label'));
             $action->iconSize(IconSize::Large);
-
         }));
 
         Repeater::configureUsing(fn (Repeater $repeater) => $repeater->deleteAction(function (Action $action) {
             $action->tooltip(trans('filament-forms::components.key_value.actions.delete.label'));
             $action->iconSize(IconSize::Large);
         }));
+
+        ShowPasswordAction::configureUsing(function (ShowPasswordAction $action) {
+            $action->tooltip(trans('filament-forms::components.text_input.actions.show_password.label'));
+            $action->iconSize(IconSize::Large);
+        });
+        HidePasswordAction::configureUsing(function (HidePasswordAction $action) {
+            $action->tooltip(trans('filament-forms::components.text_input.actions.hide_password.label'));
+            $action->iconSize(IconSize::Large);
+        });
+
+        Copyaction::configureUsing(function (CopyAction $action) {
+            $action->tooltip(trans('filament-forms::components.text_input.actions.copy.label'));
+            $action->iconSize(IconSize::Large);
+        });
 
         DeleteAction::configureUsing(function (DeleteAction $action) {
             $action->icon('tabler-trash');
@@ -141,8 +151,9 @@ class FilamentServiceProvider extends ServiceProvider
                     'disable_oauth_',
                     'enable_captcha_',
                     'disable_captcha_',
-                    'fm_',
-                    'hint_',
+                    'db_', // dashboard
+                    'fm_', // file manager
+                    'hint_', // hint actions
                 ];
 
                 $excludeActions = [

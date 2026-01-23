@@ -37,7 +37,7 @@ class NoNodesWidget extends FormWidget
                             ->state(trans('admin/dashboard.sections.intro-first-node.content')),
                     ])
                     ->headerActions([
-                        Action::make('create-node')
+                        Action::make('db_create-node')
                             ->label(trans('admin/dashboard.sections.intro-first-node.button_label'))
                             ->icon('tabler-server-2')
                             ->url(CreateNode::getUrl()),
