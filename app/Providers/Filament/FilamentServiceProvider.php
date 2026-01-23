@@ -113,7 +113,7 @@ class FilamentServiceProvider extends ServiceProvider
             $action->iconSize(IconSize::Large);
         });
 
-        Copyaction::configureUsing(function (CopyAction $action) {
+        CopyAction::configureUsing(function (CopyAction $action) {
             $action->tooltip(trans('filament-forms::components.text_input.actions.copy.label'));
             $action->iconSize(IconSize::Large);
         });
