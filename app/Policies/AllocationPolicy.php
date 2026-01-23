@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Enums\SubuserPermission;
+use App\Models\Allocation;
 use App\Models\Server;
 use App\Models\User;
 use Filament\Facades\Filament;
@@ -20,6 +21,23 @@ class AllocationPolicy
     }
 
     protected string $modelName = 'allocation';
+
+    public function before(User $user, string $ability, string|Allocation $allocation): ?bool
+    {
+        // For "viewAny" the $allocation param is the class name
+        if (is_string($allocation)) {
+            return null;
+        }
+
+        /** @var ?Server $server */
+        $server = Filament::getTenant();
+
+        if (!$server && !$user->canTarget($allocation->node)) {
+            return false;
+        }
+
+        return null;
+    }
 
     public function viewAny(User $user): bool
     {
