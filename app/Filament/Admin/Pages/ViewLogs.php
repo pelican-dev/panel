@@ -9,7 +9,6 @@ use Boquizo\FilamentLogViewer\Actions\DownloadAction;
 use Boquizo\FilamentLogViewer\Pages\ViewLog as BaseViewLog;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Facades\Http;
 
 class ViewLogs extends BaseViewLog
@@ -28,7 +27,7 @@ class ViewLogs extends BaseViewLog
                 ->icon('tabler-file-download')->iconButton(),
             Action::make('uploadLogs')
                 ->hiddenLabel()
-                ->icon('tabler-world-upload')->iconSize(IconSize::ExtraLarge)->iconButton()
+                ->icon('tabler-world-upload')
                 ->requiresConfirmation()
                 ->tooltip(trans('admin/log.actions.upload_tooltip', ['url' => 'logs.pelican.dev']))
                 ->modalHeading(trans('admin/log.actions.upload_logs'))

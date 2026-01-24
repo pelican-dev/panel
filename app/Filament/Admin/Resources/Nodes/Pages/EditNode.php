@@ -37,7 +37,6 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\RawJs;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -647,7 +646,7 @@ class EditNode extends EditRecord
                         ->headerActions([
                             Action::make('pull')
                                 ->tooltip(trans('admin/node.diagnostics.pull'))
-                                ->icon('tabler-cloud-download')->iconButton()->iconSize(IconSize::ExtraLarge)
+                                ->icon('tabler-cloud-download')
                                 ->hidden(fn (Get $get) => $get('pulled'))
                                 ->action(function (Get $get, Set $set, Node $node) {
                                     $includeEndpoints = $get('include_endpoints') ?? true;
@@ -686,7 +685,7 @@ class EditNode extends EditRecord
                             Action::make('upload')
                                 ->tooltip(trans('admin/node.diagnostics.upload'))
                                 ->visible(fn (Get $get) => $get('pulled') ?? false)
-                                ->icon('tabler-cloud-upload')->iconButton()->iconSize(IconSize::ExtraLarge)
+                                ->icon('tabler-cloud-upload')
                                 ->action(function (Get $get, Set $set) {
                                     try {
                                         $response = Http::asMultipart()
@@ -734,7 +733,7 @@ class EditNode extends EditRecord
                             Action::make('clear')
                                 ->tooltip(trans('admin/node.diagnostics.clear'))
                                 ->visible(fn (Get $get) => $get('pulled') ?? false)
-                                ->icon('tabler-trash')->iconButton()->iconSize(IconSize::ExtraLarge)->color('danger')
+                                ->icon('tabler-trash')->color('danger')
                                 ->action(function (Get $get, Set $set) {
                                     $set('pulled', false);
                                     $set('uploaded', false);
