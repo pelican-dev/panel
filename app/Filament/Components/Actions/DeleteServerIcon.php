@@ -22,6 +22,8 @@ class DeleteServerIcon extends Action
 
         $this->hiddenLabel();
 
+        $this->tooltip(trans('admin/server.import_image'));
+
         $this->icon('tabler-trash');
 
         $this->color('danger');

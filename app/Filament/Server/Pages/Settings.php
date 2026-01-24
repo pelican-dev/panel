@@ -25,7 +25,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -89,7 +88,7 @@ class Settings extends ServerFormPage
                                             ->alignJustify(),
                                         Action::make('uploadIcon')
                                             ->hiddenLabel()
-                                            ->iconSize(IconSize::Large)
+                                            ->tooltip(trans('admin/server.import_image'))
                                             ->icon('tabler-photo-up')
                                             ->modal()
                                             ->modalSubmitActionLabel(trans('server/setting.server_info.icon.upload'))

@@ -7,6 +7,8 @@ return [
     'no_servers' => 'No Servers',
     'create' => 'Create Server',
     'ip_address' => 'IP Address',
+    'import_image' => 'Import Image',
+    'delete_image' => 'Delete Image',
     'ip_address_helper' => 'Usually your machine\'s public IP unless you are port forwarding.',
     'port' => 'Port',
     'ports' => 'Ports',

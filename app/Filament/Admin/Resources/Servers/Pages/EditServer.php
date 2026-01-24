@@ -56,7 +56,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
@@ -121,8 +120,8 @@ class EditServer extends EditRecord
                                 ->columnSpan(2)
                                 ->alignJustify(),
                             Action::make('uploadIcon')
-                                ->iconSize(IconSize::Large)
                                 ->icon('tabler-photo-up')
+                                ->tooltip(trans('admin/server.import_image'))
                                 ->modal()
                                 ->modalSubmitActionLabel(trans('server/setting.server_info.icon.upload'))
                                 ->schema([
