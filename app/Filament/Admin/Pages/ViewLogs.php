@@ -20,11 +20,12 @@ class ViewLogs extends BaseViewLog
     {
         return [
             BackAction::make()
-                ->icon('tabler-arrow-left')->iconSize(IconSize::ExtraLarge)->iconButton(),
+                ->tooltip(trans('filament-log-viewer::log.table.actions.close.label'))
+                ->icon('tabler-arrow-left')->iconButton(),
             DeleteAction::make(withTooltip: true)
-                ->iconSize(IconSize::ExtraLarge)->iconButton(),
+                ->icon('tabler-trash')->iconButton(),
             DownloadAction::make(withTooltip: true)
-                ->icon('tabler-file-download')->iconSize(IconSize::ExtraLarge)->iconButton(),
+                ->icon('tabler-file-download')->iconButton(),
             Action::make('uploadLogs')
                 ->hiddenLabel()
                 ->icon('tabler-world-upload')->iconSize(IconSize::ExtraLarge)->iconButton()
@@ -77,7 +78,7 @@ class ViewLogs extends BaseViewLog
                             ->body("{$url}")
                             ->success()
                             ->actions([
-                                Action::make('viewLogs')
+                                Action::make('exclude_viewLogs')
                                     ->label(trans('admin/log.actions.view_logs'))
                                     ->url($url)
                                     ->openUrlInNewTab(true),

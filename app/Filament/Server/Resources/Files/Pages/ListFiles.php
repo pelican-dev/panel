@@ -134,7 +134,7 @@ class ListFiles extends ListRecords
                 Action::make('view')
                     ->authorize(fn () => user()?->can(SubuserPermission::FileRead, $server))
                     ->label(trans('server/file.actions.open'))
-                    ->icon('tabler-eye')->iconSize(IconSize::Large)
+                    ->icon('tabler-eye')
                     ->visible(fn (File $file) => $file->is_directory)
                     ->url(fn (File $file) => self::getUrl(['path' => encode_path(join_paths($this->path, $file->name))])),
                 EditAction::make('edit')
@@ -360,7 +360,6 @@ class ListFiles extends ListRecords
                 DeleteAction::make()
                     ->authorize(fn () => user()?->can(SubuserPermission::FileDelete, $server))
                     ->hiddenLabel()
-                    ->iconSize(IconSize::Large)
                     ->requiresConfirmation()
                     ->modalHeading(fn (File $file) => trans('filament-actions::delete.single.modal.heading', ['label' => $file->name . ' ' . ($file->is_directory ? 'folder' : 'file')]))
                     ->action(function (File $file) {

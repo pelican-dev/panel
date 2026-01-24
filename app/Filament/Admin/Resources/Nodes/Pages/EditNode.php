@@ -712,7 +712,7 @@ class EditNode extends EditRecord
                                             ->body("{$url}")
                                             ->success()
                                             ->actions([
-                                                Action::make('viewLogs')
+                                                Action::make('exclude_viewLogs')
                                                     ->label(trans('admin/node.diagnostics.view_logs'))
                                                     ->url($url)
                                                     ->openUrlInNewTab(true),

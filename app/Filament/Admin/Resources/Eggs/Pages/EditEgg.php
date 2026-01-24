@@ -85,6 +85,7 @@ class EditEgg extends EditRecord
                             Flex::make([
                                 Action::make('uploadImage')
                                     ->hiddenLabel()
+                                    ->tooltip(trans('admin/egg.import.import_image'))
                                     ->iconSize(IconSize::Large)
                                     ->icon('tabler-photo-up')
                                     ->modal()
@@ -209,6 +210,7 @@ class EditEgg extends EditRecord
                                 Action::make('delete_image')
                                     ->visible(fn ($record) => $record->image)
                                     ->hiddenLabel()
+                                    ->tooltip(trans('admin/egg.import.delete_image'))
                                     ->icon('tabler-trash')
                                     ->iconSize(IconSize::Large)
                                     ->color('danger')

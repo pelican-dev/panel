@@ -19,7 +19,6 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -65,18 +64,14 @@ class ListEggs extends ListRecords
             ->recordActions([
                 EditAction::make()
                     ->iconButton()
-                    ->tooltip(trans('filament-actions::edit.single.label'))
-                    ->iconSize(IconSize::Large),
+                    ->tooltip(trans('filament-actions::edit.single.label')),
                 ExportEggAction::make()
-                    ->tooltip(trans('filament-actions::export.modal.actions.export.label'))
-                    ->iconSize(IconSize::Large),
+                    ->tooltip(trans('filament-actions::export.modal.actions.export.label')),
                 UpdateEggAction::make()
-                    ->tooltip(trans_choice('admin/egg.update', 1))
-                    ->iconSize(IconSize::Large),
+                    ->tooltip(trans_choice('admin/egg.update', 1)),
                 ReplicateAction::make()
                     ->iconButton()
                     ->tooltip(trans('filament-actions::replicate.single.label'))
-                    ->iconSize(IconSize::Large)
                     ->modal(false)
                     ->excludeAttributes(['author', 'uuid', 'update_url', 'servers_count', 'created_at', 'updated_at'])
                     ->beforeReplicaSaved(function (Egg $replica) {

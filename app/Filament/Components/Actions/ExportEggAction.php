@@ -42,11 +42,11 @@ class ExportEggAction extends Action
         $this->modalFooterActionsAlignment(Alignment::Center);
 
         $this->modalFooterActions([
-            Action::make('json')
+            Action::make('exclude_json')
                 ->label(trans('admin/egg.export.as', ['format' => 'json']))
                 ->url(fn (Egg $egg) => route('api.application.eggs.eggs.export', ['egg' => $egg, 'format' => EggFormat::JSON->value]), true)
                 ->close(),
-            Action::make('yaml')
+            Action::make('exclude_yaml')
                 ->label(trans('admin/egg.export.as', ['format' => 'yaml']))
                 ->url(fn (Egg $egg) => route('api.application.eggs.eggs.export', ['egg' => $egg, 'format' => EggFormat::YAML->value]), true)
                 ->close(),

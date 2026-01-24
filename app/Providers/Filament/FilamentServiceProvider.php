@@ -6,7 +6,9 @@ use App\Enums\CustomizationKey;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Actions\View\ActionsIconAlias;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
@@ -108,6 +110,7 @@ class FilamentServiceProvider extends ServiceProvider
             $action->tooltip(trans('filament-forms::components.text_input.actions.show_password.label'));
             $action->iconSize(IconSize::Large);
         });
+
         HidePasswordAction::configureUsing(function (HidePasswordAction $action) {
             $action->tooltip(trans('filament-forms::components.text_input.actions.hide_password.label'));
             $action->iconSize(IconSize::Large);
@@ -140,6 +143,26 @@ class FilamentServiceProvider extends ServiceProvider
             }
         });
 
+        EditAction::configureUsing(function (EditAction $action) {
+            $action->tooltip(trans('filament-actions::edit.single.label'));
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
+        });
+
+        ViewAction::configureUsing(function (ViewAction $action) {
+            $action->tooltip(trans('filament-actions::view.single.label'));
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
+        });
+
         Action::configureUsing(function (Action $action) {
             $action->iconSize(IconSize::Large);
 
@@ -154,6 +177,7 @@ class FilamentServiceProvider extends ServiceProvider
                     'db_', // dashboard
                     'fm_', // file manager
                     'hint_', // hint actions
+                    'exclude_', // exclude actions
                 ];
 
                 $excludeActions = [
