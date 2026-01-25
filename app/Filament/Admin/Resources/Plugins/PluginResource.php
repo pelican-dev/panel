@@ -81,7 +81,7 @@ class PluginResource extends Resource
                     ->sortable(),
             ])
             ->recordActions([
-                Action::make('view')
+                Action::make('exclude_view')
                     ->label(trans('filament-actions::view.single.label'))
                     ->icon(fn (Plugin $plugin) => $plugin->getReadme() ? 'tabler-eye' : 'tabler-eye-share')
                     ->color('gray')
@@ -101,7 +101,7 @@ class PluginResource extends Resource
                             ->markdown()
                             ->state(fn (Plugin $plugin) => $plugin->getReadme()),
                     ] : null),
-                Action::make('settings')
+                Action::make('exclude_settings')
                     ->label(trans('admin/plugin.settings'))
                     ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                     ->icon('tabler-settings')
@@ -111,7 +111,7 @@ class PluginResource extends Resource
                     ->action(fn (array $data, Plugin $plugin) => $plugin->saveSettings($data))
                     ->slideOver(),
                 ActionGroup::make([
-                    Action::make('install')
+                    Action::make('exclude_install')
                         ->label(trans('admin/plugin.install'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                         ->icon('tabler-terminal')
@@ -135,7 +135,7 @@ class PluginResource extends Resource
                                     ->send();
                             }
                         }),
-                    Action::make('update')
+                    Action::make('exclude_update')
                         ->label(trans('admin/plugin.update'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                         ->icon('tabler-download')
@@ -159,7 +159,7 @@ class PluginResource extends Resource
                                     ->send();
                             }
                         }),
-                    Action::make('enable')
+                    Action::make('exclude_enable')
                         ->label(trans('admin/plugin.enable'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                         ->icon('tabler-check')
@@ -178,7 +178,7 @@ class PluginResource extends Resource
                                 ->title(trans('admin/plugin.notifications.enabled'))
                                 ->send();
                         }),
-                    Action::make('disable')
+                    Action::make('exclude_disable')
                         ->label(trans('admin/plugin.disable'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                         ->icon('tabler-x')
@@ -194,7 +194,7 @@ class PluginResource extends Resource
                                 ->title(trans('admin/plugin.notifications.disabled'))
                                 ->send();
                         }),
-                    Action::make('delete')
+                    Action::make('exclude_delete')
                         ->label(trans('filament-actions::delete.single.label'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('delete', $plugin))
                         ->icon('tabler-trash')
@@ -211,7 +211,7 @@ class PluginResource extends Resource
                                 ->title(trans('admin/plugin.notifications.deleted'))
                                 ->send();
                         }),
-                    Action::make('uninstall')
+                    Action::make('exclude_uninstall')
                         ->label(trans('admin/plugin.uninstall'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                         ->icon('tabler-terminal')

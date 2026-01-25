@@ -21,8 +21,6 @@ class ExportEggAction extends Action
 
         $this->tooltip(trans('filament-actions::export.modal.actions.export.label'));
 
-        $this->hiddenLabel();
-
         $this->icon('tabler-download');
 
         $this->tableIcon('tabler-download');
