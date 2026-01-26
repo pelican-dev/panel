@@ -563,26 +563,25 @@ class Settings extends Page implements HasSchemas
 
         $oauthSchemas = $this->oauthService->getAll();
         foreach ($oauthSchemas as $schema) {
-            $id = Str::upper($schema->getId());
             $key = $schema->getConfigKey();
 
             $formFields[] = Section::make($schema->getName())
                 ->columns(5)
                 ->icon($schema->getIcon() ?? 'tabler-brand-oauth')
-                ->collapsed(fn () => !env($key, false))
+                ->collapsed(fn () => !$schema->isEnabled())
                 ->collapsible()
                 ->schema([
                     Hidden::make($key)
                         ->live()
-                        ->default(env($key)),
+                        ->default($schema->isEnabled()),
                     Actions::make([
-                        Action::make("disable_oauth_$id")
+                        Action::make('disable_oauth_' . $schema->getId())
                             ->visible(fn (Get $get) => $get($key))
                             ->disabled(fn () => !user()?->can('update settings'))
                             ->label(trans('admin/setting.oauth.disable'))
                             ->color('danger')
                             ->action(fn (Set $set) => $set($key, false)),
-                        Action::make("enable_oauth_$id")
+                        Action::make('enable_oauth_'  . $schema->getId())
                             ->visible(fn (Get $get) => !$get($key))
                             ->disabled(fn () => !user()?->can('update settings'))
                             ->label(trans('admin/setting.oauth.enable'))
