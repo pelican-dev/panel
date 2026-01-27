@@ -120,9 +120,7 @@ abstract class OAuthSchema implements OAuthSchemaInterface
 
     public function isEnabled(): bool
     {
-        $id = Str::upper($this->getId());
-
-        return env("OAUTH_{$id}_ENABLED", false);
+        return env($this->getConfigKey(), false);
     }
 
     public function shouldCreateMissingUser(OAuthUser $user): bool
