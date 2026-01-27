@@ -20,32 +20,32 @@ class ExportServerConfigAction extends Action
     {
         parent::setUp();
 
-        $this->label('Export');
+        $this->label(trans('filament-actions::export.modal.actions.export.label'));
 
         $this->iconSize(IconSize::ExtraLarge);
 
-        $this->tooltip('Export server configuration to YAML file');
+        $this->tooltip(trans('admin/server.import_export.export_tooltip'));
 
         $this->authorize(fn () => user()?->can('view server'));
 
-        $this->modalHeading(fn (Server $server) => 'Export Configuration: ' . $server->name);
+        $this->modalHeading(fn (Server $server) => trans('admin/server.import_export.export_heading', ['name' => $server->name]));
 
-        $this->modalDescription('Export the server\'s configuration, settings, limits, allocations, and variable values to a YAML file.');
+        $this->modalDescription(trans('admin/server.import_export.export_description'));
 
         $this->modalFooterActionsAlignment(Alignment::Center);
 
         $this->schema([
             Toggle::make('include_description')
-                ->label('Include Description')
-                ->helperText('Export the server description')
+                ->label(trans('admin/server.import_export.include_description'))
+                ->helperText(trans('admin/server.import_export.include_description_help'))
                 ->default(true),
             Toggle::make('include_allocations')
-                ->label('Include Allocations')
-                ->helperText('Export IP addresses and ports assigned to the server')
+                ->label(trans('admin/server.import_export.include_allocations'))
+                ->helperText(trans('admin/server.import_export.include_allocations_help'))
                 ->default(true),
             Toggle::make('include_variable_values')
-                ->label('Include Variable Values')
-                ->helperText('Export environment variable values')
+                ->label(trans('admin/server.import_export.include_variables'))
+                ->helperText(trans('admin/server.import_export.include_variables_help'))
                 ->default(true),
         ]);
 

@@ -22,7 +22,7 @@ class ImportServerConfigAction extends Action
     {
         parent::setUp();
 
-        $this->label('Import');
+        $this->label(trans('filament-actions::import.modal.actions.import.label'));
 
         $this->iconButton();
 
@@ -30,18 +30,18 @@ class ImportServerConfigAction extends Action
 
         $this->iconSize(IconSize::ExtraLarge);
 
-        $this->tooltip('Import server configuration from YAML file');
+        $this->tooltip(trans('admin/server.import_export.import_tooltip'));
 
         $this->authorize(fn () => user()?->can('create server'));
 
-        $this->modalHeading('Import Server Configuration');
+        $this->modalHeading(trans('admin/server.import_export.import_heading'));
 
-        $this->modalDescription('Import server configuration from a YAML file to create a new server.');
+        $this->modalDescription(trans('admin/server.import_export.import_description'));
 
         $this->schema([
             FileUpload::make('file')
-                ->label('Configuration File')
-                ->hint('Upload a YAML file exported from another panel')
+                ->label(trans('admin/server.import_export.config_file'))
+                ->hint(trans('admin/server.import_export.config_file_hint'))
                 ->acceptedFileTypes(['application/x-yaml', 'text/yaml', 'text/x-yaml', '.yaml', '.yml'])
                 ->preserveFilenames()
                 ->previewable(false)
@@ -49,8 +49,8 @@ class ImportServerConfigAction extends Action
                 ->required()
                 ->maxSize(1024), // 1MB max
             Select::make('node_id')
-                ->label('Node')
-                ->hint('Select the node where the server will be created')
+                ->label(trans('admin/server.import_export.node_select'))
+                ->hint(trans('admin/server.import_export.node_select_hint'))
                 ->options(fn () => user()?->accessibleNodes()->pluck('name', 'id') ?? [])
                 ->searchable()
                 ->required()
@@ -67,23 +67,22 @@ class ImportServerConfigAction extends Action
                 $server = $createService->fromFile($file, $nodeId);
 
                 Notification::make()
-                    ->title('Server Created')
-                    ->body("Server '{$server->name}' has been successfully created from configuration.")
+                    ->title(trans('admin/server.notifications.import_created'))
+                    ->body(trans('admin/server.notifications.import_created_body', ['name' => $server->name]))
                     ->success()
                     ->send();
 
-                // Redirect to the new server's edit page
                 redirect()->route('filament.admin.resources.servers.edit', ['record' => $server]);
             } catch (InvalidFileUploadException $exception) {
                 Notification::make()
-                    ->title('Import Failed')
+                    ->title(trans('admin/server.notifications.import_failed'))
                     ->body($exception->getMessage())
                     ->danger()
                     ->send();
             } catch (\Exception $exception) {
                 Notification::make()
-                    ->title('Import Failed')
-                    ->body('An unexpected error occurred: ' . $exception->getMessage())
+                    ->title(trans('admin/server.notifications.import_failed'))
+                    ->body(trans('admin/server.notifications.import_failed_body', ['error' => $exception->getMessage()]))
                     ->danger()
                     ->send();
 
