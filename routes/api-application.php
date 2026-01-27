@@ -75,10 +75,12 @@ Route::prefix('/servers')->group(function () {
     Route::post('/{server:id}/transfer', [Application\Servers\ServerManagementController::class, 'startTransfer'])->name('api.application.servers.transfer');
     Route::post('/{server:id}/transfer/cancel', [Application\Servers\ServerManagementController::class, 'cancelTransfer'])->name('api.application.servers.transfer.cancel');
 
+    Route::get('/{server:id}/config/export', [Application\Servers\ServerConfigController::class, 'export'])->name('api.application.servers.config.export');
+    Route::post('/config/create', [Application\Servers\ServerConfigController::class, 'create'])->name('api.application.servers.config.create');
+
     Route::delete('/{server:id}', [Application\Servers\ServerController::class, 'delete']);
     Route::delete('/{server:id}/{force?}', [Application\Servers\ServerController::class, 'delete']);
 
-    // Database Management Endpoint
     Route::prefix('/{server:id}/databases')->group(function () {
         Route::get('/', [Application\Servers\DatabaseController::class, 'index'])->name('api.application.servers.databases');
         Route::get('/{database:id}', [Application\Servers\DatabaseController::class, 'view'])->name('api.application.servers.databases.view');
