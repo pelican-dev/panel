@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Mounts\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Mounts\MountResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
@@ -24,7 +25,7 @@ class ListMounts extends ListRecords
         return [
             CreateAction::make()
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-file-plus'),
+                ->icon(TablerIcon::FilePlus),
         ];
     }
 }

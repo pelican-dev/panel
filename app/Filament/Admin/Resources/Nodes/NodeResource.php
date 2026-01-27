@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Nodes;
 
 use App\Enums\CustomizationKey;
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Nodes\Pages\CreateNode;
 use App\Filament\Admin\Resources\Nodes\Pages\EditNode;
 use App\Filament\Admin\Resources\Nodes\Pages\ListNodes;
@@ -11,6 +12,7 @@ use App\Filament\Admin\Resources\Nodes\RelationManagers\ServersRelationManager;
 use App\Models\Node;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use BackedEnum;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
@@ -23,7 +25,7 @@ class NodeResource extends Resource
 
     protected static ?string $model = Node::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-server-2';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Server2;
 
     protected static ?string $recordTitleAttribute = 'name';
 

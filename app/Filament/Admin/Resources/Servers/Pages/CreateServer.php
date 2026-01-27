@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Servers\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Servers\ServerResource;
 use App\Filament\Components\Forms\Fields\StartupVariable;
 use App\Models\Allocation;
@@ -70,8 +71,8 @@ class CreateServer extends CreateRecord
             ->components([
                 Wizard::make($this->getSteps())
                     ->columnSpanFull()
-                    ->nextAction(fn (Action $action) => $action->iconButton()->iconSize(IconSize::ExtraLarge)->icon('tabler-arrow-right'))
-                    ->previousAction(fn (Action $action) => $action->iconButton()->iconSize(IconSize::ExtraLarge)->icon('tabler-arrow-left'))
+                    ->nextAction(fn (Action $action) => $action->iconButton()->iconSize(IconSize::ExtraLarge)->icon(TablerIcon::ArrowRight))
+                    ->previousAction(fn (Action $action) => $action->iconButton()->iconSize(IconSize::ExtraLarge)->icon(TablerIcon::ArrowLeft))
                     ->submitAction(new HtmlString(Blade::render(<<<'BLADE'
                         <x-filament::button
                             type="submit"
@@ -93,8 +94,8 @@ class CreateServer extends CreateRecord
         return [
             Step::make('Information')
                 ->label(trans('admin/server.tabs.information'))
-                ->icon('tabler-info-circle')
-                ->completedIcon('tabler-check')
+                ->icon(TablerIcon::InfoCircle)
+                ->completedIcon(TablerIcon::Check)
                 ->columns([
                     'default' => 1,
                     'sm' => 4,
@@ -102,7 +103,7 @@ class CreateServer extends CreateRecord
                 ])
                 ->schema([
                     TextInput::make('name')
-                        ->prefixIcon('tabler-server')
+                        ->prefixIcon(TablerIcon::Server)
                         ->label(trans('admin/server.name'))
                         ->suffixAction(Action::make('random')
                             ->icon('tabler-dice-' . random_int(1, 6))
@@ -134,7 +135,7 @@ class CreateServer extends CreateRecord
 
                     Select::make('node_id')
                         ->disabledOn('edit')
-                        ->prefixIcon('tabler-server-2')
+                        ->prefixIcon(TablerIcon::Server2)
                         ->selectablePlaceholder(false)
                         ->default(function () {
                             $lastUsedNode = session()->get('last_utilized_node');
@@ -168,7 +169,7 @@ class CreateServer extends CreateRecord
 
                     Select::make('owner_id')
                         ->preload()
-                        ->prefixIcon('tabler-user')
+                        ->prefixIcon(TablerIcon::User)
                         ->selectablePlaceholder(false)
                         ->default(user()?->id)
                         ->label(trans('admin/server.owner'))
@@ -198,7 +199,7 @@ class CreateServer extends CreateRecord
 
                             TextInput::make('password')
                                 ->label(trans('admin/user.password'))
-                                ->hintIcon('tabler-question-mark', trans('admin/user.password_help'))
+                                ->hintIcon(TablerIcon::QuestionMark, trans('admin/user.password_help'))
                                 ->password(),
                         ])
                         ->createOptionUsing(function ($data, UserCreationService $service) {
@@ -211,7 +212,7 @@ class CreateServer extends CreateRecord
                     Select::make('allocation_id')
                         ->preload()
                         ->live()
-                        ->prefixIcon('tabler-network')
+                        ->prefixIcon(TablerIcon::Network)
                         ->label(trans('admin/server.primary_allocation'))
                         ->columnSpan([
                             'default' => 1,
@@ -256,7 +257,7 @@ class CreateServer extends CreateRecord
                                     ->hintAction(
                                         Action::make('refresh')
                                             ->iconButton()
-                                            ->icon('tabler-refresh')
+                                            ->icon(TablerIcon::Refresh)
                                             ->tooltip(trans('admin/node.refresh'))
                                             ->action(function () use ($get) {
                                                 cache()->forget("nodes.{$get('node_id')}.ips");
@@ -304,7 +305,7 @@ class CreateServer extends CreateRecord
                                 ->live()
                                 ->preload()
                                 ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                                ->prefixIcon('tabler-network')
+                                ->prefixIcon(TablerIcon::Network)
                                 ->label(trans('admin/server.additional_allocations'))
                                 ->columnSpan(2)
                                 ->disabled(fn (Get $get) => $get('../../allocation_id') === null || $get('../../node_id') === null)
@@ -333,8 +334,8 @@ class CreateServer extends CreateRecord
                 ]),
 
             Step::make(trans('admin/server.tabs.egg_configuration'))
-                ->icon('tabler-egg')
-                ->completedIcon('tabler-check')
+                ->icon(TablerIcon::Egg)
+                ->completedIcon(TablerIcon::Check)
                 ->columns([
                     'default' => 1,
                     'sm' => 4,
@@ -344,7 +345,7 @@ class CreateServer extends CreateRecord
                 ->schema([
                     Select::make('egg_id')
                         ->label(trans('admin/server.name'))
-                        ->prefixIcon('tabler-egg')
+                        ->prefixIcon(TablerIcon::Egg)
                         ->relationship('egg', 'name')
                         ->columnSpan([
                             'default' => 1,
@@ -401,8 +402,8 @@ class CreateServer extends CreateRecord
                             true => 'danger',
                         ])
                         ->icons([
-                            false => 'tabler-code',
-                            true => 'tabler-code-off',
+                            false => TablerIcon::Code,
+                            true => TablerIcon::CodeOff,
                         ])
                         ->inline()
                         ->required(),
@@ -426,8 +427,8 @@ class CreateServer extends CreateRecord
                             false => 'danger',
                         ])
                         ->icons([
-                            true => 'tabler-code',
-                            false => 'tabler-code-off',
+                            true => TablerIcon::Code,
+                            false => TablerIcon::CodeOff,
                         ])
                         ->inline(),
 
@@ -475,7 +476,7 @@ class CreateServer extends CreateRecord
                     Hidden::make('environment')->default([]),
 
                     Section::make(trans('admin/server.variables'))
-                        ->icon('tabler-eggs')
+                        ->icon(TablerIcon::Eggs)
                         ->iconColor('primary')
                         ->hidden(fn (Get $get) => $get('egg_id') === null)
                         ->collapsible()
@@ -512,8 +513,8 @@ class CreateServer extends CreateRecord
                         ]),
                 ]),
             Step::make(trans('admin/server.tabs.environment_configuration'))
-                ->icon('tabler-brand-docker')
-                ->completedIcon('tabler-check')
+                ->icon(TablerIcon::BrandDocker)
+                ->completedIcon(TablerIcon::Check)
                 ->schema([
                     Fieldset::make(trans('admin/server.resource_limits'))
                         ->columnSpan(6)
@@ -549,7 +550,7 @@ class CreateServer extends CreateRecord
                                         ->hidden(fn (Get $get) => $get('unlimited_cpu'))
                                         ->label(trans('admin/server.cpu_limit'))->inlineLabel()
                                         ->suffix('%')
-                                        ->hintIcon('tabler-question-mark', trans('admin/server.cpu_helper'))
+                                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/server.cpu_helper'))
                                         ->default(0)
                                         ->required()
                                         ->columnSpan(2)
@@ -581,7 +582,7 @@ class CreateServer extends CreateRecord
                                         ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                         ->label(trans('admin/server.memory_limit'))->inlineLabel()
                                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
-                                        ->hintIcon('tabler-question-mark', trans('admin/server.memory_helper'))
+                                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/server.memory_helper'))
                                         ->default(0)
                                         ->required()
                                         ->columnSpan(2)
@@ -745,21 +746,21 @@ class CreateServer extends CreateRecord
                         ->schema([
                             TextInput::make('allocation_limit')
                                 ->label(trans('admin/server.allocations'))
-                                ->suffixIcon('tabler-network')
+                                ->suffixIcon(TablerIcon::Network)
                                 ->required()
                                 ->numeric()
                                 ->minValue(0)
                                 ->default(0),
                             TextInput::make('database_limit')
                                 ->label(trans('admin/server.databases'))
-                                ->suffixIcon('tabler-database')
+                                ->suffixIcon(TablerIcon::Database)
                                 ->required()
                                 ->numeric()
                                 ->minValue(0)
                                 ->default(0),
                             TextInput::make('backup_limit')
                                 ->label(trans('admin/server.backups'))
-                                ->suffixIcon('tabler-copy-check')
+                                ->suffixIcon(TablerIcon::CopyCheck)
                                 ->required()
                                 ->numeric()
                                 ->minValue(0)

@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use BackedEnum;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
@@ -11,12 +12,12 @@ enum PluginCategory: string implements HasIcon, HasLabel
     case Theme = 'theme';
     case Language = 'language';
 
-    public function getIcon(): string
+    public function getIcon(): BackedEnum
     {
         return match ($this) {
-            self::Plugin => 'tabler-package',
-            self::Theme => 'tabler-palette',
-            self::Language => 'tabler-language',
+            self::Plugin => TablerIcon::Package,
+            self::Theme => TablerIcon::Palette,
+            self::Language => TablerIcon::Language,
         };
     }
 

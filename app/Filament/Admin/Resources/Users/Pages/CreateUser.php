@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Users\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Users\UserResource;
 use App\Models\Role;
 use App\Services\Users\UserCreationService;
@@ -35,7 +36,7 @@ class CreateUser extends CreateRecord
         return [
             $this->getCreateFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-user-plus'),
+                ->icon(TablerIcon::UserPlus),
         ];
     }
 

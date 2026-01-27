@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Webhooks\Pages;
 
+use App\Enums\TablerIcon;
 use App\Enums\WebhookType;
 use App\Filament\Admin\Resources\Webhooks\WebhookResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -26,10 +27,10 @@ class CreateWebhookConfiguration extends CreateRecord
         return [
             $this->getCancelFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-arrow-left'),
+                ->icon(TablerIcon::ArrowLeft),
             $this->getCreateFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-file-plus'),
+                ->icon(TablerIcon::FilePlus),
         ];
     }
 

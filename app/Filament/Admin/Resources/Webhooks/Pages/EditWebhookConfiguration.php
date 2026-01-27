@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Webhooks\Pages;
 
+use App\Enums\TablerIcon;
 use App\Enums\WebhookType;
 use App\Filament\Admin\Resources\Webhooks\WebhookResource;
 use App\Models\WebhookConfiguration;
@@ -34,7 +35,7 @@ class EditWebhookConfiguration extends EditRecord
                 ->tooltip(trans('admin/webhook.test_now_help')),
             $this->getSaveFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-device-floppy'),
+                ->icon(TablerIcon::DeviceFloppy),
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Servers\RelationManagers;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Servers\Pages\CreateServer;
 use App\Models\Allocation;
 use App\Models\Server;
@@ -51,8 +52,8 @@ class AllocationsRelationManager extends RelationManager
                     ->placeholder(trans('admin/server.no_notes')),
                 IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
-                        true => 'tabler-star-filled',
-                        default => 'tabler-star',
+                        true => TablerIcon::StarFilled,
+                        default => TablerIcon::Star,
                     })
                     ->color(fn ($state) => match ($state) {
                         true => 'warning',
@@ -65,8 +66,8 @@ class AllocationsRelationManager extends RelationManager
                 IconColumn::make('is_locked')
                     ->label(trans('admin/server.locked'))
                     ->tooltip(trans('admin/server.locked_helper'))
-                    ->trueIcon('tabler-lock')
-                    ->falseIcon('tabler-lock-open'),
+                    ->trueIcon(TablerIcon::Lock)
+                    ->falseIcon(TablerIcon::LockOpen),
             ])
             ->recordActions([
                 Action::make('make-primary')
@@ -107,7 +108,7 @@ class AllocationsRelationManager extends RelationManager
                     }),
                 CreateAction::make()
                     ->label(trans('admin/server.create_allocation'))
-                    ->icon('tabler-network')
+                    ->icon(TablerIcon::Network)
                     ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->createAnother(false)
                     ->schema(fn () => [
@@ -120,7 +121,7 @@ class AllocationsRelationManager extends RelationManager
                             ->hintAction(
                                 Action::make('refresh')
                                     ->iconButton()
-                                    ->icon('tabler-refresh')
+                                    ->icon(TablerIcon::Refresh)
                                     ->tooltip(trans('admin/node.refresh'))
                                     ->action(function () {
                                         cache()->forget("nodes.{$this->getOwnerRecord()->node->id}.ips");
@@ -147,7 +148,7 @@ class AllocationsRelationManager extends RelationManager
                     ])
                     ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
                 AssociateAction::make()
-                    ->icon('tabler-file-plus')
+                    ->icon(TablerIcon::FilePlus)
                     ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->multiple()
                     ->associateAnother(false)

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Users\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Users\UserResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
@@ -24,7 +25,7 @@ class ListUsers extends ListRecords
         return [
             CreateAction::make()
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-user-plus'),
+                ->icon(TablerIcon::UserPlus),
         ];
     }
 }

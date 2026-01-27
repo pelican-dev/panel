@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Roles\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Roles\RoleResource;
 use App\Models\Role;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -63,7 +64,7 @@ class EditRole extends EditRecord
                 ->iconButton()->iconSize(IconSize::ExtraLarge),
             $this->getSaveFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-device-floppy'),
+                ->icon(TablerIcon::DeviceFloppy),
         ];
     }
 

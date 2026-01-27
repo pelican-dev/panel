@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Installer\Steps;
 
+use App\Enums\TablerIcon;
 use App\Livewire\Installer\PanelInstaller;
 use Exception;
 use Filament\Forms\Components\TextInput;
@@ -29,7 +30,7 @@ class CacheStep
             ->schema([
                 ToggleButtons::make('env_cache.CACHE_STORE')
                     ->label(trans('installer.cache.driver'))
-                    ->hintIcon('tabler-question-mark', trans('installer.cache.driver_help'))
+                    ->hintIcon(TablerIcon::QuestionMark, trans('installer.cache.driver_help'))
                     ->required()
                     ->inline()
                     ->options(self::CACHE_DRIVERS)
@@ -51,25 +52,25 @@ class CacheStep
                 TextInput::make('env_cache.REDIS_HOST')
                     ->label(trans('installer.cache.fields.host'))
                     ->placeholder('127.0.0.1')
-                    ->hintIcon('tabler-question-mark', trans('installer.cache.fields.host_help'))
+                    ->hintIcon(TablerIcon::QuestionMark, trans('installer.cache.fields.host_help'))
                     ->required(fn (Get $get) => $get('env_cache.CACHE_STORE') === 'redis')
                     ->default(fn (Get $get) => $get('env_cache.CACHE_STORE') === 'redis' ? config('database.redis.default.host') : null)
                     ->visible(fn (Get $get) => $get('env_cache.CACHE_STORE') === 'redis'),
                 TextInput::make('env_cache.REDIS_PORT')
                     ->label(trans('installer.cache.fields.port'))
                     ->placeholder('6379')
-                    ->hintIcon('tabler-question-mark', trans('installer.cache.fields.port_help'))
+                    ->hintIcon(TablerIcon::QuestionMark, trans('installer.cache.fields.port_help'))
                     ->required(fn (Get $get) => $get('env_cache.CACHE_STORE') === 'redis')
                     ->default(fn (Get $get) => $get('env_cache.CACHE_STORE') === 'redis' ? config('database.redis.default.port') : null)
                     ->visible(fn (Get $get) => $get('env_cache.CACHE_STORE') === 'redis'),
                 TextInput::make('env_cache.REDIS_USERNAME')
                     ->label(trans('installer.cache.fields.username'))
-                    ->hintIcon('tabler-question-mark', trans('installer.cache.fields.username_help'))
+                    ->hintIcon(TablerIcon::QuestionMark, trans('installer.cache.fields.username_help'))
                     ->default(fn (Get $get) => $get('env_cache.CACHE_STORE') === 'redis' ? config('database.redis.default.username') : null)
                     ->visible(fn (Get $get) => $get('env_cache.CACHE_STORE') === 'redis'),
                 TextInput::make('env_cache.REDIS_PASSWORD')
                     ->label(trans('installer.cache.fields.password'))
-                    ->hintIcon('tabler-question-mark', trans('installer.cache.fields.password_help'))
+                    ->hintIcon(TablerIcon::QuestionMark, trans('installer.cache.fields.password_help'))
                     ->password()
                     ->revealable()
                     ->default(fn (Get $get) => $get('env_cache.CACHE_STORE') === 'redis' ? config('database.redis.default.password') : null)

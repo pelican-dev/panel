@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Users\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Users\UserResource;
 use App\Models\User;
 use App\Services\Users\UserUpdateService;
@@ -38,7 +39,7 @@ class EditUser extends EditRecord
                 ->iconButton()->iconSize(IconSize::ExtraLarge),
             $this->getSaveFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-device-floppy'),
+                ->icon(TablerIcon::DeviceFloppy),
         ];
     }
 

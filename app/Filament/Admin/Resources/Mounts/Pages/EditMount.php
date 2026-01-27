@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Mounts\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Mounts\MountResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
@@ -26,7 +27,7 @@ class EditMount extends EditRecord
                 ->iconButton()->iconSize(IconSize::ExtraLarge),
             $this->getSaveFormAction()->formId('form')
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-device-floppy'),
+                ->icon(TablerIcon::DeviceFloppy),
         ];
     }
 

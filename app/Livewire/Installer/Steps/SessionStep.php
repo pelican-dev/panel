@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Installer\Steps;
 
+use App\Enums\TablerIcon;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Utilities\Get;
@@ -23,7 +24,7 @@ class SessionStep
             ->schema([
                 ToggleButtons::make('env_session.SESSION_DRIVER')
                     ->label(trans('installer.session.driver'))
-                    ->hintIcon('tabler-question-mark', trans('installer.session.driver_help'))
+                    ->hintIcon(TablerIcon::QuestionMark, trans('installer.session.driver_help'))
                     ->required()
                     ->inline()
                     ->options(self::SESSION_DRIVERS)

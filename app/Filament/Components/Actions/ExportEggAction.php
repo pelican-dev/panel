@@ -3,6 +3,7 @@
 namespace App\Filament\Components\Actions;
 
 use App\Enums\EggFormat;
+use App\Enums\TablerIcon;
 use App\Models\Egg;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
@@ -24,9 +25,9 @@ class ExportEggAction extends Action
 
         $this->iconButton();
 
-        $this->icon('tabler-download');
+        $this->icon(TablerIcon::Download);
 
-        $this->tableIcon('tabler-download');
+        $this->tableIcon(TablerIcon::Download);
 
         $this->iconSize(IconSize::ExtraLarge);
 

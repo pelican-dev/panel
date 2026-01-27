@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHosts;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\DatabaseHosts\Pages\CreateDatabaseHost;
 use App\Filament\Admin\Resources\DatabaseHosts\Pages\EditDatabaseHost;
 use App\Filament\Admin\Resources\DatabaseHosts\Pages\ListDatabaseHosts;
@@ -12,6 +13,7 @@ use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
+use BackedEnum;
 use Exception;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -37,7 +39,7 @@ class DatabaseHostResource extends Resource
 
     protected static ?string $model = DatabaseHost::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-database';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Database;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -97,7 +99,7 @@ class DatabaseHostResource extends Resource
             ->groupedBulkActions([
                 DeleteBulkAction::make(),
             ])
-            ->emptyStateIcon('tabler-database')
+            ->emptyStateIcon(TablerIcon::Database)
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/databasehost.no_database_hosts'));
     }

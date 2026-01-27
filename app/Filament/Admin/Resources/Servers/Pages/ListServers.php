@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Servers\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Servers\ServerResource;
 use App\Filament\Server\Pages\Console;
 use App\Models\Server;
@@ -94,14 +95,14 @@ class ListServers extends ListRecords
                 Action::make('View')
                     ->label(trans('admin/server.view'))
                     ->iconButton()
-                    ->icon('tabler-terminal')
+                    ->icon(TablerIcon::Terminal)
                     ->iconSize(IconSize::Large)
                     ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
                     ->authorize(fn (Server $server) => user()?->canAccessTenant($server)),
                 EditAction::make(),
             ])
-            ->emptyStateIcon('tabler-brand-docker')
             ->searchable()
+            ->emptyStateIcon(TablerIcon::BrandDocker)
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/server.no_servers'));
     }
@@ -112,7 +113,7 @@ class ListServers extends ListRecords
         return [
             CreateAction::make()
                 ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-file-plus'),
+                ->icon(TablerIcon::FilePlus),
         ];
     }
 }
