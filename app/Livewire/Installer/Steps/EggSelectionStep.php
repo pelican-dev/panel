@@ -3,6 +3,7 @@
 namespace App\Livewire\Installer\Steps;
 
 use App\Console\Commands\Egg\UpdateEggIndexCommand;
+use App\Enums\TablerIcon;
 use Exception;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Infolists\Components\TextEntry;
@@ -21,7 +22,7 @@ class EggSelectionStep
         } catch (Exception $exception) {
             Notification::make()
                 ->title(trans('installer.egg.exceptions.failed_to_update'))
-                ->icon('tabler-egg')
+                ->icon(TablerIcon::Egg)
                 ->body($exception->getMessage())
                 ->danger()
                 ->persistent()

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\ApiKeys;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\ApiKeys\Pages\CreateApiKey;
 use App\Filament\Admin\Resources\ApiKeys\Pages\ListApiKeys;
 use App\Filament\Admin\Resources\Users\Pages\EditUser;
@@ -11,6 +12,7 @@ use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
+use BackedEnum;
 use Exception;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -34,7 +36,7 @@ class ApiKeyResource extends Resource
 
     protected static ?string $model = ApiKey::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-key';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Key;
 
     public static function getNavigationLabel(): string
     {
@@ -77,7 +79,7 @@ class ApiKeyResource extends Resource
             ->columns([
                 TextColumn::make('key')
                     ->label(trans('admin/apikey.table.key'))
-                    ->icon('tabler-clipboard-text')
+                    ->icon(TablerIcon::ClipboardText)
                     ->state(fn (ApiKey $key) => $key->identifier . $key->token)
                     ->copyable(),
                 TextColumn::make('memo')
@@ -101,9 +103,9 @@ class ApiKeyResource extends Resource
             ->toolbarActions([
                 CreateAction::make()
                     ->hiddenLabel()
-                    ->icon('tabler-plus'),
+                    ->icon(TablerIcon::Plus),
             ])
-            ->emptyStateIcon('tabler-key')
+            ->emptyStateIcon(TablerIcon::Key)
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/apikey.empty'));
     }
@@ -126,9 +128,9 @@ class ApiKeyResource extends Resource
                                 3 => trans('admin/apikey.permissions.read_write'),
                             ])
                             ->icons([
-                                0 => 'tabler-book-off',
-                                1 => 'tabler-book',
-                                3 => 'tabler-writing',
+                                0 => TablerIcon::BookOff,
+                                1 => TablerIcon::Book,
+                                3 => TablerIcon::Writing,
                             ])
                             ->colors([
                                 0 => 'success',

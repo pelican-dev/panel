@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 
+use App\Enums\TablerIcon;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
@@ -20,7 +21,7 @@ class SupportWidget extends FormWidget
         return $schema
             ->components([
                 Section::make(trans('admin/dashboard.sections.intro-support.heading'))
-                    ->icon('tabler-heart-filled')
+                    ->icon(TablerIcon::HeartFilled)
                     ->iconColor('danger')
                     ->collapsible()
                     ->persistCollapsed()
@@ -35,7 +36,7 @@ class SupportWidget extends FormWidget
                     ->headerActions([
                         Action::make('db_donate')
                             ->label(trans('admin/dashboard.sections.intro-support.button_donate'))
-                            ->icon('tabler-cash')
+                            ->icon(TablerIcon::Cash)
                             ->url('https://pelican.dev/donate', true)
                             ->color('success'),
                     ]),

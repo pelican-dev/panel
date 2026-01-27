@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Servers\Pages;
 
 use App\Enums\SuspendAction;
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Servers\ServerResource;
 use App\Filament\Components\Actions\DeleteServerIcon;
 use App\Filament\Components\Actions\PreviewStartupAction;
@@ -107,7 +108,7 @@ class EditServer extends EditRecord
         return [
             Tab::make('information')
                 ->label(trans('admin/server.tabs.information'))
-                ->icon('tabler-info-circle')
+                ->icon(TablerIcon::InfoCircle)
                 ->schema([
                     Grid::make()
                         ->columns(2)
@@ -120,7 +121,7 @@ class EditServer extends EditRecord
                                 ->columnSpan(2)
                                 ->alignJustify(),
                             Action::make('uploadIcon')
-                                ->icon('tabler-photo-up')
+                                ->icon(TablerIcon::PhotoUp)
                                 ->tooltip(trans('admin/server.import_image'))
                                 ->modal()
                                 ->modalSubmitActionLabel(trans('server/setting.server_info.icon.upload'))
@@ -256,7 +257,7 @@ class EditServer extends EditRecord
                         ])
                         ->schema([
                             TextInput::make('name')
-                                ->prefixIcon('tabler-server')
+                                ->prefixIcon(TablerIcon::Server)
                                 ->label(trans('admin/server.name'))
                                 ->suffixAction(Action::make('hint_random')
                                     ->icon('tabler-dice-' . random_int(1, 6))
@@ -277,7 +278,7 @@ class EditServer extends EditRecord
                                 ->required()
                                 ->maxLength(255),
                             Select::make('owner_id')
-                                ->prefixIcon('tabler-user')
+                                ->prefixIcon(TablerIcon::User)
                                 ->label(trans('admin/server.owner'))
                                 ->columnSpan([
                                     'default' => 2,
@@ -383,7 +384,7 @@ class EditServer extends EditRecord
                 ]),
             Tab::make('environment_configuration')
                 ->label(trans('admin/server.tabs.environment_configuration'))
-                ->icon('tabler-brand-docker')
+                ->icon(TablerIcon::BrandDocker)
                 ->schema([
                     Fieldset::make(trans('admin/server.resource_limits'))
                         ->columnSpanFull()
@@ -420,7 +421,7 @@ class EditServer extends EditRecord
                                         ->hidden(fn (Get $get) => $get('unlimited_cpu'))
                                         ->label(trans('admin/server.cpu_limit'))->inlineLabel()
                                         ->suffix('%')
-                                        ->hintIcon('tabler-question-mark', trans('admin/server.cpu_helper'))
+                                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/server.cpu_helper'))
                                         ->required()
                                         ->columnSpan(2)
                                         ->numeric()
@@ -452,7 +453,7 @@ class EditServer extends EditRecord
                                         ->hidden(fn (Get $get) => $get('unlimited_mem'))
                                         ->label(trans('admin/server.memory_limit'))->inlineLabel()
                                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB')
-                                        ->hintIcon('tabler-question-mark', trans('admin/server.memory_helper'))
+                                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/server.memory_helper'))
                                         ->required()
                                         ->columnSpan(2)
                                         ->numeric()
@@ -622,19 +623,19 @@ class EditServer extends EditRecord
                         ->schema([
                             TextInput::make('allocation_limit')
                                 ->label(trans('admin/server.allocations'))
-                                ->suffixIcon('tabler-network')
+                                ->suffixIcon(TablerIcon::Network)
                                 ->required()
                                 ->minValue(0)
                                 ->numeric(),
                             TextInput::make('database_limit')
                                 ->label(trans('admin/server.databases'))
-                                ->suffixIcon('tabler-database')
+                                ->suffixIcon(TablerIcon::Database)
                                 ->required()
                                 ->minValue(0)
                                 ->numeric(),
                             TextInput::make('backup_limit')
                                 ->label(trans('admin/server.backups'))
-                                ->suffixIcon('tabler-copy-check')
+                                ->suffixIcon(TablerIcon::CopyCheck)
                                 ->required()
                                 ->minValue(0)
                                 ->numeric(),
@@ -704,7 +705,7 @@ class EditServer extends EditRecord
                 ]),
             Tab::make('egg')
                 ->label(trans('admin/server.egg'))
-                ->icon('tabler-egg')
+                ->icon(TablerIcon::Egg)
                 ->columns([
                     'default' => 1,
                     'sm' => 3,
@@ -714,7 +715,7 @@ class EditServer extends EditRecord
                 ->schema([
                     Select::make('egg_id')
                         ->disabled()
-                        ->prefixIcon('tabler-egg')
+                        ->prefixIcon(TablerIcon::Egg)
                         ->columnSpan([
                             'default' => 6,
                             'sm' => 3,
@@ -738,7 +739,7 @@ class EditServer extends EditRecord
                                 ->schema(fn (Server $server) => [
                                     Select::make('egg_id')
                                         ->label(trans('admin/server.new_egg'))
-                                        ->prefixIcon('tabler-egg')
+                                        ->prefixIcon(TablerIcon::Egg)
                                         ->options(fn () => Egg::all()->filter(fn (Egg $egg) => $egg->id !== $server->egg->id)->mapWithKeys(fn (Egg $egg) => [$egg->id => $egg->name]))
                                         ->searchable()
                                         ->preload()
@@ -768,8 +769,8 @@ class EditServer extends EditRecord
                             1 => 'danger',
                         ])
                         ->icons([
-                            0 => 'tabler-code',
-                            1 => 'tabler-code-off',
+                            0 => TablerIcon::Code,
+                            1 => TablerIcon::CodeOff,
                         ])
                         ->required(),
 
@@ -840,13 +841,13 @@ class EditServer extends EditRecord
                 ]),
             Tab::make('mounts')
                 ->label(trans('admin/server.mounts'))
-                ->icon('tabler-layers-linked')
+                ->icon(TablerIcon::LayersLinked)
                 ->schema(fn (Get $get) => [
                     ServerResource::getMountCheckboxList($get),
                 ]),
             Tab::make('actions')
                 ->label(trans('admin/server.actions'))
-                ->icon('tabler-settings')
+                ->icon(TablerIcon::Settings)
                 ->schema([
                     Fieldset::make(trans('admin/server.actions'))
                         ->columnSpanFull()
@@ -1047,7 +1048,7 @@ class EditServer extends EditRecord
         return [
             Select::make('node_id')
                 ->label(trans('admin/server.node'))
-                ->prefixIcon('tabler-server-2')
+                ->prefixIcon(TablerIcon::Server2)
                 ->selectablePlaceholder(false)
                 ->default(fn (Server $server) => user()?->accessibleNodes()->whereNot('id', $server->node->id)->first()?->id)
                 ->required()
@@ -1057,7 +1058,7 @@ class EditServer extends EditRecord
                 ->label(trans('admin/server.primary_allocation'))
                 ->disabled(fn (Get $get, Server $server) => !$get('node_id') || !$server->allocation_id)
                 ->required(fn (Server $server) => $server->allocation_id)
-                ->prefixIcon('tabler-network')
+                ->prefixIcon(TablerIcon::Network)
                 ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
                 ->searchable(['ip', 'port', 'ip_alias'])
                 ->placeholder(trans('admin/server.select_allocation')),
@@ -1067,7 +1068,7 @@ class EditServer extends EditRecord
                 ->multiple()
                 ->minItems(fn (Select $select) => $select->getMaxItems())
                 ->maxItems(fn (Select $select, Server $server) => $select->isDisabled() ? null : $server->allocations->count() - 1)
-                ->prefixIcon('tabler-network')
+                ->prefixIcon(TablerIcon::Network)
                 ->required(fn (Server $server) => $server->allocations->count() > 1)
                 ->options(fn (Get $get) => Allocation::where('node_id', $get('node_id'))->whereNull('server_id')->when($get('allocation_id'), fn ($query) => $query->whereNot('id', $get('allocation_id')))->get()->mapWithKeys(fn (Allocation $allocation) => [$allocation->id => $allocation->address]))
                 ->searchable(['ip', 'port', 'ip_alias'])
@@ -1116,14 +1117,14 @@ class EditServer extends EditRecord
                             ->title(trans('admin/server.notifications.error_server_delete'))
                             ->body(trans('admin/server.notifications.error_server_delete_body'))
                             ->color('warning')
-                            ->icon('tabler-database')
+                            ->icon(TablerIcon::Database)
                             ->warning()
                             ->send();
                     }
                 })
                 ->hidden(fn () => $canForceDelete)
                 ->authorize(fn (Server $server) => user()?->can('delete server', $server))
-                ->icon('tabler-trash'),
+                ->icon(TablerIcon::Trash),
             Action::make('ForceDelete')
                 ->color('danger')
                 ->label(trans('filament-actions::force-delete.single.label'))
@@ -1144,14 +1145,14 @@ class EditServer extends EditRecord
             Action::make('console')
                 ->hiddenLabel()
                 ->tooltip(trans('admin/server.console'))
-                ->icon('tabler-terminal')
+                ->icon(TablerIcon::Terminal)
                 ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)),
             Action::make('save')
                 ->hiddenLabel()
                 ->action('save')
                 ->keyBindings(['mod+s'])
                 ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
-                ->icon('tabler-device-floppy'),
+                ->icon(TablerIcon::DeviceFloppy),
         ];
 
     }
@@ -1189,7 +1190,7 @@ class EditServer extends EditRecord
                 ->title(trans('admin/server.notifications.error_connecting', ['node' => $server->node->name]))
                 ->body(trans('admin/server.notifications.error_connecting_description'))
                 ->color('warning')
-                ->icon('tabler-database')
+                ->icon(TablerIcon::Database)
                 ->warning()
                 ->send();
         }

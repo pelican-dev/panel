@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Users\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Users\UserResource;
 use App\Models\Role;
 use App\Services\Users\UserCreationService;
@@ -37,7 +38,7 @@ class CreateUser extends CreateRecord
                 ->action('create')
                 ->keyBindings(['mod+s'])
                 ->tooltip(trans('filament-panels::resources/pages/create-record.form.actions.create.label'))
-                ->icon('tabler-plus'),
+                ->icon(TablerIcon::UserPlus),
         ];
     }
 

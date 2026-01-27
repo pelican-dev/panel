@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Roles;
 
 use App\Enums\CustomizationKey;
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Roles\Pages\CreateRole;
 use App\Filament\Admin\Resources\Roles\Pages\EditRole;
 use App\Filament\Admin\Resources\Roles\Pages\ListRoles;
@@ -45,7 +46,7 @@ class RoleResource extends Resource
 
     protected static ?string $model = Role::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-users-group';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::UsersGroup;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -105,7 +106,7 @@ class RoleResource extends Resource
             ->toolbarActions([
                 CreateAction::make()
                     ->hiddenLabel()
-                    ->icon('tabler-plus'),
+                    ->icon(TablerIcon::Plus),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

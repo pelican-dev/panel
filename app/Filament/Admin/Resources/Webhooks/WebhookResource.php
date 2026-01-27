@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Webhooks;
 
+use App\Enums\TablerIcon;
 use App\Enums\WebhookType;
 use App\Filament\Admin\Resources\Webhooks\Pages\CreateWebhookConfiguration;
 use App\Filament\Admin\Resources\Webhooks\Pages\EditWebhookConfiguration;
@@ -13,6 +14,7 @@ use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
+use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -53,7 +55,7 @@ class WebhookResource extends Resource
 
     protected static ?string $model = WebhookConfiguration::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-webhook';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Webhook;
 
     protected static ?string $recordTitleAttribute = 'description';
 
@@ -112,12 +114,12 @@ class WebhookResource extends Resource
             ->toolbarActions([
                 CreateAction::make()
                     ->hiddenLabel()
-                    ->icon('tabler-plus'),
+                    ->icon(TablerIcon::Plus),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateIcon('tabler-webhook')
+            ->emptyStateIcon(TablerIcon::Webhook)
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/webhook.no_webhooks'))
             ->persistFiltersInSession()
@@ -337,7 +339,7 @@ class WebhookResource extends Resource
         AlertBanner::make('discord_webhook_help')
             ->title(trans('admin/webhook.help'))
             ->body(trans('admin/webhook.help_text'))
-            ->icon('tabler-question-mark')
+            ->icon(TablerIcon::QuestionMark)
             ->info()
             ->send();
     }

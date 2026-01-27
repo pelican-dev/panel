@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Mounts\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Mounts\MountResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
@@ -27,7 +28,7 @@ class EditMount extends EditRecord
                 ->action('save')
                 ->keyBindings(['mod+s'])
                 ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
-                ->icon('tabler-device-floppy'),
+                ->icon(TablerIcon::DeviceFloppy),
         ];
     }
 

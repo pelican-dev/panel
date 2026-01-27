@@ -2,6 +2,8 @@
 
 namespace App\Extensions\OAuth\Schemas;
 
+use App\Enums\TablerIcon;
+use BackedEnum;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Wizard\Step;
@@ -42,9 +44,9 @@ final class GoogleSchema extends OAuthSchema
         ], parent::getSetupSteps());
     }
 
-    public function getIcon(): string
+    public function getIcon(): BackedEnum
     {
-        return 'tabler-brand-google-f';
+        return TablerIcon::BrandGoogleFilled;
     }
 
     public function getHexColor(): string

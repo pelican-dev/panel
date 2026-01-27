@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Mounts\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Mounts\MountResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
@@ -29,7 +30,7 @@ class CreateMount extends CreateRecord
                 ->action('create')
                 ->keyBindings(['mod+s'])
                 ->tooltip(trans('filament-panels::resources/pages/create-record.form.actions.create.label'))
-                ->icon('tabler-plus'),
+                ->icon(TablerIcon::FilePlus),
         ];
     }
 

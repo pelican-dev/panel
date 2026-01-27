@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHosts\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\DatabaseHosts\DatabaseHostResource;
 use App\Services\Databases\Hosts\HostCreationService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -175,7 +176,7 @@ class CreateDatabaseHost extends CreateRecord
                 ->title(trans('admin/databasehost.error'))
                 ->body($exception->getMessage())
                 ->color('danger')
-                ->icon('tabler-database')
+                ->icon(TablerIcon::Database)
                 ->danger()
                 ->send();
 

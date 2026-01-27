@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Enums\TablerIcon;
 use Boquizo\FilamentLogViewer\Actions\DeleteAction;
 use Boquizo\FilamentLogViewer\Actions\DownloadAction;
 use Boquizo\FilamentLogViewer\Actions\ViewLogAction;
@@ -28,7 +29,7 @@ class ListLogs extends BaseListLogs
     {
         return parent::table($table)
             ->emptyStateHeading(trans('admin/log.empty_table'))
-            ->emptyStateIcon('tabler-check')
+            ->emptyStateIcon(TablerIcon::Check)
             ->columns([
                 NameColumn::make('date'),
                 LevelColumn::make(Level::ALL)
@@ -46,14 +47,14 @@ class ListLogs extends BaseListLogs
             ])
             ->recordActions([
                 ViewLogAction::make()
-                    ->icon('tabler-file-description')->iconButton(),
+                    ->icon(TablerIcon::FileDescription)->iconButton(),
                 DownloadAction::make()
                     ->tooltip(fn ($record) => trans('filament-log-viewer::log.table.actions.download.label', ['log' => ParseDateUseCase::execute($record['date'])]))
-                    ->icon('tabler-file-download')->iconButton(),
+                    ->icon(TablerIcon::FileDownload)->iconButton(),
                 Action::make('uploadLogs')
                     ->hiddenLabel()
                     ->tooltip(trans('admin/log.actions.upload_tooltip', ['url' => 'logs.pelican.dev']))
-                    ->icon('tabler-world-upload')
+                    ->icon(TablerIcon::WorldUpload)
                     ->requiresConfirmation()
                     ->modalHeading(trans('admin/log.actions.upload_logs'))
                     ->modalDescription(fn ($record) => trans('admin/log.actions.upload_logs_description', ['file' => $record['date'], 'url' => 'https://logs.pelican.dev']))
@@ -121,7 +122,7 @@ class ListLogs extends BaseListLogs
                         }
                     }),
                 DeleteAction::make()
-                    ->icon('tabler-trash')->iconButton(),
+                    ->icon(TablerIcon::Trash)->iconButton(),
             ]);
     }
 }

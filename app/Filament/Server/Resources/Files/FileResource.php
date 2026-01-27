@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\Files;
 
+use App\Enums\TablerIcon;
 use App\Filament\Server\Resources\Files\Pages\DownloadFiles;
 use App\Filament\Server\Resources\Files\Pages\EditFiles;
 use App\Filament\Server\Resources\Files\Pages\ListFiles;
@@ -10,6 +11,7 @@ use App\Models\File;
 use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use BackedEnum;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 
@@ -23,7 +25,7 @@ class FileResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-files';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Files;
 
     protected static bool $isScopedToTenant = false;
 

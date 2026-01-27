@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Roles\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Roles\RoleResource;
 use App\Models\Role;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -64,7 +65,7 @@ class EditRole extends EditRecord
                 ->action('save')
                 ->keyBindings(['mod+s'])
                 ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
-                ->icon('tabler-device-floppy'),
+                ->icon(TablerIcon::DeviceFloppy),
         ];
     }
 

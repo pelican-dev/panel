@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Nodes\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Nodes\NodeResource;
 use App\Filament\Components\Tables\Columns\NodeHealthColumn;
 use App\Filament\Components\Tables\Filters\TagsFilter;
@@ -45,14 +46,14 @@ class ListNodes extends ListRecords
                 IconColumn::make('scheme')
                     ->visibleFrom('xl')
                     ->label('SSL')
-                    ->trueIcon('tabler-lock')
-                    ->falseIcon('tabler-lock-open-off')
+                    ->trueIcon(TablerIcon::Lock)
+                    ->falseIcon(TablerIcon::LockOpenOff)
                     ->state(fn (Node $node) => $node->scheme === 'https'),
                 IconColumn::make('public')
                     ->label(trans('admin/node.table.public'))
                     ->visibleFrom('lg')
-                    ->trueIcon('tabler-eye-check')
-                    ->falseIcon('tabler-eye-cancel'),
+                    ->trueIcon(TablerIcon::EyeCheck)
+                    ->falseIcon(TablerIcon::EyeCancel),
                 TextColumn::make('servers_count')
                     ->visibleFrom('sm')
                     ->counts('servers')
@@ -65,9 +66,9 @@ class ListNodes extends ListRecords
             ->toolbarActions([
                 CreateAction::make()
                     ->hiddenLabel()
-                    ->icon('tabler-plus'),
+                    ->icon(TablerIcon::Plus),
             ])
-            ->emptyStateIcon('tabler-server-2')
+            ->emptyStateIcon(TablerIcon::Server2)
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/node.no_nodes'))
             ->filters([

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\Schedules\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Server\Resources\Schedules\ScheduleResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
@@ -23,7 +24,7 @@ class ViewSchedule extends ViewRecord
         return [
             EditAction::make()
                 ->hiddenLabel()
-                ->icon('tabler-calendar-code')
+                ->icon(TablerIcon::CalendarCode)
                 ->tooltip(trans('server/schedule.edit')),
         ];
     }

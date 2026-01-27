@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\DatabaseHosts\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\DatabaseHosts\DatabaseHostResource;
 use App\Models\DatabaseHost;
 use App\Services\Databases\Hosts\HostUpdateService;
@@ -42,7 +43,7 @@ class EditDatabaseHost extends EditRecord
                 ->action('save')
                 ->keyBindings(['mod+s'])
                 ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
-                ->icon('tabler-device-floppy'),
+                ->icon(TablerIcon::DeviceFloppy),
         ];
     }
 
@@ -64,7 +65,7 @@ class EditDatabaseHost extends EditRecord
                 ->title(trans('admin/databasehost.error'))
                 ->body($exception->getMessage())
                 ->color('danger')
-                ->icon('tabler-database')
+                ->icon(TablerIcon::Database)
                 ->danger()
                 ->send();
 

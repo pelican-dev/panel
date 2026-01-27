@@ -3,6 +3,7 @@
 namespace App\Filament\Components\Actions;
 
 use App\Enums\SubuserPermission;
+use App\Enums\TablerIcon;
 use App\Models\Schedule;
 use App\Models\Server;
 use App\Services\Schedules\Sharing\ScheduleExporterService;
@@ -22,7 +23,7 @@ class ExportScheduleAction extends Action
 
         $this->hiddenLabel();
 
-        $this->icon('tabler-download');
+        $this->icon(TablerIcon::Download);
 
         $this->tooltip(trans('server/schedule.export'));
 

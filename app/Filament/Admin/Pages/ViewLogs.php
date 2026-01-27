@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Enums\TablerIcon;
 use App\Traits\ResolvesRecordDate;
 use Boquizo\FilamentLogViewer\Actions\BackAction;
 use Boquizo\FilamentLogViewer\Actions\DeleteAction;
@@ -20,14 +21,14 @@ class ViewLogs extends BaseViewLog
         return [
             BackAction::make()
                 ->tooltip(trans('filament-log-viewer::log.table.actions.close.label'))
-                ->icon('tabler-arrow-left')->iconButton(),
+                ->icon(TablerIcon::ArrowLeft)->iconButton(),
             DeleteAction::make(withTooltip: true)
-                ->icon('tabler-trash')->iconButton(),
+                ->icon(TablerIcon::Trash)->iconButton(),
             DownloadAction::make(withTooltip: true)
-                ->icon('tabler-file-download')->iconButton(),
+                ->icon(TablerIcon::FileDownload)->iconButton(),
             Action::make('uploadLogs')
                 ->hiddenLabel()
-                ->icon('tabler-world-upload')
+                ->icon(TablerIcon::WorldUpload)
                 ->requiresConfirmation()
                 ->tooltip(trans('admin/log.actions.upload_tooltip', ['url' => 'logs.pelican.dev']))
                 ->modalHeading(trans('admin/log.actions.upload_logs'))

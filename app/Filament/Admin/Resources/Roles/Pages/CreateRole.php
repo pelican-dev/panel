@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Roles\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Roles\RoleResource;
 use App\Models\Role;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -36,7 +37,7 @@ class CreateRole extends CreateRecord
                 ->action('create')
                 ->keyBindings(['mod+s'])
                 ->tooltip(trans('filament-panels::resources/pages/create-record.form.actions.create.label'))
-                ->icon('tabler-plus'),
+                ->icon(TablerIcon::FilePlus),
         ];
     }
 

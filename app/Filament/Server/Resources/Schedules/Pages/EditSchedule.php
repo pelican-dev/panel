@@ -4,6 +4,7 @@ namespace App\Filament\Server\Resources\Schedules\Pages;
 
 use App\Enums\ScheduleStatus;
 use App\Enums\SubuserPermission;
+use App\Enums\TablerIcon;
 use App\Facades\Activity;
 use App\Filament\Components\Actions\ExportScheduleAction;
 use App\Filament\Server\Resources\Schedules\ScheduleResource;
@@ -60,7 +61,7 @@ class EditSchedule extends EditRecord
                 }),
             Action::make('run_now')
                 ->hiddenLabel()
-                ->icon('tabler-run')
+                ->icon(TablerIcon::Run)
                 ->authorize(fn () => user()?->can(SubuserPermission::ScheduleUpdate, Filament::getTenant()))
                 ->tooltip(fn (Schedule $schedule) => $schedule->tasks->count() === 0 ? trans('server/schedule.no_tasks') : ($schedule->status === ScheduleStatus::Processing ? ScheduleStatus::Processing->getLabel() : trans('server/schedule.run_now')))
                 ->color(fn (Schedule $schedule) => $schedule->tasks->count() === 0 || $schedule->status === ScheduleStatus::Processing ? 'warning' : 'primary')
@@ -80,7 +81,7 @@ class EditSchedule extends EditRecord
                 ->hiddenLabel()
                 ->action('save')
                 ->keyBindings(['mod+s'])
-                ->icon('tabler-device-floppy')
+                ->icon(TablerIcon::DeviceFloppy)
                 ->tooltip(trans('server/schedule.save')),
         ];
     }

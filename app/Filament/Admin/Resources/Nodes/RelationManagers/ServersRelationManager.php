@@ -3,7 +3,9 @@
 namespace App\Filament\Admin\Resources\Nodes\RelationManagers;
 
 use App\Enums\ServerResourceType;
+use App\Enums\TablerIcon;
 use App\Models\Server;
+use BackedEnum;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -13,7 +15,7 @@ class ServersRelationManager extends RelationManager
 {
     protected static string $relationship = 'servers';
 
-    protected static string|\BackedEnum|null $icon = 'tabler-brand-docker';
+    protected static string|BackedEnum|null $icon = TablerIcon::BrandDocker;
 
     public function setTitle(): string
     {

@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use BackedEnum;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
@@ -14,14 +15,14 @@ enum PluginStatus: string implements HasColor, HasIcon, HasLabel
     case Errored = 'errored';
     case Incompatible = 'incompatible';
 
-    public function getIcon(): string
+    public function getIcon(): BackedEnum
     {
         return match ($this) {
-            self::NotInstalled => 'tabler-heart-off',
-            self::Disabled => 'tabler-heart-x',
-            self::Enabled => 'tabler-heart-check',
-            self::Errored => 'tabler-heart-broken',
-            self::Incompatible => 'tabler-heart-cancel',
+            self::NotInstalled => TablerIcon::HeartOff,
+            self::Disabled => TablerIcon::HeartX,
+            self::Enabled => TablerIcon::HeartCheck,
+            self::Errored => TablerIcon::HeartBroken,
+            self::Incompatible => TablerIcon::HeartCancel,
         };
     }
 

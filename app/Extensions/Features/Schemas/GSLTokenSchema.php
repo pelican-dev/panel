@@ -3,6 +3,7 @@
 namespace App\Extensions\Features\Schemas;
 
 use App\Enums\SubuserPermission;
+use App\Enums\TablerIcon;
 use App\Extensions\Features\FeatureSchemaInterface;
 use App\Facades\Activity;
 use App\Models\Server;
@@ -73,7 +74,7 @@ class GSLTokenSchema implements FeatureSchemaInterface
                             }
                         },
                     ])
-                    ->hintIcon('tabler-code', fn () => implode('|', $serverVariable->variable->rules))
+                    ->hintIcon(TablerIcon::Code, fn () => implode('|', $serverVariable->variable->rules))
                     ->label(fn () => $serverVariable->variable->name)
                     ->prefix(fn () => '{{' . $serverVariable->variable->env_variable . '}}')
                     ->helperText(fn () => empty($serverVariable->variable->description) ? '—' : $serverVariable->variable->description),

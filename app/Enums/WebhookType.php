@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use BackedEnum;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
@@ -24,11 +25,11 @@ enum WebhookType: string implements HasColor, HasIcon, HasLabel
         };
     }
 
-    public function getIcon(): string
+    public function getIcon(): BackedEnum
     {
         return match ($this) {
-            self::Regular => 'tabler-world-www',
-            self::Discord => 'tabler-brand-discord',
+            self::Regular => TablerIcon::WorldWww,
+            self::Discord => TablerIcon::BrandDiscord,
         };
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\ApiKeys\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\ApiKeys\ApiKeyResource;
 use App\Models\ApiKey;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -30,7 +31,7 @@ class CreateApiKey extends CreateRecord
                 ->action('create')
                 ->keyBindings(['mod+s'])
                 ->tooltip(trans('filament-panels::resources/pages/create-record.form.actions.create.label'))
-                ->icon('tabler-plus'),
+                ->icon(TablerIcon::FilePlus),
         ];
     }
 

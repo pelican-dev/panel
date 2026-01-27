@@ -2,6 +2,8 @@
 
 namespace App\Enums;
 
+use BackedEnum;
+
 enum SubuserPermission: string
 {
     case WebsocketConnect = 'websocket.connect';
@@ -67,21 +69,21 @@ enum SubuserPermission: string
         return $this === self::WebsocketConnect;
     }
 
-    public function getIcon(): ?string
+    public function getIcon(): ?BackedEnum
     {
         [$group, $permission] = $this->split();
 
         return match ($group) {
-            'control' => 'tabler-terminal-2',
-            'user' => 'tabler-users',
-            'file' => 'tabler-files',
-            'backup' => 'tabler-file-zip',
-            'allocation' => 'tabler-network',
-            'startup' => 'tabler-player-play',
-            'database' => 'tabler-database',
-            'schedule' => 'tabler-clock',
-            'settings' => 'tabler-settings',
-            'activity' => 'tabler-stack',
+            'control' => TablerIcon::Terminal2,
+            'user' => TablerIcon::Users,
+            'file' => TablerIcon::Files,
+            'backup' => TablerIcon::FileZip,
+            'allocation' => TablerIcon::Network,
+            'startup' => TablerIcon::PlayerPlay,
+            'database' => TablerIcon::Database,
+            'schedule' => TablerIcon::Clock,
+            'settings' => TablerIcon::Settings,
+            'activity' => TablerIcon::Stack,
             default => null,
         };
     }
