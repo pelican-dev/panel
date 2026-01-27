@@ -5,6 +5,7 @@ namespace App\Services\Servers\Sharing;
 use App\Exceptions\Service\InvalidFileUploadException;
 use App\Models\Allocation;
 use App\Models\Egg;
+use App\Models\EggVariable;
 use App\Models\Node;
 use App\Models\Server;
 use App\Models\ServerVariable;
@@ -132,13 +133,12 @@ class ServerConfigCreatorService
 
         $startupCommand = Arr::get($config, 'settings.startup');
         if ($startupCommand === null) {
-            $startupCommand = $egg->startup_commands[0];
+            $startupCommand = array_values($egg->startup_commands)[0];
         }
 
         $dockerImage = Arr::get($config, 'settings.image');
         if ($dockerImage === null) {
-            $dockerImagesArray = array_values($egg->docker_images);
-            $dockerImage = $dockerImagesArray[0] ?? '';
+            $dockerImage = array_values($egg->docker_images)[0];
         }
 
         $server = Server::create([
@@ -228,15 +228,14 @@ class ServerConfigCreatorService
             $envVariable = Arr::get($variable, 'env_variable');
             $value = Arr::get($variable, 'value');
 
+            /** @var EggVariable $eggVariable */
             $eggVariable = $server->egg->variables()->where('env_variable', $envVariable)->first();
 
-            if ($eggVariable) {
-                ServerVariable::create([
-                    'server_id' => $server->id,
-                    'variable_id' => $eggVariable->id,
-                    'variable_value' => $value,
-                ]);
-            }
+            ServerVariable::create([
+                'server_id' => $server->id,
+                'variable_id' => $eggVariable->id,
+                'variable_value' => $value,
+            ]);
         }
     }
 

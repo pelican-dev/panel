@@ -95,7 +95,7 @@ class ServerConfigImporterService
     }
 
     /**
-     * @param  array[]  $variables
+     * @param  array<int, array{env_variable: string, value: string|null}>  $variables
      */
     protected function importVariables(Server $server, array $variables): void
     {
