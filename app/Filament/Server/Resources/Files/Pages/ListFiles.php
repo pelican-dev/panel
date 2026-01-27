@@ -360,7 +360,6 @@ class ListFiles extends ListRecords
                 ])->iconSize(IconSize::Large),
                 DeleteAction::make()
                     ->authorize(fn () => user()?->can(SubuserPermission::FileDelete, $server))
-                    ->hiddenLabel()
                     ->requiresConfirmation()
                     ->modalHeading(fn (File $file) => trans('filament-actions::delete.single.modal.heading', ['label' => $file->name . ' ' . ($file->is_directory ? 'folder' : 'file')]))
                     ->action(function (File $file) {

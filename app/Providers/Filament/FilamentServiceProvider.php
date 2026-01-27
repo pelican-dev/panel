@@ -103,7 +103,7 @@ class FilamentServiceProvider extends ServiceProvider
         }));
 
         Repeater::configureUsing(fn (Repeater $repeater) => $repeater->deleteAction(function (Action $action) {
-            $action->tooltip(trans('filament-forms::components.key_value.actions.delete.label'));
+            $action->tooltip(trans('filament-forms::components.repeater.actions.delete.label'));
             $action->iconSize(IconSize::Large);
         }));
 

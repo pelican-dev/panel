@@ -449,7 +449,6 @@ class EditEgg extends EditRecord
     {
         return [
             DeleteAction::make()
-                ->hiddenLabel()
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
                 ->tooltip(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use'))
                 ->successNotification(fn (Egg $egg) => Notification::make()

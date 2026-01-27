@@ -53,7 +53,6 @@ class EditSchedule extends EditRecord
     {
         return [
             DeleteAction::make()
-                ->hiddenLabel()
                 ->after(function ($record) {
                     Activity::event('server:schedule.delete')
                         ->property('name', $record->name)
