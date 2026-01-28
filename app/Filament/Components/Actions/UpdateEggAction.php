@@ -2,12 +2,12 @@
 
 namespace App\Filament\Components\Actions;
 
+use App\Enums\TablerIcon;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\IconSize;
 
 class UpdateEggAction extends Action
 {
@@ -20,13 +20,9 @@ class UpdateEggAction extends Action
     {
         parent::setUp();
 
-        $this->label(trans_choice('admin/egg.update', 1));
+        $this->tooltip(trans_choice('admin/egg.update', 1));
 
-        $this->iconButton();
-
-        $this->icon('tabler-cloud-download');
-
-        $this->iconSize(IconSize::ExtraLarge);
+        $this->icon(TablerIcon::CloudDownload);
 
         $this->color('success');
 

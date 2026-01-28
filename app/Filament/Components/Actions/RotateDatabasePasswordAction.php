@@ -2,6 +2,7 @@
 
 namespace App\Filament\Components\Actions;
 
+use App\Enums\TablerIcon;
 use App\Facades\Activity;
 use App\Models\Database;
 use App\Services\Databases\DatabaseManagementService;
@@ -15,16 +16,16 @@ class RotateDatabasePasswordAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'rotate';
+        return 'hint_rotate';
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label(trans('admin/databasehost.rotate'));
+        $this->tooltip(trans('admin/databasehost.rotate'));
 
-        $this->icon('tabler-refresh');
+        $this->icon(TablerIcon::Refresh);
 
         $this->authorize(fn (Database $database) => user()?->can('update', $database));
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 
+use App\Enums\TablerIcon;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
@@ -20,7 +21,7 @@ class HelpWidget extends FormWidget
         return $schema
             ->components([
                 Section::make(trans('admin/dashboard.sections.intro-help.heading'))
-                    ->icon('tabler-question-mark')
+                    ->icon(TablerIcon::QuestionMark)
                     ->iconColor('info')
                     ->collapsible()
                     ->persistCollapsed()
@@ -30,9 +31,9 @@ class HelpWidget extends FormWidget
                             ->state(trans('admin/dashboard.sections.intro-help.content')),
                     ])
                     ->headerActions([
-                        Action::make('docs')
+                        Action::make('db_docs')
                             ->label(trans('admin/dashboard.sections.intro-help.button_docs'))
-                            ->icon('tabler-speedboat')
+                            ->icon(TablerIcon::Speedboat)
                             ->url('https://pelican.dev/docs', true),
                     ]),
             ]);

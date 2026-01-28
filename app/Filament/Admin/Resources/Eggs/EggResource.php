@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Eggs;
 
 use App\Enums\CustomizationKey;
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Eggs\Pages\CreateEgg;
 use App\Filament\Admin\Resources\Eggs\Pages\EditEgg;
 use App\Filament\Admin\Resources\Eggs\Pages\ListEggs;
@@ -10,6 +11,7 @@ use App\Filament\Admin\Resources\Eggs\RelationManagers\ServersRelationManager;
 use App\Models\Egg;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
+use BackedEnum;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
@@ -21,7 +23,7 @@ class EggResource extends Resource
 
     protected static ?string $model = Egg::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-eggs';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Eggs;
 
     protected static ?string $recordTitleAttribute = 'name';
 

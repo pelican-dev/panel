@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Eggs\Pages;
 
 use App\Enums\EditorLanguages;
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Eggs\EggResource;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
@@ -70,7 +71,7 @@ class EditEgg extends EditRecord
             Tab::make('configuration')
                 ->label(trans('admin/egg.tabs.configuration'))
                 ->columns(['default' => 2, 'sm' => 2, 'md' => 4, 'lg' => 6])
-                ->icon('tabler-egg')
+                ->icon(TablerIcon::Egg)
                 ->schema([
                     Grid::make(2)
                         ->columnSpan(1)
@@ -84,9 +85,10 @@ class EditEgg extends EditRecord
                                 ->columnSpanFull(),
                             Flex::make([
                                 Action::make('uploadImage')
-                                    ->iconButton()
+                                    ->hiddenLabel()
+                                    ->tooltip(trans('admin/egg.import.import_image'))
                                     ->iconSize(IconSize::Large)
-                                    ->icon('tabler-photo-up')
+                                    ->icon(TablerIcon::PhotoUp)
                                     ->modal()
                                     ->modalHeading('')
                                     ->modalSubmitActionLabel(trans('admin/egg.import.import_image'))
@@ -209,8 +211,8 @@ class EditEgg extends EditRecord
                                 Action::make('delete_image')
                                     ->visible(fn ($record) => $record->image)
                                     ->hiddenLabel()
-                                    ->icon('tabler-trash')
-                                    ->iconButton()
+                                    ->tooltip(trans('admin/egg.import.delete_image'))
+                                    ->icon(TablerIcon::Trash)
                                     ->iconSize(IconSize::Large)
                                     ->color('danger')
                                     ->action(function ($record) {
@@ -262,7 +264,7 @@ class EditEgg extends EditRecord
                         ->inline(false)
                         ->label(trans('admin/egg.force_ip'))
                         ->columnSpan(1)
-                        ->hintIcon('tabler-question-mark', trans('admin/egg.force_ip_help')),
+                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/egg.force_ip_help')),
                     KeyValue::make('startup_commands')
                         ->label(trans('admin/egg.startup_commands'))
                         ->live()
@@ -280,7 +282,7 @@ class EditEgg extends EditRecord
                     TextInput::make('update_url')
                         ->label(trans('admin/egg.update_url'))
                         ->url()
-                        ->hintIcon('tabler-question-mark', trans('admin/egg.update_url_help'))
+                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/egg.update_url_help'))
                         ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 2, 'lg' => 3]),
                     TagsInput::make('features')
                         ->label(trans('admin/egg.features'))
@@ -303,7 +305,7 @@ class EditEgg extends EditRecord
             Tab::make('process_management')
                 ->label(trans('admin/egg.tabs.process_management'))
                 ->columns()
-                ->icon('tabler-server-cog')
+                ->icon(TablerIcon::ServerCog)
                 ->schema([
                     CopyFrom::make('copy_process_from')
                         ->process(),
@@ -324,7 +326,7 @@ class EditEgg extends EditRecord
             Tab::make('egg_variables')
                 ->label(trans('admin/egg.tabs.egg_variables'))
                 ->columnSpanFull()
-                ->icon('tabler-variable')
+                ->icon(TablerIcon::Variable)
                 ->schema([
                     Repeater::make('variables')
                         ->hiddenLabel()
@@ -372,7 +374,7 @@ class EditEgg extends EditRecord
                                 ->maxLength(255)
                                 ->prefix('{{')
                                 ->suffix('}}')
-                                ->hintIcon('tabler-code', fn ($state) => "{{{$state}}}")
+                                ->hintIcon(TablerIcon::Code, fn ($state) => "{{{$state}}}")
                                 ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
                                 ->rules(EggVariable::getRulesForField('env_variable'))
                                 ->validationMessages([
@@ -416,7 +418,7 @@ class EditEgg extends EditRecord
             Tab::make('install_script')
                 ->label(trans('admin/egg.tabs.install_script'))
                 ->columns(3)
-                ->icon('tabler-file-download')
+                ->icon(TablerIcon::FileDownload)
                 ->schema([
                     CopyFrom::make('copy_script_from')
                         ->script(),
@@ -448,7 +450,7 @@ class EditEgg extends EditRecord
         return [
             DeleteAction::make()
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
-                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use'))
+                ->tooltip(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use'))
                 ->successNotification(fn (Egg $egg) => Notification::make()
                     ->success()
                     ->title(trans('admin/egg.delete_success'))
@@ -458,14 +460,16 @@ class EditEgg extends EditRecord
                     ->danger()
                     ->title(trans('admin/egg.delete_failed'))
                     ->body(trans('admin/egg.could_not_delete', ['egg' => $egg->name]))
-                )
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
+                ),
             ExportEggAction::make(),
             ImportEggAction::make()
                 ->multiple(false),
-            $this->getSaveFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-device-floppy'),
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
+                ->icon(TablerIcon::DeviceFloppy),
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace App\Filament\Server\Resources\Databases;
 
 use App\Enums\SubuserPermission;
+use App\Enums\TablerIcon;
 use App\Filament\Components\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Filament\Server\Resources\Databases\Pages\ListDatabases;
@@ -16,6 +17,7 @@ use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use App\Traits\Filament\HasLimitBadge;
+use BackedEnum;
 use Exception;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -28,7 +30,6 @@ use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -46,7 +47,7 @@ class DatabaseResource extends Resource
 
     protected static ?int $navigationSort = 6;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-database';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Database;
 
     protected static function getBadgeCount(): int
     {
@@ -158,8 +159,8 @@ class DatabaseResource extends Resource
             ])
             ->toolbarActions([
                 CreateAction::make('new')
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
-                    ->icon(fn () => $server->databases()->count() >= $server->database_limit ? 'tabler-database-x' : 'tabler-database-plus')
+                    ->hiddenLabel()
+                    ->icon(fn () => $server->databases()->count() >= $server->database_limit ? TablerIcon::DatabaseX : TablerIcon::DatabasePlus)
                     ->tooltip(fn () => $server->databases()->count() >= $server->database_limit ? trans('server/database.limit') : trans('server/database.create_database'))
                     ->disabled(fn () => $server->databases()->count() >= $server->database_limit)
                     ->color(fn () => $server->databases()->count() >= $server->database_limit ? 'danger' : 'primary')
@@ -179,7 +180,7 @@ class DatabaseResource extends Resource
                                     ->label(trans('server/database.name'))
                                     ->columnSpan(1)
                                     ->prefix('s'. $server->id . '_')
-                                    ->hintIcon('tabler-question-mark', trans('server/database.name_hint')),
+                                    ->hintIcon(TablerIcon::QuestionMark, trans('server/database.name_hint')),
                                 TextInput::make('remote')
                                     ->label(trans('server/database.connections_from'))
                                     ->columnSpan(1)

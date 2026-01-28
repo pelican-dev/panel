@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Users;
 
 use App\Enums\CustomizationKey;
+use App\Enums\TablerIcon;
 use App\Extensions\OAuth\OAuthService;
 use App\Facades\Activity;
 use App\Filament\Admin\Resources\Users\Pages\CreateUser;
@@ -21,9 +22,12 @@ use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanCustomizeStaticTabs;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
+use BackedEnum;
 use DateTimeZone;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -66,7 +70,7 @@ class UserResource extends Resource
 
     protected static ?string $model = User::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-users';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Users;
 
     protected static ?string $recordTitleAttribute = 'username';
 
@@ -117,7 +121,7 @@ class UserResource extends Resource
                 IconColumn::make('mfa_email_enabled')
                     ->label(trans('profile.tabs.2fa'))
                     ->visibleFrom('lg')
-                    ->icon(fn (User $user) => filled($user->mfa_app_secret) ? 'tabler-qrcode' : ($user->mfa_email_enabled ? 'tabler-mail' : 'tabler-lock-open-off'))
+                    ->icon(fn (User $user) => filled($user->mfa_app_secret) ? TablerIcon::Qrcode : ($user->mfa_email_enabled ? TablerIcon::Mail : TablerIcon::LockOpenOff))
                     ->tooltip(fn (User $user) => filled($user->mfa_app_secret) ? 'App' : ($user->mfa_email_enabled ? 'E-Mail' : 'None')),
                 TextColumn::make('roles.name')
                     ->label(trans('admin/user.roles'))
@@ -136,10 +140,15 @@ class UserResource extends Resource
                     ->hidden(fn ($record) => static::getEditAuthorizationResponse($record)->allowed()),
                 EditAction::make(),
             ])
-            ->checkIfRecordIsSelectableUsing(fn (User $user) => user()?->id !== $user->id && !$user->servers_count)
-            ->groupedBulkActions([
-                DeleteBulkAction::make(),
-            ]);
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+                CreateAction::make()
+                    ->hiddenLabel()
+                    ->icon(TablerIcon::UserPlus),
+            ])
+            ->checkIfRecordIsSelectableUsing(fn (User $user) => user()?->id !== $user->id && !$user->servers_count);
     }
 
     public static function defaultForm(Schema $schema): Schema
@@ -159,7 +168,7 @@ class UserResource extends Resource
         return [
             Tab::make('account')
                 ->label(trans('profile.tabs.account'))
-                ->icon('tabler-user-cog')
+                ->icon(TablerIcon::UserCog)
                 ->columns([
                     'default' => 1,
                     'md' => 3,
@@ -194,13 +203,13 @@ class UserResource extends Resource
                             'md' => 1,
                             'lg' => 1,
                         ])
-                        ->hintIcon(fn ($operation) => $operation === 'create' ? 'tabler-question-mark' : null, fn ($operation) => $operation === 'create' ? trans('admin/user.password_help') : null)
+                        ->hintIcon(fn ($operation) => $operation === 'create' ? TablerIcon::QuestionMark : null, fn ($operation) => $operation === 'create' ? trans('admin/user.password_help') : null)
                         ->password()
                         ->hintAction(
-                            Action::make('password_reset')
+                            Action::make('hint_password_reset')
                                 ->label(trans('admin/user.password_reset'))
                                 ->hidden(fn (string $operation) => $operation === 'create' || config('mail.default', 'log') === 'log')
-                                ->icon('tabler-send')
+                                ->icon(TablerIcon::Send)
                                 ->action(function (User $user) {
                                     $status = Password::broker(Filament::getPanel('app')->getAuthPasswordBroker())->sendResetLink([
                                         'email' => $user->email,
@@ -237,7 +246,7 @@ class UserResource extends Resource
                         ]),
                     Toggle::make('is_managed_externally')
                         ->label(trans('admin/user.is_managed_externally'))
-                        ->hintIcon('tabler-question-mark', trans('admin/user.is_managed_externally_helper'))
+                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/user.is_managed_externally_helper'))
                         ->inline(false)
                         ->columnSpan([
                             'default' => 1,
@@ -252,7 +261,7 @@ class UserResource extends Resource
                             Select::make('timezone')
                                 ->label(trans('profile.timezone'))
                                 ->required()
-                                ->prefixIcon('tabler-clock-pin')
+                                ->prefixIcon(TablerIcon::ClockPin)
                                 ->default(fn () => config('app.timezone', 'UTC'))
                                 ->selectablePlaceholder(false)
                                 ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
@@ -260,7 +269,7 @@ class UserResource extends Resource
                             Select::make('language')
                                 ->label(trans('profile.language'))
                                 ->required()
-                                ->prefixIcon('tabler-flag')
+                                ->prefixIcon(TablerIcon::Flag)
                                 ->live()
                                 ->default('en')
                                 ->searchable()
@@ -315,7 +324,7 @@ class UserResource extends Resource
 
                                 $actions[] = Action::make("oauth_$id")
                                     ->label(trans('profile.unlink', ['name' => $name]))
-                                    ->icon('tabler-unlink')
+                                    ->icon(TablerIcon::Unlink)
                                     ->requiresConfirmation()
                                     ->color($color)
                                     ->action(function ($livewire) use ($oauthService, $user, $name, $schema) {
@@ -341,7 +350,7 @@ class UserResource extends Resource
                 ]),
             Tab::make('roles')
                 ->label(trans('admin/user.roles'))
-                ->icon('tabler-users-group')
+                ->icon(TablerIcon::UsersGroup)
                 ->schema([
                     CheckboxList::make('roles')
                         ->hidden(fn (?User $user) => $user && $user->isRootAdmin())
@@ -368,7 +377,7 @@ class UserResource extends Resource
             Tab::make('keys')
                 ->visible(fn (?User $user) => $user)
                 ->label(trans('profile.tabs.keys'))
-                ->icon('tabler-key')
+                ->icon(TablerIcon::Key)
                 ->schema([
                     Section::make(trans('profile.api_keys'))
                         ->columnSpan(2)
@@ -464,7 +473,7 @@ class UserResource extends Resource
                 ->visible(fn (?User $user) => $user)
                 ->disabledOn('create')
                 ->label(trans('profile.tabs.activity'))
-                ->icon('tabler-history')
+                ->icon(TablerIcon::History)
                 ->schema([
                     Repeater::make('activity')
                         ->hiddenLabel()

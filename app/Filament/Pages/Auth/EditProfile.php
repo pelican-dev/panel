@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Auth;
 
 use App\Enums\CustomizationKey;
+use App\Enums\TablerIcon;
 use App\Extensions\OAuth\OAuthService;
 use App\Facades\Activity;
 use App\Models\ActivityLog;
@@ -40,7 +41,6 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
@@ -104,18 +104,18 @@ class EditProfile extends BaseEditProfile
         return [
             Tab::make('account')
                 ->label(trans('profile.tabs.account'))
-                ->icon('tabler-user-cog')
+                ->icon(TablerIcon::UserCog)
                 ->schema([
                     TextInput::make('username')
                         ->disabled(fn (User $user) => $user->is_managed_externally)
-                        ->prefixIcon('tabler-user')
+                        ->prefixIcon(TablerIcon::User)
                         ->label(trans('profile.username'))
                         ->required()
                         ->maxLength(255)
                         ->unique(),
                     TextInput::make('email')
                         ->disabled(fn (User $user) => $user->is_managed_externally)
-                        ->prefixIcon('tabler-mail')
+                        ->prefixIcon(TablerIcon::Mail)
                         ->label(trans('profile.email'))
                         ->email()
                         ->required()
@@ -125,7 +125,7 @@ class EditProfile extends BaseEditProfile
                         ->hidden(fn (User $user) => $user->is_managed_externally)
                         ->label(trans('profile.password'))
                         ->password()
-                        ->prefixIcon('tabler-password')
+                        ->prefixIcon(TablerIcon::Password)
                         ->revealable(filament()->arePasswordsRevealable())
                         ->rule(Password::default())
                         ->autocomplete('new-password')
@@ -136,7 +136,7 @@ class EditProfile extends BaseEditProfile
                     TextInput::make('passwordConfirmation')
                         ->label(trans('profile.password_confirmation'))
                         ->password()
-                        ->prefixIcon('tabler-password-fingerprint')
+                        ->prefixIcon(TablerIcon::PasswordFingerprint)
                         ->revealable(filament()->arePasswordsRevealable())
                         ->required()
                         ->visible(fn (Get $get) => filled($get('password')))
@@ -144,7 +144,7 @@ class EditProfile extends BaseEditProfile
                     Select::make('timezone')
                         ->label(trans('profile.timezone'))
                         ->required()
-                        ->prefixIcon('tabler-clock-pin')
+                        ->prefixIcon(TablerIcon::ClockPin)
                         ->default(config('app.timezone', 'UTC'))
                         ->selectablePlaceholder(false)
                         ->options(fn () => collect(DateTimeZone::listIdentifiers())->mapWithKeys(fn ($tz) => [$tz => $tz]))
@@ -152,7 +152,7 @@ class EditProfile extends BaseEditProfile
                     Select::make('language')
                         ->label(trans('profile.language'))
                         ->required()
-                        ->prefixIcon('tabler-flag')
+                        ->prefixIcon(TablerIcon::Flag)
                         ->live()
                         ->default('en')
                         ->selectablePlaceholder(false)
@@ -185,7 +185,7 @@ class EditProfile extends BaseEditProfile
                 ]),
             Tab::make('oauth')
                 ->label(trans('profile.tabs.oauth'))
-                ->icon('tabler-brand-oauth')
+                ->icon(TablerIcon::BrandOauth)
                 ->visible(count($oauthSchemas) > 0)
                 ->schema(function () use ($oauthSchemas) {
                     $actions = [];
@@ -202,7 +202,7 @@ class EditProfile extends BaseEditProfile
 
                         $actions[] = Action::make("oauth_$id")
                             ->label(trans('profile.' . ($unlink ? 'unlink' : 'link'), ['name' => $name]))
-                            ->icon($unlink ? 'tabler-unlink' : 'tabler-link')
+                            ->icon($unlink ? TablerIcon::Unlink : TablerIcon::Link)
                             ->color($color)
                             ->action(function (UserUpdateService $updateService) use ($id, $name, $unlink) {
                                 if ($unlink) {
@@ -227,7 +227,7 @@ class EditProfile extends BaseEditProfile
                 }),
             Tab::make('2fa')
                 ->label(trans('profile.tabs.2fa'))
-                ->icon('tabler-shield-lock')
+                ->icon(TablerIcon::ShieldLock)
                 ->visible(fn () => Filament::hasMultiFactorAuthentication())
                 ->schema(collect(Filament::getMultiFactorAuthenticationProviders())
                     ->sort(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider) => $multiFactorAuthenticationProvider->isEnabled(Filament::auth()->user()) ? 0 : 1)
@@ -236,7 +236,7 @@ class EditProfile extends BaseEditProfile
                     ->all()),
             Tab::make('api_keys')
                 ->label(trans('profile.tabs.api_keys'))
-                ->icon('tabler-key')
+                ->icon(TablerIcon::Key)
                 ->schema([
                     Grid::make(5)
                         ->schema([
@@ -329,7 +329,7 @@ class EditProfile extends BaseEditProfile
                 ]),
             Tab::make('ssh_keys')
                 ->label(trans('profile.tabs.ssh_keys'))
-                ->icon('tabler-lock-code')
+                ->icon(TablerIcon::LockCode)
                 ->schema([
                     Grid::make(5)->schema([
                         Section::make(trans('profile.create_ssh_key'))->columnSpan(3)
@@ -424,7 +424,7 @@ class EditProfile extends BaseEditProfile
                 ]),
             Tab::make('activity')
                 ->label(trans('profile.tabs.activity'))
-                ->icon('tabler-history')
+                ->icon(TablerIcon::History)
                 ->schema([
                     Repeater::make('activity')
                         ->hiddenLabel()
@@ -442,11 +442,11 @@ class EditProfile extends BaseEditProfile
                 ]),
             Tab::make('customization')
                 ->label(trans('profile.tabs.customization'))
-                ->icon('tabler-adjustments')
+                ->icon(TablerIcon::Adjustments)
                 ->schema([
                     Section::make(trans('profile.dashboard'))
                         ->collapsible()
-                        ->icon('tabler-dashboard')
+                        ->icon(TablerIcon::Dashboard)
                         ->schema([
                             ToggleButtons::make('dashboard_layout')
                                 ->label(trans('profile.dashboard_layout'))
@@ -464,10 +464,19 @@ class EditProfile extends BaseEditProfile
                                     'topbar' => trans('profile.topbar'),
                                     'mixed' => trans('profile.mixed'),
                                 ]),
+                            ToggleButtons::make('button_style')
+                                ->label('Button Style')
+                                ->inline()
+                                ->default('icon')
+
+                                ->options([
+                                    true => 'Icon',
+                                    false => 'Icon Button',
+                                ]),
                         ]),
                     Section::make(trans('profile.console'))
                         ->collapsible()
-                        ->icon('tabler-brand-tabler')
+                        ->icon(TablerIcon::Terminal2)
                         ->columns(4)
                         ->schema([
                             TextInput::make('console_font_size')
@@ -538,7 +547,7 @@ class EditProfile extends BaseEditProfile
                             TextInput::make('console_graph_period')
                                 ->label(trans('profile.graph_period'))
                                 ->suffix(trans('profile.seconds'))
-                                ->hintIcon('tabler-question-mark', trans('profile.graph_period_helper'))
+                                ->hintIcon(TablerIcon::QuestionMark, trans('profile.graph_period_helper'))
                                 ->columnSpan(2)
                                 ->numeric()
                                 ->default(30)
@@ -567,11 +576,15 @@ class EditProfile extends BaseEditProfile
     {
         return [
             $this->getCancelFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-arrow-left'),
-            $this->getSaveFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-device-floppy'),
+                ->tooltip(trans('filament-panels::auth/pages/edit-profile.actions.cancel.label'))
+                ->hiddenLabel()
+                ->icon(TablerIcon::ArrowLeft),
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
+                ->icon(TablerIcon::DeviceFloppy),
         ];
 
     }
@@ -585,9 +598,17 @@ class EditProfile extends BaseEditProfile
             'console_graph_period' => $data['console_graph_period'],
             'dashboard_layout' => $data['dashboard_layout'],
             'top_navigation' => $data['top_navigation'],
+            'button_style' => $data['button_style'],
         ];
 
-        unset($data['console_font'],$data['console_font_size'], $data['console_rows'], $data['dashboard_layout'], $data['top_navigation']);
+        unset(
+            $data['console_font'],
+            $data['console_font_size'],
+            $data['console_rows'],
+            $data['dashboard_layout'],
+            $data['top_navigation'],
+            $data['button_style'],
+        );
 
         $data['customization'] = json_encode($customization);
 
@@ -601,6 +622,7 @@ class EditProfile extends BaseEditProfile
         $data['console_rows'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleRows);
         $data['console_graph_period'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $data['dashboard_layout'] = $this->getUser()->getCustomization(CustomizationKey::DashboardLayout);
+        $data['button_style'] = $this->getUser()->getCustomization(CustomizationKey::ButtonStyle);
 
         // Handle migration from boolean to string navigation types
         $topNavigation = $this->getUser()->getCustomization(CustomizationKey::TopNavigation);

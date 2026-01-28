@@ -3,6 +3,7 @@
 namespace App\Filament\Components\Actions;
 
 use App\Console\Commands\Egg\UpdateEggIndexCommand;
+use App\Enums\TablerIcon;
 use App\Jobs\InstallEgg;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
@@ -17,7 +18,6 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
@@ -34,13 +34,11 @@ class ImportEggAction extends Action
     {
         parent::setUp();
 
-        $this->label(trans('filament-actions::import.modal.actions.import.label'));
+        $this->tooltip(trans('filament-actions::import.modal.actions.import.label'));
 
-        $this->iconButton();
+        $this->hiddenLabel();
 
-        $this->icon('tabler-file-import');
-
-        $this->iconSize(IconSize::ExtraLarge);
+        $this->icon(TablerIcon::FileImport);
 
         $this->modalWidth(Width::ScreenExtraLarge);
 
@@ -139,7 +137,7 @@ class ImportEggAction extends Action
                     $this->importEggsFromGitHub(),
                     Tab::make('file')
                         ->label(trans('admin/egg.import.file'))
-                        ->icon('tabler-file-upload')
+                        ->icon(TablerIcon::FileUpload)
                         ->schema([
                             FileUpload::make('files')
                                 ->label(trans('admin/egg.model_label'))
@@ -152,7 +150,7 @@ class ImportEggAction extends Action
                         ]),
                     Tab::make('url')
                         ->label(trans('admin/egg.import.url'))
-                        ->icon('tabler-world-upload')
+                        ->icon(TablerIcon::WorldUpload)
                         ->schema([
                             Repeater::make('urls')
                                 ->hiddenLabel()
@@ -217,7 +215,7 @@ class ImportEggAction extends Action
 
         return Tab::make('github')
             ->label(trans('admin/egg.import.github'))
-            ->icon('tabler-brand-github')
+            ->icon(TablerIcon::BrandGithub)
             ->columnSpanFull()
             ->schema([
                 Tabs::make('egg_tabs')

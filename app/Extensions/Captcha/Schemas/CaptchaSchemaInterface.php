@@ -2,6 +2,7 @@
 
 namespace App\Extensions\Captcha\Schemas;
 
+use BackedEnum;
 use Filament\Schemas\Components\Component;
 
 interface CaptchaSchemaInterface
@@ -24,7 +25,7 @@ interface CaptchaSchemaInterface
      */
     public function getSettingsForm(): array;
 
-    public function getIcon(): ?string;
+    public function getIcon(): null|string|BackedEnum;
 
     public function validateResponse(?string $captchaResponse = null): void;
 }

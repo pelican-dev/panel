@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Servers\RelationManagers;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Servers\Pages\CreateServer;
 use App\Models\Allocation;
 use App\Models\Server;
@@ -51,8 +52,8 @@ class AllocationsRelationManager extends RelationManager
                     ->placeholder(trans('admin/server.no_notes')),
                 IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
-                        true => 'tabler-star-filled',
-                        default => 'tabler-star',
+                        true => TablerIcon::StarFilled,
+                        default => TablerIcon::Star,
                     })
                     ->color(fn ($state) => match ($state) {
                         true => 'warning',
@@ -65,8 +66,8 @@ class AllocationsRelationManager extends RelationManager
                 IconColumn::make('is_locked')
                     ->label(trans('admin/server.locked'))
                     ->tooltip(trans('admin/server.locked_helper'))
-                    ->trueIcon('tabler-lock')
-                    ->falseIcon('tabler-lock-open'),
+                    ->trueIcon(TablerIcon::Lock)
+                    ->falseIcon(TablerIcon::LockOpen),
             ])
             ->recordActions([
                 Action::make('make-primary')
@@ -106,9 +107,9 @@ class AllocationsRelationManager extends RelationManager
                         }
                     }),
                 CreateAction::make()
-                    ->label(trans('admin/server.create_allocation'))
-                    ->icon('tabler-network')
-                    ->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()
+                    ->tooltip(trans('admin/server.create_allocation'))
+                    ->icon(TablerIcon::Network)
                     ->createAnother(false)
                     ->schema(fn () => [
                         Select::make('allocation_ip')
@@ -119,8 +120,7 @@ class AllocationsRelationManager extends RelationManager
                             ->live()
                             ->hintAction(
                                 Action::make('refresh')
-                                    ->iconButton()
-                                    ->icon('tabler-refresh')
+                                    ->icon(TablerIcon::Refresh)
                                     ->tooltip(trans('admin/node.refresh'))
                                     ->action(function () {
                                         cache()->forget("nodes.{$this->getOwnerRecord()->node->id}.ips");
@@ -147,14 +147,14 @@ class AllocationsRelationManager extends RelationManager
                     ])
                     ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
                 AssociateAction::make()
-                    ->icon('tabler-file-plus')
+                    ->icon(TablerIcon::FilePlus)
                     ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->multiple()
                     ->associateAnother(false)
                     ->preloadRecordSelect()
                     ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
                     ->recordSelectSearchColumns(['ip', 'port'])
-                    ->label(trans('admin/server.add_allocation'))
+                    ->tooltip(trans('admin/server.add_allocation'))
                     ->after(function (array $data) {
                         Allocation::whereIn('id', array_values(array_unique($data['recordId'])))->update(['is_locked' => true]);
 

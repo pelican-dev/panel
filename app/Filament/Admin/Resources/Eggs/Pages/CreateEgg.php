@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Eggs\Pages;
 
 use App\Enums\EditorLanguages;
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Eggs\EggResource;
 use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Filament\Components\Forms\Fields\MonacoEditor;
@@ -28,7 +29,6 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
@@ -47,9 +47,12 @@ class CreateEgg extends CreateRecord
     protected function getDefaultHeaderActions(): array
     {
         return [
-            $this->getCreateFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-file-plus'),
+            Action::make('create')
+                ->hiddenLabel()
+                ->action('create')
+                ->keyBindings(['mod+s'])
+                ->tooltip(trans('filament-panels::resources/pages/create-record.form.actions.create.label'))
+                ->icon(TablerIcon::FilePlus),
         ];
     }
 
@@ -116,7 +119,7 @@ class CreateEgg extends CreateRecord
                         ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 1, 'lg' => 1]),
                     Toggle::make('force_outgoing_ip')
                         ->label(trans('admin/egg.force_ip'))
-                        ->hintIcon('tabler-question-mark', trans('admin/egg.force_ip_help')),
+                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/egg.force_ip_help')),
                     Hidden::make('script_is_privileged')
                         ->default(1),
                     TagsInput::make('tags')
@@ -124,7 +127,7 @@ class CreateEgg extends CreateRecord
                         ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2]),
                     TextInput::make('update_url')
                         ->label(trans('admin/egg.update_url'))
-                        ->hintIcon('tabler-question-mark', trans('admin/egg.update_url_help'))
+                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/egg.update_url_help'))
                         ->columnSpan(['default' => 1, 'sm' => 1, 'md' => 2, 'lg' => 2])
                         ->url(),
                     KeyValue::make('docker_images')
@@ -214,7 +217,7 @@ class CreateEgg extends CreateRecord
                                 ->maxLength(255)
                                 ->prefix('{{')
                                 ->suffix('}}')
-                                ->hintIcon('tabler-code', fn ($state) => "{{{$state}}}")
+                                ->hintIcon(TablerIcon::Code, fn ($state) => "{{{$state}}}")
                                 ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
                                 ->rules(EggVariable::getRulesForField('env_variable'))
                                 ->validationMessages([

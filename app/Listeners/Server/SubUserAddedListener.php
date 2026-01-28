@@ -21,7 +21,7 @@ class SubUserAddedListener
             ->title(trans('notifications.user_added.title', locale: $locale))
             ->body(trans('notifications.user_added.body', ['server' => $event->subuser->server->name], $locale))
             ->actions([
-                Action::make('view')
+                Action::make('exclude_view')
                     ->button()
                     ->label(trans('notifications.open_server', locale: $locale))
                     ->markAsRead()
