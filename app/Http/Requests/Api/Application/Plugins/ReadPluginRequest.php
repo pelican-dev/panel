@@ -6,9 +6,9 @@ use App\Http\Requests\Api\Application\ApplicationApiRequest;
 use App\Models\Plugin;
 use App\Services\Acl\Api\AdminAcl;
 
-class UpdatePluginRequest extends ApplicationApiRequest
+class ReadPluginRequest extends ApplicationApiRequest
 {
     protected ?string $resource = Plugin::RESOURCE_NAME;
 
-    protected int $permission = AdminAcl::WRITE;
+    protected int $permission = AdminAcl::READ;
 }

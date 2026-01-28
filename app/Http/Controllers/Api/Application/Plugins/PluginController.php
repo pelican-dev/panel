@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api\Application\Plugins;
 use App\Enums\PluginStatus;
 use App\Exceptions\PanelException;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
-use App\Http\Requests\Api\Application\Plugins\DeletePluginRequest;
-use App\Http\Requests\Api\Application\Plugins\GetPluginRequest;
-use App\Http\Requests\Api\Application\Plugins\UpdatePluginRequest;
+use App\Http\Requests\Api\Application\Plugins\ReadPluginRequest;
+use App\Http\Requests\Api\Application\Plugins\UninstallPluginRequest;
+use App\Http\Requests\Api\Application\Plugins\WritePluginRequest;
 use App\Models\Plugin;
 use App\Services\Helpers\PluginService;
 use App\Transformers\Api\Application\PluginTransformer;
@@ -32,7 +32,7 @@ class PluginController extends ApplicationApiController
      *
      * @return array<array-key, mixed>
      */
-    public function index(GetPluginRequest $request): array
+    public function index(ReadPluginRequest $request): array
     {
         $plugins = QueryBuilder::for(Plugin::class)
             ->allowedFilters(['id', 'name', 'author', 'category'])
@@ -51,7 +51,7 @@ class PluginController extends ApplicationApiController
      *
      * @return array<array-key, mixed>
      */
-    public function view(GetPluginRequest $request, Plugin $plugin): array
+    public function view(ReadPluginRequest $request, Plugin $plugin): array
     {
         return $this->fractal->item($plugin)
             ->transformWith($this->getTransformer(PluginTransformer::class))
@@ -65,7 +65,7 @@ class PluginController extends ApplicationApiController
      *
      * @throws Exception
      */
-    public function import(UpdatePluginRequest $request): Response
+    public function import(WritePluginRequest $request): Response
     {
         if (!$request->hasFile('plugin')) {
             throw new PanelException("No 'plugin' file in request");
@@ -85,7 +85,7 @@ class PluginController extends ApplicationApiController
      *
      * @throws Exception
      */
-    public function install(UpdatePluginRequest $request, Plugin $plugin): array
+    public function install(WritePluginRequest $request, Plugin $plugin): array
     {
         if ($plugin->status !== PluginStatus::NotInstalled) {
             throw new PanelException('Plugin is already installed');
@@ -107,7 +107,7 @@ class PluginController extends ApplicationApiController
      *
      * @throws Exception
      */
-    public function update(UpdatePluginRequest $request, Plugin $plugin): array
+    public function update(WritePluginRequest $request, Plugin $plugin): array
     {
         if (!$plugin->isUpdateAvailable()) {
             throw new PanelException("Plugin doesn't need updating");
@@ -129,7 +129,7 @@ class PluginController extends ApplicationApiController
      *
      * @throws Exception
      */
-    public function uninstall(DeletePluginRequest $request, Plugin $plugin): array
+    public function uninstall(UninstallPluginRequest $request, Plugin $plugin): array
     {
         if ($plugin->status === PluginStatus::NotInstalled) {
             throw new PanelException('Plugin is not installed');
