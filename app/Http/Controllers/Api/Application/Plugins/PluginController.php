@@ -12,6 +12,7 @@ use App\Models\Plugin;
 use App\Services\Helpers\PluginService;
 use App\Transformers\Api\Application\PluginTransformer;
 use Exception;
+use Illuminate\Http\Response;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class PluginController extends ApplicationApiController
@@ -55,6 +56,24 @@ class PluginController extends ApplicationApiController
         return $this->fractal->item($plugin)
             ->transformWith($this->getTransformer(PluginTransformer::class))
             ->toArray();
+    }
+
+    /**
+     * Import plugin
+     *
+     * Imports a new plugin.
+     *
+     * @throws Exception
+     */
+    public function import(UpdatePluginRequest $request): Response
+    {
+        if (!$request->hasFile('plugin')) {
+            throw new PanelException("No 'plugin' file in request");
+        }
+
+        $this->pluginService->downloadPluginFromFile($request->file('plugin'));
+
+        return new Response('', Response::HTTP_CREATED);
     }
 
     /**
