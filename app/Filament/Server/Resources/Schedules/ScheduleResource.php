@@ -41,7 +41,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -349,12 +348,12 @@ class ScheduleResource extends Resource
             ])
             ->toolbarActions([
                 CreateAction::make()
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()
                     ->icon(TablerIcon::CalendarPlus)
                     ->color('primary')
                     ->tooltip(trans('server/schedule.new')),
                 ImportScheduleAction::make()
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()
                     ->icon(TablerIcon::FileImport)
                     ->color('success')
                     ->tooltip(trans('server/schedule.import')),

@@ -8,7 +8,6 @@ use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\IconSize;
 
 class UpdateEggAction extends Action
 {
@@ -21,13 +20,9 @@ class UpdateEggAction extends Action
     {
         parent::setUp();
 
-        $this->label(trans_choice('admin/egg.update', 1));
-
-        $this->iconButton();
+        $this->tooltip(trans_choice('admin/egg.update', 1));
 
         $this->icon(TablerIcon::CloudDownload);
-
-        $this->iconSize(IconSize::ExtraLarge);
 
         $this->color('success');
 

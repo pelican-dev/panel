@@ -19,7 +19,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -84,7 +83,6 @@ class DatabasesRelationManager extends RelationManager
                 ViewAction::make()
                     ->color('primary'),
                 DeleteAction::make()
-                    ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->successNotificationTitle(null)
                     ->using(function (Database $database, DatabaseManagementService $service) {
                         try {
@@ -106,11 +104,11 @@ class DatabasesRelationManager extends RelationManager
             ])
             ->toolbarActions([
                 CreateAction::make()
+                    ->hiddenLabel()
                     ->disabled(fn () => DatabaseHost::count() < 1)
-                    ->label(fn () => DatabaseHost::count() < 1 ? trans('admin/server.no_db_hosts') : trans('admin/server.create_database'))
+                    ->tooltip(fn () => DatabaseHost::count() < 1 ? trans('admin/server.no_db_hosts') : trans('admin/server.create_database'))
                     ->color(fn () => DatabaseHost::count() < 1 ? 'danger' : 'primary')
                     ->icon(fn () => DatabaseHost::count() < 1 ? TablerIcon::DatabaseX : TablerIcon::DatabasePlus)
-                    ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->createAnother(false)
                     ->action(function (array $data, DatabaseManagementService $service, RandomWordService $randomWordService) {
                         $data['database'] ??= $randomWordService->word() . random_int(1, 420);

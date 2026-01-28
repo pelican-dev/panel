@@ -41,7 +41,6 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;
@@ -465,6 +464,15 @@ class EditProfile extends BaseEditProfile
                                     'topbar' => trans('profile.topbar'),
                                     'mixed' => trans('profile.mixed'),
                                 ]),
+                            ToggleButtons::make('button_style')
+                                ->label('Button Style')
+                                ->inline()
+                                ->default('icon')
+
+                                ->options([
+                                    true => 'Icon',
+                                    false => 'Icon Button',
+                                ]),
                         ]),
                     Section::make(trans('profile.console'))
                         ->collapsible()
@@ -568,10 +576,14 @@ class EditProfile extends BaseEditProfile
     {
         return [
             $this->getCancelFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->tooltip(trans('filament-panels::auth/pages/edit-profile.actions.cancel.label'))
+                ->hiddenLabel()
                 ->icon(TablerIcon::ArrowLeft),
-            $this->getSaveFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
                 ->icon(TablerIcon::DeviceFloppy),
         ];
 
@@ -586,9 +598,17 @@ class EditProfile extends BaseEditProfile
             'console_graph_period' => $data['console_graph_period'],
             'dashboard_layout' => $data['dashboard_layout'],
             'top_navigation' => $data['top_navigation'],
+            'button_style' => $data['button_style'],
         ];
 
-        unset($data['console_font'],$data['console_font_size'], $data['console_rows'], $data['dashboard_layout'], $data['top_navigation']);
+        unset(
+            $data['console_font'],
+            $data['console_font_size'],
+            $data['console_rows'],
+            $data['dashboard_layout'],
+            $data['top_navigation'],
+            $data['button_style'],
+        );
 
         $data['customization'] = json_encode($customization);
 
@@ -602,6 +622,7 @@ class EditProfile extends BaseEditProfile
         $data['console_rows'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleRows);
         $data['console_graph_period'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $data['dashboard_layout'] = $this->getUser()->getCustomization(CustomizationKey::DashboardLayout);
+        $data['button_style'] = $this->getUser()->getCustomization(CustomizationKey::ButtonStyle);
 
         // Handle migration from boolean to string navigation types
         $topNavigation = $this->getUser()->getCustomization(CustomizationKey::TopNavigation);

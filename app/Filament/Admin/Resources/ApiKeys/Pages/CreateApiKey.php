@@ -10,7 +10,6 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -27,8 +26,11 @@ class CreateApiKey extends CreateRecord
     protected function getDefaultHeaderActions(): array
     {
         return [
-            $this->getCreateFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
+            Action::make('create')
+                ->hiddenLabel()
+                ->action('create')
+                ->keyBindings(['mod+s'])
+                ->tooltip(trans('filament-panels::resources/pages/create-record.form.actions.create.label'))
                 ->icon(TablerIcon::FilePlus),
         ];
     }

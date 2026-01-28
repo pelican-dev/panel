@@ -17,6 +17,8 @@ use App\Traits\Filament\CanModifyTable;
 use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
@@ -109,8 +111,13 @@ class WebhookResource extends Resource
                     ->beforeReplicaSaved(fn (WebhookConfiguration $replica) => $replica->description .= ' Copy ' . now()->format('Y-m-d H:i:s'))
                     ->successRedirectUrl(fn (WebhookConfiguration $replica) => EditWebhookConfiguration::getUrl(['record' => $replica])),
             ])
-            ->groupedBulkActions([
-                DeleteBulkAction::make(),
+            ->toolbarActions([
+                CreateAction::make()
+                    ->hiddenLabel()
+                    ->icon(TablerIcon::Plus),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ])
             ->emptyStateIcon(TablerIcon::Webhook)
             ->emptyStateDescription('')

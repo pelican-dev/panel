@@ -20,7 +20,6 @@ use Filament\Actions\DetachAction;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -101,7 +100,7 @@ class AllocationResource extends Resource
             ])
             ->toolbarActions([
                 Action::make('add_allocation')
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()
                     ->icon(fn () => $server->allocations()->count() >= $server->allocation_limit ? TablerIcon::NetworkOff : TablerIcon::Network)
                     ->authorize(fn () => user()?->can(SubuserPermission::AllocationCreate, $server))
                     ->tooltip(fn () => $server->allocations()->count() >= $server->allocation_limit ? trans('server/network.limit') : trans('server/network.add'))

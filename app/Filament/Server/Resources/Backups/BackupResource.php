@@ -266,7 +266,7 @@ class BackupResource extends Resource
                     ->disabled(fn () => $server->backups()->count() >= $server->backup_limit)
                     ->color(fn () => $server->backups()->count() >= $server->backup_limit ? 'danger' : 'primary')
                     ->createAnother(false)
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()
                     ->successNotificationTitle(null)
                     ->action(function (InitiateBackupService $initiateBackupService, $data) use ($server) {
                         $action = $initiateBackupService->setIgnoredFiles(explode(PHP_EOL, $data['ignored'] ?? ''));

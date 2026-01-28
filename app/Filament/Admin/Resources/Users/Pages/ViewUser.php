@@ -9,7 +9,6 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Support\Enums\IconSize;
 
 class ViewUser extends ViewRecord
 {
@@ -22,8 +21,7 @@ class ViewUser extends ViewRecord
     protected function getDefaultHeaderActions(): array
     {
         return [
-            EditAction::make()
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
+            EditAction::make(),
         ];
     }
 }

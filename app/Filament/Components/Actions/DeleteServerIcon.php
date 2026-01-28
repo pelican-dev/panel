@@ -6,7 +6,6 @@ use App\Enums\TablerIcon;
 use App\Models\Server;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Facades\Storage;
 
 class DeleteServerIcon extends Action
@@ -24,11 +23,9 @@ class DeleteServerIcon extends Action
 
         $this->hiddenLabel();
 
+        $this->tooltip(trans('admin/server.import_image'));
+
         $this->icon(TablerIcon::Trash);
-
-        $this->iconButton();
-
-        $this->iconSize(IconSize::Large);
 
         $this->color('danger');
 

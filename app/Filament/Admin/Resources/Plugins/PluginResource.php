@@ -16,7 +16,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Http\UploadedFile;
@@ -84,7 +83,7 @@ class PluginResource extends Resource
                     ->sortable(),
             ])
             ->recordActions([
-                Action::make('view')
+                Action::make('exclude_view')
                     ->label(trans('filament-actions::view.single.label'))
                     ->icon(fn (Plugin $plugin) => $plugin->getReadme() ? TablerIcon::Eye : TablerIcon::EyeShare)
                     ->color('gray')
@@ -104,7 +103,7 @@ class PluginResource extends Resource
                             ->markdown()
                             ->state(fn (Plugin $plugin) => $plugin->getReadme()),
                     ] : null),
-                Action::make('settings')
+                Action::make('exclude_settings')
                     ->label(trans('admin/plugin.settings'))
                     ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                     ->icon(TablerIcon::Settings)
@@ -114,7 +113,7 @@ class PluginResource extends Resource
                     ->action(fn (array $data, Plugin $plugin) => $plugin->saveSettings($data))
                     ->slideOver(),
                 ActionGroup::make([
-                    Action::make('install')
+                    Action::make('exclude_install')
                         ->label(trans('admin/plugin.install'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                         ->icon(TablerIcon::Terminal)
@@ -138,7 +137,7 @@ class PluginResource extends Resource
                                     ->send();
                             }
                         }),
-                    Action::make('update')
+                    Action::make('exclude_update')
                         ->label(trans('admin/plugin.update'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                         ->icon(TablerIcon::Download)
@@ -162,7 +161,7 @@ class PluginResource extends Resource
                                     ->send();
                             }
                         }),
-                    Action::make('enable')
+                    Action::make('exclude_enable')
                         ->label(trans('admin/plugin.enable'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                         ->icon(TablerIcon::Check)
@@ -181,7 +180,7 @@ class PluginResource extends Resource
                                 ->title(trans('admin/plugin.notifications.enabled'))
                                 ->send();
                         }),
-                    Action::make('disable')
+                    Action::make('exclude_disable')
                         ->label(trans('admin/plugin.disable'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                         ->icon(TablerIcon::X)
@@ -197,7 +196,7 @@ class PluginResource extends Resource
                                 ->title(trans('admin/plugin.notifications.disabled'))
                                 ->send();
                         }),
-                    Action::make('delete')
+                    Action::make('exclude_delete')
                         ->label(trans('filament-actions::delete.single.label'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('delete', $plugin))
                         ->icon(TablerIcon::Trash)
@@ -214,7 +213,7 @@ class PluginResource extends Resource
                                 ->title(trans('admin/plugin.notifications.deleted'))
                                 ->send();
                         }),
-                    Action::make('uninstall')
+                    Action::make('exclude_uninstall')
                         ->label(trans('admin/plugin.uninstall'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                         ->icon(TablerIcon::Terminal)
@@ -243,11 +242,10 @@ class PluginResource extends Resource
             ])
             ->headerActions([
                 Action::make('import_from_file')
-                    ->label(trans('admin/plugin.import_from_file'))
+                    ->hiddenLabel()
+                    ->tooltip(trans('admin/plugin.import_from_file'))
                     ->authorize(fn () => user()?->can('create', Plugin::class))
                     ->icon(TablerIcon::FileDownload)
-                    ->iconButton()
-                    ->iconSize(IconSize::ExtraLarge)
                     ->schema([
                         // TODO: switch to new file upload
                         FileUpload::make('file')
@@ -287,11 +285,10 @@ class PluginResource extends Resource
                         }
                     }),
                 Action::make('import_from_url')
-                    ->label(trans('admin/plugin.import_from_url'))
+                    ->hiddenLabel()
+                    ->tooltip(trans('admin/plugin.import_from_url'))
                     ->authorize(fn () => user()?->can('create', Plugin::class))
                     ->icon(TablerIcon::WorldDownload)
-                    ->iconButton()
-                    ->iconSize(IconSize::ExtraLarge)
                     ->schema([
                         TextInput::make('url')
                             ->required()

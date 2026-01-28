@@ -46,7 +46,7 @@ class CreateNode extends CreateRecord
                         <x-filament::icon-button
                             type="submit"
                             iconSize="xl"
-                            icon="tabler-file-plus"
+                            icon="tabler-plus"
                         >
                             {{ trans('admin/node.create') }}
                         </x-filament::icon-button>

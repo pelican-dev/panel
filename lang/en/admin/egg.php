@@ -27,6 +27,7 @@ return [
         'github' => 'GitHub',
         'refresh' => 'Refresh',
         'import_image' => 'Import Image',
+        'delete_image' => 'Delete Image',
         'no_local_ip' => 'Local IP Addresses are not allowed',
         'unsupported_format' => 'Unsupported Format. Supported Formats: :formats',
         'invalid_url' => 'The provided URL is invalid',

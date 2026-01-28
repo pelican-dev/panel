@@ -107,9 +107,9 @@ class AllocationsRelationManager extends RelationManager
                         }
                     }),
                 CreateAction::make()
-                    ->label(trans('admin/server.create_allocation'))
+                    ->hiddenLabel()
+                    ->tooltip(trans('admin/server.create_allocation'))
                     ->icon(TablerIcon::Network)
-                    ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->createAnother(false)
                     ->schema(fn () => [
                         Select::make('allocation_ip')
@@ -120,7 +120,6 @@ class AllocationsRelationManager extends RelationManager
                             ->live()
                             ->hintAction(
                                 Action::make('refresh')
-                                    ->iconButton()
                                     ->icon(TablerIcon::Refresh)
                                     ->tooltip(trans('admin/node.refresh'))
                                     ->action(function () {
@@ -155,7 +154,7 @@ class AllocationsRelationManager extends RelationManager
                     ->preloadRecordSelect()
                     ->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo($this->getOwnerRecord()->node)->whereNull('server_id'))
                     ->recordSelectSearchColumns(['ip', 'port'])
-                    ->label(trans('admin/server.add_allocation'))
+                    ->tooltip(trans('admin/server.add_allocation'))
                     ->after(function (array $data) {
                         Allocation::whereIn('id', array_values(array_unique($data['recordId'])))->update(['is_locked' => true]);
 
