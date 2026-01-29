@@ -38,6 +38,8 @@ class Plugin extends Model implements HasPluginSettings
 {
     use Sushi;
 
+    public const RESOURCE_NAME = 'plugin';
+
     protected $primaryKey = 'id';
 
     protected $keyType = 'string';

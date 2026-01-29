@@ -172,3 +172,21 @@ Route::prefix('/roles')->group(function () {
 
     Route::delete('/{role:id}', [Application\Roles\RoleController::class, 'delete']);
 });
+
+/*
+|--------------------------------------------------------------------------
+| Plugin Controller Routes
+|--------------------------------------------------------------------------
+|
+| Endpoint: /api/application/plugins
+|
+*/
+Route::prefix('/plugins')->group(function () {
+    Route::get('/', [Application\Plugins\PluginController::class, 'index'])->name('api.application.plugins');
+    Route::post('/import', [Application\Plugins\PluginController::class, 'import'])->name('api.application.plugins.import');
+    Route::post('/{plugin:id}/install', [Application\Plugins\PluginController::class, 'install'])->name('api.application.plugins.install');
+    Route::post('/{plugin:id}/update', [Application\Plugins\PluginController::class, 'update'])->name('api.application.plugins.update');
+    Route::patch('/{plugin:id}/enable', [Application\Plugins\PluginController::class, 'enable'])->name('api.application.plugins.enable');
+    Route::patch('/{plugin:id}/disable', [Application\Plugins\PluginController::class, 'disable'])->name('api.application.plugins.disable');
+    Route::delete('/{plugin:id}', [Application\Plugins\PluginController::class, 'uninstall'])->name('api.application.plugins.uninstall');
+});
