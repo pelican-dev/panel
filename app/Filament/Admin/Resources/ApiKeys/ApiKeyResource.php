@@ -101,9 +101,7 @@ class ApiKeyResource extends Resource
                 DeleteAction::make(),
             ])
             ->toolbarActions([
-                CreateAction::make()
-                    ->hiddenLabel()
-                    ->icon(TablerIcon::Plus),
+                CreateAction::make(),
             ])
             ->emptyStateIcon(TablerIcon::Key)
             ->emptyStateDescription('')

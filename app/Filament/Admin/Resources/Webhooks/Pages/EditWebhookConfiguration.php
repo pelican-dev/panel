@@ -26,11 +26,11 @@ class EditWebhookConfiguration extends EditRecord
         return [
             DeleteAction::make(),
             Action::make('test_now')
-                ->label(trans('admin/webhook.test_now'))
+                ->tooltip(trans('admin/webhook.test_now'))
                 ->color('primary')
                 ->disabled(fn (WebhookConfiguration $webhookConfiguration) => count($webhookConfiguration->events) === 0)
                 ->action(fn (WebhookConfiguration $webhookConfiguration) => $webhookConfiguration->run())
-                ->tooltip(trans('admin/webhook.test_now_help')),
+                ->icon(TablerIcon::TestPipe),
             Action::make('save')
                 ->hiddenLabel()
                 ->action('save')
