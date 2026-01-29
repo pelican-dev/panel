@@ -175,6 +175,16 @@ Route::prefix('/roles')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| Panel Stats Controller Routes
+|--------------------------------------------------------------------------
+|
+| Endpoint: /api/application/panel
+|
+*/
+Route::get('/panel', Application\PanelController::class)->name('api.application.panel');
+
+/*
+|--------------------------------------------------------------------------
 | Plugin Controller Routes
 |--------------------------------------------------------------------------
 |
