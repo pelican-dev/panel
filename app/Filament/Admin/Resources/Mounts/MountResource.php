@@ -102,9 +102,7 @@ class MountResource extends Resource
                 EditAction::make(),
             ])
             ->toolbarActions([
-                CreateAction::make()
-                    ->hiddenLabel()
-                    ->icon(TablerIcon::Plus),
+                CreateAction::make(),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

@@ -64,9 +64,7 @@ class ListNodes extends ListRecords
                 EditAction::make(),
             ])
             ->toolbarActions([
-                CreateAction::make()
-                    ->hiddenLabel()
-                    ->icon(TablerIcon::Plus),
+                CreateAction::make(),
             ])
             ->emptyStateIcon(TablerIcon::Server2)
             ->emptyStateDescription('')
