@@ -98,9 +98,7 @@ class ListServers extends ListRecords
                 EditAction::make(),
             ])
             ->toolbarActions([
-                CreateAction::make()
-                    ->hiddenLabel()
-                    ->icon(TablerIcon::Plus),
+                CreateAction::make(),
             ])
             ->searchable()
             ->emptyStateIcon(TablerIcon::BrandDocker)
