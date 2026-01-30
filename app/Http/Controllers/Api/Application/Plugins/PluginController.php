@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Application\Plugins;
 use App\Enums\PluginStatus;
 use App\Exceptions\PanelException;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
+use App\Http\Requests\Api\Application\Plugins\ImportFilePluginRequest;
 use App\Http\Requests\Api\Application\Plugins\ReadPluginRequest;
 use App\Http\Requests\Api\Application\Plugins\UninstallPluginRequest;
 use App\Http\Requests\Api\Application\Plugins\WritePluginRequest;
@@ -59,19 +60,33 @@ class PluginController extends ApplicationApiController
     }
 
     /**
-     * Import plugin
+     * Import plugin (file)
      *
-     * Imports a new plugin.
+     * Imports a new plugin file.
      *
      * @throws Exception
      */
-    public function import(WritePluginRequest $request): Response
+    public function importFile(WritePluginRequest $request): Response
     {
         if (!$request->hasFile('plugin')) {
             throw new PanelException("No 'plugin' file in request");
         }
 
         $this->pluginService->downloadPluginFromFile($request->file('plugin'));
+
+        return new Response('', Response::HTTP_CREATED);
+    }
+
+    /**
+     * Import plugin (url)
+     *
+     * Imports a new plugin from an url.
+     *
+     * @throws Exception
+     */
+    public function importUrl(ImportFilePluginRequest $request): Response
+    {
+        $this->pluginService->downloadPluginFromUrl($request->string('url'));
 
         return new Response('', Response::HTTP_CREATED);
     }
@@ -136,6 +151,50 @@ class PluginController extends ApplicationApiController
         }
 
         $this->pluginService->uninstallPlugin($plugin, $request->boolean('delete'));
+
+        return $this->fractal->item($plugin)
+            ->transformWith($this->getTransformer(PluginTransformer::class))
+            ->toArray();
+    }
+
+    /**
+     * Enable plugin
+     *
+     * Enables a plugin.
+     *
+     * @return array<array-key, mixed>
+     *
+     * @throws Exception
+     */
+    public function enable(WritePluginRequest $request, Plugin $plugin): array
+    {
+        if (!$plugin->canEnable()) {
+            throw new PanelException("Plugin can't be enabled");
+        }
+
+        $this->pluginService->enablePlugin($plugin);
+
+        return $this->fractal->item($plugin)
+            ->transformWith($this->getTransformer(PluginTransformer::class))
+            ->toArray();
+    }
+
+    /**
+     * Disable plugin
+     *
+     * disables a plugin.
+     *
+     * @return array<array-key, mixed>
+     *
+     * @throws Exception
+     */
+    public function disable(WritePluginRequest $request, Plugin $plugin): array
+    {
+        if (!$plugin->canDisable()) {
+            throw new PanelException("Plugin can't be disabled");
+        }
+
+        $this->pluginService->disablePlugin($plugin);
 
         return $this->fractal->item($plugin)
             ->transformWith($this->getTransformer(PluginTransformer::class))

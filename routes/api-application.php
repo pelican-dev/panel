@@ -185,9 +185,13 @@ Route::prefix('/plugins')->group(function () {
     Route::get('/', [Application\Plugins\PluginController::class, 'index'])->name('api.application.plugins');
     Route::get('/{plugin:id}', [Application\Plugins\PluginController::class, 'view'])->name('api.application.plugins.view');
 
-    Route::post('/import', [Application\Plugins\PluginController::class, 'import']);
+    Route::post('/import/file', [Application\Plugins\PluginController::class, 'importFile']);
+    Route::post('/import/url', [Application\Plugins\PluginController::class, 'importUrl']);
 
     Route::post('/{plugin:id}/install', [Application\Plugins\PluginController::class, 'install']);
     Route::post('/{plugin:id}/update', [Application\Plugins\PluginController::class, 'update']);
     Route::post('/{plugin:id}/uninstall', [Application\Plugins\PluginController::class, 'uninstall']);
+
+    Route::post('/{plugin:id}/enable', [Application\Plugins\PluginController::class, 'enable']);
+    Route::post('/{plugin:id}/disable', [Application\Plugins\PluginController::class, 'disable']);
 });
