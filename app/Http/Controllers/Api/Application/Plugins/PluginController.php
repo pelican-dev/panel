@@ -182,7 +182,7 @@ class PluginController extends ApplicationApiController
     /**
      * Disable plugin
      *
-     * disables a plugin.
+     * Disables a plugin.
      *
      * @return array<array-key, mixed>
      *

@@ -37,6 +37,10 @@ class PluginTransformer extends BaseTransformer
                 'status' => $model->status,
                 'status_message' => $model->status_message,
                 'load_order' => $model->load_order,
+                'is_compatible' => $model->isCompatible(),
+                'update_available' => $model->isUpdateAvailable(),
+                'can_enable' => $model->canEnable(),
+                'can_disable' => $model->canDisable(),
             ],
         ];
     }
