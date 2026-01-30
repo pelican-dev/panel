@@ -86,7 +86,7 @@ class PluginController extends ApplicationApiController
      */
     public function importUrl(ImportFilePluginRequest $request): Response
     {
-        $this->pluginService->downloadPluginFromUrl($request->string('url'));
+        $this->pluginService->downloadPluginFromUrl($request->input('url'));
 
         return new Response('', Response::HTTP_CREATED);
     }

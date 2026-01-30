@@ -32,7 +32,7 @@ class PluginTransformer extends BaseTransformer
             'class' => $model->class,
             'panels' => $model->panels ? explode(',', $model->panels) : null,
             'panel_version' => $model->panel_version,
-            'composer_packages' => json_decode($model->composer_packages, true, 512, JSON_THROW_ON_ERROR),
+            'composer_packages' => $model->composer_packages ? json_decode($model->composer_packages, true, 512, JSON_THROW_ON_ERROR) : null,
             'meta' => [
                 'status' => $model->status,
                 'status_message' => $model->status_message,
