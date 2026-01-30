@@ -66,6 +66,12 @@ class Login extends BaseLogin
             ->extraInputAttributes(['tabindex' => 1]);
     }
 
+    protected function getPasswordFormComponent(): Component
+    {
+        return parent::getPasswordFormComponent()
+            ->extraInputAttributes(['tabindex' => 2]);
+    }
+
     protected function getOAuthFormComponent(): Component
     {
         $actions = [];
