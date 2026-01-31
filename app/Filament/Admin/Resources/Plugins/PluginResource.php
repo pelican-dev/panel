@@ -91,7 +91,7 @@ class PluginResource extends Resource
                     ->url(fn (Plugin $plugin) => !$plugin->getReadme() ? $plugin->url : null, true)
                     ->slideOver(true)
                     ->modalHeading('Readme')
-                    ->modalSubmitAction(fn (Plugin $plugin) => Action::make('visit_website')
+                    ->modalSubmitAction(fn (Plugin $plugin) => Action::make('exclude_visit_website')
                         ->label(trans('admin/plugin.visit_website'))
                         ->visible(!is_null($plugin->url))
                         ->url($plugin->url, true)
