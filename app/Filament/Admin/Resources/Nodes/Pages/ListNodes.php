@@ -9,12 +9,9 @@ use App\Filament\Components\Tables\Filters\TagsFilter;
 use App\Models\Node;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -66,6 +63,9 @@ class ListNodes extends ListRecords
             ->recordActions([
                 EditAction::make(),
             ])
+            ->toolbarActions([
+                CreateAction::make(),
+            ])
             ->emptyStateIcon(TablerIcon::Server2)
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/node.no_nodes'))
@@ -73,15 +73,5 @@ class ListNodes extends ListRecords
                 TagsFilter::make()
                     ->model(Node::class),
             ]);
-    }
-
-    /** @return array<Action|ActionGroup> */
-    protected function getDefaultHeaderActions(): array
-    {
-        return [
-            CreateAction::make()
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon(TablerIcon::FilePlus),
-        ];
     }
 }

@@ -85,7 +85,8 @@ class EditEgg extends EditRecord
                                 ->columnSpanFull(),
                             Flex::make([
                                 Action::make('uploadImage')
-                                    ->iconButton()
+                                    ->hiddenLabel()
+                                    ->tooltip(trans('admin/egg.import.import_image'))
                                     ->iconSize(IconSize::Large)
                                     ->icon(TablerIcon::PhotoUp)
                                     ->modal()
@@ -210,8 +211,8 @@ class EditEgg extends EditRecord
                                 Action::make('delete_image')
                                     ->visible(fn ($record) => $record->image)
                                     ->hiddenLabel()
+                                    ->tooltip(trans('admin/egg.import.delete_image'))
                                     ->icon(TablerIcon::Trash)
-                                    ->iconButton()
                                     ->iconSize(IconSize::Large)
                                     ->color('danger')
                                     ->action(function ($record) {
@@ -449,7 +450,7 @@ class EditEgg extends EditRecord
         return [
             DeleteAction::make()
                 ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
-                ->label(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use'))
+                ->tooltip(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use'))
                 ->successNotification(fn (Egg $egg) => Notification::make()
                     ->success()
                     ->title(trans('admin/egg.delete_success'))
@@ -459,13 +460,15 @@ class EditEgg extends EditRecord
                     ->danger()
                     ->title(trans('admin/egg.delete_failed'))
                     ->body(trans('admin/egg.could_not_delete', ['egg' => $egg->name]))
-                )
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
+                ),
             ExportEggAction::make(),
             ImportEggAction::make()
                 ->multiple(false),
-            $this->getSaveFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
                 ->icon(TablerIcon::DeviceFloppy),
         ];
     }

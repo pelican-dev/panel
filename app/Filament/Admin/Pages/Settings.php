@@ -38,7 +38,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Arr;
@@ -245,14 +244,14 @@ class Settings extends Page implements HasSchemas
                 ->placeholder(trans('admin/setting.general.trusted_proxies_help'))
                 ->default(env('TRUSTED_PROXIES', implode(',', Arr::wrap(config('trustedproxy.proxies')))))
                 ->hintActions([
-                    Action::make('clear')
+                    Action::make('hint_clear')
                         ->label(trans('admin/setting.general.clear'))
                         ->color('danger')
                         ->icon(TablerIcon::Trash)
                         ->requiresConfirmation()
                         ->authorize(fn () => user()?->can('update settings'))
                         ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [])),
-                    Action::make('cloudflare')
+                    Action::make('hint_cloudflare')
                         ->label(trans('admin/setting.general.set_to_cf'))
                         ->icon(TablerIcon::BrandCloudflare)
                         ->authorize(fn () => user()?->can('update settings'))
@@ -350,7 +349,7 @@ class Settings extends Page implements HasSchemas
                 ->live()
                 ->default(env('MAIL_MAILER', config('mail.default')))
                 ->hintAction(
-                    Action::make('test')
+                    Action::make('hint_test')
                         ->label(trans('admin/setting.mail.test_mail'))
                         ->icon(TablerIcon::Send)
                         ->hidden(fn (Get $get) => $get('MAIL_MAILER') === 'log')
@@ -853,9 +852,10 @@ class Settings extends Page implements HasSchemas
     {
         return [
             Action::make('save')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->hiddenLabel()
                 ->icon(TablerIcon::DeviceFloppy)
                 ->action('save')
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
                 ->authorize(fn () => user()?->can('update settings'))
                 ->keyBindings(['mod+s']),
         ];

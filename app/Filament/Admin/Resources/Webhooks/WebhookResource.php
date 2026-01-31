@@ -17,6 +17,8 @@ use App\Traits\Filament\CanModifyTable;
 use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
@@ -109,8 +111,11 @@ class WebhookResource extends Resource
                     ->beforeReplicaSaved(fn (WebhookConfiguration $replica) => $replica->description .= ' Copy ' . now()->format('Y-m-d H:i:s'))
                     ->successRedirectUrl(fn (WebhookConfiguration $replica) => EditWebhookConfiguration::getUrl(['record' => $replica])),
             ])
-            ->groupedBulkActions([
-                DeleteBulkAction::make(),
+            ->toolbarActions([
+                CreateAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ])
             ->emptyStateIcon(TablerIcon::Webhook)
             ->emptyStateDescription('')
@@ -145,9 +150,9 @@ class WebhookResource extends Resource
                     ->schema(fn () => self::getRegularFields())
                     ->headerActions([
                         Action::make('reset_headers')
-                            ->label(trans('admin/webhook.reset_headers'))
+                            ->tooltip(trans('admin/webhook.reset_headers'))
                             ->color('danger')
-                            ->icon('heroicon-o-trash')
+                            ->icon(TablerIcon::Restore)
                             ->action(fn (Get $get, Set $set) => $set('headers', [
                                 'X-Webhook-Event' => '{{event}}',
                             ])),

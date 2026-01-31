@@ -30,7 +30,6 @@ use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -160,7 +159,7 @@ class DatabaseResource extends Resource
             ])
             ->toolbarActions([
                 CreateAction::make('new')
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hiddenLabel()
                     ->icon(fn () => $server->databases()->count() >= $server->database_limit ? TablerIcon::DatabaseX : TablerIcon::DatabasePlus)
                     ->tooltip(fn () => $server->databases()->count() >= $server->database_limit ? trans('server/database.limit') : trans('server/database.create_database'))
                     ->disabled(fn () => $server->databases()->count() >= $server->database_limit)

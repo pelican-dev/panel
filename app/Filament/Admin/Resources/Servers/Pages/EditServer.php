@@ -58,7 +58,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
@@ -123,8 +122,8 @@ class EditServer extends EditRecord
                                 ->columnSpan(2)
                                 ->alignJustify(),
                             Action::make('uploadIcon')
-                                ->iconButton()->iconSize(IconSize::Large)
                                 ->icon(TablerIcon::PhotoUp)
+                                ->tooltip(trans('admin/server.import_image'))
                                 ->modal()
                                 ->modalSubmitActionLabel(trans('server/setting.server_info.icon.upload'))
                                 ->schema([
@@ -261,7 +260,8 @@ class EditServer extends EditRecord
                             TextInput::make('name')
                                 ->prefixIcon(TablerIcon::Server)
                                 ->label(trans('admin/server.name'))
-                                ->suffixAction(Action::make('random')
+                                ->suffixAction(Action::make('hint_random')
+                                    ->tooltip('Random')
                                     ->icon('tabler-dice-' . random_int(1, 6))
                                     ->action(function (Set $set, Get $get) {
                                         $egg = Egg::find($get('egg_id'));
@@ -730,7 +730,7 @@ class EditServer extends EditRecord
                         ->preload()
                         ->required()
                         ->hintAction(
-                            Action::make('change_egg')
+                            Action::make('hint_change_egg')
                                 ->label(trans('admin/server.change_egg'))
                                 ->action(function (array $data, Server $server, EggChangerService $service) {
                                     $service->handle($server, $data['egg_id'], $data['keep_old_variables']);
@@ -797,7 +797,7 @@ class EditServer extends EditRecord
                         })
                         ->selectablePlaceholder(false)
                         ->columnSpanFull()
-                        ->hintAction(PreviewStartupAction::make('preview')),
+                        ->hintAction(PreviewStartupAction::make('hint_preview')),
 
                     Textarea::make('startup')
                         ->hiddenLabel()
@@ -864,7 +864,7 @@ class EditServer extends EditRecord
                                 ->columnSpan(3)
                                 ->schema([
                                     Actions::make([
-                                        Action::make('toggleInstall')
+                                        Action::make('exclude_toggle_install')
                                             ->label(trans('admin/server.toggle_install'))
                                             ->disabled(fn (Server $server) => $server->isSuspended())
                                             ->modal(fn (Server $server) => $server->isFailedInstall())
@@ -915,7 +915,7 @@ class EditServer extends EditRecord
                                 ->columnSpan(3)
                                 ->schema([
                                     Actions::make([
-                                        Action::make('toggleSuspend')
+                                        Action::make('exclude_toggle_suspend')
                                             ->label(trans('admin/server.suspend'))
                                             ->color('warning')
                                             ->hidden(fn (Server $server) => $server->isSuspended())
@@ -971,7 +971,7 @@ class EditServer extends EditRecord
                                 ->columnSpan(3)
                                 ->schema([
                                     Actions::make([
-                                        Action::make('transfer')
+                                        Action::make('exclude_transfer')
                                             ->label(trans('admin/server.transfer'))
                                             ->disabled(fn (Server $server) => user()?->accessibleNodes()->count() <= 1 || $server->isInConflictState())
                                             ->modalHeading(trans('admin/server.transfer'))
@@ -1019,7 +1019,7 @@ class EditServer extends EditRecord
                                 ->columnSpan(3)
                                 ->schema([
                                     Actions::make([
-                                        Action::make('reinstall')
+                                        Action::make('exclude_reinstall')
                                             ->label(trans('admin/server.reinstall'))
                                             ->color('danger')
                                             ->requiresConfirmation()
@@ -1112,7 +1112,8 @@ class EditServer extends EditRecord
         return [
             Action::make('Delete')
                 ->color('danger')
-                ->label(trans('filament-actions::delete.single.label'))
+                ->hiddenLabel()
+                ->tooltip(trans('filament-actions::delete.single.label'))
                 ->modalHeading(trans('filament-actions::delete.single.modal.heading', ['label' => $this->getRecordTitle()]))
                 ->modalSubmitActionLabel(trans('filament-actions::delete.single.label'))
                 ->requiresConfirmation()
@@ -1135,8 +1136,7 @@ class EditServer extends EditRecord
                 })
                 ->hidden(fn () => $canForceDelete)
                 ->authorize(fn (Server $server) => user()?->can('delete server', $server))
-                ->icon(TablerIcon::Trash)
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
+                ->icon(TablerIcon::Trash),
             Action::make('ForceDelete')
                 ->color('danger')
                 ->label(trans('filament-actions::force-delete.single.label'))
@@ -1155,12 +1155,15 @@ class EditServer extends EditRecord
                 ->visible(fn () => $canForceDelete)
                 ->authorize(fn (Server $server) => user()?->can('delete server', $server)),
             Action::make('console')
-                ->label(trans('admin/server.console'))
+                ->hiddenLabel()
+                ->tooltip(trans('admin/server.console'))
                 ->icon(TablerIcon::Terminal)
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
                 ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)),
-            $this->getSaveFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
                 ->icon(TablerIcon::DeviceFloppy),
         ];
 

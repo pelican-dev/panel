@@ -10,11 +10,9 @@ use App\Models\Server;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Grouping\Group;
@@ -93,14 +91,15 @@ class ListServers extends ListRecords
                     ->sortable(),
             ])
             ->recordActions([
-                Action::make('View')
-                    ->label(trans('admin/server.view'))
-                    ->iconButton()
+                Action::make('view')
+                    ->tooltip(trans('admin/server.view'))
                     ->icon(TablerIcon::Terminal)
-                    ->iconSize(IconSize::Large)
                     ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
                     ->authorize(fn (Server $server) => user()?->canAccessTenant($server)),
                 EditAction::make(),
+            ])
+            ->toolbarActions([
+                CreateAction::make(),
             ])
             ->searchable()
             ->emptyStateIcon(TablerIcon::BrandDocker)

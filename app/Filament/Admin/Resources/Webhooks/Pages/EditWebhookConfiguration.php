@@ -12,7 +12,6 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Enums\IconSize;
 
 class EditWebhookConfiguration extends EditRecord
 {
@@ -25,16 +24,18 @@ class EditWebhookConfiguration extends EditRecord
     protected function getDefaultHeaderActions(): array
     {
         return [
-            DeleteAction::make()
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
+            DeleteAction::make(),
             Action::make('test_now')
-                ->label(trans('admin/webhook.test_now'))
+                ->tooltip(trans('admin/webhook.test_now'))
                 ->color('primary')
                 ->disabled(fn (WebhookConfiguration $webhookConfiguration) => count($webhookConfiguration->events) === 0)
                 ->action(fn (WebhookConfiguration $webhookConfiguration) => $webhookConfiguration->run())
-                ->tooltip(trans('admin/webhook.test_now_help')),
-            $this->getSaveFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->icon(TablerIcon::TestPipe),
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
                 ->icon(TablerIcon::DeviceFloppy),
         ];
     }

@@ -10,7 +10,6 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -70,8 +69,7 @@ class DatabasesRelationManager extends RelationManager
             ->recordActions([
                 ViewAction::make()
                     ->color('primary'),
-                DeleteAction::make()
-                    ->iconButton()->iconSize(IconSize::ExtraLarge),
+                DeleteAction::make(),
             ]);
     }
 }

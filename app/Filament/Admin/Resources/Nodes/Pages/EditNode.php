@@ -38,7 +38,6 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\RawJs;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -647,8 +646,8 @@ class EditNode extends EditRecord
                         ->disabled(fn (Get $get) => $get('pulled'))
                         ->headerActions([
                             Action::make('pull')
-                                ->label(trans('admin/node.diagnostics.pull'))
-                                ->icon(TablerIcon::CloudDownload)->iconButton()->iconSize(IconSize::ExtraLarge)
+                                ->tooltip(trans('admin/node.diagnostics.pull'))
+                                ->icon(TablerIcon::CloudDownload)
                                 ->hidden(fn (Get $get) => $get('pulled'))
                                 ->action(function (Get $get, Set $set, Node $node) {
                                     $includeEndpoints = $get('include_endpoints') ?? true;
@@ -685,9 +684,9 @@ class EditNode extends EditRecord
                                     }
                                 }),
                             Action::make('upload')
-                                ->label(trans('admin/node.diagnostics.upload'))
+                                ->tooltip(trans('admin/node.diagnostics.upload'))
                                 ->visible(fn (Get $get) => $get('pulled') ?? false)
-                                ->icon(TablerIcon::CloudUpload)->iconButton()->iconSize(IconSize::ExtraLarge)
+                                ->icon(TablerIcon::CloudUpload)
                                 ->action(function (Get $get, Set $set) {
                                     try {
                                         $response = Http::asMultipart()
@@ -713,7 +712,7 @@ class EditNode extends EditRecord
                                             ->body("{$url}")
                                             ->success()
                                             ->actions([
-                                                Action::make('viewLogs')
+                                                Action::make('exclude_viewLogs')
                                                     ->label(trans('admin/node.diagnostics.view_logs'))
                                                     ->url($url)
                                                     ->openUrlInNewTab(true),
@@ -733,9 +732,9 @@ class EditNode extends EditRecord
                                     }
                                 }),
                             Action::make('clear')
-                                ->label(trans('admin/node.diagnostics.clear'))
+                                ->tooltip(trans('admin/node.diagnostics.clear'))
                                 ->visible(fn (Get $get) => $get('pulled') ?? false)
-                                ->icon(TablerIcon::Trash)->iconButton()->iconSize(IconSize::ExtraLarge)->color('danger')
+                                ->icon(TablerIcon::Trash)->color('danger')
                                 ->action(function (Get $get, Set $set) {
                                     $set('pulled', false);
                                     $set('uploaded', false);
@@ -809,10 +808,12 @@ class EditNode extends EditRecord
         return [
             DeleteAction::make()
                 ->disabled(fn (Node $node) => $node->servers()->count() > 0)
-                ->label(fn (Node $node) => $node->servers()->count() > 0 ? trans('admin/node.node_has_servers') : trans('filament-actions::delete.single.label'))
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
-            $this->getSaveFormAction()->formId('form')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
+                ->tooltip(fn (Node $node) => $node->servers()->count() > 0 ? trans('admin/node.node_has_servers') : trans('filament-actions::delete.single.label')),
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
                 ->icon(TablerIcon::DeviceFloppy),
         ];
     }

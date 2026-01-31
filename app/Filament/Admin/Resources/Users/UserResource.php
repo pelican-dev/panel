@@ -26,6 +26,8 @@ use BackedEnum;
 use DateTimeZone;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -138,10 +140,15 @@ class UserResource extends Resource
                     ->hidden(fn ($record) => static::getEditAuthorizationResponse($record)->allowed()),
                 EditAction::make(),
             ])
-            ->checkIfRecordIsSelectableUsing(fn (User $user) => user()?->id !== $user->id && !$user->servers_count)
-            ->groupedBulkActions([
-                DeleteBulkAction::make(),
-            ]);
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+                CreateAction::make()
+                    ->hiddenLabel()
+                    ->icon(TablerIcon::UserPlus),
+            ])
+            ->checkIfRecordIsSelectableUsing(fn (User $user) => user()?->id !== $user->id && !$user->servers_count);
     }
 
     public static function defaultForm(Schema $schema): Schema
@@ -199,7 +206,7 @@ class UserResource extends Resource
                         ->hintIcon(fn ($operation) => $operation === 'create' ? TablerIcon::QuestionMark : null, fn ($operation) => $operation === 'create' ? trans('admin/user.password_help') : null)
                         ->password()
                         ->hintAction(
-                            Action::make('password_reset')
+                            Action::make('hint_password_reset')
                                 ->label(trans('admin/user.password_reset'))
                                 ->hidden(fn (string $operation) => $operation === 'create' || config('mail.default', 'log') === 'log')
                                 ->icon(TablerIcon::Send)

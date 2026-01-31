@@ -12,7 +12,7 @@ class PreviewStartupAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'preview';
+        return 'hint_preview';
     }
 
     protected function setUp(): void

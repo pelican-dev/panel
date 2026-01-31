@@ -71,15 +71,17 @@ class CreateServer extends CreateRecord
             ->components([
                 Wizard::make($this->getSteps())
                     ->columnSpanFull()
-                    ->nextAction(fn (Action $action) => $action->iconButton()->iconSize(IconSize::ExtraLarge)->icon(TablerIcon::ArrowRight))
-                    ->previousAction(fn (Action $action) => $action->iconButton()->iconSize(IconSize::ExtraLarge)->icon(TablerIcon::ArrowLeft))
+                    ->nextAction(fn (Action $action) => $action->tooltip(fn () => $action->getLabel())->iconButton()->iconSize(IconSize::ExtraLarge)->icon(TablerIcon::ArrowRight))
+                    ->previousAction(fn (Action $action) => $action->tooltip(fn () => $action->getLabel())->iconButton()->iconSize(IconSize::ExtraLarge)->icon(TablerIcon::ArrowLeft))
                     ->submitAction(new HtmlString(Blade::render(<<<'BLADE'
-                        <x-filament::button
+                        <x-filament::icon-button
                             type="submit"
-                            size="sm"
+                            iconSize="xl"
+                            icon="tabler-plus"
+                            tooltip="{{ trans('admin/server.create') }}"
                         >
                             {{ trans('admin/server.create') }}
-                        </x-filament::button>
+                        </x-filament::icon-button>
                     BLADE))),
             ]);
     }
@@ -105,7 +107,8 @@ class CreateServer extends CreateRecord
                     TextInput::make('name')
                         ->prefixIcon(TablerIcon::Server)
                         ->label(trans('admin/server.name'))
-                        ->suffixAction(Action::make('random')
+                        ->suffixAction(Action::make('hint_random')
+                            ->tooltip('Random')
                             ->icon('tabler-dice-' . random_int(1, 6))
                             ->action(function (Set $set, Get $get) {
                                 $egg = Egg::find($get('egg_id'));
@@ -255,7 +258,7 @@ class CreateServer extends CreateRecord
                                     ->ip()
                                     ->live()
                                     ->hintAction(
-                                        Action::make('refresh')
+                                        Action::make('hint_refresh')
                                             ->iconButton()
                                             ->icon(TablerIcon::Refresh)
                                             ->tooltip(trans('admin/node.refresh'))

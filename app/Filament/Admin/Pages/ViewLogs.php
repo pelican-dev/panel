@@ -10,7 +10,6 @@ use Boquizo\FilamentLogViewer\Actions\DownloadAction;
 use Boquizo\FilamentLogViewer\Pages\ViewLog as BaseViewLog;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Facades\Http;
 
 class ViewLogs extends BaseViewLog
@@ -21,14 +20,15 @@ class ViewLogs extends BaseViewLog
     {
         return [
             BackAction::make()
-                ->icon(TablerIcon::ArrowLeft)->iconSize(IconSize::ExtraLarge)->iconButton(),
+                ->tooltip(trans('filament-log-viewer::log.table.actions.close.label'))
+                ->icon(TablerIcon::ArrowLeft)->iconButton(),
             DeleteAction::make(withTooltip: true)
-                ->iconSize(IconSize::ExtraLarge)->iconButton(),
+                ->icon(TablerIcon::Trash)->iconButton(),
             DownloadAction::make(withTooltip: true)
-                ->icon(TablerIcon::FileDownload)->iconSize(IconSize::ExtraLarge)->iconButton(),
+                ->icon(TablerIcon::FileDownload)->iconButton(),
             Action::make('uploadLogs')
                 ->hiddenLabel()
-                ->icon(TablerIcon::WorldUpload)->iconSize(IconSize::ExtraLarge)->iconButton()
+                ->icon(TablerIcon::WorldUpload)
                 ->requiresConfirmation()
                 ->tooltip(trans('admin/log.actions.upload_tooltip', ['url' => 'logs.pelican.dev']))
                 ->modalHeading(trans('admin/log.actions.upload_logs'))
@@ -78,7 +78,7 @@ class ViewLogs extends BaseViewLog
                             ->body("{$url}")
                             ->success()
                             ->actions([
-                                Action::make('viewLogs')
+                                Action::make('exclude_viewLogs')
                                     ->label(trans('admin/log.actions.view_logs'))
                                     ->url($url)
                                     ->openUrlInNewTab(true),

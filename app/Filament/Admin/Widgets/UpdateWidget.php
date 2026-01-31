@@ -58,7 +58,7 @@ class UpdateWidget extends FormWidget
                             ]),
                     ])
                     ->headerActions([
-                        Action::make('update')
+                        Action::make('db_update')
                             ->label(trans('admin/dashboard.sections.intro-update-available.heading'))
                             ->icon(TablerIcon::ClipboardText)
                             ->url('https://pelican.dev/docs/panel/update', true)

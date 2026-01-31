@@ -27,7 +27,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -90,7 +89,8 @@ class Settings extends ServerFormPage
                                             ->columnSpan(2)
                                             ->alignJustify(),
                                         Action::make('uploadIcon')
-                                            ->iconButton()->iconSize(IconSize::Large)
+                                            ->hiddenLabel()
+                                            ->tooltip(trans('admin/server.import_image'))
                                             ->icon(TablerIcon::PhotoUp)
                                             ->modal()
                                             ->modalSubmitActionLabel(trans('server/setting.server_info.icon.upload'))
@@ -307,7 +307,7 @@ class Settings extends ServerFormPage
                                     ->disabled()
                                     ->copyable()
                                     ->hintAction(
-                                        Action::make('connect_sftp')
+                                        Action::make('hint_connect_sftp')
                                             ->label(trans('server/setting.server_info.sftp.action'))
                                             ->color('success')
                                             ->icon(TablerIcon::Plug)
@@ -338,7 +338,7 @@ class Settings extends ServerFormPage
                     ->hidden(fn (Server $server) => !user()?->can(SubuserPermission::SettingsReinstall, $server))
                     ->columnSpanFull()
                     ->footerActions([
-                        Action::make('reinstall')
+                        Action::make('exclude_reinstall')
                             ->label(trans('server/setting.reinstall.action'))
                             ->color('danger')
                             ->disabled(fn (Server $server) => !user()?->can(SubuserPermission::SettingsReinstall, $server))

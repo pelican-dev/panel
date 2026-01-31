@@ -9,7 +9,6 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\IconSize;
 
 class UpdateNodeAllocations extends Action
 {
@@ -22,13 +21,9 @@ class UpdateNodeAllocations extends Action
     {
         parent::setUp();
 
-        $this->label(trans('admin/node.bulk_update_ip'));
+        $this->tooltip(trans('admin/node.bulk_update_ip'));
 
         $this->icon(TablerIcon::Replace);
-
-        $this->iconSize(IconSize::ExtraLarge);
-
-        $this->iconButton();
 
         $this->color('warning');
 
