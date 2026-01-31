@@ -46,17 +46,16 @@ class ImportServerConfigAction extends Action
             Select::make('node_id')
                 ->label(trans('admin/server.import_export.node_select'))
                 ->hint(trans('admin/server.import_export.node_select_hint'))
-                ->options(fn () => user()?->accessibleNodes()->pluck('name', 'id') ?? [])
+                ->options(fn () => user()->accessibleNodes()->pluck('name', 'id') ?? [])
                 ->searchable()
                 ->required()
-                ->visible(fn () => (user()?->accessibleNodes()->count() ?? 0) > 1)
-                ->default(fn () => user()?->accessibleNodes()->first()?->id),
+                ->visible(fn () => (user()->accessibleNodes()->count() ?? 0) > 1),
         ]);
 
         $this->action(function (ServerConfigCreatorService $createService, array $data): void {
             /** @var UploadedFile $file */
             $file = $data['file'];
-            $nodeId = $data['node_id'] ?? null;
+            $nodeId = $data['node_id'] ?? user()->accessibleNodes()->first()->id;
 
             try {
                 $server = $createService->fromFile($file, $nodeId);

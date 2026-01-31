@@ -12,7 +12,7 @@ use App\Models\ServerVariable;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Yaml\Yaml;
 
 class ServerConfigCreatorService
@@ -141,9 +141,11 @@ class ServerConfigCreatorService
             $dockerImage = array_values($egg->docker_images)[0];
         }
 
+        $uuid = Uuid::uuid4()->toString();
+
         $server = Server::create([
-            'uuid' => Str::uuid()->toString(),
-            'uuid_short' => Str::uuid()->toString(),
+            'uuid' => $uuid,
+            'uuid_short' => substr($uuid, 0, 8),
             'name' => $serverName,
             'description' => Arr::get($config, 'description', ''),
             'owner_id' => $owner->id,

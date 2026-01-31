@@ -61,7 +61,7 @@ class ServerConfigController extends ApplicationApiController
     {
         $request->validate([
             'file' => 'required|file|mimes:yaml,yml|max:1024',
-            'node_id' => 'sometimes|integer|exists:nodes,id',
+            'node_id' => 'required|integer|exists:nodes,id',
         ]);
 
         $file = $request->file('file');
