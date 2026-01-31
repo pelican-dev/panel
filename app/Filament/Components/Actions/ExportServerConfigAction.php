@@ -24,8 +24,6 @@ class ExportServerConfigAction extends Action
 
         $this->iconSize(IconSize::ExtraLarge);
 
-        $this->tooltip(trans('admin/server.import_export.export_tooltip'));
-
         $this->authorize(fn () => user()?->can('view server'));
 
         $this->modalHeading(fn (Server $server) => trans('admin/server.import_export.export_heading', ['name' => $server->name]));

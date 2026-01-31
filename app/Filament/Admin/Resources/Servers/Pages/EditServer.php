@@ -1013,7 +1013,7 @@ class EditServer extends EditRecord
                                     ])->fullWidth(),
                                     ToggleButtons::make('export_help')
                                         ->hiddenLabel()
-                                        ->hint('Export server configuration to a YAML file that can be imported on another panel'),
+                                        ->hint(trans('admin/server.import_export.export_description')),
                                 ]),
                             Grid::make()
                                 ->columnSpan(3)
