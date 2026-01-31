@@ -82,9 +82,9 @@ class ListEggs extends ListRecords
                     ->successRedirectUrl(fn (Egg $replica) => EditEgg::getUrl(['record' => $replica])),
             ])
             ->toolbarActions([
+                CreateAction::make(),
                 ImportEggAction::make()
                     ->multiple(),
-                CreateAction::make(),
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->before(function (Collection &$records) {

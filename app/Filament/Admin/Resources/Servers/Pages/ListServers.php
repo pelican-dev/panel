@@ -100,21 +100,11 @@ class ListServers extends ListRecords
             ])
             ->toolbarActions([
                 CreateAction::make(),
+                ImportServerConfigAction::make(),
             ])
             ->searchable()
             ->emptyStateIcon(TablerIcon::BrandDocker)
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/server.no_servers'));
-    }
-
-    /** @return array<Action|ActionGroup> */
-    protected function getDefaultHeaderActions(): array
-    {
-        return [
-            ImportServerConfigAction::make(),
-            CreateAction::make()
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon(TablerIcon::FilePlus),
-        ];
     }
 }

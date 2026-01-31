@@ -8,7 +8,6 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Http\UploadedFile;
 
 class ImportServerConfigAction extends Action
@@ -22,13 +21,9 @@ class ImportServerConfigAction extends Action
     {
         parent::setUp();
 
-        $this->label(trans('filament-actions::import.modal.actions.import.label'));
-
-        $this->iconButton();
+        $this->hiddenLabel();
 
         $this->icon('tabler-file-import');
-
-        $this->iconSize(IconSize::ExtraLarge);
 
         $this->tooltip(trans('admin/server.import_export.import_tooltip'));
 

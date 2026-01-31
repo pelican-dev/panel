@@ -240,7 +240,7 @@ class PluginResource extends Resource
                         }),
                 ]),
             ])
-            ->headerActions([
+            ->toolbarActions([
                 Action::make('import_from_file')
                     ->hiddenLabel()
                     ->tooltip(trans('admin/plugin.import_from_file'))
