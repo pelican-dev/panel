@@ -22,6 +22,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use pxlrbt\FilamentSpotlight\SpotlightPlugin;
 
 abstract class PanelProvider extends BasePanelProvider
 {
@@ -71,6 +72,9 @@ abstract class PanelProvider extends BasePanelProvider
             ->authMiddleware([
                 Authenticate::class,
                 RequireTwoFactorAuthentication::class,
+            ])
+            ->plugins([
+                SpotlightPlugin::make(),
             ]);
     }
 }
