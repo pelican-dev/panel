@@ -329,7 +329,7 @@ class EditNode extends EditRecord
                         ->required()
                         ->minValue(1)
                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB'),
-                   TextInput::make('daemon_base')
+                    TextInput::make('daemon_base')
                         ->label(trans('admin/node.daemon_base'))
                         ->hintIcon(TablerIcon::QuestionMark, trans('admin/node.daemon_base_help'))
                         ->columnSpan([
