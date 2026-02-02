@@ -11,8 +11,6 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 
 class Login extends BaseLogin
@@ -70,14 +68,10 @@ class Login extends BaseLogin
 
     protected function getPasswordFormComponent(): Component
     {
-        return TextInput::make('password')
-            ->label(trans('filament-panels::auth/pages/login.form.password.label'))
-            ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()"> {{ __(\'filament-panels::auth/pages/login.actions.request_password_reset.label\') }}</x-filament::link>')) : null)
-            ->password()
-            ->revealable(filament()->arePasswordsRevealable())
-            ->autocomplete('current-password')
-            ->required()
-            ->extraInputAttributes(['tabindex' => 2]);
+        /** @var TextInput $component */
+        $component = parent::getPasswordFormComponent();
+
+        return $component->extraInputAttributes(['tabindex' => 2]);
     }
 
     protected function getOAuthFormComponent(): Component
