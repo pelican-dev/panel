@@ -572,7 +572,7 @@ class EditNode extends EditRecord
                         ->columnSpanFull()
                         ->schema([
                             Actions::make([
-                                Action::make('autoDeploy')
+                                Action::make('exclude_autoDeploy')
                                     ->label(trans('admin/node.auto_deploy'))
                                     ->color('primary')
                                     ->modalHeading(trans('admin/node.auto_deploy'))
@@ -610,7 +610,7 @@ class EditNode extends EditRecord
                                     }),
                             ])->fullWidth(),
                             Actions::make([
-                                Action::make('resetKey')
+                                Action::make('exclude_resetKey')
                                     ->label(trans('admin/node.reset_token'))
                                     ->color('danger')
                                     ->requiresConfirmation()
