@@ -98,33 +98,33 @@ class FilamentServiceProvider extends ServiceProvider
         Select::configureUsing(fn (Select $select) => $select->native(false));
 
         KeyValue::configureUsing(fn (KeyValue $keyValue) => $keyValue->deleteAction(function (Action $action) {
-            $action->tooltip(trans('filament-forms::components.key_value.actions.delete.label'));
+            $action->tooltip(fn () => $action->getLabel());
             $action->iconSize(IconSize::Large);
         }));
 
         Repeater::configureUsing(fn (Repeater $repeater) => $repeater->deleteAction(function (Action $action) {
-            $action->tooltip(trans('filament-forms::components.repeater.actions.delete.label'));
+            $action->tooltip(fn () => $action->getLabel());
             $action->iconSize(IconSize::Large);
         }));
 
         ShowPasswordAction::configureUsing(function (ShowPasswordAction $action) {
-            $action->tooltip(trans('filament-forms::components.text_input.actions.show_password.label'));
+            $action->tooltip(fn () => $action->getLabel());
             $action->iconSize(IconSize::Large);
         });
 
         HidePasswordAction::configureUsing(function (HidePasswordAction $action) {
-            $action->tooltip(trans('filament-forms::components.text_input.actions.hide_password.label'));
+            $action->tooltip(fn () => $action->getLabel());
             $action->iconSize(IconSize::Large);
         });
 
         CopyAction::configureUsing(function (CopyAction $action) {
-            $action->tooltip(trans('filament-forms::components.text_input.actions.copy.label'));
+            $action->tooltip(fn () => $action->getLabel());
             $action->iconSize(IconSize::Large);
         });
 
         DeleteAction::configureUsing(function (DeleteAction $action) {
             $action->icon(TablerIcon::Trash);
-            $action->tooltip(trans('filament-actions::delete.single.modal.actions.delete.label'));
+            $action->tooltip(fn () => $action->getLabel());
             $action->hiddenLabel();
             $action->iconSize(IconSize::Large);
 
@@ -135,7 +135,9 @@ class FilamentServiceProvider extends ServiceProvider
         });
 
         CreateAction::configureUsing(function (CreateAction $action) {
-            $action->tooltip(fn (): string => trans('filament-actions::create.single.label', ['label' => $action->getModelLabel()]));
+            $action->icon(TablerIcon::Plus);
+            $action->tooltip(fn () => $action->getLabel());
+            $action->hiddenLabel();
             $action->iconSize(IconSize::Large);
 
             if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
@@ -145,7 +147,9 @@ class FilamentServiceProvider extends ServiceProvider
         });
 
         EditAction::configureUsing(function (EditAction $action) {
-            $action->tooltip(trans('filament-actions::edit.single.label'));
+            $action->icon(TablerIcon::Pencil);
+            $action->tooltip(fn () => $action->getLabel());
+            $action->hiddenLabel();
             $action->iconSize(IconSize::Large);
 
             if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
@@ -155,7 +159,9 @@ class FilamentServiceProvider extends ServiceProvider
         });
 
         ViewAction::configureUsing(function (ViewAction $action) {
-            $action->tooltip(trans('filament-actions::view.single.label'));
+            $action->icon(TablerIcon::Eye);
+            $action->tooltip(fn () => $action->getLabel());
+            $action->hiddenLabel();
             $action->iconSize(IconSize::Large);
 
             if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
@@ -175,6 +181,7 @@ class FilamentServiceProvider extends ServiceProvider
                     'disable_oauth_',
                     'enable_captcha_',
                     'disable_captcha_',
+                    'oauth_',
                     'db_', // dashboard
                     'fm_', // file manager
                     'hint_', // hint actions

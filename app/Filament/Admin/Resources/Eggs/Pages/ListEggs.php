@@ -84,9 +84,7 @@ class ListEggs extends ListRecords
             ->toolbarActions([
                 ImportEggAction::make()
                     ->multiple(),
-                CreateAction::make()
-                    ->hiddenLabel()
-                    ->icon(TablerIcon::Plus),
+                CreateAction::make(),
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->before(function (Collection &$records) {

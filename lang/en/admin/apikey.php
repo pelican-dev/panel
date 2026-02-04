@@ -20,6 +20,8 @@ return [
         'never_used' => 'Never Used',
     ],
     'permissions' => [
+        'all' => 'Set All Permissions',
+        'all_description' => 'Quickly set all permissions below to the same level.',
         'none' => 'None',
         'read' => 'Read',
         'read_write' => 'Read & Write',

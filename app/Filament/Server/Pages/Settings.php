@@ -338,7 +338,7 @@ class Settings extends ServerFormPage
                     ->hidden(fn (Server $server) => !user()?->can(SubuserPermission::SettingsReinstall, $server))
                     ->columnSpanFull()
                     ->footerActions([
-                        Action::make('reinstall')
+                        Action::make('exclude_reinstall')
                             ->label(trans('server/setting.reinstall.action'))
                             ->color('danger')
                             ->disabled(fn (Server $server) => !user()?->can(SubuserPermission::SettingsReinstall, $server))

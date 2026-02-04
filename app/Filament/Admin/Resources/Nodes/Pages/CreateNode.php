@@ -40,13 +40,14 @@ class CreateNode extends CreateRecord
             ->components([
                 Wizard::make($this->getSteps())
                     ->columnSpanFull()
-                    ->nextAction(fn (Action $action) => $action->iconButton()->iconSize(IconSize::ExtraLarge)->icon(TablerIcon::ArrowRight))
-                    ->previousAction(fn (Action $action) => $action->iconButton()->iconSize(IconSize::ExtraLarge)->icon(TablerIcon::ArrowLeft))
+                    ->nextAction(fn (Action $action) => $action->tooltip(fn () => $action->getLabel())->iconButton()->iconSize(IconSize::ExtraLarge)->icon(TablerIcon::ArrowRight))
+                    ->previousAction(fn (Action $action) => $action->tooltip(fn () => $action->getLabel())->iconButton()->iconSize(IconSize::ExtraLarge)->icon(TablerIcon::ArrowLeft))
                     ->submitAction(new HtmlString(Blade::render(<<<'BLADE'
                         <x-filament::icon-button
                             type="submit"
                             iconSize="xl"
                             icon="tabler-plus"
+                            tooltip="{{ trans('admin/node.create') }}"
                         >
                             {{ trans('admin/node.create') }}
                         </x-filament::icon-button>

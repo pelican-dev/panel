@@ -22,6 +22,7 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -101,9 +102,7 @@ class ApiKeyResource extends Resource
                 DeleteAction::make(),
             ])
             ->toolbarActions([
-                CreateAction::make()
-                    ->hiddenLabel()
-                    ->icon(TablerIcon::Plus),
+                CreateAction::make(),
             ])
             ->emptyStateIcon(TablerIcon::Key)
             ->emptyStateDescription('')
@@ -115,12 +114,44 @@ class ApiKeyResource extends Resource
      */
     public static function defaultForm(Schema $schema): Schema
     {
+        $permissionList = ApiKey::getPermissionList();
+
         return $schema
             ->components([
+                Section::make(trans('admin/apikey.permissions.all'))
+                    ->description(trans('admin/apikey.permissions.all_description'))
+                    ->columnSpanFull()
+                    ->schema([
+                        ToggleButtons::make('permissions_all')
+                            ->hiddenLabel()
+                            ->inline()
+                            ->options([
+                                0 => trans('admin/apikey.permissions.none'),
+                                1 => trans('admin/apikey.permissions.read'),
+                                3 => trans('admin/apikey.permissions.read_write'),
+                            ])
+                            ->icons([
+                                0 => TablerIcon::BookOff,
+                                1 => TablerIcon::Book,
+                                3 => TablerIcon::Writing,
+                            ])
+                            ->colors([
+                                0 => 'success',
+                                1 => 'warning',
+                                3 => 'danger',
+                            ])
+                            ->live()
+                            ->afterStateUpdated(function ($state, callable $set) use ($permissionList) {
+                                foreach ($permissionList as $resource) {
+                                    $set('permissions_' . $resource, $state);
+                                }
+                            })
+                            ->default(0),
+                    ]),
                 Fieldset::make('Permissions')
                     ->columnSpanFull()
                     ->schema(
-                        collect(ApiKey::getPermissionList())->map(fn ($resource) => ToggleButtons::make('permissions_' . $resource)
+                        collect($permissionList)->map(fn ($resource) => ToggleButtons::make('permissions_' . $resource)
                             ->label(str($resource)->replace('_', ' ')->title())->inline()
                             ->options([
                                 0 => trans('admin/apikey.permissions.none'),

@@ -112,9 +112,7 @@ class WebhookResource extends Resource
                     ->successRedirectUrl(fn (WebhookConfiguration $replica) => EditWebhookConfiguration::getUrl(['record' => $replica])),
             ])
             ->toolbarActions([
-                CreateAction::make()
-                    ->hiddenLabel()
-                    ->icon(TablerIcon::Plus),
+                CreateAction::make(),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
@@ -152,9 +150,9 @@ class WebhookResource extends Resource
                     ->schema(fn () => self::getRegularFields())
                     ->headerActions([
                         Action::make('reset_headers')
-                            ->label(trans('admin/webhook.reset_headers'))
+                            ->tooltip(trans('admin/webhook.reset_headers'))
                             ->color('danger')
-                            ->icon('heroicon-o-trash')
+                            ->icon(TablerIcon::Restore)
                             ->action(fn (Get $get, Set $set) => $set('headers', [
                                 'X-Webhook-Event' => '{{event}}',
                             ])),

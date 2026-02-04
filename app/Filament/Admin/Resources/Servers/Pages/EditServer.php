@@ -261,6 +261,7 @@ class EditServer extends EditRecord
                                 ->prefixIcon(TablerIcon::Server)
                                 ->label(trans('admin/server.name'))
                                 ->suffixAction(Action::make('hint_random')
+                                    ->tooltip('Random')
                                     ->icon('tabler-dice-' . random_int(1, 6))
                                     ->action(function (Set $set, Get $get) {
                                         $egg = Egg::find($get('egg_id'));
@@ -863,7 +864,7 @@ class EditServer extends EditRecord
                                 ->columnSpan(3)
                                 ->schema([
                                     Actions::make([
-                                        Action::make('toggleInstall')
+                                        Action::make('exclude_toggle_install')
                                             ->label(trans('admin/server.toggle_install'))
                                             ->disabled(fn (Server $server) => $server->isSuspended())
                                             ->modal(fn (Server $server) => $server->isFailedInstall())
@@ -914,7 +915,7 @@ class EditServer extends EditRecord
                                 ->columnSpan(3)
                                 ->schema([
                                     Actions::make([
-                                        Action::make('toggleSuspend')
+                                        Action::make('exclude_toggle_suspend')
                                             ->label(trans('admin/server.suspend'))
                                             ->color('warning')
                                             ->hidden(fn (Server $server) => $server->isSuspended())
@@ -970,7 +971,7 @@ class EditServer extends EditRecord
                                 ->columnSpan(3)
                                 ->schema([
                                     Actions::make([
-                                        Action::make('transfer')
+                                        Action::make('exclude_transfer')
                                             ->label(trans('admin/server.transfer'))
                                             ->disabled(fn (Server $server) => user()?->accessibleNodes()->count() <= 1 || $server->isInConflictState())
                                             ->modalHeading(trans('admin/server.transfer'))
@@ -1011,7 +1012,7 @@ class EditServer extends EditRecord
                                 ->columnSpan(3)
                                 ->schema([
                                     Actions::make([
-                                        Action::make('reinstall')
+                                        Action::make('exclude_reinstall')
                                             ->label(trans('admin/server.reinstall'))
                                             ->color('danger')
                                             ->requiresConfirmation()
