@@ -573,7 +573,7 @@ class EditNode extends EditRecord
                         ->schema([
                             Actions::make([
                                 Action::make('exclude_autoDeploy')
-                                    ->label(trans('admin/node.auto_deploy'))
+                                    ->tooltip(trans('admin/node.auto_deploy'))
                                     ->color('primary')
                                     ->modalHeading(trans('admin/node.auto_deploy'))
                                     ->icon(TablerIcon::Rocket)
@@ -611,7 +611,7 @@ class EditNode extends EditRecord
                             ])->fullWidth(),
                             Actions::make([
                                 Action::make('exclude_resetKey')
-                                    ->label(trans('admin/node.reset_token'))
+                                    ->tooltip(trans('admin/node.reset_token'))
                                     ->color('danger')
                                     ->requiresConfirmation()
                                     ->modalHeading(trans('admin/node.reset_token'))
