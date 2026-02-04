@@ -314,7 +314,7 @@ class EditNode extends EditRecord
                             'default' => 1,
                             'sm' => 1,
                             'md' => 2,
-                            'lg' => 2,
+                            'lg' => 3,
                         ]),
                     TextInput::make('upload_size')
                         ->columnSpan([
@@ -331,12 +331,13 @@ class EditNode extends EditRecord
                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB'),
                     TextInput::make('daemon_base')
                         ->label(trans('admin/node.daemon_base'))
+                        ->placeholder('/var/lib/pelican/volumes')
                         ->hintIcon(TablerIcon::QuestionMark, trans('admin/node.daemon_base_help'))
                         ->columnSpan([
                             'default' => 1,
                             'sm' => 1,
                             'md' => 2,
-                            'lg' => 3,
+                            'lg' => 2,
                         ])
                         ->required()
                         ->rule('regex:/^([\/][\d\w.\-\/]+)$/'),

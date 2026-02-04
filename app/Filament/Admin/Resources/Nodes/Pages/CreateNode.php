@@ -280,6 +280,7 @@ class CreateNode extends CreateRecord
                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB'),
                     TextInput::make('daemon_base')
                         ->label(trans('admin/node.daemon_base'))
+                        ->placeholder('/var/lib/pelican/volumes')
                         ->hintIcon(TablerIcon::QuestionMark, trans('admin/node.daemon_base_help'))
                         ->columnSpan(1)
                         ->required()
