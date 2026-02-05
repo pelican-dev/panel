@@ -254,7 +254,7 @@ class EditProfile extends BaseEditProfile
                                         ->columnSpanFull(),
                                 ])
                                 ->headerActions([
-                                    Action::make('create_api_key')
+                                    Action::make('exclude_create_api_key')
                                         ->label(trans('filament-actions::create.single.modal.actions.create.label'))
                                         ->disabled(fn (Get $get) => empty($get('description')))
                                         ->successRedirectUrl(self::getUrl(['tab' => 'api-keys::data::tab'], panel: 'app'))
