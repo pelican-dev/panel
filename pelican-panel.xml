@@ -1,0 +1,384 @@
+<?xml version="1.0"?>
+<Container version="2">
+    <Name>pelican-panel</Name>
+    <Repository>ghcr.io/pelican-dev/panel:latest</Repository>
+    <Registry>https://github.com/pelican-dev/panel/pkgs/container/panel</Registry>
+    <Branch>
+        <Tag>latest</Tag>
+        <TagDescription>Latest stable release</TagDescription>
+    </Branch>
+    <Branch>
+        <Tag>develop</Tag>
+        <TagDescription>Development build (unstable)</TagDescription>
+    </Branch>
+    <Network>bridge</Network>
+    <Shell>sh</Shell>
+    <Privileged>false</Privileged>
+    <Support>https://discord.gg/pelican-panel</Support>
+    <Project>https://pelican.dev</Project>
+    <Overview>Pelican Panel is an open-source, free game server management panel built with modern PHP and React. It supports Minecraft, Rust, Terraria, CS2, and many more out of the box. Features include multi-user access, server scheduling, file management, and a powerful API.</Overview>
+    <Category>GameServers: Tools:</Category>
+    <WebUI>http://[IP]:[PORT:80]</WebUI>
+    <Icon>https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg</Icon>
+    <Requires>Ensure port 80 and 443 are not in use by another container or Unraid's built-in web server.</Requires>
+    <ExtraParams>--restart=unless-stopped</ExtraParams>
+
+    <!-- Ports -->
+    <Config
+        Name="HTTP Port"
+        Target="80"
+        Default="80"
+        Mode="tcp"
+        Description="Web interface HTTP port."
+        Type="Port"
+        Display="always"
+        Required="true"
+        Mask="false"
+    />
+    <Config
+        Name="HTTPS Port"
+        Target="443"
+        Default="443"
+        Mode="tcp"
+        Description="Web interface HTTPS port. Used when APP_URL starts with https:// and LE_EMAIL is set."
+        Type="Port"
+        Display="always"
+        Required="false"
+        Mask="false"
+    />
+
+    <!-- Volumes -->
+    <Config
+        Name="Panel Data"
+        Target="/pelican-data"
+        Default="/mnt/user/appdata/pelican-panel/data"
+        Mode="rw"
+        Description="Persistent storage for the panel (database, .env, uploads, plugins)."
+        Type="Path"
+        Display="always"
+        Required="true"
+        Mask="false"
+    />
+    <Config
+        Name="Panel Logs"
+        Target="/var/www/html/storage/logs"
+        Default="/mnt/user/appdata/pelican-panel/logs"
+        Mode="rw"
+        Description="Application log files."
+        Type="Path"
+        Display="always"
+        Required="false"
+        Mask="false"
+    />
+
+    <!-- Core Application Settings -->
+    <Config
+        Name="App URL"
+        Target="APP_URL"
+        Default="http://[IP]"
+        Mode=""
+        Description="The full URL used to access the panel (e.g. http://192.168.1.50 or https://panel.example.com). Must match how you access it in your browser."
+        Type="Variable"
+        Display="always"
+        Required="true"
+        Mask="false"
+    />
+    <Config
+        Name="App Environment"
+        Target="APP_ENV"
+        Default="production"
+        Mode=""
+        Description="Application environment. Leave as production."
+        Type="Variable"
+        Display="advanced"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="Debug Mode"
+        Target="APP_DEBUG"
+        Default="false"
+        Mode=""
+        Description="Enable debug mode. Only enable for troubleshooting."
+        Type="Variable"
+        Display="advanced"
+        Required="false"
+        Mask="false"
+    />
+
+    <!-- Database Configuration -->
+    <Config
+        Name="Database Driver"
+        Target="DB_CONNECTION"
+        Default="sqlite|mysql|mariadb|pgsql"
+        Mode=""
+        Description="Database engine to use. SQLite requires no extra setup and stores data in the Panel Data volume. MySQL/MariaDB/PostgreSQL require a separate database server."
+        Type="Variable"
+        Display="always"
+        Required="true"
+        Mask="false"
+    />
+    <Config
+        Name="Database Host"
+        Target="DB_HOST"
+        Default=""
+        Mode=""
+        Description="Database server hostname or IP. Not needed for SQLite. Use the Unraid IP or container name if running a database container."
+        Type="Variable"
+        Display="always"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="Database Port"
+        Target="DB_PORT"
+        Default="3306"
+        Mode=""
+        Description="Database server port. Default: 3306 for MySQL/MariaDB, 5432 for PostgreSQL. Not needed for SQLite."
+        Type="Variable"
+        Display="always"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="Database Name"
+        Target="DB_DATABASE"
+        Default="panel"
+        Mode=""
+        Description="Name of the database. Not needed for SQLite."
+        Type="Variable"
+        Display="always"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="Database Username"
+        Target="DB_USERNAME"
+        Default="pelican"
+        Mode=""
+        Description="Database user. Not needed for SQLite."
+        Type="Variable"
+        Display="always"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="Database Password"
+        Target="DB_PASSWORD"
+        Default=""
+        Mode=""
+        Description="Database password. Not needed for SQLite."
+        Type="Variable"
+        Display="always"
+        Required="false"
+        Mask="true"
+    />
+
+    <!-- SSL / Let's Encrypt -->
+    <Config
+        Name="Let's Encrypt Email"
+        Target="LE_EMAIL"
+        Default=""
+        Mode=""
+        Description="Email for automatic Let's Encrypt SSL certificates. Only used when APP_URL starts with https://. Leave empty to use HTTP only."
+        Type="Variable"
+        Display="always"
+        Required="false"
+        Mask="false"
+    />
+
+    <!-- Reverse Proxy Settings -->
+    <Config
+        Name="Behind Proxy"
+        Target="BEHIND_PROXY"
+        Default="false|true"
+        Mode=""
+        Description="Set to true if this container is behind a reverse proxy (e.g. Nginx Proxy Manager, Swag, Caddy)."
+        Type="Variable"
+        Display="always"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="Trusted Proxies"
+        Target="TRUSTED_PROXIES"
+        Default="172.17.0.0/12"
+        Mode=""
+        Description="Comma-separated list of trusted proxy IPs or CIDR ranges. Only used when Behind Proxy is true."
+        Type="Variable"
+        Display="advanced"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="Skip Built-in Caddy"
+        Target="SKIP_CADDY"
+        Default="false|true"
+        Mode=""
+        Description="Set to true to disable the built-in Caddy web server. Use this when your reverse proxy connects directly to PHP-FPM on port 9000."
+        Type="Variable"
+        Display="advanced"
+        Required="false"
+        Mask="false"
+    />
+
+    <!-- Mail Configuration -->
+    <Config
+        Name="Mail Driver"
+        Target="MAIL_MAILER"
+        Default="log|smtp|sendmail|mailgun|postmark"
+        Mode=""
+        Description="Mail transport method. 'log' writes emails to the log file (no actual sending). Use 'smtp' to send real emails."
+        Type="Variable"
+        Display="always"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="SMTP Host"
+        Target="MAIL_HOST"
+        Default=""
+        Mode=""
+        Description="SMTP server hostname (e.g. smtp.gmail.com, smtp.mailgun.org)."
+        Type="Variable"
+        Display="always"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="SMTP Port"
+        Target="MAIL_PORT"
+        Default="587"
+        Mode=""
+        Description="SMTP server port. Common values: 587 (TLS), 465 (SSL), 25 (unencrypted)."
+        Type="Variable"
+        Display="always"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="SMTP Username"
+        Target="MAIL_USERNAME"
+        Default=""
+        Mode=""
+        Description="SMTP authentication username."
+        Type="Variable"
+        Display="always"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="SMTP Password"
+        Target="MAIL_PASSWORD"
+        Default=""
+        Mode=""
+        Description="SMTP authentication password."
+        Type="Variable"
+        Display="always"
+        Required="false"
+        Mask="true"
+    />
+    <Config
+        Name="Mail Encryption"
+        Target="MAIL_SCHEME"
+        Default="tls|ssl"
+        Mode=""
+        Description="SMTP encryption scheme."
+        Type="Variable"
+        Display="advanced"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="Mail From Address"
+        Target="MAIL_FROM_ADDRESS"
+        Default="no-reply@example.com"
+        Mode=""
+        Description="The sender email address for outgoing mail."
+        Type="Variable"
+        Display="always"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="Mail From Name"
+        Target="MAIL_FROM_NAME"
+        Default="Pelican Panel"
+        Mode=""
+        Description="The sender name shown in outgoing emails."
+        Type="Variable"
+        Display="advanced"
+        Required="false"
+        Mask="false"
+    />
+
+    <!-- Cache / Session / Queue -->
+    <Config
+        Name="Cache Driver"
+        Target="CACHE_STORE"
+        Default="file|redis"
+        Mode=""
+        Description="Cache backend. 'file' works out of the box. Use 'redis' for better performance with multiple users."
+        Type="Variable"
+        Display="advanced"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="Session Driver"
+        Target="SESSION_DRIVER"
+        Default="file|redis"
+        Mode=""
+        Description="Session storage backend."
+        Type="Variable"
+        Display="advanced"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="Queue Driver"
+        Target="QUEUE_CONNECTION"
+        Default="sync|database|redis"
+        Mode=""
+        Description="Queue processing backend. 'sync' processes jobs immediately. 'database' or 'redis' process in the background."
+        Type="Variable"
+        Display="advanced"
+        Required="false"
+        Mask="false"
+    />
+
+    <!-- Redis (Advanced) -->
+    <Config
+        Name="Redis Host"
+        Target="REDIS_HOST"
+        Default="127.0.0.1"
+        Mode=""
+        Description="Redis server hostname. Only needed if using redis for cache, session, or queue."
+        Type="Variable"
+        Display="advanced"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="Redis Port"
+        Target="REDIS_PORT"
+        Default="6379"
+        Mode=""
+        Description="Redis server port."
+        Type="Variable"
+        Display="advanced"
+        Required="false"
+        Mask="false"
+    />
+    <Config
+        Name="Redis Password"
+        Target="REDIS_PASSWORD"
+        Default=""
+        Mode=""
+        Description="Redis server password. Leave empty if no authentication is required."
+        Type="Variable"
+        Display="advanced"
+        Required="false"
+        Mask="true"
+    />
+</Container>
