@@ -138,7 +138,7 @@ class BackupStatusController extends Controller
 
         $client = $adapter->getClient();
         if (!$successful) {
-            $client->execute($client->getCommand('AbortMultipartUpload', $params));
+            $adapter->executeS3Command($client->getCommand('AbortMultipartUpload', $params));
 
             return;
         }
@@ -149,7 +149,7 @@ class BackupStatusController extends Controller
         ];
 
         if (is_null($parts)) {
-            $params['MultipartUpload']['Parts'] = $client->execute($client->getCommand('ListParts', $params))['Parts'];
+            $params['MultipartUpload']['Parts'] = $adapter->executeS3Command($client->getCommand('ListParts', $params))['Parts'];
         } else {
             foreach ($parts as $part) {
                 $params['MultipartUpload']['Parts'][] = [
@@ -159,6 +159,6 @@ class BackupStatusController extends Controller
             }
         }
 
-        $client->execute($client->getCommand('CompleteMultipartUpload', $params));
+        $adapter->executeS3Command($client->getCommand('CompleteMultipartUpload', $params));
     }
 }
