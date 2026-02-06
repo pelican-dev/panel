@@ -38,11 +38,11 @@ class Utilities
      *
      * @throws Exception
      */
-    public static function getScheduleNextRunDate(string $minute, string $hour, string $dayOfMonth, string $month, string $dayOfWeek): Carbon
+    public static function getScheduleNextRunDate(string $minute, string $hour, string $dayOfMonth, string $month, string $dayOfWeek, string $timezone = 'UTC'): Carbon
     {
         return Carbon::instance((new CronExpression(
             sprintf('%s %s %s %s %s', $minute, $hour, $dayOfMonth, $month, $dayOfWeek)
-        ))->getNextRunDate(now('UTC')));
+        ))->getNextRunDate(now($timezone)))->setTimezone('UTC');
     }
 
     public static function checked(string $name, mixed $default): string
