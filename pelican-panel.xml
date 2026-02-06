@@ -20,7 +20,7 @@
     <Category>GameServers: Tools:</Category>
     <WebUI>http://[IP]:[PORT:80]</WebUI>
     <Icon>https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg</Icon>
-    <Requires>Ensure port 80 and 443 are not in use by another container or Unraid's built-in web server.</Requires>
+    <Requires>Ensure port 80 and 443 are not in use by another container or Unraid's built-in web server. If using HTTPS (APP_URL starts with https://), the WebUI link below will still show HTTP — navigate manually using your HTTPS URL.</Requires>
     <ExtraParams>--restart=unless-stopped</ExtraParams>
 
     <!-- Ports -->
@@ -281,9 +281,9 @@
     <Config
         Name="Mail Encryption"
         Target="MAIL_SCHEME"
-        Default="tls|ssl"
+        Default="|tls|ssl"
         Mode=""
-        Description="SMTP encryption scheme."
+        Description="SMTP encryption scheme. Leave empty for no encryption."
         Type="Variable"
         Display="advanced"
         Required="false"
@@ -351,9 +351,9 @@
     <Config
         Name="Redis Host"
         Target="REDIS_HOST"
-        Default="127.0.0.1"
+        Default=""
         Mode=""
-        Description="Redis server hostname. Only needed if using redis for cache, session, or queue."
+        Description="Redis server hostname or IP. Only needed if using redis for cache, session, or queue. Use the Unraid IP or Redis container name (e.g. redis)."
         Type="Variable"
         Display="advanced"
         Required="false"
