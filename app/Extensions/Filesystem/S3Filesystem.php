@@ -44,6 +44,8 @@ class S3Filesystem extends AwsS3V3Adapter
     /**
      * Execute an S3 command using a presigned URL for maximum compatibility
      * with S3-compatible providers.
+     *
+     * @return Result<array<string, mixed>>
      */
     public function executeS3Command(CommandInterface $command): Result
     {
