@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
 
@@ -72,6 +73,8 @@ class Node extends Model implements Validatable
 
     public const DAEMON_TOKEN_LENGTH = 64;
 
+    public const BANNED_FQDNS = ['0.0.0.0', '127.0.0.1', 'localhost'];
+
     /**
      * The attributes excluded from the model's JSON form.
      */
@@ -95,7 +98,7 @@ class Node extends Model implements Validatable
         'name' => ['required', 'string', 'min:1', 'max:100'],
         'description' => ['string', 'nullable'],
         'public' => ['boolean'],
-        'fqdn' => ['required', 'string', 'notIn:0.0.0.0,127.0.0.1,localhost'],
+        'fqdn' => ['required', 'string'],
         'scheme' => ['required', 'string', 'in:http,https'],
         'behind_proxy' => ['boolean'],
         'memory' => ['required', 'numeric', 'min:0'],
@@ -113,6 +116,14 @@ class Node extends Model implements Validatable
         'upload_size' => ['int', 'min:1'],
         'tags' => ['array'],
     ];
+
+    public static function getRules(): array
+    {
+        $rules = static::$validationRules;
+        $rules['fqdn'][] = Rule::notIn(static::BANNED_FQDNS);
+
+        return $rules;
+    }
 
     /**
      * Default values for specific columns that are generally not changed on base installs.
