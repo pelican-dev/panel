@@ -78,11 +78,15 @@ class Console extends Page
         $feature = data_get($data, 'key');
 
         $feature = $this->featureService->get($feature);
-        if (!$feature || $this->getMountedAction()) {
+        if (!$feature) {
             return;
         }
-        $this->mountAction($feature->getId());
-        sleep(2); // TODO find a better way
+
+        if ($this->getMountedAction()) {
+            $this->replaceMountedAction($feature->getId());
+        } else {
+            $this->mountAction($feature->getId());
+        }
     }
 
     public function getWidgetData(): array
