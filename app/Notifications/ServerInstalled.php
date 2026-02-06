@@ -27,7 +27,7 @@ class ServerInstalled extends Notification implements ShouldQueue
         $locale = $notifiable->language ?? 'en';
 
         return (new MailMessage())
-            ->greeting(trans('mail.greeting_formal', ['name' => $notifiable->username], $locale))
+            ->greeting(trans('mail.greeting', ['name' => $notifiable->username], $locale))
             ->line(trans('mail.server_installed.body', locale: $locale))
             ->line(trans('mail.server_installed.server_name', ['name' => $this->server->name], $locale))
             ->action(trans('mail.server_installed.action', locale: $locale), Console::getUrl(panel: 'server', tenant: $this->server));

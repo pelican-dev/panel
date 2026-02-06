@@ -2,7 +2,6 @@
 
 return [
     'greeting' => 'Hello :name!',
-    'greeting_formal' => 'Hello :name.',
 
     'account_created' => [
         'body' => 'You are receiving this email because an account has been created for you on :app.',

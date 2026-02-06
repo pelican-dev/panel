@@ -27,7 +27,7 @@ class RemovedFromServer extends Notification implements ShouldQueue
 
         return (new MailMessage())
             ->error()
-            ->greeting(trans('mail.greeting_formal', ['name' => $notifiable->username], $locale))
+            ->greeting(trans('mail.greeting', ['name' => $notifiable->username], $locale))
             ->line(trans('mail.removed_from_server.body', locale: $locale))
             ->line(trans('mail.removed_from_server.server_name', ['name' => $this->server->name], $locale))
             ->action(trans('mail.removed_from_server.action', locale: $locale), url(''));
