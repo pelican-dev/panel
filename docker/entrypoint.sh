@@ -65,6 +65,13 @@ if [ "${BEHIND_PROXY}" == "true" ]; then
   export PARSED_APP_URL=":80"
   export PARSED_AUTO_HTTPS="auto_https off"
   export ASSET_URL=${APP_URL}
+
+  # Write ASSET_URL to .env so PHP-FPM workers can read it (clear_env = yes by default)
+  if grep -q "^ASSET_URL=" /pelican-data/.env; then
+    sed -i "s|^ASSET_URL=.*|ASSET_URL=${APP_URL}|" /pelican-data/.env
+  else
+    echo "ASSET_URL=${APP_URL}" >> /pelican-data/.env
+  fi
 fi
 
 # disable caddy if SKIP_CADDY is set
