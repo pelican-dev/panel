@@ -4,12 +4,14 @@ namespace App\Providers\Filament;
 
 use App\Enums\CustomizationKey;
 use App\Enums\TablerIcon;
+use App\Facades\Activity;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
@@ -29,8 +31,10 @@ use Filament\Support\View\SupportIconAlias;
 use Filament\Tables\View\TablesIconAlias;
 use Filament\View\PanelsIconAlias;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
 
@@ -132,6 +136,18 @@ class FilamentServiceProvider extends ServiceProvider
                 $action->iconButton();
                 $action->iconSize(IconSize::ExtraLarge);
             }
+
+            $action->before(function (Model $record) {
+                if (Filament::getCurrentPanel()?->getId() !== 'admin') {
+                    return;
+                }
+
+                $slug = Str::kebab(class_basename($record));
+
+                Activity::event("admin:$slug.delete")
+                    ->subject($record)
+                    ->log();
+            });
         });
 
         CreateAction::configureUsing(function (CreateAction $action) {
