@@ -103,9 +103,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use CanResetPassword;
     use HasAccessTokens;
     use HasFactory;
-    use InteractsWithPasskeys;
     use HasRoles;
     use HasValidation { getRules as getValidationRules; }
+    use InteractsWithPasskeys;
     use Notifiable;
 
     public const USER_LEVEL_USER = 0;
