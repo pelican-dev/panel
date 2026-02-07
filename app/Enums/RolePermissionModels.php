@@ -6,6 +6,7 @@ enum RolePermissionModels: string
 {
     case ApiKey = 'apiKey';
     case Allocation = 'allocation';
+    case BackupHost = 'backupHost';
     case DatabaseHost = 'databaseHost';
     case Database = 'database';
     case Egg = 'egg';
