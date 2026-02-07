@@ -5,6 +5,7 @@ namespace App\Services\Servers;
 use App\Exceptions\DisplayException;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
+use App\Services\Backups\DeleteBackupService;
 use App\Services\Databases\DatabaseManagementService;
 use Exception;
 use Illuminate\Database\ConnectionInterface;
@@ -16,13 +17,16 @@ class ServerDeletionService
 {
     protected bool $force = false;
 
+    protected bool $deleteBackups = false;
+
     /**
      * ServerDeletionService constructor.
      */
     public function __construct(
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository,
-        private DatabaseManagementService $databaseManagementService
+        private DatabaseManagementService $databaseManagementService,
+        private DeleteBackupService $deleteBackupService
     ) {}
 
     /**
@@ -31,6 +35,16 @@ class ServerDeletionService
     public function withForce(bool $bool = true): self
     {
         $this->force = $bool;
+
+        return $this;
+    }
+
+    /**
+     * Set if unlocked backups should be deleted from storage when the server is deleted.
+     */
+    public function withDeleteBackups(bool $bool = true): self
+    {
+        $this->deleteBackups = $bool;
 
         return $this;
     }
@@ -75,6 +89,22 @@ class ServerDeletionService
                     $database->delete();
 
                     logger()->warning($exception);
+                }
+            }
+
+            if ($this->deleteBackups) {
+                foreach ($server->backups()->where('is_locked', false)->get() as $backup) {
+                    try {
+                        $this->deleteBackupService->handle($backup);
+                    } catch (Exception $exception) {
+                        if (!$this->force) {
+                            throw $exception;
+                        }
+
+                        $backup->delete();
+
+                        logger()->warning($exception);
+                    }
                 }
             }
 
