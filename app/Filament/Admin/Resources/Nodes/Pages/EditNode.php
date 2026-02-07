@@ -174,6 +174,12 @@ class EditNode extends EditRecord
                                 return;
                             }
 
+                            if (in_array(strtolower($state), Node::BANNED_FQDNS)) {
+                                $set('dns', false);
+
+                                return;
+                            }
+
                             $ip = get_ip_from_hostname($state);
                             if ($ip) {
                                 $set('dns', true);
