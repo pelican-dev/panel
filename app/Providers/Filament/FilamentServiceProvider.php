@@ -33,7 +33,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Component;
 use Livewire\Livewire;
-use App\Passkeys\Livewire\Passkeys;
+use App\Livewire\Passkeys;
 
 use function Livewire\on;
 use function Livewire\store;

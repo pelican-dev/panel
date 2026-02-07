@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Passkeys;
+namespace App\Filament;
 
 use Filament\Auth\Pages\EditProfile;
 use Filament\Contracts\Plugin;
@@ -11,7 +11,7 @@ use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\View\View;
 use Livewire\Livewire;
-use App\Passkeys\Livewire\Passkeys;
+use App\Livewire\Passkeys;
 
 final class PasskeysPlugin implements Plugin
 {

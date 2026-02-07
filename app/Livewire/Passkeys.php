@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Passkeys\Livewire;
+namespace App\Livewire;
 
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
