@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Component;
 use Livewire\Livewire;
+use MarcelWeidum\Passkeys\Livewire\Passkeys as FilamentPasskeys;
 
 use function Livewire\on;
 use function Livewire\store;
@@ -257,6 +258,7 @@ class FilamentServiceProvider extends ServiceProvider
 
             SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP => TablerIcon::Check,
         ]);
+        Livewire::component('filament-passkeys', FilamentPasskeys::class);
     }
 
     public function register(): void {}
