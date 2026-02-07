@@ -143,6 +143,24 @@ class MountResource extends Resource
                         ])
                         ->inline()
                         ->default(false),
+                    ToggleButtons::make('user_mountable')
+                        ->label(trans('admin/mount.user_mountable'))
+                        ->helperText(trans('admin/mount.user_mountable_help'))
+                        ->stateCast(new BooleanStateCast(false, true))
+                        ->options([
+                            false => trans('admin/mount.toggles.not_user_mountable'),
+                            true => trans('admin/mount.toggles.user_mountable'),
+                        ])
+                        ->icons([
+                            false => TablerIcon::Users,
+                            true => TablerIcon::Users,
+                        ])
+                        ->colors([
+                            false => 'warning',
+                            true => 'success',
+                        ])
+                        ->inline()
+                        ->default(true),
                     TextInput::make('source')
                         ->label(trans('admin/mount.source'))
                         ->required()
