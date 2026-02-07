@@ -29,11 +29,13 @@ final class Passkeys extends PasskeysComponent implements HasActions, HasSchemas
             ->label(__('passkeys.delete'))
             ->color('danger')
             ->requiresConfirmation()
-            ->action(fn (array $arguments) => $this->deletePasskey($arguments['passkey']));
+            ->action(fn (array $arguments) => $this->deletePasskey((int) $arguments['passkey']));
     }
 
     public function deletePasskey(int $passkeyId): void
     {
+        $this->currentUser()->passkeys()->findOrFail($passkeyId);
+
         parent::deletePasskey($passkeyId);
 
         Notification::make()

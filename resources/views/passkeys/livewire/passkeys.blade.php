@@ -48,4 +48,4 @@
     <x-filament-actions::modals />
 </div>
 
-@include('passkeys::livewire.partials.createScript')
+@include('passkeys.livewire.partials.createScript')

@@ -46,6 +46,5 @@ final class PasskeysPlugin implements Plugin
             fn (): View => view('passkeys.login'),
         );
 
-        Livewire::component('filament-passkeys', Passkeys::class);
     }
 }

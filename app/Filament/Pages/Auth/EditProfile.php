@@ -239,7 +239,7 @@ class EditProfile extends BaseEditProfile
                 ->icon(TablerIcon::Fingerprint)
                 ->schema([
                     Section::make(trans('profile.tabs.passkeys'))
-                        ->description(trans('profile.passkeys_description'))
+                        ->description(trans('passkeys.description'))
                         ->schema([
                             Group::make([
                                 view('passkeys.livewire.passkeys-tab'),
