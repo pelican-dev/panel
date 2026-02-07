@@ -235,11 +235,11 @@ class EditProfile extends BaseEditProfile
                         ->statePath($multiFactorAuthenticationProvider->getId()))
                     ->all()),
             Tab::make('passkeys')
-                ->label(trans('passkeys.passkeys'))
+                ->label(trans('profile.tabs.passkeys'))
                 ->icon(TablerIcon::Fingerprint)
                 ->schema([
-                    Section::make(trans('passkeys.passkeys'))
-                        ->description(trans('passkeys.description'))
+                    Section::make(trans('profile.tabs.passkeys'))
+                        ->description(trans('profile.passkeys_description'))
                         ->schema([
                             Group::make([
                                 view('passkeys.livewire.passkeys-tab'),

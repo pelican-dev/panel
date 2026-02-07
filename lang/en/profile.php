@@ -11,6 +11,7 @@ return [
         'keys' => 'Keys',
         '2fa' => '2FA',
         'customization' => 'Customization',
+        'passkeys' => 'Passkeys',
     ],
     'username' => 'Username',
     'admin' => 'Admin',
@@ -67,4 +68,5 @@ return [
     'no_oauth' => 'No Accounts Linked',
     'no_api_keys' => 'No API Keys',
     'no_ssh_keys' => 'No SSH Keys',
+    'passkeys_description' => 'Passkeys let you log in without needing a password. Instead of a password, you can generate a passkey which will be stored in 1Pass, MacOS password app, or alternative app on your favourite OS.',
 ];
