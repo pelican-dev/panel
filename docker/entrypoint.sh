@@ -2,8 +2,13 @@
 # check for .env file or symlink and generate app keys if missing
 if [ -f /var/www/html/.env ]; then
   echo "external vars exist."
-  # load specific env vars from .env used in the entrypoint and they are not already set
-  for VAR in "APP_KEY" "APP_INSTALLED" "DB_CONNECTION" "DB_HOST" "DB_PORT"; do if ! (printenv | grep -q ${VAR}); then export $(grep ${VAR} .env | grep -ve "^#"); fi; done
+  # load specific env vars from .env used in the entrypoint if they are not already set
+  for VAR in "APP_KEY" "APP_INSTALLED" "DB_CONNECTION" "DB_HOST" "DB_PORT"; do
+    if ! (printenv | grep -q "^${VAR}="); then
+      VAL=$(grep "^${VAR}=" .env | grep -ve "^#" | head -1 | cut -d= -f2- | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//")
+      if [ -n "$VAL" ]; then export "${VAR}=${VAL}"; fi
+    fi
+  done
 else
   echo "external vars don't exist."
   # webroot .env is symlinked to this path
