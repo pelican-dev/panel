@@ -7,7 +7,6 @@ use App\Extensions\Backups\BackupManager;
 use App\Extensions\Filesystem\S3Filesystem;
 use App\Models\Backup;
 use App\Repositories\Daemon\DaemonBackupRepository;
-use Aws\S3\S3Client;
 use Exception;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\Response;
@@ -72,14 +71,12 @@ class DeleteBackupService
 
             /** @var S3Filesystem $adapter */
             $adapter = $this->manager->adapter(Backup::ADAPTER_AWS_S3);
-
-            /** @var S3Client $client */
             $client = $adapter->getClient();
 
-            $client->deleteObject([
+            $adapter->executeS3Command($client->getCommand('DeleteObject', [
                 'Bucket' => $adapter->getBucket(),
                 'Key' => sprintf('%s/%s.tar.gz', $backup->server->uuid, $backup->uuid),
-            ]);
+            ]));
         });
     }
 }
