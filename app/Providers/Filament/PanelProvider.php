@@ -22,7 +22,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use MarcelWeidum\Passkeys\PasskeysPlugin;
+use App\Passkeys\PasskeysPlugin;
 
 abstract class PanelProvider extends BasePanelProvider
 {
