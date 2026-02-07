@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Enums\CustomizationKey;
 use App\Enums\TablerIcon;
+use App\Livewire\Passkeys;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -33,7 +34,6 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Component;
 use Livewire\Livewire;
-use App\Livewire\Passkeys;
 
 use function Livewire\on;
 use function Livewire\store;

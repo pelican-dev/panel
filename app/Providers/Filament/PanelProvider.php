@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Enums\CustomizationKey;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\PasskeysPlugin;
 use App\Http\Middleware\LanguageMiddleware;
 use App\Http\Middleware\RequireTwoFactorAuthentication;
 use Filament\Actions\Action;
@@ -22,7 +23,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use App\Filament\PasskeysPlugin;
 
 abstract class PanelProvider extends BasePanelProvider
 {
