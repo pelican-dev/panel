@@ -96,17 +96,17 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereUsername($value)
  * @method static Builder|User whereUuid($value)
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasEmailAuthentication, HasName, HasTenants, Validatable, HasPasskeys
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasEmailAuthentication, HasName, HasPasskeys, HasTenants, Validatable
 {
     use Authenticatable;
     use Authorizable { can as protected canned; }
     use CanResetPassword;
     use HasAccessTokens;
     use HasFactory;
+    use HasFactory, InteractsWithPasskeys, Notifiable;
     use HasRoles;
     use HasValidation { getRules as getValidationRules; }
     use Notifiable;
-    use HasFactory, Notifiable, InteractsWithPasskeys;
 
     public const USER_LEVEL_USER = 0;
 
@@ -513,7 +513,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->username ?? $this->email;
     }
 
-    public function getPasskeyUserId(): string
+    public function getPasskeyUserId(): int
     {
         return $this->id;
     }
