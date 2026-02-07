@@ -103,7 +103,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use CanResetPassword;
     use HasAccessTokens;
     use HasFactory;
-    use HasFactory, InteractsWithPasskeys, Notifiable;
+    use InteractsWithPasskeys;
     use HasRoles;
     use HasValidation { getRules as getValidationRules; }
     use Notifiable;
