@@ -65,6 +65,8 @@ return [
     'sftp_port' => 'SFTP Port',
     'sftp_alias' => 'SFTP Alias',
     'sftp_alias_help' => 'Display alias for the SFTP address. Leave empty to use the Node FQDN.',
+    'daemon_base' => 'Daemon Base Directory',
+    'daemon_base_help' => 'The directory where server data will be stored.',
     'use_for_deploy' => 'Use for Deployments?',
     'maintenance_mode' => 'Maintenance Mode',
     'maintenance_mode_help' => 'If the node is marked \'Under Maintenance\' users won\'t be able to access servers that are on that node',

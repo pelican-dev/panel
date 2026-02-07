@@ -358,7 +358,7 @@ class Node extends Model implements Validatable
             'disk_used' => 0,
         ];
 
-        return cache()->remember("nodes.$this->id.statistics", now()->addSeconds(360), function () use ($default) {
+        return cache()->flexible("nodes.$this->id.statistics", [5, 30], function () use ($default) {
             try {
 
                 $data = Http::daemon($this)
