@@ -234,6 +234,18 @@ class EditProfile extends BaseEditProfile
                     ->map(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider) => Group::make($multiFactorAuthenticationProvider->getManagementSchemaComponents())
                         ->statePath($multiFactorAuthenticationProvider->getId()))
                     ->all()),
+            Tab::make('passkeys')
+                ->label(trans('profile.tabs.passkeys'))
+                ->icon(TablerIcon::Fingerprint)
+                ->schema([
+                    Section::make(trans('profile.tabs.passkeys'))
+                        ->description(trans('profile.passkeys_description'))
+                        ->schema([
+                            Group::make([
+                                view('passkeys.livewire.passkeys-tab'),
+                            ]),
+                        ]),
+                ]),
             Tab::make('api_keys')
                 ->label(trans('profile.tabs.api_keys'))
                 ->icon(TablerIcon::Key)

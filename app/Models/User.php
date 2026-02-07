@@ -43,6 +43,8 @@ use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\In;
 use ResourceBundle;
+use Spatie\LaravelPasskeys\Models\Concerns\HasPasskeys;
+use Spatie\LaravelPasskeys\Models\Concerns\InteractsWithPasskeys;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -94,7 +96,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder|User whereUsername($value)
  * @method static Builder|User whereUuid($value)
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasEmailAuthentication, HasName, HasTenants, Validatable
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasEmailAuthentication, HasName, HasPasskeys, HasTenants, Validatable
 {
     use Authenticatable;
     use Authorizable { can as protected canned; }
@@ -103,6 +105,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use HasFactory;
     use HasRoles;
     use HasValidation { getRules as getValidationRules; }
+    use InteractsWithPasskeys;
     use Notifiable;
 
     public const USER_LEVEL_USER = 0;
@@ -503,5 +506,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function toggleEmailAuthentication(bool $condition): void
     {
         $this->update(['mfa_email_enabled' => $condition]);
+    }
+
+    public function getPasskeyDisplayName(): string
+    {
+        return $this->username ?? $this->email;
+    }
+
+    public function getPasskeyUserId(): int
+    {
+        return $this->id;
     }
 }

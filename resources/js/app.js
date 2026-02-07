@@ -15,3 +15,4 @@
       success ? resolve() : reject('Fallback copy failed');
     });
 })();
+import './passkeys/index.js';

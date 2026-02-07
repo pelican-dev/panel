@@ -292,6 +292,11 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.53.1.tgz#56eeb602545ec03ce84633b331c2e3ece07b99c3"
   integrity sha512-rLarc1Ofcs3DHtgSzFO31pZsCh8g05R2azN1q3fF+H423Co87My0R+tazOEvYVKXSLh8C4LerMK41/K7wlklcg==
 
+"@simplewebauthn/browser@^13.2.2":
+  version "13.2.2"
+  resolved "https://registry.yarnpkg.com/@simplewebauthn/browser/-/browser-13.2.2.tgz#4cde38c4c6969a039c23c2a3d931ecb69f937910"
+  integrity sha512-FNW1oLQpTJyqG5kkDg5ZsotvWgmBaC6jCHR7Ej0qUNep36Wl9tj2eZu7J5rP+uhXgHaLk+QQ3lqcw2vS5MX1IA==
+
 "@tailwindcss/forms@^0.5.9":
   version "0.5.10"
   resolved "https://registry.npmjs.org/@tailwindcss/forms/-/forms-0.5.10.tgz"
