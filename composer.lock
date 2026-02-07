@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "15f89930db77693b2d692dbadf22fb9f",
+    "content-hash": "ee0e729079d522f013d1203a624a4765",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -128,16 +128,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.369.27",
+            "version": "3.369.29",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "f844afab2a74eb3cf881970a9c31de460510eb74"
+                "reference": "068195b2980cf5cf4ade2515850d461186db3310"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f844afab2a74eb3cf881970a9c31de460510eb74",
-                "reference": "f844afab2a74eb3cf881970a9c31de460510eb74",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/068195b2980cf5cf4ade2515850d461186db3310",
+                "reference": "068195b2980cf5cf4ade2515850d461186db3310",
                 "shasum": ""
             },
             "require": {
@@ -219,9 +219,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.27"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.29"
             },
-            "time": "2026-02-04T19:07:08+00:00"
+            "time": "2026-02-06T19:08:50+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -375,16 +375,16 @@
         },
         {
             "name": "brick/math",
-            "version": "0.14.5",
+            "version": "0.14.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/math.git",
-                "reference": "618a8077b3c326045e10d5788ed713b341fcfe40"
+                "reference": "07ff363b16ef8aca9692bba3be9e73fe63f34e50"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/618a8077b3c326045e10d5788ed713b341fcfe40",
-                "reference": "618a8077b3c326045e10d5788ed713b341fcfe40",
+                "url": "https://api.github.com/repos/brick/math/zipball/07ff363b16ef8aca9692bba3be9e73fe63f34e50",
+                "reference": "07ff363b16ef8aca9692bba3be9e73fe63f34e50",
                 "shasum": ""
             },
             "require": {
@@ -423,7 +423,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brick/math/issues",
-                "source": "https://github.com/brick/math/tree/0.14.5"
+                "source": "https://github.com/brick/math/tree/0.14.7"
             },
             "funding": [
                 {
@@ -431,7 +431,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-03T18:06:51+00:00"
+            "time": "2026-02-07T10:57:35+00:00"
         },
         {
             "name": "calebporzio/sushi",
@@ -822,16 +822,16 @@
         },
         {
             "name": "dedoc/scramble",
-            "version": "v0.13.11",
+            "version": "v0.13.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dedoc/scramble.git",
-                "reference": "871dbac4888e3d22d7f04c2c7b3d7bb810e87005"
+                "reference": "1788ab68ae51ae2fce34e16add1387ee1ac5d88b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dedoc/scramble/zipball/871dbac4888e3d22d7f04c2c7b3d7bb810e87005",
-                "reference": "871dbac4888e3d22d7f04c2c7b3d7bb810e87005",
+                "url": "https://api.github.com/repos/dedoc/scramble/zipball/1788ab68ae51ae2fce34e16add1387ee1ac5d88b",
+                "reference": "1788ab68ae51ae2fce34e16add1387ee1ac5d88b",
                 "shasum": ""
             },
             "require": {
@@ -890,7 +890,7 @@
             ],
             "support": {
                 "issues": "https://github.com/dedoc/scramble/issues",
-                "source": "https://github.com/dedoc/scramble/tree/v0.13.11"
+                "source": "https://github.com/dedoc/scramble/tree/v0.13.12"
             },
             "funding": [
                 {
@@ -898,7 +898,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-28T14:02:15+00:00"
+            "time": "2026-02-05T07:47:09+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -977,29 +977,29 @@
         },
         {
             "name": "doctrine/deprecations",
-            "version": "1.1.5",
+            "version": "1.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/deprecations.git",
-                "reference": "459c2f5dd3d6a4633d3b5f46ee2b1c40f57d3f38"
+                "reference": "d4fe3e6fd9bb9e72557a19674f44d8ac7db4c6ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/459c2f5dd3d6a4633d3b5f46ee2b1c40f57d3f38",
-                "reference": "459c2f5dd3d6a4633d3b5f46ee2b1c40f57d3f38",
+                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/d4fe3e6fd9bb9e72557a19674f44d8ac7db4c6ca",
+                "reference": "d4fe3e6fd9bb9e72557a19674f44d8ac7db4c6ca",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1 || ^8.0"
             },
             "conflict": {
-                "phpunit/phpunit": "<=7.5 || >=13"
+                "phpunit/phpunit": "<=7.5 || >=14"
             },
             "require-dev": {
-                "doctrine/coding-standard": "^9 || ^12 || ^13",
-                "phpstan/phpstan": "1.4.10 || 2.1.11",
+                "doctrine/coding-standard": "^9 || ^12 || ^14",
+                "phpstan/phpstan": "1.4.10 || 2.1.30",
                 "phpstan/phpstan-phpunit": "^1.0 || ^2",
-                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.6 || ^10.5 || ^11.5 || ^12",
+                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.6 || ^10.5 || ^11.5 || ^12.4 || ^13.0",
                 "psr/log": "^1 || ^2 || ^3"
             },
             "suggest": {
@@ -1019,9 +1019,9 @@
             "homepage": "https://www.doctrine-project.org/",
             "support": {
                 "issues": "https://github.com/doctrine/deprecations/issues",
-                "source": "https://github.com/doctrine/deprecations/tree/1.1.5"
+                "source": "https://github.com/doctrine/deprecations/tree/1.1.6"
             },
-            "time": "2025-04-07T20:06:18+00:00"
+            "time": "2026-02-07T07:09:04+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -2544,16 +2544,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v12.50.0",
+            "version": "v12.49.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "174ffed91d794a35a541a5eb7c3785a02a34aaba"
+                "reference": "4bde4530545111d8bdd1de6f545fa8824039fcb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/174ffed91d794a35a541a5eb7c3785a02a34aaba",
-                "reference": "174ffed91d794a35a541a5eb7c3785a02a34aaba",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/4bde4530545111d8bdd1de6f545fa8824039fcb5",
+                "reference": "4bde4530545111d8bdd1de6f545fa8824039fcb5",
                 "shasum": ""
             },
             "require": {
@@ -2762,7 +2762,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-02-04T18:34:13+00:00"
+            "time": "2026-01-28T03:40:49+00:00"
         },
         {
             "name": "laravel/helpers",
@@ -4263,16 +4263,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v3.7.8",
+            "version": "v3.7.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "06ec7e8cd61bb01739b8f26396db6fe73b7e0607"
+                "reference": "112b27e41e87e89d828a96e37b257aff2a058c7a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/06ec7e8cd61bb01739b8f26396db6fe73b7e0607",
-                "reference": "06ec7e8cd61bb01739b8f26396db6fe73b7e0607",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/112b27e41e87e89d828a96e37b257aff2a058c7a",
+                "reference": "112b27e41e87e89d828a96e37b257aff2a058c7a",
                 "shasum": ""
             },
             "require": {
@@ -4327,7 +4327,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v3.7.8"
+                "source": "https://github.com/livewire/livewire/tree/v3.7.9"
             },
             "funding": [
                 {
@@ -4335,7 +4335,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-03T02:57:56+00:00"
+            "time": "2026-02-05T23:27:27+00:00"
         },
         {
             "name": "masterminds/html5",
