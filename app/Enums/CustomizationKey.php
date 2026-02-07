@@ -12,6 +12,7 @@ enum CustomizationKey: string
     case DashboardLayout = 'dashboard_layout';
 
     case ButtonStyle = 'button_style';
+    case RedirectToAdmin = 'redirect_to_admin';
 
     public function getDefaultValue(): string|int|bool
     {
@@ -23,6 +24,7 @@ enum CustomizationKey: string
             self::TopNavigation => config('panel.filament.default-navigation', 'sidebar'),
             self::DashboardLayout => 'grid',
             self::ButtonStyle => true,
+            self::RedirectToAdmin => false,
         };
     }
 
