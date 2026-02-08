@@ -1,7 +1,7 @@
 {
 	servers {
 		## docs https://caddyserver.com/docs/caddyfile/options#trusted-proxies
-		{$CADDY_TRUSTED_PROXIES} 
+		{$CADDY_TRUSTED_PROXIES}
 		{$CADDY_STRICT_PROXIES}
 	}
 	admin off
@@ -14,5 +14,11 @@
 	encode gzip
 
 	file_server
-	php_fastcgi 127.0.0.1:9000
+
+	# FrankenPHP replaces php-fpm + fastcgi with an in-process PHP runtime.
+	# When we later want Laravel "worker mode", we can extend this block with
+	# FrankenPHP worker directives (often via Laravel Octane).
+	php_server {
+	    worker ./public/index.php
+	}
 }

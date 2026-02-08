@@ -1,10 +1,17 @@
 # ================================
-# Stage 0: Build PHP Base Image
+# Stage 0: Base Panel Runtime (FrankenPHP dev, GNU libc)
 # ================================
-FROM --platform=$TARGETOS/$TARGETARCH php:8.4-fpm-alpine
+#
+# We use the FrankenPHP *development* images (as requested) and a GNU libc base
+# (Debian bookworm) to avoid musl compatibility issues and to match "gnu"
+# expectations.
+#
+FROM dunglas/frankenphp-dev:php8.4-bookworm
 
-ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+# Keep compatible with the legacy Docker builder (no BuildKit required).
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/install-php-extensions
 
-RUN install-php-extensions bcmath gd intl zip pcntl pdo_mysql pdo_pgsql bz2
-
-RUN rm /usr/local/bin/install-php-extensions
+# Match what the panel previously installed on php:*-alpine.
+RUN chmod +x /usr/local/bin/install-php-extensions \
+  && install-php-extensions bcmath gd intl zip pcntl pdo_mysql pdo_pgsql bz2 \
+  && rm /usr/local/bin/install-php-extensions

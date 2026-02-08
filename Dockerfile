@@ -5,10 +5,25 @@
 #  If you want to build this locally you want to run `docker build -f Dockerfile.dev .`
 ##
 
+ARG TARGETOS=linux
+ARG TARGETARCH=amd64
+
+# ================================
+# Stage 0: Base Runtime (FrankenPHP dev, GNU libc)
+# ================================
+FROM dunglas/frankenphp-dev:php8.4-bookworm AS base
+
+# Keep compatible with the legacy Docker builder (no BuildKit required).
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/install-php-extensions
+
+RUN chmod +x /usr/local/bin/install-php-extensions \
+    && install-php-extensions bcmath gd intl zip pcntl pdo_mysql pdo_pgsql bz2 \
+    && rm /usr/local/bin/install-php-extensions
+
 # ================================
 # Stage 1-1: Composer Install
 # ================================
-FROM --platform=$TARGETOS/$TARGETARCH localhost:5000/base-php:$TARGETARCH AS composer
+FROM --platform=$TARGETOS/$TARGETARCH base AS composer
 
 WORKDIR /build
 
@@ -58,15 +73,17 @@ RUN yarn run build
 # ================================
 # Stage 5: Build Final Application Image
 # ================================
-FROM --platform=$TARGETOS/$TARGETARCH localhost:5000/base-php:$TARGETARCH AS final
+FROM --platform=$TARGETOS/$TARGETARCH base AS final
 
 WORKDIR /var/www/html
 
-RUN apk add --no-cache \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     # packages for running the panel
-    caddy ca-certificates supervisor supercronic fcgi \
+    ca-certificates supervisor curl netcat-openbsd \
     # required for installing plugins. Pulled from https://github.com/pelican-dev/panel/pull/2034
-    zip unzip 7zip bzip2-dev yarn git
+    zip unzip p7zip-full bzip2 git yarnpkg \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --chown=root:www-data --chmod=770 --from=composerbuild /build .
 COPY --chown=root:www-data --chmod=770 --from=yarnbuild /build/public ./public
@@ -83,19 +100,17 @@ RUN mkdir -p /pelican-data/storage /pelican-data/plugins /var/run/supervisord \
 # Allow www-data write permissions where necessary
     && chown -R www-data: /pelican-data .env ./storage ./plugins ./bootstrap/cache /var/run/supervisord /var/www/html/public/storage \
     && chmod -R 770 /pelican-data ./storage ./bootstrap/cache /var/run/supervisord \
-    && chown -R www-data: /usr/local/etc/php/ /usr/local/etc/php-fpm.d/
+    && chown -R www-data: /usr/local/etc/php/
 
 # Configure Supervisor
 COPY docker/supervisord.conf /etc/supervisord.conf
 COPY docker/Caddyfile /etc/caddy/Caddyfile
-# Add Laravel scheduler to crontab
-COPY docker/crontab /etc/crontabs/crontab
 
 COPY docker/entrypoint.sh /entrypoint.sh
 COPY docker/healthcheck.sh /healthcheck.sh
 
 HEALTHCHECK --interval=5m --timeout=10s --start-period=5s --retries=3 \
-  CMD /bin/ash /healthcheck.sh
+  CMD /bin/sh /healthcheck.sh
 
 EXPOSE 80 443
 
@@ -103,5 +118,5 @@ VOLUME /pelican-data
 
 USER www-data
 
-ENTRYPOINT [ "/bin/ash", "/entrypoint.sh" ]
+ENTRYPOINT [ "/bin/sh", "/entrypoint.sh" ]
 CMD [ "supervisord", "-n", "-c", "/etc/supervisord.conf" ]
