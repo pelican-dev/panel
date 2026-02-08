@@ -7,6 +7,7 @@ use App\Services\Pwa\PwaPushService;
 use App\Services\Pwa\PwaSettingsRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PwaPushController extends Controller
 {
@@ -24,17 +25,13 @@ class PwaPushController extends Controller
         ]);
 
         $user = $request->user();
-        if (!$user) {
-            return response()->json([
-                'message' => trans('pwa.errors.unauthorized'),
-            ], 401);
-        }
 
         $subscription = PwaPushSubscription::query()->updateOrCreate(
-            ['endpoint' => $request->string('endpoint')->toString()],
+            ['endpoint_hash' => hash('sha256', $request->string('endpoint')->toString())],
             [
                 'notifiable_type' => $user->getMorphClass(),
                 'notifiable_id' => $user->getKey(),
+                'endpoint' => $request->string('endpoint')->toString(),
                 'public_key' => $request->input('keys.p256dh'),
                 'auth_token' => $request->input('keys.auth'),
                 'content_encoding' => $request->input('contentEncoding', 'aesgcm'),
@@ -55,14 +52,9 @@ class PwaPushController extends Controller
         ]);
 
         $user = $request->user();
-        if (!$user) {
-            return response()->json([
-                'message' => trans('pwa.errors.unauthorized'),
-            ], 401);
-        }
 
         PwaPushSubscription::query()
-            ->where('endpoint', $request->string('endpoint')->toString())
+            ->where('endpoint_hash', hash('sha256', $request->string('endpoint')->toString()))
             ->where('notifiable_type', $user->getMorphClass())
             ->where('notifiable_id', $user->getKey())
             ->delete();
@@ -75,11 +67,6 @@ class PwaPushController extends Controller
     public function test(Request $request, PwaPushService $push): JsonResponse
     {
         $user = $request->user();
-        if (!$user) {
-            return response()->json([
-                'message' => trans('pwa.errors.unauthorized'),
-            ], 401);
-        }
 
         $vapid = [
             'subject' => $this->settings->get('vapid_subject', ''),
@@ -120,10 +107,19 @@ class PwaPushController extends Controller
 
         $result = $push->sendToSubscription($subscription, $payload, $vapid);
 
+        if ($result !== true) {
+            Log::error('PWA test push failed', [
+                'subscription_id' => $subscription->getKey(),
+                'reason' => $result,
+            ]);
+
+            return response()->json([
+                'message' => trans('pwa.errors.send_failed'),
+            ], 500);
+        }
+
         return response()->json([
-            'message' => $result === true
-                ? trans('pwa.notifications.test_sent')
-                : trans('pwa.errors.send_failed') . ': ' . $result,
-        ], $result === true ? 200 : 500);
+            'message' => trans('pwa.notifications.test_sent'),
+        ]);
     }
 }

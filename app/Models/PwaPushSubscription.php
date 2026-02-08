@@ -13,11 +13,19 @@ class PwaPushSubscription extends Model
         'notifiable_type',
         'notifiable_id',
         'endpoint',
+        'endpoint_hash',
         'public_key',
         'auth_token',
         'content_encoding',
         'user_agent',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $model) {
+            $model->endpoint_hash = hash('sha256', $model->endpoint);
+        });
+    }
 
     public function notifiable(): MorphTo
     {

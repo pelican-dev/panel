@@ -38,9 +38,12 @@ class PwaServiceProvider extends ServiceProvider
         Route::middleware('web')->group(function () {
             Route::get('/manifest.json', [PwaController::class, 'manifest'])->name('pwa.manifest');
             Route::get('/service-worker.js', [PwaController::class, 'serviceWorker'])->name('pwa.sw');
-            Route::post('/pwa/subscribe', [PwaPushController::class, 'subscribe'])->name('pwa.subscribe');
-            Route::post('/pwa/unsubscribe', [PwaPushController::class, 'unsubscribe'])->name('pwa.unsubscribe');
-            Route::post('/pwa/test', [PwaPushController::class, 'test'])->name('pwa.test');
+
+            Route::middleware('auth')->group(function () {
+                Route::post('/pwa/subscribe', [PwaPushController::class, 'subscribe'])->name('pwa.subscribe');
+                Route::post('/pwa/unsubscribe', [PwaPushController::class, 'unsubscribe'])->name('pwa.unsubscribe');
+                Route::post('/pwa/test', [PwaPushController::class, 'test'])->name('pwa.test');
+            });
         });
     }
 
@@ -61,16 +64,16 @@ class PwaServiceProvider extends ServiceProvider
     {
         $settings = $this->app->make(PwaSettingsRepository::class);
 
-        $appName = config('app.name', 'Pelican Panel');
+        $appName = e(config('app.name', 'Pelican Panel'));
 
-        $themeColor = $settings->get('theme_color', '#0ea5e9');
+        $themeColor = e($settings->get('theme_color', '#0ea5e9'));
 
-        $favicon = config('app.favicon', '/pelican.ico');
+        $favicon = e(config('app.favicon', '/pelican.ico'));
 
-        $appleDefault = asset(ltrim($settings->get('apple_touch_icon', '/pelican-180.png'), '/'));
-        $apple152 = asset(ltrim($settings->get('apple_touch_icon_152', '/pelican-152.png'), '/'));
-        $apple167 = asset(ltrim($settings->get('apple_touch_icon_167', '/pelican-167.png'), '/'));
-        $apple180 = asset(ltrim($settings->get('apple_touch_icon_180', '/pelican-180.png'), '/'));
+        $appleDefault = e(asset(ltrim($settings->get('apple_touch_icon', '/pelican-180.png'), '/')));
+        $apple152 = e(asset(ltrim($settings->get('apple_touch_icon_152', '/pelican-152.png'), '/')));
+        $apple167 = e(asset(ltrim($settings->get('apple_touch_icon_167', '/pelican-167.png'), '/')));
+        $apple180 = e(asset(ltrim($settings->get('apple_touch_icon_180', '/pelican-180.png'), '/')));
 
         $vapidPublicKey = json_encode($settings->get('vapid_public_key', ''));
         $pushEnabled = json_encode((bool) $settings->get('push_enabled', false));

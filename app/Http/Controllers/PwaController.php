@@ -77,11 +77,11 @@ class PwaController extends Controller
         $swDefaultIcon = $this->settings->get('default_notification_icon', '/pelican.svg');
 
         $serviceWorker = <<<'JS'
-const CACHE_NAME = '__CACHE_NAME__';
+const CACHE_NAME = __CACHE_NAME__;
 const CACHE_VERSION = __CACHE_VERSION__;
-const DEFAULT_TITLE = '__DEFAULT_TITLE__';
-const DEFAULT_BODY = '__DEFAULT_BODY__';
-const DEFAULT_ICON = '__DEFAULT_ICON__';
+const DEFAULT_TITLE = __DEFAULT_TITLE__;
+const DEFAULT_BODY = __DEFAULT_BODY__;
+const DEFAULT_ICON = __DEFAULT_ICON__;
 
 let badgeCount = 0;
 
@@ -181,11 +181,11 @@ JS;
         $serviceWorker = str_replace(
             ['__CACHE_NAME__', '__CACHE_VERSION__', '__DEFAULT_TITLE__', '__DEFAULT_BODY__', '__DEFAULT_ICON__'],
             [
-                addslashes($cacheName),
+                json_encode($cacheName, JSON_UNESCAPED_SLASHES),
                 (string) $cacheVersion,
-                addslashes($swDefaultTitle),
-                addslashes($swDefaultBody),
-                addslashes($swDefaultIcon),
+                json_encode($swDefaultTitle, JSON_UNESCAPED_SLASHES),
+                json_encode($swDefaultBody, JSON_UNESCAPED_SLASHES),
+                json_encode($swDefaultIcon, JSON_UNESCAPED_SLASHES),
             ],
             $serviceWorker
         );

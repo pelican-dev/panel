@@ -811,7 +811,6 @@ class Settings extends Page implements HasSchemas
         ];
     }
 
-
     /**
      * @return Component[]
      */
@@ -948,8 +947,15 @@ class Settings extends Page implements HasSchemas
                                 $push = app(PwaPushService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
                                 $user = user();
 
+                                if (!$user) {
+                                    Notification::make()->title(trans('pwa.errors.unauthorized'))->danger()->send();
+
+                                    return;
+                                }
+
                                 if (!$push->canSend()) {
                                     Notification::make()->title(trans('pwa.errors.library_missing'))->danger()->send();
+
                                     return;
                                 }
 
@@ -961,6 +967,7 @@ class Settings extends Page implements HasSchemas
 
                                 if (!$vapid['publicKey'] || !$vapid['privateKey']) {
                                     Notification::make()->title(trans('pwa.errors.vapid_missing'))->danger()->send();
+
                                     return;
                                 }
 
@@ -972,6 +979,7 @@ class Settings extends Page implements HasSchemas
 
                                 if (!$subscription) {
                                     Notification::make()->title(trans('pwa.errors.no_subscription'))->danger()->send();
+
                                     return;
                                 }
 
@@ -1025,6 +1033,7 @@ class Settings extends Page implements HasSchemas
             }
 
             if ($pwaData !== []) {
+                $pwaData = array_map(fn ($v) => is_bool($v) ? ($v ? 'true' : 'false') : $v, $pwaData);
                 app(PwaSettingsRepository::class)->setMany($pwaData); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
             }
 

@@ -22,7 +22,7 @@ class PwaActions
                         ->color('success')
                         ->action(fn () => Notification::make()->title(trans('pwa.errors.unsupported'))->warning()->send())
                         ->extraAttributes([
-                            'onclick' => "if(!window.triggerPwaInstall()){ \$wire.call('mountAction', 'install'); } return false;",
+                            'onclick' => "if(!window.triggerPwaInstall?.()){ \$wire.call('mountAction', 'install'); } return false;",
                         ]),
                 ])->fullWidth(),
 
@@ -57,7 +57,7 @@ class PwaActions
                         ->color('warning')
                         ->visible(fn () => (bool) app(PwaSettingsRepository::class)->get('push_enabled', false)) // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
                         ->action(fn () => Notification::make()->title(trans('pwa.notifications.test_sent'))->success()->send())
-                        ->extraAttributes(['onclick' => <<<JS
+                        ->extraAttributes(['onclick' => <<<'JS'
                             const btn = event.target;
                             btn.disabled = true;
                             fetch(window.pwaConfig.routes.test, { 
@@ -69,7 +69,7 @@ class PwaActions
                             }).then(res => {
                                 btn.disabled = false;
                                 if(res.ok) {
-                                    \$wire.call('mountAction', 'test');
+                                    $wire.call('mountAction', 'test');
                                 }
                             }).catch(() => {
                                 btn.disabled = false;

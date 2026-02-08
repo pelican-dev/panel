@@ -2,8 +2,8 @@
 
 namespace App\Listeners;
 
+use App\Jobs\SendPwaPush;
 use App\Models\PwaPushSubscription;
-use App\Services\Pwa\PwaPushService;
 use App\Services\Pwa\PwaSettingsRepository;
 use Illuminate\Notifications\Events\NotificationSent;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,7 +11,6 @@ use Illuminate\Notifications\Messages\MailMessage;
 class SendPwaPushOnDatabaseNotification
 {
     public function __construct(
-        private PwaPushService $push,
         private PwaSettingsRepository $settings,
     ) {}
 
@@ -58,13 +57,7 @@ class SendPwaPushOnDatabaseNotification
             ->get();
 
         foreach ($subscriptions as $subscription) {
-            $result = $this->push->sendToSubscription($subscription, $payload, $vapid);
-            if ($result !== true) {
-                logger()->debug('PWA push failed', [
-                    'subscription_id' => $subscription->getKey(),
-                    'reason' => $result,
-                ]);
-            }
+            SendPwaPush::dispatch($subscription->getKey(), $payload, $vapid);
         }
     }
 

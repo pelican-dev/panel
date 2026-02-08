@@ -57,7 +57,7 @@ class PwaPushService
 
             $statusCode = $report->getResponse()?->getStatusCode();
 
-            if (in_array($statusCode, [400, 403, 404, 410], true)) {
+            if (in_array($statusCode, [404, 410], true)) {
                 $subscription->delete();
             }
 
