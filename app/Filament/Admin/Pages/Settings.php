@@ -892,8 +892,8 @@ class Settings extends Page implements HasSchemas
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->default((bool) $pwa->get('push_enabled', false)),
+                        ->formatStateUsing(fn ($state): bool => filter_var($state, FILTER_VALIDATE_BOOLEAN))
+                        ->default(filter_var($pwa->get('push_enabled', false), FILTER_VALIDATE_BOOLEAN)),
                     Toggle::make('pwa_push_send_on_database_notifications')
                         ->label(trans('pwa.fields.push_send_on_db.label'))
                         ->helperText(trans('pwa.fields.push_send_on_db.helper'))
@@ -903,8 +903,8 @@ class Settings extends Page implements HasSchemas
                         ->onColor('success')
                         ->offColor('danger')
                         ->visible(fn (Get $get) => $get('pwa_push_enabled'))
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->default((bool) $pwa->get('push_send_on_database_notifications', true)),
+                        ->formatStateUsing(fn ($state): bool => filter_var($state, FILTER_VALIDATE_BOOLEAN))
+                        ->default(filter_var($pwa->get('push_send_on_database_notifications', true), FILTER_VALIDATE_BOOLEAN)),
                     Toggle::make('pwa_push_send_on_mail_notifications')
                         ->label(trans('pwa.fields.push_send_on_mail.label'))
                         ->helperText(trans('pwa.fields.push_send_on_mail.helper'))
@@ -914,8 +914,8 @@ class Settings extends Page implements HasSchemas
                         ->onColor('success')
                         ->offColor('danger')
                         ->visible(fn (Get $get) => $get('pwa_push_enabled'))
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->default((bool) $pwa->get('push_send_on_mail_notifications', false)),
+                        ->formatStateUsing(fn ($state): bool => filter_var($state, FILTER_VALIDATE_BOOLEAN))
+                        ->default(filter_var($pwa->get('push_send_on_mail_notifications', false), FILTER_VALIDATE_BOOLEAN)),
                     TextInput::make('pwa_vapid_subject')
                         ->label(trans('pwa.fields.vapid_subject.label'))
                         ->helperText(trans('pwa.fields.vapid_subject.helper'))
@@ -931,12 +931,12 @@ class Settings extends Page implements HasSchemas
                         ->revealable()
                         ->visible(fn (Get $get) => $get('pwa_push_enabled'))
                         ->default($pwa->get('vapid_private_key', '')),
-                    TextInput::make('pwa_notification_icon')
+                    TextInput::make('pwa_default_notification_icon')
                         ->label(trans('pwa.fields.default_notification_icon.label'))
                         ->helperText(trans('pwa.fields.default_notification_icon.helper'))
                         ->visible(fn (Get $get) => $get('pwa_push_enabled'))
                         ->default($pwa->get('default_notification_icon', '/pelican.svg')),
-                    TextInput::make('pwa_notification_badge')
+                    TextInput::make('pwa_default_notification_badge')
                         ->label(trans('pwa.fields.default_notification_badge.label'))
                         ->helperText(trans('pwa.fields.default_notification_badge.helper'))
                         ->visible(fn (Get $get) => $get('pwa_push_enabled'))
