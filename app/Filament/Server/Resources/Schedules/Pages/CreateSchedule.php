@@ -39,7 +39,7 @@ class CreateSchedule extends CreateRecord
             $data['server_id'] = $server->id;
         }
 
-        $timezone = $data['timezone'] ?? user()?->timezone ?? 'UTC';
+        $timezone = $data['timezone'] ?? user()->timezone ?? 'UTC';
         unset($data['timezone']);
 
         if (!isset($data['next_run_at'])) {

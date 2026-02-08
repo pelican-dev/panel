@@ -100,7 +100,7 @@ class ScheduleResource extends Resource
                 Section::make('Cron')
                     ->label(trans('server/schedule.cron'))
                     ->description(function (Get $get) {
-                        $timezone = $get('timezone') ?? user()?->timezone ?? 'UTC';
+                        $timezone = $get('timezone') ?? user()->timezone ?? 'UTC';
 
                         try {
                             $nextRun = Utilities::getScheduleNextRunDate($get('cron_minute'), $get('cron_hour'), $get('cron_day_of_month'), $get('cron_month'), $get('cron_day_of_week'), $timezone)->timezone($timezone);
@@ -300,7 +300,7 @@ class ScheduleResource extends Resource
                         Select::make('timezone')
                             ->label(trans('server/schedule.timezone'))
                             ->options(fn () => array_combine(timezone_identifiers_list(), timezone_identifiers_list()))
-                            ->default(user()?->timezone ?? 'UTC')
+                            ->default(user()->timezone ?? 'UTC')
                             ->searchable()
                             ->live()
                             ->hiddenOn('view'),
