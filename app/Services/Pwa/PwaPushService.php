@@ -19,6 +19,9 @@ class PwaPushService
      *
      * Returns true on success, or an error reason string on failure.
      * Automatically deletes stale/expired subscriptions (404, 410, VAPID mismatch).
+     *
+     * @param  array<string, mixed>  $payload
+     * @param  array<string, string>  $vapid
      */
     public function sendToSubscription(PwaPushSubscription $subscription, array $payload, array $vapid): true|string
     {

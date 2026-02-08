@@ -44,6 +44,7 @@ class PwaSettingsRepository
         );
     }
 
+    /** @param  array<string, mixed>  $values */
     public function setMany(array $values): void
     {
         foreach ($values as $key => $value) {
@@ -51,6 +52,10 @@ class PwaSettingsRepository
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $defaults
+     * @return array<string, mixed>
+     */
     public function allWithDefaults(array $defaults): array
     {
         $settings = [];

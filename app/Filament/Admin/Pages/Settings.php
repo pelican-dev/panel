@@ -817,7 +817,7 @@ class Settings extends Page implements HasSchemas
      */
     private function pwaSettings(): array
     {
-        $pwa = app(PwaSettingsRepository::class);
+        $pwa = app(PwaSettingsRepository::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
         $pwa->ensureVapidKeys();
 
         return [
@@ -944,8 +944,8 @@ class Settings extends Page implements HasSchemas
                             ->visible(fn (Get $get) => $get('pwa_push_enabled'))
                             ->requiresConfirmation()
                             ->action(function () {
-                                $settings = app(PwaSettingsRepository::class);
-                                $push = app(PwaPushService::class);
+                                $settings = app(PwaSettingsRepository::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+                                $push = app(PwaPushService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
                                 $user = user();
 
                                 if (!$push->canSend()) {
@@ -1025,7 +1025,7 @@ class Settings extends Page implements HasSchemas
             }
 
             if ($pwaData !== []) {
-                app(PwaSettingsRepository::class)->setMany($pwaData);
+                app(PwaSettingsRepository::class)->setMany($pwaData); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
             }
 
             $data = array_map(function ($value) {

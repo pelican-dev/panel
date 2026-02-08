@@ -55,7 +55,7 @@ class PwaActions
                         ->label(trans('pwa.actions.test_push'))
                         ->icon('heroicon-o-paper-airplane')
                         ->color('warning')
-                        ->visible(fn () => (bool) app(PwaSettingsRepository::class)->get('push_enabled', false))
+                        ->visible(fn () => (bool) app(PwaSettingsRepository::class)->get('push_enabled', false)) // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
                         ->action(fn () => Notification::make()->title(trans('pwa.notifications.test_sent'))->success()->send())
                         ->extraAttributes(['onclick' => <<<JS
                             const btn = event.target;

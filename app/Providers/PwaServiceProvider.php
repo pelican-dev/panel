@@ -59,7 +59,7 @@ class PwaServiceProvider extends ServiceProvider
 
     private function getPwaHeadHtml(): HtmlString
     {
-        $settings = app(PwaSettingsRepository::class);
+        $settings = $this->app->make(PwaSettingsRepository::class);
 
         $appName = config('app.name', 'Pelican Panel');
 

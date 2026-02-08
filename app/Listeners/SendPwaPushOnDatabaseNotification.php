@@ -68,6 +68,7 @@ class SendPwaPushOnDatabaseNotification
         }
     }
 
+    /** @return array<string, mixed>|null */
     private function buildPayload(NotificationSent $event): ?array
     {
         if (method_exists($event->notification, 'toPwaPush')) {
@@ -97,11 +98,12 @@ class SendPwaPushOnDatabaseNotification
         return null;
     }
 
+    /** @return array<string, mixed> */
     private function payloadFromMailMessage(MailMessage $mail): array
     {
         $greeting = $mail->greeting;
-        $introLines = $mail->introLines ?? [];
-        $outroLines = $mail->outroLines ?? [];
+        $introLines = $mail->introLines;
+        $outroLines = $mail->outroLines;
         $subject = $mail->subject;
 
         $title = $subject ?: ($greeting ?: config('app.name', 'Pelican'));
@@ -133,6 +135,10 @@ class SendPwaPushOnDatabaseNotification
         return $payload;
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     private function normalizePayload(array $data): array
     {
         $defaultTitle = config('app.name', 'Pelican');
