@@ -76,6 +76,7 @@
                     document.getElementById(monacoId).editor = monaco.editor.create($refs.monacoEditorElement, {
                         value: monacoContent,
                         theme: localStorage.getItem('theme') === 'light' ? 'iPlastic' : 'custom',
+                        fontFamily: 'Consolas, \'Courier New\', \'Noto Sans Mono\', \'DejaVu Sans Mono\', monospace',
                         fontSize: monacoFontSize,
                         lineNumbersMinChars: lineNumbersMinChars,
                         automaticLayout: automaticLayout,
