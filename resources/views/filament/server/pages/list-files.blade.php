@@ -1,7 +1,7 @@
 <x-filament-panels::page>
     @once
         <style>
-            .files-selection-merged .fi-ta-header-ctn {
+            .fi-ta-header-ctn {
                 position: sticky;
                 top: 0;
                 z-index: 1;
