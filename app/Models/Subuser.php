@@ -115,7 +115,7 @@ class Subuser extends Model implements Validatable
         return $this->belongsTo(User::class);
     }
 
-    /** @return array<array{name: string, hidden: bool, icon: string, permissions: string[]}> */
+    /** @return array<array{name: string, hidden: bool, icon: string, permissions: string[], translationPrefix?: ?string, label?: ?string, description?: ?string, descriptions?: array<string, string>}> */
     public static function allPermissionData(): array
     {
         $allPermissions = [];
@@ -128,6 +128,10 @@ class Subuser extends Model implements Validatable
                 'hidden' => $subuserPermission->isHidden(),
                 'icon' => $subuserPermission->getIcon(),
                 'permissions' => array_merge($allPermissions[$group]['permissions'] ?? [], [$permission]),
+                'translationPrefix' => null,
+                'label' => null,
+                'description' => null,
+                'descriptions' => [],
             ];
         }
 

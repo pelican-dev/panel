@@ -93,16 +93,14 @@ class SubuserResource extends Resource
                 $permissionsArray[$data['name']][] = $permission;
             }
 
-            $customLabel = $data['label'] ?? null;
-            $customDescription = $data['description'] ?? null;
             $tabLabelKey = $translationPrefix . $data['name'];
             $groupDescKey = $translationPrefix . $data['name'] . '_desc';
 
             $tabs[] = Tab::make($data['name'])
-                ->label($customLabel ?? (trans()->has($tabLabelKey) ? trans($tabLabelKey) : str($data['name'])->headline()))
+                ->label($data['label'] ?? (trans()->has($tabLabelKey) ? trans($tabLabelKey) : str($data['name'])->headline()))
                 ->schema([
                     Section::make()
-                        ->description($customDescription ?? (trans()->has($groupDescKey) ? trans($groupDescKey) : null))
+                        ->description($data['description'] ?? (trans()->has($groupDescKey) ? trans($groupDescKey) : null))
                         ->icon($data['icon'])
                         ->contained(false)
                         ->schema([
