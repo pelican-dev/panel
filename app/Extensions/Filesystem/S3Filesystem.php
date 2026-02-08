@@ -12,6 +12,8 @@ use SimpleXMLElement;
 
 class S3Filesystem extends AwsS3V3Adapter
 {
+    private ?GuzzleClient $guzzle = null;
+
     /**
      * @param  array<mixed>  $options
      */
@@ -29,6 +31,18 @@ class S3Filesystem extends AwsS3V3Adapter
             null,
             $options,
         );
+    }
+
+    private function getGuzzleClient(): GuzzleClient
+    {
+        if ($this->guzzle === null) {
+            $this->guzzle = new GuzzleClient([
+                'timeout' => 30,
+                'connect_timeout' => 10,
+            ]);
+        }
+
+        return $this->guzzle;
     }
 
     public function getClient(): S3ClientInterface
@@ -51,8 +65,7 @@ class S3Filesystem extends AwsS3V3Adapter
     {
         $presignedRequest = $this->client->createPresignedRequest($command, '+60 minutes');
 
-        $guzzle = new GuzzleClient();
-        $response = $guzzle->send($presignedRequest);
+        $response = $this->getGuzzleClient()->send($presignedRequest);
 
         $body = (string) $response->getBody();
         $commandName = $command->getName();
