@@ -36,8 +36,14 @@ class Subuser extends Model implements Validatable
     /** @var array<string, array{name: string, hidden: ?bool, icon: ?string, permissions: string[]}> */
     protected static array $customPermissions = [];
 
-    /** @param string[] $permissions */
-    public static function registerCustomPermissions(string $name, array $permissions, ?string $icon = null, ?bool $hidden = null, ?string $translationPrefix = null): void
+    /**
+     * @param  string[]  $permissions
+     * @param  ?string  $label  Custom label for the permission tab (overrides translation lookup)
+     * @param  ?string  $description  Custom description for the permission group (overrides translation lookup)
+     * @param  ?array<string, string>  $descriptions  Custom descriptions keyed by permission name (overrides translation lookup)
+     * @param  ?string  $translationPrefix  Translation prefix for looking up labels/descriptions (e.g. 'my-plugin::permissions.')
+     */
+    public static function registerCustomPermissions(string $name, array $permissions, ?string $icon = null, ?bool $hidden = null, ?string $translationPrefix = null, ?string $label = null, ?string $description = null, ?array $descriptions = null): void
     {
         $customPermission = static::$customPermissions[$name] ?? [];
 
@@ -54,6 +60,18 @@ class Subuser extends Model implements Validatable
 
         if (!is_null($translationPrefix)) {
             $customPermission['translationPrefix'] = $translationPrefix;
+        }
+
+        if (!is_null($label)) {
+            $customPermission['label'] = $label;
+        }
+
+        if (!is_null($description)) {
+            $customPermission['description'] = $description;
+        }
+
+        if (!is_null($descriptions)) {
+            $customPermission['descriptions'] = array_merge($customPermission['descriptions'] ?? [], $descriptions);
         }
 
         static::$customPermissions[$name] = $customPermission;
@@ -124,6 +142,9 @@ class Subuser extends Model implements Validatable
                 'icon' => $customPermission['icon'] ?? $groupData['icon'],
                 'permissions' => array_unique(array_merge($groupData['permissions'] ?? [], $customPermission['permissions'])),
                 'translationPrefix' => $customPermission['translationPrefix'] ?? $groupData['translationPrefix'] ?? null,
+                'label' => $customPermission['label'] ?? $groupData['label'] ?? null,
+                'description' => $customPermission['description'] ?? $groupData['description'] ?? null,
+                'descriptions' => array_merge($groupData['descriptions'] ?? [], $customPermission['descriptions'] ?? []),
             ];
 
             $allPermissions[$name] = $groupData;
