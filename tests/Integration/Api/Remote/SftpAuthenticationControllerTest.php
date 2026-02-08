@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\UserSSHKey;
 use App\Tests\Integration\IntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Spatie\Permission\Models\Permission;
 
 class SftpAuthenticationControllerTest extends IntegrationTestCase
 {
@@ -215,7 +216,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
 
         // Assign a role with only "view server" permission
         $role = Role::findOrCreate('view-only-test', 'web');
-        $permission = \Spatie\Permission\Models\Permission::findOrCreate('view server', 'web');
+        $permission = Permission::findOrCreate('view server', 'web');
         $role->givePermissionTo($permission);
         $user->syncRoles($role);
 

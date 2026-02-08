@@ -37,7 +37,7 @@ class GetUserPermissionsService
 
         /** @var Subuser|null $subuser */
         $subuser = $server->subusers()->where('user_id', $user->id)->first();
-        $subuserPermissions = $subuser->permissions ?? [];
+        $subuserPermissions = $subuser?->permissions ?? [];
 
         if ($isAdmin) {
             return array_unique(array_merge(
