@@ -2,13 +2,17 @@
 
 namespace App\Extensions\OAuth\Schemas;
 
+use App\Enums\TablerIcon;
 use App\Extensions\OAuth\OAuthSchemaInterface;
+use App\Models\User;
+use BackedEnum;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
 use Illuminate\Support\Str;
+use Laravel\Socialite\Contracts\User as OAuthUser;
 
 abstract class OAuthSchema implements OAuthSchemaInterface
 {
@@ -59,8 +63,8 @@ abstract class OAuthSchema implements OAuthSchemaInterface
                 ->label(trans('admin/setting.oauth.create_missing_users'))
                 ->columnSpan(2)
                 ->inline(false)
-                ->onIcon('tabler-check')
-                ->offIcon('tabler-x')
+                ->onIcon(TablerIcon::Check)
+                ->offIcon(TablerIcon::X)
                 ->onColor('success')
                 ->offColor('danger')
                 ->formatStateUsing(fn ($state) => (bool) $state)
@@ -70,8 +74,8 @@ abstract class OAuthSchema implements OAuthSchemaInterface
                 ->label(trans('admin/setting.oauth.link_missing_users'))
                 ->columnSpan(2)
                 ->inline(false)
-                ->onIcon('tabler-check')
-                ->offIcon('tabler-x')
+                ->onIcon(TablerIcon::Check)
+                ->offIcon(TablerIcon::X)
                 ->onColor('success')
                 ->offColor('danger')
                 ->formatStateUsing(fn ($state) => (bool) $state)
@@ -104,7 +108,7 @@ abstract class OAuthSchema implements OAuthSchemaInterface
         return "OAUTH_{$id}_ENABLED";
     }
 
-    public function getIcon(): ?string
+    public function getIcon(): null|string|BackedEnum
     {
         return null;
     }
@@ -116,19 +120,17 @@ abstract class OAuthSchema implements OAuthSchemaInterface
 
     public function isEnabled(): bool
     {
-        $id = Str::upper($this->getId());
-
-        return env("OAUTH_{$id}_ENABLED", false);
+        return env($this->getConfigKey(), false);
     }
 
-    public function shouldCreateMissingUsers(): bool
+    public function shouldCreateMissingUser(OAuthUser $user): bool
     {
         $id = Str::upper($this->getId());
 
         return env("OAUTH_{$id}_SHOULD_CREATE_MISSING_USERS", false);
     }
 
-    public function shouldLinkMissingUsers(): bool
+    public function shouldLinkMissingUser(User $user, OAuthUser $oauthUser): bool
     {
         $id = Str::upper($this->getId());
 

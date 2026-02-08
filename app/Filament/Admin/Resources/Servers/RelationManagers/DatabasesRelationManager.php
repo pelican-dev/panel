@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Servers\RelationManagers;
 
+use App\Enums\TablerIcon;
 use App\Filament\Components\Actions\RotateDatabasePasswordAction;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\Database;
@@ -18,7 +19,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -49,7 +49,7 @@ class DatabasesRelationManager extends RelationManager
                     ->formatStateUsing(fn (Database $record) => $record->remote === '%' ? trans('admin/databasehost.anywhere'). ' ( % )' : $record->remote),
                 TextInput::make('max_connections')
                     ->label(trans('admin/databasehost.table.max_connections'))
-                    ->formatStateUsing(fn (Database $record) => $record->max_connections === 0 ? trans('admin/databasehost.unlimited') : $record->max_connections),
+                    ->formatStateUsing(fn (Database $record) => $record->max_connections ?: trans('admin/databasehost.unlimited')),
                 TextInput::make('jdbc')
                     ->label(trans('admin/databasehost.table.connection_string'))
                     ->columnSpanFull()
@@ -75,7 +75,7 @@ class DatabasesRelationManager extends RelationManager
                     ->url(fn (Database $database) => route('filament.admin.resources.servers.edit', ['record' => $database->server_id])),
                 TextColumn::make('max_connections')
                     ->label(trans('admin/databasehost.table.max_connections'))
-                    ->formatStateUsing(fn ($record) => $record->max_connections === 0 ? trans('admin/databasehost.unlimited') : $record->max_connections),
+                    ->formatStateUsing(fn ($record) => $record->max_connections ?: trans('admin/databasehost.unlimited')),
                 DateTimeColumn::make('created_at')
                     ->label(trans('admin/databasehost.table.created_at')),
             ])
@@ -83,7 +83,6 @@ class DatabasesRelationManager extends RelationManager
                 ViewAction::make()
                     ->color('primary'),
                 DeleteAction::make()
-                    ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->successNotificationTitle(null)
                     ->using(function (Database $database, DatabaseManagementService $service) {
                         try {
@@ -105,11 +104,11 @@ class DatabasesRelationManager extends RelationManager
             ])
             ->toolbarActions([
                 CreateAction::make()
+                    ->hiddenLabel()
                     ->disabled(fn () => DatabaseHost::count() < 1)
-                    ->label(fn () => DatabaseHost::count() < 1 ? trans('admin/server.no_db_hosts') : trans('admin/server.create_database'))
+                    ->tooltip(fn () => DatabaseHost::count() < 1 ? trans('admin/server.no_db_hosts') : trans('admin/server.create_database'))
                     ->color(fn () => DatabaseHost::count() < 1 ? 'danger' : 'primary')
-                    ->icon(fn () => DatabaseHost::count() < 1 ? 'tabler-database-x' : 'tabler-database-plus')
-                    ->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->icon(fn () => DatabaseHost::count() < 1 ? TablerIcon::DatabaseX : TablerIcon::DatabasePlus)
                     ->createAnother(false)
                     ->action(function (array $data, DatabaseManagementService $service, RandomWordService $randomWordService) {
                         $data['database'] ??= $randomWordService->word() . random_int(1, 420);
@@ -143,13 +142,13 @@ class DatabasesRelationManager extends RelationManager
                             ->label(trans('admin/server.name'))
                             ->alphaDash()
                             ->prefix(fn () => 's' . $this->getOwnerRecord()->id . '_')
-                            ->hintIcon('tabler-question-mark', trans('admin/databasehost.table.name_helper')),
+                            ->hintIcon(TablerIcon::QuestionMark, trans('admin/databasehost.table.name_helper')),
                         TextInput::make('remote')
                             ->columnSpan(1)
                             ->regex('/^[\w\-\/.%:]+$/')
                             ->label(trans('admin/databasehost.table.remote'))
                             ->default('%')
-                            ->hintIcon('tabler-question-mark', trans('admin/databasehost.table.remote_helper')),
+                            ->hintIcon(TablerIcon::QuestionMark, trans('admin/databasehost.table.remote_helper')),
                     ]),
             ]);
     }

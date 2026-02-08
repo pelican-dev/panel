@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Enums\TablerIcon;
 use App\Services\Helpers\PluginService;
 use Boquizo\FilamentLogViewer\FilamentLogViewerPlugin;
 use Filament\Actions\Action;
@@ -22,7 +23,7 @@ class AppPanelProvider extends PanelProvider
                 Action::make('to_admin')
                     ->label(trans('profile.admin'))
                     ->url(fn () => Filament::getPanel('admin')->getUrl())
-                    ->icon('tabler-arrow-forward')
+                    ->icon(TablerIcon::ArrowForward)
                     ->visible(fn () => user()?->canAccessPanel(Filament::getPanel('admin'))),
             ])
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')

@@ -2,15 +2,26 @@
 
 namespace App\Providers\Filament;
 
+use App\Enums\CustomizationKey;
+use App\Enums\TablerIcon;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Actions\View\ActionsIconAlias;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput\Actions\CopyAction;
+use Filament\Forms\Components\TextInput\Actions\HidePasswordAction;
+use Filament\Forms\Components\TextInput\Actions\ShowPasswordAction;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Notifications\View\NotificationsIconAlias;
 use Filament\Schemas\View\SchemaIconAlias;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
@@ -85,51 +96,166 @@ class FilamentServiceProvider extends ServiceProvider
         });
 
         Select::configureUsing(fn (Select $select) => $select->native(false));
-        DeleteAction::configureUsing(fn (DeleteAction $action) => $action->icon('tabler-trash'));
+
+        KeyValue::configureUsing(fn (KeyValue $keyValue) => $keyValue->deleteAction(function (Action $action) {
+            $action->tooltip(fn () => $action->getLabel());
+            $action->iconSize(IconSize::Large);
+        }));
+
+        Repeater::configureUsing(fn (Repeater $repeater) => $repeater->deleteAction(function (Action $action) {
+            $action->tooltip(fn () => $action->getLabel());
+            $action->iconSize(IconSize::Large);
+        }));
+
+        ShowPasswordAction::configureUsing(function (ShowPasswordAction $action) {
+            $action->tooltip(fn () => $action->getLabel());
+            $action->iconSize(IconSize::Large);
+        });
+
+        HidePasswordAction::configureUsing(function (HidePasswordAction $action) {
+            $action->tooltip(fn () => $action->getLabel());
+            $action->iconSize(IconSize::Large);
+        });
+
+        CopyAction::configureUsing(function (CopyAction $action) {
+            $action->tooltip(fn () => $action->getLabel());
+            $action->iconSize(IconSize::Large);
+        });
+
+        DeleteAction::configureUsing(function (DeleteAction $action) {
+            $action->icon(TablerIcon::Trash);
+            $action->tooltip(fn () => $action->getLabel());
+            $action->hiddenLabel();
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
+        });
+
+        CreateAction::configureUsing(function (CreateAction $action) {
+            $action->icon(TablerIcon::Plus);
+            $action->tooltip(fn () => $action->getLabel());
+            $action->hiddenLabel();
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
+        });
+
+        EditAction::configureUsing(function (EditAction $action) {
+            $action->icon(TablerIcon::Pencil);
+            $action->tooltip(fn () => $action->getLabel());
+            $action->hiddenLabel();
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
+        });
+
+        ViewAction::configureUsing(function (ViewAction $action) {
+            $action->icon(TablerIcon::Eye);
+            $action->tooltip(fn () => $action->getLabel());
+            $action->hiddenLabel();
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
+        });
+
+        Action::configureUsing(function (Action $action) {
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $name = $action->getName();
+
+                $excludedPrefixes = [
+                    'enable_oauth_',
+                    'disable_oauth_',
+                    'enable_captcha_',
+                    'disable_captcha_',
+                    'oauth_',
+                    'db_', // dashboard
+                    'fm_', // file manager
+                    'hint_', // hint actions
+                    'exclude_', // exclude actions
+                ];
+
+                $excludeActions = [
+                    'profile',
+                    'logout',
+                    'start',
+                    'stop',
+                    'restart',
+                    'kill',
+                    'fileUpload',
+                ];
+
+                foreach ($excludedPrefixes as $prefix) {
+                    if (str_starts_with($name, $prefix)) {
+                        return;
+                    }
+                }
+
+                if (in_array($name, $excludeActions, true)) {
+                    return;
+                }
+
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
+        });
 
         FilamentIcon::register([
-            ActionsIconAlias::DELETE_ACTION => 'tabler-trash',
-            ActionsIconAlias::DETACH_ACTION => 'tabler-trash',
-            ActionsIconAlias::EDIT_ACTION => 'tabler-pencil',
-            ActionsIconAlias::VIEW_ACTION => 'tabler-eye',
-            ActionsIconAlias::REPLICATE_ACTION => 'tabler-copy-plus',
+            ActionsIconAlias::DELETE_ACTION => TablerIcon::Trash,
+            ActionsIconAlias::DETACH_ACTION => TablerIcon::Trash,
+            ActionsIconAlias::EDIT_ACTION => TablerIcon::Pencil,
+            ActionsIconAlias::VIEW_ACTION => TablerIcon::Eye,
+            ActionsIconAlias::REPLICATE_ACTION => TablerIcon::CopyPlus,
 
-            PanelsIconAlias::USER_MENU_LOGOUT_BUTTON => 'tabler-logout-2',
-            PanelsIconAlias::USER_MENU_PROFILE_ITEM => 'tabler-user',
-            PanelsIconAlias::THEME_SWITCHER_LIGHT_BUTTON => 'tabler-sun',
-            PanelsIconAlias::THEME_SWITCHER_DARK_BUTTON => 'tabler-moon',
-            PanelsIconAlias::THEME_SWITCHER_SYSTEM_BUTTON => 'tabler-device-desktop',
-            PanelsIconAlias::SIDEBAR_OPEN_DATABASE_NOTIFICATIONS_BUTTON => 'tabler-bell',
-            PanelsIconAlias::TOPBAR_OPEN_DATABASE_NOTIFICATIONS_BUTTON => 'tabler-bell',
-            PanelsIconAlias::GLOBAL_SEARCH_FIELD => 'tabler-search',
-            PanelsIconAlias::SIDEBAR_EXPAND_BUTTON => 'tabler-arrow-right-dashed',
-            PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON => 'tabler-arrow-left-dashed',
+            PanelsIconAlias::USER_MENU_LOGOUT_BUTTON => TablerIcon::Logout2,
+            PanelsIconAlias::USER_MENU_PROFILE_ITEM => TablerIcon::User,
+            PanelsIconAlias::THEME_SWITCHER_LIGHT_BUTTON => TablerIcon::Sun,
+            PanelsIconAlias::THEME_SWITCHER_DARK_BUTTON => TablerIcon::Moon,
+            PanelsIconAlias::THEME_SWITCHER_SYSTEM_BUTTON => TablerIcon::DeviceDesktop,
+            PanelsIconAlias::SIDEBAR_OPEN_DATABASE_NOTIFICATIONS_BUTTON => TablerIcon::Bell,
+            PanelsIconAlias::TOPBAR_OPEN_DATABASE_NOTIFICATIONS_BUTTON => TablerIcon::Bell,
+            PanelsIconAlias::GLOBAL_SEARCH_FIELD => TablerIcon::Search,
+            PanelsIconAlias::SIDEBAR_EXPAND_BUTTON => TablerIcon::ArrowRightDashed,
+            PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON => TablerIcon::ArrowLeftDashed,
 
-            TablesIconAlias::ACTIONS_FILTER => 'tabler-filters',
-            TablesIconAlias::SEARCH_FIELD => 'tabler-search',
-            TablesIconAlias::ACTIONS_COLUMN_MANAGER => 'tabler-columns',
-            TablesIconAlias::ACTIONS_OPEN_BULK_ACTIONS => 'tabler-box-multiple',
+            TablesIconAlias::ACTIONS_FILTER => TablerIcon::Filters,
+            TablesIconAlias::SEARCH_FIELD => TablerIcon::Search,
+            TablesIconAlias::ACTIONS_COLUMN_MANAGER => TablerIcon::Columns,
+            TablesIconAlias::ACTIONS_OPEN_BULK_ACTIONS => TablerIcon::BoxMultiple,
 
-            NotificationsIconAlias::DATABASE_MODAL_EMPTY_STATE => 'tabler-bell-off',
-            NotificationsIconAlias::NOTIFICATION_CLOSE_BUTTON => 'tabler-x',
-            NotificationsIconAlias::NOTIFICATION_INFO => 'tabler-info-circle',
-            NotificationsIconAlias::NOTIFICATION_SUCCESS => 'tabler-circle-check',
-            NotificationsIconAlias::NOTIFICATION_WARNING => 'tabler-alert-triangle',
-            NotificationsIconAlias::NOTIFICATION_DANGER => 'tabler-alert-circle',
+            NotificationsIconAlias::DATABASE_MODAL_EMPTY_STATE => TablerIcon::BellOff,
+            NotificationsIconAlias::NOTIFICATION_CLOSE_BUTTON => TablerIcon::X,
+            NotificationsIconAlias::NOTIFICATION_INFO => TablerIcon::InfoCircle,
+            NotificationsIconAlias::NOTIFICATION_SUCCESS => TablerIcon::CircleCheck,
+            NotificationsIconAlias::NOTIFICATION_WARNING => TablerIcon::AlertTriangle,
+            NotificationsIconAlias::NOTIFICATION_DANGER => TablerIcon::AlertCircle,
 
-            SupportIconAlias::MODAL_CLOSE_BUTTON => 'tabler-x',
-            SupportIconAlias::BREADCRUMBS_SEPARATOR => 'tabler-chevrons-right',
-            SupportIconAlias::PAGINATION_NEXT_BUTTON => 'tabler-arrow-right',
-            SupportIconAlias::PAGINATION_PREVIOUS_BUTTON => 'tabler-arrow-left',
-            SupportIconAlias::SECTION_COLLAPSE_BUTTON => 'tabler-chevron-up',
+            SupportIconAlias::MODAL_CLOSE_BUTTON => TablerIcon::X,
+            SupportIconAlias::BREADCRUMBS_SEPARATOR => TablerIcon::ChevronsRight,
+            SupportIconAlias::PAGINATION_NEXT_BUTTON => TablerIcon::ArrowRight,
+            SupportIconAlias::PAGINATION_PREVIOUS_BUTTON => TablerIcon::ArrowLeft,
+            SupportIconAlias::SECTION_COLLAPSE_BUTTON => TablerIcon::ChevronUp,
 
-            FormsIconAlias::COMPONENTS_KEY_VALUE_ACTIONS_DELETE => 'tabler-trash',
-            FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_DELETE => 'tabler-trash',
-            FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_EXPAND => 'tabler-chevron-down',
-            FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_COLLAPSE => 'tabler-chevron-up',
-            FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_REORDER => 'tabler-arrows-sort',
+            FormsIconAlias::COMPONENTS_KEY_VALUE_ACTIONS_DELETE => TablerIcon::Trash,
+            FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_DELETE => TablerIcon::Trash,
+            FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_EXPAND => TablerIcon::ChevronDown,
+            FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_COLLAPSE => TablerIcon::ChevronUp,
+            FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_REORDER => TablerIcon::ArrowsSort,
 
-            SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP => 'tabler-check',
+            SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP => TablerIcon::Check,
         ]);
     }
 

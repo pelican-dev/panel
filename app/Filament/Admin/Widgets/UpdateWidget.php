@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 
+use App\Enums\TablerIcon;
 use App\Services\Helpers\SoftwareVersionService;
 use Exception;
 use Filament\Actions\Action;
@@ -31,7 +32,7 @@ class UpdateWidget extends FormWidget
             ->components([
                 $isLatest
                 ? Section::make(trans('admin/dashboard.sections.intro-no-update.heading'))
-                    ->icon('tabler-checkbox')
+                    ->icon(TablerIcon::Checkbox)
                     ->iconColor('success')
                     ->schema([
                         TextEntry::make('info')
@@ -39,14 +40,14 @@ class UpdateWidget extends FormWidget
                             ->state(trans('admin/dashboard.sections.intro-no-update.content', ['version' => $this->softwareVersionService->currentPanelVersion()])),
                     ])
                 : Section::make(trans('admin/dashboard.sections.intro-update-available.heading'))
-                    ->icon('tabler-info-circle')
+                    ->icon(TablerIcon::InfoCircle)
                     ->iconColor('warning')
                     ->schema([
                         TextEntry::make('info')
                             ->hiddenLabel()
                             ->state(trans('admin/dashboard.sections.intro-update-available.content', ['latestVersion' => $this->softwareVersionService->latestPanelVersion()])),
                         Section::make(trans('admin/dashboard.sections.intro-update-available.button_changelog'))
-                            ->icon('tabler-script')
+                            ->icon(TablerIcon::Script)
                             ->collapsible()
                             ->collapsed()
                             ->schema([
@@ -57,9 +58,9 @@ class UpdateWidget extends FormWidget
                             ]),
                     ])
                     ->headerActions([
-                        Action::make('update')
+                        Action::make('db_update')
                             ->label(trans('admin/dashboard.sections.intro-update-available.heading'))
-                            ->icon('tabler-clipboard-text')
+                            ->icon(TablerIcon::ClipboardText)
                             ->url('https://pelican.dev/docs/panel/update', true)
                             ->color('warning'),
                     ]),

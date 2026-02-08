@@ -5,6 +5,7 @@ namespace App\Filament\App\Resources\Servers\Pages;
 use App\Enums\CustomizationKey;
 use App\Enums\ServerResourceType;
 use App\Enums\SubuserPermission;
+use App\Enums\TablerIcon;
 use App\Filament\App\Resources\Servers\ServerResource;
 use App\Filament\Components\Tables\Columns\ProgressBarColumn;
 use App\Filament\Components\Tables\Columns\ServerEntryColumn;
@@ -127,7 +128,7 @@ class ListServers extends ListRecords
             ->recordActions(!$usingGrid ? static::getPowerActionGroup() : [])
             ->recordActionsAlignment(Alignment::Center->value)
             ->contentGrid($usingGrid ? ['default' => 1, 'md' => 2] : null)
-            ->emptyStateIcon('tabler-brand-docker')
+            ->emptyStateIcon(TablerIcon::BrandDocker)
             ->emptyStateDescription('')
             ->emptyStateHeading(fn () => $this->activeTab === 'my' ? 'You don\'t own any servers!' : 'You don\'t have access to any servers!')
             ->persistFiltersInSession()
@@ -243,34 +244,34 @@ class ListServers extends ListRecords
             Action::make('start')
                 ->label(trans('server/console.power_actions.start'))
                 ->color('primary')
-                ->icon('tabler-player-play-filled')
+                ->icon(TablerIcon::PlayerPlayFilled)
                 ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlStart, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isStartable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'start']),
             Action::make('restart')
                 ->label(trans('server/console.power_actions.restart'))
                 ->color('gray')
-                ->icon('tabler-reload')
+                ->icon(TablerIcon::Reload)
                 ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlRestart, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isRestartable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'restart']),
             Action::make('stop')
                 ->label(trans('server/console.power_actions.stop'))
                 ->color('danger')
-                ->icon('tabler-player-stop-filled')
+                ->icon(TablerIcon::PlayerStopFilled)
                 ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlStop, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isStoppable() && !$server->retrieveStatus()->isKillable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'stop']),
             Action::make('kill')
                 ->label(trans('server/console.power_actions.kill'))
                 ->color('danger')
-                ->icon('tabler-alert-square')
+                ->icon(TablerIcon::AlertSquare)
                 ->tooltip(trans('server/console.power_actions.kill_tooltip'))
                 ->authorize(fn (Server $server) => user()?->can(SubuserPermission::ControlStop, $server))
                 ->visible(fn (Server $server) => $server->retrieveStatus()->isKillable())
                 ->dispatch('powerAction', fn (Server $server) => ['server' => $server, 'action' => 'kill']),
         ])
-            ->icon('tabler-power')
+            ->icon(TablerIcon::Power)
             ->color('primary')
             ->tooltip(trans('server/dashboard.power_actions'))
             ->hidden(fn (Server $server) => $server->isInConflictState())

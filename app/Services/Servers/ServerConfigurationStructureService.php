@@ -3,7 +3,6 @@
 namespace App\Services\Servers;
 
 use App\Extensions\Features\FeatureService;
-use App\Models\Egg;
 use App\Models\Mount;
 use App\Models\Server;
 
@@ -39,6 +38,7 @@ class ServerConfigurationStructureService
      * Returns the data format used for the daemon.
      *
      * @return array{
+     *     id: int,
      *     uuid: string,
      *     meta: array{name: string, description: string},
      *     suspended: bool,
@@ -70,6 +70,7 @@ class ServerConfigurationStructureService
     protected function returnFormat(Server $server): array
     {
         $response = [
+            'id' => $server->id,
             'uuid' => $server->uuid,
             'meta' => [
                 'name' => $server->name,

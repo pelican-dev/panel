@@ -21,7 +21,7 @@ class ServerInstalledListener
             ->title(trans('notifications.' . ($event->initialInstall ? 'installation' : 'reinstallation') . '_' . ($event->successful ? 'completed' : 'failed'), locale: $locale))
             ->body(trans('server/setting.server_info.server_name', ['name' => $event->server->name], $locale))
             ->actions([
-                Action::make('view')
+                Action::make('exclude_view')
                     ->button()
                     ->label(trans('notifications.open_server', locale: $locale))
                     ->markAsRead()

@@ -20,9 +20,11 @@ class MailTested extends Notification
 
     public function toMail(): MailMessage
     {
+        $locale = $this->user->language ?? 'en';
+
         return (new MailMessage())
-            ->subject('Panel Test Message')
-            ->greeting('Hello ' . $this->user->username . '!')
-            ->line('This is a test of the Panel mail system. You\'re good to go!');
+            ->subject(trans('mail.mail_tested.subject', locale: $locale))
+            ->greeting(trans('mail.greeting', ['name' => $this->user->username], $locale))
+            ->line(trans('mail.mail_tested.body', locale: $locale));
     }
 }

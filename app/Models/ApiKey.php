@@ -174,6 +174,7 @@ class ApiKey extends PersonalAccessToken
         Database::RESOURCE_NAME,
         Mount::RESOURCE_NAME,
         Role::RESOURCE_NAME,
+        Plugin::RESOURCE_NAME,
     ];
 
     /** @var string[] */

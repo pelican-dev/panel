@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Mounts;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Mounts\Pages\CreateMount;
 use App\Filament\Admin\Resources\Mounts\Pages\EditMount;
 use App\Filament\Admin\Resources\Mounts\Pages\ListMounts;
@@ -11,7 +12,10 @@ use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
+use BackedEnum;
 use Exception;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -21,7 +25,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Schema;
@@ -38,7 +41,7 @@ class MountResource extends Resource
 
     protected static ?string $model = Mount::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-layers-linked';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::LayersLinked;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -89,7 +92,7 @@ class MountResource extends Resource
                 TextColumn::make('read_only')
                     ->label(trans('admin/mount.table.read_only'))
                     ->badge()
-                    ->icon(fn ($state) => $state ? 'tabler-writing-off' : 'tabler-writing')
+                    ->icon(fn ($state) => $state ? TablerIcon::WritingOff : TablerIcon::Writing)
                     ->color(fn ($state) => $state ? 'success' : 'warning')
                     ->formatStateUsing(fn ($state) => $state ? trans('admin/mount.toggles.read_only') : trans('admin/mount.toggles.writable')),
             ])
@@ -98,10 +101,13 @@ class MountResource extends Resource
                     ->hidden(fn ($record) => static::getEditAuthorizationResponse($record)->allowed()),
                 EditAction::make(),
             ])
-            ->groupedBulkActions([
-                DeleteBulkAction::make(),
+            ->toolbarActions([
+                CreateAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ])
-            ->emptyStateIcon('tabler-layers-linked')
+            ->emptyStateIcon(TablerIcon::LayersLinked)
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/mount.no_mounts'));
     }
@@ -128,8 +134,8 @@ class MountResource extends Resource
                             true => trans('admin/mount.toggles.read_only'),
                         ])
                         ->icons([
-                            false => 'tabler-writing',
-                            true => 'tabler-writing-off',
+                            false => TablerIcon::Writing,
+                            true => TablerIcon::WritingOff,
                         ])
                         ->colors([
                             false => 'warning',
@@ -151,30 +157,32 @@ class MountResource extends Resource
                         ->label(trans('admin/mount.description'))
                         ->helperText(trans('admin/mount.description_help'))
                         ->columnSpanFull(),
-                ])->columnSpan(1)->columns([
-                    'default' => 1,
-                    'lg' => 2,
-                ]),
-                Group::make()->schema([
-                    Section::make()->schema([
-                        Select::make('eggs')->multiple()
-                            ->label(trans('admin/mount.eggs'))
-                            // Selecting only non-json fields to prevent Postgres from choking on DISTINCT JSON columns
-                            ->relationship('eggs', 'name', fn (Builder $query) => $query->select(['eggs.id', 'eggs.name']))
-                            ->preload(),
-                        Select::make('nodes')->multiple()
-                            ->label(trans('admin/mount.nodes'))
-                            ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', user()?->accessibleNodes()->pluck('id')))
-                            ->searchable(['name', 'fqdn'])
-                            ->preload(),
+                ])
+                    ->columnSpan([
+                        'default' => 1,
+                        'lg' => 2,
+                    ])
+                    ->columns([
+                        'default' => 1,
+                        'xl' => 2,
                     ]),
-                ])->columns([
-                    'default' => 1,
-                    'lg' => 2,
+                Section::make()->schema([
+                    Select::make('eggs')
+                        ->multiple()
+                        ->label(trans('admin/mount.eggs'))
+                        // Selecting only non-json fields to prevent Postgres from choking on DISTINCT JSON columns
+                        ->relationship('eggs', 'name', fn (Builder $query) => $query->select(['eggs.id', 'eggs.name']))
+                        ->preload(),
+                    Select::make('nodes')
+                        ->multiple()
+                        ->label(trans('admin/mount.nodes'))
+                        ->relationship('nodes', 'name', fn (Builder $query) => $query->whereIn('nodes.id', user()?->accessibleNodes()->pluck('id')))
+                        ->searchable(['name', 'fqdn'])
+                        ->preload(),
                 ]),
             ])->columns([
                 'default' => 1,
-                'lg' => 2,
+                'lg' => 3,
             ]);
     }
 

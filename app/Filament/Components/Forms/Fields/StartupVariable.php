@@ -3,6 +3,7 @@
 namespace App\Filament\Components\Forms\Fields;
 
 use App\Enums\StartupVariableType;
+use App\Enums\TablerIcon;
 use App\Models\ServerVariable;
 use Closure;
 use Filament\Forms\Components\Concerns\HasAffixes;
@@ -46,7 +47,7 @@ class StartupVariable extends Field
 
         $this->prefix(fn (StartupVariable $component) => '{{' . $component->getVariableEnv() . '}}');
 
-        $this->hintIcon('tabler-code', fn (StartupVariable $component) => implode('|', $component->getVariableRules()));
+        $this->hintIcon(TablerIcon::Code, fn (StartupVariable $component) => implode('|', $component->getVariableRules()));
 
         $this->helperText(fn (StartupVariable $component) => !$component->getVariableDesc() ? '—' : $component->getVariableDesc());
 

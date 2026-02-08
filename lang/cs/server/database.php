@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'Databáze',
+    'empty' => 'Žádné databáze',
+    'create_database' => 'Vytvořit databázi',
+    'limit' => 'Dosáhli jsme limitu databáze',
+    'viewing' => 'Zobrazení: :database',
+    'host' => 'Hostitel',
+    'database' => 'Databáze',
+    'username' => 'Uživatelské jméno',
+    'password' => 'Heslo',
+    'remote' => 'Vzdálené',
+    'created_at' => 'Vytvořeno v',
+    'name' => 'Název databáze',
+    'name_hint' => 'Ponecháním tohoto prázdného bude automaticky generováno náhodné jméno',
+    'connections_from' => 'Připojení od',
+    'max_connections' => 'Maximální počet připojení',
+    'database_host' => 'Host databáze',
+    'database_host_select' => 'Vybrat hostitele databáze',
+    'jdbc' => 'JDBC připojovací řetězec',
+    'create_notification' => 'Vytvořeno :database',
+    'create_notification_fail' => 'Nepodařilo se vytvořit :database',
+    'delete_notification' => 'Smazáno :database',
+    'delete_notification_fail' => 'Nepodařilo se smazat :database',
+];

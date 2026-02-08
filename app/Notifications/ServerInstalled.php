@@ -24,10 +24,12 @@ class ServerInstalled extends Notification implements ShouldQueue
 
     public function toMail(User $notifiable): MailMessage
     {
+        $locale = $notifiable->language ?? 'en';
+
         return (new MailMessage())
-            ->greeting('Hello ' . $notifiable->username . '.')
-            ->line('Your server has finished installing and is now ready for you to use.')
-            ->line('Server Name: ' . $this->server->name)
-            ->action('Login and Begin Using', Console::getUrl(panel: 'server', tenant: $this->server));
+            ->greeting(trans('mail.greeting', ['name' => $notifiable->username], $locale))
+            ->line(trans('mail.server_installed.body', locale: $locale))
+            ->line(trans('mail.server_installed.server_name', ['name' => $this->server->name], $locale))
+            ->action(trans('mail.server_installed.action', locale: $locale), Console::getUrl(panel: 'server', tenant: $this->server));
     }
 }

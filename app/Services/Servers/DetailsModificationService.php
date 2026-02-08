@@ -48,7 +48,7 @@ class DetailsModificationService
             // websockets.
             if ($server->owner_id !== $owner) {
                 try {
-                    $this->serverRepository->setServer($server)->revokeUserJTI($owner);
+                    $this->serverRepository->setServer($server)->deauthorize($server->user->uuid);
                 } catch (ConnectionException) {
                     // Do nothing. A failure here is not ideal, but it is likely to be caused by daemon
                     // being offline, or in an entirely broken state. Remember, these tokens reset every

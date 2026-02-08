@@ -110,7 +110,7 @@ class Node extends Model implements Validatable
         'daemon_listen' => ['required', 'numeric', 'between:1,65535'],
         'daemon_connect' => ['required', 'numeric', 'between:1,65535'],
         'maintenance_mode' => ['boolean'],
-        'upload_size' => ['int', 'between:1,1024'],
+        'upload_size' => ['int', 'min:1'],
         'tags' => ['array'],
     ];
 
@@ -358,7 +358,7 @@ class Node extends Model implements Validatable
             'disk_used' => 0,
         ];
 
-        return cache()->remember("nodes.$this->id.statistics", now()->addSeconds(360), function () use ($default) {
+        return cache()->flexible("nodes.$this->id.statistics", [5, 30], function () use ($default) {
             try {
 
                 $data = Http::daemon($this)

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Installer\Steps;
 
+use App\Enums\TablerIcon;
 use App\Livewire\Installer\PanelInstaller;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
@@ -17,12 +18,12 @@ class EnvironmentStep
             ->schema([
                 TextInput::make('env_general.APP_NAME')
                     ->label(trans('installer.environment.fields.app_name'))
-                    ->hintIcon('tabler-question-mark', trans('installer.environment.fields.app_name_help'))
+                    ->hintIcon(TablerIcon::QuestionMark, trans('installer.environment.fields.app_name_help'))
                     ->required()
                     ->default(config('app.name')),
                 TextInput::make('env_general.APP_URL')
                     ->label(trans('installer.environment.fields.app_url'))
-                    ->hintIcon('tabler-question-mark', trans('installer.environment.fields.app_url_help'))
+                    ->hintIcon(TablerIcon::QuestionMark, trans('installer.environment.fields.app_url_help'))
                     ->required()
                     ->default(url('')),
                 Fieldset::make('admin_user')

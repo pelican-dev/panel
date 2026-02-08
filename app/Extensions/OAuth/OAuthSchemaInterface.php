@@ -2,8 +2,11 @@
 
 namespace App\Extensions\OAuth;
 
+use App\Models\User;
+use BackedEnum;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Wizard\Step;
+use Laravel\Socialite\Contracts\User as OAuthUser;
 
 interface OAuthSchemaInterface
 {
@@ -27,13 +30,13 @@ interface OAuthSchemaInterface
     /** @return Step[] */
     public function getSetupSteps(): array;
 
-    public function getIcon(): ?string;
+    public function getIcon(): null|string|BackedEnum;
 
     public function getHexColor(): ?string;
 
     public function isEnabled(): bool;
 
-    public function shouldCreateMissingUsers(): bool;
+    public function shouldCreateMissingUser(OAuthUser $user): bool;
 
-    public function shouldLinkMissingUsers(): bool;
+    public function shouldLinkMissingUser(User $user, OAuthUser $oauthUser): bool;
 }

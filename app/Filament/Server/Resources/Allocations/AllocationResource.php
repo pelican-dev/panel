@@ -3,6 +3,7 @@
 namespace App\Filament\Server\Resources\Allocations;
 
 use App\Enums\SubuserPermission;
+use App\Enums\TablerIcon;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\Allocations\Pages\ListAllocations;
 use App\Models\Allocation;
@@ -12,13 +13,13 @@ use App\Traits\Filament\BlockAccessInConflict;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyTable;
+use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\DetachAction;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -35,7 +36,7 @@ class AllocationResource extends Resource
 
     protected static ?int $navigationSort = 7;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-network';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Network;
 
     /**
      * @throws Exception
@@ -61,8 +62,8 @@ class AllocationResource extends Resource
                     ->placeholder(trans('server/network.no_notes')),
                 IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
-                        true => 'tabler-star-filled',
-                        default => 'tabler-star',
+                        true => TablerIcon::StarFilled,
+                        default => TablerIcon::Star,
                     })
                     ->color(fn ($state) => match ($state) {
                         true => 'warning',
@@ -75,8 +76,8 @@ class AllocationResource extends Resource
                 IconColumn::make('is_locked')
                     ->label(trans('server/network.locked'))
                     ->tooltip(trans('server/network.locked_helper'))
-                    ->trueIcon('tabler-lock')
-                    ->falseIcon('tabler-lock-open'),
+                    ->trueIcon(TablerIcon::Lock)
+                    ->falseIcon(TablerIcon::LockOpen),
             ])
             ->recordActions([
                 DetachAction::make()
@@ -99,8 +100,8 @@ class AllocationResource extends Resource
             ])
             ->toolbarActions([
                 Action::make('add_allocation')
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
-                    ->icon(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'tabler-network-off' : 'tabler-network')
+                    ->hiddenLabel()
+                    ->icon(fn () => $server->allocations()->count() >= $server->allocation_limit ? TablerIcon::NetworkOff : TablerIcon::Network)
                     ->authorize(fn () => user()?->can(SubuserPermission::AllocationCreate, $server))
                     ->tooltip(fn () => $server->allocations()->count() >= $server->allocation_limit ? trans('server/network.limit') : trans('server/network.add'))
                     ->hidden(fn () => !config('panel.client_features.allocations.enabled') || $server->allocation === null)

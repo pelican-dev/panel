@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Eggs\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Eggs\EggResource;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
@@ -12,17 +13,17 @@ use App\Models\Egg;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class ListEggs extends ListRecords
@@ -63,19 +64,13 @@ class ListEggs extends ListRecords
             ])
             ->recordActions([
                 EditAction::make()
-                    ->iconButton()
-                    ->tooltip(trans('filament-actions::edit.single.label'))
-                    ->iconSize(IconSize::Large),
+                    ->tooltip(trans('filament-actions::edit.single.label')),
                 ExportEggAction::make()
-                    ->tooltip(trans('filament-actions::export.modal.actions.export.label'))
-                    ->iconSize(IconSize::Large),
+                    ->tooltip(trans('filament-actions::export.modal.actions.export.label')),
                 UpdateEggAction::make()
-                    ->tooltip(trans_choice('admin/egg.update', 1))
-                    ->iconSize(IconSize::Large),
+                    ->tooltip(trans_choice('admin/egg.update', 1)),
                 ReplicateAction::make()
-                    ->iconButton()
                     ->tooltip(trans('filament-actions::replicate.single.label'))
-                    ->iconSize(IconSize::Large)
                     ->modal(false)
                     ->excludeAttributes(['author', 'uuid', 'update_url', 'servers_count', 'created_at', 'updated_at'])
                     ->beforeReplicaSaved(function (Egg $replica) {
@@ -86,38 +81,59 @@ class ListEggs extends ListRecords
                     ->after(fn (Egg $record, Egg $replica) => $record->variables->each(fn ($variable) => $variable->replicate()->fill(['egg_id' => $replica->id])->save()))
                     ->successRedirectUrl(fn (Egg $replica) => EditEgg::getUrl(['record' => $replica])),
             ])
-            ->groupedBulkActions([
-                DeleteBulkAction::make()
-                    ->before(fn (&$records) => $records = $records->filter(function ($egg) {
-                        /** @var Egg $egg */
-                        return $egg->servers_count <= 0;
-                    })),
-                UpdateEggBulkAction::make()
-                    ->before(fn (&$records) => $records = $records->filter(function ($egg) {
-                        /** @var Egg $egg */
-                        return cache()->get("eggs.$egg->uuid.update", false);
-                    })),
+            ->toolbarActions([
+                ImportEggAction::make()
+                    ->multiple(),
+                CreateAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->before(function (Collection &$records) {
+                            $eggsWithServers = $records->filter(fn (Egg $egg) => $egg->servers_count > 0);
+
+                            if ($eggsWithServers->isNotEmpty()) {
+                                $eggNames = $eggsWithServers->map(fn (Egg $egg) => sprintf('%s (%d server%s)', $egg->name, $egg->servers_count, $egg->servers_count > 1 ? 's' : ''))
+                                    ->join(', ');
+                                Notification::make()
+                                    ->danger()
+                                    ->title(trans('admin/egg.cannot_delete', ['count' => $eggsWithServers->count()]))
+                                    ->body(trans('admin/egg.eggs_have_servers', ['eggs' => $eggNames]))
+                                    ->send();
+                            }
+
+                            $records = $records->filter(fn (Egg $egg) => $egg->servers_count <= 0);
+
+                            if ($records->isEmpty()) {
+                                $this->halt();
+                            }
+                        }),
+                    UpdateEggBulkAction::make()
+                        ->before(function (Collection &$records) {
+                            $eggsWithoutUpdateUrl = $records->filter(fn (Egg $egg) => $egg->update_url === null);
+
+                            if ($eggsWithoutUpdateUrl->isNotEmpty()) {
+                                $eggNames = $eggsWithoutUpdateUrl->pluck('name')->join(', ');
+
+                                Notification::make()
+                                    ->warning()
+                                    ->title(trans('admin/egg.cannot_update', ['count' => $eggsWithoutUpdateUrl->count()]))
+                                    ->body(trans('admin/egg.no_update_url', ['eggs' => $eggNames]))
+                                    ->send();
+                            }
+
+                            $records = $records->filter(fn (Egg $egg) => $egg->update_url !== null);
+
+                            if ($records->isEmpty()) {
+                                $this->halt();
+                            }
+                        }),
+                ]),
             ])
-            ->emptyStateIcon('tabler-eggs')
+            ->emptyStateIcon(TablerIcon::Eggs)
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/egg.no_eggs'))
             ->filters([
                 TagsFilter::make()
                     ->model(Egg::class),
             ]);
-    }
-
-    /** @return array<Action|ActionGroup>
-     * @throws Exception
-     */
-    protected function getDefaultHeaderActions(): array
-    {
-        return [
-            ImportEggAction::make()
-                ->multiple(),
-            CreateAction::make()
-                ->icon('tabler-file-plus')
-                ->iconButton()->iconSize(IconSize::ExtraLarge),
-        ];
     }
 }
