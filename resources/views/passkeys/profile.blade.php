@@ -1,10 +1,10 @@
 <x-filament::section class="{{ $this->isSimple() ? 'mt-4' : 'mt-0 mb-4' }}">
     <x-slot name="heading">
-        {{ __('passkeys.passkeys') }}
+        {{ trans('passkeys.passkeys') }}
     </x-slot>
 
     <x-slot name="description">
-        {{ __('passkeys.description') }}
+        {{ trans('passkeys.description') }}
     </x-slot>
 
     <livewire:filament-passkeys />

@@ -26,7 +26,7 @@ final class Passkeys extends PasskeysComponent implements HasActions, HasSchemas
     public function deleteAction(): Action
     {
         return Action::make('deleteAction')
-            ->label(__('passkeys.delete'))
+            ->label(trans('passkeys.delete'))
             ->color('danger')
             ->requiresConfirmation()
             ->action(fn (array $arguments) => $this->deletePasskey((int) $arguments['passkey']));
@@ -39,7 +39,7 @@ final class Passkeys extends PasskeysComponent implements HasActions, HasSchemas
         parent::deletePasskey($passkeyId);
 
         Notification::make()
-            ->title(__('passkeys.deleted_notification_title'))
+            ->title(trans('passkeys.deleted_notification_title'))
             ->success()
             ->send();
     }
@@ -49,7 +49,7 @@ final class Passkeys extends PasskeysComponent implements HasActions, HasSchemas
         parent::storePasskey($passkey);
 
         Notification::make()
-            ->title(__('passkeys.created_notification_title'))
+            ->title(trans('passkeys.created_notification_title'))
             ->success()
             ->send();
     }

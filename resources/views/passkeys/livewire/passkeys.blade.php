@@ -1,11 +1,11 @@
 <div>
     <div class="flex items-start gap-2 mb-6">
         <div class="flex-1">
-            <x-filament::input.wrapper prefix="{{ __('passkeys.name') }}" :valid="! $errors->has('name')">
+            <x-filament::input.wrapper prefix="{{ trans('passkeys.name') }}" :valid="! $errors->has('name')">
                 <x-filament::input
                     type="text"
                     wire:model="name"
-                    placeholder="{{ __('passkeys.name') }}"
+                    placeholder="{{ trans('passkeys.name') }}"
                 />
             </x-filament::input.wrapper>
 
@@ -15,20 +15,20 @@
         </div>
 
         <x-filament::button type="button" wire:click="validatePasskeyProperties" class="mt-1">
-            {{ __('passkeys.create') }}
+            {{ trans('passkeys.create') }}
         </x-filament::button>
     </div>
 
     @if($passkeys->isNotEmpty())
         <div>
-            <span class="font-bold text-sm">{{ __('passkeys.passkeys') }}</span>
+            <span class="font-bold text-sm">{{ trans('passkeys.passkeys') }}</span>
             <ul class="space-y-4 mt-4">
                 @foreach($passkeys as $passkey)
                     <x-filament::fieldset>
                         <div class="flex items-center justify-between">
                             <div class="flex flex-col">
                                 <span>{{ $passkey->name }}</span>
-                                <span class="text-xs fi-sc-text">{{ __('passkeys.last_used') }}: {{ $passkey->last_used_at?->diffForHumans() ?? __('passkeys.not_used_yet') }}</span>
+                                <span class="text-xs fi-sc-text">{{ trans('passkeys.last_used') }}: {{ $passkey->last_used_at?->diffForHumans() ?? trans('passkeys.not_used_yet') }}</span>
                             </div>
 
                             <x-filament::button 
@@ -36,7 +36,7 @@
                                 size="sm"
                                 wire:click="confirmDelete({{ $passkey->id }})"
                             >
-                                {{ __('passkeys.delete') }}
+                                {{ trans('passkeys.delete') }}
                             </x-filament::button>
                         </div>
                     </x-filament::fieldset>
