@@ -257,12 +257,12 @@ class PluginService
         }
     }
 
-    public function buildAssets(): bool
+    public function buildAssets(bool $throw = false): bool
     {
         try {
             $result = Process::path(base_path())->timeout(300)->run('yarn install');
             if ($result->failed()) {
-                throw new Exception('Could not install dependencies: ' . $result->errorOutput());
+                throw new Exception('Could not install yarn dependencies: ' . $result->errorOutput());
             }
 
             $result = Process::path(base_path())->timeout(600)->run('yarn build');
@@ -272,7 +272,7 @@ class PluginService
 
             return true;
         } catch (Exception $exception) {
-            if ($this->isDevModeActive()) {
+            if ($throw || $this->isDevModeActive()) {
                 throw ($exception);
             }
 
@@ -285,24 +285,30 @@ class PluginService
     /** @throws Exception */
     public function installPlugin(Plugin $plugin, bool $enable = true): void
     {
-        $this->manageComposerPackages(json_decode($plugin->composer_packages, true, 512));
+        try {
+            $this->manageComposerPackages(json_decode($plugin->composer_packages, true, 512));
 
-        if ($enable) {
-            $this->enablePlugin($plugin);
-        } else {
-            if ($plugin->status === PluginStatus::NotInstalled) {
-                $this->disablePlugin($plugin);
+            $this->buildAssets($plugin->isTheme());
+
+            $this->runPluginMigrations($plugin);
+
+            $this->runPluginSeeder($plugin);
+
+            if ($enable) {
+                $this->enablePlugin($plugin);
+            } else {
+                if ($plugin->status === PluginStatus::NotInstalled) {
+                    $this->disablePlugin($plugin);
+                }
             }
-        }
 
-        $this->buildAssets();
+            foreach (Filament::getPanels() as $panel) {
+                $panel->clearCachedComponents();
+            }
+        } catch (Exception $exception) {
+            $this->setStatus($plugin, PluginStatus::NotInstalled, $exception->getMessage());
 
-        $this->runPluginMigrations($plugin);
-
-        $this->runPluginSeeder($plugin);
-
-        foreach (Filament::getPanels() as $panel) {
-            $panel->clearCachedComponents();
+            throw $exception;
         }
     }
 
@@ -328,10 +334,10 @@ class PluginService
 
         $this->rollbackPluginMigrations($plugin);
 
+        $this->setStatus($plugin, PluginStatus::NotInstalled);
+
         if ($deleteFiles) {
             $this->deletePlugin($plugin);
-        } else {
-            $this->setStatus($plugin, PluginStatus::NotInstalled);
         }
 
         $this->buildAssets();

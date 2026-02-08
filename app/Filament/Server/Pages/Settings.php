@@ -3,10 +3,12 @@
 namespace App\Filament\Server\Pages;
 
 use App\Enums\SubuserPermission;
+use App\Enums\TablerIcon;
 use App\Facades\Activity;
 use App\Filament\Components\Actions\DeleteServerIcon;
 use App\Models\Server;
 use App\Services\Servers\ReinstallServerService;
+use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -25,13 +27,12 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class Settings extends ServerFormPage
 {
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-settings';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Settings;
 
     protected static ?int $navigationSort = 10;
 
@@ -88,8 +89,9 @@ class Settings extends ServerFormPage
                                             ->columnSpan(2)
                                             ->alignJustify(),
                                         Action::make('uploadIcon')
-                                            ->iconButton()->iconSize(IconSize::Large)
-                                            ->icon('tabler-photo-up')
+                                            ->hiddenLabel()
+                                            ->tooltip(trans('admin/server.import_image'))
+                                            ->icon(TablerIcon::PhotoUp)
                                             ->modal()
                                             ->modalSubmitActionLabel(trans('server/setting.server_info.icon.upload'))
                                             ->schema([
@@ -249,42 +251,42 @@ class Settings extends ServerFormPage
                                 TextInput::make('cpu')
                                     ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.cpu'))
-                                    ->prefixIcon('tabler-cpu')
+                                    ->prefixIcon(TablerIcon::Cpu)
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : format_number($server->cpu) . '%'),
                                 TextInput::make('memory')
                                     ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.memory'))
-                                    ->prefixIcon('tabler-device-desktop-analytics')
+                                    ->prefixIcon(TablerIcon::DeviceDesktopAnalytics)
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : convert_bytes_to_readable($server->memory * 2 ** 20)),
                                 TextInput::make('disk')
                                     ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.disk'))
-                                    ->prefixIcon('tabler-device-sd-card')
+                                    ->prefixIcon(TablerIcon::DeviceSdCard)
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.unlimited') : convert_bytes_to_readable($server->disk * 2 ** 20)),
                                 TextInput::make('backup_limit')
                                     ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.backups'))
-                                    ->prefixIcon('tabler-file-zip')
+                                    ->prefixIcon(TablerIcon::FileZip)
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/backup.empty') : $server->backups->count() . ' ' .trans('server/setting.server_info.limits.of', ['max' => $state])),
                                 TextInput::make('database_limit')
                                     ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.databases'))
-                                    ->prefixIcon('tabler-database')
+                                    ->prefixIcon(TablerIcon::Database)
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/database.empty') : $server->databases->count() . ' ' . trans('server/setting.server_info.limits.of', ['max' => $state])),
                                 TextInput::make('allocation_limit')
                                     ->hiddenLabel()
                                     ->prefix(trans('server/setting.server_info.limits.allocations'))
-                                    ->prefixIcon('tabler-network')
+                                    ->prefixIcon(TablerIcon::Network)
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->formatStateUsing(fn ($state, Server $server) => !$state ? trans('server/setting.server_info.limits.no_allocations') : $server->allocations->count() . ' ' .trans('server/setting.server_info.limits.of', ['max' => $state])),
@@ -305,10 +307,10 @@ class Settings extends ServerFormPage
                                     ->disabled()
                                     ->copyable()
                                     ->hintAction(
-                                        Action::make('connect_sftp')
+                                        Action::make('hint_connect_sftp')
                                             ->label(trans('server/setting.server_info.sftp.action'))
                                             ->color('success')
-                                            ->icon('tabler-plug')
+                                            ->icon(TablerIcon::Plug)
                                             ->url(function (Server $server) {
                                                 $fqdn = $server->node->daemon_sftp_alias ?? $server->node->fqdn;
 
@@ -336,7 +338,7 @@ class Settings extends ServerFormPage
                     ->hidden(fn (Server $server) => !user()?->can(SubuserPermission::SettingsReinstall, $server))
                     ->columnSpanFull()
                     ->footerActions([
-                        Action::make('reinstall')
+                        Action::make('exclude_reinstall')
                             ->label(trans('server/setting.reinstall.action'))
                             ->color('danger')
                             ->disabled(fn (Server $server) => !user()?->can(SubuserPermission::SettingsReinstall, $server))

@@ -14,7 +14,7 @@ class BackupPolicy
         return $user->can(SubuserPermission::BackupRead, Filament::getTenant());
     }
 
-    public function view(User $user, Model $record): bool
+    public function view(User $user, Model $model): bool
     {
         return $user->can(SubuserPermission::BackupRead, Filament::getTenant());
     }
@@ -24,7 +24,7 @@ class BackupPolicy
         return $user->can(SubuserPermission::BackupCreate, Filament::getTenant());
     }
 
-    public function delete(User $user, Model $record): bool
+    public function delete(User $user, Model $model): bool
     {
         return $user->can(SubuserPermission::BackupDelete, Filament::getTenant());
     }

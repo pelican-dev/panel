@@ -2,6 +2,7 @@
 
 namespace App\Enums;
 
+use BackedEnum;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
@@ -23,20 +24,20 @@ enum ContainerStatus: string implements HasColor, HasIcon, HasLabel
     // HTTP Based
     case Missing = 'missing';
 
-    public function getIcon(): string
+    public function getIcon(): BackedEnum
     {
         return match ($this) {
 
-            self::Created => 'tabler-heart-plus',
-            self::Starting => 'tabler-heart-up',
-            self::Running => 'tabler-heartbeat',
-            self::Restarting => 'tabler-heart-bolt',
-            self::Exited => 'tabler-heart-exclamation',
-            self::Paused => 'tabler-heart-pause',
-            self::Dead, self::Offline => 'tabler-heart-x',
-            self::Removing => 'tabler-heart-down',
-            self::Missing => 'tabler-heart-search',
-            self::Stopping => 'tabler-heart-minus',
+            self::Created => TablerIcon::HeartPlus,
+            self::Starting => TablerIcon::HeartUp,
+            self::Running => TablerIcon::Heartbeat,
+            self::Restarting => TablerIcon::HeartBolt,
+            self::Exited => TablerIcon::HeartExclamation,
+            self::Paused => TablerIcon::HeartPause,
+            self::Dead, self::Offline => TablerIcon::HeartX,
+            self::Removing => TablerIcon::HeartDown,
+            self::Missing => TablerIcon::HeartSearch,
+            self::Stopping => TablerIcon::HeartMinus,
         };
     }
 

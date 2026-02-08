@@ -49,12 +49,6 @@ class UserCreationService
             $data['username'] = str($data['email'])->before('@')->toString() . Str::random(3);
         }
 
-        $data['username'] = str($data['username'])
-            ->replace(['.', '-'], '')
-            ->ascii()
-            ->substr(0, 64)
-            ->toString();
-
         /** @var User $user */
         $user = User::query()->forceCreate(array_merge($data, [
             'uuid' => Uuid::uuid4()->toString(),

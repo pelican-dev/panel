@@ -3,6 +3,7 @@
 namespace App\Filament\Components\Actions;
 
 use App\Enums\SubuserPermission;
+use App\Enums\TablerIcon;
 use App\Models\Server;
 use App\Services\Schedules\Sharing\ScheduleImporterService;
 use Exception;
@@ -41,7 +42,7 @@ class ImportScheduleAction extends Action
                 ->tabs([
                     Tab::make('file')
                         ->label(trans('server/schedule.import_action.file'))
-                        ->icon('tabler-file-upload')
+                        ->icon(TablerIcon::FileUpload)
                         ->schema([
                             FileUpload::make('files')
                                 ->hiddenLabel()
@@ -54,7 +55,7 @@ class ImportScheduleAction extends Action
                         ]),
                     Tab::make('url')
                         ->label(trans('server/schedule.import_action.url'))
-                        ->icon('tabler-world-upload')
+                        ->icon(TablerIcon::WorldUpload)
                         ->schema([
                             Repeater::make('urls')
                                 ->hiddenLabel()

@@ -131,7 +131,7 @@ class BackupRemoteUploadController extends Controller
      */
     private function getConfiguredMaxPartSize(): int
     {
-        $maxPartSize = (int) config('backups.max_part_size', self::DEFAULT_MAX_PART_SIZE);
+        $maxPartSize = config('backups.max_part_size', self::DEFAULT_MAX_PART_SIZE);
         if ($maxPartSize <= 0) {
             $maxPartSize = self::DEFAULT_MAX_PART_SIZE;
         }

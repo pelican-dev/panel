@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Pages;
 
+use App\Enums\TablerIcon;
 use App\Extensions\Avatar\AvatarService;
 use App\Extensions\Captcha\CaptchaService;
 use App\Extensions\OAuth\OAuthService;
@@ -10,6 +11,7 @@ use App\Notifications\MailTested;
 use App\Traits\EnvironmentWriterTrait;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use App\Traits\Filament\CanCustomizeTabs;
 use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
@@ -36,7 +38,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Arr;
@@ -53,10 +54,11 @@ class Settings extends Page implements HasSchemas
         CanCustomizeHeaderActions::getHeaderActions insteadof InteractsWithHeaderActions;
     }
     use CanCustomizeHeaderWidgets;
+    use CanCustomizeTabs;
     use EnvironmentWriterTrait;
     use InteractsWithForms;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-settings';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Settings;
 
     protected string $view = 'filament.pages.settings';
 
@@ -96,11 +98,7 @@ class Settings extends Page implements HasSchemas
         return trans('admin/setting.title');
     }
 
-    /**
-     * @return array<Component>
-     *
-     * @throws Exception
-     */
+    /** @return array<Component> */
     protected function getFormSchema(): array
     {
         return [
@@ -108,34 +106,44 @@ class Settings extends Page implements HasSchemas
                 ->columns()
                 ->persistTabInQueryString()
                 ->disabled(fn () => !user()?->can('update settings'))
-                ->tabs([
-                    Tab::make('general')
-                        ->label(trans('admin/setting.navigation.general'))
-                        ->icon('tabler-home')
-                        ->schema($this->generalSettings()),
-                    Tab::make('captcha')
-                        ->label(trans('admin/setting.navigation.captcha'))
-                        ->icon('tabler-shield')
-                        ->schema($this->captchaSettings())
-                        ->columns(1),
-                    Tab::make('mail')
-                        ->label(trans('admin/setting.navigation.mail'))
-                        ->icon('tabler-mail')
-                        ->schema($this->mailSettings()),
-                    Tab::make('backup')
-                        ->label(trans('admin/setting.navigation.backup'))
-                        ->icon('tabler-box')
-                        ->schema($this->backupSettings()),
-                    Tab::make('oauth')
-                        ->label(trans('admin/setting.navigation.oauth'))
-                        ->icon('tabler-brand-oauth')
-                        ->schema($this->oauthSettings())
-                        ->columns(1),
-                    Tab::make('misc')
-                        ->label(trans('admin/setting.navigation.misc'))
-                        ->icon('tabler-tool')
-                        ->schema($this->miscSettings()),
-                ]),
+                ->tabs($this->getTabs()),
+        ];
+    }
+
+    /**
+     * @return Tab[]
+     *
+     * @throws Exception
+     */
+    protected function getDefaultTabs(): array
+    {
+        return [
+            Tab::make('general')
+                ->label(trans('admin/setting.navigation.general'))
+                ->icon(TablerIcon::Home)
+                ->schema($this->generalSettings()),
+            Tab::make('captcha')
+                ->label(trans('admin/setting.navigation.captcha'))
+                ->icon(TablerIcon::Shield)
+                ->schema($this->captchaSettings())
+                ->columns(1),
+            Tab::make('mail')
+                ->label(trans('admin/setting.navigation.mail'))
+                ->icon(TablerIcon::Mail)
+                ->schema($this->mailSettings()),
+            Tab::make('backup')
+                ->label(trans('admin/setting.navigation.backup'))
+                ->icon(TablerIcon::Box)
+                ->schema($this->backupSettings()),
+            Tab::make('oauth')
+                ->label(trans('admin/setting.navigation.oauth'))
+                ->icon(TablerIcon::BrandOauth)
+                ->schema($this->oauthSettings())
+                ->columns(1),
+            Tab::make('misc')
+                ->label(trans('admin/setting.navigation.misc'))
+                ->icon(TablerIcon::Tool)
+                ->schema($this->miscSettings()),
         ];
     }
 
@@ -154,12 +162,12 @@ class Settings extends Page implements HasSchemas
                 ->schema([
                     TextInput::make('APP_LOGO')
                         ->label(trans('admin/setting.general.app_logo'))
-                        ->hintIcon('tabler-question-mark', trans('admin/setting.general.app_logo_help'))
+                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/setting.general.app_logo_help'))
                         ->default(env('APP_LOGO'))
                         ->placeholder('/pelican.svg'),
                     TextInput::make('APP_FAVICON')
                         ->label(trans('admin/setting.general.app_favicon'))
-                        ->hintIcon('tabler-question-mark', trans('admin/setting.general.app_favicon_help'))
+                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/setting.general.app_favicon_help'))
                         ->required()
                         ->default(env('APP_FAVICON', '/pelican.ico'))
                         ->placeholder('/pelican.ico'),
@@ -170,8 +178,8 @@ class Settings extends Page implements HasSchemas
                     Toggle::make('APP_DEBUG')
                         ->label(trans('admin/setting.general.debug_mode'))
                         ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
                         ->onColor('success')
                         ->offColor('danger')
                         ->stateCast(new BooleanStateCast(false))
@@ -188,8 +196,8 @@ class Settings extends Page implements HasSchemas
                     Toggle::make('FILAMENT_UPLOADABLE_AVATARS')
                         ->label(trans('admin/setting.general.uploadable_avatars'))
                         ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
                         ->onColor('success')
                         ->offColor('danger')
                         ->stateCast(new BooleanStateCast(false))
@@ -236,16 +244,16 @@ class Settings extends Page implements HasSchemas
                 ->placeholder(trans('admin/setting.general.trusted_proxies_help'))
                 ->default(env('TRUSTED_PROXIES', implode(',', Arr::wrap(config('trustedproxy.proxies')))))
                 ->hintActions([
-                    Action::make('clear')
+                    Action::make('hint_clear')
                         ->label(trans('admin/setting.general.clear'))
                         ->color('danger')
-                        ->icon('tabler-trash')
+                        ->icon(TablerIcon::Trash)
                         ->requiresConfirmation()
                         ->authorize(fn () => user()?->can('update settings'))
                         ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [])),
-                    Action::make('cloudflare')
+                    Action::make('hint_cloudflare')
                         ->label(trans('admin/setting.general.set_to_cf'))
-                        ->icon('tabler-brand-cloudflare')
+                        ->icon(TablerIcon::BrandCloudflare)
                         ->authorize(fn () => user()?->can('update settings'))
                         ->action(function (Factory $client, Set $set) {
                             $ips = collect();
@@ -287,7 +295,7 @@ class Settings extends Page implements HasSchemas
 
             $formFields[] = Section::make($schema->getName())
                 ->columns(5)
-                ->icon($schema->getIcon() ?? 'tabler-shield')
+                ->icon($schema->getIcon() ?? TablerIcon::Shield)
                 ->collapsed(fn () => !$schema->isEnabled())
                 ->collapsible()
                 ->schema([
@@ -341,9 +349,9 @@ class Settings extends Page implements HasSchemas
                 ->live()
                 ->default(env('MAIL_MAILER', config('mail.default')))
                 ->hintAction(
-                    Action::make('test')
+                    Action::make('hint_test')
                         ->label(trans('admin/setting.mail.test_mail'))
-                        ->icon('tabler-send')
+                        ->icon(TablerIcon::Send)
                         ->hidden(fn (Get $get) => $get('MAIL_MAILER') === 'log')
                         ->authorize(fn () => user()?->can('update settings'))
                         ->action(function (Get $get) {
@@ -533,8 +541,8 @@ class Settings extends Page implements HasSchemas
                     Toggle::make('AWS_USE_PATH_STYLE_ENDPOINT')
                         ->label(trans('admin/setting.backup.s3.use_path_style_endpoint'))
                         ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
@@ -555,26 +563,25 @@ class Settings extends Page implements HasSchemas
 
         $oauthSchemas = $this->oauthService->getAll();
         foreach ($oauthSchemas as $schema) {
-            $id = Str::upper($schema->getId());
             $key = $schema->getConfigKey();
 
             $formFields[] = Section::make($schema->getName())
                 ->columns(5)
-                ->icon($schema->getIcon() ?? 'tabler-brand-oauth')
-                ->collapsed(fn () => !env($key, false))
+                ->icon($schema->getIcon() ?? TablerIcon::BrandOauth)
+                ->collapsed(fn () => !$schema->isEnabled())
                 ->collapsible()
                 ->schema([
                     Hidden::make($key)
                         ->live()
-                        ->default(env($key)),
+                        ->default($schema->isEnabled()),
                     Actions::make([
-                        Action::make("disable_oauth_$id")
+                        Action::make('disable_oauth_' . $schema->getId())
                             ->visible(fn (Get $get) => $get($key))
                             ->disabled(fn () => !user()?->can('update settings'))
                             ->label(trans('admin/setting.oauth.disable'))
                             ->color('danger')
                             ->action(fn (Set $set) => $set($key, false)),
-                        Action::make("enable_oauth_$id")
+                        Action::make('enable_oauth_'  . $schema->getId())
                             ->visible(fn (Get $get) => !$get($key))
                             ->disabled(fn () => !user()?->can('update settings'))
                             ->label(trans('admin/setting.oauth.enable'))
@@ -619,8 +626,8 @@ class Settings extends Page implements HasSchemas
                 ->schema([
                     Toggle::make('PANEL_CLIENT_ALLOCATIONS_ENABLED')
                         ->label(trans('admin/setting.misc.auto_allocation.question'))
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
@@ -630,8 +637,8 @@ class Settings extends Page implements HasSchemas
                     Toggle::make('PANEL_CLIENT_ALLOCATIONS_CREATE_NEW')
                         ->label(trans('admin/setting.misc.auto_allocation.create_new'))
                         ->helperText(trans('admin/setting.misc.auto_allocation.create_new_help'))
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
@@ -664,8 +671,8 @@ class Settings extends Page implements HasSchemas
                 ->schema([
                     Toggle::make('PANEL_SEND_INSTALL_NOTIFICATION')
                         ->label(trans('admin/setting.misc.mail_notifications.server_installed'))
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
@@ -674,8 +681,8 @@ class Settings extends Page implements HasSchemas
                         ->default(env('PANEL_SEND_INSTALL_NOTIFICATION', config('panel.email.send_install_notification'))),
                     Toggle::make('PANEL_SEND_REINSTALL_NOTIFICATION')
                         ->label(trans('admin/setting.misc.mail_notifications.server_reinstalled'))
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
@@ -723,8 +730,8 @@ class Settings extends Page implements HasSchemas
                     Toggle::make('APP_ACTIVITY_HIDE_ADMIN')
                         ->label(trans('admin/setting.misc.activity_log.log_admin'))
                         ->inline(false)
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
@@ -760,8 +767,8 @@ class Settings extends Page implements HasSchemas
                 ->schema([
                     Toggle::make('PANEL_EDITABLE_SERVER_DESCRIPTIONS')
                         ->label(trans('admin/setting.misc.server.edit_server_desc'))
-                        ->onIcon('tabler-check')
-                        ->offIcon('tabler-x')
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
@@ -845,9 +852,10 @@ class Settings extends Page implements HasSchemas
     {
         return [
             Action::make('save')
-                ->iconButton()->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-device-floppy')
+                ->hiddenLabel()
+                ->icon(TablerIcon::DeviceFloppy)
                 ->action('save')
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
                 ->authorize(fn () => user()?->can('update settings'))
                 ->keyBindings(['mod+s']),
         ];

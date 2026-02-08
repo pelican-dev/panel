@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.2, 8.3, 8.4]
+        php: [8.2, 8.3, 8.4, 8.5]
     env:
       DB_CONNECTION: sqlite
       DB_DATABASE: testing.sqlite
@@ -61,14 +61,17 @@ jobs:
       - name: Create SQLite file
         run: touch database/testing.sqlite
 
+      - name: Run Migrations
+        run: php artisan migrate --force --seed
+
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit
+        run: vendor/bin/pest tests/Unit --parallel
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration
+        run: vendor/bin/pest tests/Integration --parallel
 
   mysql:
     name: MySQL
@@ -76,7 +79,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.2, 8.3, 8.4]
+        php: [8.2, 8.3, 8.4, 8.5]
         database: ["mysql:8"]
     services:
       database:
@@ -120,14 +123,20 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
+      - name: Run Migrations
+        run: php artisan migrate --force --seed
+        env:
+          DB_PORT: ${{ job.services.database.ports[3306] }}
+          DB_USERNAME: root
+
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit
+        run: vendor/bin/pest tests/Unit --parallel
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration
+        run: vendor/bin/pest tests/Integration --parallel
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -138,7 +147,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.2, 8.3, 8.4]
+        php: [8.2, 8.3, 8.4, 8.5]
         database: ["mariadb:10.6", "mariadb:10.11", "mariadb:11.4"]
     services:
       database:
@@ -182,14 +191,20 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
+      - name: Run Migrations
+        run: php artisan migrate --force --seed
+        env:
+          DB_PORT: ${{ job.services.database.ports[3306] }}
+          DB_USERNAME: root
+
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit
+        run: vendor/bin/pest tests/Unit --parallel
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration
+        run: vendor/bin/pest tests/Integration --parallel
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -200,7 +215,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.2, 8.3, 8.4]
+        php: [8.2, 8.3, 8.4, 8.5]
         database: ["postgres:14"]
     services:
       database:
@@ -238,6 +253,7 @@ jobs:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
+            ${{ runner.os }}-composer-${{ matrix.php }}-
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -250,11 +266,14 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-suggest --no-progress --no-scripts
 
+      - name: Run Migrations
+        run: php artisan migrate --force --seed
+
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit
+        run: vendor/bin/pest tests/Unit --parallel
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration
+        run: vendor/bin/pest tests/Integration --parallel

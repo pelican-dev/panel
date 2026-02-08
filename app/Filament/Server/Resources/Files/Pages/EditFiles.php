@@ -4,6 +4,7 @@ namespace App\Filament\Server\Resources\Files\Pages;
 
 use App\Enums\EditorLanguages;
 use App\Enums\SubuserPermission;
+use App\Enums\TablerIcon;
 use App\Exceptions\Http\Server\FileSizeTooLargeException;
 use App\Exceptions\Repository\FileNotEditableException;
 use App\Facades\Activity;
@@ -81,10 +82,10 @@ class EditFiles extends Page
             ->components([
                 Section::make(trans('server/file.actions.edit.title', ['file' => $this->path]))
                     ->footerActions([
-                        Action::make('save_and_close')
+                        Action::make('fm_save_and_close')
                             ->label(trans('server/file.actions.edit.save_close'))
                             ->authorize(fn () => user()?->can(SubuserPermission::FileUpdate, $server))
-                            ->icon('tabler-device-floppy')
+                            ->icon(TablerIcon::DeviceFloppy)
                             ->keyBindings('mod+shift+s')
                             ->action(function () {
                                 $this->getDaemonFileRepository()->putContent($this->path, $this->data['editor'] ?? '');
@@ -101,10 +102,10 @@ class EditFiles extends Page
 
                                 $this->redirectToList();
                             }),
-                        Action::make('save')
+                        Action::make('fm_save')
                             ->label(trans('server/file.actions.edit.save'))
                             ->authorize(fn () => user()?->can(SubuserPermission::FileUpdate, $server))
-                            ->icon('tabler-device-floppy')
+                            ->icon(TablerIcon::DeviceFloppy)
                             ->keyBindings('mod+s')
                             ->action(function () {
                                 $this->getDaemonFileRepository()->putContent($this->path, $this->data['editor'] ?? '');
@@ -119,10 +120,10 @@ class EditFiles extends Page
                                     ->body(fn () => $this->path)
                                     ->send();
                             }),
-                        Action::make('cancel')
+                        Action::make('fm_cancel')
                             ->label(trans('server/file.actions.edit.cancel'))
                             ->color('danger')
-                            ->icon('tabler-x')
+                            ->icon(TablerIcon::X)
                             ->alpineClickHandler(function () {
                                 $url = $this->previousUrl ?? ListFiles::getUrl(['path' => dirname($this->path)]);
 

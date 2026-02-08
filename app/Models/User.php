@@ -198,7 +198,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         });
 
         static::saving(function (self $user) {
-            $user->email = mb_strtolower($user->email);
+            $user->username = str($user->username)->lower()->toString();
+            $user->email = str($user->email)->lower()->toString();
         });
 
         static::deleting(function (self $user) {

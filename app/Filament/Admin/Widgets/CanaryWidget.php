@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Widgets;
 
+use App\Enums\TablerIcon;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
@@ -25,7 +26,7 @@ class CanaryWidget extends FormWidget
         return $schema
             ->components([
                 Section::make(trans('admin/dashboard.sections.intro-developers.heading'))
-                    ->icon('tabler-code')
+                    ->icon(TablerIcon::Code)
                     ->iconColor('primary')
                     ->collapsible()
                     ->collapsed()
@@ -39,9 +40,9 @@ class CanaryWidget extends FormWidget
                             ->state(trans('admin/dashboard.sections.intro-developers.extra_note')),
                     ])
                     ->headerActions([
-                        Action::make('issues')
+                        Action::make('db_issues')
                             ->label(trans('admin/dashboard.sections.intro-developers.button_issues'))
-                            ->icon('tabler-brand-github')
+                            ->icon(TablerIcon::BrandGithub)
                             ->url('https://github.com/pelican-dev/panel/issues', true),
                     ]),
             ]);

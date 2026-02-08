@@ -3,9 +3,11 @@
 namespace App\Filament\Admin\Resources\Plugins;
 
 use App\Enums\PluginStatus;
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Plugins\Pages\ListPlugins;
 use App\Models\Plugin;
 use App\Services\Helpers\PluginService;
+use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -14,7 +16,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Http\UploadedFile;
@@ -23,7 +24,7 @@ class PluginResource extends Resource
 {
     protected static ?string $model = Plugin::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-packages';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Packages;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -59,7 +60,7 @@ class PluginResource extends Resource
                 TextColumn::make('name')
                     ->label(trans('admin/plugin.name'))
                     ->description(fn (Plugin $plugin) => (strlen($plugin->description) > 80) ? substr($plugin->description, 0, 80).'...' : $plugin->description)
-                    ->icon(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? 'tabler-versions-off' : 'tabler-versions')
+                    ->icon(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? TablerIcon::VersionsOff : TablerIcon::Versions)
                     ->iconColor(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? 'danger' : 'success')
                     ->tooltip(fn (Plugin $plugin) => $plugin->isUpdateAvailable() ? trans('admin/plugin.update_available') : null)
                     ->sortable()
@@ -82,15 +83,15 @@ class PluginResource extends Resource
                     ->sortable(),
             ])
             ->recordActions([
-                Action::make('view')
+                Action::make('exclude_view')
                     ->label(trans('filament-actions::view.single.label'))
-                    ->icon(fn (Plugin $plugin) => $plugin->getReadme() ? 'tabler-eye' : 'tabler-eye-share')
+                    ->icon(fn (Plugin $plugin) => $plugin->getReadme() ? TablerIcon::Eye : TablerIcon::EyeShare)
                     ->color('gray')
                     ->visible(fn (Plugin $plugin) => $plugin->getReadme() || $plugin->url)
                     ->url(fn (Plugin $plugin) => !$plugin->getReadme() ? $plugin->url : null, true)
                     ->slideOver(true)
                     ->modalHeading('Readme')
-                    ->modalSubmitAction(fn (Plugin $plugin) => Action::make('visit_website')
+                    ->modalSubmitAction(fn (Plugin $plugin) => Action::make('exclude_visit_website')
                         ->label(trans('admin/plugin.visit_website'))
                         ->visible(!is_null($plugin->url))
                         ->url($plugin->url, true)
@@ -102,20 +103,20 @@ class PluginResource extends Resource
                             ->markdown()
                             ->state(fn (Plugin $plugin) => $plugin->getReadme()),
                     ] : null),
-                Action::make('settings')
+                Action::make('exclude_settings')
                     ->label(trans('admin/plugin.settings'))
                     ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                    ->icon('tabler-settings')
+                    ->icon(TablerIcon::Settings)
                     ->color('primary')
                     ->visible(fn (Plugin $plugin) => $plugin->status === PluginStatus::Enabled && $plugin->hasSettings())
                     ->schema(fn (Plugin $plugin) => $plugin->getSettingsForm())
                     ->action(fn (array $data, Plugin $plugin) => $plugin->saveSettings($data))
                     ->slideOver(),
                 ActionGroup::make([
-                    Action::make('install')
+                    Action::make('exclude_install')
                         ->label(trans('admin/plugin.install'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                        ->icon('tabler-terminal')
+                        ->icon(TablerIcon::Terminal)
                         ->color('success')
                         ->hidden(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled)
                         ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
@@ -136,10 +137,10 @@ class PluginResource extends Resource
                                     ->send();
                             }
                         }),
-                    Action::make('update')
+                    Action::make('exclude_update')
                         ->label(trans('admin/plugin.update'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                        ->icon('tabler-download')
+                        ->icon(TablerIcon::Download)
                         ->color('success')
                         ->visible(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled && $plugin->isUpdateAvailable())
                         ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
@@ -160,10 +161,10 @@ class PluginResource extends Resource
                                     ->send();
                             }
                         }),
-                    Action::make('enable')
+                    Action::make('exclude_enable')
                         ->label(trans('admin/plugin.enable'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                        ->icon('tabler-check')
+                        ->icon(TablerIcon::Check)
                         ->color('success')
                         ->visible(fn (Plugin $plugin) => $plugin->canEnable())
                         ->requiresConfirmation(fn (Plugin $plugin, PluginService $pluginService) => $plugin->isTheme() && $pluginService->hasThemePluginEnabled())
@@ -179,10 +180,10 @@ class PluginResource extends Resource
                                 ->title(trans('admin/plugin.notifications.enabled'))
                                 ->send();
                         }),
-                    Action::make('disable')
+                    Action::make('exclude_disable')
                         ->label(trans('admin/plugin.disable'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                        ->icon('tabler-x')
+                        ->icon(TablerIcon::X)
                         ->color('warning')
                         ->visible(fn (Plugin $plugin) => $plugin->canDisable())
                         ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
@@ -195,10 +196,10 @@ class PluginResource extends Resource
                                 ->title(trans('admin/plugin.notifications.disabled'))
                                 ->send();
                         }),
-                    Action::make('delete')
+                    Action::make('exclude_delete')
                         ->label(trans('filament-actions::delete.single.label'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('delete', $plugin))
-                        ->icon('tabler-trash')
+                        ->icon(TablerIcon::Trash)
                         ->color('danger')
                         ->requiresConfirmation()
                         ->visible(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled)
@@ -212,10 +213,10 @@ class PluginResource extends Resource
                                 ->title(trans('admin/plugin.notifications.deleted'))
                                 ->send();
                         }),
-                    Action::make('uninstall')
+                    Action::make('exclude_uninstall')
                         ->label(trans('admin/plugin.uninstall'))
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
-                        ->icon('tabler-terminal')
+                        ->icon(TablerIcon::Terminal)
                         ->color('danger')
                         ->requiresConfirmation()
                         ->hidden(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled || $plugin->status === PluginStatus::Errored)
@@ -241,11 +242,10 @@ class PluginResource extends Resource
             ])
             ->headerActions([
                 Action::make('import_from_file')
-                    ->label(trans('admin/plugin.import_from_file'))
+                    ->hiddenLabel()
+                    ->tooltip(trans('admin/plugin.import_from_file'))
                     ->authorize(fn () => user()?->can('create', Plugin::class))
-                    ->icon('tabler-file-download')
-                    ->iconButton()
-                    ->iconSize(IconSize::ExtraLarge)
+                    ->icon(TablerIcon::FileDownload)
                     ->schema([
                         // TODO: switch to new file upload
                         FileUpload::make('file')
@@ -285,11 +285,10 @@ class PluginResource extends Resource
                         }
                     }),
                 Action::make('import_from_url')
-                    ->label(trans('admin/plugin.import_from_url'))
+                    ->hiddenLabel()
+                    ->tooltip(trans('admin/plugin.import_from_url'))
                     ->authorize(fn () => user()?->can('create', Plugin::class))
-                    ->icon('tabler-world-download')
-                    ->iconButton()
-                    ->iconSize(IconSize::ExtraLarge)
+                    ->icon(TablerIcon::WorldDownload)
                     ->schema([
                         TextInput::make('url')
                             ->required()
@@ -323,7 +322,7 @@ class PluginResource extends Resource
                         }
                     }),
             ])
-            ->emptyStateIcon('tabler-packages')
+            ->emptyStateIcon(TablerIcon::Packages)
             ->emptyStateDescription('')
             ->emptyStateHeading(trans('admin/plugin.no_plugins'));
     }

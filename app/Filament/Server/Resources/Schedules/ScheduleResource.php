@@ -3,6 +3,7 @@
 namespace App\Filament\Server\Resources\Schedules;
 
 use App\Enums\ScheduleStatus;
+use App\Enums\TablerIcon;
 use App\Facades\Activity;
 use App\Filament\Components\Actions\ImportScheduleAction;
 use App\Filament\Components\Forms\Actions\CronPresetAction;
@@ -19,6 +20,7 @@ use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
+use BackedEnum;
 use Carbon\Carbon;
 use Exception;
 use Filament\Actions\CreateAction;
@@ -39,7 +41,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -59,7 +60,7 @@ class ScheduleResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-clock';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Clock;
 
     /**
      * @throws Exception
@@ -80,13 +81,13 @@ class ScheduleResource extends Resource
                     ->required(),
                 Toggle::make('only_when_online')
                     ->label(trans('server/schedule.only_online'))
-                    ->hintIcon('tabler-question-mark', trans('server/schedule.only_online_hint'))
+                    ->hintIcon(TablerIcon::QuestionMark, trans('server/schedule.only_online_hint'))
                     ->inline(false)
                     ->required()
                     ->default(1),
                 Toggle::make('is_active')
                     ->label(trans('server/schedule.enabled'))
-                    ->hintIcon('tabler-question-mark', trans('server/schedule.enabled_hint'))
+                    ->hintIcon(TablerIcon::QuestionMark, trans('server/schedule.enabled_hint'))
                     ->inline(false)
                     ->hiddenOn('view')
                     ->required()
@@ -347,13 +348,13 @@ class ScheduleResource extends Resource
             ])
             ->toolbarActions([
                 CreateAction::make()
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
-                    ->icon('tabler-calendar-plus')
+                    ->hiddenLabel()
+                    ->icon(TablerIcon::CalendarPlus)
                     ->color('primary')
                     ->tooltip(trans('server/schedule.new')),
                 ImportScheduleAction::make()
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
-                    ->icon('tabler-file-import')
+                    ->hiddenLabel()
+                    ->icon(TablerIcon::FileImport)
                     ->color('success')
                     ->tooltip(trans('server/schedule.import')),
             ]);

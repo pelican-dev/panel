@@ -3,6 +3,7 @@
 namespace App\Filament\Server\Resources\Subusers;
 
 use App\Enums\SubuserPermission;
+use App\Enums\TablerIcon;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\Subusers\Pages\ListSubusers;
 use App\Models\Server;
@@ -15,6 +16,7 @@ use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyTable;
 use App\Traits\Filament\HasLimitBadge;
+use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
@@ -33,7 +35,6 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -50,7 +51,7 @@ class SubuserResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'tabler-users';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::Users;
 
     protected static function getBadgeCount(): int
     {
@@ -216,8 +217,8 @@ class SubuserResource extends Resource
             ])
             ->toolbarActions([
                 CreateAction::make('invite')
-                    ->hiddenLabel()->iconButton()->iconSize(IconSize::ExtraLarge)
-                    ->icon('tabler-user-plus')
+                    ->hiddenLabel()
+                    ->icon(TablerIcon::UserPlus)
                     ->tooltip(trans('server/user.invite_user'))
                     ->createAnother(false)
                     ->authorize(fn () => user()?->can(SubuserPermission::UserCreate, $server))
@@ -264,7 +265,7 @@ class SubuserResource extends Resource
                             ]),
                     ])
                     ->modalHeading(trans('server/user.invite_user'))
-                    ->modalIcon('tabler-user-plus')
+                    ->modalIcon(TablerIcon::UserPlus)
                     ->modalSubmitActionLabel(trans('server/user.action'))
                     ->successNotificationTitle(null)
                     ->failureNotificationTitle(null)

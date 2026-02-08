@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'title' => 'Базы данных',
+    'empty' => 'Нет баз данных',
+    'create_database' => 'Создать базу данных',
+    'limit' => 'Достигнут предел базы данных',
+    'viewing' => 'Просмотр: :database',
+    'host' => 'Хост',
+    'database' => 'База данных',
+    'username' => 'Пользователь',
+    'password' => 'Пароль',
+    'remote' => 'Удалённый',
+    'created_at' => 'Создано',
+    'name' => 'Имя базы данных',
+    'name_hint' => 'Если оставить поле пустым, то будет сгенерировано случайное название',
+    'connections_from' => 'Подключение из',
+    'max_connections' => 'Максимум подключений',
+    'database_host' => 'Сервер базы данных',
+    'database_host_select' => 'Выберите сервер базы данных',
+    'jdbc' => 'Строка подключения JDBC',
+    'create_notification' => 'Создано :database',
+    'create_notification_fail' => 'Не удалось создать :database',
+    'delete_notification' => 'Удалено :database',
+    'delete_notification_fail' => 'Не удалось удалить :database',
+];

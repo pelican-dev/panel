@@ -3,24 +3,24 @@
 namespace App\Filament\Components\Actions;
 
 use App\Console\Commands\Egg\UpdateEggIndexCommand;
+use App\Enums\TablerIcon;
+use App\Jobs\InstallEgg;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Support\Enums\IconSize;
+use Filament\Support\Enums\Width;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ImportEggAction extends Action
@@ -34,18 +34,37 @@ class ImportEggAction extends Action
     {
         parent::setUp();
 
-        $this->label(trans('filament-actions::import.modal.actions.import.label'));
+        $this->tooltip(trans('filament-actions::import.modal.actions.import.label'));
 
-        $this->iconButton();
+        $this->hiddenLabel();
 
-        $this->icon('tabler-file-import');
+        $this->icon(TablerIcon::FileImport);
 
-        $this->iconSize(IconSize::ExtraLarge);
+        $this->modalWidth(Width::ScreenExtraLarge);
 
         $this->authorize(fn () => user()?->can('import egg'));
 
         $this->action(function (array $data, EggImporterService $eggImportService): void {
+
+            $gitHubEggs = array_get($this->data, 'eggs', []);
             $eggs = array_merge(collect($data['urls'])->flatten()->whereNotNull()->unique()->all(), Arr::wrap($data['files']));
+
+            if ($gitHubEggs) {
+                foreach ($gitHubEggs as $category => $sortedEggs) {
+                    foreach ($sortedEggs as $downloadUrl) {
+                        InstallEgg::dispatch($downloadUrl);
+                    }
+                }
+
+                Notification::make()
+                    ->title(trans('installer.egg.background_install_started'))
+                    ->body(trans('installer.egg.background_install_description', ['count' => array_sum(array_map('count', $gitHubEggs))]))
+                    ->success()
+                    ->persistent()
+                    ->send();
+
+            }
+
             if (empty($eggs)) {
                 return;
             }
@@ -89,18 +108,20 @@ class ImportEggAction extends Action
                 }
             }
 
-            if ($failed->count() > 0) {
+            $bodyParts = collect([
+                $success->isNotEmpty() ? trans('admin/egg.import.imported_eggs', ['eggs' => $success->join(', ')]) : null,
+                $failed->isNotEmpty() ? trans('admin/egg.import.failed_import_eggs', ['eggs' => $failed->join(', ')]) : null,
+            ])->filter();
+
+            if ($bodyParts->isNotEmpty()) {
                 Notification::make()
-                    ->title(trans('admin/egg.import.import_failed'))
-                    ->body($failed->join(', '))
-                    ->danger()
-                    ->send();
-            }
-            if ($success->count() > 0) {
-                Notification::make()
-                    ->title(trans('admin/egg.import.import_success'))
-                    ->body($success->join(', '))
-                    ->success()
+                    ->title(trans('admin/egg.import.import_result', [
+                        'success' => $success->count(),
+                        'failed' => $failed->count(),
+                        'total' => $success->count() + $failed->count(),
+                    ]))
+                    ->body($bodyParts->join(' | '))
+                    ->status($failed->isEmpty() ? 'success' : ($success->isEmpty() ? 'danger' : 'warning'))
                     ->send();
             }
         });
@@ -113,9 +134,10 @@ class ImportEggAction extends Action
             Tabs::make('Tabs')
                 ->contained(false)
                 ->tabs([
+                    $this->importEggsFromGitHub(),
                     Tab::make('file')
                         ->label(trans('admin/egg.import.file'))
-                        ->icon('tabler-file-upload')
+                        ->icon(TablerIcon::FileUpload)
                         ->schema([
                             FileUpload::make('files')
                                 ->label(trans('admin/egg.model_label'))
@@ -128,32 +150,8 @@ class ImportEggAction extends Action
                         ]),
                     Tab::make('url')
                         ->label(trans('admin/egg.import.url'))
-                        ->icon('tabler-world-upload')
+                        ->icon(TablerIcon::WorldUpload)
                         ->schema([
-                            Select::make('github')
-                                ->label(trans('admin/egg.import.github'))
-                                ->options(fn () => cache('eggs.index'))
-                                ->selectablePlaceholder(false)
-                                ->searchable()
-                                ->preload()
-                                ->live()
-                                ->hintAction(
-                                    Action::make('refresh')
-                                        ->iconButton()
-                                        ->icon('tabler-refresh')
-                                        ->tooltip(trans('admin/egg.import.refresh'))
-                                        ->action(function () {
-                                            Artisan::call(UpdateEggIndexCommand::class);
-                                        })
-                                )
-                                ->afterStateUpdated(function ($state, Set $set, Get $get) use ($isMultiple) {
-                                    if ($state) {
-                                        $urls = $isMultiple ? $get('urls') : [];
-                                        $urls[Str::uuid()->toString()] = ['url' => $state];
-                                        $set('urls', $urls);
-                                        $set('github', null);
-                                    }
-                                }),
                             Repeater::make('urls')
                                 ->hiddenLabel()
                                 ->itemLabel(fn (array $state) => str($state['url'])->afterLast('/egg-')->beforeLast('.')->headline())
@@ -178,5 +176,50 @@ class ImportEggAction extends Action
         ]);
 
         return $this;
+    }
+
+    public function importEggsFromGitHub(): Tab
+    {
+        if (!cache()->get('eggs.index')) {
+            Artisan::call(UpdateEggIndexCommand::class);
+        }
+
+        $eggs = cache()->get('eggs.index', []);
+        $categories = array_keys($eggs);
+        $tabs = array_map(function (string $label) use ($eggs) {
+            $id = str_slug($label, '_');
+            $eggCount = count($eggs[$label]);
+
+            return Tab::make($id)
+                ->label($label)
+                ->badge($eggCount)
+                ->schema([
+                    CheckboxList::make("eggs.$id")
+                        ->hiddenLabel()
+                        ->options(fn () => array_sort($eggs[$label]))
+                        ->searchable($eggCount > 0)
+                        ->bulkToggleable($eggCount > 0)
+                        ->columns(4),
+                ]);
+        }, $categories);
+
+        if (empty($tabs)) {
+            $tabs[] = Tab::make('no_eggs')
+                ->label(trans('installer.egg.no_eggs'))
+                ->schema([
+                    TextEntry::make('no_eggs')
+                        ->hiddenLabel()
+                        ->state(trans('installer.egg.exceptions.no_eggs')),
+                ]);
+        }
+
+        return Tab::make('github')
+            ->label(trans('admin/egg.import.github'))
+            ->icon(TablerIcon::BrandGithub)
+            ->columnSpanFull()
+            ->schema([
+                Tabs::make('egg_tabs')
+                    ->tabs($tabs),
+            ]);
     }
 }

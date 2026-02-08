@@ -3,12 +3,12 @@
 namespace App\Filament\Components\Actions;
 
 use App\Enums\SubuserPermission;
+use App\Enums\TablerIcon;
 use App\Models\Schedule;
 use App\Models\Server;
 use App\Services\Schedules\Sharing\ScheduleExporterService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Support\Enums\IconSize;
 
 class ExportScheduleAction extends Action
 {
@@ -23,11 +23,7 @@ class ExportScheduleAction extends Action
 
         $this->hiddenLabel();
 
-        $this->iconButton();
-
-        $this->iconSize(IconSize::ExtraLarge);
-
-        $this->icon('tabler-download');
+        $this->icon(TablerIcon::Download);
 
         $this->tooltip(trans('server/schedule.export'));
 

@@ -74,18 +74,18 @@ class OAuthController extends Controller
         $email = $oauthUser->getEmail();
 
         if (!$email) {
-            return $this->errorRedirect();
+            return $this->errorRedirect('No email was linked to your account on the OAuth provider.');
         }
 
         $user = User::whereEmail($email)->first();
         if ($user) {
-            if (!$driver->shouldLinkMissingUsers()) {
+            if (!$driver->shouldLinkMissingUser($user, $oauthUser)) {
                 return $this->errorRedirect();
             }
 
             $user = $this->oauthService->linkUser($user, $driver, $oauthUser);
         } else {
-            if (!$driver->shouldCreateMissingUsers()) {
+            if (!$driver->shouldCreateMissingUser($oauthUser)) {
                 return $this->errorRedirect();
             }
 

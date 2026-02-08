@@ -2,12 +2,12 @@
 
 namespace App\Filament\Components\Actions;
 
+use App\Enums\TablerIcon;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Support\Enums\IconSize;
 
 class UpdateEggAction extends Action
 {
@@ -20,13 +20,9 @@ class UpdateEggAction extends Action
     {
         parent::setUp();
 
-        $this->label(trans_choice('admin/egg.update', 1));
+        $this->tooltip(trans_choice('admin/egg.update', 1));
 
-        $this->iconButton();
-
-        $this->icon('tabler-cloud-download');
-
-        $this->iconSize(IconSize::ExtraLarge);
+        $this->icon(TablerIcon::CloudDownload);
 
         $this->color('success');
 
@@ -47,8 +43,8 @@ class UpdateEggAction extends Action
                 cache()->forget("eggs.$egg->uuid.update");
             } catch (Exception $exception) {
                 Notification::make()
-                    ->title(trans('admin/egg.update_failed'))
-                    ->body($exception->getMessage())
+                    ->title(trans('admin/egg.update_failed', ['egg' => $egg->name]))
+                    ->body(trans('admin/egg.update_error', ['error' => $exception->getMessage()]))
                     ->danger()
                     ->send();
 
@@ -58,8 +54,8 @@ class UpdateEggAction extends Action
             }
 
             Notification::make()
-                ->title(trans_choice('admin/egg.updated', 1))
-                ->body($egg->name)
+                ->title(trans('admin/egg.update_success', ['egg' => $egg->name]))
+                ->body(trans('admin/egg.updated_from', ['url' => $egg->update_url]))
                 ->success()
                 ->send();
         });

@@ -2,8 +2,8 @@
 # check for .env file or symlink and generate app keys if missing
 if [ -f /var/www/html/.env ]; then
   echo "external vars exist."
-  # load env vars from .env
-  export $(grep -v '^#' .env | xargs)
+  # load specific env vars from .env used in the entrypoint and they are not already set
+  for VAR in "APP_KEY" "APP_INSTALLED" "DB_CONNECTION" "DB_HOST" "DB_PORT"; do if ! (printenv | grep -q ${VAR}); then export $(grep ${VAR} .env | grep -ve "^#"); fi; done
 else
   echo "external vars don't exist."
   # webroot .env is symlinked to this path
@@ -25,7 +25,7 @@ else
 fi
 
 # create directories for volumes
-mkdir -p /pelican-data/database /pelican-data/storage/avatars /pelican-data/storage/fonts /var/www/html/storage/logs/supervisord 2>/dev/null
+mkdir -p /pelican-data/database /pelican-data/storage/avatars /pelican-data/storage/fonts /pelican-data/storage/icons /pelican-data/plugins /var/www/html/storage/logs/supervisord 2>/dev/null
 
 # if the app is installed then we need to run migrations on start. New installs will run migrations when you run the installer.
 if [ "${APP_INSTALLED}" == "true" ];  then
