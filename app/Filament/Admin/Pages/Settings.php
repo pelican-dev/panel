@@ -863,15 +863,19 @@ class Settings extends Page implements HasSchemas
                         ->default($pwa->get('manifest_icon_512', '/pelican-512.png')),
                     TextInput::make('pwa_apple_touch_icon')
                         ->label(trans('pwa.fields.apple_touch_icon.label'))
+                        ->regex('/\.(png|svg)$/i')
                         ->default($pwa->get('apple_touch_icon', '/pelican-180.png')),
                     TextInput::make('pwa_apple_touch_icon_152')
                         ->label(trans('pwa.fields.apple_touch_icon_152.label'))
+                        ->regex('/\.(png|svg)$/i')
                         ->default($pwa->get('apple_touch_icon_152', '/pelican-152.png')),
                     TextInput::make('pwa_apple_touch_icon_167')
                         ->label(trans('pwa.fields.apple_touch_icon_167.label'))
+                        ->regex('/\.(png|svg)$/i')
                         ->default($pwa->get('apple_touch_icon_167', '/pelican-167.png')),
                     TextInput::make('pwa_apple_touch_icon_180')
                         ->label(trans('pwa.fields.apple_touch_icon_180.label'))
+                        ->regex('/\.(png|svg)$/i')
                         ->default($pwa->get('apple_touch_icon_180', '/pelican-180.png')),
                 ]),
             Section::make(trans('pwa.tabs.push'))
