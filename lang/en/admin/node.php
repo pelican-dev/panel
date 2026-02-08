@@ -14,6 +14,7 @@ return [
     ],
     'table' => [
         'health' => 'Health',
+        'reachable' => 'Reachable',
         'name' => 'Name',
         'address' => 'Address',
         'public' => 'Public',
