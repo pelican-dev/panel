@@ -854,10 +854,12 @@ class Settings extends Page implements HasSchemas
                     TextInput::make('pwa_manifest_icon_192')
                         ->label(trans('pwa.fields.manifest_icon_192.label'))
                         ->helperText(trans('pwa.fields.manifest_icon_192.helper'))
+                        ->regex('/\.(png|svg)$/i')
                         ->default($pwa->get('manifest_icon_192', '/pelican-192.png')),
                     TextInput::make('pwa_manifest_icon_512')
                         ->label(trans('pwa.fields.manifest_icon_512.label'))
                         ->helperText(trans('pwa.fields.manifest_icon_512.helper'))
+                        ->regex('/\.(png|svg)$/i')
                         ->default($pwa->get('manifest_icon_512', '/pelican-512.png')),
                     TextInput::make('pwa_apple_touch_icon')
                         ->label(trans('pwa.fields.apple_touch_icon.label'))

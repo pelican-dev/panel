@@ -237,12 +237,7 @@ JS;
 
         return match ($extension) {
             'svg' => 'image/svg+xml',
-            'png' => 'image/png',
-            'jpg', 'jpeg' => 'image/jpeg',
-            'webp' => 'image/webp',
-            'ico' => 'image/x-icon',
-            'gif' => 'image/gif',
-            default => 'application/octet-stream',
+            default => 'image/png',
         };
     }
 }
