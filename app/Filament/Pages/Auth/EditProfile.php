@@ -254,7 +254,7 @@ class EditProfile extends BaseEditProfile
                                         ->columnSpanFull(),
                                 ])
                                 ->headerActions([
-                                    Action::make('create_api_key')
+                                    Action::make('exclude_create_api_key')
                                         ->label(trans('filament-actions::create.single.modal.actions.create.label'))
                                         ->disabled(fn (Get $get) => empty($get('description')))
                                         ->successRedirectUrl(self::getUrl(['tab' => 'api-keys::data::tab'], panel: 'app'))
@@ -343,7 +343,7 @@ class EditProfile extends BaseEditProfile
                                     ->live(),
                             ])
                             ->headerActions([
-                                Action::make('create_ssh_key')
+                                Action::make('exclude_create_ssh_key')
                                     ->label(trans('filament-actions::create.single.modal.actions.create.label'))
                                     ->disabled(fn (Get $get) => empty($get('name')) || empty($get('public_key')))
                                     ->successRedirectUrl(self::getUrl(['tab' => 'ssh-keys::data::tab'], panel: 'app'))
@@ -474,6 +474,17 @@ class EditProfile extends BaseEditProfile
                                     false => 'Icon Button',
                                 ]),
                         ]),
+                    Section::make(trans('profile.admin'))
+                        ->collapsible()
+                        ->icon(TablerIcon::Shield)
+                        ->visible(fn (User $user) => $user->isAdmin())
+                        ->schema([
+                            ToggleButtons::make('redirect_to_admin')
+                                ->label(trans('profile.redirect_to_admin'))
+                                ->helperText(trans('profile.redirect_to_admin_help'))
+                                ->inline()
+                                ->boolean(),
+                        ]),
                     Section::make(trans('profile.console'))
                         ->collapsible()
                         ->icon(TablerIcon::Terminal2)
@@ -599,6 +610,7 @@ class EditProfile extends BaseEditProfile
             'dashboard_layout' => $data['dashboard_layout'],
             'top_navigation' => $data['top_navigation'],
             'button_style' => $data['button_style'],
+            'redirect_to_admin' => $data['redirect_to_admin'] ?? $this->getUser()->getCustomization(CustomizationKey::RedirectToAdmin),
         ];
 
         unset(
@@ -608,6 +620,7 @@ class EditProfile extends BaseEditProfile
             $data['dashboard_layout'],
             $data['top_navigation'],
             $data['button_style'],
+            $data['redirect_to_admin'],
         );
 
         $data['customization'] = json_encode($customization);
@@ -623,6 +636,7 @@ class EditProfile extends BaseEditProfile
         $data['console_graph_period'] = (int) $this->getUser()->getCustomization(CustomizationKey::ConsoleGraphPeriod);
         $data['dashboard_layout'] = $this->getUser()->getCustomization(CustomizationKey::DashboardLayout);
         $data['button_style'] = $this->getUser()->getCustomization(CustomizationKey::ButtonStyle);
+        $data['redirect_to_admin'] = $this->getUser()->getCustomization(CustomizationKey::RedirectToAdmin);
 
         // Handle migration from boolean to string navigation types
         $topNavigation = $this->getUser()->getCustomization(CustomizationKey::TopNavigation);
