@@ -67,10 +67,17 @@ if [ "${BEHIND_PROXY}" == "true" ]; then
   export ASSET_URL=${APP_URL}
 
   # Write ASSET_URL to .env so PHP-FPM workers can read it (clear_env = yes by default)
-  if grep -q "^ASSET_URL=" /pelican-data/.env; then
-    sed -i "s|^ASSET_URL=.*|ASSET_URL=${APP_URL}|" /pelican-data/.env
+  ENV_FILE="/var/www/html/.env"
+  if [ -e "$ENV_FILE" ]; then
+    ENV_FILE="$(readlink -f "$ENV_FILE")"
   else
-    echo "ASSET_URL=${APP_URL}" >> /pelican-data/.env
+    ENV_FILE="/pelican-data/.env"
+  fi
+  ESCAPED_APP_URL="$(printf '%s' "$APP_URL" | sed 's/[&|]/\\&/g')"
+  if grep -q "^ASSET_URL=" "$ENV_FILE"; then
+    sed -i "s|^ASSET_URL=.*|ASSET_URL=${ESCAPED_APP_URL}|" "$ENV_FILE"
+  else
+    echo "ASSET_URL=${APP_URL}" >> "$ENV_FILE"
   fi
 fi
 
