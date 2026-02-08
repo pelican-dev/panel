@@ -66,6 +66,11 @@ class FilamentServiceProvider extends ServiceProvider
         );
 
         FilamentView::registerRenderHook(
+            PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+            fn () => view('passkeys.login'),
+        );
+
+        FilamentView::registerRenderHook(
             PanelsRenderHook::STYLES_BEFORE,
             fn () => Blade::render("@vite(['resources/css/app.css'])")
         );
