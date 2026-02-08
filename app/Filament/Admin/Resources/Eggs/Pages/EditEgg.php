@@ -318,6 +318,7 @@ class EditEgg extends EditRecord
                         ->helperText(trans('admin/egg.start_config_help')),
                     Textarea::make('config_files')->rows(10)->json()
                         ->label(trans('admin/egg.config_files'))
+                        ->default('{}')
                         ->helperText(trans('admin/egg.config_files_help')),
                     Textarea::make('config_logs')->rows(10)->json()
                         ->label(trans('admin/egg.log_config'))

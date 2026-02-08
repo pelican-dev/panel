@@ -36,7 +36,7 @@ class EggTransformer extends BaseTransformer
     {
         $model->loadMissing('configFrom');
 
-        $files = json_decode($model->inherit_config_files, true, 512, JSON_THROW_ON_ERROR);
+        $files = json_decode($model->inherit_config_files ?? '{}', true, 512, JSON_THROW_ON_ERROR);
 
         $model->loadMissing('scriptFrom');
 
