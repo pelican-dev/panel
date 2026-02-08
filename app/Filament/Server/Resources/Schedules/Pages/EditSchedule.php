@@ -37,7 +37,7 @@ class EditSchedule extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $timezone = $data['timezone'] ?? user()->timezone ?? 'UTC';
+        $timezone = $data['timezone'] ?? user()?->timezone ?? 'UTC';
         unset($data['timezone']);
 
         $data['next_run_at'] = ScheduleResource::getNextRun(
