@@ -7,7 +7,11 @@ use App\Extensions\Avatar\AvatarService;
 use App\Extensions\Captcha\CaptchaService;
 use App\Extensions\OAuth\OAuthService;
 use App\Models\Backup;
+use App\Models\PwaPushSubscription;
 use App\Notifications\MailTested;
+use App\Services\Pwa\PwaActions;
+use App\Services\Pwa\PwaPushService;
+use App\Services\Pwa\PwaSettingsRepository;
 use App\Traits\EnvironmentWriterTrait;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
@@ -144,6 +148,10 @@ class Settings extends Page implements HasSchemas
                 ->label(trans('admin/setting.navigation.misc'))
                 ->icon(TablerIcon::Tool)
                 ->schema($this->miscSettings()),
+            Tab::make('pwa')
+                ->label(trans('pwa.navigation.label'))
+                ->icon('heroicon-o-device-phone-mobile')
+                ->schema($this->pwaSettings()),
         ];
     }
 
@@ -803,6 +811,200 @@ class Settings extends Page implements HasSchemas
         ];
     }
 
+
+    /**
+     * @return Component[]
+     */
+    private function pwaSettings(): array
+    {
+        $pwa = app(PwaSettingsRepository::class);
+        $pwa->ensureVapidKeys();
+
+        return [
+            Section::make(trans('pwa.tabs.manifest'))
+                ->description(trans('pwa.fields.theme_color.helper'))
+                ->columns()
+                ->collapsible()
+                ->schema([
+                    TextInput::make('pwa_theme_color')
+                        ->label(trans('pwa.fields.theme_color.label'))
+                        ->helperText(trans('pwa.fields.theme_color.helper'))
+                        ->default($pwa->get('theme_color', '#0ea5e9')),
+                    TextInput::make('pwa_background_color')
+                        ->label(trans('pwa.fields.background_color.label'))
+                        ->helperText(trans('pwa.fields.background_color.helper'))
+                        ->default($pwa->get('background_color', '#0f172a')),
+                    TextInput::make('pwa_start_url')
+                        ->label(trans('pwa.fields.start_url.label'))
+                        ->helperText(trans('pwa.fields.start_url.helper'))
+                        ->default($pwa->get('start_url', '/')),
+                    TextInput::make('pwa_cache_name')
+                        ->label(trans('pwa.fields.cache_name.label'))
+                        ->helperText(trans('pwa.fields.cache_name.helper'))
+                        ->default($pwa->get('cache_name', 'pelican-pwa-v1')),
+                    TextInput::make('pwa_cache_version')
+                        ->label(trans('pwa.fields.cache_version.label'))
+                        ->numeric()
+                        ->default($pwa->get('cache_version', 1)),
+                ]),
+            Section::make(trans('pwa.fields.manifest_icon_192.label'))
+                ->columns()
+                ->collapsible()
+                ->collapsed()
+                ->schema([
+                    TextInput::make('pwa_manifest_icon_192')
+                        ->label(trans('pwa.fields.manifest_icon_192.label'))
+                        ->helperText(trans('pwa.fields.manifest_icon_192.helper'))
+                        ->default($pwa->get('manifest_icon_192', '/pelican-192.png')),
+                    TextInput::make('pwa_manifest_icon_512')
+                        ->label(trans('pwa.fields.manifest_icon_512.label'))
+                        ->helperText(trans('pwa.fields.manifest_icon_512.helper'))
+                        ->default($pwa->get('manifest_icon_512', '/pelican-512.png')),
+                    TextInput::make('pwa_apple_touch_icon')
+                        ->label(trans('pwa.fields.apple_touch_icon.label'))
+                        ->default($pwa->get('apple_touch_icon', '/pelican-180.png')),
+                    TextInput::make('pwa_apple_touch_icon_152')
+                        ->label(trans('pwa.fields.apple_touch_icon_152.label'))
+                        ->default($pwa->get('apple_touch_icon_152', '/pelican-152.png')),
+                    TextInput::make('pwa_apple_touch_icon_167')
+                        ->label(trans('pwa.fields.apple_touch_icon_167.label'))
+                        ->default($pwa->get('apple_touch_icon_167', '/pelican-167.png')),
+                    TextInput::make('pwa_apple_touch_icon_180')
+                        ->label(trans('pwa.fields.apple_touch_icon_180.label'))
+                        ->default($pwa->get('apple_touch_icon_180', '/pelican-180.png')),
+                ]),
+            Section::make(trans('pwa.tabs.push'))
+                ->columns()
+                ->collapsible()
+                ->collapsed()
+                ->schema([
+                    Toggle::make('pwa_push_enabled')
+                        ->label(trans('pwa.fields.push_enabled.label'))
+                        ->helperText(trans('pwa.fields.push_enabled.helper'))
+                        ->inline(false)
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->default((bool) $pwa->get('push_enabled', false)),
+                    Toggle::make('pwa_push_send_on_database_notifications')
+                        ->label(trans('pwa.fields.push_send_on_db.label'))
+                        ->helperText(trans('pwa.fields.push_send_on_db.helper'))
+                        ->inline(false)
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->visible(fn (Get $get) => $get('pwa_push_enabled'))
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->default((bool) $pwa->get('push_send_on_database_notifications', true)),
+                    Toggle::make('pwa_push_send_on_mail_notifications')
+                        ->label(trans('pwa.fields.push_send_on_mail.label'))
+                        ->helperText(trans('pwa.fields.push_send_on_mail.helper'))
+                        ->inline(false)
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->visible(fn (Get $get) => $get('pwa_push_enabled'))
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->default((bool) $pwa->get('push_send_on_mail_notifications', false)),
+                    TextInput::make('pwa_vapid_subject')
+                        ->label(trans('pwa.fields.vapid_subject.label'))
+                        ->helperText(trans('pwa.fields.vapid_subject.helper'))
+                        ->visible(fn (Get $get) => $get('pwa_push_enabled'))
+                        ->default($pwa->get('vapid_subject', '')),
+                    TextInput::make('pwa_vapid_public_key')
+                        ->label(trans('pwa.fields.vapid_public_key.label'))
+                        ->visible(fn (Get $get) => $get('pwa_push_enabled'))
+                        ->default($pwa->get('vapid_public_key', '')),
+                    TextInput::make('pwa_vapid_private_key')
+                        ->label(trans('pwa.fields.vapid_private_key.label'))
+                        ->password()
+                        ->revealable()
+                        ->visible(fn (Get $get) => $get('pwa_push_enabled'))
+                        ->default($pwa->get('vapid_private_key', '')),
+                    TextInput::make('pwa_notification_icon')
+                        ->label(trans('pwa.fields.default_notification_icon.label'))
+                        ->helperText(trans('pwa.fields.default_notification_icon.helper'))
+                        ->visible(fn (Get $get) => $get('pwa_push_enabled'))
+                        ->default($pwa->get('default_notification_icon', '/pelican.svg')),
+                    TextInput::make('pwa_notification_badge')
+                        ->label(trans('pwa.fields.default_notification_badge.label'))
+                        ->helperText(trans('pwa.fields.default_notification_badge.helper'))
+                        ->visible(fn (Get $get) => $get('pwa_push_enabled'))
+                        ->default($pwa->get('default_notification_badge', '/pelican.svg')),
+                    Actions::make([
+                        Action::make('pwa_test_push')
+                            ->label(trans('pwa.actions.test_push'))
+                            ->icon('heroicon-o-paper-airplane')
+                            ->color('warning')
+                            ->visible(fn (Get $get) => $get('pwa_push_enabled'))
+                            ->requiresConfirmation()
+                            ->action(function () {
+                                $settings = app(PwaSettingsRepository::class);
+                                $push = app(PwaPushService::class);
+                                $user = user();
+
+                                if (!$push->canSend()) {
+                                    Notification::make()->title(trans('pwa.errors.library_missing'))->danger()->send();
+                                    return;
+                                }
+
+                                $vapid = [
+                                    'subject' => $settings->get('vapid_subject', ''),
+                                    'publicKey' => $settings->get('vapid_public_key', ''),
+                                    'privateKey' => $settings->get('vapid_private_key', ''),
+                                ];
+
+                                if (!$vapid['publicKey'] || !$vapid['privateKey']) {
+                                    Notification::make()->title(trans('pwa.errors.vapid_missing'))->danger()->send();
+                                    return;
+                                }
+
+                                $subscription = PwaPushSubscription::query()
+                                    ->where('notifiable_type', $user->getMorphClass())
+                                    ->where('notifiable_id', $user->getKey())
+                                    ->latest('id')
+                                    ->first();
+
+                                if (!$subscription) {
+                                    Notification::make()->title(trans('pwa.errors.no_subscription'))->danger()->send();
+                                    return;
+                                }
+
+                                $icon = asset(ltrim($settings->get('default_notification_icon', '/pelican.svg'), '/'));
+                                $badge = asset(ltrim($settings->get('default_notification_badge', '/pelican.svg'), '/'));
+
+                                $result = $push->sendToSubscription($subscription, [
+                                    'title' => config('app.name', 'Pelican'),
+                                    'body' => trans('pwa.messages.test_notification_body'),
+                                    'icon' => $icon,
+                                    'badge' => $badge,
+                                    'url' => url('/'),
+                                    'tag' => 'pwa-test',
+                                ], $vapid);
+
+                                if ($result === true) {
+                                    Notification::make()->title(trans('pwa.notifications.test_sent'))->success()->send();
+                                } else {
+                                    Notification::make()->title(trans('pwa.errors.send_failed'))->body($result)->danger()->send();
+                                }
+                            }),
+                    ]),
+                ]),
+            Section::make(trans('pwa.tabs.actions'))
+                ->description(trans('pwa.profile.section_description'))
+                ->collapsible()
+                ->collapsed()
+                ->schema([
+                    PwaActions::make(),
+                ]),
+        ];
+    }
+
     protected function getFormStatePath(): ?string
     {
         return 'data';
@@ -813,6 +1015,18 @@ class Settings extends Page implements HasSchemas
         try {
             $data = $this->form->getState();
             unset($data['ConsoleFonts']);
+
+            $pwaData = [];
+            foreach ($data as $key => $value) {
+                if (str_starts_with($key, 'pwa_')) {
+                    $pwaData[substr($key, 4)] = $value;
+                    unset($data[$key]);
+                }
+            }
+
+            if ($pwaData !== []) {
+                app(PwaSettingsRepository::class)->setMany($pwaData);
+            }
 
             $data = array_map(function ($value) {
                 // Convert bools to a string, so they are correctly written to the .env file
