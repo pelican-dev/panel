@@ -37,13 +37,25 @@ class PwaController extends Controller
                     'src' => $this->assetOrUrl($icon192),
                     'sizes' => '192x192',
                     'type' => $this->iconMime($icon192),
-                    'purpose' => 'any maskable',
+                    'purpose' => 'any',
+                ],
+                [
+                    'src' => $this->assetOrUrl($icon192),
+                    'sizes' => '192x192',
+                    'type' => $this->iconMime($icon192),
+                    'purpose' => 'maskable',
                 ],
                 [
                     'src' => $this->assetOrUrl($icon512),
                     'sizes' => '512x512',
                     'type' => $this->iconMime($icon512),
-                    'purpose' => 'any maskable',
+                    'purpose' => 'any',
+                ],
+                [
+                    'src' => $this->assetOrUrl($icon512),
+                    'sizes' => '512x512',
+                    'type' => $this->iconMime($icon512),
+                    'purpose' => 'maskable',
                 ],
             ],
             'categories' => ['utilities', 'productivity'],
@@ -221,11 +233,16 @@ JS;
 
     private function iconMime(string $value): string
     {
-        $lower = strtolower($value);
-        if (str_ends_with($lower, '.svg')) {
-            return 'image/svg+xml';
-        }
+        $extension = strtolower(pathinfo($value, PATHINFO_EXTENSION));
 
-        return 'image/png';
+        return match ($extension) {
+            'svg' => 'image/svg+xml',
+            'png' => 'image/png',
+            'jpg', 'jpeg' => 'image/jpeg',
+            'webp' => 'image/webp',
+            'ico' => 'image/x-icon',
+            'gif' => 'image/gif',
+            default => 'application/octet-stream',
+        };
     }
 }

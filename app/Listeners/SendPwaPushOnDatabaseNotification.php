@@ -36,16 +36,6 @@ class SendPwaPushOnDatabaseNotification
 
         $notifiable = $event->notifiable;
 
-        $vapid = [
-            'subject' => $this->settings->get('vapid_subject', ''),
-            'publicKey' => $this->settings->get('vapid_public_key', ''),
-            'privateKey' => $this->settings->get('vapid_private_key', ''),
-        ];
-
-        if (!$vapid['publicKey'] || !$vapid['privateKey']) {
-            return;
-        }
-
         $payload = $this->buildPayload($event);
         if (!$payload) {
             return;
@@ -57,7 +47,7 @@ class SendPwaPushOnDatabaseNotification
             ->get();
 
         foreach ($subscriptions as $subscription) {
-            SendPwaPush::dispatch($subscription->getKey(), $payload, $vapid);
+            SendPwaPush::dispatch($subscription->getKey(), $payload);
         }
     }
 
