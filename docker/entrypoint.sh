@@ -5,7 +5,7 @@ if [ -f /var/www/html/.env ]; then
   # load specific env vars from .env used in the entrypoint if they are not already set
   for VAR in "APP_KEY" "APP_INSTALLED" "DB_CONNECTION" "DB_HOST" "DB_PORT"; do
     if ! (printenv | grep -q "^${VAR}="); then
-      VAL=$(grep "^${VAR}=" .env | grep -ve "^#" | head -1 | cut -d= -f2- | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//")
+      VAL=$(grep "^${VAR}=" /var/www/html/.env | head -1 | cut -d= -f2- | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//")
       if [ -n "$VAL" ]; then export "${VAR}=${VAL}"; fi
     fi
   done
