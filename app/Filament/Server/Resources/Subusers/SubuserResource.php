@@ -77,15 +77,17 @@ class SubuserResource extends Resource
             $options = [];
             $descriptions = [];
 
+            $translationPrefix = $data['translationPrefix'] ?? 'server/user.permissions.';
+
             foreach ($data['permissions'] as $permission) {
                 $options[$permission] = str($permission)->headline();
-                $descKey = 'server/user.permissions.' . $data['name'] . '_' . str($permission)->replace('-', '_');
+                $descKey = $translationPrefix . $data['name'] . '_' . str($permission)->replace('-', '_');
                 $descriptions[$permission] = trans()->has($descKey) ? trans($descKey) : null;
                 $permissionsArray[$data['name']][] = $permission;
             }
 
-            $tabLabelKey = 'server/user.permissions.' . $data['name'];
-            $groupDescKey = 'server/user.permissions.' . $data['name'] . '_desc';
+            $tabLabelKey = $translationPrefix . $data['name'];
+            $groupDescKey = $translationPrefix . $data['name'] . '_desc';
 
             $tabs[] = Tab::make($data['name'])
                 ->label(trans()->has($tabLabelKey) ? trans($tabLabelKey) : str($data['name'])->headline())

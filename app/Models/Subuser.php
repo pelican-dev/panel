@@ -37,7 +37,7 @@ class Subuser extends Model implements Validatable
     protected static array $customPermissions = [];
 
     /** @param string[] $permissions */
-    public static function registerCustomPermissions(string $name, array $permissions, ?string $icon = null, ?bool $hidden = null): void
+    public static function registerCustomPermissions(string $name, array $permissions, ?string $icon = null, ?bool $hidden = null, ?string $translationPrefix = null): void
     {
         $customPermission = static::$customPermissions[$name] ?? [];
 
@@ -50,6 +50,10 @@ class Subuser extends Model implements Validatable
 
         if (!is_null($hidden)) {
             $customPermission['hidden'] = $hidden;
+        }
+
+        if (!is_null($translationPrefix)) {
+            $customPermission['translationPrefix'] = $translationPrefix;
         }
 
         static::$customPermissions[$name] = $customPermission;
@@ -119,6 +123,7 @@ class Subuser extends Model implements Validatable
                 'hidden' => $customPermission['hidden'] ?? $groupData['hidden'] ?? false,
                 'icon' => $customPermission['icon'] ?? $groupData['icon'],
                 'permissions' => array_unique(array_merge($groupData['permissions'] ?? [], $customPermission['permissions'])),
+                'translationPrefix' => $customPermission['translationPrefix'] ?? $groupData['translationPrefix'] ?? null,
             ];
 
             $allPermissions[$name] = $groupData;
