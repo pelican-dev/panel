@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 return [
     'authenticate_using_passkey' => 'Authenticate using a passkey',
     'create' => 'Create',
