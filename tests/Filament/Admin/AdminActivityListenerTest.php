@@ -10,11 +10,23 @@ use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Role;
 use Filament\Facades\Filament;
+use Filament\Resources\Events\RecordCreated;
+use Filament\Resources\Events\RecordUpdated;
 use Illuminate\Support\Facades\Event;
 
 function pageInstance(string $class): object
 {
     return (new ReflectionClass($class))->newInstanceWithoutConstructor();
+}
+
+function createEvent(object $record, array $data, object $page): RecordCreated
+{
+    return new RecordCreated($record, $data, $page);
+}
+
+function updateEvent(object $record, array $data, object $page): RecordUpdated
+{
+    return new RecordUpdated($record, $data, $page);
 }
 
 beforeEach(function () {
@@ -29,7 +41,7 @@ it('logs create activity for an egg', function () {
     $egg = Egg::first();
 
     $listener = new AdminActivityListener();
-    $listener->handle($egg, ['name' => 'Test Egg'], pageInstance(CreateEgg::class));
+    $listener->handle(createEvent($egg, ['name' => 'Test Egg'], pageInstance(CreateEgg::class)));
 
     $this->assertActivityLogged('admin:egg.create');
 });
@@ -38,7 +50,7 @@ it('logs update activity for an egg', function () {
     $egg = Egg::first();
 
     $listener = new AdminActivityListener();
-    $listener->handle($egg, ['name' => 'Updated Egg'], pageInstance(EditEgg::class));
+    $listener->handle(updateEvent($egg, ['name' => 'Updated Egg'], pageInstance(EditEgg::class)));
 
     $this->assertActivityLogged('admin:egg.update');
 });
@@ -47,7 +59,7 @@ it('logs create activity for a node', function () {
     $node = Node::first();
 
     $listener = new AdminActivityListener();
-    $listener->handle($node, ['name' => 'Test Node'], pageInstance(CreateNode::class));
+    $listener->handle(createEvent($node, ['name' => 'Test Node'], pageInstance(CreateNode::class)));
 
     $this->assertActivityLogged('admin:node.create');
 });
@@ -56,7 +68,7 @@ it('logs update activity for a node', function () {
     $node = Node::first();
 
     $listener = new AdminActivityListener();
-    $listener->handle($node, ['name' => 'Updated Node'], pageInstance(EditNode::class));
+    $listener->handle(updateEvent($node, ['name' => 'Updated Node'], pageInstance(EditNode::class)));
 
     $this->assertActivityLogged('admin:node.update');
 });
@@ -67,7 +79,7 @@ it('does not log activity for non-admin panels', function () {
     $egg = Egg::first();
 
     $listener = new AdminActivityListener();
-    $listener->handle($egg, ['name' => 'Test'], pageInstance(CreateEgg::class));
+    $listener->handle(createEvent($egg, ['name' => 'Test'], pageInstance(CreateEgg::class)));
 
     Event::assertNotDispatched(ActivityLogged::class);
 });
@@ -76,7 +88,7 @@ it('sets the record as the activity subject', function () {
     $egg = Egg::first();
 
     $listener = new AdminActivityListener();
-    $listener->handle($egg, ['name' => 'Test'], pageInstance(CreateEgg::class));
+    $listener->handle(createEvent($egg, ['name' => 'Test'], pageInstance(CreateEgg::class)));
 
     $this->assertActivityFor('admin:egg.create', $this->admin, $egg);
 });
@@ -94,17 +106,17 @@ it('redacts sensitive fields from activity properties', function () {
     ];
 
     $listener = new AdminActivityListener();
-    $listener->handle($egg, $data, pageInstance(EditEgg::class));
+    $listener->handle(updateEvent($egg, $data, pageInstance(EditEgg::class)));
 
     Event::assertDispatched(ActivityLogged::class, function (ActivityLogged $event) {
         $properties = $event->model->properties;
 
         expect($properties)->toHaveKey('name', 'Visible')
-            ->not->toHaveKey('password')
-            ->not->toHaveKey('password_confirmation')
-            ->not->toHaveKey('token')
-            ->not->toHaveKey('secret')
-            ->not->toHaveKey('api_key');
+            ->toHaveKey('password', '[REDACTED]')
+            ->toHaveKey('password_confirmation', '[REDACTED]')
+            ->toHaveKey('token', '[REDACTED]')
+            ->toHaveKey('secret', '[REDACTED]')
+            ->toHaveKey('api_key', '[REDACTED]');
 
         return true;
     });
@@ -123,14 +135,14 @@ it('redacts sensitive fields in nested arrays', function () {
     ];
 
     $listener = new AdminActivityListener();
-    $listener->handle($egg, $data, pageInstance(EditEgg::class));
+    $listener->handle(updateEvent($egg, $data, pageInstance(EditEgg::class)));
 
     Event::assertDispatched(ActivityLogged::class, function (ActivityLogged $event) {
         $properties = $event->model->properties;
 
         expect($properties['nested'])->toHaveKey('safe', 'value')
-            ->not->toHaveKey('password')
-            ->not->toHaveKey('token');
+            ->toHaveKey('password', '[REDACTED]')
+            ->toHaveKey('token', '[REDACTED]');
 
         return true;
     });
@@ -140,7 +152,7 @@ it('generates kebab-case event names from model class names', function () {
     $node = Node::first();
 
     $listener = new AdminActivityListener();
-    $listener->handle($node, ['name' => 'Test'], pageInstance(CreateNode::class));
+    $listener->handle(createEvent($node, ['name' => 'Test'], pageInstance(CreateNode::class)));
 
     $this->assertActivityLogged('admin:node.create');
 });
