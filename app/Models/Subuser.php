@@ -33,7 +33,7 @@ class Subuser extends Model implements Validatable
      */
     public const RESOURCE_NAME = 'server_subuser';
 
-    /** @var array<string, array{name: string, hidden: ?bool, icon: ?string, permissions: string[]}> */
+    /** @var array<string, array{name: string, hidden?: ?bool, icon?: ?string, permissions: string[], translationPrefix?: string, label?: string, description?: string, descriptions?: array<string, string>}> */
     protected static array $customPermissions = [];
 
     /**
@@ -138,20 +138,18 @@ class Subuser extends Model implements Validatable
         foreach (static::$customPermissions as $customPermission) {
             $name = $customPermission['name'];
 
-            $groupData = $allPermissions[$name] ?? [];
+            $existing = $allPermissions[$name] ?? null;
 
-            $groupData = [
+            $allPermissions[$name] = [
                 'name' => $name,
-                'hidden' => $customPermission['hidden'] ?? $groupData['hidden'] ?? false,
-                'icon' => $customPermission['icon'] ?? $groupData['icon'],
-                'permissions' => array_unique(array_merge($groupData['permissions'] ?? [], $customPermission['permissions'])),
-                'translationPrefix' => $customPermission['translationPrefix'] ?? $groupData['translationPrefix'] ?? null,
-                'label' => $customPermission['label'] ?? $groupData['label'] ?? null,
-                'description' => $customPermission['description'] ?? $groupData['description'] ?? null,
-                'descriptions' => array_merge($groupData['descriptions'] ?? [], $customPermission['descriptions'] ?? []),
+                'hidden' => $customPermission['hidden'] ?? ($existing !== null ? $existing['hidden'] : false),
+                'icon' => $customPermission['icon'] ?? ($existing !== null ? $existing['icon'] : null),
+                'permissions' => array_unique(array_merge($existing !== null ? $existing['permissions'] : [], $customPermission['permissions'])),
+                'translationPrefix' => ($customPermission['translationPrefix'] ?? null) ?? ($existing !== null ? $existing['translationPrefix'] : null),
+                'label' => ($customPermission['label'] ?? null) ?? ($existing !== null ? $existing['label'] : null),
+                'description' => ($customPermission['description'] ?? null) ?? ($existing !== null ? $existing['description'] : null),
+                'descriptions' => array_merge($existing !== null ? $existing['descriptions'] : [], $customPermission['descriptions'] ?? []),
             ];
-
-            $allPermissions[$name] = $groupData;
         }
 
         return array_values($allPermissions);
