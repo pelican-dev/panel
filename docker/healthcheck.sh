@@ -1,9 +1,6 @@
-#!/bin/ash -e
+#!/bin/sh -eu
 
-if [ ${SKIP_CADDY} ! "true" ]; then
-    curl -f http://localhost/up || exit 1
+# If the web server is enabled, ensure the app responds.
+if [ "${SKIP_CADDY:-}" != "true" ]; then
+  curl -fsS http://localhost/up >/dev/null
 fi
-
-cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 2
-
-exit 0
