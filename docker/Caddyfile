@@ -15,10 +15,7 @@
 
 	file_server
 
-	# FrankenPHP replaces php-fpm + fastcgi with an in-process PHP runtime.
-	# When we later want Laravel "worker mode", we can extend this block with
-	# FrankenPHP worker directives (often via Laravel Octane).
 	php_server {
-	    worker ./public/index.php
+	    try_files {path} index.php
 	}
 }

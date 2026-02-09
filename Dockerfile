@@ -81,8 +81,17 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     # packages for running the panel
     ca-certificates supervisor curl netcat-openbsd \
+    # packages required for NodeSource setup script
+    gnupg \
     # required for installing plugins. Pulled from https://github.com/pelican-dev/panel/pull/2034
-    zip unzip p7zip-full bzip2 git yarnpkg \
+    zip unzip p7zip-full bzip2 git \
+    # Install Node.js (22.x) + Yarn in the final runtime image (needed at runtime).
+    # We intentionally do this here rather than relying on the build stage image.
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && npm install -g yarn \
+    && node --version \
+    && yarn --version \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --chown=root:www-data --chmod=770 --from=composerbuild /build .
