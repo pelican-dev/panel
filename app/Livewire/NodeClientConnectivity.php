@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Enums\TablerIcon;
 use App\Models\Node;
-use App\Models\Server;
 use App\Services\Nodes\NodeJWTService;
 use App\Services\Servers\GetUserPermissionsService;
 use Filament\Support\Enums\IconSize;
