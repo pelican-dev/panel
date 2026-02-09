@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Enums\TablerIcon;
 use App\Models\Node;
+use App\Models\Server;
 use App\Services\Nodes\NodeJWTService;
 use App\Services\Servers\GetUserPermissionsService;
 use Filament\Support\Enums\IconSize;
@@ -20,6 +21,16 @@ class NodeClientConnectivity extends Component
     #[Locked]
     public Node $node;
 
+    private GetUserPermissionsService $getUserPermissionsService;
+
+    private NodeJWTService $nodeJWTService;
+
+    public function boot(GetUserPermissionsService $getUserPermissionsService, NodeJWTService $nodeJWTService): void
+    {
+        $this->getUserPermissionsService = $getUserPermissionsService;
+        $this->nodeJWTService = $nodeJWTService;
+    }
+
     public function render(): \Illuminate\Contracts\View\View
     {
         $httpUrl = $this->node->getConnectionAddress();
@@ -32,11 +43,9 @@ class NodeClientConnectivity extends Component
         if ($server) {
             $user = Auth::user();
 
-            $permissionsService = app(GetUserPermissionsService::class);
-            $permissions = $permissionsService->handle($server, $user);
+            $permissions = $this->getUserPermissionsService->handle($server, $user);
 
-            $jwtService = app(NodeJWTService::class);
-            $wsToken = $jwtService
+            $wsToken = $this->nodeJWTService
                 ->setExpiresAt(now()->addMinute()->toImmutable())
                 ->setUser($user)
                 ->setClaims([

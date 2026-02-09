@@ -255,6 +255,8 @@ class Node extends Model implements Validatable
 
     /**
      * Gets the servers associated with a node.
+     *
+     * @return HasMany<Server, $this>
      */
     public function servers(): HasMany
     {
