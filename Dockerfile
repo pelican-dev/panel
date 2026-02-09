@@ -11,7 +11,7 @@ ARG TARGETARCH=amd64
 # ================================
 # Stage 0: Base Runtime (FrankenPHP dev, GNU libc)
 # ================================
-FROM dunglas/frankenphp-dev:php8.4-bookworm AS base
+FROM dunglas/frankenphp:php8.4-bookworm AS base
 
 # Keep compatible with the legacy Docker builder (no BuildKit required).
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/install-php-extensions
