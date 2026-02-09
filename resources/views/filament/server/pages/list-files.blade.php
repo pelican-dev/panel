@@ -5,6 +5,8 @@
                 position: sticky;
                 top: 0;
                 z-index: 1;
+                border-top-left-radius: 15px;
+                border-top-right-radius: 15px;
                 -webkit-backdrop-filter: blur(8px);
                 backdrop-filter: blur(8px);
             }
