@@ -9,6 +9,7 @@ use Filament\Auth\Pages\Login as BaseLogin;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Illuminate\Validation\ValidationException;
@@ -23,6 +24,16 @@ class Login extends BaseLogin
     {
         $this->oauthService = $oauthService;
         $this->captchaService = $captchaService;
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+                $this->getMultiFactorChallengeFormContentComponent(),
+                View::make('passkeys.login'),
+            ]);
     }
 
     public function form(Schema $schema): Schema

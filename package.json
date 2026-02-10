@@ -17,6 +17,7 @@
         "vite": "7.1.11"
     },
     "dependencies": {
+        "@simplewebauthn/browser": "^13.2.2",
         "@xterm/addon-fit": "^0.10.0",
         "@xterm/addon-search": "^0.15.0",
         "@xterm/addon-web-links": "^0.11.0",

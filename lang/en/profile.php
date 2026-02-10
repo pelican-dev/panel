@@ -11,6 +11,7 @@ return [
         'keys' => 'Keys',
         '2fa' => '2FA',
         'customization' => 'Customization',
+        'passkeys' => 'Passkeys',
     ],
     'username' => 'Username',
     'admin' => 'Admin',
