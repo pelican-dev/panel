@@ -68,6 +68,9 @@ RUN apk add --no-cache \
     # required for installing plugins. Pulled from https://github.com/pelican-dev/panel/pull/2034
     zip unzip 7zip bzip2-dev yarn git
 
+# Copy composer binary for runtime plugin dependency management
+COPY --from=composer /usr/local/bin/composer /usr/local/bin/composer    
+
 COPY --chown=root:www-data --chmod=770 --from=composerbuild /build .
 COPY --chown=root:www-data --chmod=770 --from=yarnbuild /build/public ./public
 
