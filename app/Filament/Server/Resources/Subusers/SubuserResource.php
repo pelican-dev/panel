@@ -205,6 +205,7 @@ class SubuserResource extends Resource
                 DeleteAction::make()
                     ->label(trans('server/user.delete'))
                     ->hidden(fn (Subuser $subuser) => user()?->id === $subuser->user->id)
+                    ->authorize(fn () => user()?->can(SubuserPermission::UserCreate, $server))
                     ->successNotificationTitle(null)
                     ->action(function (Subuser $subuser, SubuserDeletionService $subuserDeletionService) use ($server) {
                         $subuserDeletionService->handle($subuser, $server);
