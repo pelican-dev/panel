@@ -228,6 +228,8 @@ class BackupResource extends Resource
                     Action::make('exclude_delete')
                         ->icon(TablerIcon::Trash)
                         ->color('danger')
+                        ->requiresConfirmation()
+                        ->authorize(fn () => user()?->can(SubuserPermission::BackupDelete, $server))
                         ->label(trans('filament-actions::delete.single.label'))
                         ->iconSize(IconSize::Large)
                         ->disabled(fn (Backup $backup) => $backup->is_locked && $backup->status !== BackupStatus::Failed)
