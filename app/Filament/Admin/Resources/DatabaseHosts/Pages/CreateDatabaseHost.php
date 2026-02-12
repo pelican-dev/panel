@@ -8,6 +8,7 @@ use App\Services\Databases\Hosts\HostCreationService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -43,6 +44,17 @@ class CreateDatabaseHost extends CreateRecord
     public function boot(HostCreationService $service): void
     {
         $this->service = $service;
+    }
+
+    protected function getCreateFormAction(): Action
+    {
+        $hasFormWrapper = $this->hasFormWrapper();
+
+        return Action::make('exclude_create')
+            ->label(trans('filament-panels::resources/pages/create-record.form.actions.create.label'))
+            ->submit($hasFormWrapper ? $this->getSubmitFormLivewireMethodName() : null)
+            ->action($hasFormWrapper ? null : $this->getSubmitFormLivewireMethodName())
+            ->keyBindings(['mod+s']);
     }
 
     /** @return Step[]

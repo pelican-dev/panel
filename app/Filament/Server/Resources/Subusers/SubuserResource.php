@@ -123,18 +123,6 @@ class SubuserResource extends Resource
                     ),
             ])
             ->recordActions([
-                DeleteAction::make()
-                    ->label(trans('server/user.delete'))
-                    ->hidden(fn (Subuser $subuser) => user()?->id === $subuser->user->id)
-                    ->successNotificationTitle(null)
-                    ->action(function (Subuser $subuser, SubuserDeletionService $subuserDeletionService) use ($server) {
-                        $subuserDeletionService->handle($subuser, $server);
-
-                        Notification::make()
-                            ->title(trans('server/user.notification_delete'))
-                            ->success()
-                            ->send();
-                    }),
                 EditAction::make()
                     ->label(trans('server/user.edit'))
                     ->hidden(fn (Subuser $subuser) => user()?->id === $subuser->user->id)
@@ -213,6 +201,19 @@ class SubuserResource extends Resource
                         }
 
                         return $data;
+                    }),
+                DeleteAction::make()
+                    ->label(trans('server/user.delete'))
+                    ->hidden(fn (Subuser $subuser) => user()?->id === $subuser->user->id)
+                    ->authorize(fn () => user()?->can(SubuserPermission::UserDelete, $server))
+                    ->successNotificationTitle(null)
+                    ->action(function (Subuser $subuser, SubuserDeletionService $subuserDeletionService) use ($server) {
+                        $subuserDeletionService->handle($subuser, $server);
+
+                        Notification::make()
+                            ->title(trans('server/user.notification_delete'))
+                            ->success()
+                            ->send();
                     }),
             ])
             ->toolbarActions([
