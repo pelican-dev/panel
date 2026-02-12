@@ -935,7 +935,7 @@ class EditServer extends EditRecord
                                                         ->send();
                                                 }
                                             }),
-                                        Action::make('toggleUnsuspend')
+                                        Action::make('exclude_toggle_unsuspend')
                                             ->label(trans('admin/server.unsuspend'))
                                             ->color('success')
                                             ->hidden(fn (Server $server) => !$server->isSuspended())
