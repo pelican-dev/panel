@@ -278,6 +278,14 @@ class CreateNode extends CreateRecord
                         ->default(256)
                         ->minValue(1)
                         ->suffix(config('panel.use_binary_prefix') ? 'MiB' : 'MB'),
+                    TextInput::make('daemon_base')
+                        ->label(trans('admin/node.daemon_base'))
+                        ->placeholder('/var/lib/pelican/volumes')
+                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/node.daemon_base_help'))
+                        ->columnSpan(1)
+                        ->required()
+                        ->default('/var/lib/pelican/volumes')
+                        ->rule('regex:/^([\/][\d\w.\-\/]+)$/'),
                     TextInput::make('daemon_sftp')
                         ->columnSpan(1)
                         ->label(trans('admin/node.sftp_port'))
@@ -287,7 +295,7 @@ class CreateNode extends CreateRecord
                         ->required()
                         ->integer(),
                     TextInput::make('daemon_sftp_alias')
-                        ->columnSpan(2)
+                        ->columnSpan(1)
                         ->label(trans('admin/node.sftp_alias'))
                         ->helperText(trans('admin/node.sftp_alias_help')),
                     Grid::make()
