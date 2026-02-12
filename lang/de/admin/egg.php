@@ -33,7 +33,7 @@ return [
     ],
     'export' => [
         'modal' => 'Wie möchten Sie exportieren?',
-        'as' => 'Als',
+        'as' => 'Als .:format',
     ],
     'in_use' => 'In Verwendung',
     'servers' => 'Server',
