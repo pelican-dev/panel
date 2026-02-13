@@ -197,7 +197,7 @@ class Plugin extends Model implements HasPluginSettings
 
     public function shouldLoad(?string $panelId = null): bool
     {
-        return ($this->status === PluginStatus::Enabled || $this->status === PluginStatus::Errored) && (is_null($panelId) || !$this->panels || in_array($panelId, explode(',', $this->panels)));
+        return $this->fullClass() !== '\\Error\\Error' && ($this->status === PluginStatus::Enabled || $this->status === PluginStatus::Errored) && (is_null($panelId) || !$this->panels || in_array($panelId, explode(',', $this->panels)));
     }
 
     public function canEnable(): bool
