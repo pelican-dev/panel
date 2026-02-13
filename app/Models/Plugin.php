@@ -101,7 +101,7 @@ class Plugin extends Model implements HasPluginSettings
 
         $directories = File::directories(base_path('plugins/'));
         foreach ($directories as $directory) {
-            $plugin = File::basename($directory);
+            $plugin = Str::lower(File::basename($directory));
 
             $path = plugin_path($plugin, 'plugin.json');
             if (!file_exists($path)) {
@@ -110,6 +110,7 @@ class Plugin extends Model implements HasPluginSettings
 
             try {
                 $data = File::json($path, JSON_THROW_ON_ERROR);
+                $data['id'] = Str::lower($data['id']);
 
                 if ($data['id'] !== $plugin) {
                     throw new Exception("Plugin id mismatch for folder name ($plugin) and id in plugin.json ({$data['id']})!");
