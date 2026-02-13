@@ -102,12 +102,14 @@ class Plugin extends Model implements HasPluginSettings
 
         $directories = File::directories(base_path('plugins/'));
         foreach ($directories as $directory) {
-            $plugin = Str::lower(File::basename($directory));
+            $plugin = File::basename($directory);
 
             $path = plugin_path($plugin, 'plugin.json');
             if (!file_exists($path)) {
                 continue;
             }
+
+            $plugin = Str::lower($plugin);
 
             try {
                 $data = File::json($path, JSON_THROW_ON_ERROR);
