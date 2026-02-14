@@ -71,7 +71,7 @@ export CADDY_APP_URL=${APP_URL}
 # checking if app url is https
 if (echo "${APP_URL}" | grep -qE '^https://'); then
   # check lets encrypt email was set without a proxy
-  if [ ! -z "${LE_EMAIL}" ] && [ "${BEHIND_PROXY}" != "true" ]; then
+  if [ -z "${LE_EMAIL}" ] && [ "${BEHIND_PROXY}" != "true" ]; then
     echo "when app url is https a lets encrypt email must be set when not behind a proxy"
     exit 1
   fi
