@@ -68,8 +68,13 @@ php artisan filament:optimize
 export SUPERVISORD_CADDY=false
 export CADDY_APP_URL=${APP_URL}
 
-# checking if app url is using https
-if echo "${APP_URL}" | grep -qE '^https://'; then
+# checking if app url is https
+if (echo "${APP_URL}" | grep -qE '^https://'); then
+  # check lets encrypt email was set without a proxy
+  if [ ! -z "${LE_EMAIL}" ] && [ "${BEHIND_PROXY}" != "true" ]; then
+    echo "when app url is https a lets encrypt email must be set when not behind a proxy"
+    exit 1
+  fi
   echo "https domain found setting email var"
   export CADDY_LE_EMAIL="email ${LE_EMAIL}"
 fi
