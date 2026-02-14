@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/ash -e
 # shellcheck shell=dash
 
 # check for .env file or symlink and generate app keys if missing
