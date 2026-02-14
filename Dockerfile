@@ -73,6 +73,7 @@ COPY --from=composer /usr/local/bin/composer /usr/local/bin/composer
 
 COPY --chown=root:www-data --chmod=770 --from=composerbuild /build .
 COPY --chown=root:www-data --chmod=770 --from=yarnbuild /build/public ./public
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # Create and remove directories
 RUN mkdir -p /pelican-data/storage /pelican-data/plugins /var/run/supervisord \
