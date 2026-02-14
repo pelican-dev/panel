@@ -86,7 +86,7 @@ if [ "${BEHIND_PROXY}" = "true" ]; then
   export CADDY_LE_EMAIL=""
   export CADDY_APP_URL=":80"
   export CADDY_AUTO_HTTPS="auto_https off"
-  export ASSET_URL=${APP_URL}
+  export ASSET_URL="${APP_URL}"
 fi
 
 # disable caddy if SKIP_CADDY is set
