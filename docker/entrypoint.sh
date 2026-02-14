@@ -28,7 +28,7 @@ else
     echo "Generating key."
     APP_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
     echo "Generated app key: $APP_KEY"
-    ech "APP_KEY=$APP_KEY" > /pelican-data/.env
+    echo "APP_KEY=$APP_KEY" > /pelican-data/.env
   else
     echo "APP_KEY exists in environment, using that."
     echo "APP_KEY=$APP_KEY" > /pelican-data/.env
