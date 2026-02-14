@@ -97,8 +97,7 @@ class ScheduleResource extends Resource
                     ->formatStateUsing(fn (?Schedule $schedule) => $schedule?->status->value ?? 'new')
                     ->options(fn (?Schedule $schedule) => [$schedule?->status->value ?? 'new' => $schedule?->status->getLabel() ?? 'New'])
                     ->visibleOn('view'),
-                Section::make('Cron')
-                    ->label(trans('server/schedule.cron'))
+                Section::make(trans('server/schedule.cron'))
                     ->description(function (Get $get) {
                         try {
                             $nextRun = Utilities::getScheduleNextRunDate($get('cron_minute'), $get('cron_hour'), $get('cron_day_of_month'), $get('cron_month'), $get('cron_day_of_week'))->timezone(user()->timezone ?? 'UTC');
@@ -110,22 +109,22 @@ class ScheduleResource extends Resource
                     })
                     ->schema([
                         Actions::make([
-                            CronPresetAction::make('hourly')
+                            CronPresetAction::make('exclude_hourly')
                                 ->label(trans('server/schedule.time.hourly'))
                                 ->cron('0', '*', '*', '*', '*'),
-                            CronPresetAction::make('daily')
+                            CronPresetAction::make('exclude_daily')
                                 ->label(trans('server/schedule.time.daily'))
                                 ->cron('0', '0', '*', '*', '*'),
-                            CronPresetAction::make('weekly_monday')
+                            CronPresetAction::make('exclude_weekly_monday')
                                 ->label(trans('server/schedule.time.weekly_mon'))
                                 ->cron('0', '0', '*', '*', '1'),
-                            CronPresetAction::make('weekly_sunday')
+                            CronPresetAction::make('exclude_weekly_sunday')
                                 ->label(trans('server/schedule.time.weekly_sun'))
                                 ->cron('0', '0', '*', '*', '0'),
-                            CronPresetAction::make('monthly')
+                            CronPresetAction::make('exclude_monthly')
                                 ->label(trans('server/schedule.time.monthly'))
                                 ->cron('0', '0', '1', '*', '*'),
-                            CronPresetAction::make('every_x_minutes')
+                            CronPresetAction::make('exclude_every_x_minutes')
                                 ->label(trans('server/schedule.time.every_min'))
                                 ->color(fn (Get $get) => str($get('cron_minute'))->startsWith('*/')
                                                     && $get('cron_hour') == '*'
@@ -148,7 +147,7 @@ class ScheduleResource extends Resource
                                     $set('cron_month', '*');
                                     $set('cron_day_of_week', '*');
                                 }),
-                            CronPresetAction::make('every_x_hours')
+                            CronPresetAction::make('exclude_every_x_hours')
                                 ->color(fn (Get $get) => $get('cron_minute') == '0'
                                                     && str($get('cron_hour'))->startsWith('*/')
                                                     && $get('cron_day_of_month') == '*'
@@ -170,7 +169,7 @@ class ScheduleResource extends Resource
                                     $set('cron_month', '*');
                                     $set('cron_day_of_week', '*');
                                 }),
-                            CronPresetAction::make('every_x_days')
+                            CronPresetAction::make('exclude_every_x_days')
                                 ->color(fn (Get $get) => $get('cron_minute') == '0'
                                                     && $get('cron_hour') == '0'
                                                     && str($get('cron_day_of_month'))->startsWith('*/')
@@ -192,7 +191,7 @@ class ScheduleResource extends Resource
                                     $set('cron_month', '*');
                                     $set('cron_day_of_week', '*');
                                 }),
-                            CronPresetAction::make('every_x_months')
+                            CronPresetAction::make('exclude_every_x_months')
                                 ->color(fn (Get $get) => $get('cron_minute') == '0'
                                                     && $get('cron_hour') == '0'
                                                     && $get('cron_day_of_month') == '1'
@@ -214,7 +213,7 @@ class ScheduleResource extends Resource
                                     $set('cron_month', '*/' . $data['x']);
                                     $set('cron_day_of_week', '*');
                                 }),
-                            CronPresetAction::make('every_x_day_of_week')
+                            CronPresetAction::make('exclude_every_x_day_of_week')
                                 ->color(fn (Get $get) => $get('cron_minute') == '0'
                                                     && $get('cron_hour') == '0'
                                                     && $get('cron_day_of_month') == '*'
