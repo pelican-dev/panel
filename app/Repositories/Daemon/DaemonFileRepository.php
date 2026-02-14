@@ -53,7 +53,7 @@ class DaemonFileRepository extends DaemonRepository
     {
         $response = $this->getHttpClient()
             ->withQueryParameters(['file' => $path])
-            ->withBody($content)
+            ->withBody($content, 'text/plain')
             ->post("/api/servers/{$this->server->uuid}/files/write");
 
         if ($response->status() === 400) {
