@@ -54,6 +54,10 @@ class PluginService
                     }
                 }
 
+                if ($plugin->namespace === 'Error') {
+                    continue;
+                }
+
                 // Always autoload src directory to make sure all class names can be resolved (e.g. in migrations)
                 $namespace = $plugin->namespace . '\\';
                 if (!array_key_exists($namespace, $classLoader->getPrefixesPsr4())) {
