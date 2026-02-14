@@ -93,7 +93,7 @@ else
   export SUPERVISORD_CADDY=true
 
   # handle trusted proxies for caddy when variable has data
-  if [ ! -z ${TRUSTED_PROXIES} ]; then
+  if [ ! -z "${TRUSTED_PROXIES}" ]; then
     FORMATED_PROXIES=$(echo "trusted_proxies static ${TRUSTED_PROXIES}" | sed 's/,/ /g')
     export CADDY_TRUSTED_PROXIES=${FORMATED_PROXIES}
     export CADDY_STRICT_PROXIES="trusted_proxies_strict"
