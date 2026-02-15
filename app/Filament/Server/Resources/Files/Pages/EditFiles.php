@@ -149,11 +149,7 @@ class EditFiles extends Page
                                 try {
                                     $contents = $this->getDaemonFileRepository()->getContent($this->path, config('panel.files.max_edit_size'));
 
-                                    if (mb_check_encoding($contents, 'UTF-8')) {
-                                        return $contents;
-                                    }
-
-                                    return mb_convert_encoding($contents, 'UTF-8', 'ISO-8859-1');
+                                    return mb_convert_encoding($contents, 'UTF-8', ['UTF-8', 'UTF-16', 'ISO-8859-1', 'ASCII']);
                                 } catch (FileSizeTooLargeException) {
                                     AlertBanner::make('file_too_large')
                                         ->title(trans('server/file.alerts.file_too_large.title', ['name' => basename($this->path)]))

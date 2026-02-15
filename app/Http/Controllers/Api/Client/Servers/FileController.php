@@ -77,7 +77,7 @@ class FileController extends ClientApiController
             ->property('file', $request->get('file'))
             ->log();
 
-        return new Response($response, Response::HTTP_OK, ['Content-Type' => 'text/plain; charset=utf-8']);
+        return new Response($response, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
     }
 
     /**
