@@ -25,6 +25,9 @@ class AlertBannerContainer extends Component
         }
     }
 
+    /**
+     * @param  array{id: string, title: ?string, body: ?string, status: ?string, icon: ?string, closeable: bool}  $alert
+     */
     #[On('showAlertBanner')]
     public function showAlertBanner(array $alert): void
     {
