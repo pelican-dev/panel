@@ -333,9 +333,9 @@ class EditEgg extends EditRecord
                         ->hiddenLabel()
                         ->grid()
                         ->relationship('variables')
-                        ->reorderable()
-                        ->collapsible()->collapsed()
                         ->orderColumn()
+                        ->reorderAction(fn (Action $action) => $action->hiddenLabel()->tooltip(fn () => $action->getLabel()))
+                        ->collapsible()->collapsed()
                         ->addActionLabel(trans('admin/egg.add_new_variable'))
                         ->itemLabel(fn (array $state) => $state['name'])
                         ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {

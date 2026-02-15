@@ -103,6 +103,7 @@ class AllocationsRelationManager extends RelationManager
                             ->live()
                             ->hintAction(
                                 Action::make('hint_refresh')
+                                    ->hiddenLabel()
                                     ->icon(TablerIcon::Refresh)
                                     ->tooltip(trans('admin/node.refresh'))
                                     ->action(function () {

@@ -167,7 +167,7 @@ class SubuserResource extends Resource
                                     ])
                                     ->formatStateUsing(fn (Subuser $subuser) => $subuser->user->email),
                                 Actions::make([
-                                    Action::make('assignAll')
+                                    Action::make('exclude_assignAll')
                                         ->label(trans('server/user.assign_all'))
                                         ->action(function (Set $set) use ($permissionsArray) {
                                             $permissions = $permissionsArray;
@@ -244,7 +244,7 @@ class SubuserResource extends Resource
                                     ])
                                     ->required(),
                                 Actions::make([
-                                    Action::make('assignAll')
+                                    Action::make('exclude_assignAll')
                                         ->label(trans('server/user.assign_all'))
                                         ->action(function (Set $set, Get $get) use ($permissionsArray) {
                                             $permissions = $permissionsArray;
