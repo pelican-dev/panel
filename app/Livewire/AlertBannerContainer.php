@@ -13,13 +13,24 @@ class AlertBannerContainer extends Component
     public function mount(): void
     {
         $this->alertBanners = new AlertBannerCollection();
-        $this->pullFromSession();
+
+        foreach (session()->pull('alert-banners', []) as $alertBanner) {
+            // Alerts created during Livewire requests should have been consumed by the event handler on the same page.
+            if (!empty($alertBanner['from_livewire'])) {
+                // If they weren't, then discard them instead of showing on the wrong page.
+                continue;
+            }
+
+            $alertBanner = AlertBanner::fromArray($alertBanner);
+            $this->alertBanners->put($alertBanner->getId(), $alertBanner);
+        }
     }
 
     #[On('alertBannerSent')]
     public function pullFromSession(): void
     {
         foreach (session()->pull('alert-banners', []) as $alertBanner) {
+            unset($alertBanner['from_livewire']);
             $alertBanner = AlertBanner::fromArray($alertBanner);
             $this->alertBanners->put($alertBanner->getId(), $alertBanner);
         }
