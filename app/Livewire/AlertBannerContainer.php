@@ -25,6 +25,13 @@ class AlertBannerContainer extends Component
         }
     }
 
+    #[On('showAlertBanner')]
+    public function showAlertBanner(array $alert): void
+    {
+        $alertBanner = AlertBanner::fromArray($alert);
+        $this->alertBanners->put($alertBanner->getId(), $alertBanner);
+    }
+
     public function remove(string $id): void
     {
         if ($this->alertBanners->has($id)) {
