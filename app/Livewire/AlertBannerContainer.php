@@ -2,18 +2,17 @@
 
 namespace App\Livewire;
 
-use Filament\Notifications\Collection;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
 class AlertBannerContainer extends Component
 {
-    public Collection $alertBanners;
+    public AlertBannerCollection $alertBanners;
 
     public function mount(): void
     {
-        $this->alertBanners = new Collection();
+        $this->alertBanners = new AlertBannerCollection();
         $this->pullFromSession();
     }
 
