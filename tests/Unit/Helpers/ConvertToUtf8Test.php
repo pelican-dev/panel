@@ -92,7 +92,7 @@ class ConvertToUtf8Test extends TestCase
 
             // Truncated UTF-8: max_edit_size can cut a file mid-character.
             // \xC3 starts a 2-byte sequence but has no continuation byte → invalid UTF-8 → ISO-8859-1 fallback
-            'truncated utf8 2-byte sequence' => ["hello\xC3", "helloÃ"],
+            'truncated utf8 2-byte sequence' => ["hello\xC3", 'helloÃ'],
             'truncated utf8 3-byte sequence' => ["hello\xE2\x80", "helloâ\xC2\x80"],
             'truncated utf8 4-byte sequence' => ["hello\xF0\x9F\x98", "helloð\xC2\x9F\xC2\x98"],
 
