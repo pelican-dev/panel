@@ -7,6 +7,7 @@ use App\Facades\Activity;
 use App\Models\Schedule;
 use App\Models\Task;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -73,6 +74,7 @@ class TasksRelationManager extends RelationManager
         return $table
             ->reorderable('sequence_id')
             ->defaultSort('sequence_id')
+            ->reorderRecordsTriggerAction(fn (Action $action, bool $isReordering) => $action->hiddenLabel()->tooltip(fn () => $action->getLabel()))
             ->columns([
                 TextColumn::make('action')
                     ->label(trans('server/schedule.tasks.actions.title'))
