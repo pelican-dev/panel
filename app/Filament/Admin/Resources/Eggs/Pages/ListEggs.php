@@ -86,7 +86,7 @@ class ListEggs extends ListRecords
                     ->multiple(),
                 CreateAction::make(),
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()
+                    DeleteBulkAction::make('exclude_bulk_delete')
                         ->before(function (Collection &$records) {
                             $eggsWithServers = $records->filter(fn (Egg $egg) => $egg->servers_count > 0);
 
@@ -106,7 +106,7 @@ class ListEggs extends ListRecords
                                 $this->halt();
                             }
                         }),
-                    UpdateEggBulkAction::make()
+                    UpdateEggBulkAction::make('exclude_bulk_update')
                         ->before(function (Collection &$records) {
                             $eggsWithoutUpdateUrl = $records->filter(fn (Egg $egg) => $egg->update_url === null);
 
