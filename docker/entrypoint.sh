@@ -66,7 +66,7 @@ php artisan filament:optimize
 
 # default to caddy not starting
 export SUPERVISORD_CADDY=false
-export CADDY_APP_URL=${APP_URL}
+export CADDY_APP_URL="${APP_URL}"
 
 # checking if app url is https
 if (echo "${APP_URL}" | grep -qE '^https://'); then
@@ -98,9 +98,9 @@ else
   export SUPERVISORD_CADDY=true
 
   # handle trusted proxies for caddy when variable has data
-  if [ ! -z "${TRUSTED_PROXIES}" ]; then
-    FORMATED_PROXIES=$(echo "trusted_proxies static ${TRUSTED_PROXIES}" | sed 's/,/ /g')
-    export CADDY_TRUSTED_PROXIES=${FORMATED_PROXIES}
+  if [ -n "${TRUSTED_PROXIES:-}" ]; then
+    FORMATTED_PROXIES=$(echo "trusted_proxies static ${TRUSTED_PROXIES}" | sed 's/,/ /g')
+    export CADDY_TRUSTED_PROXIES="${FORMATTED_PROXIES}"
     export CADDY_STRICT_PROXIES="trusted_proxies_strict"
   fi
 fi
