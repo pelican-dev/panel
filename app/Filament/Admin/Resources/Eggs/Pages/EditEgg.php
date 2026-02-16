@@ -318,6 +318,7 @@ class EditEgg extends EditRecord
                         ->helperText(trans('admin/egg.start_config_help')),
                     Textarea::make('config_files')->rows(10)->json()
                         ->label(trans('admin/egg.config_files'))
+                        ->dehydrateStateUsing(fn ($state) => blank($state) ? '{}' : $state)
                         ->helperText(trans('admin/egg.config_files_help')),
                     Textarea::make('config_logs')->rows(10)->json()
                         ->label(trans('admin/egg.log_config'))
@@ -332,9 +333,9 @@ class EditEgg extends EditRecord
                         ->hiddenLabel()
                         ->grid()
                         ->relationship('variables')
-                        ->reorderable()
-                        ->collapsible()->collapsed()
                         ->orderColumn()
+                        ->reorderAction(fn (Action $action) => $action->hiddenLabel()->tooltip(fn () => $action->getLabel()))
+                        ->collapsible()->collapsed()
                         ->addActionLabel(trans('admin/egg.add_new_variable'))
                         ->itemLabel(fn (array $state) => $state['name'])
                         ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {

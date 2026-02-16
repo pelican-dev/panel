@@ -16,12 +16,14 @@ class RotateDatabasePasswordAction extends Action
 {
     public static function getDefaultName(): ?string
     {
-        return 'hint_rotate';
+        return 'exclude_hint_rotate';
     }
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->hiddenLabel();
 
         $this->tooltip(trans('admin/databasehost.rotate'));
 

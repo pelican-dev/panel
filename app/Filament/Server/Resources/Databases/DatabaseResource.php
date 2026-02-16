@@ -62,7 +62,7 @@ class DatabaseResource extends Resource
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        return $server->database_limit;
+        return $server->database_limit ?? 0;
     }
 
     /**

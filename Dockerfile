@@ -94,6 +94,9 @@ RUN apt-get update \
     && yarn --version \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy composer binary for runtime plugin dependency management
+COPY --from=composer /usr/local/bin/composer /usr/local/bin/composer    
+
 COPY --chown=root:www-data --chmod=770 --from=composerbuild /build .
 COPY --chown=root:www-data --chmod=770 --from=yarnbuild /build/public ./public
 
@@ -109,8 +112,7 @@ RUN mkdir -p /pelican-data/storage /pelican-data/plugins /var/run/supervisord \
 # Allow www-data write permissions where necessary
     && chown -R www-data: /pelican-data .env ./storage ./plugins ./bootstrap/cache /var/run/supervisord /var/www/html/public/storage \
     && chmod -R 770 /pelican-data ./storage ./bootstrap/cache /var/run/supervisord \
-    && chown -R www-data: /usr/local/etc/php/
-
+    && chown -R www-data: /usr/local/etc/php/ /usr/local/etc/php-fpm.d/ /var/www/html/composer.json /var/www/html/composer.lock
 # Configure Supervisor
 COPY docker/supervisord.conf /etc/supervisord.conf
 COPY docker/Caddyfile /etc/caddy/Caddyfile

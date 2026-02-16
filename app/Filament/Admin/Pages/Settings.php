@@ -13,6 +13,8 @@ use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use App\Traits\Filament\CanCustomizeTabs;
 use BackedEnum;
+use BladeUI\Icons\Exceptions\SvgNotFound;
+use BladeUI\Icons\Factory as IconFactory;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -68,6 +70,8 @@ class Settings extends Page implements HasSchemas
 
     protected CaptchaService $captchaService;
 
+    protected IconFactory $iconFactory;
+
     /** @var array<mixed>|null */
     public ?array $data = [];
 
@@ -76,11 +80,12 @@ class Settings extends Page implements HasSchemas
         $this->form->fill();
     }
 
-    public function boot(OAuthService $oauthService, AvatarService $avatarService, CaptchaService $captchaService): void
+    public function boot(OAuthService $oauthService, AvatarService $avatarService, CaptchaService $captchaService, IconFactory $iconFactory): void
     {
         $this->oauthService = $oauthService;
         $this->avatarService = $avatarService;
         $this->captchaService = $captchaService;
+        $this->iconFactory = $iconFactory;
     }
 
     public static function canAccess(): bool
@@ -565,9 +570,18 @@ class Settings extends Page implements HasSchemas
         foreach ($oauthSchemas as $schema) {
             $key = $schema->getConfigKey();
 
+            $icon = $schema->getIcon();
+            if (is_string($icon)) {
+                try {
+                    $this->iconFactory->svg($icon);
+                } catch (SvgNotFound) {
+                    $icon = null;
+                }
+            }
+
             $formFields[] = Section::make($schema->getName())
                 ->columns(5)
-                ->icon($schema->getIcon() ?? TablerIcon::BrandOauth)
+                ->icon($icon ?? TablerIcon::BrandOauth)
                 ->collapsed(fn () => !$schema->isEnabled())
                 ->collapsible()
                 ->schema([

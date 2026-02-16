@@ -29,6 +29,9 @@ abstract class PanelProvider extends BasePanelProvider
     {
         return $panel
             ->spa(fn () => !request()->routeIs('filament.server.pages.console'))
+            ->spaUrlExceptions([
+                '*/oauth/redirect/*',
+            ])
             ->databaseNotifications()
             ->brandName(config('app.name', 'Pelican'))
             ->brandLogo(config('app.logo'))

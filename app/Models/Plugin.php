@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\Plugins\HasPluginSettings;
 use App\Enums\PluginCategory;
 use App\Enums\PluginStatus;
+use App\Exceptions\PluginIdMismatchException;
 use App\Facades\Plugins;
 use Exception;
 use Filament\Schemas\Components\Component;
@@ -108,11 +109,14 @@ class Plugin extends Model implements HasPluginSettings
                 continue;
             }
 
+            $plugin = Str::lower($plugin);
+
             try {
                 $data = File::json($path, JSON_THROW_ON_ERROR);
+                $data['id'] = Str::lower($data['id']);
 
                 if ($data['id'] !== $plugin) {
-                    throw new Exception("Plugin id mismatch for folder name ($plugin) and id in plugin.json ({$data['id']})!");
+                    throw new PluginIdMismatchException("Plugin id mismatch for folder name ($plugin) and id in plugin.json ({$data['id']})!");
                 }
 
                 $panels = null;
@@ -158,12 +162,12 @@ class Plugin extends Model implements HasPluginSettings
                 if (!$exception instanceof JsonException) {
                     $plugins[] = [
                         'id' => $data['id'] ?? Str::uuid(),
-                        'name' => $data['name'] ?? $plugin,
+                        'name' => $data['name'] ?? Str::headline($plugin),
                         'author' => $data['author'] ?? 'Unknown',
-                        'version' => '0.0.0',
-                        'description' => 'Plugin.json is invalid!',
+                        'version' => $data['version'] ?? '0.0.0',
+                        'description' => $exception instanceof PluginIdMismatchException ? $exception->getMessage() : 'Plugin.json is invalid!',
                         'category' => PluginCategory::Plugin->value,
-                        'url' => null,
+                        'url' => $data['url'] ?? null,
                         'update_url' => null,
                         'namespace' => 'Error',
                         'class' => 'Error',
@@ -197,7 +201,7 @@ class Plugin extends Model implements HasPluginSettings
 
     public function shouldLoad(?string $panelId = null): bool
     {
-        return ($this->status === PluginStatus::Enabled || $this->status === PluginStatus::Errored) && (is_null($panelId) || !$this->panels || in_array($panelId, explode(',', $this->panels)));
+        return $this->fullClass() !== '\\Error\\Error' && ($this->status === PluginStatus::Enabled || $this->status === PluginStatus::Errored) && (is_null($panelId) || !$this->panels || in_array($panelId, explode(',', $this->panels)));
     }
 
     public function canEnable(): bool

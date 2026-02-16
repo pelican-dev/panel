@@ -15,7 +15,7 @@
         "filament/filament": "^4.5",
         "gboquizosanchez/filament-log-viewer": "^2.1",
         "guzzlehttp/guzzle": "^7.10",
-        "laravel/framework": "^12.49",
+        "laravel/framework": "^12.51",
         "laravel/helpers": "^1.8",
         "laravel/sanctum": "^4.2",
         "laravel/socialite": "^5.24",
@@ -55,8 +55,7 @@
         "nunomaduro/collision": "^8.6",
         "pestphp/pest": "^3.7",
         "pestphp/pest-plugin-faker": "^3.0",
-        "pestphp/pest-plugin-livewire": "^3.0",
-        "spatie/laravel-ignition": "^2.9"
+        "pestphp/pest-plugin-livewire": "^3.0"
     },
     "autoload": {
         "files": [

@@ -14,6 +14,7 @@ return [
     ],
     'table' => [
         'health' => 'Health',
+        'reachable' => 'Reachable',
         'name' => 'Name',
         'address' => 'Address',
         'public' => 'Public',
@@ -39,6 +40,7 @@ return [
     'ip_help' => 'Usually your machine\'s public IP unless you are port forwarding.',
     'alias_help' => 'Optional display name to help you remember what these are.',
     'refresh' => 'Refresh',
+    'custom_ip' => 'Enter Custom IP',
     'domain' => 'Domain Name',
     'ssl_ip' => 'You cannot connect to an IP Address over SSL',
     'error' => 'This is the domain name that points to your node\'s IP Address. If you\'ve already set up this, you can verify it by checking the next field!',
