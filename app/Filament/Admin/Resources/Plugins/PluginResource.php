@@ -202,7 +202,7 @@ class PluginResource extends Resource
                         ->icon(TablerIcon::Trash)
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->visible(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled)
+                        ->visible(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled || $plugin->status === PluginStatus::Errored)
                         ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
                             $pluginService->deletePlugin($plugin);
 
