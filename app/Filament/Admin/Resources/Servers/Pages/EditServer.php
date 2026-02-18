@@ -121,6 +121,7 @@ class EditServer extends EditRecord
                                 ->columnSpan(2)
                                 ->alignJustify(),
                             Action::make('uploadIcon')
+                                ->hiddenLabel()
                                 ->icon(TablerIcon::PhotoUp)
                                 ->tooltip(trans('admin/server.import_image'))
                                 ->modal()
