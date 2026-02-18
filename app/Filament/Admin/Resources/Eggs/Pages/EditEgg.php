@@ -485,17 +485,19 @@ class EditEgg extends EditRecord
             ],
         ]);
 
+        $normalizedExtension = match ($extension) {
+            'svg+xml', 'svg' => 'svg',
+            'jpeg', 'jpg' => 'jpg',
+            'png' => 'png',
+            'webp' => 'webp',
+            default => throw new \Exception(trans('admin/egg.import.unknown_extension')),
+        };
+
         $data = @file_get_contents($imageUrl, false, $context, 0, 1048576); // 1024KB
 
         if (empty($data)) {
-            throw new Exception(trans('admin/egg.import.invalid_url'));
+            throw new \Exception(trans('admin/egg.import.invalid_url'));
         }
-
-        $normalizedExtension = match ($extension) {
-            'svg+xml' => 'svg',
-            'jpeg' => 'jpg',
-            default => $extension,
-        };
 
         Storage::disk('public')->put(Egg::ICON_STORAGE_PATH . "/$egg->uuid.$normalizedExtension", $data);
     }
