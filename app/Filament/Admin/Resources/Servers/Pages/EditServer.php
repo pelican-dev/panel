@@ -1223,13 +1223,13 @@ class EditServer extends EditRecord
             'jpeg', 'jpg' => 'jpg',
             'png' => 'png',
             'webp' => 'webp',
-            default => throw new \Exception(trans('admin/egg.import.unknown_extension')),
+            default => throw new Exception(trans('admin/egg.import.unknown_extension')),
         };
 
         $data = @file_get_contents($imageUrl, false, $context, 0, 262144); //256KB
 
         if (empty($data)) {
-            throw new \Exception(trans('admin/egg.import.invalid_url'));
+            throw new Exception(trans('admin/egg.import.invalid_url'));
         }
 
         Storage::disk('public')->put(Server::ICON_STORAGE_PATH . "/$server->uuid.$normalizedExtension", $data);
