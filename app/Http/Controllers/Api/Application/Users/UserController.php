@@ -102,15 +102,8 @@ class UserController extends ApplicationApiController
      */
     public function assignRoles(AssignUserRolesRequest $request, User $user): array
     {
-        if (!$user->isRootAdmin()) {
-            $rootAdminId = Role::getRootAdmin()->id;
-            foreach ($request->input('roles') as $role) {
-                if ($role === $rootAdminId) {
-                    continue;
-                }
-
-                $user->assignRole($role);
-            }
+        foreach ($request->input('roles') as $role) {
+            $user->assignRole($role);
         }
 
         $response = $this->fractal->item($user)
@@ -128,15 +121,16 @@ class UserController extends ApplicationApiController
      */
     public function removeRoles(AssignUserRolesRequest $request, User $user): array
     {
-        if (!$user->isRootAdmin()) {
-            $rootAdminId = Role::getRootAdmin()->id;
-            foreach ($request->input('roles') as $role) {
-                if ($role === $rootAdminId) {
-                    continue;
-                }
+        $rootAdminId = Role::getRootAdmin()->id;
+        $authenticatedUser = $request->user();
 
-                $user->removeRole($role);
+        foreach ($request->input('roles') as $role) {
+            // Prevent users from removing their own Root Admin role
+            if ($user->id === $authenticatedUser->id && $role === $rootAdminId) {
+                continue;
             }
+
+            $user->removeRole($role);
         }
 
         $response = $this->fractal->item($user)

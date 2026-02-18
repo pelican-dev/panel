@@ -353,26 +353,20 @@ class UserResource extends Resource
                 ->icon(TablerIcon::UsersGroup)
                 ->schema([
                     CheckboxList::make('roles')
-                        ->hidden(fn (?User $user) => $user && $user->isRootAdmin())
-                        ->relationship('roles', 'name', fn (Builder $query) => $query->whereNot('id', Role::getRootAdmin()->id))
-                        ->saveRelationshipsUsing(fn (User $user, array $state) => $user->syncRoles(collect($state)->map(fn ($role) => Role::findById($role))))
+                        ->relationship('roles', 'name')
+                        ->saveRelationshipsUsing(function (User $user, array $state) {
+                            $currentUser = auth()->user();
+                            // If user is editing their own profile and they are Root Admin, preserve Root Admin role
+                            if ($user->id === $currentUser->id && $user->isRootAdmin() && !in_array(Role::getRootAdmin()->id, $state)) {
+                                $state[] = Role::getRootAdmin()->id;
+                            }
+                            $user->syncRoles(collect($state)->map(fn ($role) => Role::findById($role)));
+                        })
                         ->dehydrated()
                         ->label(trans('admin/user.admin_roles'))
                         ->columnSpanFull()
-                        ->bulkToggleable(false),
-                    CheckboxList::make('root_admin_role')
-                        ->visible(fn (?User $user) => $user && $user->isRootAdmin())
-                        ->disabled()
-                        ->options([
-                            'root_admin' => Role::ROOT_ADMIN,
-                        ])
-                        ->descriptions([
-                            'root_admin' => trans('admin/role.root_admin', ['role' => Role::ROOT_ADMIN]),
-                        ])
-                        ->formatStateUsing(fn () => ['root_admin'])
-                        ->dehydrated(false)
-                        ->label(trans('admin/user.admin_roles'))
-                        ->columnSpanFull(),
+                        ->bulkToggleable(false)
+                        ->disabled(fn (?User $user) => $user && auth()->user()->id === $user->id && $user->isRootAdmin(), [Role::getRootAdmin()->id]),
                 ]),
             Tab::make('keys')
                 ->visible(fn (?User $user) => $user)
