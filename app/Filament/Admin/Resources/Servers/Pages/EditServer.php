@@ -30,6 +30,7 @@ use App\Traits\Filament\CanCustomizeTabs;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
@@ -1107,9 +1108,13 @@ class EditServer extends EditRecord
                 ->modalHeading(trans('filament-actions::delete.single.modal.heading', ['label' => $this->getRecordTitle()]))
                 ->modalSubmitActionLabel(trans('filament-actions::delete.single.label'))
                 ->requiresConfirmation()
-                ->action(function (Server $server, ServerDeletionService $service) {
+                ->form(fn (Server $server) => $server->backups()->where('is_locked', false)->exists() ? [
+                    Checkbox::make('delete_backups')
+                        ->label(trans('admin/server.delete_backups', ['count' => $server->backups()->where('is_locked', false)->count()])),
+                ] : [])
+                ->action(function (array $data, Server $server, ServerDeletionService $service) {
                     try {
-                        $service->handle($server);
+                        $service->withDeleteBackups($data['delete_backups'] ?? false)->handle($server);
 
                         return redirect(ListServers::getUrl(panel: 'admin'));
                     } catch (ConnectionException) {
@@ -1133,9 +1138,13 @@ class EditServer extends EditRecord
                 ->modalHeading(trans('filament-actions::force-delete.single.modal.heading', ['label' => $this->getRecordTitle()]))
                 ->modalSubmitActionLabel(trans('filament-actions::force-delete.single.label'))
                 ->requiresConfirmation()
-                ->action(function (Server $server, ServerDeletionService $service) {
+                ->form(fn (Server $server) => $server->backups()->where('is_locked', false)->exists() ? [
+                    Checkbox::make('delete_backups')
+                        ->label(trans('admin/server.delete_backups', ['count' => $server->backups()->where('is_locked', false)->count()])),
+                ] : [])
+                ->action(function (array $data, Server $server, ServerDeletionService $service) {
                     try {
-                        $service->withForce()->handle($server);
+                        $service->withForce()->withDeleteBackups($data['delete_backups'] ?? false)->handle($server);
 
                         return redirect(ListServers::getUrl(panel: 'admin'));
                     } catch (ConnectionException) {
