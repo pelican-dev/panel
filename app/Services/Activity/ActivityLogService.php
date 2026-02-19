@@ -10,7 +10,6 @@ use Filament\Facades\Filament;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Request;
 use Throwable;
@@ -71,7 +70,7 @@ class ActivityLogService
      */
     public function subject(...$subjects): self
     {
-        foreach (Arr::wrap($subjects) as $subject) {
+        foreach ($subjects as $subject) {
             if (is_null($subject)) {
                 continue;
             }
