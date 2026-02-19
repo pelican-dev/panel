@@ -189,6 +189,18 @@ class EggImporterService
             }
         }
 
+        // Convert YAML booleans to strings to prevent Laravel from converting them to 1/0
+        // when saving to TEXT field. Required for validation rules like "in:true,false".
+        if (isset($parsed['variables'])) {
+            $parsed['variables'] = array_map(function ($variable) {
+                if (isset($variable['default_value']) && is_bool($variable['default_value'])) {
+                    $variable['default_value'] = $variable['default_value'] ? 'true' : 'false';
+                }
+
+                return $variable;
+            }, $parsed['variables']);
+        }
+
         // Reserved env var name handling
         [$forbidden, $allowed] = collect($parsed['variables'])
             ->map(fn ($variable) => array_merge(
