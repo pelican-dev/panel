@@ -3,9 +3,9 @@
 return [
     App\Providers\ActivityLogServiceProvider::class,
     App\Providers\AppServiceProvider::class,
-    App\Providers\BackupsServiceProvider::class,
     App\Providers\EventServiceProvider::class,
     App\Providers\Extensions\AvatarServiceProvider::class,
+    App\Providers\Extensions\BackupAdapterServiceProvider::class,
     App\Providers\Extensions\CaptchaServiceProvider::class,
     App\Providers\Extensions\FeatureServiceProvider::class,
     App\Providers\Extensions\OAuthServiceProvider::class,
