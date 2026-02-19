@@ -75,7 +75,7 @@ class ScheduleController extends ClientApiController
             'cron_minute' => $request->input('minute'),
             'is_active' => (bool) $request->input('is_active'),
             'only_when_online' => (bool) $request->input('only_when_online'),
-            'next_run_at' => $this->getNextRunAt($request),
+            'next_run_at' => $this->getNextRunAt($request, $request->user()->timezone ?? 'UTC'),
         ]);
 
         Activity::event('server:schedule.create')
@@ -131,7 +131,7 @@ class ScheduleController extends ClientApiController
             'cron_minute' => $request->input('minute'),
             'is_active' => $active,
             'only_when_online' => (bool) $request->input('only_when_online'),
-            'next_run_at' => $this->getNextRunAt($request),
+            'next_run_at' => $this->getNextRunAt($request, $request->user()->timezone ?? 'UTC'),
         ];
 
         // Toggle the processing state of the scheduled task when it is enabled or disabled so that an
@@ -188,7 +188,7 @@ class ScheduleController extends ClientApiController
      *
      * @throws DisplayException
      */
-    protected function getNextRunAt(Request $request): Carbon
+    protected function getNextRunAt(Request $request, string $timezone = 'UTC'): Carbon
     {
         try {
             return Utilities::getScheduleNextRunDate(
@@ -196,7 +196,8 @@ class ScheduleController extends ClientApiController
                 $request->input('hour'),
                 $request->input('day_of_month'),
                 $request->input('month'),
-                $request->input('day_of_week')
+                $request->input('day_of_week'),
+                $timezone
             );
         } catch (Exception) {
             throw new DisplayException('The cron data provided does not evaluate to a valid expression.');

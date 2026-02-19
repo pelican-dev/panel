@@ -99,13 +99,15 @@ class ScheduleResource extends Resource
                     ->visibleOn('view'),
                 Section::make(trans('server/schedule.cron'))
                     ->description(function (Get $get) {
+                        $timezone = $get('timezone') ?? user()->timezone ?? 'UTC';
+
                         try {
-                            $nextRun = Utilities::getScheduleNextRunDate($get('cron_minute'), $get('cron_hour'), $get('cron_day_of_month'), $get('cron_month'), $get('cron_day_of_week'))->timezone(user()->timezone ?? 'UTC');
+                            $nextRun = Utilities::getScheduleNextRunDate($get('cron_minute'), $get('cron_hour'), $get('cron_day_of_month'), $get('cron_month'), $get('cron_day_of_week'), $timezone)->timezone($timezone);
                         } catch (Exception) {
                             $nextRun = trans('server/schedule.invalid');
                         }
 
-                        return new HtmlString(trans('server/schedule.cron_body') . '<br>' . trans('server/schedule.cron_timezone', ['timezone' => user()->timezone ?? 'UTC', 'next_run' => $nextRun]));
+                        return new HtmlString(trans('server/schedule.cron_body', ['timezone' => $timezone]) . '<br>' . trans('server/schedule.cron_timezone', ['timezone' => $timezone, 'next_run' => $nextRun]));
                     })
                     ->schema([
                         Actions::make([
@@ -294,6 +296,13 @@ class ScheduleResource extends Resource
                                 'default' => 4,
                                 'lg' => 5,
                             ]),
+                        Select::make('timezone')
+                            ->label(trans('server/schedule.timezone'))
+                            ->options(fn () => array_combine(timezone_identifiers_list(), timezone_identifiers_list()))
+                            ->default(user()->timezone ?? 'UTC')
+                            ->searchable()
+                            ->live()
+                            ->hiddenOn('view'),
                     ])
                     ->columnSpanFull(),
             ]);
@@ -378,10 +387,10 @@ class ScheduleResource extends Resource
         ];
     }
 
-    public static function getNextRun(string $minute, string $hour, string $dayOfMonth, string $month, string $dayOfWeek): Carbon
+    public static function getNextRun(string $minute, string $hour, string $dayOfMonth, string $month, string $dayOfWeek, string $timezone = 'UTC'): Carbon
     {
         try {
-            return Utilities::getScheduleNextRunDate($minute, $hour, $dayOfMonth, $month, $dayOfWeek);
+            return Utilities::getScheduleNextRunDate($minute, $hour, $dayOfMonth, $month, $dayOfWeek, $timezone);
         } catch (Exception) {
             Notification::make()
                 ->title(trans('server/schedule.notification_invalid_cron'))
