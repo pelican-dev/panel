@@ -47,10 +47,8 @@ class CheckEggUpdatesCommand extends Command
 
         $remote = Http::timeout(5)->connectTimeout(1)->get($egg->update_url);
 
-        if (!$remote->successful()) {
-            $this->comment("$egg->name: Skipping (error {$remote->getStatusCode()})");
-
-            return;
+        if ($remote->failed()) {
+            throw new Exception("Update url returned {$remote->getStatusCode()}");
         }
 
         $remote = $remote->body();
