@@ -17,9 +17,13 @@ return [
     'no_mounts' => 'No Mounts',
     'eggs' => 'Eggs',
     'nodes' => 'Nodes',
+    'user_mountable' => 'User Mountable?',
+    'user_mountable_help' => 'Allow users to toggle this mount on or off for their servers.',
     'toggles' => [
         'writable' => 'Writable',
         'read_only' => 'Read Only',
+        'user_mountable' => 'User Mountable',
+        'not_user_mountable' => 'Admin Only',
     ],
     'table' => [
         'name' => 'Name',
