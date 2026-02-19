@@ -77,17 +77,30 @@ class SubuserResource extends Resource
             $options = [];
             $descriptions = [];
 
+            $translationPrefix = $data['translationPrefix'] ?? 'server/user.permissions.';
+            $customDescriptions = $data['descriptions'] ?? [];
+
             foreach ($data['permissions'] as $permission) {
                 $options[$permission] = str($permission)->headline();
-                $descriptions[$permission] = trans('server/user.permissions.' . $data['name'] . '_' . str($permission)->replace('-', '_'));
+
+                if (isset($customDescriptions[$permission])) {
+                    $descriptions[$permission] = $customDescriptions[$permission];
+                } else {
+                    $descKey = $translationPrefix . $data['name'] . '_' . str($permission)->replace('-', '_');
+                    $descriptions[$permission] = trans()->has($descKey) ? trans($descKey) : null;
+                }
+
                 $permissionsArray[$data['name']][] = $permission;
             }
 
+            $tabLabelKey = $translationPrefix . $data['name'];
+            $groupDescKey = $translationPrefix . $data['name'] . '_desc';
+
             $tabs[] = Tab::make($data['name'])
-                ->label(str($data['name'])->headline())
+                ->label($data['label'] ?? (trans()->has($tabLabelKey) ? trans($tabLabelKey) : str($data['name'])->headline()))
                 ->schema([
                     Section::make()
-                        ->description(trans('server/user.permissions.' . $data['name'] . '_desc'))
+                        ->description($data['description'] ?? (trans()->has($groupDescKey) ? trans($groupDescKey) : null))
                         ->icon($data['icon'])
                         ->contained(false)
                         ->schema([
