@@ -426,7 +426,7 @@ class EditProfile extends BaseEditProfile
                 ->label(trans('profile.tabs.activity'))
                 ->icon(TablerIcon::History)
                 ->schema([
-                    Repeater::make('activity')
+                    Repeater::make('activity') // TODO: move to a table
                         ->label(trans('profile.activity_info'))
                         ->inlineLabel(false)
                         ->deletable(false)
