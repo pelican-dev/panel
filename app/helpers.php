@@ -130,6 +130,27 @@ if (!function_exists('encode_path')) {
     }
 }
 
+if (!function_exists('convert_to_utf8')) {
+    /**
+     * Convert a string to UTF-8 from an unknown encoding
+     */
+    function convert_to_utf8(string $contents): string
+    {
+        // Valid UTF-8 passes through unchanged
+        if (mb_check_encoding($contents, 'UTF-8')) {
+            return $contents;
+        }
+
+        // Only detect UTF-16 by BOM instead of mb_check_encoding('UTF-16') which can cause false positives
+        if (str_starts_with($contents, "\xFF\xFE") || str_starts_with($contents, "\xFE\xFF")) {
+            return mb_convert_encoding($contents, 'UTF-8', 'UTF-16');
+        }
+
+        // ISO-8859-1 serves as a universal fallback since any byte sequence is valid in it
+        return mb_convert_encoding($contents, 'UTF-8', 'ISO-8859-1');
+    }
+}
+
 if (!function_exists('user')) {
     function user(): ?App\Models\User
     {
