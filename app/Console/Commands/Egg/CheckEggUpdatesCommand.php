@@ -45,7 +45,15 @@ class CheckEggUpdatesCommand extends Command
             ? Yaml::parse($exporterService->handle($egg->id, EggFormat::YAML))
             : json_decode($exporterService->handle($egg->id, EggFormat::JSON), true);
 
-        $remote = Http::timeout(5)->connectTimeout(1)->get($egg->update_url)->throw()->body();
+        $remote = Http::timeout(5)->connectTimeout(1)->get($egg->update_url);
+
+        if (!$remote->successful()) {
+            $this->comment("$egg->name: Skipping (error {$remote->getStatusCode()})");
+
+            return;
+        }
+
+        $remote = $remote->body();
         $remote = $isYaml ? Yaml::parse($remote) : json_decode($remote, true);
 
         unset($local['exported_at'], $remote['exported_at']);
