@@ -27,10 +27,16 @@ return new class extends Migration
         ];
 
         foreach ($mappings as $oldUuid => $newData) {
-            DB::table('eggs')->where('uuid', $oldUuid)->update([
-                'uuid' => $newData['new_uuid'],
-                'update_url' => $newData['new_update_url'],
-            ]);
+            if (DB::table('eggs')->where('uuid', $newData['new_uuid'])->exists()) {
+                DB::table('eggs')->where('uuid', $newData['new_uuid'])->update([
+                    'update_url' => $newData['new_update_url'],
+                ]);
+            } else {
+                DB::table('eggs')->where('uuid', $oldUuid)->update([
+                    'uuid' => $newData['new_uuid'],
+                    'update_url' => $newData['new_update_url'],
+                ]);
+            }
         }
     }
 
