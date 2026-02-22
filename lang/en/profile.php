@@ -69,4 +69,5 @@ return [
     'no_oauth' => 'No Accounts Linked',
     'no_api_keys' => 'No API Keys',
     'no_ssh_keys' => 'No SSH Keys',
+    'activity_info' => 'Showing last 50 activity logs',
 ];

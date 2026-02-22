@@ -39,7 +39,7 @@ class PluginService
         /** @var ClassLoader $classLoader */
         $classLoader = File::getRequire(base_path('vendor/autoload.php'));
 
-        $plugins = Plugin::query()->orderBy('load_order')->get();
+        $plugins = Plugin::orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
             try {
                 // Filter out plugins that are not compatible with the current panel version
@@ -138,7 +138,7 @@ class PluginService
             return;
         }
 
-        $plugins = Plugin::query()->orderBy('load_order')->get();
+        $plugins = Plugin::orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
             try {
                 if (!$plugin->shouldLoad($panel->getId())) {
@@ -172,7 +172,7 @@ class PluginService
     {
         $newPackages ??= [];
 
-        $plugins = Plugin::query()->orderBy('load_order')->get();
+        $plugins = Plugin::orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
             if (!$plugin->composer_packages) {
                 continue;
@@ -434,7 +434,7 @@ class PluginService
     /** @param array<string, mixed> $data */
     private function setMetaData(string|Plugin $plugin, array $data): void
     {
-        $path = plugin_path($plugin instanceof Plugin ? $plugin->id : $plugin, 'plugin.json');
+        $path = plugin_path($plugin->id, 'plugin.json');
 
         if (File::exists($path)) {
             $pluginData = File::json($path, JSON_THROW_ON_ERROR);
@@ -443,7 +443,6 @@ class PluginService
 
             File::put($path, json_encode($pluginData, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-            $plugin = $plugin instanceof Plugin ? $plugin : Plugin::findOrFail($plugin);
             $plugin->update($metaData);
         }
     }
@@ -464,6 +463,8 @@ class PluginService
     public function updateLoadOrder(array $order): void
     {
         foreach ($order as $i => $plugin) {
+            $plugin = Plugin::firstOrFail(str($plugin)->lower()->toString());
+
             $this->setMetaData($plugin, [
                 'load_order' => $i,
             ]);
@@ -472,7 +473,7 @@ class PluginService
 
     public function hasThemePluginEnabled(): bool
     {
-        $plugins = Plugin::query()->orderBy('load_order')->get();
+        $plugins = Plugin::orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
             if ($plugin->isTheme() && $plugin->status === PluginStatus::Enabled) {
                 return true;
@@ -487,7 +488,7 @@ class PluginService
     {
         $languages = [];
 
-        $plugins = Plugin::query()->orderBy('load_order')->get();
+        $plugins = Plugin::orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
             if ($plugin->status !== PluginStatus::Enabled || !$plugin->isLanguage()) {
                 continue;
@@ -504,7 +505,7 @@ class PluginService
         return config('panel.plugin.dev_mode', false);
     }
 
-    private function handlePluginException(string|Plugin $plugin, Exception $exception): void
+    private function handlePluginException(Plugin $plugin, Exception $exception): void
     {
         if ($this->isDevModeActive()) {
             throw ($exception);
