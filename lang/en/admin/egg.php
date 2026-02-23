@@ -31,6 +31,7 @@ return [
         'no_local_ip' => 'Local IP Addresses are not allowed',
         'unsupported_format' => 'Unsupported Format. Supported Formats: :formats',
         'invalid_url' => 'The provided URL is invalid',
+        'unknown_extension' => 'Unknown image extension',
         'image_deleted' => 'Image Deleted',
         'no_image' => 'No Image Provided',
         'image_updated' => 'Image Updated',

@@ -426,13 +426,13 @@ class EditProfile extends BaseEditProfile
                 ->label(trans('profile.tabs.activity'))
                 ->icon(TablerIcon::History)
                 ->schema([
-                    Repeater::make('activity')
-                        ->hiddenLabel()
+                    Repeater::make('activity') // TODO: move to a table
+                        ->label(trans('profile.activity_info'))
                         ->inlineLabel(false)
                         ->deletable(false)
                         ->addable(false)
                         ->relationship(null, function (Builder $query) {
-                            $query->orderBy('timestamp', 'desc');
+                            $query->orderBy('timestamp', 'desc')->limit(50);
                         })
                         ->schema([
                             TextEntry::make('log')
