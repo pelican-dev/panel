@@ -159,7 +159,7 @@ class Plugin extends Model implements HasPluginSettings
 
                 if (!$exception instanceof JsonException) {
                     $plugins[] = [
-                        'id' => ($exception instanceof PluginIdMismatchException ? $plugin : $data['id']) ?? Str::uuid(),
+                        'id' => $exception instanceof PluginIdMismatchException ? $plugin : ($data['id'] ?? Str::uuid()),
                         'name' => $data['name'] ?? Str::headline($plugin),
                         'author' => $data['author'] ?? 'Unknown',
                         'version' => $data['version'] ?? '0.0.0',
