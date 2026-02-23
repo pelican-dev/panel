@@ -1127,7 +1127,7 @@ class EditServer extends EditRecord
                 ->hidden(fn () => $canForceDelete)
                 ->authorize(fn (Server $server) => user()?->can('delete server', $server))
                 ->icon(TablerIcon::Trash),
-            Action::make('ForceDelete')
+            Action::make('exclude_force_delete')
                 ->color('danger')
                 ->label(trans('filament-actions::force-delete.single.label'))
                 ->modalHeading(trans('filament-actions::force-delete.single.modal.heading', ['label' => $this->getRecordTitle()]))
