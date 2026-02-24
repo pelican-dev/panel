@@ -987,6 +987,7 @@ class EditServer extends EditRecord
                                                         ->each(function ($backup) use ($backupService) {
                                                             $schema = $backupService->get($backup->backupHost->schema);
 
+                                                            // Wings backups that aren't transferred only need to be delete on the panel, wings will cleanup the backup files automatically
                                                             if ($schema instanceof WingsBackupSchema) {
                                                                 $backup->delete();
                                                             }
