@@ -34,7 +34,7 @@ class TransferServerService
 
         // Make sure only wings backups are forwarded in the wings request
         foreach ($backup_uuids as $uuid) {
-            $backup = Backup::find($uuid);
+            $backup = Backup::where('uuid', $uuid)->first();
 
             if ($backup) {
                 $schema = $this->backupService->get($backup->backupHost->schema);

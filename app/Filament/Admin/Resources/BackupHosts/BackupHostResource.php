@@ -124,7 +124,7 @@ class BackupHostResource extends Resource
                     ->columnSpanFull()
                     ->columns()
                     ->schema(function (?BackupHost $backupHost, Get $get, BackupAdapterService $service) {
-                        $schema = $backupHost ? $backupHost->schema : $get('schema');
+                        $schema = $get('schema') ?? $backupHost?->schema;
 
                         if (!$schema) {
                             return [];
