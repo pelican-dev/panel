@@ -8,6 +8,7 @@ use App\Filament\Admin\Resources\BackupHosts\Pages\CreateBackupHost;
 use App\Filament\Admin\Resources\BackupHosts\Pages\EditBackupHost;
 use App\Filament\Admin\Resources\BackupHosts\Pages\ListBackupHosts;
 use App\Filament\Admin\Resources\BackupHosts\Pages\ViewBackupHost;
+use App\Filament\Admin\Resources\BackupHosts\RelationManagers\BackupsRelationManager;
 use App\Models\BackupHost;
 use App\Traits\Filament\CanCustomizePages;
 use App\Traits\Filament\CanCustomizeRelations;
@@ -144,7 +145,7 @@ class BackupHostResource extends Resource
     public static function getDefaultRelations(): array
     {
         return [
-            // BackupsRelationManager::class, // TODO
+            BackupsRelationManager::class,
         ];
     }
 

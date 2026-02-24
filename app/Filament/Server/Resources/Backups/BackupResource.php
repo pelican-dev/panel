@@ -170,7 +170,7 @@ class BackupResource extends Resource
                         ->color('primary')
                         ->icon(TablerIcon::Download)
                         ->authorize(fn () => user()?->can(SubuserPermission::BackupDownload, $server))
-                        ->url(fn (DownloadLinkService $downloadLinkService, Backup $backup, Request $request) => $downloadLinkService->handle($backup, $request->user()), true)
+                        ->url(fn (DownloadLinkService $downloadLinkService, Backup $backup) => $downloadLinkService->handle($backup, user()), true)
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     Action::make('exclude_restore')
                         ->label(trans('server/backup.actions.restore.title'))
