@@ -30,20 +30,13 @@ class TransferServerService
     /** @param  string[]  $backup_uuids */ // TODO: add backup uuids to ServerTransfer model
     private function notify(ServerTransfer $transfer, UnencryptedToken $token, array $backup_uuids = []): void
     {
-        $backups = [];
-
-        // Make sure only wings backups are forwarded in the wings request
-        foreach ($backup_uuids as $uuid) {
-            $backup = Backup::where('uuid', $uuid)->first();
-
-            if ($backup) {
-                $schema = $this->backupService->get($backup->backupHost->schema);
-
-                if ($schema instanceof WingsBackupSchema) {
-                    $backups[] = $uuid;
-                }
-            }
-        }
+        // Make sure only wings backups of the current server are forwarded in the wings request
+        $backups = Backup::where('server_id', $transfer->server_id)
+            ->whereIn('uuid', $backup_uuids)
+            ->get()
+            ->filter(fn (Backup $backup) => $this->backupService->get($backup->backupHost->schema) instanceof WingsBackupSchema)
+            ->pluck('uuid')
+            ->all();
 
         Http::daemon($transfer->oldNode)->post("/api/servers/{$transfer->server->uuid}/transfer", [
             'url' => $transfer->newNode->getConnectionAddress() . '/api/transfers',
@@ -64,7 +57,7 @@ class TransferServerService
      *
      * @throws Throwable
      */
-    public function handle(Server $server, int $node_id, ?int $allocation_id = null, ?array $additional_allocations = [], ?array $backup_uuids = []): bool
+    public function handle(Server $server, int $node_id, ?int $allocation_id = null, ?array $additional_allocations = [], array $backup_uuids = []): bool
     {
         $additional_allocations = array_map(intval(...), $additional_allocations);
 
