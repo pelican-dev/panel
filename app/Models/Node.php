@@ -280,7 +280,7 @@ class Node extends Model implements Validatable
 
     public function backupHosts(): BelongsToMany
     {
-        return $this->BelongsToMany(BackupHost::class);
+        return $this->belongsToMany(BackupHost::class);
     }
 
     public function roles(): HasManyThrough
