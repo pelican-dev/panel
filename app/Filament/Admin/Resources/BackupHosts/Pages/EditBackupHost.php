@@ -12,7 +12,6 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
-/** @property BackupHost $record */
 class EditBackupHost extends EditRecord
 {
     use CanCustomizeHeaderActions;
