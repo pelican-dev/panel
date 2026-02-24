@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\BackupHosts\Pages;
 
+use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\BackupHosts\BackupHostResource;
 use App\Models\BackupHost;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -10,7 +11,6 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Enums\IconSize;
 
 /** @property BackupHost $record */
 class EditBackupHost extends EditRecord
@@ -27,14 +27,13 @@ class EditBackupHost extends EditRecord
             DeleteAction::make()
                 ->label(fn (BackupHost $backupHost) => $backupHost->backups()->count() > 0 ? trans('admin/backuphost.delete_help') : trans('filament-actions::delete.single.modal.actions.delete.label'))
                 ->disabled(fn (BackupHost $backupHost) => $backupHost->backups()->count() > 0)
-                ->hidden(fn () => BackupHost::count() === 1)
-                ->iconButton()
-                ->iconSize(IconSize::ExtraLarge),
-            $this->getSaveFormAction()
-                ->formId('form')
-                ->iconButton()
-                ->iconSize(IconSize::ExtraLarge)
-                ->icon('tabler-device-floppy'),
+                ->hidden(fn () => BackupHost::count() === 1),
+            Action::make('save')
+                ->hiddenLabel()
+                ->action('save')
+                ->keyBindings(['mod+s'])
+                ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
+                ->icon(TablerIcon::DeviceFloppy),
         ];
     }
 

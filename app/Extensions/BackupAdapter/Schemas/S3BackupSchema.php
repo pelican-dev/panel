@@ -2,6 +2,7 @@
 
 namespace App\Extensions\BackupAdapter\Schemas;
 
+use App\Enums\TablerIcon;
 use App\Http\Controllers\Api\Remote\Backups\BackupRemoteUploadController;
 use App\Models\Backup;
 use App\Models\BackupHost;
@@ -90,8 +91,8 @@ final class S3BackupSchema extends BackupAdapterSchema
             Toggle::make('configuration.use_path_style_endpoint')
                 ->label(trans('admin/setting.backup.s3.use_path_style_endpoint'))
                 ->inline(false)
-                ->onIcon('tabler-check')
-                ->offIcon('tabler-x')
+                ->onIcon(TablerIcon::Check)
+                ->offIcon(TablerIcon::X)
                 ->onColor('success')
                 ->offColor('danger')
                 ->live()

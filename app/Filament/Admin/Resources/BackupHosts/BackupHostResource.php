@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\BackupHosts;
 
+use App\Enums\TablerIcon;
 use App\Extensions\BackupAdapter\BackupAdapterService;
 use App\Filament\Admin\Resources\BackupHosts\Pages\CreateBackupHost;
 use App\Filament\Admin\Resources\BackupHosts\Pages\EditBackupHost;
@@ -14,7 +15,7 @@ use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use BackedEnum;
 use Exception;
-use Filament\Actions\DeleteAction;
+use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -38,7 +39,7 @@ class BackupHostResource extends Resource
 
     protected static ?string $model = BackupHost::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'tabler-file-zip';
+    protected static string|BackedEnum|null $navigationIcon = TablerIcon::FileZip;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -88,10 +89,11 @@ class BackupHostResource extends Resource
                 ViewAction::make()
                     ->hidden(fn ($record) => static::getEditAuthorizationResponse($record)->allowed()),
                 EditAction::make(),
-                DeleteAction::make()
-                    ->hidden(fn (BackupHost $backupHost) => $backupHost->backups_count > 0 || BackupHost::count() === 1),
             ])
-            ->emptyStateIcon('tabler-file-zip')
+            ->toolbarActions([
+                CreateAction::make(),
+            ])
+            ->emptyStateIcon(TablerIcon::FileZip)
             ->emptyStateDescription(trans('admin/backuphost.local_backups_only'))
             ->emptyStateHeading(trans('admin/backuphost.no_backup_hosts'));
     }
