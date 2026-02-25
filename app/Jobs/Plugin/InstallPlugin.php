@@ -42,7 +42,7 @@ class InstallPlugin implements ShouldBeUnique, ShouldQueue
 
             Notification::make()
                 ->danger()
-                ->title(trans('admin/plugin.notifications.install_failed'))
+                ->title(trans('admin/plugin.notifications.install_error'))
                 ->body($exception->getMessage())
                 ->sendToDatabase($this->user);
         }

@@ -42,7 +42,7 @@ class UpdatePlugin implements ShouldBeUnique, ShouldQueue
 
             Notification::make()
                 ->danger()
-                ->title(trans('admin/plugin.notifications.update_failed'))
+                ->title(trans('admin/plugin.notifications.update_error'))
                 ->body($exception->getMessage())
                 ->sendToDatabase($this->user);
         }

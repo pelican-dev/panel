@@ -46,7 +46,7 @@ return [
 
     'notifications' => [
         'goto_plugins' => 'Go to Plugins',
-        'background_info' => 'This process can take a few seconds. You will be notified once its finished.',
+        'background_info' => 'This process can take a few seconds. You will be notified once it\'s finished.',
 
         'install_started' => 'Plugin install started in the background',
         'installed' => 'Plugin installed',

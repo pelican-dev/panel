@@ -42,7 +42,7 @@ class UninstallPlugin implements ShouldBeUnique, ShouldQueue
 
             Notification::make()
                 ->danger()
-                ->title(trans('admin/plugin.notifications.uninstall_failed'))
+                ->title(trans('admin/plugin.notifications.uninstall_error'))
                 ->body($exception->getMessage())
                 ->sendToDatabase($this->user);
         }
