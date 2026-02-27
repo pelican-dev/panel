@@ -58,6 +58,9 @@ enum SubuserPermission: string
     case SettingsDescription = 'settings.description';
     case SettingsReinstall = 'settings.reinstall';
 
+    case MountRead = 'mount.read';
+    case MountUpdate = 'mount.update';
+
     /** @return string[] */
     public function split(): array
     {
@@ -84,6 +87,7 @@ enum SubuserPermission: string
             'schedule' => TablerIcon::Clock,
             'settings' => TablerIcon::Settings,
             'activity' => TablerIcon::Stack,
+            'mount' => TablerIcon::LayersLinked,
             default => null,
         };
     }
