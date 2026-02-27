@@ -109,13 +109,11 @@ class Plugin extends Model implements HasPluginSettings
                 continue;
             }
 
-            $plugin = Str::lower($plugin);
-
             try {
                 $data = File::json($path, JSON_THROW_ON_ERROR);
                 $data['id'] = Str::lower($data['id']);
 
-                if ($data['id'] !== $plugin) {
+                if ($data['id'] !== Str::lower($plugin)) {
                     throw new PluginIdMismatchException("Plugin id mismatch for folder name ($plugin) and id in plugin.json ({$data['id']})!");
                 }
 
@@ -161,7 +159,7 @@ class Plugin extends Model implements HasPluginSettings
 
                 if (!$exception instanceof JsonException) {
                     $plugins[] = [
-                        'id' => $data['id'] ?? Str::uuid(),
+                        'id' => $exception instanceof PluginIdMismatchException ? $plugin : ($data['id'] ?? Str::uuid()),
                         'name' => $data['name'] ?? Str::headline($plugin),
                         'author' => $data['author'] ?? 'Unknown',
                         'version' => $data['version'] ?? '0.0.0',
