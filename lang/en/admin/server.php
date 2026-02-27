@@ -98,6 +98,7 @@ return [
     'delete_db' => 'Are you sure you want to delete :name ?',
     'delete_db_heading' => 'Delete Database?',
     'backups' => 'Backups',
+    'delete_backups' => 'Also delete :count backup(s) from storage',
     'egg' => 'Egg',
     'mounts' => 'Mounts',
     'no_mounts' => 'No Mounts exist for this Node',
