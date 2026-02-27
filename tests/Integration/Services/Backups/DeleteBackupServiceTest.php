@@ -9,8 +9,10 @@ use App\Models\Backup;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Services\Backups\DeleteBackupService;
 use App\Tests\Integration\IntegrationTestCase;
+use Aws\CommandInterface;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Client\ConnectionException;
+use Mockery;
 
 class DeleteBackupServiceTest extends IntegrationTestCase
 {
@@ -92,10 +94,12 @@ class DeleteBackupServiceTest extends IntegrationTestCase
         $manager->expects('adapter')->with(Backup::ADAPTER_AWS_S3)->andReturn($adapter);
 
         $adapter->expects('getBucket')->andReturn('foobar');
-        $adapter->expects('getClient->deleteObject')->with([
+        $mockCommand = Mockery::mock(CommandInterface::class);
+        $adapter->expects('getClient->getCommand')->with('DeleteObject', [
             'Bucket' => 'foobar',
             'Key' => sprintf('%s/%s.tar.gz', $server->uuid, $backup->uuid),
-        ]);
+        ])->andReturn($mockCommand);
+        $adapter->expects('executeS3Command')->with($mockCommand);
 
         $this->app->make(DeleteBackupService::class)->handle($backup);
 
