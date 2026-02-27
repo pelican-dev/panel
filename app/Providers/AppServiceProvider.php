@@ -116,8 +116,6 @@ class AppServiceProvider extends ServiceProvider
             'Up-to-Date' => $versionService->isLatestPanel() ? '<fg=green;options=bold>Yes</>' : '<fg=red;options=bold>No</>',
         ]);
 
-        AboutCommand::add('Drivers', 'Backups', config('backups.default'));
-
         AboutCommand::add('Environment', 'Installation Directory', base_path());
     }
 

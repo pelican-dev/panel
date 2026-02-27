@@ -3,10 +3,11 @@
 namespace App\Services\Backups;
 
 use App\Exceptions\Service\Backup\TooManyBackupsException;
-use App\Extensions\Backups\BackupManager;
+use App\Extensions\BackupAdapter\BackupAdapterService;
 use App\Models\Backup;
+use App\Models\BackupHost;
 use App\Models\Server;
-use App\Repositories\Daemon\DaemonBackupRepository;
+use Exception;
 use Illuminate\Database\ConnectionInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
@@ -25,9 +26,8 @@ class InitiateBackupService
      */
     public function __construct(
         private readonly ConnectionInterface $connection,
-        private readonly DaemonBackupRepository $daemonBackupRepository,
         private readonly DeleteBackupService $deleteBackupService,
-        private readonly BackupManager $backupManager
+        private readonly BackupAdapterService $backupService
     ) {}
 
     /**
@@ -110,20 +110,28 @@ class InitiateBackupService
             $this->deleteBackupService->handle($oldest);
         }
 
-        return $this->connection->transaction(function () use ($server, $name) {
-            /** @var Backup $backup */
-            $backup = Backup::query()->create([
+        // TODO: select backup host via frontend
+        $backupHost = $server->node->backupHosts()->first();
+        if (!$backupHost) {
+            $backupHost = BackupHost::doesntHave('nodes')->firstOrFail();
+        }
+
+        $schema = $this->backupService->get($backupHost->schema);
+        if (!$schema) {
+            throw new Exception('Backup host has unknown backup adapter.');
+        }
+
+        return $this->connection->transaction(function () use ($backupHost, $schema, $server, $name) {
+            $backup = Backup::create([
                 'server_id' => $server->id,
                 'uuid' => Uuid::uuid4()->toString(),
                 'name' => trim($name) ?: sprintf('Backup at %s', now()->toDateTimeString()),
                 'ignored_files' => array_values($this->ignoredFiles ?? []),
-                'disk' => $this->backupManager->getDefaultAdapter(),
+                'backup_host_id' => $backupHost->id,
                 'is_locked' => $this->isLocked,
             ]);
 
-            $this->daemonBackupRepository->setServer($server)
-                ->setBackupAdapter($this->backupManager->getDefaultAdapter())
-                ->backup($backup);
+            $schema->createBackup($backup);
 
             return $backup;
         });

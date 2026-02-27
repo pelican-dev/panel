@@ -2,6 +2,8 @@
 
 namespace App\Services\Servers;
 
+use App\Extensions\BackupAdapter\BackupAdapterService;
+use App\Extensions\BackupAdapter\Schemas\WingsBackupSchema;
 use App\Models\Allocation;
 use App\Models\Backup;
 use App\Models\Node;
@@ -20,19 +22,22 @@ class TransferServerService
      * TransferService constructor.
      */
     public function __construct(
-        private ConnectionInterface $connection,
-        private NodeJWTService $nodeJWTService,
+        private readonly ConnectionInterface $connection,
+        private readonly NodeJWTService $nodeJWTService,
+        private readonly BackupAdapterService $backupService
     ) {}
 
-    /**
-     * @param  string[]  $backup_uuids
-     */
+    /** @param  string[]  $backup_uuids */ // TODO: add backup uuids to ServerTransfer model
     private function notify(ServerTransfer $transfer, UnencryptedToken $token, array $backup_uuids = []): void
     {
-        $backups = [];
-        if (config('backups.default') === Backup::ADAPTER_DAEMON) {
-            $backups = $backup_uuids;
-        }
+        // Make sure only wings backups of the current server are forwarded in the wings request
+        $backups = Backup::where('server_id', $transfer->server_id)
+            ->whereIn('uuid', $backup_uuids)
+            ->get()
+            ->filter(fn (Backup $backup) => $this->backupService->get($backup->backupHost->schema) instanceof WingsBackupSchema)
+            ->pluck('uuid')
+            ->all();
+
         Http::daemon($transfer->oldNode)->post("/api/servers/{$transfer->server->uuid}/transfer", [
             'url' => $transfer->newNode->getConnectionAddress() . '/api/transfers',
             'token' => 'Bearer ' . $token->toString(),
@@ -48,11 +53,11 @@ class TransferServerService
      * Starts a transfer of a server to a new node.
      *
      * @param  int[]  $additional_allocations
-     * @param  string[]  $backup_uuid
+     * @param  string[]  $backup_uuids
      *
      * @throws Throwable
      */
-    public function handle(Server $server, int $node_id, ?int $allocation_id = null, ?array $additional_allocations = [], ?array $backup_uuid = []): bool
+    public function handle(Server $server, int $node_id, ?int $allocation_id = null, ?array $additional_allocations = [], array $backup_uuids = []): bool
     {
         $additional_allocations = array_map(intval(...), $additional_allocations);
 
@@ -103,7 +108,7 @@ class TransferServerService
             ->handle($transfer->newNode, $server->uuid, 'sha256');
 
         // Notify the source node of the pending outgoing transfer.
-        $this->notify($transfer, $token, $backup_uuid);
+        $this->notify($transfer, $token, $backup_uuids);
 
         return true;
     }

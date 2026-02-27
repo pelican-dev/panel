@@ -5,6 +5,7 @@ namespace App\Tests\Integration\Api\Client\Server\Backup;
 use App\Enums\SubuserPermission;
 use App\Events\ActivityLogged;
 use App\Models\Backup;
+use App\Models\BackupHost;
 use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Illuminate\Http\Response;
@@ -26,7 +27,8 @@ class DeleteBackupTest extends ClientApiIntegrationTestCase
     {
         [$user, $server] = $this->generateTestAccount([SubuserPermission::BackupCreate]);
 
-        $backup = Backup::factory()->create(['server_id' => $server->id]);
+        $backupHost = BackupHost::factory()->create();
+        $backup = Backup::factory()->create(['server_id' => $server->id, 'backup_host_id' => $backupHost->id]);
 
         $this->actingAs($user)->deleteJson($this->link($backup))
             ->assertStatus(Response::HTTP_FORBIDDEN);
@@ -43,8 +45,9 @@ class DeleteBackupTest extends ClientApiIntegrationTestCase
 
         [$user, $server] = $this->generateTestAccount([SubuserPermission::BackupDelete]);
 
+        $backupHost = BackupHost::factory()->create();
         /** @var \App\Models\Backup $backup */
-        $backup = Backup::factory()->create(['server_id' => $server->id]);
+        $backup = Backup::factory()->create(['server_id' => $server->id, 'backup_host_id' => $backupHost->id]);
 
         $this->repository->expects('setServer->delete')->with(
             \Mockery::on(function ($value) use ($backup) {

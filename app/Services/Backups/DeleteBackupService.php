@@ -3,23 +3,15 @@
 namespace App\Services\Backups;
 
 use App\Exceptions\Service\Backup\BackupLockedException;
-use App\Extensions\Backups\BackupManager;
-use App\Extensions\Filesystem\S3Filesystem;
+use App\Extensions\BackupAdapter\BackupAdapterService;
 use App\Models\Backup;
-use App\Repositories\Daemon\DaemonBackupRepository;
-use Aws\S3\S3Client;
 use Exception;
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Http\Response;
 use Throwable;
 
 class DeleteBackupService
 {
-    public function __construct(
-        private ConnectionInterface $connection,
-        private BackupManager $manager,
-        private DaemonBackupRepository $daemonBackupRepository
-    ) {}
+    public function __construct(private readonly ConnectionInterface $connection, private readonly BackupAdapterService $backupService) {}
 
     /**
      * Deletes a backup from the system. If the backup is stored in S3 a request
@@ -39,47 +31,15 @@ class DeleteBackupService
             throw new BackupLockedException();
         }
 
-        if ($backup->disk === Backup::ADAPTER_AWS_S3) {
-            $this->deleteFromS3($backup);
-
-            return;
+        $schema = $this->backupService->get($backup->backupHost->schema);
+        if (!$schema) {
+            throw new Exception('Backup has unknown backup adapter.');
         }
 
-        $this->connection->transaction(function () use ($backup) {
-            try {
-                $this->daemonBackupRepository->setServer($backup->server)->delete($backup);
-            } catch (Exception $exception) {
-                // Don't fail the request if the Daemon responds with a 404, just assume the backup
-                // doesn't actually exist and remove its reference from the Panel as well.
-                if ($exception->getCode() !== Response::HTTP_NOT_FOUND) {
-                    throw $exception;
-                }
-            }
+        $this->connection->transaction(function () use ($schema, $backup) {
+            $schema->deleteBackup($backup);
 
             $backup->delete();
-        });
-    }
-
-    /**
-     * Deletes a backup from an S3 disk.
-     *
-     * @throws Throwable
-     */
-    protected function deleteFromS3(Backup $backup): void
-    {
-        $this->connection->transaction(function () use ($backup) {
-            $backup->delete();
-
-            /** @var S3Filesystem $adapter */
-            $adapter = $this->manager->adapter(Backup::ADAPTER_AWS_S3);
-
-            /** @var S3Client $client */
-            $client = $adapter->getClient();
-
-            $client->deleteObject([
-                'Bucket' => $adapter->getBucket(),
-                'Key' => sprintf('%s/%s.tar.gz', $backup->server->uuid, $backup->uuid),
-            ]);
         });
     }
 }
