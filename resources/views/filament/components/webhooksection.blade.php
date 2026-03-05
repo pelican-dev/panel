@@ -68,7 +68,7 @@
         :secondary="$isSecondary"
     >
         <x-slot name="heading">
-            @livewire(App\Filament\Admin\Widgets\DiscordPreview::class, ['record' => $getRecord(), 'pollingInterval' => $pollingInterval ?? null])
+            @livewire('discord-preview', ['record' => $getRecord(), 'pollingInterval' => $pollingInterval ?? null])
         </x-slot>
 
         {{ $getChildSchema()->gap(! $isDivided)->extraAttributes(['class' => 'fi-section-content']) }}

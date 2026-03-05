@@ -34,14 +34,16 @@ class ProcessWebhook implements ShouldQueue
             $data = reset($data);
         }
 
-        if (is_object($data)) {
-                $data = $data->toArray();
-            } else {
-                $data = json_decode(json_encode($data), true);
-        }
-
         if (is_string($data)) {
             $data = Arr::wrap(json_decode($data, true) ?? []);
+        } elseif (is_object($data)) {
+            if (method_exists($data, 'toArray')) {
+                $data = Arr::wrap($data->toArray());
+            } else {
+                $data = Arr::wrap(json_decode(json_encode($data), true) ?? []);
+            }
+        } else {
+            $data = Arr::wrap($data);
         }
         $data['event'] = $this->webhookConfiguration->transformClassName($this->eventName);
 

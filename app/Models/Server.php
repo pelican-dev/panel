@@ -6,6 +6,7 @@ use App\Contracts\Validatable;
 use App\Enums\ContainerStatus;
 use App\Enums\ServerResourceType;
 use App\Enums\ServerState;
+use App\Enums\WebhookScope;
 use App\Exceptions\Http\Server\ServerStateConflictException;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Subusers\SubuserDeletionService;
@@ -399,6 +400,15 @@ class Server extends Model implements HasAvatar, Validatable
     public function mounts(): MorphToMany
     {
         return $this->morphToMany(Mount::class, 'mountable');
+    }
+
+    /**
+     * @return HasMany<WebhookConfiguration, $this>
+     */
+    public function webhooks(): HasMany
+    {
+        return $this->hasMany(WebhookConfiguration::class, 'server_id', 'id')
+            ->where('scope', WebhookScope::SERVER);
     }
 
     /**

@@ -1,4 +1,11 @@
-<x-filament-widgets::widget>
+@php
+    $pollingInterval = $this->getPollingInterval();
+@endphp
+<div :attributes="
+    new \Illuminate\View\ComponentAttributeBag([
+        'wire:poll.' . $pollingInterval => $pollingInterval ? '' : false,
+    ])
+    ">
     @assets
         <style>
             :root {
@@ -128,7 +135,7 @@
                 @if(!data_get($sender, 'human'))
                     <span class="text-white text-xs rounded-md tag">app</span>
                 @endif
-                <span class="timestamp text-xs">{{ $getTime }}</span>
+                <span class="timestamp text-xs">{{ $getTime() }}</span>
             </div>
 
             @if(filled($content))
@@ -217,5 +224,4 @@
             @endforeach
         </div>
     </div>
-    
-</x-filament-widgets::widget>
+</div>
