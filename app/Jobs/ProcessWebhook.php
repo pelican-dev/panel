@@ -35,7 +35,9 @@ class ProcessWebhook implements ShouldQueue
         }
 
         if (is_object($data)) {
-            $data = get_object_vars($data);
+                $data = $data->toArray();
+            } else {
+                $data = json_decode(json_encode($data), true);
         }
 
         if (is_string($data)) {

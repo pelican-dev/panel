@@ -100,11 +100,82 @@ class WebhookConfiguration extends Model
             ->all();
     }
 
+    /**
+     * @param array<string> $filterList
+     * @return array<string>
+     */
+    public static function eventList(array $filterList): array
+    {
+        return collect(static::allPossibleEvents())
+            ->filter(function ($event) use ($filterList) {
+                foreach ($filterList as $filter) {
+                    $eventLower = strtolower($event);
+                    $filterLower = strtolower($filter);
+                    
+                    if ($eventLower === $filterLower) {
+                        return true;
+                    }
+                    
+                    $pattern = '/(?:\\\\|\\.)' . preg_quote($filterLower) . '(?:\\\\|:|$)/i';
+                    if (preg_match($pattern, $eventLower)) {
+                        return true;
+                    }
+                }
+                return false;
+            })
+            ->values()
+            ->all();
+    }
+
+    /** @return array<string> */
+    public static function adminEvents(): array
+    {
+        return static::eventList([
+            'User',
+            'Role',
+            'ApiKey',
+            'Token',
+            'HasAccessTokens',
+            'Node',
+            'Allocation',
+            'DatabaseHost',
+            'Mount',
+            'NodeRole',
+            'Egg',
+            'Plugin',
+            'WebhookConfiguration',
+            'Webhook',  
+            'Captcha',
+            'Authentication',
+            'ActivityLogged',
+        ]);
+    }
+
+    /** @return array<string> */
+    public static function serverEvents(): array
+    {
+        return static::eventList([
+            'Server',
+            'ServerTransfer',
+            'ServerVariable',
+            'Allocation',
+            'Backup',
+            'Database',
+            'File',
+            'Schedule',
+            'Task',
+            'Subuser',
+            'Installed',
+            'SubUserAdded',
+            'SubUserRemoved',
+        ]);
+    }
+
     /** @return array<string, string> */
     public static function filamentCheckboxList(): array
     {
         $list = [];
-        $events = static::allPossibleEvents();
+        $events = static::adminEvents();
         foreach ($events as $event) {
             $list[$event] = static::transformClassName($event);
         }
