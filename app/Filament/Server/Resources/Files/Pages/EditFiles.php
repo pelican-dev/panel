@@ -259,9 +259,9 @@ class EditFiles extends Page
         return $this->fileRepository;
     }
 
-    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
+    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false, ?string $configuration = null): string
     {
-        return parent::getUrl($parameters, $isAbsolute, $panel, $tenant) . '/';
+        return parent::getUrl($parameters, $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters, $configuration) . '/';
     }
 
     public static function route(string $path): PageRegistration
