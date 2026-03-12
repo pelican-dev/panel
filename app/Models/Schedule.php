@@ -32,7 +32,7 @@ use Illuminate\Support\Carbon;
  * @property string $cron_month
  * @property bool $only_when_online
  * @property-read Server $server
- * @property-read mixed $status
+ * @property-read ScheduleStatus $status
  * @property-read Collection<int, Task> $tasks
  * @property-read int|null $tasks_count
  *

@@ -31,7 +31,7 @@ use Illuminate\Database\Query\Builder;
  * @property string|null $upload_id
  * @property bool $is_locked
  * @property-read Server $server
- * @property-read mixed $status
+ * @property-read BackupStatus $status
  *
  * @method static \Database\Factories\BackupFactory factory($count = null, $state = [])
  * @method static BackupQueryBuilder<static>|Backup newModelQuery()

@@ -70,7 +70,7 @@ use Psr\Http\Message\ResponseInterface;
  * @property-read int|null $allocations_count
  * @property-read Collection<int, Backup> $backups
  * @property-read int|null $backups_count
- * @property-read mixed $condition
+ * @property-read ServerState|ContainerStatus $condition
  * @property-read Collection<int, Database> $databases
  * @property-read int|null $databases_count
  * @property-read Egg $egg

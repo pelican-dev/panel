@@ -18,16 +18,16 @@ use Sushi\Sushi;
  * \App\Models\File.
  *
  * @property int $id
- * @property string|null $name
- * @property Carbon|null $created_at
- * @property Carbon|null $modified_at
- * @property string|null $mode
- * @property int|null $mode_bits
- * @property int|null $size
- * @property int|null $is_directory
- * @property int|null $is_file
- * @property int|null $is_symlink
- * @property string|null $mime_type
+ * @property string $name
+ * @property Carbon $created_at
+ * @property Carbon $modified_at
+ * @property string $mode
+ * @property int $mode_bits
+ * @property int $size
+ * @property int $is_directory
+ * @property int $is_file
+ * @property int $is_symlink
+ * @property string $mime_type
  *
  * @method static Builder<static>|File newModelQuery()
  * @method static Builder<static>|File newQuery()

@@ -23,7 +23,7 @@ use PDOException;
  * @property Carbon|null $updated_at
  * @property int|null $max_connections
  * @property-read DatabaseHost $host
- * @property-read mixed $jdbc
+ * @property-read string $jdbc
  * @property-read Server $server
  *
  * @method static \Database\Factories\DatabaseFactory factory($count = null, $state = [])

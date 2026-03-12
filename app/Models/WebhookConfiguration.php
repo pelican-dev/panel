@@ -17,7 +17,7 @@ use Livewire\Features\SupportEvents\HandlesEvents;
  * @property int $id
  * @property string $endpoint
  * @property string $description
- * @property array<array-key, mixed> $events
+ * @property string[] $events
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at

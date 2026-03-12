@@ -348,7 +348,6 @@ class PluginService
 
         $this->manageComposerPackages(oldPackages: $pluginPackages);
 
-        // This throws an error when not called with qualifier
         foreach (Filament::getPanels() as $panel) {
             $panel->clearCachedComponents();
         }

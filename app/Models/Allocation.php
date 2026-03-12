@@ -24,7 +24,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $ip_alias
  * @property string|null $notes
  * @property bool $is_locked
- * @property-read mixed $address
+ * @property-read string $address
  * @property-read string $alias
  * @property-read bool $has_alias
  * @property-read Node $node

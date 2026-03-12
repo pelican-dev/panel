@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $default_value
  * @property bool $user_viewable
  * @property bool $user_editable
- * @property array<string, string> $rules
+ * @property string[] $rules
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property int|null $sort
