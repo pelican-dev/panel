@@ -19,7 +19,7 @@ use Illuminate\Database\Query\Builder;
  * @property int $server_id
  * @property string $uuid
  * @property string $name
- * @property array<array-key, mixed> $ignored_files
+ * @property string[] $ignored_files
  * @property string $disk
  * @property string|null $checksum
  * @property int $bytes

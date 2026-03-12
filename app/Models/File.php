@@ -24,9 +24,9 @@ use Sushi\Sushi;
  * @property string $mode
  * @property int $mode_bits
  * @property int $size
- * @property int $is_directory
- * @property int $is_file
- * @property int $is_symlink
+ * @property bool $is_directory
+ * @property bool $is_file
+ * @property bool $is_symlink
  * @property string $mime_type
  *
  * @method static Builder<static>|File newModelQuery()
@@ -153,6 +153,9 @@ class File extends Model
         return [
             'created_at' => 'datetime',
             'modified_at' => 'datetime',
+            'is_directory' => 'boolean',
+            'is_file' => 'boolean',
+            'is_symlink' => 'boolean',
         ];
     }
 
