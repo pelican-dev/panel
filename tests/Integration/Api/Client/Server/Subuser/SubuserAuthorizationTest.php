@@ -17,7 +17,7 @@ class SubuserAuthorizationTest extends ClientApiIntegrationTestCase
     public function test_user_cannot_access_resource_belonging_to_other_servers(string $method): void
     {
         // Generic subuser, the specific resource we're trying to access.
-        /** @var \App\Models\User $internal */
+        /** @var User $internal */
         $internal = User::factory()->create();
 
         // The API $user is the owner of $server1.

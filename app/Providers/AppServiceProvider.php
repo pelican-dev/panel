@@ -10,6 +10,7 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
+use App\Http\Responses\LoginResponse;
 use App\Models\Allocation;
 use App\Models\ApiKey;
 use App\Models\Backup;
@@ -126,7 +127,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(LoginResponseContract::class, \App\Http\Responses\LoginResponse::class);
+        $this->app->bind(LoginResponseContract::class, LoginResponse::class);
 
         Scramble::ignoreDefaultRoutes();
 

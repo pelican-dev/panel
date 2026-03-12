@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 if (!function_exists('is_digit')) {
     /**
      * Deal with normal (and irritating) PHP behavior to determine if
@@ -131,7 +133,7 @@ if (!function_exists('encode_path')) {
 }
 
 if (!function_exists('user')) {
-    function user(): ?App\Models\User
+    function user(): ?User
     {
         return auth(config('auth.defaults.guard', 'web'))->user();
     }

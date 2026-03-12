@@ -55,8 +55,8 @@ use Illuminate\Support\Str;
  * @property int|null $servers_count
  * @property Collection|EggVariable[] $variables
  * @property int|null $variables_count
- * @property \App\Models\Egg|null $scriptFrom
- * @property \App\Models\Egg|null $configFrom
+ * @property Egg|null $scriptFrom
+ * @property Egg|null $configFrom
  */
 class Egg extends Model implements Validatable
 {

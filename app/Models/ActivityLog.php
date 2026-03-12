@@ -33,7 +33,7 @@ use LogicException;
  * @property int|null $actor_id
  * @property int|null $api_key_id
  * @property Collection|null $properties
- * @property \Carbon\Carbon $timestamp
+ * @property Carbon $timestamp
  * @property Model|\Eloquent $actor
  * @property \Illuminate\Database\Eloquent\Collection|ActivityLogSubject[] $subjects
  * @property int|null $subjects_count
