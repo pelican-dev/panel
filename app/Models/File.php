@@ -6,28 +6,43 @@ use App\Enums\TablerIcon;
 use App\Livewire\AlertBanner;
 use App\Repositories\Daemon\DaemonFileRepository;
 use BackedEnum;
-use Carbon\Carbon;
 use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Carbon;
 use Sushi\Sushi;
 
 /**
  * \App\Models\File.
  *
  * @property int $id
- * @property string $name
- * @property Carbon $created_at
- * @property Carbon $modified_at
- * @property string $mode
- * @property int $mode_bits
- * @property int $size
- * @property bool $is_directory
- * @property bool $is_file
- * @property bool $is_symlink
- * @property string $mime_type
+ * @property string|null $name
+ * @property Carbon|null $created_at
+ * @property Carbon|null $modified_at
+ * @property string|null $mode
+ * @property int|null $mode_bits
+ * @property int|null $size
+ * @property int|null $is_directory
+ * @property int|null $is_file
+ * @property int|null $is_symlink
+ * @property string|null $mime_type
+ *
+ * @method static Builder<static>|File newModelQuery()
+ * @method static Builder<static>|File newQuery()
+ * @method static Builder<static>|File query()
+ * @method static Builder<static>|File whereCreatedAt($value)
+ * @method static Builder<static>|File whereId($value)
+ * @method static Builder<static>|File whereIsDirectory($value)
+ * @method static Builder<static>|File whereIsFile($value)
+ * @method static Builder<static>|File whereIsSymlink($value)
+ * @method static Builder<static>|File whereMimeType($value)
+ * @method static Builder<static>|File whereMode($value)
+ * @method static Builder<static>|File whereModeBits($value)
+ * @method static Builder<static>|File whereModifiedAt($value)
+ * @method static Builder<static>|File whereName($value)
+ * @method static Builder<static>|File whereSize($value)
  */
 class File extends Model
 {
