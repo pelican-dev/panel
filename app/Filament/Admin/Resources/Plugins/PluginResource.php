@@ -5,6 +5,9 @@ namespace App\Filament\Admin\Resources\Plugins;
 use App\Enums\PluginStatus;
 use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Plugins\Pages\ListPlugins;
+use App\Jobs\Plugin\InstallPlugin;
+use App\Jobs\Plugin\UninstallPlugin;
+use App\Jobs\Plugin\UpdatePlugin;
 use App\Models\Plugin;
 use App\Services\Helpers\PluginService;
 use BackedEnum;
@@ -119,15 +122,14 @@ class PluginResource extends Resource
                         ->icon(TablerIcon::Terminal)
                         ->color('success')
                         ->hidden(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled)
-                        ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
+                        ->action(function (Plugin $plugin) {
                             try {
-                                $pluginService->installPlugin($plugin, !$plugin->isTheme() || !$pluginService->hasThemePluginEnabled());
-
-                                redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
+                                InstallPlugin::dispatch(user(), $plugin);
 
                                 Notification::make()
                                     ->success()
-                                    ->title(trans('admin/plugin.notifications.installed'))
+                                    ->title(trans('admin/plugin.notifications.install_started'))
+                                    ->body(trans('admin/plugin.notifications.background_info'))
                                     ->send();
                             } catch (Exception $exception) {
                                 Notification::make()
@@ -143,15 +145,14 @@ class PluginResource extends Resource
                         ->icon(TablerIcon::Download)
                         ->color('success')
                         ->visible(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled && $plugin->isUpdateAvailable())
-                        ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
+                        ->action(function (Plugin $plugin) {
                             try {
-                                $pluginService->updatePlugin($plugin);
-
-                                redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
+                                UpdatePlugin::dispatch(user(), $plugin);
 
                                 Notification::make()
                                     ->success()
-                                    ->title(trans('admin/plugin.notifications.updated'))
+                                    ->title(trans('admin/plugin.notifications.update_started'))
+                                    ->body(trans('admin/plugin.notifications.background_info'))
                                     ->send();
                             } catch (Exception $exception) {
                                 Notification::make()
@@ -220,15 +221,14 @@ class PluginResource extends Resource
                         ->color('danger')
                         ->requiresConfirmation()
                         ->hidden(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled || $plugin->status === PluginStatus::Errored)
-                        ->action(function (Plugin $plugin, $livewire, PluginService $pluginService) {
+                        ->action(function (Plugin $plugin) {
                             try {
-                                $pluginService->uninstallPlugin($plugin);
-
-                                redirect(ListPlugins::getUrl(['tab' => $livewire->activeTab]));
+                                UninstallPlugin::dispatch(user(), $plugin);
 
                                 Notification::make()
                                     ->success()
-                                    ->title(trans('admin/plugin.notifications.uninstalled'))
+                                    ->title(trans('admin/plugin.notifications.uninstall_started'))
+                                    ->body(trans('admin/plugin.notifications.background_info'))
                                     ->send();
                             } catch (Exception $exception) {
                                 Notification::make()
