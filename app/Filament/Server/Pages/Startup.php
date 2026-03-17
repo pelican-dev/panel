@@ -28,7 +28,7 @@ class Startup extends ServerFormPage
 {
     protected static string|BackedEnum|null $navigationIcon = TablerIcon::PlayerPlay;
 
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 10;
 
     /**
      * @throws Exception

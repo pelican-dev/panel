@@ -18,7 +18,7 @@ return [
     'eggs' => 'Eggs',
     'nodes' => 'Nodes',
     'user_mountable' => 'User Mountable?',
-    'user_mountable_help' => 'Allow users to toggle this mount on or off for their servers.',
+    'user_mountable_help' => 'Should users be able to toggle this mount on or off for their servers?',
     'toggles' => [
         'writable' => 'Writable',
         'read_only' => 'Read Only',
@@ -30,5 +30,6 @@ return [
         'all_eggs' => 'All Eggs',
         'all_nodes' => 'All Nodes',
         'read_only' => 'Read Only',
+        'user_mountable' => 'User Mountable',
     ],
 ];

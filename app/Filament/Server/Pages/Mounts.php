@@ -8,17 +8,19 @@ use App\Facades\Activity;
 use App\Models\Mount;
 use App\Models\Server;
 use BackedEnum;
+use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\HtmlString;
 
 class Mounts extends ServerFormPage
 {
     protected static string|BackedEnum|null $navigationIcon = TablerIcon::LayersLinked;
 
-    protected static ?int $navigationSort = 11;
+    protected static ?int $navigationSort = 9;
 
     public static function canAccess(): bool
     {
@@ -56,22 +58,21 @@ class Mounts extends ServerFormPage
 
         return parent::form($schema)
             ->components([
-                Section::make(trans('server/mount.description'))
-                    ->schema([
-                        CheckboxList::make('mounts')
-                            ->hiddenLabel()
-                            ->relationship('mounts')
-                            ->options(fn () => $allowedMounts->mapWithKeys(fn (Mount $mount) => [$mount->id => $mount->name]))
-                            ->descriptions(fn () => $allowedMounts->mapWithKeys(fn (Mount $mount) => [$mount->id => "$mount->source -> $mount->target"]))
-                            ->helperText(fn () => $allowedMounts->isEmpty() ? trans('server/mount.no_mounts') : null)
-                            ->disabled(fn (Server $server) => !user()?->can(SubuserPermission::MountUpdate, $server))
-                            ->bulkToggleable()
-                            ->live()
-                            ->afterStateUpdated(function ($state) {
-                                $this->save();
-                            })
-                            ->columnSpanFull(),
-                    ]),
+                Section::make([
+                    CheckboxList::make('mounts')
+                        ->label(trans('server/mount.description'))
+                        ->relationship('mounts')
+                        ->options(fn () => $allowedMounts->mapWithKeys(fn (Mount $mount) => [$mount->id => $mount->name]))
+                        ->descriptions(fn () => $allowedMounts->mapWithKeys(fn (Mount $mount) => [$mount->id => new HtmlString("$mount->source -> $mount->target" . ($mount->description ? '<br>' . str($mount->description)->stripTags() : ''))]))
+                        ->helperText(fn () => $allowedMounts->isEmpty() ? trans('server/mount.no_mounts') : null)
+                        ->disabled(fn (Server $server) => !user()?->can(SubuserPermission::MountUpdate, $server))
+                        ->bulkToggleable()
+                        ->live()
+                        ->afterStateUpdated(function ($state) {
+                            $this->save();
+                        })
+                        ->columnSpanFull(),
+                ]),
             ]);
     }
 
@@ -91,9 +92,10 @@ class Mounts extends ServerFormPage
 
             Notification::make()
                 ->title(trans('server/mount.notification_updated'))
+                ->body(trans('server/mount.notification_updated_body'))
                 ->success()
                 ->send();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             Notification::make()
                 ->title(trans('server/mount.notification_failed'))
                 ->body($exception->getMessage())
