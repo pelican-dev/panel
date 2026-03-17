@@ -11,6 +11,8 @@ parameters:
 
     level: 6
 
+    treatPhpDocTypesAsCertain: false
+
     ignoreErrors:
         - identifier: argument.templateType
         - identifier: missingType.generics

@@ -735,7 +735,7 @@ class EditNode extends EditRecord
                                         $set('pulled', false);
                                         $set('uploaded', true);
 
-                                    } catch (\Exception $e) {
+                                    } catch (Exception $e) {
                                         Notification::make()
                                             ->title(trans('admin/node.diagnostics.upload_failed'))
                                             ->body($e->getMessage())

@@ -18,7 +18,7 @@ class SettingsControllerTest extends ClientApiIntegrationTestCase
     #[DataProvider('renamePermissionsDataProvider')]
     public function test_server_name_can_be_changed(array $permissions): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
         $originalName = $server->name;
 
@@ -68,7 +68,7 @@ class SettingsControllerTest extends ClientApiIntegrationTestCase
     #[DataProvider('reinstallPermissionsDataProvider')]
     public function test_server_can_be_reinstalled(array $permissions): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
         $this->assertTrue($server->isInstalled());
 

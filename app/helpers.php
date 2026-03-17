@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 if (!function_exists('is_digit')) {
     /**
      * Deal with normal (and irritating) PHP behavior to determine if
@@ -152,7 +154,7 @@ if (!function_exists('convert_to_utf8')) {
 }
 
 if (!function_exists('user')) {
-    function user(): ?App\Models\User
+    function user(): ?User
     {
         return auth(config('auth.defaults.guard', 'web'))->user();
     }

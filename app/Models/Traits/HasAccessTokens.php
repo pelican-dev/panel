@@ -4,13 +4,14 @@ namespace App\Models\Traits;
 
 use App\Extensions\Laravel\Sanctum\NewAccessToken;
 use App\Models\ApiKey;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\Sanctum;
 
 /**
- * @mixin \App\Models\Model
+ * @mixin Model
  */
 trait HasAccessTokens
 {

@@ -8,6 +8,7 @@ use App\Services\Nodes\NodeJWTService;
 use App\Services\Servers\GetUserPermissionsService;
 use Filament\Support\Enums\IconSize;
 use Filament\Tables\View\Components\Columns\IconColumnComponent\IconComponent;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\ComponentAttributeBag;
 use Livewire\Attributes\Locked;
@@ -30,7 +31,7 @@ class NodeClientConnectivity extends Component
         $this->nodeJWTService = $nodeJWTService;
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         $httpUrl = $this->node->getConnectionAddress();
 

@@ -4,6 +4,7 @@ namespace App\Tests\Integration\Api\Client\Server\Startup;
 
 use App\Enums\SubuserPermission;
 use App\Models\EggVariable;
+use App\Models\Server;
 use App\Models\User;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -17,7 +18,7 @@ class GetStartupAndVariablesTest extends ClientApiIntegrationTestCase
     #[DataProvider('permissionsDataProvider')]
     public function test_startup_variables_are_returned_for_server(array $permissions): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
 
         $egg = $this->cloneEggAndVariables($server->egg);

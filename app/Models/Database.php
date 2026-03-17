@@ -4,11 +4,11 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use PDOException;
 
 /**
@@ -19,12 +19,27 @@ use PDOException;
  * @property string $username
  * @property string $remote
  * @property string $password
- * @property ?int $max_connections
- * @property string $jdbc
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Server $server
- * @property DatabaseHost $host
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property int|null $max_connections
+ * @property-read DatabaseHost $host
+ * @property-read string $jdbc
+ * @property-read Server $server
+ *
+ * @method static \Database\Factories\DatabaseFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Database newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Database newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Database query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Database whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Database whereDatabase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Database whereDatabaseHostId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Database whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Database whereMaxConnections($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Database wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Database whereRemote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Database whereServerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Database whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Database whereUsername($value)
  */
 class Database extends Model implements Validatable
 {
