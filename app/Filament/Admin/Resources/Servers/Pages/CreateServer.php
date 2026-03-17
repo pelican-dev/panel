@@ -251,7 +251,10 @@ class CreateServer extends CreateRecord
 
                             return [
                                 Select::make('allocation_ip')
-                                    ->options(fn () => collect(Node::find($get('node_id'))?->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                                    ->options(fn (Get $get) => collect(Node::find($getPage('node_id'))?->ipAddresses())
+                                        ->when($get('allocation_ip'), fn ($ips, $current) => $ips->push($current))
+                                        ->unique()
+                                        ->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                                     ->label(trans('admin/server.ip_address'))->inlineLabel()
                                     ->helperText(trans('admin/server.ip_address_helper'))
                                     ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
@@ -265,6 +268,18 @@ class CreateServer extends CreateRecord
                                             ->action(function () use ($get) {
                                                 cache()->forget("nodes.{$get('node_id')}.ips");
                                             })
+                                    )
+                                    ->suffixAction(
+                                        Action::make('custom_ip')
+                                            ->icon(TablerIcon::Keyboard)
+                                            ->tooltip(trans('admin/node.custom_ip'))
+                                            ->schema([
+                                                TextInput::make('custom_ip')
+                                                    ->label(trans('admin/node.ip_address'))
+                                                    ->ip()
+                                                    ->required(),
+                                            ])
+                                            ->action(fn (array $data, Set $set) => $set('allocation_ip', $data['custom_ip']))
                                     )
                                     ->required(),
                                 TextInput::make('allocation_alias')

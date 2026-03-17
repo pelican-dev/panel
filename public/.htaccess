@@ -5,6 +5,10 @@
 
     RewriteEngine On
 
+    # Handle X-Forwarded-Proto Header
+    RewriteCond %{HTTP:X-Forwarded-Proto} =https [NC]
+    RewriteRule .* - [E=HTTPS:on]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

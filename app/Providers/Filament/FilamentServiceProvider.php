@@ -34,7 +34,7 @@ use Illuminate\Support\ServiceProvider;
 use Livewire\Component;
 use Livewire\Livewire;
 
-use function Livewire\on;
+use function Livewire\before;
 use function Livewire\store;
 
 class FilamentServiceProvider extends ServiceProvider
@@ -74,7 +74,7 @@ class FilamentServiceProvider extends ServiceProvider
             fn () => Blade::render("@vite(['resources/js/app.js'])"),
         );
 
-        on('dehydrate', function (Component $component) {
+        before('dehydrate', function (Component $component) {
             if (!Livewire::isLivewireRequest()) {
                 return;
             }

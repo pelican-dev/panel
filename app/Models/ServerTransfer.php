@@ -4,27 +4,43 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property int $server_id
+ * @property bool|null $successful
  * @property int $old_node
  * @property int $new_node
  * @property int|null $old_allocation
  * @property int|null $new_allocation
- * @property array<int>|null $old_additional_allocations array of allocation.id's
- * @property array<int>|null $new_additional_allocations array of allocation.id's
- * @property bool|null $successful
+ * @property int[]|null $old_additional_allocations
+ * @property int[]|null $new_additional_allocations
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property bool $archived
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Server $server
- * @property Node $oldNode
- * @property Node $newNode
+ * @property-read Node|null $newNode
+ * @property-read Node|null $oldNode
+ * @property-read Server $server
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer whereArchived($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer whereNewAdditionalAllocations($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer whereNewAllocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer whereNewNode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer whereOldAdditionalAllocations($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer whereOldAllocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer whereOldNode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer whereServerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer whereSuccessful($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerTransfer whereUpdatedAt($value)
  */
 class ServerTransfer extends Model implements Validatable
 {

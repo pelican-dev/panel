@@ -74,7 +74,7 @@ class OAuthController extends Controller
         $email = $oauthUser->getEmail();
 
         if (!$email) {
-            return $this->errorRedirect();
+            return $this->errorRedirect('No email was linked to your account on the OAuth provider.');
         }
 
         $user = User::whereEmail($email)->first();

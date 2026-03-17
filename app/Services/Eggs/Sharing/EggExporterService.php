@@ -92,7 +92,7 @@ class EggExporterService
                 return $this->yamlExport($decoded);
             }
 
-            return str_replace(["\r\n", '\\r\\n', '\\n'], "\n", $data);
+            return str_replace("\r\n", "\n", $data);
         }
 
         if (is_array($data)) {

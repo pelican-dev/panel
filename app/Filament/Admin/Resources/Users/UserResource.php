@@ -142,7 +142,7 @@ class UserResource extends Resource
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make('exclude_bulk_delete'),
                 ]),
                 CreateAction::make()
                     ->hiddenLabel()

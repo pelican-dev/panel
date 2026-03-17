@@ -24,10 +24,12 @@ class AddedToServer extends Notification implements ShouldQueue
 
     public function toMail(User $notifiable): MailMessage
     {
+        $locale = $notifiable->language ?? 'en';
+
         return (new MailMessage())
-            ->greeting('Hello ' . $notifiable->username . '!')
-            ->line('You have been added as a subuser for the following server, allowing you certain control over the server.')
-            ->line('Server Name: ' . $this->server->name)
-            ->action('Visit Server', Console::getUrl(panel: 'server', tenant: $this->server));
+            ->greeting(trans('mail.greeting', ['name' => $notifiable->username], $locale))
+            ->line(trans('mail.added_to_server.body', locale: $locale))
+            ->line(trans('mail.added_to_server.server_name', ['name' => $this->server->name], $locale))
+            ->action(trans('mail.added_to_server.action', locale: $locale), Console::getUrl(panel: 'server', tenant: $this->server));
     }
 }

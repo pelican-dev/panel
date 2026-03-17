@@ -5,21 +5,32 @@ namespace App\Models;
 use App\Contracts\Validatable;
 use App\Enums\SubuserPermission;
 use App\Traits\HasValidation;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property int $user_id
  * @property int $server_id
- * @property string[] $permissions
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property User $user
- * @property Server $server
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property string[]|null $permissions
+ * @property-read Server $server
+ * @property-read User $user
+ *
+ * @method static \Database\Factories\SubuserFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser wherePermissions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser whereServerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser whereUserId($value)
  */
 class Subuser extends Model implements Validatable
 {

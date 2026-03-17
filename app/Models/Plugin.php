@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\Plugins\HasPluginSettings;
 use App\Enums\PluginCategory;
 use App\Enums\PluginStatus;
+use App\Exceptions\PluginIdMismatchException;
 use App\Facades\Plugins;
 use Exception;
 use Filament\Schemas\Components\Component;
@@ -33,6 +34,26 @@ use Sushi\Sushi;
  * @property PluginStatus $status
  * @property string|null $status_message
  * @property int $load_order
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereAuthor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereCategory($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereClass($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereComposerPackages($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereLoadOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereNamespace($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin wherePanelVersion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin wherePanels($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereStatusMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereUpdateUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereVersion($value)
  */
 class Plugin extends Model implements HasPluginSettings
 {
@@ -110,9 +131,10 @@ class Plugin extends Model implements HasPluginSettings
 
             try {
                 $data = File::json($path, JSON_THROW_ON_ERROR);
+                $data['id'] = Str::lower($data['id']);
 
-                if ($data['id'] !== $plugin) {
-                    throw new Exception("Plugin id mismatch for folder name ($plugin) and id in plugin.json ({$data['id']})!");
+                if ($data['id'] !== Str::lower($plugin)) {
+                    throw new PluginIdMismatchException("Plugin id mismatch for folder name ($plugin) and id in plugin.json ({$data['id']})!");
                 }
 
                 $panels = null;
@@ -157,13 +179,13 @@ class Plugin extends Model implements HasPluginSettings
 
                 if (!$exception instanceof JsonException) {
                     $plugins[] = [
-                        'id' => $data['id'] ?? Str::uuid(),
-                        'name' => $data['name'] ?? $plugin,
+                        'id' => $exception instanceof PluginIdMismatchException ? $plugin : ($data['id'] ?? Str::uuid()),
+                        'name' => $data['name'] ?? Str::headline($plugin),
                         'author' => $data['author'] ?? 'Unknown',
-                        'version' => '0.0.0',
-                        'description' => 'Plugin.json is invalid!',
+                        'version' => $data['version'] ?? '0.0.0',
+                        'description' => $exception instanceof PluginIdMismatchException ? $exception->getMessage() : 'Plugin.json is invalid!',
                         'category' => PluginCategory::Plugin->value,
-                        'url' => null,
+                        'url' => $data['url'] ?? null,
                         'update_url' => null,
                         'namespace' => 'Error',
                         'class' => 'Error',
@@ -197,7 +219,7 @@ class Plugin extends Model implements HasPluginSettings
 
     public function shouldLoad(?string $panelId = null): bool
     {
-        return ($this->status === PluginStatus::Enabled || $this->status === PluginStatus::Errored) && (is_null($panelId) || !$this->panels || in_array($panelId, explode(',', $this->panels)));
+        return $this->fullClass() !== '\\Error\\Error' && ($this->status === PluginStatus::Enabled || $this->status === PluginStatus::Errored) && (is_null($panelId) || !$this->panels || in_array($panelId, explode(',', $this->panels)));
     }
 
     public function canEnable(): bool

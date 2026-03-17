@@ -23,11 +23,13 @@ class RemovedFromServer extends Notification implements ShouldQueue
 
     public function toMail(User $notifiable): MailMessage
     {
+        $locale = $notifiable->language ?? 'en';
+
         return (new MailMessage())
             ->error()
-            ->greeting('Hello ' . $notifiable->username . '.')
-            ->line('You have been removed as a subuser for the following server.')
-            ->line('Server Name: ' . $this->server->name)
-            ->action('Visit Panel', url(''));
+            ->greeting(trans('mail.greeting', ['name' => $notifiable->username], $locale))
+            ->line(trans('mail.removed_from_server.body', locale: $locale))
+            ->line(trans('mail.removed_from_server.server_name', ['name' => $this->server->name], $locale))
+            ->action(trans('mail.removed_from_server.action', locale: $locale), url(''));
     }
 }

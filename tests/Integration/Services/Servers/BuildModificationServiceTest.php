@@ -34,7 +34,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
         $server = $this->createServerModel();
         $server2 = $this->createServerModel();
 
-        /** @var \App\Models\Allocation[] $allocations */
+        /** @var Allocation[] $allocations */
         $allocations = Allocation::factory()->times(4)->create(['node_id' => $server->node_id, 'notes' => 'Random notes']);
 
         $initialAllocationId = $server->allocation_id;
@@ -175,7 +175,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
     public function test_no_exception_is_thrown_if_only_removing_allocation(): void
     {
         $server = $this->createServerModel();
-        /** @var \App\Models\Allocation $allocation */
+        /** @var Allocation $allocation */
         $allocation = Allocation::factory()->create(['node_id' => $server->node_id, 'server_id' => $server->id]);
 
         $this->daemonServerRepository->expects('setServer->sync')->andReturnUndefined();
@@ -198,7 +198,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
     public function test_allocation_in_both_add_and_remove_is_added(): void
     {
         $server = $this->createServerModel();
-        /** @var \App\Models\Allocation $allocation */
+        /** @var Allocation $allocation */
         $allocation = Allocation::factory()->create(['node_id' => $server->node_id]);
 
         $this->daemonServerRepository->expects('setServer->sync')->andReturnUndefined();
@@ -217,9 +217,9 @@ class BuildModificationServiceTest extends IntegrationTestCase
     public function test_using_same_allocation_id_multiple_times_does_not_error(): void
     {
         $server = $this->createServerModel();
-        /** @var \App\Models\Allocation $allocation */
+        /** @var Allocation $allocation */
         $allocation = Allocation::factory()->create(['node_id' => $server->node_id, 'server_id' => $server->id]);
-        /** @var \App\Models\Allocation $allocation2 */
+        /** @var Allocation $allocation2 */
         $allocation2 = Allocation::factory()->create(['node_id' => $server->node_id]);
 
         $this->daemonServerRepository->expects('setServer->sync')->andReturnUndefined();
@@ -242,7 +242,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
     public function test_that_updates_are_rolled_back_if_exception_is_encountered(): void
     {
         $server = $this->createServerModel();
-        /** @var \App\Models\Allocation $allocation */
+        /** @var Allocation $allocation */
         $allocation = Allocation::factory()->create(['node_id' => $server->node_id]);
 
         $this->daemonServerRepository->expects('setServer->sync')->andThrows(new DisplayException('Test'));

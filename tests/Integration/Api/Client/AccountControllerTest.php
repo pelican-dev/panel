@@ -14,7 +14,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_account_details_are_returned(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get('/api/client/account');
@@ -41,7 +41,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_email_is_updated(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->putJson('/api/client/account/email', [
@@ -60,7 +60,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_email_is_not_updated_when_password_is_invalid(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->putJson('/api/client/account/email', [
@@ -79,7 +79,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_email_is_not_updated_when_not_valid(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->putJson('/api/client/account/email', [
@@ -106,7 +106,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_password_is_updated(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $initialHash = $user->password;
@@ -132,7 +132,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_password_is_not_updated_if_current_password_is_invalid(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->putJson('/api/client/account/password', [
@@ -175,7 +175,7 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_error_is_returned_if_password_is_not_confirmed(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->putJson('/api/client/account/password', [

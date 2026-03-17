@@ -10,6 +10,7 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
+use App\Http\Responses\LoginResponse;
 use App\Models\Allocation;
 use App\Models\ApiKey;
 use App\Models\Backup;
@@ -27,6 +28,7 @@ use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse as LoginResponseContract;
 use Illuminate\Config\Repository;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
@@ -125,6 +127,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(LoginResponseContract::class, LoginResponse::class);
+
         Scramble::ignoreDefaultRoutes();
 
         /** @var PluginService $pluginService */

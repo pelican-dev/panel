@@ -26,9 +26,9 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_api_keys_are_returned(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
-        /** @var \App\Models\ApiKey $key */
+        /** @var ApiKey $key */
         $key = ApiKey::factory()->for($user)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
         ]);
@@ -49,7 +49,7 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
     #[DataProvider('validIPAddressDataProvider')]
     public function test_api_key_can_be_created_for_account(array $data): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         // Small subtest to ensure we're always comparing the  number of keys to the
@@ -67,7 +67,7 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
             ->assertOk()
             ->assertJsonPath('object', ApiKey::RESOURCE_NAME);
 
-        /** @var \App\Models\ApiKey $key */
+        /** @var ApiKey $key */
         $key = ApiKey::query()->where('identifier', $response->json('attributes.identifier'))->firstOrFail();
 
         $this->assertJsonTransformedWith($response->json('attributes'), $key);
@@ -101,7 +101,7 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_api_key_limit_is_applied(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
         ApiKey::factory()->times(config('panel.api.key_limit', 25))->for($user)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
@@ -155,9 +155,9 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_api_key_can_be_deleted(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
-        /** @var \App\Models\ApiKey $key */
+        /** @var ApiKey $key */
         $key = ApiKey::factory()->for($user)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
         ]);
@@ -174,9 +174,9 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_non_existent_api_key_deletion_returns404_error(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
-        /** @var \App\Models\ApiKey $key */
+        /** @var ApiKey $key */
         $key = ApiKey::factory()->create([
             'user_id' => $user->id,
             'key_type' => ApiKey::TYPE_ACCOUNT,
@@ -195,11 +195,11 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_api_key_belonging_to_another_user_cannot_be_deleted(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
-        /** @var \App\Models\User $user2 */
+        /** @var User $user2 */
         $user2 = User::factory()->create();
-        /** @var \App\Models\ApiKey $key */
+        /** @var ApiKey $key */
         $key = ApiKey::factory()->for($user2)->create([
             'key_type' => ApiKey::TYPE_ACCOUNT,
         ]);
@@ -218,9 +218,9 @@ class ApiKeyControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_application_api_key_cannot_be_deleted(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
-        /** @var \App\Models\ApiKey $key */
+        /** @var ApiKey $key */
         $key = ApiKey::factory()->for($user)->create([
             'key_type' => ApiKey::TYPE_APPLICATION,
         ]);

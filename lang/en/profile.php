@@ -64,7 +64,10 @@ return [
     'sidebar' => 'Sidebar',
     'topbar' => 'Topbar',
     'mixed' => 'Mixed',
+    'redirect_to_admin' => 'Redirect to Admin on Login',
+    'redirect_to_admin_help' => 'When enabled, you will be redirected to the admin area after logging in instead of the server list.',
     'no_oauth' => 'No Accounts Linked',
     'no_api_keys' => 'No API Keys',
     'no_ssh_keys' => 'No SSH Keys',
+    'activity_info' => 'Showing last 50 activity logs',
 ];

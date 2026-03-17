@@ -91,7 +91,10 @@ class AllocationsRelationManager extends RelationManager
                     ->icon(TablerIcon::WorldPlus)
                     ->schema(fn () => [
                         Select::make('allocation_ip')
-                            ->options(fn () => collect($this->getOwnerRecord()->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                            ->options(fn (Get $get) => collect($this->getOwnerRecord()->ipAddresses())
+                                ->when($get('allocation_ip'), fn ($ips, $current) => $ips->push($current))
+                                ->unique()
+                                ->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                             ->label(trans('admin/node.ip_address'))
                             ->inlineLabel()
                             ->ip()
@@ -100,11 +103,24 @@ class AllocationsRelationManager extends RelationManager
                             ->live()
                             ->hintAction(
                                 Action::make('hint_refresh')
+                                    ->hiddenLabel()
                                     ->icon(TablerIcon::Refresh)
                                     ->tooltip(trans('admin/node.refresh'))
                                     ->action(function () {
                                         cache()->forget("nodes.{$this->getOwnerRecord()->id}.ips");
                                     })
+                            )
+                            ->suffixAction(
+                                Action::make('custom_ip')
+                                    ->icon(TablerIcon::Keyboard)
+                                    ->tooltip(trans('admin/node.custom_ip'))
+                                    ->schema([
+                                        TextInput::make('custom_ip')
+                                            ->label(trans('admin/node.ip_address'))
+                                            ->ip()
+                                            ->required(),
+                                    ])
+                                    ->action(fn (array $data, Set $set) => $set('allocation_ip', $data['custom_ip']))
                             )
                             ->required(),
                         TextInput::make('allocation_alias')

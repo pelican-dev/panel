@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Traits\HasValidation;
-use Database\Factories\UserSSHKeyFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,23 +21,23 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property User $user
+ * @property-read User $user
  *
- * @method static Builder|UserSSHKey newModelQuery()
- * @method static Builder|UserSSHKey newQuery()
- * @method static \Illuminate\Database\Query\Builder|UserSSHKey onlyTrashed()
- * @method static Builder|UserSSHKey query()
- * @method static Builder|UserSSHKey whereCreatedAt($value)
- * @method static Builder|UserSSHKey whereDeletedAt($value)
- * @method static Builder|UserSSHKey whereFingerprint($value)
- * @method static Builder|UserSSHKey whereId($value)
- * @method static Builder|UserSSHKey whereName($value)
- * @method static Builder|UserSSHKey wherePublicKey($value)
- * @method static Builder|UserSSHKey whereUpdatedAt($value)
- * @method static Builder|UserSSHKey whereUserId($value)
- * @method static \Illuminate\Database\Query\Builder|UserSSHKey withTrashed()
- * @method static \Illuminate\Database\Query\Builder|UserSSHKey withoutTrashed()
- * @method static UserSSHKeyFactory factory(...$parameters)
+ * @method static \Database\Factories\UserSSHKeyFactory factory($count = null, $state = [])
+ * @method static Builder<static>|UserSSHKey newModelQuery()
+ * @method static Builder<static>|UserSSHKey newQuery()
+ * @method static Builder<static>|UserSSHKey onlyTrashed()
+ * @method static Builder<static>|UserSSHKey query()
+ * @method static Builder<static>|UserSSHKey whereCreatedAt($value)
+ * @method static Builder<static>|UserSSHKey whereDeletedAt($value)
+ * @method static Builder<static>|UserSSHKey whereFingerprint($value)
+ * @method static Builder<static>|UserSSHKey whereId($value)
+ * @method static Builder<static>|UserSSHKey whereName($value)
+ * @method static Builder<static>|UserSSHKey wherePublicKey($value)
+ * @method static Builder<static>|UserSSHKey whereUpdatedAt($value)
+ * @method static Builder<static>|UserSSHKey whereUserId($value)
+ * @method static Builder<static>|UserSSHKey withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|UserSSHKey withoutTrashed()
  */
 class UserSSHKey extends Model
 {

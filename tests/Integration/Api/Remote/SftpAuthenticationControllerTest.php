@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\UserSSHKey;
 use App\Tests\Integration\IntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Spatie\Permission\Models\Permission;
 
 class SftpAuthenticationControllerTest extends IntegrationTestCase
 {
@@ -193,6 +194,39 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
 
         $user->syncRoles();
         $this->post('/api/remote/sftp/auth', $data)->assertForbidden();
+    }
+
+    public function test_subuser_sftp_works_when_user_has_view_only_role(): void
+    {
+        [$user, $server] = $this->generateTestAccount([SubuserPermission::FileRead, SubuserPermission::FileSftp]);
+
+        $user->update(['password' => password_hash('foobar', PASSWORD_DEFAULT)]);
+
+        $this->setAuthorization($server->node);
+
+        $data = [
+            'username' => $user->username . '.' . $server->uuid_short,
+            'password' => 'foobar',
+        ];
+
+        // SFTP works as a plain subuser
+        $this->postJson('/api/remote/sftp/auth', $data)
+            ->assertOk()
+            ->assertJsonPath('permissions', [SubuserPermission::FileRead->value, SubuserPermission::FileSftp->value]);
+
+        // Assign a role with only "view server" permission
+        $role = Role::findOrCreate('view-only-test', 'web');
+        $permission = Permission::findOrCreate('view server', 'web');
+        $role->givePermissionTo($permission);
+        $user->syncRoles($role);
+
+        // SFTP should still work — subuser permissions must be merged with admin permissions
+        $response = $this->postJson('/api/remote/sftp/auth', $data)
+            ->assertOk();
+
+        $permissions = $response->json('permissions');
+        $this->assertContains(SubuserPermission::FileSftp->value, $permissions);
+        $this->assertContains(SubuserPermission::FileRead->value, $permissions);
     }
 
     public static function authorizationTypeDataProvider(): array

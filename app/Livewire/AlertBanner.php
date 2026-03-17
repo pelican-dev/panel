@@ -10,6 +10,7 @@ use Filament\Notifications\Concerns\HasStatus;
 use Filament\Notifications\Concerns\HasTitle;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Contracts\Support\Arrayable;
+use Livewire\Livewire;
 
 final class AlertBanner extends ViewComponent implements Arrayable
 {
@@ -83,7 +84,13 @@ final class AlertBanner extends ViewComponent implements Arrayable
 
     public function send(): AlertBanner
     {
-        session()->push('alert-banners', $this->toArray());
+        $data = $this->toArray();
+
+        if (Livewire::isLivewireRequest()) {
+            $data['from_livewire'] = true;
+        }
+
+        session()->push('alert-banners', $data);
 
         return $this;
     }

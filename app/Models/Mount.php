@@ -12,14 +12,29 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property int $id
  * @property string $uuid
  * @property string $name
- * @property string $description
+ * @property string|null $description
  * @property string $source
  * @property string $target
  * @property bool $read_only
  * @property bool $user_mountable
- * @property Egg[]|Collection $eggs
- * @property Node[]|Collection $nodes
- * @property Server[]|Collection $servers
+ * @property-read Collection<int, Egg> $eggs
+ * @property-read int|null $eggs_count
+ * @property-read Collection<int, Node> $nodes
+ * @property-read int|null $nodes_count
+ * @property-read Collection<int, Server> $servers
+ * @property-read int|null $servers_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Mount newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Mount newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Mount query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Mount whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Mount whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Mount whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Mount whereReadOnly($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Mount whereSource($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Mount whereTarget($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Mount whereUserMountable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Mount whereUuid($value)
  */
 class Mount extends Model implements Validatable
 {

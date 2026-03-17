@@ -64,7 +64,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
     {
         [$user, $server] = $this->generateTestAccount();
 
-        /** @var \App\Models\Subuser $subuser */
+        /** @var Subuser $subuser */
         $subuser = Subuser::factory()
             ->for(User::factory()->create())
             ->for($server)

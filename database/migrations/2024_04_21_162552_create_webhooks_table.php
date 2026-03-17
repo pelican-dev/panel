@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\WebhookConfiguration;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('webhooks', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\WebhookConfiguration::class)->constrained();
+            $table->foreignIdFor(WebhookConfiguration::class)->constrained();
             $table->string('event');
             $table->string('endpoint');
             $table->timestamp('successful_at')->nullable();

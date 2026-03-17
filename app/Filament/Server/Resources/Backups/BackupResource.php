@@ -27,7 +27,6 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Textarea;
@@ -77,7 +76,7 @@ class BackupResource extends Resource
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        return $server->backup_limit;
+        return $server->backup_limit ?? 0;
     }
 
     public static function defaultForm(Schema $schema): Schema
@@ -128,7 +127,7 @@ class BackupResource extends Resource
             ])
             ->recordActions([
                 ActionGroup::make([
-                    Action::make('rename')
+                    Action::make('exclude_rename')
                         ->icon(TablerIcon::Pencil)
                         ->authorize(fn () => user()?->can(SubuserPermission::BackupDelete, $server))
                         ->label(trans('server/backup.actions.rename.title'))
@@ -158,14 +157,14 @@ class BackupResource extends Resource
                                 ->send();
                         })
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
-                    Action::make('lock')
+                    Action::make('exclude_lock')
                         ->iconSize(IconSize::Large)
                         ->icon(fn (Backup $backup) => !$backup->is_locked ? TablerIcon::Lock : TablerIcon::LockOpen)
                         ->authorize(fn () => user()?->can(SubuserPermission::BackupDelete, $server))
                         ->label(fn (Backup $backup) => !$backup->is_locked ? trans('server/backup.actions.lock.lock') : trans('server/backup.actions.lock.unlock'))
                         ->action(fn (BackupController $backupController, Backup $backup, Request $request) => $backupController->toggleLock($request, $server, $backup))
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
-                    Action::make('download')
+                    Action::make('exclude_download')
                         ->label(trans('server/backup.actions.download'))
                         ->iconSize(IconSize::Large)
                         ->color('primary')
@@ -173,7 +172,7 @@ class BackupResource extends Resource
                         ->authorize(fn () => user()?->can(SubuserPermission::BackupDownload, $server))
                         ->url(fn (DownloadLinkService $downloadLinkService, Backup $backup, Request $request) => $downloadLinkService->handle($backup, $request->user()), true)
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
-                    Action::make('restore')
+                    Action::make('exclude_restore')
                         ->label(trans('server/backup.actions.restore.title'))
                         ->iconSize(IconSize::Large)
                         ->color('success')
@@ -226,7 +225,12 @@ class BackupResource extends Resource
                                 ->send();
                         })
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
-                    DeleteAction::make('delete')
+                    Action::make('exclude_delete')
+                        ->icon(TablerIcon::Trash)
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->authorize(fn () => user()?->can(SubuserPermission::BackupDelete, $server))
+                        ->label(trans('filament-actions::delete.single.label'))
                         ->iconSize(IconSize::Large)
                         ->disabled(fn (Backup $backup) => $backup->is_locked && $backup->status !== BackupStatus::Failed)
                         ->modalDescription(fn (Backup $backup) => trans('server/backup.actions.delete.description', ['backup' => $backup->name]))
