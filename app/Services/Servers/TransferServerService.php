@@ -33,6 +33,7 @@ class TransferServerService
         // Make sure only wings backups of the current server are forwarded in the wings request
         $backups = Backup::where('server_id', $transfer->server_id)
             ->whereIn('uuid', $backup_uuids)
+            ->with('backupHost')
             ->get()
             ->filter(fn (Backup $backup) => $this->backupService->get($backup->backupHost->schema) instanceof WingsBackupSchema)
             ->pluck('uuid')
