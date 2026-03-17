@@ -3,6 +3,8 @@
 namespace App\Tests\Integration\Api\Client\Server;
 
 use App\Enums\SubuserPermission;
+use App\Models\Server;
+use App\Models\User;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Response;
@@ -42,8 +44,8 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_jwt_and_websocket_url_are_returned_for_server_owner(): void
     {
-        /** @var \App\Models\User $user */
-        /** @var \App\Models\Server $server */
+        /** @var User $user */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount();
 
         // Force the node to HTTPS since we want to confirm it gets transformed to wss:// in the URL.
@@ -88,8 +90,8 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
     {
         $permissions = [SubuserPermission::WebsocketConnect->value, SubuserPermission::ControlConsole->value];
 
-        /** @var \App\Models\User $user */
-        /** @var \App\Models\Server $server */
+        /** @var User $user */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
 
         $response = $this->actingAs($user)->getJson("/api/client/servers/$server->uuid/websocket");

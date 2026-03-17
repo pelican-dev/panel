@@ -6,34 +6,55 @@ use App\Contracts\Validatable;
 use App\Enums\ScheduleStatus;
 use App\Helpers\Utilities;
 use App\Traits\HasValidation;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property int $server_id
  * @property string $name
  * @property string $cron_day_of_week
- * @property string $cron_month
  * @property string $cron_day_of_month
  * @property string $cron_hour
  * @property string $cron_minute
  * @property bool $is_active
  * @property bool $is_processing
- * @property bool $only_when_online
  * @property Carbon|null $last_run_at
  * @property Carbon|null $next_run_at
- * @property ScheduleStatus $status
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Server $server
- * @property Task[]|Collection $tasks
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property string $cron_month
+ * @property bool $only_when_online
+ * @property-read Server $server
+ * @property-read ScheduleStatus $status
+ * @property-read Collection<int, Task> $tasks
+ * @property-read int|null $tasks_count
+ *
+ * @method static \Database\Factories\ScheduleFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereCronDayOfMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereCronDayOfWeek($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereCronHour($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereCronMinute($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereCronMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereIsProcessing($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereLastRunAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereNextRunAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereOnlyWhenOnline($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereServerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Schedule whereUpdatedAt($value)
  */
 class Schedule extends Model implements Validatable
 {

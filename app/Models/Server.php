@@ -11,7 +11,6 @@ use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Subusers\SubuserDeletionService;
 use App\Traits\HasValidation;
 use Carbon\CarbonInterface;
-use Database\Factories\ServerFactory;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -37,100 +36,95 @@ use Psr\Http\Message\ResponseInterface;
  * \App\Models\Server.
  *
  * @property int $id
- * @property string|null $external_id
  * @property string $uuid
  * @property string $uuid_short
  * @property int $node_id
  * @property string $name
- * @property string $description
- * @property ServerState|null $status
- * @property bool $skip_scripts
  * @property int $owner_id
  * @property int $memory
  * @property int $swap
  * @property int $disk
  * @property int $io
  * @property int $cpu
- * @property string|null $threads
- * @property bool $oom_killer
- * @property int|null $allocation_id
  * @property int $egg_id
  * @property string $startup
- * @property string $image
- * @property string|null $icon
- * @property int|null $allocation_limit
- * @property int|null $database_limit
- * @property int|null $backup_limit
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property int|null $allocation_id
+ * @property string $image
+ * @property string|null $description
+ * @property bool $skip_scripts
+ * @property string|null $external_id
+ * @property int|null $database_limit
+ * @property int|null $allocation_limit
+ * @property string|null $threads
+ * @property int $backup_limit
+ * @property ServerState|null $status
  * @property Carbon|null $installed_at
- * @property Collection|ActivityLog[] $activity
- * @property int|null $activity_count
- * @property Allocation|null $allocation
- * @property Collection|Allocation[] $allocations
- * @property int|null $allocations_count
- * @property Collection|Backup[] $backups
- * @property int|null $backups_count
- * @property Collection|Database[] $databases
- * @property int|null $databases_count
- * @property Egg $egg
- * @property Collection|Mount[] $mounts
- * @property int|null $mounts_count
- * @property Node $node
- * @property DatabaseNotificationCollection|DatabaseNotification[] $notifications
- * @property int|null $notifications_count
- * @property Collection|Schedule[] $schedules
- * @property int|null $schedules_count
- * @property Collection|Subuser[] $subusers
- * @property int|null $subusers_count
- * @property ServerTransfer|null $transfer
- * @property User $user
- * @property Collection|EggVariable[] $variables
- * @property int|null $variables_count
- *
- * @method static ServerFactory factory(...$parameters)
- * @method static Builder|Server newModelQuery()
- * @method static Builder|Server newQuery()
- * @method static Builder|Server query()
- * @method static Builder|Server whereAllocationId($value)
- * @method static Builder|Server whereAllocationLimit($value)
- * @method static Builder|Server whereBackupLimit($value)
- * @method static Builder|Server whereCpu($value)
- * @method static Builder|Server whereCreatedAt($value)
- * @method static Builder|Server whereDatabaseLimit($value)
- * @method static Builder|Server whereDescription($value)
- * @method static Builder|Server whereDisk($value)
- * @method static Builder|Server whereEggId($value)
- * @method static Builder|Server whereExternalId($value)
- * @method static Builder|Server whereId($value)
- * @method static Builder|Server whereImage($value)
- * @method static Builder|Server whereIo($value)
- * @method static Builder|Server whereMemory($value)
- * @method static Builder|Server whereName($value)
- * @method static Builder|Server whereNodeId($value)
- * @method static Builder|Server whereOomKiller($value)
- * @method static Builder|Server whereOwnerId($value)
- * @method static Builder|Server whereSkipScripts($value)
- * @method static Builder|Server whereStartup($value)
- * @method static Builder|Server whereStatus($value)
- * @method static Builder|Server whereSwap($value)
- * @method static Builder|Server whereThreads($value)
- * @method static Builder|Server whereUpdatedAt($value)
- * @method static Builder|Server whereUuid($value)
- * @method static Builder|Server whereuuid_short($value)
- *
- * @property string[]|null $docker_labels
- * @property string|null $ports
- * @property-read ContainerStatus|ServerState $condition
+ * @property bool $oom_killer
+ * @property array<array-key, mixed>|null $docker_labels
+ * @property-read Collection<int, ActivityLog> $activity
+ * @property-read int|null $activity_count
+ * @property-read Allocation|null $allocation
+ * @property-read Collection<int, Allocation> $allocations
+ * @property-read int|null $allocations_count
+ * @property-read Collection<int, Backup> $backups
+ * @property-read int|null $backups_count
+ * @property-read ServerState|ContainerStatus $condition
+ * @property-read Collection<int, Database> $databases
+ * @property-read int|null $databases_count
+ * @property-read Egg $egg
  * @property-read Collection<int, EggVariable> $eggVariables
  * @property-read int|null $egg_variables_count
+ * @property-read string|null $icon
+ * @property-read Collection<int, Mount> $mounts
+ * @property-read int|null $mounts_count
+ * @property-read Node $node
+ * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read Collection<int, Schedule> $schedules
+ * @property-read int|null $schedules_count
  * @property-read Collection<int, ServerVariable> $serverVariables
  * @property-read int|null $server_variables_count
+ * @property-read Collection<int, Subuser> $subusers
+ * @property-read int|null $subusers_count
+ * @property-read ServerTransfer|null $transfer
+ * @property-read User $user
+ * @property-read Collection<int, EggVariable> $variables
+ * @property-read int|null $variables_count
  *
- * @method static Builder|Server whereDockerLabels($value)
- * @method static Builder|Server whereInstalledAt($value)
- * @method static Builder|Server wherePorts($value)
- * @method static Builder|Server whereUuidShort($value)
+ * @method static \Database\Factories\ServerFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Server newModelQuery()
+ * @method static Builder<static>|Server newQuery()
+ * @method static Builder<static>|Server query()
+ * @method static Builder<static>|Server whereAllocationId($value)
+ * @method static Builder<static>|Server whereAllocationLimit($value)
+ * @method static Builder<static>|Server whereBackupLimit($value)
+ * @method static Builder<static>|Server whereCpu($value)
+ * @method static Builder<static>|Server whereCreatedAt($value)
+ * @method static Builder<static>|Server whereDatabaseLimit($value)
+ * @method static Builder<static>|Server whereDescription($value)
+ * @method static Builder<static>|Server whereDisk($value)
+ * @method static Builder<static>|Server whereDockerLabels($value)
+ * @method static Builder<static>|Server whereEggId($value)
+ * @method static Builder<static>|Server whereExternalId($value)
+ * @method static Builder<static>|Server whereId($value)
+ * @method static Builder<static>|Server whereImage($value)
+ * @method static Builder<static>|Server whereInstalledAt($value)
+ * @method static Builder<static>|Server whereIo($value)
+ * @method static Builder<static>|Server whereMemory($value)
+ * @method static Builder<static>|Server whereName($value)
+ * @method static Builder<static>|Server whereNodeId($value)
+ * @method static Builder<static>|Server whereOomKiller($value)
+ * @method static Builder<static>|Server whereOwnerId($value)
+ * @method static Builder<static>|Server whereSkipScripts($value)
+ * @method static Builder<static>|Server whereStartup($value)
+ * @method static Builder<static>|Server whereStatus($value)
+ * @method static Builder<static>|Server whereSwap($value)
+ * @method static Builder<static>|Server whereThreads($value)
+ * @method static Builder<static>|Server whereUpdatedAt($value)
+ * @method static Builder<static>|Server whereUuid($value)
+ * @method static Builder<static>|Server whereUuidShort($value)
  */
 class Server extends Model implements HasAvatar, Validatable
 {

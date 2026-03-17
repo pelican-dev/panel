@@ -14,13 +14,14 @@ use Boquizo\FilamentLogViewer\Utils\Level;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Http;
 
 class ListLogs extends BaseListLogs
 {
     protected string $view = 'filament.components.list-logs';
 
-    public function getHeading(): string|null|\Illuminate\Contracts\Support\Htmlable
+    public function getHeading(): string|null|Htmlable
     {
         return trans('admin/log.navigation.panel_logs');
     }
