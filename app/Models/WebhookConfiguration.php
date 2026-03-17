@@ -14,15 +14,36 @@ use Illuminate\Support\Facades\File;
 use Livewire\Features\SupportEvents\HandlesEvents;
 
 /**
- * @property string|array<string, mixed>|null $payload
+ * @property int $id
  * @property string $endpoint
  * @property string $description
  * @property string[] $events
- * @property WebhookType|string|null $type
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property array<string, string>|null $headers
+ * @property WebhookType|null $type
+ * @property string|array<array-key, mixed>|null $payload
+ * @property array<array-key, mixed>|null $headers
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Webhook> $webhooks
+ * @property-read int|null $webhooks_count
+ *
+ * @method static \Database\Factories\WebhookConfigurationFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration whereEndpoint($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration whereEvents($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration whereHeaders($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration wherePayload($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WebhookConfiguration withoutTrashed()
  */
 class WebhookConfiguration extends Model
 {

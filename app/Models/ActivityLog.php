@@ -6,7 +6,6 @@ use App\Enums\TablerIcon;
 use App\Events\ActivityLogged;
 use App\Traits\HasValidation;
 use BackedEnum;
-use Carbon\Carbon;
 use Filament\Facades\Filament;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
@@ -17,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
@@ -31,28 +31,28 @@ use LogicException;
  * @property string|null $description
  * @property string|null $actor_type
  * @property int|null $actor_id
+ * @property Collection<array-key, mixed> $properties
+ * @property Carbon $timestamp
  * @property int|null $api_key_id
- * @property Collection|null $properties
- * @property \Carbon\Carbon $timestamp
- * @property Model|\Eloquent $actor
- * @property \Illuminate\Database\Eloquent\Collection|ActivityLogSubject[] $subjects
- * @property int|null $subjects_count
- * @property ApiKey|null $apiKey
+ * @property-read Model|\Eloquent|null $actor
+ * @property-read ApiKey|null $apiKey
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ActivityLogSubject> $subjects
+ * @property-read int|null $subjects_count
  *
- * @method static Builder|ActivityLog forActor(Model $actor)
- * @method static Builder|ActivityLog forEvent(string $action)
- * @method static Builder|ActivityLog newModelQuery()
- * @method static Builder|ActivityLog newQuery()
- * @method static Builder|ActivityLog query()
- * @method static Builder|ActivityLog whereActorId($value)
- * @method static Builder|ActivityLog whereActorType($value)
- * @method static Builder|ActivityLog whereApiKeyId($value)
- * @method static Builder|ActivityLog whereDescription($value)
- * @method static Builder|ActivityLog whereEvent($value)
- * @method static Builder|ActivityLog whereId($value)
- * @method static Builder|ActivityLog whereIp($value)
- * @method static Builder|ActivityLog whereProperties($value)
- * @method static Builder|ActivityLog whereTimestamp($value)
+ * @method static Builder<static>|ActivityLog forActor(\Illuminate\Database\Eloquent\Model $actor)
+ * @method static Builder<static>|ActivityLog forEvent(string $action)
+ * @method static Builder<static>|ActivityLog newModelQuery()
+ * @method static Builder<static>|ActivityLog newQuery()
+ * @method static Builder<static>|ActivityLog query()
+ * @method static Builder<static>|ActivityLog whereActorId($value)
+ * @method static Builder<static>|ActivityLog whereActorType($value)
+ * @method static Builder<static>|ActivityLog whereApiKeyId($value)
+ * @method static Builder<static>|ActivityLog whereDescription($value)
+ * @method static Builder<static>|ActivityLog whereEvent($value)
+ * @method static Builder<static>|ActivityLog whereId($value)
+ * @method static Builder<static>|ActivityLog whereIp($value)
+ * @method static Builder<static>|ActivityLog whereProperties($value)
+ * @method static Builder<static>|ActivityLog whereTimestamp($value)
  */
 class ActivityLog extends Model implements HasIcon, HasLabel
 {

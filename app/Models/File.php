@@ -6,12 +6,12 @@ use App\Enums\TablerIcon;
 use App\Livewire\AlertBanner;
 use App\Repositories\Daemon\DaemonFileRepository;
 use BackedEnum;
-use Carbon\Carbon;
 use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Carbon;
 use Sushi\Sushi;
 
 /**
@@ -28,6 +28,21 @@ use Sushi\Sushi;
  * @property bool $is_file
  * @property bool $is_symlink
  * @property string $mime_type
+ *
+ * @method static Builder<static>|File newModelQuery()
+ * @method static Builder<static>|File newQuery()
+ * @method static Builder<static>|File query()
+ * @method static Builder<static>|File whereCreatedAt($value)
+ * @method static Builder<static>|File whereId($value)
+ * @method static Builder<static>|File whereIsDirectory($value)
+ * @method static Builder<static>|File whereIsFile($value)
+ * @method static Builder<static>|File whereIsSymlink($value)
+ * @method static Builder<static>|File whereMimeType($value)
+ * @method static Builder<static>|File whereMode($value)
+ * @method static Builder<static>|File whereModeBits($value)
+ * @method static Builder<static>|File whereModifiedAt($value)
+ * @method static Builder<static>|File whereName($value)
+ * @method static Builder<static>|File whereSize($value)
  */
 class File extends Model
 {
@@ -138,6 +153,9 @@ class File extends Model
         return [
             'created_at' => 'datetime',
             'modified_at' => 'datetime',
+            'is_directory' => 'boolean',
+            'is_file' => 'boolean',
+            'is_symlink' => 'boolean',
         ];
     }
 

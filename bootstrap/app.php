@@ -1,8 +1,24 @@
 <?php
 
+use App\Console\Kernel;
+use App\Exceptions\Handler;
+use App\Http\Middleware\Activity\TrackAPIKey;
+use App\Http\Middleware\Api\Application\AuthenticateApplicationUser;
+use App\Http\Middleware\Api\AuthenticateIPAccess;
+use App\Http\Middleware\Api\Client\RequireClientApiKey;
+use App\Http\Middleware\Api\Daemon\DaemonAuthenticate;
+use App\Http\Middleware\Api\IsValidJson;
+use App\Http\Middleware\EnsureStatefulRequests;
+use App\Http\Middleware\LanguageMiddleware;
+use App\Http\Middleware\MaintenanceMiddleware;
+use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withProviders()
@@ -12,46 +28,46 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->redirectGuestsTo(fn () => route('filament.app.auth.login'));
 
-        $middleware->web(\App\Http\Middleware\LanguageMiddleware::class);
+        $middleware->web(LanguageMiddleware::class);
 
         $middleware->api([
-            \App\Http\Middleware\EnsureStatefulRequests::class,
+            EnsureStatefulRequests::class,
             'auth:sanctum',
-            \App\Http\Middleware\Api\IsValidJson::class,
-            \App\Http\Middleware\Activity\TrackAPIKey::class,
-            \App\Http\Middleware\Api\AuthenticateIPAccess::class,
+            IsValidJson::class,
+            TrackAPIKey::class,
+            AuthenticateIPAccess::class,
         ]);
 
         $middleware->group('application-api', [
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \App\Http\Middleware\Api\Application\AuthenticateApplicationUser::class,
+            SubstituteBindings::class,
+            AuthenticateApplicationUser::class,
         ]);
 
         $middleware->group('client-api', [
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \App\Http\Middleware\Api\Client\RequireClientApiKey::class,
+            SubstituteBindings::class,
+            RequireClientApiKey::class,
         ]);
 
         $middleware->group('daemon', [
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \App\Http\Middleware\Api\Daemon\DaemonAuthenticate::class,
+            SubstituteBindings::class,
+            DaemonAuthenticate::class,
         ]);
 
-        $middleware->replaceInGroup('web', \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class, \App\Http\Middleware\VerifyCsrfToken::class);
+        $middleware->replaceInGroup('web', ValidateCsrfToken::class, VerifyCsrfToken::class);
 
         $middleware->alias([
-            'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-            'node.maintenance' => \App\Http\Middleware\MaintenanceMiddleware::class,
+            'bindings' => SubstituteBindings::class,
+            'guest' => RedirectIfAuthenticated::class,
+            'node.maintenance' => MaintenanceMiddleware::class,
         ]);
 
         $middleware->priority([
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            SubstituteBindings::class,
         ]);
     })
     ->withSingletons([
-        \Illuminate\Contracts\Console\Kernel::class => \App\Console\Kernel::class,
-        \Illuminate\Contracts\Debug\ExceptionHandler::class => \App\Exceptions\Handler::class,
+        Illuminate\Contracts\Console\Kernel::class => Kernel::class,
+        ExceptionHandler::class => Handler::class,
     ])
     ->withExceptions(function (Exceptions $exceptions) {})
     ->create();

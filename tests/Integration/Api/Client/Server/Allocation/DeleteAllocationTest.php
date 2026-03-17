@@ -4,6 +4,7 @@ namespace App\Tests\Integration\Api\Client\Server\Allocation;
 
 use App\Enums\SubuserPermission;
 use App\Models\Allocation;
+use App\Models\Server;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -17,11 +18,11 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
     #[DataProvider('permissionDataProvider')]
     public function test_allocation_can_be_deleted_from_server(array $permission): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount($permission);
         $server->update(['allocation_limit' => 2]);
 
-        /** @var \App\Models\Allocation $allocation */
+        /** @var Allocation $allocation */
         $allocation = Allocation::factory()->create([
             'server_id' => $server->id,
             'node_id' => $server->node_id,
@@ -39,7 +40,7 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
      */
     public function test_primary_allocation_can_be_deleted_from_server(): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount();
         $server->update(['allocation_limit' => 2]);
 
@@ -55,10 +56,10 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
      */
     public function test_error_is_returned_if_user_does_not_have_permission(): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount([SubuserPermission::AllocationCreate]);
 
-        /** @var \App\Models\Allocation $allocation */
+        /** @var Allocation $allocation */
         $allocation = Allocation::factory()->create([
             'server_id' => $server->id,
             'node_id' => $server->node_id,
@@ -74,7 +75,7 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
     {
         [$user, $server] = $this->generateTestAccount();
 
-        /** @var \App\Models\Allocation $allocation */
+        /** @var Allocation $allocation */
         $allocation = Allocation::factory()->forServer($server)->create(['notes' => 'Test notes']);
 
         $this->actingAs($user)->deleteJson($this->link($allocation))
@@ -91,7 +92,7 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
      */
     public function test_error_is_returned_if_allocation_does_not_belong_to_server(): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount();
         [, $server2] = $this->generateTestAccount();
 

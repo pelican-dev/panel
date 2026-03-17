@@ -20,10 +20,10 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_only_logged_in_users_servers_are_returned(): void
     {
-        /** @var \App\Models\User[] $users */
+        /** @var User[] $users */
         $users = User::factory()->times(3)->create();
 
-        /** @var \App\Models\Server[] $servers */
+        /** @var Server[] $servers */
         $servers = [
             $this->createServerModel(['user_id' => $users[0]->id]),
             $this->createServerModel(['user_id' => $users[1]->id]),
@@ -47,11 +47,11 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_servers_are_filtered_using_name_and_uuid_information(): void
     {
-        /** @var \App\Models\User[] $users */
+        /** @var User[] $users */
         $users = User::factory()->times(2)->create();
         $users[0]->syncRoles(Role::getRootAdmin());
 
-        /** @var \App\Models\Server[] $servers */
+        /** @var Server[] $servers */
         $servers = [
             $this->createServerModel(['user_id' => $users[0]->id, 'name' => 'julia']),
             $this->createServerModel(['user_id' => $users[1]->id, 'uuid_short' => '12121212', 'name' => 'janice']),
@@ -103,8 +103,8 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_servers_are_filtered_using_allocation_information(): void
     {
-        /** @var \App\Models\User $user */
-        /** @var \App\Models\Server $server */
+        /** @var User $user */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount();
         $server2 = $this->createServerModel(['user_id' => $user->id, 'node_id' => $server->node_id]);
 
@@ -145,7 +145,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_servers_user_is_a_subuser_of_are_returned(): void
     {
-        /** @var \App\Models\User[] $users */
+        /** @var User[] $users */
         $users = User::factory()->times(3)->create();
         $servers = [
             $this->createServerModel(['user_id' => $users[0]->id]),
@@ -176,7 +176,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_filter_only_owner_servers(): void
     {
-        /** @var \App\Models\User[] $users */
+        /** @var User[] $users */
         $users = User::factory()->times(3)->create();
         $servers = [
             $this->createServerModel(['user_id' => $users[0]->id]),
@@ -205,7 +205,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_permissions_are_returned(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $this->actingAs($user)
@@ -225,7 +225,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_only_admin_level_servers_are_returned(): void
     {
-        /** @var \App\Models\User[] $users */
+        /** @var User[] $users */
         $users = User::factory()->times(4)->create();
         $users[0]->syncRoles(Role::getRootAdmin());
 
@@ -260,7 +260,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_all_servers_are_returned_to_admin(): void
     {
-        /** @var \App\Models\User[] $users */
+        /** @var User[] $users */
         $users = User::factory()->times(4)->create();
         $users[0]->syncRoles(Role::getRootAdmin());
 
@@ -291,7 +291,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
     #[DataProvider('filterTypeDataProvider')]
     public function test_no_servers_are_returned_if_admin_filter_is_passed_by_regular_user(string $type): void
     {
-        /** @var \App\Models\User[] $users */
+        /** @var User[] $users */
         $users = User::factory()->times(3)->create();
 
         $this->createServerModel(['user_id' => $users[0]->id]);
@@ -310,7 +310,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
      */
     public function test_only_primary_allocation_is_returned_to_subuser(): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount([SubuserPermission::WebsocketConnect]);
         $server->allocation->notes = 'Test notes';
         $server->allocation->save();

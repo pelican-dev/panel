@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Services\Acl\Api\AdminAcl;
 use App\Traits\HasValidation;
-use Database\Factories\ApiKeyFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,41 +16,35 @@ use Webmozart\Assert\Assert;
  * App\Models\ApiKey.
  *
  * @property int $id
- * @property int $user_id
- * @property int $key_type
- * @property string $identifier
  * @property string $token
- * @property string[]|null $permissions
- * @property string[]|null $allowed_ips
- * @property string|null $memo
- * @property Carbon|null $last_used_at
- * @property Carbon|null $expires_at
+ * @property string[] $allowed_ips
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property User $tokenable
- * @property User $user
+ * @property int|null $user_id
+ * @property string|null $memo
+ * @property string|null $identifier
+ * @property int $key_type
+ * @property Carbon|null $last_used_at
+ * @property Carbon|null $expires_at
+ * @property array<string, int> $permissions
+ * @property-read User|null $user
  *
- * @method static ApiKeyFactory factory(...$parameters)
- * @method static Builder|ApiKey newModelQuery()
- * @method static Builder|ApiKey newQuery()
- * @method static Builder|ApiKey query()
- * @method static Builder|ApiKey whereAllowedIps($value)
- * @method static Builder|ApiKey whereCreatedAt($value)
- * @method static Builder|ApiKey whereId($value)
- * @method static Builder|ApiKey whereIdentifier($value)
- * @method static Builder|ApiKey whereKeyType($value)
- * @method static Builder|ApiKey whereLastUsedAt($value)
- * @method static Builder|ApiKey whereMemo($value)
- * @method static Builder|ApiKey whereRAllocations($value)
- * @method static Builder|ApiKey whereRDatabaseHosts($value)
- * @method static Builder|ApiKey whereREggs($value)
- * @method static Builder|ApiKey whereRNodes($value)
- * @method static Builder|ApiKey whereRServerDatabases($value)
- * @method static Builder|ApiKey whereRServers($value)
- * @method static Builder|ApiKey whereRUsers($value)
- * @method static Builder|ApiKey whereToken($value)
- * @method static Builder|ApiKey whereUpdatedAt($value)
- * @method static Builder|ApiKey whereUserId($value)
+ * @method static \Database\Factories\ApiKeyFactory factory($count = null, $state = [])
+ * @method static Builder<static>|ApiKey newModelQuery()
+ * @method static Builder<static>|ApiKey newQuery()
+ * @method static Builder<static>|ApiKey query()
+ * @method static Builder<static>|ApiKey whereAllowedIps($value)
+ * @method static Builder<static>|ApiKey whereCreatedAt($value)
+ * @method static Builder<static>|ApiKey whereExpiresAt($value)
+ * @method static Builder<static>|ApiKey whereId($value)
+ * @method static Builder<static>|ApiKey whereIdentifier($value)
+ * @method static Builder<static>|ApiKey whereKeyType($value)
+ * @method static Builder<static>|ApiKey whereLastUsedAt($value)
+ * @method static Builder<static>|ApiKey whereMemo($value)
+ * @method static Builder<static>|ApiKey wherePermissions($value)
+ * @method static Builder<static>|ApiKey whereToken($value)
+ * @method static Builder<static>|ApiKey whereUpdatedAt($value)
+ * @method static Builder<static>|ApiKey whereUserId($value)
  */
 class ApiKey extends PersonalAccessToken
 {

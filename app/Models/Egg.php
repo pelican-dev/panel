@@ -6,57 +6,90 @@ use App\Contracts\Validatable;
 use App\Exceptions\Service\Egg\HasChildrenException;
 use App\Exceptions\Service\HasActiveServersException;
 use App\Traits\HasValidation;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
  * @property int $id
- * @property string $uuid
- * @property string $author
  * @property string $name
  * @property string|null $description
- * @property string|null $image
- * @property string[]|null $features
- * @property array<string, string> $docker_images
- * @property string|null $update_url
- * @property bool $force_outgoing_ip
- * @property string[]|null $file_denylist
- * @property string|null $config_files
- * @property string|null $config_startup
- * @property string|null $config_logs
- * @property string|null $config_stop
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property int|null $config_from
- * @property array<string, string> $startup_commands
- * @property bool $script_is_privileged
+ * @property string|null $config_stop
+ * @property string|null $config_logs
+ * @property string|null $config_startup
+ * @property string|null $config_files
  * @property string|null $script_install
+ * @property bool $script_is_privileged
  * @property string $script_entry
  * @property string $script_container
  * @property int|null $copy_script_from
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property string|null $copy_script_install
- * @property string $copy_script_entry
- * @property string $copy_script_container
- * @property string|null $inherit_config_files
- * @property string|null $inherit_config_startup
- * @property string|null $inherit_config_logs
- * @property string|null $inherit_config_stop
- * @property string $inherit_file_denylist
- * @property string[]|null $inherit_features
+ * @property string|null $uuid
+ * @property string $author
+ * @property string[]|null $features
+ * @property array<string, string> $docker_images
+ * @property string|null $update_url
+ * @property string[]|null $file_denylist
+ * @property bool $force_outgoing_ip
  * @property string[] $tags
- * @property Collection|Server[] $servers
- * @property int|null $servers_count
- * @property Collection|EggVariable[] $variables
- * @property int|null $variables_count
- * @property \App\Models\Egg|null $scriptFrom
- * @property \App\Models\Egg|null $configFrom
+ * @property array<string, string> $startup_commands
+ * @property-read Collection<int, Egg> $children
+ * @property-read int|null $children_count
+ * @property-read Egg|null $configFrom
+ * @property-read string $copy_script_container
+ * @property-read string $copy_script_entry
+ * @property-read string|null $copy_script_install
+ * @property-read string|null $image
+ * @property-read string|null $inherit_config_files
+ * @property-read string|null $inherit_config_logs
+ * @property-read string|null $inherit_config_startup
+ * @property-read string|null $inherit_config_stop
+ * @property-read string[]|null $inherit_features
+ * @property-read string[]|null $inherit_file_denylist
+ * @property-read Collection<int, Mount> $mounts
+ * @property-read int|null $mounts_count
+ * @property-read Egg|null $scriptFrom
+ * @property-read Collection<int, Server> $servers
+ * @property-read int|null $servers_count
+ * @property-read Collection<int, EggVariable> $variables
+ * @property-read int|null $variables_count
+ *
+ * @method static \Database\Factories\EggFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereAuthor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereConfigFiles($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereConfigFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereConfigLogs($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereConfigStartup($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereConfigStop($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereCopyScriptFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereDockerImages($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereFeatures($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereFileDenylist($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereForceOutgoingIp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereScriptContainer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereScriptEntry($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereScriptInstall($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereScriptIsPrivileged($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereStartupCommands($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereTags($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereUpdateUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Egg whereUuid($value)
  */
 class Egg extends Model implements Validatable
 {

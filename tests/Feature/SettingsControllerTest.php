@@ -3,6 +3,7 @@
 use App\Enums\ServerState;
 use App\Enums\SubuserPermission;
 use App\Http\Controllers\Api\Client\Servers\SettingsController;
+use App\Models\ActivityLog;
 use App\Repositories\Daemon\DaemonServerRepository;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,7 +38,7 @@ it('server description can be changed', function () {
         ->assertStatus(Response::HTTP_NO_CONTENT);
 
     $server = $server->refresh();
-    $logged = \App\Models\ActivityLog::first();
+    $logged = ActivityLog::first();
     expect()->toLogActivities(1)
         ->and($logged->properties['old'])->toBe($originalDescription)
         ->and($logged->properties['new'])->toBe($newDescription)
@@ -127,7 +128,7 @@ test('can change docker image in use by server', function () {
 
     $server = $server->refresh();
 
-    $logItem = \App\Models\ActivityLog::first();
+    $logItem = ActivityLog::first();
     expect()->toLogActivities(1)
         ->and($logItem->properties['old'])->toBe($oldImage)
         ->and($logItem->properties['new'])->toBe($newImage)
@@ -158,11 +159,11 @@ test('can be reinstalled', function () {
     [$user, $server] = generateTestAccount([SubuserPermission::SettingsReinstall]);
     expect($server->isInstalled())->toBeTrue();
 
-    $service = \Mockery::mock(DaemonServerRepository::class);
+    $service = Mockery::mock(DaemonServerRepository::class);
     $this->app->instance(DaemonServerRepository::class, $service);
 
     $service->expects('setServer')
-        ->with(\Mockery::on(function ($value) use ($server) {
+        ->with(Mockery::on(function ($value) use ($server) {
             return $value->uuid === $server->uuid;
         }))
         ->andReturnSelf()

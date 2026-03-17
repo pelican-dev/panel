@@ -34,6 +34,26 @@ use Sushi\Sushi;
  * @property PluginStatus $status
  * @property string|null $status_message
  * @property int $load_order
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereAuthor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereCategory($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereClass($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereComposerPackages($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereLoadOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereNamespace($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin wherePanelVersion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin wherePanels($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereStatusMessage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereUpdateUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Plugin whereVersion($value)
  */
 class Plugin extends Model implements HasPluginSettings
 {

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\Validatable;
 use App\Traits\HasValidation;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 /**
  * @property int $id
  * @property int $egg_id
- * @property null $sort
  * @property string $name
  * @property string $description
  * @property string $env_variable
@@ -21,15 +21,32 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property bool $user_viewable
  * @property bool $user_editable
  * @property string[] $rules
- * @property CarbonImmutable $created_at
- * @property CarbonImmutable $updated_at
- * @property bool $required
- * @property Egg $egg
- * @property ServerVariable $serverVariable
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property int|null $sort
+ * @property-read Egg|null $egg
+ * @property-read bool $required
+ * @property-read Collection<int, ServerVariable> $serverVariable
+ * @property-read int|null $server_variable_count
  *
- * The "server_value" variable is only present on the object if you've loaded this model
- * using the server relationship.
- * @property string|null $server_value
+ * @method static \Database\Factories\EggVariableFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable whereDefaultValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable whereEggId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable whereEnvVariable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable whereRules($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable whereSort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable whereUserEditable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EggVariable whereUserViewable($value)
+ *
+ * @property string|null $server_value This variable is only present on the object if you've loaded this model using the server relationship.
  */
 class EggVariable extends Model implements Validatable
 {

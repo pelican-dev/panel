@@ -9,6 +9,7 @@ use BackedEnum;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Carbon;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role as BaseRole;
 
@@ -16,12 +17,27 @@ use Spatie\Permission\Models\Role as BaseRole;
  * @property int $id
  * @property string $name
  * @property string $guard_name
- * @property Collection|Permission[] $permissions
- * @property int|null $permissions_count
- * @property Collection|User[] $users
- * @property int|null $users_count
- * @property Collection|Node[] $nodes
- * @property int|null $nodes_count
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read NodeRole|null $pivot
+ * @property-read Collection<int, Node> $nodes
+ * @property-read int|null $nodes_count
+ * @property-read Collection<int, Permission> $permissions
+ * @property-read int|null $permissions_count
+ * @property-read Collection<int, User> $users
+ * @property-read int|null $users_count
+ *
+ * @method static \Database\Factories\RoleFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Role newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Role newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Role permission($permissions, $without = false)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Role query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Role whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Role whereGuardName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Role whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Role whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Role whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Role withoutPermission($permissions)
  */
 class Role extends BaseRole
 {
