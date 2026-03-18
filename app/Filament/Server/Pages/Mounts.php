@@ -96,6 +96,8 @@ class Mounts extends ServerFormPage
                 ->success()
                 ->send();
         } catch (Exception $exception) {
+            report($exception);
+
             Notification::make()
                 ->title(trans('server/mount.notification_failed'))
                 ->body($exception->getMessage())
