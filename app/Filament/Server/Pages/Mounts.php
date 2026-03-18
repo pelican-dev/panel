@@ -77,9 +77,7 @@ class Mounts extends ServerFormPage
 
     public function save(): void
     {
-        $server = $this->getRecord();
-
-        abort_unless(user()?->can(SubuserPermission::MountUpdate, $server), 403);
+        abort_unless(user()?->can(SubuserPermission::MountUpdate, $this->getRecord()), 403);
 
         try {
             $this->form->getState();
