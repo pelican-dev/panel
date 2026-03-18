@@ -63,7 +63,7 @@ class Mounts extends ServerFormPage
                         ->label(trans('server/mount.description'))
                         ->relationship('mounts')
                         ->options(fn () => $allowedMounts->mapWithKeys(fn (Mount $mount) => [$mount->id => $mount->name]))
-                        ->descriptions(fn () => $allowedMounts->mapWithKeys(fn (Mount $mount) => [$mount->id => new HtmlString("$mount->source -> $mount->target" . ($mount->description ? '<br>' . str($mount->description)->stripTags() : ''))]))
+                        ->descriptions(fn () => $allowedMounts->mapWithKeys(fn (Mount $mount) => [$mount->id => new HtmlString(str("$mount->source -> $mount->target")->stripTags() . ($mount->description ? '<br>' . str($mount->description)->stripTags() : ''))]))
                         ->helperText(fn () => $allowedMounts->isEmpty() ? trans('server/mount.no_mounts') : null)
                         ->disabled(fn (Server $server) => !user()?->can(SubuserPermission::MountUpdate, $server))
                         ->bulkToggleable()
