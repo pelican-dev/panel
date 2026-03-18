@@ -41,7 +41,6 @@ class Mounts extends ServerFormPage
 
     public function form(Schema $schema): Schema
     {
-        /** @var Server $server */
         $server = $this->getRecord();
 
         $allowedMounts = Mount::query()
@@ -78,7 +77,6 @@ class Mounts extends ServerFormPage
 
     public function save(): void
     {
-        /** @var Server $server */
         $server = $this->getRecord();
 
         abort_unless(user()?->can(SubuserPermission::MountUpdate, $server), 403);
