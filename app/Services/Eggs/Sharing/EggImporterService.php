@@ -272,10 +272,16 @@ class EggImporterService
         }
 
         $normalizedExtension = match ($extension) {
-            'svg+xml' => 'svg',
-            'jpeg' => 'jpg',
-            default => $extension,
+            'svg+xml', 'svg' => 'svg',
+            'jpeg', 'jpg' => 'jpg',
+            'png' => 'png',
+            'webp' => 'webp',
+            default => null,
         };
+
+        if (is_null($normalizedExtension)) {
+            return;
+        }
 
         Storage::disk('public')->put(Egg::ICON_STORAGE_PATH . "/$egg->uuid.$normalizedExtension", $data);
     }
