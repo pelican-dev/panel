@@ -264,7 +264,7 @@ class EggImporterService
             return;
         }
 
-        $extension = $matches[1];
+        $extension = strtolower($matches[1]);
         $data = base64_decode($matches[2]);
 
         if (!$data) {
