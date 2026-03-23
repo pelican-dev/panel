@@ -72,14 +72,14 @@ class Settings extends ServerFormPage
                                             ->afterStateUpdated(fn ($state, Server $server) => $this->updateDescription($state ?? '', $server)),
                                     ]),
                                 Grid::make()
-                                    ->columns(2)
                                     ->columnStart(6)
                                     ->schema([
                                         Image::make('', 'icon')
                                             ->hidden(fn ($record) => !$record->icon && !$record->egg->icon)
                                             ->url(fn ($record) => $record->icon ?: $record->egg->icon)
                                             ->tooltip(fn ($record) => $record->icon ? '' : trans('server/setting.server_info.icon.tooltip'))
-                                            ->columnSpan(2)
+                                            ->imageSize(150)
+                                            ->columnSpanFull()
                                             ->alignJustify(),
                                         UploadIcon::make()
                                             ->iconFormats(array_values(Server::ICON_FORMATS)),
@@ -317,33 +317,6 @@ class Settings extends ServerFormPage
                 ->danger()
                 ->send();
         }
-    }
-
-    /**
-     * Save an icon from URL download to a file.
-     *
-     * @throws Exception
-     */
-    private function saveIconFromUrl(string $icon_url, Server $server): void
-    {
-        $context = stream_context_create([
-            'http' => ['timeout' => 3],
-            'https' => [
-                'timeout' => 3,
-                'verify_peer' => true,
-                'verify_peer_name' => true,
-            ],
-        ]);
-
-        $data = @file_get_contents($icon_url, false, $context, 0, 262144); //256KB
-
-        if (empty($data)) {
-            throw new Exception(trans('admin/egg.import.invalid_url'));
-        }
-
-        $extension = strtolower(pathinfo(parse_url($icon_url, PHP_URL_PATH), PATHINFO_EXTENSION));
-
-        $server->writeServerIcon($extension, $data);
     }
 
     public function getTitle(): string

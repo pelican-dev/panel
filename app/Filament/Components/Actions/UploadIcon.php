@@ -13,9 +13,9 @@ use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Facades\Http;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use Ramsey\Collection\Set;
 
 class UploadIcon extends Action
 {
@@ -30,9 +30,9 @@ class UploadIcon extends Action
     {
         parent::setUp();
 
-        $this->visible(fn ($record) => $record->icon);
+        $this->hiddenLabel();
 
-        $this->label(trans('admin/egg.import.import_icon'));
+        $this->tooltip(trans('admin/egg.import.import_icon'));
 
         $this->icon(TablerIcon::PhotoUp);
 
@@ -146,6 +146,7 @@ class UploadIcon extends Action
         }
     }
 
+    /** @param string[] $iconFormats */
     public function iconFormats(?array $iconFormats): static
     {
         $this->iconFormats = $iconFormats;

@@ -16,7 +16,6 @@ use App\Models\EggVariable;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use App\Traits\Filament\CanCustomizeTabs;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
@@ -31,7 +30,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Tabs;
@@ -70,21 +68,19 @@ class EditEgg extends EditRecord
                 ->icon(TablerIcon::Egg)
                 ->schema([
                     Grid::make(2)
-                        ->columnSpan(1)
+                        ->columnStart(1)
                         ->schema([
                             Image::make('', 'icon')
                                 ->hidden(fn ($record) => !$record->icon)
                                 ->url(fn ($record) => $record->icon)
-                                ->alignJustify()
                                 ->imageSize(150)
-                                ->columnSpanFull(),
-                            Flex::make([
-                                UploadIcon::make()
-                                    ->iconFormats(array_values(Egg::ICON_FORMATS)),
-                                DeleteIcon::make()
-                                    ->iconFormats(array_keys(Egg::ICON_FORMATS))
-                                    ->iconStoragePath(Egg::ICON_STORAGE_PATH),
-                            ]),
+                                ->columnSpanFull()
+                                ->alignJustify(),
+                            UploadIcon::make()
+                                ->iconFormats(array_values(Egg::ICON_FORMATS)),
+                            DeleteIcon::make()
+                                ->iconFormats(array_keys(Egg::ICON_FORMATS))
+                                ->iconStoragePath(Egg::ICON_STORAGE_PATH),
                         ]),
                     TextInput::make('name')
                         ->label(trans('admin/egg.name'))
@@ -321,33 +317,6 @@ class EditEgg extends EditRecord
     public function refreshForm(): void
     {
         $this->fillForm();
-    }
-
-    /**
-     * Save an icon from URL download to a file.
-     *
-     * @throws Exception
-     */
-    private function saveIconFromUrl(string $icon_url, Egg $egg): void
-    {
-        $context = stream_context_create([
-            'http' => ['timeout' => 3],
-            'https' => [
-                'timeout' => 3,
-                'verify_peer' => true,
-                'verify_peer_name' => true,
-            ],
-        ]);
-
-        $data = @file_get_contents($icon_url, false, $context, 0, 1048576); // 1024KB
-
-        if (empty($data)) {
-            throw new Exception(trans('admin/egg.import.invalid_url'));
-        }
-
-        $extension = strtolower(pathinfo(parse_url($icon_url, PHP_URL_PATH), PATHINFO_EXTENSION));
-
-        $egg->writeEggIcon($extension, $data);
     }
 
     protected function getFormActions(): array

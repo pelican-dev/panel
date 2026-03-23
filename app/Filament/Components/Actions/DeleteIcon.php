@@ -24,7 +24,9 @@ class DeleteIcon extends Action
 
         $this->visible(fn ($record) => $record->icon);
 
-        $this->label(trans('admin/egg.import.delete_icon'));
+        $this->hiddenLabel();
+
+        $this->tooltip(trans('admin/egg.import.delete_icon'));
 
         $this->icon(TablerIcon::Trash);
 
@@ -47,6 +49,7 @@ class DeleteIcon extends Action
         });
     }
 
+    /** @param string[] $iconFormats */
     public function iconFormats(?array $iconFormats): static
     {
         $this->iconFormats = $iconFormats;
