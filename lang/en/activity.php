@@ -122,4 +122,51 @@ return [
         ],
         'crashed' => 'Server crashed',
     ],
+    'admin' => [
+        'user' => [
+            'create' => 'Created user <b>:username</b>',
+            'update' => 'Updated user <b>:username</b>',
+            'delete' => 'Deleted user <b>:username</b>',
+        ],
+        'server' => [
+            'create' => 'Created server <b>:name</b>',
+            'update' => 'Updated server <b>:name</b>',
+            'delete' => 'Deleted server <b>:name</b>',
+        ],
+        'node' => [
+            'create' => 'Created node <b>:name</b>',
+            'update' => 'Updated node <b>:name</b>',
+            'delete' => 'Deleted node <b>:name</b>',
+        ],
+        'egg' => [
+            'create' => 'Created egg <b>:name</b>',
+            'update' => 'Updated egg <b>:name</b>',
+            'delete' => 'Deleted egg <b>:name</b>',
+        ],
+        'role' => [
+            'create' => 'Created role <b>:name</b>',
+            'update' => 'Updated role <b>:name</b>',
+            'delete' => 'Deleted role <b>:name</b>',
+        ],
+        'database-host' => [
+            'create' => 'Created database host <b>:name</b>',
+            'update' => 'Updated database host <b>:name</b>',
+            'delete' => 'Deleted database host <b>:name</b>',
+        ],
+        'mount' => [
+            'create' => 'Created mount <b>:name</b>',
+            'update' => 'Updated mount <b>:name</b>',
+            'delete' => 'Deleted mount <b>:name</b>',
+        ],
+        'webhook-configuration' => [
+            'create' => 'Created webhook <b>:description</b>',
+            'update' => 'Updated webhook <b>:description</b>',
+            'delete' => 'Deleted webhook <b>:description</b>',
+        ],
+        'api-key' => [
+            'create' => 'Created API key',
+            'update' => 'Updated API key',
+            'delete' => 'Deleted API key',
+        ],
+    ],
 ];
