@@ -17,33 +17,60 @@ return [
     'notification_failed' => 'Failed to invite user!',
     'permissions' => [
         'title' => 'Permissions',
+
+        'activity_title' => 'Activity',
         'activity_desc' => 'Permissions that control a user\'s access to the server activity logs.',
+
+        'startup_title' => 'Startup',
         'startup_desc' => 'Permissions that control a user\'s ability to view this server\'s startup parameters.',
+
+        'settings_title' => 'Settings',
         'settings_desc' => 'Permissions that control a user\'s ability to modify this server\'s settings.',
+
+        'control_title' => 'Control',
         'control_desc' => 'Permissions that control a user\'s ability to control the power state of a server, or send commands.',
+
+        'user_title' => 'User',
         'user_desc' => 'Permissions that allow a user to manage other subusers on a server. They will never be able to edit their own account, or assign permissions they do not have themselves.',
+
+        'file_title' => 'File',
         'file_desc' => 'Permissions that control a user\'s ability to modify the filesystem for this server.',
+
+        'allocation_title' => 'Allocation',
         'allocation_desc' => 'Permissions that control a user\'s ability to modify the port allocations for this server.',
+
+        'database_title' => 'Database',
         'database_desc' => 'Permissions that control a user\'s access to the database management for this server.',
+
+        'backup_title' => 'Backup',
         'backup_desc' => 'Permissions that control a user\'s ability to generate and manage server backups.',
+
+        'schedule_title' => 'Schedule',
         'schedule_desc' => 'Permissions that control a user\'s access to the schedule management for this server.',
+
         'startup_read' => 'Allows a user to view the startup variables for a server.',
         'startup_update' => 'Allows a user to modify the startup variables for the server.',
         'startup_docker_image' => 'Allows a user to modify the Docker image used when running the server.',
+
         'settings_reinstall' => 'Allows a user to trigger a reinstall of this server.',
         'settings_rename' => 'Allows a user to rename this server.',
         'settings_description' => 'Allows a user to change the description of this server.',
+
         'activity_read' => 'Allows a user to view the activity logs for the server.',
+
         'websocket_connect' => 'Allows a user access to the websocket for this server.',
+
         'control_console' => 'Allows a user to send data to the server console.',
         'control_start' => 'Allows a user to start the server instance.',
         'control_stop' => 'Allows a user to stop the server instance.',
         'control_restart' => 'Allows a user to restart the server instance.',
         'control_kill' => 'Allows a user to kill the server instance.',
+
         'user_create' => 'Allows a user to create new user accounts for the server.',
         'user_read' => 'Allows a user permission to view users associated with this server.',
         'user_update' => 'Allows a user to modify other users associated with this server.',
         'user_delete' => 'Allows a user to delete other users associated with this server.',
+
         'file_create' => 'Allows a user permission to create new files and directories.',
         'file_read' => 'Allows a user to view the contents of a directory, but not view the contents of or download files.',
         'file_read_content' => 'Allows a user to view the contents of a given file. This will also allow the user to download files.',
@@ -51,19 +78,23 @@ return [
         'file_delete' => 'Allows a user to delete files and directories.',
         'file_archive' => 'Allows a user to create file archives and decompress existing archives.',
         'file_sftp' => 'Allows a user to perform the above file actions using a SFTP client.',
+
         'allocation_read' => 'Allows a user to view all allocations currently assigned to this server. Users with any level of access to this server can always view the primary allocation.',
         'allocation_update' => 'Allows a user to change the primary server allocation and attach notes to each allocation.',
         'allocation_delete' => 'Allows a user to delete an allocation from the server.',
         'allocation_create' => 'Allows a user to assign additional allocations to the server.',
+
         'database_create' => 'Allows a user permission to create a new database for the server.',
         'database_read' => 'Allows a user permission to view the server databases.',
         'database_update' => 'Allows a user permission to make modifications to a database. If the user does not have the "View Password" permission as well they will not be able to modify the password.',
         'database_delete' => 'Allows a user permission to delete a database instance.',
         'database_view_password' => 'Allows a user permission to view a database password in the system.',
+
         'schedule_create' => 'Allows a user to create a new schedule for the server.',
         'schedule_read' => 'Allows a user permission to view schedules for a server.',
         'schedule_update' => 'Allows a user permission to make modifications to an existing server schedule.',
         'schedule_delete' => 'Allows a user to delete a schedule for the server.',
+
         'backup_create' => 'Allows a user to create new backups for this server.',
         'backup_read' => 'Allows a user to view all backups that exist for this server.',
         'backup_delete' => 'Allows a user to remove backups from the system.',
