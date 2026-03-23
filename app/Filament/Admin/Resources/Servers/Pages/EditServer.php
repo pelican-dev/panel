@@ -7,6 +7,7 @@ use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Servers\ServerResource;
 use App\Filament\Components\Actions\DeleteIcon;
 use App\Filament\Components\Actions\PreviewStartupAction;
+use App\Filament\Components\Actions\UploadIcon;
 use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Filament\Components\Forms\Fields\StartupVariable;
 use App\Filament\Components\StateCasts\ServerConditionStateCast;
@@ -31,7 +32,6 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
@@ -41,7 +41,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
@@ -61,7 +60,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use LogicException;
 use Random\RandomException;
 
@@ -119,108 +117,8 @@ class EditServer extends EditRecord
                                 ->tooltip(fn ($record) => $record->icon ? '' : trans('server/setting.server_info.icon.tooltip'))
                                 ->columnSpan(2)
                                 ->alignJustify(),
-                            Action::make('upload_icon')
-                                ->hiddenLabel()
-                                ->icon(TablerIcon::PhotoUp)
-                                ->tooltip(trans('admin/server.import_icon'))
-                                ->modal()
-                                ->modalSubmitActionLabel(trans('server/setting.server_info.icon.upload'))
-                                ->schema([
-                                    Tabs::make()
-                                        ->contained(false)
-                                        ->tabs([
-                                            Tab::make(trans('admin/egg.import.url'))
-                                                ->schema([
-                                                    TextInput::make('icon_url')
-                                                        ->label(trans('admin/egg.import.icon_url'))
-                                                        ->reactive()
-                                                        ->autocomplete(false)
-                                                        ->debounce(500)
-                                                        ->afterStateUpdated(function ($state, Set $set) {
-                                                            if (!$state) {
-                                                                $set('icon_url_error', null);
-
-                                                                return;
-                                                            }
-
-                                                            try {
-                                                                if (!in_array(parse_url($state, PHP_URL_SCHEME), ['http', 'https'], true)) {
-                                                                    throw new Exception(trans('admin/egg.import.invalid_url'));
-                                                                }
-
-                                                                if (!filter_var($state, FILTER_VALIDATE_URL)) {
-                                                                    throw new Exception(trans('admin/egg.import.invalid_url'));
-                                                                }
-
-                                                                $host = parse_url($state, PHP_URL_HOST);
-                                                                $ip = gethostbyname($host);
-
-                                                                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
-                                                                    throw new Exception(trans('admin/egg.import.no_local_ip'));
-                                                                }
-
-                                                                $set('icon_url_error', null);
-                                                            } catch (Exception $exception) {
-                                                                $set('icon_url_error', $exception->getMessage());
-                                                            }
-                                                        }),
-                                                    TextEntry::make('icon_url_error')
-                                                        ->hiddenLabel()
-                                                        ->visible(fn (Get $get) => $get('icon_url_error') !== null)
-                                                        ->afterStateHydrated(fn (Get $get) => $get('icon_url_error')),
-                                                    Image::make(fn (Get $get) => $get('icon_url'), '')
-                                                        ->imageSize(150)
-                                                        ->visible(fn (Get $get) => $get('icon_url') && !$get('icon_url_error'))
-                                                        ->alignCenter(),
-                                                ]),
-                                            Tab::make(trans('admin/egg.import.file'))
-                                                ->schema([
-                                                    FileUpload::make('icon')
-                                                        ->hiddenLabel()
-                                                        ->previewable()
-                                                        ->openable(false)
-                                                        ->downloadable(false)
-                                                        ->maxSize(256)
-                                                        ->maxFiles(1)
-                                                        ->columnSpanFull()
-                                                        ->alignCenter()
-                                                        ->imageEditor()
-                                                        ->image()
-                                                        ->disk('public')
-                                                        ->directory(Server::ICON_STORAGE_PATH)
-                                                        ->acceptedFileTypes(array_values(Server::ICON_FORMATS))
-                                                        ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file, Server $record) => $record->writeServerIcon($file->getClientOriginalExtension(), $file->getContent())),
-                                                ]),
-                                        ]),
-                                ])
-                                ->action(function (array $data, $record) {
-                                    if (!empty($data['icon_url'])) {
-                                        $this->saveIconFromUrl($data['icon_url'], $record);
-
-                                        Notification::make()
-                                            ->title(trans('server/setting.server_info.icon.updated'))
-                                            ->success()
-                                            ->send();
-
-                                        return;
-                                    }
-
-                                    if (!empty($data['icon'])) {
-                                        Notification::make()
-                                            ->title(trans('server/setting.server_info.icon.updated'))
-                                            ->success()
-                                            ->send();
-
-                                        return;
-                                    }
-
-                                    if (empty($data['icon_url']) && empty($data['icon'])) {
-                                        Notification::make()
-                                            ->title(trans('admin/egg.import.no_icon'))
-                                            ->warning()
-                                            ->send();
-                                    }
-                                }),
+                            UploadIcon::make()
+                                ->iconFormats(array_values(Server::ICON_FORMATS)),
                             DeleteIcon::make()
                                 ->iconFormats(array_keys(Server::ICON_FORMATS))
                                 ->iconStoragePath(Server::ICON_STORAGE_PATH),

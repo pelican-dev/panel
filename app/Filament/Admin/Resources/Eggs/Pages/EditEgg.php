@@ -8,6 +8,7 @@ use App\Filament\Admin\Resources\Eggs\EggResource;
 use App\Filament\Components\Actions\DeleteIcon;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
+use App\Filament\Components\Actions\UploadIcon;
 use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Models\Egg;
@@ -20,7 +21,6 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
@@ -29,8 +29,6 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Flex;
@@ -41,9 +39,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Validation\Rules\Unique;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class EditEgg extends EditRecord
 {
@@ -79,115 +75,12 @@ class EditEgg extends EditRecord
                             Image::make('', 'icon')
                                 ->hidden(fn ($record) => !$record->icon)
                                 ->url(fn ($record) => $record->icon)
-                                ->alt('')
                                 ->alignJustify()
                                 ->imageSize(150)
                                 ->columnSpanFull(),
                             Flex::make([
-                                Action::make('upload_icon')
-                                    ->hiddenLabel()
-                                    ->tooltip(trans('admin/egg.import.import_icon'))
-                                    ->iconSize(IconSize::Large)
-                                    ->icon(TablerIcon::PhotoUp)
-                                    ->modal()
-                                    ->modalHeading('')
-                                    ->modalSubmitActionLabel(trans('admin/egg.import.import_icon'))
-                                    ->schema([
-                                        Tabs::make()
-                                            ->contained(false)
-                                            ->tabs([
-                                                Tab::make(trans('admin/egg.import.url'))
-                                                    ->schema([
-                                                        TextInput::make('icon_url')
-                                                            ->label(trans('admin/egg.import.icon_url'))
-                                                            ->reactive()
-                                                            ->autocomplete(false)
-                                                            ->debounce(500)
-                                                            ->afterStateUpdated(function ($state, Set $set) {
-                                                                if (!$state) {
-                                                                    $set('icon_url_error', null);
-
-                                                                    return;
-                                                                }
-
-                                                                try {
-                                                                    if (!in_array(parse_url($state, PHP_URL_SCHEME), ['http', 'https'], true)) {
-                                                                        throw new Exception(trans('admin/egg.import.invalid_url'));
-                                                                    }
-
-                                                                    if (!filter_var($state, FILTER_VALIDATE_URL)) {
-                                                                        throw new Exception(trans('admin/egg.import.invalid_url'));
-                                                                    }
-
-                                                                    $host = parse_url($state, PHP_URL_HOST);
-                                                                    $ip = gethostbyname($host);
-
-                                                                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
-                                                                        throw new Exception(trans('admin/egg.import.no_local_ip'));
-                                                                    }
-
-                                                                    $set('icon_url_error', null);
-                                                                } catch (Exception $exception) {
-                                                                    $set('icon_url_error', $exception->getMessage());
-                                                                }
-                                                            }),
-                                                        TextEntry::make('icon_url_error')
-                                                            ->hiddenLabel()
-                                                            ->visible(fn (Get $get) => $get('icon_url_error') !== null)
-                                                            ->afterStateHydrated(fn (Get $get) => $get('icon_url_error')),
-                                                        Image::make(fn (Get $get) => $get('icon_url'), '')
-                                                            ->imageSize(150)
-                                                            ->visible(fn (Get $get) => $get('icon_url') && !$get('icon_url_error'))
-                                                            ->alignCenter(),
-                                                    ]),
-                                                Tab::make(trans('admin/egg.import.file'))
-                                                    ->schema([
-                                                        FileUpload::make('icon')
-                                                            ->hiddenLabel()
-                                                            ->previewable()
-                                                            ->openable(false)
-                                                            ->downloadable(false)
-                                                            ->maxSize(256)
-                                                            ->maxFiles(1)
-                                                            ->columnSpanFull()
-                                                            ->alignCenter()
-                                                            ->imageEditor()
-                                                            ->image()
-                                                            ->disk('public')
-                                                            ->directory(Egg::ICON_STORAGE_PATH)
-                                                            ->acceptedFileTypes(array_values(Egg::ICON_FORMATS))
-                                                            ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file, Egg $record) => $record->writeEggIcon($file->getClientOriginalExtension(), $file->getContent())),
-                                                    ]),
-                                            ]),
-                                    ])
-                                    ->action(function (array $data, $record) {
-                                        if (!empty($data['icon_url'])) {
-                                            $this->saveIconFromUrl($data['icon_url'], $record);
-
-                                            Notification::make()
-                                                ->title(trans('admin/egg.import.icon_updated'))
-                                                ->success()
-                                                ->send();
-
-                                            return;
-                                        }
-
-                                        if (!empty($data['icon'])) {
-                                            Notification::make()
-                                                ->title(trans('admin/egg.import.icon_updated'))
-                                                ->success()
-                                                ->send();
-
-                                            return;
-                                        }
-
-                                        if (empty($data['icon_url']) && empty($data['icon'])) {
-                                            Notification::make()
-                                                ->title(trans('admin/egg.import.no_icon'))
-                                                ->warning()
-                                                ->send();
-                                        }
-                                    }),
+                                UploadIcon::make()
+                                    ->iconFormats(array_values(Egg::ICON_FORMATS)),
                                 DeleteIcon::make()
                                     ->iconFormats(array_keys(Egg::ICON_FORMATS))
                                     ->iconStoragePath(Egg::ICON_STORAGE_PATH),

@@ -390,7 +390,7 @@ class Egg extends Model implements Validatable
         return null;
     }
 
-    public function writeEggIcon(string $extension, string $data): string
+    public function writeIcon(string $extension, string $data): string
     {
         $normalizedExtension = match (strtolower($extension)) {
             'svg+xml', 'svg' => 'svg',

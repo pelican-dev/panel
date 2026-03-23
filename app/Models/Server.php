@@ -544,7 +544,7 @@ class Server extends Model implements HasAvatar, Validatable
         return $this->icon ?? $this->egg->icon;
     }
 
-    public function writeServerIcon(string $extension, string $data): string
+    public function writeIcon(string $extension, string $data): string
     {
         $normalizedExtension = match (strtolower($extension)) {
             'svg+xml', 'svg' => 'svg',
