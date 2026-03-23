@@ -11,6 +11,7 @@ use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Subusers\SubuserDeletionService;
 use App\Traits\HasValidation;
 use Carbon\CarbonInterface;
+use Exception;
 use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -144,9 +145,9 @@ class Server extends Model implements HasAvatar, Validatable
     public const ICON_STORAGE_PATH = 'icons/server';
 
     /**
-     * Supported image formats: file extension => MIME type
+     * Supported icon formats: file extension => MIME type
      */
-    public const IMAGE_FORMATS = [
+    public const ICON_FORMATS = [
         'png' => 'image/png',
         'jpg' => 'image/jpeg',
         'jpeg' => 'image/jpeg',
@@ -529,7 +530,7 @@ class Server extends Model implements HasAvatar, Validatable
 
     public function getIconAttribute(): ?string
     {
-        foreach (array_keys(static::IMAGE_FORMATS) as $ext) {
+        foreach (array_keys(static::ICON_FORMATS) as $ext) {
             $path = static::ICON_STORAGE_PATH . "/$this->uuid.$ext";
             if (Storage::disk('public')->exists($path)) {
                 return Storage::disk('public')->url($path);
@@ -541,6 +542,46 @@ class Server extends Model implements HasAvatar, Validatable
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->icon ?? $this->egg->image;
+        return $this->icon ?? $this->egg->icon;
+    }
+
+    public function writeServerIcon(string $extension, string $data, bool $throw = true): bool
+    {
+        $normalizedExtension = match (strtolower($extension)) {
+            'svg+xml', 'svg' => 'svg',
+            'jpeg', 'jpg' => 'jpg',
+            'png' => 'png',
+            'webp' => 'webp',
+            default => null,
+        };
+
+        if (is_null($normalizedExtension)) {
+            if ($throw) {
+                throw new Exception(trans('admin/egg.import.unknown_extension'));
+            }
+
+            return false;
+        }
+
+        if (Storage::disk('public')->put(static::ICON_STORAGE_PATH . "/$this->uuid.$normalizedExtension", $data)) {
+            foreach (array_keys(static::ICON_FORMATS) as $ext) {
+                if ($ext === $normalizedExtension) {
+                    continue;
+                }
+
+                $path = static::ICON_STORAGE_PATH . "/$this->uuid.$ext";
+                if (Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
+                }
+            }
+
+            return true;
+        } else {
+            if ($throw) {
+                throw new Exception(trans('admin/egg.import.could_not_write'));
+            }
+        }
+
+        return false;
     }
 }

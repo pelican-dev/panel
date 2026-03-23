@@ -45,12 +45,12 @@ class ListEggs extends ListRecords
                 TextColumn::make('id')
                     ->label('Id')
                     ->hidden(),
-                ImageColumn::make('image')
+                ImageColumn::make('icon')
                     ->label('')
                     ->alignCenter()
                     ->circular()
-                    ->getStateUsing(fn ($record) => $record->image
-                        ? $record->image
+                    ->getStateUsing(fn ($record) => $record->icon
+                        ? $record->icon
                         : 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(public_path('pelican.svg')))),
                 TextColumn::make('name')
                     ->label(trans('admin/egg.name'))

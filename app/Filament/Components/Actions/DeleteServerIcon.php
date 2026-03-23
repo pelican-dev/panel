@@ -23,14 +23,14 @@ class DeleteServerIcon extends Action
 
         $this->hiddenLabel();
 
-        $this->tooltip(trans('admin/server.import_image'));
+        $this->tooltip(trans('admin/server.import_icon'));
 
         $this->icon(TablerIcon::Trash);
 
         $this->color('danger');
 
         $this->action(function ($record) {
-            foreach (array_keys(Server::IMAGE_FORMATS) as $ext) {
+            foreach (array_keys(Server::ICON_FORMATS) as $ext) {
                 $path = Server::ICON_STORAGE_PATH . "/$record->uuid.$ext";
                 if (Storage::disk('public')->exists($path)) {
                     Storage::disk('public')->delete($path);

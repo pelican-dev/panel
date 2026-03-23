@@ -1,6 +1,6 @@
 @php
     $actiongroup = \App\Filament\App\Resources\Servers\Pages\ListServers::getPowerActionGroup()->record($server);
-    $backgroundImage = $server->icon ?? $server->egg->image;
+    $backgroundImage = $server->icon ?? $server->egg->icon;
 
     $serverEntryColumn = $column ?? \App\Filament\Components\Tables\Columns\ServerEntryColumn::make('server_entry');
     $serverNodeStatistics = $server->node->statistics();

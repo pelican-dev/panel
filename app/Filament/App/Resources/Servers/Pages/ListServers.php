@@ -70,7 +70,7 @@ class ListServers extends ListRecords
             ImageColumn::make('icon')
                 ->label('')
                 ->imageSize(46)
-                ->state(fn (Server $server) => $server->icon ?: $server->egg->image),
+                ->state(fn (Server $server) => $server->icon ?: $server->egg->icon),
             TextColumn::make('condition')
                 ->label(trans('server/dashboard.status'))
                 ->badge()
