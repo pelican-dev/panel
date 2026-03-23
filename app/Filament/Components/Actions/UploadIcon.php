@@ -101,7 +101,7 @@ class UploadIcon extends Action
             if (!empty($data['icon_url'])) {
                 $this->validateIconUrl($data['icon_url']);
 
-                $content = Http::timeout(5)->connectTimeout(1)->get($data['icon_url'])->body();
+                $content = Http::timeout(5)->connectTimeout(1)->withoutRedirecting()->get($data['icon_url'])->body();
 
                 if (empty($content)) {
                     throw new Exception(trans('admin/egg.import.invalid_url'));

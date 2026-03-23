@@ -15,7 +15,6 @@ return [
         'url' => 'URL',
         'icon_url' => 'Icon URL',
         'icon_error' => 'Could not fetch icon',
-        'image_too_large' => 'Icon too large. Limit is 1024KB',
         'egg_help' => 'This should be the raw .json/.yaml file',
         'url_help' => 'URLs must point directly to the raw .json/.yaml file',
         'add_url' => 'New URL',
