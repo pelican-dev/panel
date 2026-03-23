@@ -5,7 +5,7 @@ namespace App\Filament\Admin\Resources\Servers\Pages;
 use App\Enums\SuspendAction;
 use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Servers\ServerResource;
-use App\Filament\Components\Actions\DeleteServerIcon;
+use App\Filament\Components\Actions\DeleteIcon;
 use App\Filament\Components\Actions\PreviewStartupAction;
 use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Filament\Components\Forms\Fields\StartupVariable;
@@ -221,7 +221,9 @@ class EditServer extends EditRecord
                                             ->send();
                                     }
                                 }),
-                            DeleteServerIcon::make(),
+                            DeleteIcon::make()
+                                ->iconFormats(array_keys(Server::ICON_FORMATS))
+                                ->iconStoragePath(Server::ICON_STORAGE_PATH),
                         ]),
                     Grid::make()
                         ->columns(3)

@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\Eggs\Pages;
 use App\Enums\EditorLanguages;
 use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Eggs\EggResource;
+use App\Filament\Components\Actions\DeleteIcon;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
 use App\Filament\Components\Forms\Fields\CopyFrom;
@@ -41,7 +42,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Unique;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -188,28 +188,9 @@ class EditEgg extends EditRecord
                                                 ->send();
                                         }
                                     }),
-                                Action::make('delete_icon')
-                                    ->visible(fn ($record) => $record->icon)
-                                    ->hiddenLabel()
-                                    ->tooltip(trans('admin/egg.import.delete_icon'))
-                                    ->icon(TablerIcon::Trash)
-                                    ->iconSize(IconSize::Large)
-                                    ->color('danger')
-                                    ->action(function ($record) {
-                                        foreach (array_keys(Egg::ICON_FORMATS) as $ext) {
-                                            $path = Egg::ICON_STORAGE_PATH . "/$record->uuid.$ext";
-                                            if (Storage::disk('public')->exists($path)) {
-                                                Storage::disk('public')->delete($path);
-                                            }
-                                        }
-
-                                        Notification::make()
-                                            ->title(trans('admin/egg.import.icon_deleted'))
-                                            ->success()
-                                            ->send();
-
-                                        $record->refresh();
-                                    }),
+                                DeleteIcon::make()
+                                    ->iconFormats(array_keys(Egg::ICON_FORMATS))
+                                    ->iconStoragePath(Egg::ICON_STORAGE_PATH),
                             ]),
                         ]),
                     TextInput::make('name')
