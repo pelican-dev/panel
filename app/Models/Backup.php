@@ -20,7 +20,8 @@ use Illuminate\Database\Query\Builder;
  * @property string $uuid
  * @property string $name
  * @property string[] $ignored_files
- * @property string $disk
+ * @property int $backup_host_id
+ * @property BackupHost $backupHost
  * @property string|null $checksum
  * @property int $bytes
  * @property CarbonImmutable|null $completed_at
@@ -65,10 +66,6 @@ class Backup extends Model implements Validatable
 
     public const RESOURCE_NAME = 'backup';
 
-    public const ADAPTER_DAEMON = 'wings';
-
-    public const ADAPTER_AWS_S3 = 's3';
-
     protected $attributes = [
         'is_successful' => false,
         'is_locked' => false,
@@ -87,7 +84,7 @@ class Backup extends Model implements Validatable
         'is_locked' => ['boolean'],
         'name' => ['required', 'string'],
         'ignored_files' => ['array'],
-        'disk' => ['required', 'string'],
+        'backup_host_id' => ['required', 'numeric', 'exists:backup_hosts,id'],
         'checksum' => ['nullable', 'string'],
         'bytes' => ['numeric'],
         'upload_id' => ['nullable', 'string'],
@@ -118,6 +115,11 @@ class Backup extends Model implements Validatable
     public function server(): BelongsTo
     {
         return $this->belongsTo(Server::class);
+    }
+
+    public function backupHost(): BelongsTo
+    {
+        return $this->belongsTo(BackupHost::class);
     }
 
     /**

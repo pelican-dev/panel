@@ -8,7 +8,7 @@ use App\Services\Backups\InitiateBackupService;
 
 final class CreateBackupSchema extends TaskSchema
 {
-    public function __construct(private InitiateBackupService $backupService) {}
+    public function __construct(private InitiateBackupService $initiateService) {}
 
     public function getId(): string
     {
@@ -17,7 +17,7 @@ final class CreateBackupSchema extends TaskSchema
 
     public function runTask(Task $task): void
     {
-        $this->backupService->setIgnoredFiles(explode(PHP_EOL, $task->payload))->handle($task->server, null, true);
+        $this->initiateService->setIgnoredFiles(explode(PHP_EOL, $task->payload))->handle($task->server, null, true);
     }
 
     public function canCreate(Schedule $schedule): bool
