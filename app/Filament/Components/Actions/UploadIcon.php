@@ -19,6 +19,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class UploadIcon extends Action
 {
+    /** @var string[] */
     protected ?array $iconFormats = null;
 
     public static function getDefaultName(): ?string
@@ -154,6 +155,7 @@ class UploadIcon extends Action
         return $this;
     }
 
+    /** @return string[] */
     public function getIconFormats(): ?array
     {
         return $this->iconFormats;

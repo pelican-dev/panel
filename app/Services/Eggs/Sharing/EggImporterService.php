@@ -272,7 +272,7 @@ class EggImporterService
         $data = base64_decode($matches[2]);
 
         if ($data) {
-            $egg->writeEggIcon($extension, $data);
+            $egg->writeIcon($extension, $data);
         }
     }
 

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class DeleteIcon extends Action
 {
+    /** @var string[] */
     protected ?array $iconFormats = null;
 
     protected ?string $iconStoragePath = null;
@@ -64,6 +65,7 @@ class DeleteIcon extends Action
         return $this;
     }
 
+    /** @return string[] */
     public function getIconFormats(): ?array
     {
         return $this->iconFormats;
