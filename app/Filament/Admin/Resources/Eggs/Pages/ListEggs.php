@@ -38,6 +38,8 @@ class ListEggs extends ListRecords
      */
     public function table(Table $table): Table
     {
+        $defaultEggIcon = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(public_path('pelican.svg')));
+
         return $table
             ->searchable(true)
             ->defaultPaginationPageOption(25)
@@ -49,9 +51,7 @@ class ListEggs extends ListRecords
                     ->label('')
                     ->alignCenter()
                     ->circular()
-                    ->getStateUsing(fn ($record) => $record->icon
-                        ? $record->icon
-                        : 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(public_path('pelican.svg')))),
+                    ->getStateUsing(fn (Egg $record) => $record->icon ?: $defaultEggIcon),
                 TextColumn::make('name')
                     ->label(trans('admin/egg.name'))
                     ->description(fn ($record): ?string => (strlen($record->description) > 120) ? substr($record->description, 0, 120).'...' : $record->description)
