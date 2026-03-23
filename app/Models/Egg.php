@@ -390,7 +390,7 @@ class Egg extends Model implements Validatable
         return null;
     }
 
-    public function writeEggIcon(string $extension, string $data, bool $throw = true): bool
+    public function writeEggIcon(string $extension, string $data): string
     {
         $normalizedExtension = match (strtolower($extension)) {
             'svg+xml', 'svg' => 'svg',
@@ -401,32 +401,26 @@ class Egg extends Model implements Validatable
         };
 
         if (is_null($normalizedExtension)) {
-            if ($throw) {
-                throw new Exception(trans('admin/egg.import.unknown_extension'));
-            }
-
-            return false;
+            throw new Exception(trans('admin/egg.import.unknown_extension'));
         }
 
-        if (Storage::disk('public')->put(static::ICON_STORAGE_PATH . "/$this->uuid.$normalizedExtension", $data)) {
-            foreach (array_keys(static::ICON_FORMATS) as $ext) {
-                if ($ext === $normalizedExtension) {
-                    continue;
-                }
+        $fileName = static::ICON_STORAGE_PATH . "/$this->uuid.$normalizedExtension";
 
-                $path = static::ICON_STORAGE_PATH . "/$this->uuid.$ext";
-                if (Storage::disk('public')->exists($path)) {
-                    Storage::disk('public')->delete($path);
-                }
+        if (!Storage::disk('public')->put($fileName, $data)) {
+            throw new Exception(trans('admin/egg.import.could_not_write'));
+        }
+
+        foreach (array_keys(static::ICON_FORMATS) as $ext) {
+            if ($ext === $normalizedExtension) {
+                continue;
             }
 
-            return true;
-        } else {
-            if ($throw) {
-                throw new Exception(trans('admin/egg.import.could_not_write'));
+            $path = static::ICON_STORAGE_PATH . "/$this->uuid.$ext";
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
             }
         }
 
-        return false;
+        return $fileName;
     }
 }

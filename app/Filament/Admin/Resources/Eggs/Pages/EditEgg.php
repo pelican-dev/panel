@@ -98,7 +98,6 @@ class EditEgg extends EditRecord
                                             ->tabs([
                                                 Tab::make(trans('admin/egg.import.url'))
                                                     ->schema([
-                                                        Hidden::make('icon_extension'),
                                                         TextInput::make('icon_url')
                                                             ->label(trans('admin/egg.import.icon_url'))
                                                             ->reactive()
@@ -107,37 +106,29 @@ class EditEgg extends EditRecord
                                                             ->afterStateUpdated(function ($state, Set $set) {
                                                                 if (!$state) {
                                                                     $set('icon_url_error', null);
-                                                                    $set('icon_extension', null);
 
                                                                     return;
                                                                 }
 
                                                                 try {
-                                                                    if (!filter_var($state, FILTER_VALIDATE_URL)) {
+                                                                    if (!in_array(parse_url($state, PHP_URL_SCHEME), ['http', 'https'], true)) {
                                                                         throw new Exception(trans('admin/egg.import.invalid_url'));
                                                                     }
 
-                                                                    $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
-
-                                                                    if (!array_key_exists($extension, Egg::ICON_FORMATS)) {
-                                                                        throw new Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', array_keys(Egg::ICON_FORMATS))]));
+                                                                    if (!filter_var($state, FILTER_VALIDATE_URL)) {
+                                                                        throw new Exception(trans('admin/egg.import.invalid_url'));
                                                                     }
 
                                                                     $host = parse_url($state, PHP_URL_HOST);
                                                                     $ip = gethostbyname($host);
 
-                                                                    if (
-                                                                        filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false
-                                                                    ) {
+                                                                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
                                                                         throw new Exception(trans('admin/egg.import.no_local_ip'));
                                                                     }
 
-                                                                    $set('icon_extension', $extension);
                                                                     $set('icon_url_error', null);
-
                                                                 } catch (Exception $exception) {
                                                                     $set('icon_url_error', $exception->getMessage());
-                                                                    $set('icon_extension', null);
                                                                 }
                                                             }),
                                                         TextEntry::make('icon_url_error')
@@ -170,8 +161,8 @@ class EditEgg extends EditRecord
                                             ]),
                                     ])
                                     ->action(function (array $data, $record) {
-                                        if (!empty($data['icon_url']) && !empty($data['icon_extension']) && empty($data['icon_url_error'])) {
-                                            $this->saveIconFromUrl($data['icon_url'], $data['icon_extension'], $record);
+                                        if (!empty($data['icon_url'])) {
+                                            $this->saveIconFromUrl($data['icon_url'], $record);
 
                                             Notification::make()
                                                 ->title(trans('admin/egg.import.icon_updated'))
@@ -463,7 +454,7 @@ class EditEgg extends EditRecord
      *
      * @throws Exception
      */
-    private function saveIconFromUrl(string $icon_url, string $extension, Egg $egg): void
+    private function saveIconFromUrl(string $icon_url, Egg $egg): void
     {
         $context = stream_context_create([
             'http' => ['timeout' => 3],
@@ -479,6 +470,8 @@ class EditEgg extends EditRecord
         if (empty($data)) {
             throw new Exception(trans('admin/egg.import.invalid_url'));
         }
+
+        $extension = strtolower(pathinfo(parse_url($icon_url, PHP_URL_PATH), PATHINFO_EXTENSION));
 
         $egg->writeEggIcon($extension, $data);
     }
