@@ -98,7 +98,6 @@ class EditEgg extends EditRecord
                                             ->tabs([
                                                 Tab::make(trans('admin/egg.import.url'))
                                                     ->schema([
-                                                        Hidden::make('icon_url'),
                                                         Hidden::make('icon_extension'),
                                                         TextInput::make('icon_url')
                                                             ->label(trans('admin/egg.import.icon_url'))
@@ -108,7 +107,6 @@ class EditEgg extends EditRecord
                                                             ->afterStateUpdated(function ($state, Set $set) {
                                                                 if (!$state) {
                                                                     $set('icon_url_error', null);
-                                                                    $set('icon_url', null);
                                                                     $set('icon_extension', null);
 
                                                                     return;
@@ -134,13 +132,11 @@ class EditEgg extends EditRecord
                                                                         throw new Exception(trans('admin/egg.import.no_local_ip'));
                                                                     }
 
-                                                                    $set('icon_url', $state);
                                                                     $set('icon_extension', $extension);
                                                                     $set('icon_url_error', null);
 
-                                                                } catch (Exception $e) {
-                                                                    $set('icon_url_error', $e->getMessage());
-                                                                    $set('icon_url', null);
+                                                                } catch (Exception $exception) {
+                                                                    $set('icon_url_error', $exception->getMessage());
                                                                     $set('icon_extension', null);
                                                                 }
                                                             }),
@@ -173,8 +169,8 @@ class EditEgg extends EditRecord
                                                     ]),
                                             ]),
                                     ])
-                                    ->action(function (array $data, $record): void {
-                                        if (!empty($data['icon_url']) && !empty($data['icon_extension'])) {
+                                    ->action(function (array $data, $record) {
+                                        if (!empty($data['icon_url']) && !empty($data['icon_extension']) && empty($data['icon_url_error'])) {
                                             $this->saveIconFromUrl($data['icon_url'], $data['icon_extension'], $record);
 
                                             Notification::make()
