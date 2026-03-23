@@ -95,6 +95,12 @@ class MountResource extends Resource
                     ->icon(fn ($state) => $state ? TablerIcon::WritingOff : TablerIcon::Writing)
                     ->color(fn ($state) => $state ? 'success' : 'warning')
                     ->formatStateUsing(fn ($state) => $state ? trans('admin/mount.toggles.read_only') : trans('admin/mount.toggles.writable')),
+                TextColumn::make('user_mountable')
+                    ->label(trans('admin/mount.table.user_mountable'))
+                    ->badge()
+                    ->icon(fn ($state) => $state ? TablerIcon::User : TablerIcon::UserOff)
+                    ->color(fn ($state) => $state ? 'success' : 'warning')
+                    ->formatStateUsing(fn ($state) => $state ? trans('admin/mount.toggles.user_mountable') : trans('admin/mount.toggles.not_user_mountable')),
             ])
             ->recordActions([
                 ViewAction::make()
@@ -124,7 +130,8 @@ class MountResource extends Resource
                         ->label(trans('admin/mount.name'))
                         ->required()
                         ->helperText(trans('admin/mount.name_help'))
-                        ->maxLength(64),
+                        ->maxLength(64)
+                        ->columnSpanFull(),
                     ToggleButtons::make('read_only')
                         ->label(trans('admin/mount.read_only'))
                         ->helperText(trans('admin/mount.read_only_help'))
@@ -143,6 +150,24 @@ class MountResource extends Resource
                         ])
                         ->inline()
                         ->default(false),
+                    ToggleButtons::make('user_mountable')
+                        ->label(trans('admin/mount.user_mountable'))
+                        ->helperText(trans('admin/mount.user_mountable_help'))
+                        ->stateCast(new BooleanStateCast(false, true))
+                        ->options([
+                            false => trans('admin/mount.toggles.not_user_mountable'),
+                            true => trans('admin/mount.toggles.user_mountable'),
+                        ])
+                        ->icons([
+                            false => TablerIcon::UserOff,
+                            true => TablerIcon::User,
+                        ])
+                        ->colors([
+                            false => 'warning',
+                            true => 'success',
+                        ])
+                        ->inline()
+                        ->default(true),
                     TextInput::make('source')
                         ->label(trans('admin/mount.source'))
                         ->required()
