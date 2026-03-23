@@ -169,9 +169,7 @@ class EditEgg extends EditRecord
                                                             ->disk('public')
                                                             ->directory(Egg::ICON_STORAGE_PATH)
                                                             ->acceptedFileTypes(array_values(Egg::ICON_FORMATS))
-                                                            ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
-                                                                return $record->uuid . '.' . $file->getClientOriginalExtension();
-                                                            }),
+                                                            ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file, Egg $record) => $record->writeEggIcon($file->getClientOriginalExtension(), $file->getContent())),
                                                     ]),
                                             ]),
                                     ])

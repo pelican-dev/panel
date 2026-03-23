@@ -206,9 +206,7 @@ class EditServer extends EditRecord
                                                         ->disk('public')
                                                         ->directory(Server::ICON_STORAGE_PATH)
                                                         ->acceptedFileTypes(array_values(Server::ICON_FORMATS))
-                                                        ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
-                                                            return $record->uuid . '.' . $file->getClientOriginalExtension();
-                                                        }),
+                                                        ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file, Server $record) => $record->writeServerIcon($file->getClientOriginalExtension(), $file->getContent())),
                                                 ]),
                                         ]),
                                 ])
