@@ -81,7 +81,8 @@ class ListServers extends ListRecords
                 ->label(trans('server/dashboard.title'))
                 ->description(fn (Server $server) => $server->description)
                 ->grow()
-                ->searchable(),
+                ->searchable()
+                ->sortable(),
             TextColumn::make('allocation.address')
                 ->label('')
                 ->badge()
@@ -122,6 +123,7 @@ class ListServers extends ListRecords
             ->paginated($usingGrid ? [10, 20, 30, 40] : [10, 20, 50, 100])
             ->defaultPaginationPageOption($usingGrid ? 10 : 20)
             ->query(fn () => $baseQuery)
+            ->defaultSort('name', 'asc')
             ->poll('15s')
             ->columns($usingGrid ? $this->gridColumns() : $this->tableColumns())
             ->recordUrl(!$usingGrid ? (fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server)) : null)
