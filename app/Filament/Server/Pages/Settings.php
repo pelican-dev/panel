@@ -81,11 +81,9 @@ class Settings extends ServerFormPage
                                             ->imageSize(150)
                                             ->columnSpanFull()
                                             ->alignJustify(),
-                                        UploadIcon::make()
-                                            ->iconFormats(array_values(Server::ICON_FORMATS)),
+                                        UploadIcon::make(),
                                         DeleteIcon::make()
-                                            ->iconFormats(array_keys(Server::ICON_FORMATS))
-                                            ->iconStoragePath(Server::ICON_STORAGE_PATH),
+                                            ->iconStoragePath(Server::getIconStoragePath()),
                                     ]),
                                 TextInput::make('uuid')
                                     ->label(trans('server/setting.server_info.uuid'))

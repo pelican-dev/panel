@@ -76,11 +76,9 @@ class EditEgg extends EditRecord
                                 ->imageSize(150)
                                 ->columnSpanFull()
                                 ->alignJustify(),
-                            UploadIcon::make()
-                                ->iconFormats(array_values(Egg::ICON_FORMATS)),
+                            UploadIcon::make(),
                             DeleteIcon::make()
-                                ->iconFormats(array_keys(Egg::ICON_FORMATS))
-                                ->iconStoragePath(Egg::ICON_STORAGE_PATH),
+                                ->iconStoragePath(Egg::getIconStoragePath()),
                         ]),
                     TextInput::make('name')
                         ->label(trans('admin/egg.name'))

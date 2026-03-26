@@ -117,11 +117,9 @@ class EditServer extends EditRecord
                                 ->imageSize(150)
                                 ->columnSpanFull()
                                 ->alignJustify(),
-                            UploadIcon::make()
-                                ->iconFormats(array_values(Server::ICON_FORMATS)),
+                            UploadIcon::make(),
                             DeleteIcon::make()
-                                ->iconFormats(array_keys(Server::ICON_FORMATS))
-                                ->iconStoragePath(Server::ICON_STORAGE_PATH),
+                                ->iconStoragePath(Server::getIconStoragePath()),
                         ]),
                     Grid::make()
                         ->columns(3)

@@ -3,6 +3,7 @@
 namespace App\Filament\Components\Actions;
 
 use App\Enums\TablerIcon;
+use App\Models\Traits\HasIcon;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -156,8 +157,8 @@ class UploadIcon extends Action
     }
 
     /** @return string[] */
-    public function getIconFormats(): ?array
+    public function getIconFormats(): array
     {
-        return $this->iconFormats;
+        return $this->iconFormats ?? array_values(HasIcon::$iconFormats);
     }
 }

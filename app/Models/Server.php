@@ -7,6 +7,7 @@ use App\Enums\ContainerStatus;
 use App\Enums\ServerResourceType;
 use App\Enums\ServerState;
 use App\Exceptions\Http\Server\ServerStateConflictException;
+use App\Models\Traits\HasIcon;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Subusers\SubuserDeletionService;
 use App\Traits\HasValidation;
@@ -30,7 +31,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -130,6 +130,7 @@ use Psr\Http\Message\ResponseInterface;
 class Server extends Model implements HasAvatar, Validatable
 {
     use HasFactory;
+    use HasIcon;
     use HasValidation;
     use Notifiable;
 
@@ -138,21 +139,6 @@ class Server extends Model implements HasAvatar, Validatable
      * API representation using fractal. Also used as name for api key permissions.
      */
     public const RESOURCE_NAME = 'server';
-
-    /**
-     * Path to store server icons relative to storage path.
-     */
-    public const ICON_STORAGE_PATH = 'icons/server';
-
-    /**
-     * Supported icon formats: file extension => MIME type
-     */
-    public const ICON_FORMATS = [
-        'png' => 'image/png',
-        'jpg' => 'image/jpeg',
-        'webp' => 'image/webp',
-        'svg' => 'image/svg+xml',
-    ];
 
     /**
      * Default values when creating the model. We want to switch to disabling OOM killer
@@ -527,54 +513,8 @@ class Server extends Model implements HasAvatar, Validatable
         );
     }
 
-    public function getIconAttribute(): ?string
-    {
-        foreach (array_keys(static::ICON_FORMATS) as $ext) {
-            $path = static::ICON_STORAGE_PATH . "/$this->uuid.$ext";
-            if (Storage::disk('public')->exists($path)) {
-                return Storage::disk('public')->url($path);
-            }
-        }
-
-        return null;
-    }
-
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->icon ?? $this->egg->icon;
-    }
-
-    public function writeIcon(string $extension, string $data): string
-    {
-        $normalizedExtension = match (strtolower($extension)) {
-            'svg+xml', 'svg' => 'svg',
-            'jpeg', 'jpg' => 'jpg',
-            'png' => 'png',
-            'webp' => 'webp',
-            default => null,
-        };
-
-        if (is_null($normalizedExtension)) {
-            throw new Exception(trans('admin/egg.import.unknown_extension'));
-        }
-
-        $fileName = static::ICON_STORAGE_PATH . "/$this->uuid.$normalizedExtension";
-
-        if (!Storage::disk('public')->put($fileName, $data)) {
-            throw new Exception(trans('admin/egg.import.could_not_write'));
-        }
-
-        foreach (array_keys(static::ICON_FORMATS) as $ext) {
-            if ($ext === $normalizedExtension) {
-                continue;
-            }
-
-            $path = static::ICON_STORAGE_PATH . "/$this->uuid.$ext";
-            if (Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->delete($path);
-            }
-        }
-
-        return $fileName;
     }
 }

@@ -67,12 +67,10 @@ class EggExporterService
      */
     private function getEggIconAsBase64(Egg $egg): ?string
     {
-        foreach (array_keys(Egg::ICON_FORMATS) as $ext) {
-            $path = Egg::ICON_STORAGE_PATH . "/$egg->uuid.$ext";
+        foreach (Egg::$iconFormats as $ext => $mimeType) {
+            $path = Egg::getIconStoragePath() . "/$egg->uuid.$ext";
 
             if (Storage::disk('public')->exists($path)) {
-                $mimeType = Egg::ICON_FORMATS[$ext];
-
                 return 'data:' . $mimeType . ';base64,' . base64_encode(Storage::disk('public')->get($path));
             }
         }

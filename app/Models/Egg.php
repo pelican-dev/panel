@@ -5,8 +5,8 @@ namespace App\Models;
 use App\Contracts\Validatable;
 use App\Exceptions\Service\Egg\HasChildrenException;
 use App\Exceptions\Service\HasActiveServersException;
+use App\Models\Traits\HasIcon;
 use App\Traits\HasValidation;
-use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -95,6 +94,7 @@ use Illuminate\Support\Str;
 class Egg extends Model implements Validatable
 {
     use HasFactory;
+    use HasIcon;
     use HasValidation;
 
     /**
@@ -107,21 +107,6 @@ class Egg extends Model implements Validatable
      * Defines the current egg export version.
      */
     public const EXPORT_VERSION = 'PLCN_v3';
-
-    /**
-     * Path to store egg icons relative to storage path.
-     */
-    public const ICON_STORAGE_PATH = 'icons/egg';
-
-    /**
-     * Supported icon formats: file extension => MIME type
-     */
-    public const ICON_FORMATS = [
-        'png' => 'image/png',
-        'jpg' => 'image/jpeg',
-        'webp' => 'image/webp',
-        'svg' => 'image/svg+xml',
-    ];
 
     /**
      * Fields that are not mass assignable.
@@ -376,51 +361,5 @@ class Egg extends Model implements Validatable
     public function getKebabName(): string
     {
         return str($this->name)->kebab()->lower()->trim()->split('/[^\w\-]/')->join('');
-    }
-
-    public function getIconAttribute(): ?string
-    {
-        foreach (array_keys(static::ICON_FORMATS) as $ext) {
-            $path = static::ICON_STORAGE_PATH . "/$this->uuid.$ext";
-            if (Storage::disk('public')->exists($path)) {
-                return Storage::disk('public')->url($path);
-            }
-        }
-
-        return null;
-    }
-
-    public function writeIcon(string $extension, string $data): string
-    {
-        $normalizedExtension = match (strtolower($extension)) {
-            'svg+xml', 'svg' => 'svg',
-            'jpeg', 'jpg' => 'jpg',
-            'png' => 'png',
-            'webp' => 'webp',
-            default => null,
-        };
-
-        if (is_null($normalizedExtension)) {
-            throw new Exception(trans('admin/egg.import.unknown_extension'));
-        }
-
-        $fileName = static::ICON_STORAGE_PATH . "/$this->uuid.$normalizedExtension";
-
-        if (!Storage::disk('public')->put($fileName, $data)) {
-            throw new Exception(trans('admin/egg.import.could_not_write'));
-        }
-
-        foreach (array_keys(static::ICON_FORMATS) as $ext) {
-            if ($ext === $normalizedExtension) {
-                continue;
-            }
-
-            $path = static::ICON_STORAGE_PATH . "/$this->uuid.$ext";
-            if (Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->delete($path);
-            }
-        }
-
-        return $fileName;
     }
 }

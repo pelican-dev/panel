@@ -3,6 +3,7 @@
 namespace App\Filament\Components\Actions;
 
 use App\Enums\TablerIcon;
+use App\Models\Traits\HasIcon;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -66,9 +67,9 @@ class DeleteIcon extends Action
     }
 
     /** @return string[] */
-    public function getIconFormats(): ?array
+    public function getIconFormats(): array
     {
-        return $this->iconFormats;
+        return $this->iconFormats ?? array_keys(HasIcon::$iconFormats);
     }
 
     public function getIconStoragePath(): ?string
