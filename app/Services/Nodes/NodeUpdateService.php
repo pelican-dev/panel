@@ -41,6 +41,7 @@ class NodeUpdateService
             $updated = $node->replicate();
             $updated->exists = true;
             $updated->forceFill($data)->save();
+            $updated->refresh();
             try {
                 $node->fqdn = $updated->fqdn;
 
