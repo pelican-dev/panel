@@ -40,6 +40,7 @@ class NodeUpdateService
             /** @var Node $updated */
             $updated = $node->replicate();
             $updated->exists = true;
+            $data = array_merge($data, ['created_at' => $node->created_at, 'updated_at' => now()]);
             $updated->forceFill($data)->save();
             try {
                 $node->fqdn = $updated->fqdn;
