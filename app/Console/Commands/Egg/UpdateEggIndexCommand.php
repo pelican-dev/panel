@@ -13,7 +13,7 @@ class UpdateEggIndexCommand extends Command
     public function handle(): int
     {
         try {
-            $data = Http::timeout(5)->connectTimeout(1)->get(config('panel.egg.index_url'))->throw()->json();
+            $data = Http::timeout(5)->connectTimeout(1)->get(config('panel.egg.nest_url'))->throw()->json();
         } catch (Exception $exception) {
             $this->error($exception->getMessage());
 

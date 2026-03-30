@@ -76,6 +76,6 @@ return [
     ],
 
     'egg' => [
-        'index_url' => env('PANEL_EGG_INDEX_URL', 'https://raw.githubusercontent.com/pelican-eggs/pelican-eggs.github.io/refs/heads/main/content/pelican.json'),
+        'nest_url' => env('PANEL_EGG_NEST_URL', 'https://raw.githubusercontent.com/pelican-eggs/pelican-eggs.github.io/refs/heads/main/content/pelican.json'),
     ]
 ];
