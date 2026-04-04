@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\Remote;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SftpAuthenticationFormRequest extends FormRequest
 {
@@ -22,7 +23,10 @@ class SftpAuthenticationFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => ['nullable', 'in:password,public_key'],
+            'type' => [
+                'nullable',
+                Rule::in(['password', 'public_key']),
+            ],
             'username' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];

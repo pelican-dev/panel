@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\Remote;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ReportBackupCompleteRequest extends FormRequest
 {
@@ -17,17 +18,17 @@ class ReportBackupCompleteRequest extends FormRequest
             'checksum' => [
                 'nullable',
                 'string',
-                'required_if:successful,true',
+                Rule::requiredIf(fn () => $this->boolean('successful')),
             ],
             'checksum_type' => [
                 'nullable',
                 'string',
-                'required_if:successful,true',
+                Rule::requiredIf(fn () => $this->boolean('successful')),
             ],
             'size' => [
                 'nullable',
                 'numeric',
-                'required_if:successful,true',
+                Rule::requiredIf(fn () => $this->boolean('successful')),
             ],
             'parts' => [
                 'nullable',
