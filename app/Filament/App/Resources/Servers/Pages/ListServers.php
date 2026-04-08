@@ -81,7 +81,8 @@ class ListServers extends ListRecords
                 ->label(trans('server/dashboard.title'))
                 ->description(fn (Server $server) => $server->description)
                 ->grow()
-                ->searchable(),
+                ->searchable()
+                ->sortable(),
             TextColumn::make('allocation.address')
                 ->label('')
                 ->badge()
