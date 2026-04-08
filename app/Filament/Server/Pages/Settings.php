@@ -34,7 +34,7 @@ class Settings extends ServerFormPage
 {
     protected static string|BackedEnum|null $navigationIcon = TablerIcon::Settings;
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 11;
 
     /**
      * @throws Exception

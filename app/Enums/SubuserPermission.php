@@ -50,6 +50,9 @@ enum SubuserPermission: string
 
     case ActivityRead = 'activity.read';
 
+    case MountRead = 'mount.read';
+    case MountUpdate = 'mount.update';
+
     case StartupRead = 'startup.read';
     case StartupUpdate = 'startup.update';
     case StartupDockerImage = 'startup.docker-image';
@@ -84,6 +87,7 @@ enum SubuserPermission: string
             'schedule' => TablerIcon::Clock,
             'settings' => TablerIcon::Settings,
             'activity' => TablerIcon::Stack,
+            'mount' => TablerIcon::LayersLinked,
             default => null,
         };
     }
