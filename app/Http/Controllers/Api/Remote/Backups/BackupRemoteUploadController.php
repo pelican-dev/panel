@@ -91,7 +91,7 @@ class BackupRemoteUploadController extends Controller
         }
 
         // Execute the CreateMultipartUpload request
-        $result = $client->execute($client->getCommand('CreateMultipartUpload', $params));
+        $result = $adapter->executeS3Command($client->getCommand('CreateMultipartUpload', $params));
 
         // Get the UploadId from the CreateMultipartUpload request, this is needed to create
         // the other presigned urls.
