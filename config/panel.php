@@ -18,6 +18,7 @@ return [
 
     'cdn' => [
         'cache_time' => 60,
+        'egg_index_url' => env('EGG_INDEX_URL', 'https://raw.githubusercontent.com/pelican-eggs/pelican-eggs.github.io/refs/heads/main/content/pelican.json'),
     ],
 
     'client_features' => [
@@ -73,9 +74,5 @@ return [
     'plugin' => [
         'dev_mode' => env('PANEL_PLUGIN_DEV_MODE', false),
         'max_import_size' => env('PANEL_PLUGIN_MAX_IMPORT_SIZE', 1024 * 1024 * 100),
-    ],
-
-    'egg' => [
-        'nest_url' => env('PANEL_EGG_NEST_URL', 'https://raw.githubusercontent.com/pelican-eggs/pelican-eggs.github.io/refs/heads/main/content/pelican.json'),
     ],
 ];
