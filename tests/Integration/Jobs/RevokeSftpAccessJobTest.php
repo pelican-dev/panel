@@ -31,7 +31,8 @@ class RevokeSftpAccessJobTest extends IntegrationTestCase
         $node = Node::factory()->make(['uuid' => 'uuid-1234']);
 
         $mock = $this->mock(DaemonServerRepository::class, function ($mock) {
-            $mock->expects('setNode->deauthorize')->andThrows(new ConnectionException());
+            $mock->expects('setNode')->andReturnSelf();
+            $mock->expects('deauthorize')->andThrows(new ConnectionException());
         });
 
         $job = \Mockery::mock(RevokeSftpAccessJob::class, ['user-1', $node])->makePartial();
