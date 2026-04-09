@@ -143,7 +143,7 @@ class DatabaseManagementService
         $password = Utilities::randomStringWithSpecialCharacters(24);
 
         $this->connection->transaction(function () use ($database, $password) {
-            $database->update([
+            $database->sharedLock()->update([
                 'password' => $password,
             ]);
 
