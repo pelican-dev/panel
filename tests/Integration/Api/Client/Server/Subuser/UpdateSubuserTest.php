@@ -59,7 +59,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
 
         $this->postJson($endpoint, $data)->assertOk();
 
-        Bus::assertDispatchedTimes(function (RevokeSftpAccessJob $job) use ($server, $subuser) {
+        Bus::assertDispatched(function (RevokeSftpAccessJob $job) use ($server, $subuser) {
             return $job->user === $subuser->user->uuid && $job->target->is($server);
         });
     }
@@ -102,7 +102,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
             $subuser->permissions
         );
 
-        Bus::assertDispatchedTimes(function (RevokeSftpAccessJob $job) use ($server, $subuser) {
+        Bus::assertDispatched(function (RevokeSftpAccessJob $job) use ($server, $subuser) {
             return $job->user === $subuser->user->uuid && $job->target->is($server);
         });
     }

@@ -33,7 +33,7 @@ class DetailsModificationService
     public function handle(Server $server, array $data): Server
     {
         return $this->connection->transaction(function () use ($data, $server) {
-            $owner = $server->owner_id;
+            $oldOwner = $server->user;
 
             $server->forceFill([
                 'external_id' => Arr::get($data, 'external_id'),
@@ -45,8 +45,8 @@ class DetailsModificationService
             // If the owner_id value is changed we need to revoke any tokens that exist for the server
             // on the daemon instance so that the old owner no longer has any permission to access the
             // websockets.
-            if ($server->owner_id !== $owner) {
-                RevokeSftpAccessJob::dispatch($server->user->uuid, $server);
+            if ($server->owner_id !== $oldOwner->id) {
+                RevokeSftpAccessJob::dispatch($oldOwner->uuid, $server);
             }
 
             return $server;

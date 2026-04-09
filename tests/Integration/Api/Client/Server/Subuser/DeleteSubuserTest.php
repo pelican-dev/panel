@@ -45,7 +45,7 @@ class DeleteSubuserTest extends ClientApiIntegrationTestCase
 
         $this->actingAs($user)->deleteJson($this->link($server) . "/users/$subuser->uuid")->assertNoContent();
 
-        Bus::assertDispatchedTimes(function (RevokeSftpAccessJob $job) use ($subuser, $server) {
+        Bus::assertDispatched(function (RevokeSftpAccessJob $job) use ($subuser, $server) {
             return $job->user === $subuser->uuid && $job->target->is($server);
         });
 
@@ -63,7 +63,7 @@ class DeleteSubuserTest extends ClientApiIntegrationTestCase
 
         $this->actingAs($user)->deleteJson($this->link($server) . "/users/$subuser->uuid")->assertNoContent();
 
-        Bus::assertDispatchedTimes(function (RevokeSftpAccessJob $job) use ($subuser, $server) {
+        Bus::assertDispatched(function (RevokeSftpAccessJob $job) use ($subuser, $server) {
             return $job->user === $subuser->uuid && $job->target->is($server);
         });
     }

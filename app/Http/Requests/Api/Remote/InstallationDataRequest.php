@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Api\Remote;
 
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
-class InstallationDataRequest extends Request
+class InstallationDataRequest extends FormRequest
 {
     /**
      * @return array<string, string|string[]>
