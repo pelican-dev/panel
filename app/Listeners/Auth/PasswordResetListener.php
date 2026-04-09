@@ -7,7 +7,7 @@ use Illuminate\Auth\Events\PasswordReset;
 
 class PasswordResetListener
 {
-    public function reset(PasswordReset $event): void
+    public function handle(PasswordReset $event): void
     {
         Activity::event('auth:password-reset')
             ->withRequestMetadata()
