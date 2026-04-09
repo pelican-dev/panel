@@ -6,6 +6,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class InstallationDataRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        return true;
+    }
+
     /**
      * @return array<string, string|string[]>
      */

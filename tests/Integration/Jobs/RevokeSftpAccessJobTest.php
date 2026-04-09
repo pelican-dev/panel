@@ -7,7 +7,6 @@ use App\Models\Node;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Tests\Integration\IntegrationTestCase;
-use GuzzleHttp\Exception\TransferException;
 use Illuminate\Http\Client\ConnectionException;
 use PHPUnit\Framework\Attributes\TestWith;
 
@@ -32,9 +31,7 @@ class RevokeSftpAccessJobTest extends IntegrationTestCase
         $node = Node::factory()->make(['uuid' => 'uuid-1234']);
 
         $mock = $this->mock(DaemonServerRepository::class, function ($mock) {
-            $mock->expects('setNode->deauthorize')->andThrows(
-                new ConnectionException(new TransferException('Connection failed'))
-            );
+            $mock->expects('setNode->deauthorize')->andThrows(new ConnectionException());
         });
 
         $job = \Mockery::mock(RevokeSftpAccessJob::class, ['user-1', $node])->makePartial();
@@ -49,7 +46,7 @@ class RevokeSftpAccessJobTest extends IntegrationTestCase
 
         $mock = $this->mock(DaemonServerRepository::class, function ($mock) {
             $mock->expects('setNode')->andReturnSelf();
-            $mock->expects('deauthorize')->with('user-1', [])->andReturnUndefined();
+            $mock->expects('deauthorize')->with('user-1')->andReturnUndefined();
         });
 
         (new RevokeSftpAccessJob('user-1', $node))->handle($mock);
@@ -61,8 +58,8 @@ class RevokeSftpAccessJobTest extends IntegrationTestCase
         $server = Server::factory()->make(['uuid' => 'server-1234'])->setRelation('node', $node);
 
         $mock = $this->mock(DaemonServerRepository::class, function ($mock) {
-            $mock->expects('setNode')->with(\Mockery::on(fn (Node $node) => $node->uuid === 'node-1234'))->andReturnSelf();
-            $mock->expects('deauthorize')->with('user-1', ['server-1234'])->andReturnUndefined();
+            $mock->expects('setServer')->with(\Mockery::on(fn (Server $server) => $server->uuid === 'server-1234'))->andReturnSelf();
+            $mock->expects('deauthorize')->with('user-1')->andReturnUndefined();
         });
 
         (new RevokeSftpAccessJob('user-1', $server))->handle($mock);

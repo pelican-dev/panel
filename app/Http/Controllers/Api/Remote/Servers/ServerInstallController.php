@@ -20,11 +20,11 @@ class ServerInstallController extends Controller
      */
     public function index(Request $request, Server $server): JsonResponse
     {
-        $egg = $server->egg;
-
         if (!$server->node->is($request->attributes->get('node'))) {
             throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
+
+        $egg = $server->egg;
 
         return new JsonResponse([
             'container_image' => $egg->copy_script_container,
