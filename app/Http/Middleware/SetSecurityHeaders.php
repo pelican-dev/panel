@@ -14,8 +14,10 @@ class SetSecurityHeaders
      *
      * We'll circle back to that at a later date when it can be more fully controlled
      * by the admin to support those cases without too much trouble.
+     *
+     * @var array<string, string>
      */
-    private static array $headers = [
+    protected static array $headers = [
         'X-Frame-Options' => 'DENY',
         'X-Content-Type-Options' => 'nosniff',
         'X-XSS-Protection' => '1; mode=block',
