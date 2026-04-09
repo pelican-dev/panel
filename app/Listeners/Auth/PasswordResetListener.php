@@ -9,7 +9,7 @@ class PasswordResetListener
 {
     public function reset(PasswordReset $event): void
     {
-        Activity::event('event:password-reset')
+        Activity::event('auth:password-reset')
             ->withRequestMetadata()
             ->subject($event->user)
             ->log();
