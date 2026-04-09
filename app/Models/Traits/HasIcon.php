@@ -20,7 +20,6 @@ trait HasIcon
         'png' => 'image/png',
         'jpg' => 'image/jpeg',
         'webp' => 'image/webp',
-        'svg' => 'image/svg+xml',
     ];
 
     public static function getIconStoragePath(): string
@@ -43,7 +42,6 @@ trait HasIcon
     public function writeIcon(string $extension, string $data): string
     {
         $normalizedExtension = match (strtolower($extension)) {
-            'svg+xml', 'svg' => 'svg',
             'jpeg', 'jpg' => 'jpg',
             'png' => 'png',
             'webp' => 'webp',
@@ -60,7 +58,7 @@ trait HasIcon
             throw new Exception(trans('admin/egg.import.could_not_write'));
         }
 
-        foreach (array_keys(static::$iconFormats) as $ext) {
+        foreach (['png', 'jpg', 'jpeg', 'webp', 'svg'] as $ext) {
             if ($ext === $normalizedExtension) {
                 continue;
             }
