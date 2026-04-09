@@ -5,6 +5,7 @@ namespace App\Tests\Integration\Api\Client;
 use App\Jobs\RevokeSftpAccessJob;
 use App\Models\Subuser;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Hash;
@@ -56,6 +57,27 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
 
         $this->assertActivityFor('user:account.email-changed', $user, $user);
         $this->assertDatabaseHas('users', ['id' => $user->id, 'email' => $email]);
+    }
+
+    public function test_email_change_is_throttled(): void
+    {
+        /** @var Collection<int, User> $users */
+        $users = User::factory()->count(2)->create();
+
+        for ($i = 0; $i < 3; $i++) {
+            $this->actingAs($users[0])
+                ->putJson('/api/client/account/email', ['email' => "foo+{$i}@example.com", 'password' => 'password'])
+                ->assertNoContent();
+        }
+
+        $this->putJson('/api/client/account/email', ['email' => 'bar@example.com', 'password' => 'password'])
+            ->assertTooManyRequests();
+
+        // The other user should still be able to update their email because the throttle
+        // is tied to the account, not to the IP address.
+        $this->actingAs($users[1])
+            ->putJson('/api/client/account/email', ['email' => 'bar+1@example.com', 'password' => 'password'])
+            ->assertNoContent();
     }
 
     /**
