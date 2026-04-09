@@ -3,10 +3,11 @@
 namespace App\Tests\Integration\Api\Client\Server\Subuser;
 
 use App\Enums\SubuserPermission;
+use App\Jobs\RevokeSftpAccessJob;
 use App\Models\Subuser;
 use App\Models\User;
-use App\Repositories\Daemon\DaemonServerRepository;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
+use Illuminate\Support\Facades\Bus;
 use Ramsey\Uuid\Uuid;
 
 class DeleteSubuserTest extends ClientApiIntegrationTestCase
@@ -22,7 +23,7 @@ class DeleteSubuserTest extends ClientApiIntegrationTestCase
      */
     public function test_correct_subuser_is_deleted_from_server(): void
     {
-        $this->swap(DaemonServerRepository::class, $mock = \Mockery::mock(DaemonServerRepository::class));
+        Bus::fake([RevokeSftpAccessJob::class]);
 
         [$user, $server] = $this->generateTestAccount();
 
@@ -42,9 +43,11 @@ class DeleteSubuserTest extends ClientApiIntegrationTestCase
             'permissions' => [SubuserPermission::WebsocketConnect],
         ]);
 
-        $mock->expects('setServer->deauthorize')->with($subuser->uuid)->andReturnUndefined();
-
         $this->actingAs($user)->deleteJson($this->link($server) . "/users/$subuser->uuid")->assertNoContent();
+
+        Bus::assertDispatched(function (RevokeSftpAccessJob $job) use ($subuser, $server) {
+            return $job->user === $subuser->uuid && $job->target->is($server);
+        });
 
         // Try the same test, but this time with a UUID that if cast to an int (shouldn't) line up with
         // anything in the database.
@@ -58,8 +61,10 @@ class DeleteSubuserTest extends ClientApiIntegrationTestCase
             'permissions' => [SubuserPermission::WebsocketConnect],
         ]);
 
-        $mock->expects('setServer->deauthorize')->with($subuser->uuid)->andReturnUndefined();
-
         $this->actingAs($user)->deleteJson($this->link($server) . "/users/$subuser->uuid")->assertNoContent();
+
+        Bus::assertDispatched(function (RevokeSftpAccessJob $job) use ($subuser, $server) {
+            return $job->user === $subuser->uuid && $job->target->is($server);
+        });
     }
 }

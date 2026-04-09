@@ -13,10 +13,17 @@ use Illuminate\Auth\SessionGuard;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\RateLimiter;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Throwable;
 
 class AccountController extends ClientApiController
 {
+    /**
+     * The number of seconds that must elapse before the email change throttle resets.
+     */
+    private const EMAIL_UPDATE_THROTTLE = 60 * 60 * 24;
+
     /**
      * AccountController constructor.
      */
@@ -63,10 +70,22 @@ class AccountController extends ClientApiController
      */
     public function updateEmail(UpdateEmailRequest $request): JsonResponse
     {
-        $original = $request->user()->email;
-        $this->updateService->handle($request->user(), $request->validated());
+        $user = $request->user();
 
-        if ($original !== $request->input('email')) {
+        // Only allow a user to change their email three times in the span
+        // of 24 hours. This prevents malicious users from trying to find
+        // existing accounts in the system by constantly changing their email.
+        if (RateLimiter::tooManyAttempts($key = "user:update-email:{$user->uuid}", 3)) {
+            throw new TooManyRequestsHttpException(message: 'Your email address has been changed too many times today. Please try again later.');
+        }
+
+        $original = $user->email;
+
+        if (mb_strtolower($original) !== mb_strtolower($request->validated('email'))) {
+            RateLimiter::hit($key, self::EMAIL_UPDATE_THROTTLE);
+
+            $this->updateService->handle($user, $request->validated());
+
             Activity::event('user:account.email-changed')
                 ->property(['old' => $original, 'new' => $request->input('email')])
                 ->log();
@@ -85,7 +104,9 @@ class AccountController extends ClientApiController
      */
     public function updatePassword(UpdatePasswordRequest $request): JsonResponse
     {
-        $user = $this->updateService->handle($request->user(), $request->validated());
+        $user = Activity::event('user:account.password-changed')->transaction(function () use ($request) {
+            return $this->updateService->handle($request->user(), $request->validated());
+        });
 
         $guard = $this->manager->guard();
         // If you do not update the user in the session you'll end up working with a
@@ -97,8 +118,6 @@ class AccountController extends ClientApiController
         if ($guard instanceof SessionGuard) {
             $guard->logoutOtherDevices($request->input('password'));
         }
-
-        Activity::event('user:account.password-changed')->log();
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
