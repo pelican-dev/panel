@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api\Remote;
 
-class InstallationDataRequest extends ServerRequest
+use Illuminate\Http\Request;
+
+class InstallationDataRequest extends Request
 {
     /**
      * @return array<string, string|string[]>

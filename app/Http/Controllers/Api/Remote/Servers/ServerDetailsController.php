@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api\Remote\Servers;
 
 use App\Enums\ServerState;
+use App\Exceptions\Http\HttpForbiddenException;
 use App\Facades\Activity;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Remote\ServerRequest;
 use App\Http\Resources\Daemon\ServerConfigurationCollection;
 use App\Models\ActivityLog;
 use App\Models\Backup;
@@ -17,6 +17,7 @@ use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Throwable;
+use Webmozart\Assert\Assert;
 
 class ServerDetailsController extends Controller
 {
@@ -33,8 +34,21 @@ class ServerDetailsController extends Controller
      * Returns details about the server that allows daemon to self-recover and ensure
      * that the state of the server matches the Panel at all times.
      */
-    public function __invoke(ServerRequest $request, Server $server): JsonResponse
+    public function __invoke(Request $request, Server $server): JsonResponse
     {
+        Assert::isInstanceOf($node = $request->attributes->get('node'), Node::class);
+
+        $transfer = $server->transfer;
+
+        // If the server is being transferred allow either node to request information about
+        // the server. If the server is not being transferred only the target node is allowed
+        // to fetch these details.
+        $valid = $transfer ? $node->id === $transfer->old_node || $node->id === $transfer->new_node : $node->id === $server->node_id;
+
+        if (!$valid) {
+            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
+        }
+
         return new JsonResponse([
             'settings' => $this->configurationStructureService->handle($server),
             'process_configuration' => $this->eggConfigurationService->handle($server),
