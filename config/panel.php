@@ -18,7 +18,7 @@ return [
 
     'cdn' => [
         'cache_time' => 60,
-        'egg_index_url' => env('EGG_INDEX_URL', 'https://raw.githubusercontent.com/pelican-eggs/pelican-eggs.github.io/refs/heads/main/content/pelican.json'),
+        'egg_index_url' => env('PANEL_EGG_INDEX_URL', 'https://raw.githubusercontent.com/pelican-eggs/pelican-eggs.github.io/refs/heads/main/content/pelican.json'),
     ],
 
     'client_features' => [
