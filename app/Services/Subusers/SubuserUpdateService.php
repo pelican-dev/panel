@@ -4,17 +4,12 @@ namespace App\Services\Subusers;
 
 use App\Enums\SubuserPermission;
 use App\Facades\Activity;
+use App\Jobs\RevokeSftpAccessJob;
 use App\Models\Server;
 use App\Models\Subuser;
-use App\Repositories\Daemon\DaemonServerRepository;
-use Illuminate\Http\Client\ConnectionException;
 
 class SubuserUpdateService
 {
-    public function __construct(
-        private DaemonServerRepository $serverRepository,
-    ) {}
-
     /**
      * @param  string[]  $permissions
      */
@@ -42,18 +37,10 @@ class SubuserUpdateService
         // Only update the database and hit up the daemon instance to invalidate JTI's if the permissions
         // have actually changed for the user.
         if ($cleanedPermissions !== $current) {
-            $log->transaction(function ($instance) use ($subuser, $cleanedPermissions, $server) {
+            $log->transaction(function () use ($subuser, $cleanedPermissions, $server) {
                 $subuser->update(['permissions' => $cleanedPermissions]);
 
-                try {
-                    $this->serverRepository->setServer($server)->deauthorize($subuser->user->uuid);
-                } catch (ConnectionException $exception) {
-                    // Don't block this request if we can't connect to the daemon instance. Chances are it is
-                    // offline and the token will be invalid once daemon boots back.
-                    logger()->warning($exception, ['user_id' => $subuser->user_id, 'server_id' => $server->id]);
-
-                    $instance->property('revoked', false);
-                }
+                RevokeSftpAccessJob::dispatch($subuser->user->uuid, $server);
             });
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Listeners\Auth;
+namespace App\Listeners;
 
 use App\Events\Auth\ProvidedAuthenticationToken;
 use App\Facades\Activity;

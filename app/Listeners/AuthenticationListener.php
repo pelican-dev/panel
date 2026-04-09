@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Listeners\Auth;
+namespace App\Listeners;
 
 use App\Facades\Activity;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\PasswordReset;
 
 class AuthenticationListener
 {
@@ -16,7 +17,7 @@ class AuthenticationListener
      * Handles an authentication event by logging the user and information about
      * the request.
      */
-    public function handle(Failed|Login $event): void
+    public function login(Failed|Login $event): void
     {
         $activity = Activity::withRequestMetadata();
 
@@ -33,5 +34,13 @@ class AuthenticationListener
         }
 
         $activity->event($event instanceof Failed ? 'auth:fail' : 'auth:success')->log();
+    }
+
+    public function reset(PasswordReset $event): void
+    {
+        Activity::event('event:password-reset')
+            ->withRequestMetadata()
+            ->subject($event->user)
+            ->log();
     }
 }

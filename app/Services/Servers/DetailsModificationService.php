@@ -2,11 +2,10 @@
 
 namespace App\Services\Servers;
 
+use App\Jobs\RevokeSftpAccessJob;
 use App\Models\Server;
-use App\Repositories\Daemon\DaemonServerRepository;
 use App\Traits\Services\ReturnsUpdatedModels;
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
 use Throwable;
 
@@ -17,7 +16,7 @@ class DetailsModificationService
     /**
      * DetailsModificationService constructor.
      */
-    public function __construct(private ConnectionInterface $connection, private DaemonServerRepository $serverRepository) {}
+    public function __construct(private ConnectionInterface $connection) {}
 
     /**
      * Update the details for a single server instance.
@@ -47,13 +46,7 @@ class DetailsModificationService
             // on the daemon instance so that the old owner no longer has any permission to access the
             // websockets.
             if ($server->owner_id !== $owner) {
-                try {
-                    $this->serverRepository->setServer($server)->deauthorize($server->user->uuid);
-                } catch (ConnectionException) {
-                    // Do nothing. A failure here is not ideal, but it is likely to be caused by daemon
-                    // being offline, or in an entirely broken state. Remember, these tokens reset every
-                    // few minutes by default, we're just trying to help it along a little quicker.
-                }
+                RevokeSftpAccessJob::dispatch($server->user->uuid, $server);
             }
 
             return $server;

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\Validatable;
 use App\Enums\CustomizationKey;
 use App\Enums\SubuserPermission;
+use App\Events\User\Deleting;
 use App\Exceptions\DisplayException;
 use App\Extensions\Avatar\AvatarService;
 use App\Models\Traits\HasAccessTokens;
@@ -225,6 +226,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             throw_if($user->servers()->count() > 0, new DisplayException(trans('exceptions.users.has_servers')));
 
             throw_if(request()->user()?->id === $user->id, new DisplayException(trans('exceptions.users.is_self')));
+
+            event(new Deleting($user));
         });
     }
 
