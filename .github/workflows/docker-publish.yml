@@ -77,8 +77,23 @@ jobs:
     # Always run against a tag, even if the commit into the tag has [docker skip] within the commit message.
     if: "!contains(github.ref, 'main') || (!contains(github.event.head_commit.message, 'skip docker') && !contains(github.event.head_commit.message, 'docker skip'))"
     steps:
+        # Fetch the latest release tag from GitHub API before checkout so we can check out the correct ref
+      - name: Get latest release tag (scheduled)
+        id: release_info
+        if: github.event_name == 'schedule'
+        run: |
+          LATEST_TAG=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
+          if [ "$LATEST_TAG" = "null" ] || [ -z "$LATEST_TAG" ]; then
+            echo "No release found, exiting"
+            exit 1
+          fi
+          echo "version_tag=${LATEST_TAG/v/}" >> $GITHUB_OUTPUT
+          echo "schedule_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+
       - name: Code checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.release_info.outputs.schedule_tag || github.ref }}
 
       - name: Docker metadata
         id: docker_meta
@@ -113,14 +128,6 @@ jobs:
         run: |
           echo "version_tag=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_OUTPUT
           echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-
-        # Fetch the latest release tag from GitHub API for use in scheduled builds
-      - name: Get latest release tag (scheduled)
-        id: release_info
-        if: github.event_name == 'schedule'
-        run: |
-          LATEST_TAG=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
-          echo "version_tag=${LATEST_TAG/v/}" >> $GITHUB_OUTPUT
 
         # Download the base PHP image AMD64
       - uses: actions/download-artifact@v4
