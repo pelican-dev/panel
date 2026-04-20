@@ -77,17 +77,23 @@ jobs:
     # Always run against a tag, even if the commit into the tag has [docker skip] within the commit message.
     if: "!contains(github.ref, 'main') || (!contains(github.event.head_commit.message, 'skip docker') && !contains(github.event.head_commit.message, 'docker skip'))"
     steps:
-        # Fetch the latest release tag from GitHub API before checkout so we can check out the correct ref
+        # Fetch the latest release tag from GitHub API before checkout and metadata so we can check out the correct ref and tag the image
       - name: Get latest release tag (scheduled)
         id: release_info
         if: github.event_name == 'schedule'
         run: |
-          LATEST_TAG=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
-          if [ "$LATEST_TAG" = "null" ] || [ -z "$LATEST_TAG" ]; then
-            echo "No release found, exiting"
+          LATEST_TAG=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -w "\n%{http_code}" https://api.github.com/repos/${{ github.repository }}/releases/latest | tail -1 | head -1)
+          HTTP_CODE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -w "%{http_code}" -o /dev/null https://api.github.com/repos/${{ github.repository }}/releases/latest)
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "Failed to fetch latest release (HTTP $HTTP_CODE)"
             exit 1
           fi
-          echo "version_tag=${LATEST_TAG/v/}" >> $GITHUB_OUTPUT
+          LATEST_TAG=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
+          if [ "$LATEST_TAG" = "null" ] || [ -z "$LATEST_TAG" ]; then
+            echo "No release found"
+            exit 1
+          fi
+          echo "version_tag=${LATEST_TAG#v}" >> $GITHUB_OUTPUT
           echo "schedule_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
       - name: Code checkout
@@ -103,7 +109,8 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=raw,value=latest,enable=${{ github.event_name == 'release' && github.event.action == 'published' && github.event.release.prerelease == false }}
+            type=raw,value=latest,enable=${{ (github.event_name == 'release' && github.event.action == 'published' && github.event.release.prerelease == false) || github.event_name == 'schedule' }}
+            type=raw,value=${{ steps.release_info.outputs.version_tag }},enable=${{ github.event_name == 'schedule' }}
             type=ref,event=tag
             type=ref,event=branch
 
@@ -126,7 +133,7 @@ jobs:
       - name: Get Build Information
         id: build_info
         run: |
-          echo "version_tag=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_OUTPUT
+          echo "version_tag=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
           echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
         # Download the base PHP image AMD64
@@ -152,7 +159,12 @@ jobs:
       - name: Update version in config/app.php (tag)
         if: "(github.event_name == 'release' && github.event.action == 'published') || github.event_name == 'schedule'"
         run: |
-          sed -i "s/'version' => 'canary',/'version' => '${{ steps.release_info.outputs.version_tag || steps.build_info.outputs.version_tag }}',/" config/app.php
+          VERSION="${{ github.event_name == 'schedule' && steps.release_info.outputs.version_tag || steps.build_info.outputs.version_tag }}"
+          if [ -z "$VERSION" ] || [ "$VERSION" = "refs/heads/main" ]; then
+            echo "Invalid version tag, refusing to update config"
+            exit 1
+          fi
+          sed -i "s/'version' => 'canary',/'version' => '$VERSION',/" config/app.php
               
       - name: Build and Push (tag)
         uses: docker/build-push-action@v6
@@ -163,7 +175,7 @@ jobs:
           push: true
           platforms: 'linux/amd64,linux/arm64'
           build-args: |
-            VERSION=${{ steps.release_info.outputs.version_tag || steps.build_info.outputs.version_tag }}
+            VERSION=${{ github.event_name == 'schedule' && steps.release_info.outputs.version_tag || steps.build_info.outputs.version_tag }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           cache-from: type=gha,scope=tagged${{ matrix.os }}
