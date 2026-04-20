@@ -59,9 +59,9 @@ if [ "${APP_INSTALLED}" = "true" ];  then
   
   # run migration
   php artisan migrate --force
-fi
 
-php artisan p:plugin:composer
+  php artisan p:plugin:composer
+fi
 
 echo "Optimizing Filament"
 php artisan filament:optimize
