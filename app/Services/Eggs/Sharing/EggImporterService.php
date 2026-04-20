@@ -6,6 +6,7 @@ use App\Enums\EggFormat;
 use App\Exceptions\Service\InvalidFileUploadException;
 use App\Models\Egg;
 use App\Models\EggVariable;
+use Exception;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
@@ -268,11 +269,15 @@ class EggImporterService
             return;
         }
 
-        $extension = strtolower($matches[1]);
-        $data = base64_decode($matches[2]);
+        try {
+            $extension = strtolower($matches[1]);
+            $data = base64_decode($matches[2]);
 
-        if ($data) {
-            $egg->writeIcon($extension, $data);
+            if ($data) {
+                $egg->writeIcon($extension, $data);
+            }
+        } catch (Exception $exception) {
+            report($exception);
         }
     }
 
