@@ -7,6 +7,8 @@ on:
   release:
     types:
       - published
+  schedule:
+    - cron: '0 0 * * 1'
 
 env:
   REGISTRY: ghcr.io
@@ -112,6 +114,14 @@ jobs:
           echo "version_tag=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_OUTPUT
           echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
+        # Fetch the latest release tag from GitHub API for use in scheduled builds
+      - name: Get latest release tag (scheduled)
+        id: release_info
+        if: github.event_name == 'schedule'
+        run: |
+          LATEST_TAG=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
+          echo "version_tag=${LATEST_TAG/v/}" >> $GITHUB_OUTPUT
+
         # Download the base PHP image AMD64
       - uses: actions/download-artifact@v4
         with:
@@ -133,20 +143,20 @@ jobs:
           rm base-php-arm64.tar base-php-amd64.tar
           
       - name: Update version in config/app.php (tag)
-        if: "github.event_name == 'release' && github.event.action == 'published'"
+        if: "(github.event_name == 'release' && github.event.action == 'published') || github.event_name == 'schedule'"
         run: |
-          sed -i "s/'version' => 'canary',/'version' => '${{ steps.build_info.outputs.version_tag }}',/" config/app.php
+          sed -i "s/'version' => 'canary',/'version' => '${{ steps.release_info.outputs.version_tag || steps.build_info.outputs.version_tag }}',/" config/app.php
               
       - name: Build and Push (tag)
         uses: docker/build-push-action@v6
-        if: "github.event_name == 'release' && github.event.action == 'published'"
+        if: "(github.event_name == 'release' && github.event.action == 'published') || github.event_name == 'schedule'"
         with:
           context: .
           file: ./Dockerfile
           push: true
           platforms: 'linux/amd64,linux/arm64'
           build-args: |
-            VERSION=${{ steps.build_info.outputs.version_tag }}
+            VERSION=${{ steps.release_info.outputs.version_tag || steps.build_info.outputs.version_tag }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           cache-from: type=gha,scope=tagged${{ matrix.os }}
