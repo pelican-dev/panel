@@ -30,7 +30,7 @@ return [
         'no_local_ip' => 'Local IP Addresses are not allowed',
         'unsupported_format' => 'Unsupported Format. Supported Formats: :formats',
         'invalid_url' => 'The provided URL is invalid',
-        'unknown_extension' => 'Unknown icon extension',
+        'unknown_extension' => 'Unknown icon extension (:extension)',
         'could_not_write' => 'Could not write icon to disk',
         'icon_deleted' => 'Icon Deleted',
         'no_icon' => 'No Icon Provided',
