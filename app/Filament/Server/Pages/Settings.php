@@ -81,9 +81,11 @@ class Settings extends ServerFormPage
                                             ->imageSize(150)
                                             ->columnSpanFull()
                                             ->alignJustify(),
-                                        UploadIcon::make(),
+                                        UploadIcon::make()
+                                            ->authorize(fn (Server $server) => user()?->can(SubuserPermission::SettingsChangeIcon, $server)),
                                         DeleteIcon::make()
-                                            ->iconStoragePath(Server::getIconStoragePath()),
+                                            ->iconStoragePath(Server::getIconStoragePath())
+                                            ->authorize(fn (Server $server) => user()?->can(SubuserPermission::SettingsChangeIcon, $server)),
                                     ]),
                                 TextInput::make('uuid')
                                     ->label(trans('server/setting.server_info.uuid'))

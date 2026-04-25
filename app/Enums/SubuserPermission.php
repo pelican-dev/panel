@@ -60,6 +60,7 @@ enum SubuserPermission: string
     case SettingsRename = 'settings.rename';
     case SettingsDescription = 'settings.description';
     case SettingsReinstall = 'settings.reinstall';
+    case SettingsChangeIcon = 'settings.change-icon';
 
     /** @return string[] */
     public function split(): array

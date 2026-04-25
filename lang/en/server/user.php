@@ -52,9 +52,10 @@ return [
         'startup_update' => 'Allows a user to modify the startup variables for the server.',
         'startup_docker_image' => 'Allows a user to modify the Docker image used when running the server.',
 
-        'settings_reinstall' => 'Allows a user to trigger a reinstall of this server.',
         'settings_rename' => 'Allows a user to rename this server.',
         'settings_description' => 'Allows a user to change the description of this server.',
+        'settings_reinstall' => 'Allows a user to trigger a reinstall of this server.',
+        'settings_change_icon' => 'Allows a user to change the icon of this server.',
 
         'activity_read' => 'Allows a user to view the activity logs for the server.',
 
