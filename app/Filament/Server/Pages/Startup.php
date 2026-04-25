@@ -149,10 +149,14 @@ class Startup extends ServerFormPage
         return parent::canAccess() && user()?->can(SubuserPermission::StartupRead, Filament::getTenant());
     }
 
-    public function update(?string $state, ServerVariable $serverVariable): void
+    public function update(null|string|bool $state, ServerVariable $serverVariable): void
     {
         if (!$serverVariable->variable->user_editable) {
             return;
+        }
+
+        if (is_bool($state)) {
+            $state = (int) $state;
         }
 
         $original = $serverVariable->variable_value;
@@ -185,14 +189,14 @@ class Startup extends ServerFormPage
                     ->property([
                         'variable' => $serverVariable->variable->env_variable,
                         'old' => $original,
-                        'new' => $state,
+                        'new' => (string) $state,
                     ])
                     ->log();
             }
 
             Notification::make()
                 ->title(trans('server/startup.update', ['variable' => $serverVariable->variable->name]))
-                ->body(fn () => $original . ' -> ' . $state)
+                ->body(fn () => $original . ' -> ' . ((string) $state))
                 ->success()
                 ->send();
         } catch (Exception $e) {
