@@ -156,7 +156,7 @@ class Startup extends ServerFormPage
         }
 
         if (is_bool($state)) {
-            $state = (int) $state;
+            $state = $state ? '1' : '0';
         }
 
         $original = $serverVariable->variable_value;
@@ -189,14 +189,14 @@ class Startup extends ServerFormPage
                     ->property([
                         'variable' => $serverVariable->variable->env_variable,
                         'old' => $original,
-                        'new' => (string) $state,
+                        'new' => $state,
                     ])
                     ->log();
             }
 
             Notification::make()
                 ->title(trans('server/startup.update', ['variable' => $serverVariable->variable->name]))
-                ->body(fn () => $original . ' -> ' . ((string) $state))
+                ->body(fn () => $original . ' -> ' . $state)
                 ->success()
                 ->send();
         } catch (Exception $e) {
