@@ -12,6 +12,7 @@ use App\Http\Middleware\EnsureStatefulRequests;
 use App\Http\Middleware\LanguageMiddleware;
 use App\Http\Middleware\MaintenanceMiddleware;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\SetSecurityHeaders;
 use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Application;
@@ -28,7 +29,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->redirectGuestsTo(fn () => route('filament.app.auth.login'));
 
-        $middleware->web(LanguageMiddleware::class);
+        $middleware->web([
+            LanguageMiddleware::class,
+            SetSecurityHeaders::class,
+        ]);
 
         $middleware->api([
             EnsureStatefulRequests::class,

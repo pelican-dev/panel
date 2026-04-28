@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Api\Remote\Servers;
 
 use App\Enums\ServerState;
 use App\Events\Server\Installed as ServerInstalled;
+use App\Exceptions\Http\HttpForbiddenException;
 use App\Exceptions\Model\DataValidationException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Remote\InstallationDataRequest;
-use App\Http\Requests\Api\Remote\ServerRequest;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class ServerInstallController extends Controller
@@ -17,12 +18,18 @@ class ServerInstallController extends Controller
     /**
      * Returns installation information for a server.
      */
-    public function index(ServerRequest $request, Server $server): JsonResponse
+    public function index(Request $request, Server $server): JsonResponse
     {
+        if (!$server->node->is($request->attributes->get('node'))) {
+            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
+        }
+
+        $egg = $server->egg;
+
         return new JsonResponse([
-            'container_image' => $server->egg->copy_script_container,
-            'entrypoint' => $server->egg->copy_script_entry,
-            'script' => $server->egg->copy_script_install,
+            'container_image' => $egg->copy_script_container,
+            'entrypoint' => $egg->copy_script_entry,
+            'script' => $egg->copy_script_install,
         ]);
     }
 
@@ -34,6 +41,10 @@ class ServerInstallController extends Controller
     public function store(InstallationDataRequest $request, Server $server): JsonResponse
     {
         $status = null;
+
+        if (!$server->node->is($request->attributes->get('node'))) {
+            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
+        }
 
         $successful = $request->boolean('successful');
 

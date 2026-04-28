@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\Validatable;
 use App\Exceptions\Service\Egg\HasChildrenException;
 use App\Exceptions\Service\HasActiveServersException;
+use App\Models\Traits\HasIcon;
 use App\Traits\HasValidation;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -47,7 +47,7 @@ use Illuminate\Support\Str;
  * @property-read string $copy_script_container
  * @property-read string $copy_script_entry
  * @property-read string|null $copy_script_install
- * @property-read string|null $image
+ * @property-read string|null $icon
  * @property-read string|null $inherit_config_files
  * @property-read string|null $inherit_config_logs
  * @property-read string|null $inherit_config_startup
@@ -94,6 +94,7 @@ use Illuminate\Support\Str;
 class Egg extends Model implements Validatable
 {
     use HasFactory;
+    use HasIcon;
     use HasValidation;
 
     /**
@@ -106,22 +107,6 @@ class Egg extends Model implements Validatable
      * Defines the current egg export version.
      */
     public const EXPORT_VERSION = 'PLCN_v3';
-
-    /**
-     * Path to store egg icons relative to storage path.
-     */
-    public const ICON_STORAGE_PATH = 'icons/egg';
-
-    /**
-     * Supported image formats: file extension => MIME type
-     */
-    public const IMAGE_FORMATS = [
-        'png' => 'image/png',
-        'jpg' => 'image/jpeg',
-        'jpeg' => 'image/jpeg',
-        'webp' => 'image/webp',
-        'svg' => 'image/svg+xml',
-    ];
 
     /**
      * Fields that are not mass assignable.
@@ -376,17 +361,5 @@ class Egg extends Model implements Validatable
     public function getKebabName(): string
     {
         return str($this->name)->kebab()->lower()->trim()->split('/[^\w\-]/')->join('');
-    }
-
-    public function getImageAttribute(): ?string
-    {
-        foreach (array_keys(static::IMAGE_FORMATS) as $ext) {
-            $path = static::ICON_STORAGE_PATH . "/$this->uuid.$ext";
-            if (Storage::disk('public')->exists($path)) {
-                return Storage::disk('public')->url($path);
-            }
-        }
-
-        return null;
     }
 }

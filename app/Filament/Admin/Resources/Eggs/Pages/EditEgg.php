@@ -5,8 +5,10 @@ namespace App\Filament\Admin\Resources\Eggs\Pages;
 use App\Enums\EditorLanguages;
 use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Eggs\EggResource;
+use App\Filament\Components\Actions\DeleteIcon;
 use App\Filament\Components\Actions\ExportEggAction;
 use App\Filament\Components\Actions\ImportEggAction;
+use App\Filament\Components\Actions\UploadIcon;
 use App\Filament\Components\Forms\Fields\CopyFrom;
 use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Models\Egg;
@@ -14,12 +16,10 @@ use App\Models\EggVariable;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use App\Traits\Filament\CanCustomizeTabs;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Repeater;
@@ -28,11 +28,8 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Tabs;
@@ -40,10 +37,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Unique;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class EditEgg extends EditRecord
 {
@@ -74,163 +68,17 @@ class EditEgg extends EditRecord
                 ->icon(TablerIcon::Egg)
                 ->schema([
                     Grid::make(2)
-                        ->columnSpan(1)
+                        ->columnStart(1)
                         ->schema([
-                            Image::make('', '')
-                                ->hidden(fn ($record) => !$record->image)
-                                ->url(fn ($record) => $record->image)
-                                ->alt('')
-                                ->alignJustify()
+                            Image::make('', 'icon')
+                                ->hidden(fn ($record) => !$record->icon)
+                                ->url(fn ($record) => $record->icon)
                                 ->imageSize(150)
-                                ->columnSpanFull(),
-                            Flex::make([
-                                Action::make('uploadImage')
-                                    ->hiddenLabel()
-                                    ->tooltip(trans('admin/egg.import.import_image'))
-                                    ->iconSize(IconSize::Large)
-                                    ->icon(TablerIcon::PhotoUp)
-                                    ->modal()
-                                    ->modalHeading('')
-                                    ->modalSubmitActionLabel(trans('admin/egg.import.import_image'))
-                                    ->schema([
-                                        Tabs::make()
-                                            ->contained(false)
-                                            ->tabs([
-                                                Tab::make(trans('admin/egg.import.url'))
-                                                    ->schema([
-                                                        Hidden::make('imageUrl'),
-                                                        Hidden::make('imageExtension'),
-                                                        TextInput::make('image_url')
-                                                            ->label(trans('admin/egg.import.image_url'))
-                                                            ->reactive()
-                                                            ->autocomplete(false)
-                                                            ->debounce(500)
-                                                            ->afterStateUpdated(function ($state, Set $set) {
-                                                                if (!$state) {
-                                                                    $set('image_url_error', null);
-                                                                    $set('imageUrl', null);
-                                                                    $set('imageExtension', null);
-
-                                                                    return;
-                                                                }
-
-                                                                try {
-                                                                    if (!filter_var($state, FILTER_VALIDATE_URL)) {
-                                                                        throw new Exception(trans('admin/egg.import.invalid_url'));
-                                                                    }
-
-                                                                    $extension = strtolower(pathinfo(parse_url($state, PHP_URL_PATH), PATHINFO_EXTENSION));
-
-                                                                    if (!array_key_exists($extension, Egg::IMAGE_FORMATS)) {
-                                                                        throw new Exception(trans('admin/egg.import.unsupported_format', ['format' => implode(', ', array_keys(Egg::IMAGE_FORMATS))]));
-                                                                    }
-
-                                                                    $host = parse_url($state, PHP_URL_HOST);
-                                                                    $ip = gethostbyname($host);
-
-                                                                    if (
-                                                                        filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false
-                                                                    ) {
-                                                                        throw new Exception(trans('admin/egg.import.no_local_ip'));
-                                                                    }
-
-                                                                    $set('imageUrl', $state);
-                                                                    $set('imageExtension', $extension);
-                                                                    $set('image_url_error', null);
-
-                                                                } catch (Exception $e) {
-                                                                    $set('image_url_error', $e->getMessage());
-                                                                    $set('imageUrl', null);
-                                                                    $set('imageExtension', null);
-                                                                }
-                                                            }),
-                                                        TextEntry::make('image_url_error')
-                                                            ->hiddenLabel()
-                                                            ->visible(fn ($get) => $get('image_url_error') !== null)
-                                                            ->afterStateHydrated(fn ($set, $get) => $get('image_url_error')),
-                                                        Image::make(fn (Get $get) => $get('image_url'), '')
-                                                            ->imageSize(150)
-                                                            ->visible(fn ($get) => $get('image_url') && !$get('image_url_error'))
-                                                            ->alignCenter(),
-                                                    ]),
-                                                Tab::make(trans('admin/egg.import.file'))
-                                                    ->schema([
-                                                        FileUpload::make('image')
-                                                            ->hiddenLabel()
-                                                            ->previewable()
-                                                            ->openable(false)
-                                                            ->downloadable(false)
-                                                            ->maxSize(256)
-                                                            ->maxFiles(1)
-                                                            ->columnSpanFull()
-                                                            ->alignCenter()
-                                                            ->imageEditor()
-                                                            ->image()
-                                                            ->disk('public')
-                                                            ->directory(Egg::ICON_STORAGE_PATH)
-                                                            ->acceptedFileTypes([
-                                                                'image/png',
-                                                                'image/jpeg',
-                                                                'image/webp',
-                                                                'image/svg+xml',
-                                                            ])
-                                                            ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file, $record) {
-                                                                return $record->uuid . '.' . $file->getClientOriginalExtension();
-                                                            }),
-                                                    ]),
-                                            ]),
-                                    ])
-                                    ->action(function (array $data, $record): void {
-                                        if (!empty($data['imageUrl']) && !empty($data['imageExtension'])) {
-                                            $this->saveImageFromUrl($data['imageUrl'], $data['imageExtension'], $record);
-
-                                            Notification::make()
-                                                ->title(trans('admin/egg.import.image_updated'))
-                                                ->success()
-                                                ->send();
-
-                                            return;
-                                        }
-
-                                        if (!empty($data['image'])) {
-                                            Notification::make()
-                                                ->title(trans('admin/egg.import.image_updated'))
-                                                ->success()
-                                                ->send();
-
-                                            return;
-                                        }
-
-                                        if (empty($data['imageUrl']) && empty($data['image'])) {
-                                            Notification::make()
-                                                ->title(trans('admin/egg.import.no_image'))
-                                                ->warning()
-                                                ->send();
-                                        }
-                                    }),
-                                Action::make('delete_image')
-                                    ->visible(fn ($record) => $record->image)
-                                    ->hiddenLabel()
-                                    ->tooltip(trans('admin/egg.import.delete_image'))
-                                    ->icon(TablerIcon::Trash)
-                                    ->iconSize(IconSize::Large)
-                                    ->color('danger')
-                                    ->action(function ($record) {
-                                        foreach (array_keys(Egg::IMAGE_FORMATS) as $ext) {
-                                            $path = Egg::ICON_STORAGE_PATH . "/$record->uuid.$ext";
-                                            if (Storage::disk('public')->exists($path)) {
-                                                Storage::disk('public')->delete($path);
-                                            }
-                                        }
-
-                                        Notification::make()
-                                            ->title(trans('admin/egg.import.image_deleted'))
-                                            ->success()
-                                            ->send();
-
-                                        $record->refresh();
-                                    }),
-                            ]),
+                                ->columnSpanFull()
+                                ->alignJustify(),
+                            UploadIcon::make(),
+                            DeleteIcon::make()
+                                ->iconStoragePath(Egg::getIconStoragePath()),
                         ]),
                     TextInput::make('name')
                         ->label(trans('admin/egg.name'))
@@ -467,39 +315,6 @@ class EditEgg extends EditRecord
     public function refreshForm(): void
     {
         $this->fillForm();
-    }
-
-    /**
-     * Save an image from URL download to a file.
-     *
-     * @throws Exception
-     */
-    private function saveImageFromUrl(string $imageUrl, string $extension, Egg $egg): void
-    {
-        $context = stream_context_create([
-            'http' => ['timeout' => 3],
-            'https' => [
-                'timeout' => 3,
-                'verify_peer' => true,
-                'verify_peer_name' => true,
-            ],
-        ]);
-
-        $normalizedExtension = match ($extension) {
-            'svg+xml', 'svg' => 'svg',
-            'jpeg', 'jpg' => 'jpg',
-            'png' => 'png',
-            'webp' => 'webp',
-            default => throw new Exception(trans('admin/egg.import.unknown_extension')),
-        };
-
-        $data = @file_get_contents($imageUrl, false, $context, 0, 1048576); // 1024KB
-
-        if (empty($data)) {
-            throw new Exception(trans('admin/egg.import.invalid_url'));
-        }
-
-        Storage::disk('public')->put(Egg::ICON_STORAGE_PATH . "/$egg->uuid.$normalizedExtension", $data);
     }
 
     protected function getFormActions(): array

@@ -6,12 +6,12 @@ use App\Enums\EggFormat;
 use App\Exceptions\Service\InvalidFileUploadException;
 use App\Models\Egg;
 use App\Models\EggVariable;
+use Exception;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use JsonException;
 use Ramsey\Uuid\Uuid;
 use stdClass;
@@ -223,6 +223,11 @@ class EggImporterService
             }
         }
 
+        if (!empty($parsed['image']) && str_starts_with($parsed['image'], 'data:')) {
+            $parsed['icon'] = $parsed['image'];
+            unset($parsed['image']);
+        }
+
         return $parsed;
     }
 
@@ -231,9 +236,9 @@ class EggImporterService
      */
     protected function fillFromParsed(Egg $model, array $parsed): Egg
     {
-        // Handle image data if present
-        if (!empty($parsed['image']) && str_starts_with($parsed['image'], 'data:')) {
-            $this->saveEggImageFromBase64($parsed['image'], $model);
+        // Handle icon data if present
+        if (!empty($parsed['icon']) && str_starts_with($parsed['icon'], 'data:')) {
+            $this->saveEggIconFromBase64($parsed['icon'], $model);
         }
 
         return $model->forceFill([
@@ -256,28 +261,24 @@ class EggImporterService
     }
 
     /**
-     * Save an egg image from base64 data to a file.
+     * Save an egg icon from base64 data to a file.
      */
-    private function saveEggImageFromBase64(string $base64String, Egg $egg): void
+    private function saveEggIconFromBase64(string $base64String, Egg $egg): void
     {
         if (!preg_match('/^data:image\/([\w+]+);base64,(.+)$/', $base64String, $matches)) {
             return;
         }
 
-        $extension = $matches[1];
-        $data = base64_decode($matches[2]);
+        try {
+            $extension = strtolower($matches[1]);
+            $data = base64_decode($matches[2]);
 
-        if (!$data) {
-            return;
+            if ($data) {
+                $egg->writeIcon($extension, $data);
+            }
+        } catch (Exception $exception) {
+            report($exception);
         }
-
-        $normalizedExtension = match ($extension) {
-            'svg+xml' => 'svg',
-            'jpeg' => 'jpg',
-            default => $extension,
-        };
-
-        Storage::disk('public')->put(Egg::ICON_STORAGE_PATH . "/$egg->uuid.$normalizedExtension", $data);
     }
 
     /**

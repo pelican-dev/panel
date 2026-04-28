@@ -46,7 +46,7 @@ class BackupRemoteUploadController extends Controller
         // Check that the backup is "owned" by the node making the request. This avoids other nodes
         // from messing with backups that they don't own.
         if ($backup->server->node_id !== $node->id) {
-            throw new HttpForbiddenException('You do not have permission to access that backup.');
+            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
 
         // Prevent backups that have already been completed from trying to be uploaded again.
