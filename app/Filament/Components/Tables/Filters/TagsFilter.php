@@ -21,9 +21,9 @@ class TagsFilter extends BaseFilter
     {
         parent::setUp();
 
-        $this->query(fn (Builder $query, array $data) => $query->when($data['tag'], fn (Builder $query, $tag) => $query->whereJsonContains('tags', $tag)));
+        $this->query(fn (Builder $query, array $data) => $query->when($data['tag'] ?? null, fn (Builder $query, $tag) => $query->whereJsonContains('tags', $tag)));
 
-        $this->indicateUsing(fn (array $data) => $data['tag'] ? 'Tag: ' . $data['tag'] : null);
+        $this->indicateUsing(fn (array $data) => ($data['tag'] ?? null) ? 'Tag: ' . $data['tag'] : null);
 
         $this->resetState(['tag' => null]);
 
