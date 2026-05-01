@@ -10,6 +10,7 @@ use App\Http\Middleware\RequireTwoFactorAuthentication;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
+use Filament\Auth\Pages\EmailVerification\EmailVerificationPrompt;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -55,6 +56,7 @@ abstract class PanelProvider extends BasePanelProvider
             ])
             ->login(Login::class)
             ->passwordReset()
+            ->emailVerification(EmailVerificationPrompt::class)
             ->multiFactorAuthentication([
                 AppAuthentication::make()->recoverable(),
                 EmailAuthentication::make(),
