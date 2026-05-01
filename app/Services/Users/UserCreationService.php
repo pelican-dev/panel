@@ -52,6 +52,11 @@ class UserCreationService
         /** @var User $user */
         $user = User::query()->forceCreate(array_merge($data, [
             'uuid' => Uuid::uuid4()->toString(),
+            // every caller of this service is a trusted server-side context,
+            // cli, admin ui, installer, oauth, subuser invite, application
+            // api. self-service signup goes through filament's base register
+            // and bypasses this path so verification still gates that flow.
+            'email_verified_at' => now(),
         ]));
 
         if ($isRootAdmin) {
