@@ -29,7 +29,7 @@ class CronPresetAction extends Action
                                     $get('cron_day_of_month') == $this->dayOfMonth &&
                                     $get('cron_month') == $this->month &&
                                     $get('cron_day_of_week') == $this->dayOfWeek
-            ? 'success' : 'primary');
+            ? 'primary' : 'gray');
 
         $this->action(function (Set $set) {
             $set('cron_minute', $this->minute);
