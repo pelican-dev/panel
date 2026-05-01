@@ -27,3 +27,6 @@ public/assets/manifest.json
 /database/*.sqlite*
 _ide_helper*
 /.phpstorm.meta.php
+
+public/hot
+public/css/*/
