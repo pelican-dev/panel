@@ -155,7 +155,7 @@ jobs:
         
       - name: Build and Push (main)
         uses: docker/build-push-action@v6
-        if: "github.event_name == 'push' && contains(github.ref, 'main')"
+        if: "(github.event_name == 'push' && contains(github.ref, 'main')) || github.event_name == 'workflow_dispatch'"
         with:
           context: .
           file: ./Dockerfile
