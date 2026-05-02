@@ -17,6 +17,8 @@ class SubUserRemovedListener
             ->body(trans('notifications.user_removed.body', ['server' => $event->server->name], $locale))
             ->sendToDatabase($event->user);
 
-        $event->user->notify(new RemovedFromServer($event->server));
+        if (config('panel.email.send_removed_from_server_notification', true)) {
+            $event->user->notify(new RemovedFromServer($event->server));
+        }
     }
 }
