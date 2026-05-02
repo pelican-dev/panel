@@ -5,6 +5,7 @@ return [
     'version' => 'Version: :version',
     'advanced' => 'Advanced',
     'server' => 'Server',
+    'server_versions' => 'Server Versions',
     'user' => 'User',
     'sections' => [
         'intro-developers' => [
