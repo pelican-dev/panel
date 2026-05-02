@@ -88,6 +88,7 @@ jobs:
             latest=false
           tags: |
             type=raw,value=latest,enable=${{ github.event_name == 'release' && github.event.action == 'published' && github.event.release.prerelease == false }}
+            type=raw,value=prod,enable=${{ github.event_name == 'release' && github.event.action == 'published' && github.event.release.prerelease == false }}
             type=ref,event=tag
             type=ref,event=branch
 
