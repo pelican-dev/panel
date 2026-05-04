@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Listeners\Backup;
+namespace App\Listeners\Server;
 
 use App\Events\Server\BackupCompleted;
 use App\Filament\Server\Resources\Backups\Pages\ListBackups;
