@@ -28,6 +28,14 @@ return [
         'action' => 'Login and Begin Using',
     ],
 
+    'backup_completed' => [
+        'body_success' => 'The backup was created successfully.',
+        'body_failed' => 'The backup creation failed.',
+        'backup_name' => 'Backup Name: :name',
+        'server_name' => 'Server Name: :name',
+        'action' => 'View Backups',
+    ],
+
     'mail_tested' => [
         'subject' => 'Panel Test Message',
         'body' => 'This is a test of the Panel mail system. You\'re good to go!',

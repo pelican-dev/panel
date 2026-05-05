@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Remote\Backups;
 
+use App\Events\Server\BackupCompleted;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Extensions\BackupAdapter\BackupAdapterService;
 use App\Extensions\BackupAdapter\Schemas\S3BackupSchema;
@@ -76,6 +77,8 @@ class BackupStatusController extends Controller
                 $schema->completeMultipartUpload($model, $successful, $request->input('parts'));
             }
         });
+
+        event(new BackupCompleted($model));
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
     }
