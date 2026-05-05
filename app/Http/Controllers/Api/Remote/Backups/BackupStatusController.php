@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Remote\Backups;
 
+use App\Events\Server\BackupCompleted;
 use App\Exceptions\DisplayException;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Extensions\Backups\BackupManager;
@@ -78,6 +79,8 @@ class BackupStatusController extends Controller
                 $this->completeMultipartUpload($model, $adapter, $successful, $request->input('parts'));
             }
         });
+
+        event(new BackupCompleted($model));
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
     }
