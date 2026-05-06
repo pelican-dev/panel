@@ -6,6 +6,7 @@ use App\Enums\CustomizationKey;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\Login;
 use App\Http\Middleware\LanguageMiddleware;
+use App\Http\Middleware\PreventRequestForgery;
 use App\Http\Middleware\RequireTwoFactorAuthentication;
 use App\Http\Middleware\SetSecurityHeaders;
 use Filament\Actions\Action;
@@ -18,7 +19,6 @@ use Filament\Panel;
 use Filament\PanelProvider as BasePanelProvider;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
@@ -66,7 +66,7 @@ abstract class PanelProvider extends BasePanelProvider
                 StartSession::class,
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
-                VerifyCsrfToken::class,
+                PreventRequestForgery::class,
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
