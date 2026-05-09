@@ -290,6 +290,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     /**
+     * Returns activity logs where this user is the actor and the event is an admin action.
+     *
+     * @return HasMany<ActivityLog, $this>
+     */
+    public function adminLog(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class, 'actor_id')
+            ->where('actor_type', 'user')
+            ->where('event', 'like', 'admin:%');
+    }
+
+    /**
      * Returns all the servers that a user can access.
      * Either because they are an admin or because they are the owner/ a subuser of the server.
      */

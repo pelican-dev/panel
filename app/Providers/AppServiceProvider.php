@@ -23,6 +23,7 @@ use App\Models\Server;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\UserSSHKey;
+use App\Observers\AdminActivityObserver;
 use App\Services\Helpers\PluginService;
 use App\Services\Helpers\SoftwareVersionService;
 use Dedoc\Scramble\Scramble;
@@ -108,6 +109,20 @@ class AppServiceProvider extends ServiceProvider
                 NodeVersionsCheck::new(),
             ]);
         }
+
+        $observer = new AdminActivityObserver();
+        User::created(fn (User $user) => $observer->userCreated($user));
+        User::updated(fn (User $user) => $observer->userUpdated($user));
+        User::deleted(fn (User $user) => $observer->userDeleted($user));
+        Server::created(fn (Server $server) => $observer->serverCreated($server));
+        Server::updated(fn (Server $server) => $observer->serverUpdated($server));
+        Server::deleted(fn (Server $server) => $observer->serverDeleted($server));
+        Node::created(fn (Node $node) => $observer->nodeCreated($node));
+        Node::updated(fn (Node $node) => $observer->nodeUpdated($node));
+        Node::deleted(fn (Node $node) => $observer->nodeDeleted($node));
+        Egg::created(fn (Egg $egg) => $observer->eggCreated($egg));
+        Egg::updated(fn (Egg $egg) => $observer->eggUpdated($egg));
+        Egg::deleted(fn (Egg $egg) => $observer->eggDeleted($egg));
 
         Gate::before(fn (User $user, $ability) => $user->isRootAdmin() ? true : null);
 

@@ -70,6 +70,9 @@ class Role extends BaseRole
         'panelLog' => [
             'view',
         ],
+        'adminAuditLog' => [
+            'view',
+        ],
         'plugin' => [
             'viewList',
             'create',
@@ -82,6 +85,7 @@ class Role extends BaseRole
         'health' => TablerIcon::Heart,
         'activityLog' => TablerIcon::Stack,
         'panelLog' => TablerIcon::FileInfo,
+        'adminAuditLog' => TablerIcon::ShieldSearch,
     ];
 
     /** @var array<string, array<string>> */

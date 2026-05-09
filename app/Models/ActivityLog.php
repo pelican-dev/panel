@@ -228,7 +228,7 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         });
 
         $keys = $properties->keys()->filter(fn ($key) => Str::endsWith($key, '_count'))->values();
-        if ($keys->containsOneItem()) {
+        if ($keys->hasSole()) {
             $properties = $properties->merge(['count' => $properties->get($keys[0])])->except([$keys[0]]);
         }
 
