@@ -5,7 +5,7 @@ import { globSync } from 'glob';
 
 export default defineConfig({
     build: {
-        chunkSizeWarningLimit: 1000000,
+        chunkSizeWarningLimit: 1000,
     },
     plugins: [
         laravel({
