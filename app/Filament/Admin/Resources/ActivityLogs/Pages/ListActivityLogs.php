@@ -6,7 +6,6 @@ use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\ActivityLogs\ActivityLogResource;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
 use App\Models\ActivityLog;
-use App\Models\Server;
 use App\Models\User;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
