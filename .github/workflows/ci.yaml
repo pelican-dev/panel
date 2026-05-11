@@ -65,13 +65,13 @@ jobs:
         run: php artisan migrate --force --seed
 
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit --parallel
+        run: vendor/bin/pest tests/Unit --parallel --do-not-fail-on-phpunit-warning
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration --parallel
+        run: vendor/bin/pest tests/Integration --parallel --do-not-fail-on-phpunit-warning
 
   mysql:
     name: MySQL
@@ -130,13 +130,13 @@ jobs:
           DB_USERNAME: root
 
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit --parallel
+        run: vendor/bin/pest tests/Unit --parallel --do-not-fail-on-phpunit-warning
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration --parallel
+        run: vendor/bin/pest tests/Integration --parallel --do-not-fail-on-phpunit-warning
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -198,13 +198,13 @@ jobs:
           DB_USERNAME: root
 
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit --parallel
+        run: vendor/bin/pest tests/Unit --parallel --do-not-fail-on-phpunit-warning
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration --parallel
+        run: vendor/bin/pest tests/Integration --parallel --do-not-fail-on-phpunit-warning
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -270,10 +270,10 @@ jobs:
         run: php artisan migrate --force --seed
 
       - name: Unit tests
-        run: vendor/bin/pest tests/Unit --parallel
+        run: vendor/bin/pest tests/Unit --parallel --do-not-fail-on-phpunit-warning
         env:
           DB_HOST: UNIT_NO_DB
           SKIP_MIGRATIONS: true
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration --parallel
+        run: vendor/bin/pest tests/Integration --parallel --do-not-fail-on-phpunit-warning

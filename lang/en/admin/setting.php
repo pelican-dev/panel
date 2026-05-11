@@ -116,6 +116,9 @@ return [
         'mail_notifications' => [
             'title' => 'Mail Notifications',
             'helper' => 'Toggle which mail notifications should be sent to Users.',
+            'account_created' => 'Account Created',
+            'added_to_server' => 'Added to Server',
+            'removed_from_server' => 'Removed from Server',
             'server_installed' => 'Server Installed',
             'server_reinstalled' => 'Server Reinstalled',
             'backup_completed' => 'Backup Completed',

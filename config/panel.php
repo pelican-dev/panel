@@ -45,6 +45,12 @@ return [
     ],
 
     'email' => [
+        // Should an email be sent to a new user when their account is created?
+        'send_account_created_notification' => env('PANEL_SEND_ACCOUNT_CREATED_NOTIFICATION', true),
+        // Should an email be sent to a user when they are added as a subuser to a server?
+        'send_added_to_server_notification' => env('PANEL_SEND_ADDED_TO_SERVER_NOTIFICATION', true),
+        // Should an email be sent to a user when they are removed as a subuser from a server?
+        'send_removed_from_server_notification' => env('PANEL_SEND_REMOVED_FROM_SERVER_NOTIFICATION', true),
         // Should an email be sent to a server owner once their server has completed it's first install process?
         'send_install_notification' => env('PANEL_SEND_INSTALL_NOTIFICATION', true),
         // Should an email be sent to a server owner whenever their server is reinstalled?

@@ -97,15 +97,35 @@ class FilamentServiceProvider extends ServiceProvider
 
         Select::configureUsing(fn (Select $select) => $select->native(false));
 
-        KeyValue::configureUsing(fn (KeyValue $keyValue) => $keyValue->deleteAction(function (Action $action) {
-            $action->tooltip(fn () => $action->getLabel());
-            $action->iconSize(IconSize::Large);
-        }));
+        KeyValue::configureUsing(fn (KeyValue $keyValue) => $keyValue
+            ->addAction(function (Action $action) {
+                $action->tooltip(fn () => $action->getLabel());
+                $action->iconSize(IconSize::Large);
+            })
+            ->deleteAction(function (Action $action) {
+                $action->tooltip(fn () => $action->getLabel());
+                $action->iconSize(IconSize::Large);
+            })
+            ->reorderAction(function (Action $action) {
+                $action->tooltip(fn () => $action->getLabel());
+                $action->iconSize(IconSize::Large);
+            })
+        );
 
-        Repeater::configureUsing(fn (Repeater $repeater) => $repeater->deleteAction(function (Action $action) {
-            $action->tooltip(fn () => $action->getLabel());
-            $action->iconSize(IconSize::Large);
-        }));
+        Repeater::configureUsing(fn (Repeater $repeater) => $repeater
+            ->addAction(function (Action $action) {
+                $action->tooltip(fn () => $action->getLabel());
+                $action->iconSize(IconSize::Large);
+            })
+            ->deleteAction(function (Action $action) {
+                $action->tooltip(fn () => $action->getLabel());
+                $action->iconSize(IconSize::Large);
+            })
+            ->reorderAction(function (Action $action) {
+                $action->tooltip(fn () => $action->getLabel());
+                $action->iconSize(IconSize::Large);
+            })
+        );
 
         ShowPasswordAction::configureUsing(function (ShowPasswordAction $action) {
             $action->tooltip(fn () => $action->getLabel());
