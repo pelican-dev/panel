@@ -9,6 +9,7 @@ use App\Traits\Filament\CanCustomizePages;
 use BackedEnum;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 
 class ActivityLogResource extends Resource
 {
@@ -45,17 +46,17 @@ class ActivityLogResource extends Resource
         return false;
     }
 
-    public static function canEdit($record): bool
+    public static function canEdit(Model $record): bool
     {
         return false;
     }
 
-    public static function canDelete($record): bool
+    public static function canDelete(Model $record): bool
     {
         return false;
     }
 
-    public static function canView($record): bool
+    public static function canView(Model $record): bool
     {
         return false;
     }

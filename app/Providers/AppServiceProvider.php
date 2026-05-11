@@ -18,6 +18,7 @@ use App\Models\Database;
 use App\Models\Egg;
 use App\Models\EggVariable;
 use App\Models\Node;
+use App\Models\Role;
 use App\Models\Schedule;
 use App\Models\Server;
 use App\Models\Task;
@@ -123,6 +124,9 @@ class AppServiceProvider extends ServiceProvider
         Egg::created(fn (Egg $egg) => $observer->eggCreated($egg));
         Egg::updated(fn (Egg $egg) => $observer->eggUpdated($egg));
         Egg::deleted(fn (Egg $egg) => $observer->eggDeleted($egg));
+        Role::created(fn (Role $role) => $observer->roleCreated($role));
+        Role::updated(fn (Role $role) => $observer->roleUpdated($role));
+        Role::deleted(fn (Role $role) => $observer->roleDeleted($role));
 
         Gate::before(fn (User $user, $ability) => $user->isRootAdmin() ? true : null);
 
