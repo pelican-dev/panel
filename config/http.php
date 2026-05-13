@@ -6,10 +6,9 @@ return [
     | API Rate Limits
     |--------------------------------------------------------------------------
     |
-    | Defines the rate limit for the number of requests per minute that can be
-    | executed against both the client and internal (application) APIs over the
-    | defined period (by default, 1 minute).
-    |
+    | Defines the rate limit for the number of requests that can be
+    | executed against the client and internal (application) APIs along with 
+    | certain other endpoints over a defined period (1 minute for most)
     */
     'rate_limit' => [
         'client_period' => env('APP_API_CLIENT_RATELIMIT_PERIOD', 1),
