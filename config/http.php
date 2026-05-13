@@ -7,7 +7,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Defines the rate limit for the number of requests that can be
-    | executed against the client and internal (application) APIs along with 
+    | executed against the client and internal (application) APIs along with
     | certain other endpoints over a defined period (1 minute for most)
     */
     'rate_limit' => [
