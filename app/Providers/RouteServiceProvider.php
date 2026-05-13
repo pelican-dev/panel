@@ -69,10 +69,10 @@ class RouteServiceProvider extends ServiceProvider
         // trigger email spam.
         RateLimiter::for('authentication', function (Request $request) {
             if ($request->route()->named('auth.post.forgot-password')) {
-                return Limit::perMinute(2)->by($request->ip());
+                return Limit::perMinutes(config('http.rate_limit.password_reset_period'), config('http.rate_limit.password_reset'))->by($request->ip());
             }
 
-            return Limit::perMinute(10);
+            return Limit::perMinutes(config('http.rate_limit.auth_period'), config('http.rate_limit.auth'));
         });
 
         // Configure the throttles for both the application and client APIs below.
