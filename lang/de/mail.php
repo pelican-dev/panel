@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'greeting' => 'Hello :name!',
+    'greeting' => 'Hallo :name!',
 
     'account_created' => [
         'body' => 'Sie erhalten diese E-Mail, weil für Sie ein Konto erstellt wurde für :app.',
