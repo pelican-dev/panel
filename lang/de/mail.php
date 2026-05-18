@@ -29,15 +29,15 @@ return [
     ],
 
     'backup_completed' => [
-        'body_success' => 'The backup was created successfully.',
-        'body_failed' => 'The backup creation failed.',
+        'body_success' => 'Backup erfolgreich erstellt.',
+        'body_failed' => 'Backup Erstellung fehlgeschlagen.',
         'backup_name' => 'Backup Name: :name',
         'server_name' => 'Server Name: :name',
-        'action' => 'View Backups',
+        'action' => 'Backups ansehen',
     ],
 
     'mail_tested' => [
-        'subject' => 'Panel Test Message',
-        'body' => 'This is a test of the Panel mail system. You\'re good to go!',
+        'subject' => 'Panel Test Nachricht',
+        'body' => 'Das ist ein Test vom Panel E-Mail System. Sie können loslegen!',
     ],
 ];
