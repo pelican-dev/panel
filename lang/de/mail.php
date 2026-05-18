@@ -5,13 +5,13 @@ return [
 
     'account_created' => [
         'body' => 'You are receiving this email because an account has been created for you on :app.',
-        'username' => 'Username: :username',
-        'email' => 'Email: :email',
-        'action' => 'Setup Your Account',
+        'username' => 'Benutzername: :username',
+        'email' => 'E-Mail: :email',
+        'action' => 'Richte dein Konto ein',
     ],
 
     'added_to_server' => [
-        'body' => 'You have been added as a subuser for the following server, allowing you certain control over the server.',
+        'body' => 'Sie wurden als Unterbenutzer für den folgenden Server hinzugefügt, wodurch Sie bestimmte Kontrollrechte über den Server erhalten.',
         'server_name' => 'Server Name: :name',
         'action' => 'Visit Server',
     ],
