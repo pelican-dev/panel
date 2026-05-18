@@ -4,7 +4,7 @@ return [
     'greeting' => 'Hello :name!',
 
     'account_created' => [
-        'body' => 'You are receiving this email because an account has been created for you on :app.',
+        'body' => 'Sie erhalten diese E-Mail, weil für Sie ein Konto erstellt wurde für :app.',
         'username' => 'Benutzername: :username',
         'email' => 'E-Mail: :email',
         'action' => 'Richte dein Konto ein',
