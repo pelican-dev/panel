@@ -13,19 +13,19 @@ return [
     'added_to_server' => [
         'body' => 'Sie wurden als Unterbenutzer für den folgenden Server hinzugefügt, wodurch Sie bestimmte Kontrollrechte über den Server erhalten.',
         'server_name' => 'Server Name: :name',
-        'action' => 'Visit Server',
+        'action' => 'Server ansehen',
     ],
 
     'removed_from_server' => [
-        'body' => 'You have been removed as a subuser for the following server.',
+        'body' => 'Sie wurden als Unterbenutzer für folgende Server entfernt.',
         'server_name' => 'Server Name: :name',
-        'action' => 'Visit Panel',
+        'action' => 'Panel ansehen',
     ],
 
     'server_installed' => [
-        'body' => 'Your server has finished installing and is now ready for you to use.',
+        'body' => 'Die Installation für den Server wurde abgeschlossen und ist nun bereit.',
         'server_name' => 'Server Name: :name',
-        'action' => 'Login and Begin Using',
+        'action' => 'Anmelden und loslegen',
     ],
 
     'backup_completed' => [
