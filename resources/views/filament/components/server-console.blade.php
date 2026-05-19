@@ -145,14 +145,14 @@
                     handleConsoleOutput(args[0]);
                     break;
                 case 'install completed':
-                    window.location.reload();
+                    $wire.dispatch('refresh-sidebar');
+                    $wire.dispatch('removeAlertBanner', { id: 'server_conflict' });
                     break;
                 case 'feature match':
                     Livewire.dispatch('mount-feature', { data: args[0] });
                     break;
                 case 'status':
                     handlePowerChangeEvent(args[0]);
-
                     $wire.dispatch('console-status', { state: args[0] });
                     break;
                 case 'transfer status':

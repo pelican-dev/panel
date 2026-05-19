@@ -36,6 +36,7 @@ class AlertBannerContainer extends Component
         }
     }
 
+    #[On('removeAlertBanner')]
     public function remove(string $id): void
     {
         if ($this->alertBanners->has($id)) {
