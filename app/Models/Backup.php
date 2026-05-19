@@ -84,7 +84,7 @@ class Backup extends Model implements Validatable
         'is_locked' => ['boolean'],
         'name' => ['required', 'string'],
         'ignored_files' => ['array'],
-        'backup_host_id' => ['required', 'numeric', 'exists:backup_hosts,id'],
+        'backup_host_id' => ['required', 'integer', 'exists:backup_hosts,id'],
         'checksum' => ['nullable', 'string'],
         'bytes' => ['numeric'],
         'upload_id' => ['nullable', 'string'],
