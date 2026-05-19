@@ -146,6 +146,7 @@
                     break;
                 case 'install completed':
                     $wire.dispatch('refresh-sidebar');
+                    $wire.dispatch('refresh-topbar');
                     $wire.dispatch('removeAlertBanner', { id: 'server_conflict' });
                     break;
                 case 'feature match':
