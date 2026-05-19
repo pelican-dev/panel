@@ -144,6 +144,9 @@
                 case 'install output':
                     handleConsoleOutput(args[0]);
                     break;
+                case 'install completed':
+                    window.location.reload();
+                    break;
                 case 'feature match':
                     Livewire.dispatch('mount-feature', { data: args[0] });
                     break;
