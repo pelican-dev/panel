@@ -67,12 +67,13 @@ class RouteServiceProvider extends ServiceProvider
         // a limit of 10 requests per minute, for the forgot password endpoint apply a
         // limit of two per minute for the requester so that there is less ability to
         // trigger email spam.
+        // the ratelimits refrenced above are now configured by env vars (check config/http.php for more details)
         RateLimiter::for('authentication', function (Request $request) {
             if ($request->route()->named('auth.post.forgot-password')) {
-                return Limit::perMinute(2)->by($request->ip());
+                return Limit::perMinutes(config('http.rate_limit.password_reset_period'), config('http.rate_limit.password_reset'))->by($request->ip());
             }
 
-            return Limit::perMinute(10);
+            return Limit::perMinutes(config('http.rate_limit.auth_period'), config('http.rate_limit.auth'));
         });
 
         // Configure the throttles for both the application and client APIs below.
