@@ -16,10 +16,8 @@ use App\Livewire\AlertBanner;
 use App\Models\File;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonFileRepository;
-use App\Services\Nodes\NodeJWTService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
-use Carbon\CarbonImmutable;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -614,28 +612,6 @@ class ListFiles extends ListRecords
             7 => ['read', 'write', 'execute'],
             default => [],
         };
-    }
-
-    public function getUploadUrl(NodeJWTService $jwtService): string
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        if (!user()?->can(SubuserPermission::FileCreate, $server)) {
-            abort(403, 'You do not have permission to upload files.');
-        }
-
-        $token = $jwtService
-            ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
-            ->setUser(user())
-            ->setClaims(['server_uuid' => $server->uuid])
-            ->handle($server->node, user()->id . $server->uuid);
-
-        return sprintf(
-            '%s/upload/file?token=%s',
-            $server->node->getConnectionAddress(),
-            $token->toString()
-        );
     }
 
     public function getUploadSizeLimit(): int
