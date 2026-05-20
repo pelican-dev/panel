@@ -23,6 +23,7 @@ jobs:
           upload_sources: false
           upload_translations: false
           download_translations: true
+          export_only_approved: true
           create_pull_request: true
           pull_request_title: 'feat: Update translations'
           pull_request_body: 'Automated Pull Request containing the latest translations from Crowdin.'
