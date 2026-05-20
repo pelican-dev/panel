@@ -31,13 +31,13 @@ use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -112,7 +112,7 @@ class Settings extends Page implements HasSchemas
             Tabs::make('Tabs')
                 ->columns()
                 ->persistTabInQueryString()
-                ->disabled(fn() => !user()?->can('update settings'))
+                ->disabled(fn () => !user()?->can('update settings'))
                 ->tabs($this->getTabs()),
         ];
     }
@@ -236,8 +236,8 @@ class Settings extends Page implements HasSchemas
                     1 => trans('admin/setting.general.admins_only'),
                     2 => trans('admin/setting.general.all_users'),
                 ])
-                ->formatStateUsing(fn($state): int => (int) $state)
-                ->afterStateUpdated(fn($state, Set $set) => $set('APP_2FA_REQUIRED', (int) $state))
+                ->formatStateUsing(fn ($state): int => (int) $state)
+                ->afterStateUpdated(fn ($state, Set $set) => $set('APP_2FA_REQUIRED', (int) $state))
                 ->default(env('APP_2FA_REQUIRED', config('panel.auth.2fa_required'))),
             Select::make('FILAMENT_WIDTH')
                 ->label(trans('admin/setting.general.display_width'))
@@ -256,12 +256,12 @@ class Settings extends Page implements HasSchemas
                         ->color('danger')
                         ->icon(TablerIcon::Trash)
                         ->requiresConfirmation()
-                        ->authorize(fn() => user()?->can('update settings'))
-                        ->action(fn(Set $set) => $set('TRUSTED_PROXIES', [])),
+                        ->authorize(fn () => user()?->can('update settings'))
+                        ->action(fn (Set $set) => $set('TRUSTED_PROXIES', [])),
                     Action::make('hint_cloudflare')
                         ->label(trans('admin/setting.general.set_to_cf'))
                         ->icon(TablerIcon::BrandCloudflare)
-                        ->authorize(fn() => user()?->can('update settings'))
+                        ->authorize(fn () => user()?->can('update settings'))
                         ->action(function (Factory $client, Set $set) {
                             $ips = collect();
 
@@ -303,7 +303,7 @@ class Settings extends Page implements HasSchemas
             $formFields[] = Section::make($schema->getName())
                 ->columns(5)
                 ->icon($schema->getIcon() ?? TablerIcon::Shield)
-                ->collapsed(fn() => !$schema->isEnabled())
+                ->collapsed(fn () => !$schema->isEnabled())
                 ->collapsible()
                 ->schema([
                     Hidden::make("CAPTCHA_{$id}_ENABLED")
@@ -311,20 +311,20 @@ class Settings extends Page implements HasSchemas
                         ->default(env("CAPTCHA_{$id}_ENABLED")),
                     Actions::make([
                         Action::make("disable_captcha_$id")
-                            ->visible(fn(Get $get) => $get("CAPTCHA_{$id}_ENABLED"))
-                            ->disabled(fn() => !user()?->can('update settings'))
+                            ->visible(fn (Get $get) => $get("CAPTCHA_{$id}_ENABLED"))
+                            ->disabled(fn () => !user()?->can('update settings'))
                             ->label(trans('admin/setting.captcha.disable'))
                             ->color('danger')
-                            ->action(fn(Set $set) => $set("CAPTCHA_{$id}_ENABLED", false)),
+                            ->action(fn (Set $set) => $set("CAPTCHA_{$id}_ENABLED", false)),
                         Action::make("enable_captcha_$id")
-                            ->visible(fn(Get $get) => !$get("CAPTCHA_{$id}_ENABLED"))
-                            ->disabled(fn() => !user()?->can('update settings'))
+                            ->visible(fn (Get $get) => !$get("CAPTCHA_{$id}_ENABLED"))
+                            ->disabled(fn () => !user()?->can('update settings'))
                             ->label(trans('admin/setting.captcha.enable'))
                             ->color('success')
-                            ->action(fn(Set $set) => $set("CAPTCHA_{$id}_ENABLED", true)),
+                            ->action(fn (Set $set) => $set("CAPTCHA_{$id}_ENABLED", true)),
                     ])->columnSpan(1),
                     Group::make($schema->getSettingsForm())
-                        ->visible(fn(Get $get) => $get("CAPTCHA_{$id}_ENABLED"))
+                        ->visible(fn (Get $get) => $get("CAPTCHA_{$id}_ENABLED"))
                         ->columns(4)
                         ->columnSpan(4),
                 ]);
@@ -359,8 +359,8 @@ class Settings extends Page implements HasSchemas
                     Action::make('hint_test')
                         ->label(trans('admin/setting.mail.test_mail'))
                         ->icon(TablerIcon::Send)
-                        ->hidden(fn(Get $get) => $get('MAIL_MAILER') === 'log')
-                        ->authorize(fn() => user()?->can('update settings'))
+                        ->hidden(fn (Get $get) => $get('MAIL_MAILER') === 'log')
+                        ->authorize(fn () => user()?->can('update settings'))
                         ->action(function (Get $get) {
                             // Store original mail configuration
                             $originalConfig = [
@@ -429,7 +429,7 @@ class Settings extends Page implements HasSchemas
             Section::make(trans('admin/setting.mail.smtp.smtp_title'))
                 ->columns()
                 ->columnSpanFull()
-                ->visible(fn(Get $get) => $get('MAIL_MAILER') === 'smtp')
+                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'smtp')
                 ->schema([
                     TextInput::make('MAIL_HOST')
                         ->label(trans('admin/setting.mail.smtp.host'))
@@ -466,7 +466,7 @@ class Settings extends Page implements HasSchemas
             Section::make(trans('admin/setting.mail.mailgun.mailgun_title'))
                 ->columns()
                 ->columnSpanFull()
-                ->visible(fn(Get $get) => $get('MAIL_MAILER') === 'mailgun')
+                ->visible(fn (Get $get) => $get('MAIL_MAILER') === 'mailgun')
                 ->schema([
                     TextInput::make('MAILGUN_DOMAIN')
                         ->label(trans('admin/setting.mail.mailgun.domain'))
@@ -523,7 +523,7 @@ class Settings extends Page implements HasSchemas
                 ]),
             Section::make(trans('admin/setting.backup.s3.s3_title'))
                 ->columns()
-                ->visible(fn(Get $get) => $get('APP_BACKUP_DRIVER') === Backup::ADAPTER_AWS_S3)
+                ->visible(fn (Get $get) => $get('APP_BACKUP_DRIVER') === Backup::ADAPTER_AWS_S3)
                 ->schema([
                     TextInput::make('AWS_DEFAULT_REGION')
                         ->label(trans('admin/setting.backup.s3.default_region'))
@@ -584,7 +584,7 @@ class Settings extends Page implements HasSchemas
             $formFields[] = Section::make($schema->getName())
                 ->columns(5)
                 ->icon($icon ?? TablerIcon::BrandOauth)
-                ->collapsed(fn() => !$schema->isEnabled())
+                ->collapsed(fn () => !$schema->isEnabled())
                 ->collapsible()
                 ->schema([
                     Hidden::make($key)
@@ -592,14 +592,14 @@ class Settings extends Page implements HasSchemas
                         ->default($schema->isEnabled()),
                     Actions::make([
                         Action::make('disable_oauth_' . $schema->getId())
-                            ->visible(fn(Get $get) => $get($key))
-                            ->disabled(fn() => !user()?->can('update settings'))
+                            ->visible(fn (Get $get) => $get($key))
+                            ->disabled(fn () => !user()?->can('update settings'))
                             ->label(trans('admin/setting.oauth.disable'))
                             ->color('danger')
-                            ->action(fn(Set $set) => $set($key, false)),
+                            ->action(fn (Set $set) => $set($key, false)),
                         Action::make('enable_oauth_'  . $schema->getId())
-                            ->visible(fn(Get $get) => !$get($key))
-                            ->disabled(fn() => !user()?->can('update settings'))
+                            ->visible(fn (Get $get) => !$get($key))
+                            ->disabled(fn () => !user()?->can('update settings'))
                             ->label(trans('admin/setting.oauth.enable'))
                             ->color('success')
                             ->steps($schema->getSetupSteps())
@@ -617,7 +617,7 @@ class Settings extends Page implements HasSchemas
                             }),
                     ])->columnSpan(1),
                     Group::make($schema->getSettingsForm())
-                        ->visible(fn(Get $get) => $get($key))
+                        ->visible(fn (Get $get) => $get($key))
                         ->columns(4)
                         ->columnSpan(4),
                 ]);
@@ -659,7 +659,7 @@ class Settings extends Page implements HasSchemas
                         ->offColor('danger')
                         ->live()
                         ->columnSpanFull()
-                        ->visible(fn(Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
+                        ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
                         ->stateCast(new BooleanStateCast(false))
                         ->default(env('PANEL_CLIENT_ALLOCATIONS_CREATE_NEW', config('panel.client_features.allocations.create_new'))),
                     TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_START')
@@ -668,7 +668,7 @@ class Settings extends Page implements HasSchemas
                         ->numeric()
                         ->minValue(1024)
                         ->maxValue(65535)
-                        ->visible(fn(Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
+                        ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
                         ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_START')),
                     TextInput::make('PANEL_CLIENT_ALLOCATIONS_RANGE_END')
                         ->label(trans('admin/setting.misc.auto_allocation.end'))
@@ -676,7 +676,7 @@ class Settings extends Page implements HasSchemas
                         ->numeric()
                         ->minValue(1024)
                         ->maxValue(65535)
-                        ->visible(fn(Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
+                        ->visible(fn (Get $get) => $get('PANEL_CLIENT_ALLOCATIONS_ENABLED'))
                         ->default(env('PANEL_CLIENT_ALLOCATIONS_RANGE_END')),
                 ]),
             Section::make(trans('admin/setting.misc.mail_notifications.title'))
@@ -692,8 +692,8 @@ class Settings extends Page implements HasSchemas
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->formatStateUsing(fn($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn($state, Set $set) => $set('PANEL_SEND_ACCOUNT_CREATED_NOTIFICATION', (bool) $state))
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_ACCOUNT_CREATED_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_ACCOUNT_CREATED_NOTIFICATION', config('panel.email.send_account_created_notification'))),
                     Toggle::make('PANEL_SEND_ADDED_TO_SERVER_NOTIFICATION')
                         ->label(trans('admin/setting.misc.mail_notifications.added_to_server'))
@@ -702,8 +702,8 @@ class Settings extends Page implements HasSchemas
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->formatStateUsing(fn($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn($state, Set $set) => $set('PANEL_SEND_ADDED_TO_SERVER_NOTIFICATION', (bool) $state))
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_ADDED_TO_SERVER_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_ADDED_TO_SERVER_NOTIFICATION', config('panel.email.send_added_to_server_notification'))),
                     Toggle::make('PANEL_SEND_REMOVED_FROM_SERVER_NOTIFICATION')
                         ->label(trans('admin/setting.misc.mail_notifications.removed_from_server'))
@@ -712,8 +712,8 @@ class Settings extends Page implements HasSchemas
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->formatStateUsing(fn($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn($state, Set $set) => $set('PANEL_SEND_REMOVED_FROM_SERVER_NOTIFICATION', (bool) $state))
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REMOVED_FROM_SERVER_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_REMOVED_FROM_SERVER_NOTIFICATION', config('panel.email.send_removed_from_server_notification'))),
                     Toggle::make('PANEL_SEND_INSTALL_NOTIFICATION')
                         ->label(trans('admin/setting.misc.mail_notifications.server_installed'))
@@ -722,8 +722,8 @@ class Settings extends Page implements HasSchemas
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->formatStateUsing(fn($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn($state, Set $set) => $set('PANEL_SEND_INSTALL_NOTIFICATION', (bool) $state))
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_INSTALL_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_INSTALL_NOTIFICATION', config('panel.email.send_install_notification'))),
                     Toggle::make('PANEL_SEND_REINSTALL_NOTIFICATION')
                         ->label(trans('admin/setting.misc.mail_notifications.server_reinstalled'))
@@ -732,8 +732,8 @@ class Settings extends Page implements HasSchemas
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->formatStateUsing(fn($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn($state, Set $set) => $set('PANEL_SEND_REINSTALL_NOTIFICATION', (bool) $state))
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REINSTALL_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
                     Toggle::make('PANEL_SEND_BACKUP_COMPLETED_NOTIFICATION')
                         ->label(trans('admin/setting.misc.mail_notifications.backup_completed'))
@@ -742,8 +742,8 @@ class Settings extends Page implements HasSchemas
                         ->onColor('success')
                         ->offColor('danger')
                         ->live()
-                        ->formatStateUsing(fn($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn($state, Set $set) => $set('PANEL_SEND_BACKUP_COMPLETED_NOTIFICATION', (bool) $state))
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_BACKUP_COMPLETED_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_BACKUP_COMPLETED_NOTIFICATION', config('panel.email.send_backup_completed_notification'))),
                 ]),
             Section::make(trans('admin/setting.misc.connections.title'))
@@ -804,181 +804,181 @@ class Settings extends Page implements HasSchemas
                         ->label('Client API Ratelimit')
                         ->schema([
                             TextInput::make('APP_API_CLIENT_RATELIMIT')
-                                ->label("Requests Per Period")
+                                ->label('Requests Per Period')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix("Requests")->default(env('APP_API_CLIENT_RATELIMIT', config('http.rate_limit.client'))),
+                                ->suffix('Requests')->default(env('APP_API_CLIENT_RATELIMIT', config('http.rate_limit.client'))),
 
                             TextInput::make('APP_API_CLIENT_RATELIMIT_PERIOD')
-                                ->label("Period Length")
+                                ->label('Period Length')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
                                 ->suffix('Minutes')->default(env('APP_API_CLIENT_RATELIMIT_PERIOD', config('http.rate_limit.client_period'))),
-                            Text::make("Ratelimit is per user, or IP if there is no user")
+                            Text::make('Ratelimit is per user, or IP if there is no user'),
                         ]),
                     Fieldset::make()
                         ->label('Application API Ratelimit')
                         ->schema([
                             TextInput::make('APP_API_APPLICATION_RATELIMIT')
-                                ->label("Requests Per Period")
+                                ->label('Requests Per Period')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix("Requests")->default(env('APP_API_APPLICATION_RATELIMIT', config('http.rate_limit.application'))),
+                                ->suffix('Requests')->default(env('APP_API_APPLICATION_RATELIMIT', config('http.rate_limit.application'))),
 
                             TextInput::make('APP_API_APPLICATION_RATELIMIT_PERIOD')
-                                ->label("Period Length")
+                                ->label('Period Length')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
                                 ->suffix('Minutes')->default(env('APP_API_APPLICATION_RATELIMIT_PERIOD', config('http.rate_limit.application_period'))),
-                            Text::make("Ratelimit is per user, or IP if there is no user")
+                            Text::make('Ratelimit is per user, or IP if there is no user'),
                         ]),
                     Fieldset::make()
                         ->label('Auth Ratelimit')
                         ->schema([
                             TextInput::make('APP_API_AUTH_RATELIMIT')
-                                ->label("Requests Per Period")
+                                ->label('Requests Per Period')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix("Requests")->default(env('APP_API_AUTH_RATELIMIT', config('http.rate_limit.auth'))),
+                                ->suffix('Requests')->default(env('APP_API_AUTH_RATELIMIT', config('http.rate_limit.auth'))),
 
                             TextInput::make('APP_API_AUTH_RATELIMIT_PERIOD')
-                                ->label("Period Length")
+                                ->label('Period Length')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
                                 ->suffix('Minutes')->default(env('APP_API_AUTH_RATELIMIT_PERIOD', config('http.rate_limit.auth_period'))),
-                            Text::make("Ratelimit is instance wide")
+                            Text::make('Ratelimit is instance wide'),
                         ]),
                     Fieldset::make()
                         ->label('Password Reset Ratelimit')
                         ->schema([
                             TextInput::make('APP_API_PASSWORD_RESET_RATELIMIT')
-                                ->label("Requests Per Period")
+                                ->label('Requests Per Period')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix("Requests")->default(env('APP_API_PASSWORD_RESET_RATELIMIT', config('http.rate_limit.password_reset'))),
+                                ->suffix('Requests')->default(env('APP_API_PASSWORD_RESET_RATELIMIT', config('http.rate_limit.password_reset'))),
 
                             TextInput::make('APP_API_PASSWORD_RESET_RATELIMIT_PERIOD')
-                                ->label("Period Length")
+                                ->label('Period Length')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
                                 ->suffix('Minutes')->default(env('APP_API_PASSWORD_RESET_RATELIMIT_PERIOD', config('http.rate_limit.password_reset_period'))),
-                            Text::make("Ratelimit is per IP")
+                            Text::make('Ratelimit is per IP'),
                         ]),
                     Fieldset::make()
                         ->label('Websocket Ratelimit')
                         ->schema([
                             TextInput::make('APP_API_WEBSOCKET_RATELIMIT')
-                                ->label("Requests Per Period")
+                                ->label('Requests Per Period')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix("Requests")->default(env('APP_API_WEBSOCKET_RATELIMIT', config('http.rate_limit.websocket'))),
+                                ->suffix('Requests')->default(env('APP_API_WEBSOCKET_RATELIMIT', config('http.rate_limit.websocket'))),
 
                             TextInput::make('APP_API_WEBSOCKET_RATELIMIT_PERIOD')
-                                ->label("Period Length")
+                                ->label('Period Length')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
                                 ->suffix('Minutes')->default(env('APP_API_WEBSOCKET_RATELIMIT_PERIOD', config('http.rate_limit.websocket_period'))),
-                            Text::make("Ratelimit is per server")
+                            Text::make('Ratelimit is per server'),
                         ]),
                     Fieldset::make()
                         ->label('Backup and Restore Ratelimit')
                         ->schema([
                             TextInput::make('APP_API_BACKUP_RESTORE_RATELIMIT')
-                                ->label("Requests Per Period")
+                                ->label('Requests Per Period')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix("Requests")->default(env('APP_API_BACKUP_RESTORE_RATELIMIT', config('http.rate_limit.backup_restore'))),
+                                ->suffix('Requests')->default(env('APP_API_BACKUP_RESTORE_RATELIMIT', config('http.rate_limit.backup_restore'))),
 
                             TextInput::make('APP_API_BACKUP_RESTORE_RATELIMIT_PERIOD')
-                                ->label("Period Length")
+                                ->label('Period Length')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
                                 ->suffix('Minutes')->default(env('APP_API_BACKUP_RESTORE_RATELIMIT_PERIOD', config('http.rate_limit.backup_restore_period'))),
-                            Text::make("Ratelimit is per server")
+                            Text::make('Ratelimit is per server'),
                         ]),
                     Fieldset::make()
                         ->label('Database Create Ratelimit')
                         ->schema([
                             TextInput::make('APP_API_DATABASE_CREATE_RATELIMIT')
-                                ->label("Requests Per Period")
+                                ->label('Requests Per Period')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix("Requests")->default(env('APP_API_DATABASE_CREATE_RATELIMIT', config('http.rate_limit.database_create'))),
+                                ->suffix('Requests')->default(env('APP_API_DATABASE_CREATE_RATELIMIT', config('http.rate_limit.database_create'))),
 
                             TextInput::make('APP_API_DATABASE_CREATE_RATELIMIT_PERIOD')
-                                ->label("Period Length")
+                                ->label('Period Length')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
                                 ->suffix('Minutes')->default(env('APP_API_DATABASE_CREATE_RATELIMIT_PERIOD', config('http.rate_limit.database_create_period'))),
-                            Text::make("Ratelimit is per server")
+                            Text::make('Ratelimit is per server'),
                         ]),
                     Fieldset::make()
                         ->label('Subuser Create Ratelimit')
                         ->schema([
                             TextInput::make('APP_API_SUBUSER_CREATE_RATELIMIT')
-                                ->label("Requests Per Period")
+                                ->label('Requests Per Period')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix("Requests")->default(env('APP_API_SUBUSER_CREATE_RATELIMIT', config('http.rate_limit.subuser_create'))),
+                                ->suffix('Requests')->default(env('APP_API_SUBUSER_CREATE_RATELIMIT', config('http.rate_limit.subuser_create'))),
 
                             TextInput::make('APP_API_SUBUSER_CREATE_RATELIMIT_PERIOD')
-                                ->label("Period Length")
+                                ->label('Period Length')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
                                 ->suffix('Minutes')->default(env('APP_API_SUBUSER_CREATE_RATELIMIT_PERIOD', config('http.rate_limit.subuser_create_period'))),
-                            Text::make("Ratelimit is per server")
+                            Text::make('Ratelimit is per server'),
                         ]),
                     Fieldset::make()
                         ->label('File Pull Ratelimit')
                         ->schema([
                             TextInput::make('APP_API_FILE_PULL_RATELIMIT')
-                                ->label("Requests Per Period")
+                                ->label('Requests Per Period')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix("Requests")->default(env('APP_API_FILE_PULL_RATELIMIT', config('http.rate_limit.file_pull'))),
+                                ->suffix('Requests')->default(env('APP_API_FILE_PULL_RATELIMIT', config('http.rate_limit.file_pull'))),
 
                             TextInput::make('APP_API_FILE_PULL_RATELIMIT_PERIOD')
-                                ->label("Period Length")
+                                ->label('Period Length')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
                                 ->suffix('Minutes')->default(env('APP_API_FILE_PULL_RATELIMIT_PERIOD', config('http.rate_limit.file_pull_period'))),
-                            Text::make("Ratelimit is per server")
+                            Text::make('Ratelimit is per server'),
                         ]),
                     Fieldset::make()
                         ->label('Default Ratelimit')
                         ->schema([
                             TextInput::make('APP_API_DEFAULT_RATELIMIT')
-                                ->label("Requests Per Period")
+                                ->label('Requests Per Period')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix("Requests")->default(env('APP_API_DEFAULT_RATELIMIT', config('http.rate_limit.default'))),
+                                ->suffix('Requests')->default(env('APP_API_DEFAULT_RATELIMIT', config('http.rate_limit.default'))),
 
                             TextInput::make('APP_API_DEFAULT_RATELIMIT_PERIOD')
-                                ->label("Period Length")
+                                ->label('Period Length')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
                                 ->suffix('Minutes')->default(env('APP_API_DEFAULT_RATELIMIT_PERIOD', config('http.rate_limit.default_period'))),
-                            Text::make("Ratelimit is per server")
+                            Text::make('Ratelimit is per server'),
                         ]),
                 ]),
             Section::make(trans('admin/setting.misc.server.title'))
@@ -995,8 +995,8 @@ class Settings extends Page implements HasSchemas
                         ->offColor('danger')
                         ->live()
                         ->columnSpan(1)
-                        ->formatStateUsing(fn($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
                         ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
                     FileUpload::make('ConsoleFonts')
                         ->hint(trans('admin/setting.misc.server.console_font_hint'))
@@ -1078,7 +1078,7 @@ class Settings extends Page implements HasSchemas
                 ->icon(TablerIcon::DeviceFloppy)
                 ->action('save')
                 ->tooltip(trans('filament-panels::resources/pages/edit-record.form.actions.save.label'))
-                ->authorize(fn() => user()?->can('update settings'))
+                ->authorize(fn () => user()?->can('update settings'))
                 ->keyBindings(['mod+s']),
         ];
     }
