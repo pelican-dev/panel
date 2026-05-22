@@ -17,9 +17,6 @@ return [
         'application_period' => env('APP_API_APPLICATION_RATELIMIT_PERIOD', 1),
         'application' => env('APP_API_APPLICATION_RATELIMIT', 256),
 
-        'auth_period' => env('APP_API_AUTH_RATELIMIT_PERIOD', 1),
-        'auth' => env('APP_API_AUTH_RATELIMIT', 10),
-
         'password_reset_period' => env('APP_API_PASSWORD_RESET_RATELIMIT_PERIOD', 1),
         'password_reset' => env('APP_API_PASSWORD_RESET_RATELIMIT', 2),
 

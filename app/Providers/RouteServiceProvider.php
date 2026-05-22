@@ -72,8 +72,6 @@ class RouteServiceProvider extends ServiceProvider
             if ($request->route()->named('auth.post.forgot-password')) {
                 return Limit::perMinutes(config('http.rate_limit.password_reset_period'), config('http.rate_limit.password_reset'))->by($request->ip());
             }
-
-            return Limit::perMinutes(config('http.rate_limit.auth_period'), config('http.rate_limit.auth'));
         });
 
         // Configure the throttles for both the application and client APIs below.

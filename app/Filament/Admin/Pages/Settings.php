@@ -837,24 +837,6 @@ class Settings extends Page implements HasSchemas
                             Text::make('Ratelimit is per user, or IP if there is no user'),
                         ]),
                     Fieldset::make()
-                        ->label('Auth Ratelimit')
-                        ->schema([
-                            TextInput::make('APP_API_AUTH_RATELIMIT')
-                                ->label('Requests Per Period')
-                                ->required()
-                                ->numeric()
-                                ->minValue(1)
-                                ->suffix('Requests')->default(env('APP_API_AUTH_RATELIMIT', config('http.rate_limit.auth'))),
-
-                            TextInput::make('APP_API_AUTH_RATELIMIT_PERIOD')
-                                ->label('Period Length')
-                                ->required()
-                                ->numeric()
-                                ->minValue(1)
-                                ->suffix('Minutes')->default(env('APP_API_AUTH_RATELIMIT_PERIOD', config('http.rate_limit.auth_period'))),
-                            Text::make('Ratelimit is instance wide'),
-                        ]),
-                    Fieldset::make()
                         ->label('Password Reset Ratelimit')
                         ->schema([
                             TextInput::make('APP_API_PASSWORD_RESET_RATELIMIT')
