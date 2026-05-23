@@ -1,0 +1,29 @@
+name: Add Crowdin Translation Strings
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'lang/en/**'
+      - 'crowdin.yml'
+  workflow_dispatch:
+
+jobs:
+  synchronize-with-crowdin:
+    name: Synchronize Sources with Crowdin
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Sync Sources to Crowdin
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: true
+          upload_translations: false
+          download_translations: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CROWDIN_PROJECT_ID: '665842'
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
