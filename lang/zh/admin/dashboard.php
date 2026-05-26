@@ -25,7 +25,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => '未偵測到節點',
-            'content' => "看起來您尚未設定任何節點，不過別擔心，您可以點擊操作按鈕來建立第一個節點！",
+            'content' => '看起來您尚未設定任何節點，不過別擔心，您可以點擊操作按鈕來建立第一個節點！',
             'extra_note' => '如果您遇到任何問題，請在 GitHub 上回報。',
             'button_label' => '在 Pelican 建立第一個節點',
         ],

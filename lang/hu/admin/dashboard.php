@@ -25,7 +25,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'Nincs észlelt csomópont',
-            'content' => "Úgy tűnik, hogy még nincs egyetlen csomópontod sem beállítva, de ne aggódj, mert a művelet gombra kattintva létrehozhatod az elsőt!",
+            'content' => 'Úgy tűnik, hogy még nincs egyetlen csomópontod sem beállítva, de ne aggódj, mert a művelet gombra kattintva létrehozhatod az elsőt!',
             'extra_note' => 'Ha bármilyen problémába ütközik, kérjük jelentse a GitHubon.',
             'button_label' => 'Első csomópont létrehozása a Pelicanban',
         ],

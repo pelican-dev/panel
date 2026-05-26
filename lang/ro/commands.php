@@ -5,7 +5,7 @@ return [
         'comment' => [
             'author' => 'Furnizați adresa de e-mail de la care ar trebui să fie exportate ouăle prin acest Panou. Aceasta ar trebui să fie o adresă de e-mail validă.',
             'url' => 'Aplicaţia URL TREBUIE să înceapă cu http:// sau http:// în funcţie de dacă utilizaţi SSL sau nu. Dacă nu includeți schema de e-mailuri și alte conținuturi se vor conecta la locația greșită.',
-            'timezone' => "Fusul orar ar trebui să se potrivească cu unul dintre fusele orare acceptate de PHP. Dacă nu sunteți sigur, vă rugăm să faceți referire la\\ https://php.net/manual/en/timezones.php.",
+            'timezone' => 'Fusul orar ar trebui să se potrivească cu unul dintre fusele orare acceptate de PHP. Dacă nu sunteți sigur, vă rugăm să faceți referire la\\ https://php.net/manual/en/timezones.php.',
         ],
         'redis' => [
             'note' => 'Ați selectat driverul Redis pentru una sau mai multe opțiuni, vă rugăm să furnizați informații valide de conectare de mai jos. În cele mai multe cazuri puteți utiliza valorile implicite furnizate, cu excepția cazului în care ați modificat configurarea.',
@@ -15,7 +15,7 @@ return [
     ],
     'database_settings' => [
         'DB_HOST_note' => 'Este recomandat sa nu se foloseasca "localhost" ca gazda ta de baza de date pentru ca am vazut probleme frecvente legate de conexiunea socket-ului. Dacă doriți să utilizați o conexiune locală, ar trebui să utilizați "127.0.0.1".',
-        'DB_USERNAME_note' => "Folosirea contului root pentru conexiunile MySQL nu este doar foarte înspăimântată, dar nici nu este permisă de această aplicație. Va trebui să vă creați un utilizator MySQL pentru acest software.",
+        'DB_USERNAME_note' => 'Folosirea contului root pentru conexiunile MySQL nu este doar foarte înspăimântată, dar nici nu este permisă de această aplicație. Va trebui să vă creați un utilizator MySQL pentru acest software.',
         'DB_PASSWORD_note' => 'Se pare ca aveti deja o parola pentru conexiunea MySQL, doriti sa o schimbati?',
         'DB_error_2' => 'Datele de conectare NU au fost salvate. Va trebui să furnizați informații valide despre conexiune înainte de a continua.',
         'go_back' => 'Întoarce-te și încearcă din nou',
@@ -34,7 +34,7 @@ return [
         'disk_overallocate' => 'Introduceți cantitatea de disc pentru a fi suprasolicitată de, -1 va dezactiva verificarea și 0 va împiedica crearea unui nou server',
         'cpu' => 'Introduceți valoarea maximă a cpu',
         'cpu_overallocate' => 'Introduceți cantitatea de disc pentru a fi suprasolicitată, -1 va dezactiva verificarea și 0 va împiedica crearea unui nou server',
-        'upload_size' => "Introduceți dimensiunea maximă a fișierului",
+        'upload_size' => 'Introduceți dimensiunea maximă a fișierului',
         'daemonListen' => 'Introduceți portul de ascultare al daemon-ului',
         'daemonConnect' => 'Introdu portul de conectare al daemon-ului (poate fi același ca portul de ascultare)',
         'daemonSFTP' => 'Introduceți portul de ascultare al daemon-ului pentru SFTP',

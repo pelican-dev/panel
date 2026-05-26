@@ -5,7 +5,7 @@ return [
         'comment' => [
             'author' => 'Podaj adres e-mail, z którego powinny być eksportowane jaja przez ten panel. To powinien być poprawny adres e-mail.',
             'url' => 'Adres URL aplikacji MUSI zaczynać się od https:// lub http:// w zależności od tego, czy używasz SSL, czy nie. Jeśli nie zastosujesz tego schematu, adresy e-mail i inne treści będą linkować do złej lokalizacji.',
-            'timezone' => "Strefa czasowa powinna odpowiadać jednej z obsługiwanych stref czasowych PHP. Jeśli nie jesteś pewien, sprawdź stronę https://php.net/manual/en/timezones.php.",
+            'timezone' => 'Strefa czasowa powinna odpowiadać jednej z obsługiwanych stref czasowych PHP. Jeśli nie jesteś pewien, sprawdź stronę https://php.net/manual/en/timezones.php.',
         ],
         'redis' => [
             'note' => 'Wybrałeś sterownik Redis dla jednej lub więcej opcji, podaj poniżej poprawne informacje o połączeniu. W większości przypadków możesz użyć domyślnych ustawień chyba że zmodyfikowałeś ustawienia.',
@@ -15,7 +15,7 @@ return [
     ],
     'database_settings' => [
         'DB_HOST_note' => 'Zaleca się, aby nie używać „localhost” jako hosta bazy danych, ponieważ często występują problemy z połączeniami gniazdowymi. Jeśli chcesz używać połączenia lokalnego, powinieneś użyć „127.0.0.1”.',
-        'DB_USERNAME_note' => "Używanie konta root do połączeń z MySQL jest nie tylko zdecydowanie odradzane, ale także niedozwolone przez tę aplikację. Musisz utworzyć użytkownika MySQL dla tego oprogramowania.",
+        'DB_USERNAME_note' => 'Używanie konta root do połączeń z MySQL jest nie tylko zdecydowanie odradzane, ale także niedozwolone przez tę aplikację. Musisz utworzyć użytkownika MySQL dla tego oprogramowania.',
         'DB_PASSWORD_note' => 'Wygląda na to, że masz już zdefiniowane hasło do połączenia z MySQL. Czy chcesz je zmienić?',
         'DB_error_2' => 'Twoje dane logowania nie zostały zapisane. Będziesz musiał podać prawidłowe informacje o połączeniu przed kontynuowaniem.',
         'go_back' => 'Wróć i spróbuj ponownie',
@@ -34,7 +34,7 @@ return [
         'disk_overallocate' => 'Wprowadź ilość przestrzeni dyskowej, którą chcesz przypisać; -1 wyłączy sprawdzanie, a 0 uniemożliwi tworzenie nowych serwerów.',
         'cpu' => 'Wprowadź maksymalną ilość cpu',
         'cpu_overallocate' => 'Wprowadź ilość cpu, którą chcesz przypisać; -1 wyłączy sprawdzanie, a 0 uniemożliwi tworzenie nowych serwerów.',
-        'upload_size' => "Wprowadź maksymalny rozmiar pliku do przesłania",
+        'upload_size' => 'Wprowadź maksymalny rozmiar pliku do przesłania',
         'daemonListen' => 'Wprowadź port, na którym nasłuchuje daemon',
         'daemonConnect' => 'Podaj port łączenia daemon (może być taki sam jak port nasłuchu).',
         'daemonSFTP' => 'Wprowadź port nasłuchujący daemona SFTP',

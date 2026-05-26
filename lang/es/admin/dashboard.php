@@ -25,7 +25,7 @@ return [
         ],
         'intro-first-node' => [
             'heading' => 'No se han detectado nodes',
-            'content' => "Parece que aún no tienes ningún node configurado, pero no te preocupes: haz clic en el botón de acción para crear el primero.",
+            'content' => 'Parece que aún no tienes ningún node configurado, pero no te preocupes: haz clic en el botón de acción para crear el primero.',
             'extra_note' => 'Si tienes algún problema, por favor repórtalo en GitHub.',
             'button_label' => 'Crear el primer node en Pelican',
         ],

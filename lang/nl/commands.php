@@ -15,7 +15,7 @@ return [
     ],
     'database_settings' => [
         'DB_HOST_note' => 'Het wordt sterk aangeraden om "localhost" niet als uw database-host te gebruiken, aangezien we frequente problemen met verbinding met socket hebben gezien. Als je een lokale verbinding wilt gebruiken, moet je "127.0.0.1" gebruiken.',
-        'DB_USERNAME_note' => "Het gebruik van het root-account voor MySQL verbindingen is niet alleen sterk afgeraden, het wordt ook niet toegestaan door deze applicatie. U heeft een MySQL gebruiker voor deze software nodig.",
+        'DB_USERNAME_note' => 'Het gebruik van het root-account voor MySQL verbindingen is niet alleen sterk afgeraden, het wordt ook niet toegestaan door deze applicatie. U heeft een MySQL gebruiker voor deze software nodig.',
         'DB_PASSWORD_note' => 'Het lijkt erop dat u al een MySQL wachtwoord hebt gedefinieerd, wilt u het wijzigen?',
         'DB_error_2' => 'Uw verbindingsgegevens zijn NIET opgeslagen. U moet geldige verbindingsinformatie verstrekken voordat u verder gaat.',
         'go_back' => 'Ga terug en probeer het opnieuw',
