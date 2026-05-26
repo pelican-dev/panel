@@ -377,7 +377,7 @@ class PluginService
             }
         }
 
-        $pluginName = str($file->getClientOriginalName())->before('.zip')->toString();
+        $pluginName = str($file->getClientOriginalName())->basename()->before('.zip')->toString();
 
         if ($cleanDownload) {
             File::deleteDirectory(plugin_path($pluginName));
