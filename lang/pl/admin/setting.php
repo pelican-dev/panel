@@ -116,8 +116,12 @@ return [
         'mail_notifications' => [
             'title' => 'Powiadomienia e-mail',
             'helper' => 'Wybierz, które powiadomienia mailowe mają być wysyłane do użytkowników.',
+            'account_created' => 'Konto utworzone',
+            'added_to_server' => 'Dodano do serwera',
+            'removed_from_server' => 'Usunięto z serwera',
             'server_installed' => 'Serwer zainstalowany',
             'server_reinstalled' => 'Serwer został ponownie zainstalowany',
+            'backup_completed' => 'Kopia zapasowa zakończona',
         ],
         'connections' => [
             'title' => 'Połączenia',

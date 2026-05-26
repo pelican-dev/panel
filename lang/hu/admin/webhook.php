@@ -10,7 +10,6 @@ return [
     'help' => 'Súgó',
     'help_text' => 'A változó nevét a {{ }}} közé kell tenned, például ha a nevet az api-ból akarod megkapni, használhatod a {{name}} változó.',
     'test_now' => 'Tesztelés',
-    'test_now_help' => 'Ez egy `created: Server` esemény',
     'table' => [
         'description' => 'Leírás',
         'endpoint' => 'Végpont',

@@ -20,6 +20,8 @@ return [
         'never_used' => 'Nigdy nieużywane',
     ],
     'permissions' => [
+        'all' => 'Ustaw wszystkie uprawnienia',
+        'all_description' => 'Szybko ustaw wszystkie poniższe uprawnienia na ten sam poziom.',
         'none' => 'Brak',
         'read' => 'Odczyt',
         'read_write' => 'Odczyt i zapis',

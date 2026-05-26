@@ -3,7 +3,7 @@
 return [
     'title' => 'Bases de datos',
     'empty' => 'Sin bases de datos',
-    'create_database' => 'Crear Base de Datos',
+    'create_database' => 'Crear base de datos',
     'limit' => 'Límite de bases de datos alcanzado',
     'viewing' => 'Visualizando: :database',
     'host' => 'Host',
@@ -11,6 +11,7 @@ return [
     'username' => 'Nombre de usuario',
     'password' => 'Contraseña',
     'remote' => 'Remoto',
+    'unlimited' => 'Ilimitado',
     'created_at' => 'Creado el',
     'name' => 'Nombre de la base de datos',
     'name_hint' => 'Dejar este espacio en blanco generará automáticamente un nombre aleatorio',

@@ -10,8 +10,8 @@ return [
     'in_use' => 'En uso',
     'all' => 'Todos',
     'root_admin' => 'El rol :role tiene todos los permisos',
-    'root_admin_delete' => 'No se puede eliminar el Administrador raíz',
+    'root_admin_delete' => 'No es posible eliminar el administrador raíz',
     'users' => 'Usuarios',
-    'nodes' => 'Nodos',
-    'nodes_hint' => 'Dejar vacío para permitir el acceso a todos los nodos',
+    'nodes' => 'Nodes',
+    'nodes_hint' => 'Déjalo vacío para permitir el acceso a todos los nodes.',
 ];

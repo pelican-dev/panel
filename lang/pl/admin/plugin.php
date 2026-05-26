@@ -11,7 +11,7 @@ return [
     'version' => 'Wersja',
     'category' => 'Kategoria',
     'status' => 'Status',
-    'visit_website' => 'Odwiedzić stronę internetową',
+    'visit_website' => 'Odwiedź stronę internetową',
     'settings' => 'Ustawienia',
     'install' => 'Zainstaluj',
     'uninstall' => 'Odinstaluj',
@@ -26,16 +26,16 @@ return [
     'apply_load_order' => 'Zastosuj kolejność ładowania',
 
     'enable_theme_modal' => [
-        'heading' => 'Motyw jest już włączony',
-        'description' => 'Masz już włączony motyw. Włączenie wielu motywów może powodować błędy wizualne. Czy chcesz kontynuować?',
+        'heading' => 'Motyw już jest włączony',
+        'description' => 'Motyw już jest włączony. Aktywacja wielu motywów może powodować błędy wizualne. Kontynuować?',
     ],
 
     'status_enum' => [
         'not_installed' => 'Niezainstalowane',
         'disabled' => 'Wyłączone',
         'enabled' => 'Włączone',
-        'errored' => 'Błąd',
-        'incompatible' => 'Niekompatybilny',
+        'errored' => 'Wystąpił błąd',
+        'incompatible' => 'Niekompatybilna',
     ],
 
     'category_enum' => [
@@ -45,17 +45,27 @@ return [
     ],
 
     'notifications' => [
-        'installed' => 'Wtyczka zainstalowana',
-        'install_error' => 'Nie można zainstalować wtyczki',
-        'uninstalled' => 'Wtyczka odinstalowana',
-        'uninstall_error' => 'Nie można odinstalować wtyczki',
-        'deleted' => 'Wtyczka usunięta',
-        'updated' => 'Wtyczka zaktualizowana',
-        'update_error' => 'Nie można zaktualizować wtyczki',
-        'enabled' => 'Wtyczka została włączona',
-        'disabled' => 'Wtyczka została wyłączona',
-        'imported' => 'Wtyczka zaimportowana',
+        'goto_plugins' => 'Przejdź do sekcji Wtyczki',
+        'background_info' => 'Ten proces może potrwać kilka sekund. Otrzymasz powiadomienie, gdy się zakończy.',
+
+        'install_started' => 'Rozpoczęto instalację wtyczki w tle',
+        'installed' => 'Zainstalowano wtyczkę',
+        'install_error' => 'Niepowodzenie aktualizacji wtyczki',
+
+        'uninstall_started' => 'Rozpoczęto odinstalowywanie wtyczki w tle',
+        'uninstalled' => 'Odinstalowano wtyczkę',
+        'uninstall_error' => 'Niepowodzenie odinstalowania wtyczki',
+
+        'update_started' => 'Rozpoczęła się aktualizacja wtyczki w tle',
+        'updated' => 'Zaktualizowano wtyczkę',
+        'update_error' => 'Niepowodzenie aktualizacji wtyczki',
+
+        'enabled' => 'Włączono wtyczkę',
+        'disabled' => 'Wyłączono wtyczkę',
+        'deleted' => 'Usunięto wtyczkę',
+
+        'imported' => 'Zaimportowano wtyczkę',
         'import_exists' => 'Wtyczka o tym id już istnieje',
-        'import_failed' => 'Nie można zaimportować wtyczki',
+        'import_failed' => 'Niepowodzenie importu wtyczki',
     ],
 ];

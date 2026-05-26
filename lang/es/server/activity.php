@@ -7,5 +7,5 @@ return [
     'deleted_user' => 'Usuario eliminado',
     'system' => 'Sistema',
     'timestamp' => 'Fecha y hora',
-    'metadata' => 'Meta datos',
+    'metadata' => 'Metadatos',
 ];

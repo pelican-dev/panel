@@ -17,14 +17,19 @@ return [
     'no_mounts' => 'Geen Mounts',
     'eggs' => 'Eggs',
     'nodes' => 'Nodes',
+    'user_mountable' => 'Kan worden gemount door gebruiker?',
+    'user_mountable_help' => 'Mogen gebruikers deze mount in en uitschakelen?',
     'toggles' => [
         'writable' => 'Schrijfbaar',
         'read_only' => 'Alleen lezen',
+        'user_mountable' => 'Kan worden gemount door gebruiker',
+        'not_user_mountable' => 'Alleen voor admins',
     ],
     'table' => [
         'name' => 'Naam',
         'all_eggs' => 'Alle Eggs',
         'all_nodes' => 'Alle Nodes',
         'read_only' => 'Alleen lezen',
+        'user_mountable' => 'Kan worden gemount door gebruiker?',
     ],
 ];

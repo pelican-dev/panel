@@ -64,7 +64,10 @@ return [
     'sidebar' => 'Boczny pasek',
     'topbar' => 'Górny pasek',
     'mixed' => 'Zmieszane',
+    'redirect_to_admin' => 'Przekierowanie do panelu administracyjnego po zalogowaniu',
+    'redirect_to_admin_help' => 'Po włączeniu tej opcji po zalogowaniu nastąpi przekierowanie do panelu administracyjnego zamiast do listy serwerów.',
     'no_oauth' => 'Brak połączonych kont',
     'no_api_keys' => 'Brak kluczy API',
     'no_ssh_keys' => 'Brak kluczy SSH',
+    'activity_info' => 'Wyświetlanie ostatnich 50 wpisów w dzienniku aktywności',
 ];

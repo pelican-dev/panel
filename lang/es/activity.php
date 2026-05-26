@@ -22,7 +22,7 @@ return [
     'user' => [
         'account' => [
             'username-changed' => 'Nombre de usuario cambiado de <b>:old</b> a <b>:new</b>',
-            'email-changed' => 'Correo electrónico cambiado de <b>:old</b> a <b>:new</b>',
+            'email-changed' => 'Correo cambiado de <b>:old</b> a <b>:new</b>',
             'password-changed' => 'Contraseña cambiada',
         ],
         'api-key' => [
@@ -82,7 +82,7 @@ return [
         ],
         'sftp' => [
             'denied' => 'Acceso SFTP bloqueado debido a los permisos',
-            'create' => 'Creado <b>:files</b>|Creado <b>:count</b> archivos nuevos',
+            'create' => 'Creados <b>:files</b> | Creados <b>:count</b> archivos nuevos',
             'write' => 'Modificados los contenidos de <b>:files</b>| Modificados los contenidos de <b>:count</b> archivos',
             'delete' => 'Eliminado <b>:files</b>|Eliminados <b>:count</b> archivos',
             'create-directory' => 'Creado el directorio <b>:files</b> | Creados <b>:count</b> directorios',
@@ -91,19 +91,19 @@ return [
         'allocation' => [
             'create' => 'Añadido <b>:allocation</b> al servidor',
             'notes' => 'Actualizadas las notas para <b>:allocation</b> de "<b>:old</b>" a "<b>:new</b>"',
-            'primary' => 'Establecida <b>:allocation</b> como la asignación primaria del servidor',
-            'delete' => 'Eliminada la asignación <b>:allocation</b>',
+            'primary' => 'Establecida <b>:allocation</b> como la allocation primaria del servidor',
+            'delete' => 'Eliminada la allocation <b>:allocation</b>',
         ],
         'schedule' => [
-            'create' => 'Creado el horario <b>:name</b>',
-            'update' => 'Actualizado el horario <b>:name</b>',
-            'execute' => 'Ejecutó manualmente el horario <b>:name</b>',
-            'delete' => 'Eliminado el horario <b>:name</b>',
+            'create' => 'Se creó la schedule <b>:name</b>',
+            'update' => 'Se actualizó la schedule <b>:name</b>',
+            'execute' => 'Se ejecutó manualmente la schedule <b>:name</b>',
+            'delete' => 'Se eliminó la schedule <b>:name</b>',
         ],
         'task' => [
-            'create' => 'Creada una nueva tarea "<b>:action</b>" para el horario <b>:name</b>',
-            'update' => 'Actualizada la tarea"<b>:action</b>" para el horario <b>:name</b>',
-            'delete' => 'Se eliminó la tarea "<b>:action</b>" del horario <b>:name</b>',
+            'create' => 'Creada una nueva tarea "<b>:action</b>" para la schedule <b>:name</b>',
+            'update' => 'Actualizada la tarea"<b>:action</b>" para la schedule <b>:name</b>',
+            'delete' => 'Se eliminó la tarea "<b>:action</b>" de la schedule <b>:name</b>',
         ],
         'settings' => [
             'rename' => 'Renombrado el servidor de "<b>:old</b>" a "<b>:new</b>"',
@@ -119,6 +119,9 @@ return [
             'create' => 'Añadido <b>:email</b> como subusuario',
             'update' => 'Actualizados los permisos del subusuario <b>:email</b>',
             'delete' => 'Eliminado <b>:email</b> como subusuario',
+        ],
+        'mount' => [
+            'update' => 'Montajes del servidor actualizados',
         ],
         'crashed' => 'Servidor caído',
     ],

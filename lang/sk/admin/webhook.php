@@ -10,7 +10,6 @@ return [
     'help' => 'Pomoc',
     'help_text' => 'Názov premennej musíte vložiť medzi {{ }}. Napríklad, ak chcete získať názov z API, môžete použiť {{name}}.',
     'test_now' => 'Otestovať teraz',
-    'test_now_help' => 'Toto spustí \'created: Server\' udalosť',
     'table' => [
         'description' => 'Popis',
         'endpoint' => 'Koncový bod',

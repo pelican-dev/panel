@@ -20,6 +20,8 @@ return [
         'never_used' => 'Chưa bao giờ dùng',
     ],
     'permissions' => [
+        'all' => 'Thiết lập tất cả quyền',
+        'all_description' => 'Nhanh chóng thiết lập tất cả các quyền bên dưới về cùng một cấp độ.',
         'none' => 'Trống',
         'read' => 'Đọc',
         'read_write' => 'Đọc & Ghi',

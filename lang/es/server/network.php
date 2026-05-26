@@ -2,8 +2,8 @@
 
 return [
     'title' => 'Red',
-    'add' => 'Añadir Asignación',
-    'limit' => 'Límite de asignaciones alcanzado',
+    'add' => 'Añadir allocation',
+    'limit' => 'Límite de allocations alcanzado',
     'address' => 'Dirección',
     'port' => 'Puerto',
     'notes' => 'Notas',
@@ -13,5 +13,5 @@ return [
     'make' => 'Crear',
     'delete' => 'Eliminar',
     'locked' => '¿Bloqueado?',
-    'locked_helper' => 'Las asignaciones bloqueadas sólo pueden ser eliminadas por administradores',
+    'locked_helper' => 'Las allocations bloqueadas sólo pueden ser eliminadas por administradores',
 ];

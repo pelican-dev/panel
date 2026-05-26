@@ -10,7 +10,6 @@ return [
     'help' => '도움말',
     'help_text' => '변수 이름을 {{ }} 사이에 래핑해야 합니다. 예를 들어 API에서 이름을 가져오려면 {{name}}을 사용할 수 있습니다.',
     'test_now' => '지금 테스트',
-    'test_now_help' => '`created: Server` 이벤트를 발생시킵니다',
     'table' => [
         'description' => '설명',
         'endpoint' => '엔드포인트',
