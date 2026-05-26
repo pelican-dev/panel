@@ -47,7 +47,8 @@ class EditEgg extends EditRecord
 
     protected static string $resource = EggResource::class;
 
-    public ?Egg $record = null;
+    /** @var Egg|null */
+    public \Illuminate\Database\Eloquent\Model|string|int|null $record = null;
 
     public function form(Schema $schema): Schema
     {
