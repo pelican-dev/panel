@@ -126,7 +126,12 @@ class ImportEggAction extends Action
             }
 
             if (method_exists($livewire, 'refreshForm')) {
-                $livewire->record->refresh();
+                if (isset($this->record) && method_exists($this->record, 'refresh')) {
+                    $this->record->refresh();
+                }
+                if (isset($livewire->record) && method_exists($livewire->record, 'refresh')) {
+                    $livewire->record->refresh();
+                }
                 $livewire->refreshForm();
             }
         });
