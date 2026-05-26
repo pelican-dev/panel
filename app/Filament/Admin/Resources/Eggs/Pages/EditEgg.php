@@ -74,8 +74,8 @@ class EditEgg extends EditRecord
                         ->columnStart(1)
                         ->schema([
                             Image::make('', 'icon')
-                                ->hidden(fn($record) => !$record->icon)
-                                ->url(fn($record) => $record->icon)
+                                ->hidden(fn ($record) => !$record->icon)
+                                ->url(fn ($record) => $record->icon)
                                 ->imageSize(150)
                                 ->columnSpanFull()
                                 ->alignJustify(),
@@ -171,7 +171,7 @@ class EditEgg extends EditRecord
                         ->helperText(trans('admin/egg.start_config_help')),
                     Textarea::make('config_files')->rows(10)->json()
                         ->label(trans('admin/egg.config_files'))
-                        ->dehydrateStateUsing(fn($state) => blank($state) ? '{}' : $state)
+                        ->dehydrateStateUsing(fn ($state) => blank($state) ? '{}' : $state)
                         ->helperText(trans('admin/egg.config_files_help')),
                     Textarea::make('config_logs')->rows(10)->json()
                         ->label(trans('admin/egg.log_config'))
@@ -189,7 +189,7 @@ class EditEgg extends EditRecord
                         ->orderColumn()
                         ->collapsible()->collapsed()
                         ->addActionLabel(trans('admin/egg.add_new_variable'))
-                        ->itemLabel(fn(array $state) => $state['name'])
+                        ->itemLabel(fn (array $state) => $state['name'])
                         ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                             $data['default_value'] ??= '';
                             $data['description'] ??= '';
@@ -215,8 +215,8 @@ class EditEgg extends EditRecord
                                 ->debounce(750)
                                 ->maxLength(255)
                                 ->columnSpanFull()
-                                ->afterStateUpdated(fn(Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString()))
-                                ->unique(modifyRuleUsing: fn(Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
+                                ->afterStateUpdated(fn (Set $set, $state) => $set('env_variable', str($state)->trim()->snake()->upper()->toString()))
+                                ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
                                 ->validationMessages([
                                     'unique' => trans('admin/egg.error_unique'),
                                 ])
@@ -227,8 +227,8 @@ class EditEgg extends EditRecord
                                 ->maxLength(255)
                                 ->prefix('{{')
                                 ->suffix('}}')
-                                ->hintIcon(TablerIcon::Code, fn($state) => "{{{$state}}}")
-                                ->unique(modifyRuleUsing: fn(Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
+                                ->hintIcon(TablerIcon::Code, fn ($state) => "{{{$state}}}")
+                                ->unique(modifyRuleUsing: fn (Unique $rule, Get $get) => $rule->where('egg_id', $get('../../id')))
                                 ->rules(EggVariable::getRulesForField('env_variable'))
                                 ->validationMessages([
                                     'unique' => trans('admin/egg.error_unique'),
@@ -302,8 +302,8 @@ class EditEgg extends EditRecord
     {
         return [
             DeleteAction::make()
-                ->disabled(fn(Egg $egg): bool => $egg->servers()->count() > 0)
-                ->tooltip(fn(Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use')),
+                ->disabled(fn (Egg $egg): bool => $egg->servers()->count() > 0)
+                ->tooltip(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use')),
             ExportEggAction::make(),
             ImportEggAction::make()
                 ->multiple(false),
