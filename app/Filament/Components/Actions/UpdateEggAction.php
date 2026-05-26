@@ -8,6 +8,7 @@ use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
+use Livewire\Component;
 
 class UpdateEggAction extends Action
 {
@@ -36,7 +37,7 @@ class UpdateEggAction extends Action
 
         $this->modalSubmitAction(fn (Action $action) => $action->color('danger'));
 
-        $this->action(function (Egg $egg, EggImporterService $eggImporterService, $livewire) {
+        $this->action(function (Egg $egg, EggImporterService $eggImporterService, Component $livewire) {
             try {
                 $eggImporterService->fromUrl($egg->update_url, $egg);
 
