@@ -47,7 +47,6 @@ class EditEgg extends EditRecord
 
     protected static string $resource = EggResource::class;
 
-    #[Override]
     public ?Egg $record = null;
 
     public function form(Schema $schema): Schema
