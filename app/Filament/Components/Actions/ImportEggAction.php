@@ -44,7 +44,7 @@ class ImportEggAction extends Action
 
         $this->authorize(fn () => user()?->can('import egg'));
 
-        $this->action(function (array $data, EggImporterService $eggImportService): void {
+        $this->action(function (array $data, EggImporterService $eggImportService, $livewire): void {
 
             $gitHubEggs = array_get($this->data, 'eggs', []);
             $eggs = array_merge(collect($data['urls'])->flatten()->whereNotNull()->unique()->all(), Arr::wrap($data['files']));
@@ -123,6 +123,11 @@ class ImportEggAction extends Action
                     ->body($bodyParts->join(' | '))
                     ->status($failed->isEmpty() ? 'success' : ($success->isEmpty() ? 'danger' : 'warning'))
                     ->send();
+            }
+
+            if (method_exists($livewire, 'refreshForm')) {
+                $livewire->record->refresh();
+                $livewire->refreshForm();
             }
         });
     }

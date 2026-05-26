@@ -110,6 +110,7 @@ class EggImporterService
                 'uuid' => $uuid,
                 'author' => Arr::get($parsed, 'author'),
                 'copy_script_from' => null,
+                'config_from' => null,
             ]);
 
             for ($i = 0; $i < count($parsed['variables']); $i++) {

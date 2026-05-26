@@ -36,7 +36,7 @@ class UpdateEggAction extends Action
 
         $this->modalSubmitAction(fn (Action $action) => $action->color('danger'));
 
-        $this->action(function (Egg $egg, EggImporterService $eggImporterService) {
+        $this->action(function (Egg $egg, EggImporterService $eggImporterService, $livewire) {
             try {
                 $eggImporterService->fromUrl($egg->update_url, $egg);
 
@@ -58,6 +58,8 @@ class UpdateEggAction extends Action
                 ->body(trans('admin/egg.updated_from', ['url' => $egg->update_url]))
                 ->success()
                 ->send();
+
+            $livewire->refreshForm();
         });
 
         $this->authorize(fn () => user()?->can('import egg'));

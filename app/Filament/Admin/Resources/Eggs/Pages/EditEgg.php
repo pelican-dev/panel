@@ -316,6 +316,8 @@ class EditEgg extends EditRecord
     public function refreshForm(): void
     {
         $this->fillForm();
+
+        $this->dispatch('setContent', content: $this->record->script_install ?? '');
     }
 
     protected function getFormActions(): array
