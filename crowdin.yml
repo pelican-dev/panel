@@ -1,11 +1,14 @@
+project_id_env: "CROWDIN_PROJECT_ID"
+api_token_env: "CROWDIN_PERSONAL_TOKEN"
+base_path: "."
+preserve_hierarchy: true
+
 files:
-  - source: /lang/en/*.php
-    translation: /lang/%two_letters_code%/%original_file_name%
-  - source: /lang/en/admin
-    translation: /lang/%two_letters_code%/admin/%original_file_name%
-  - source: /lang/en/command
-    translation: /lang/%two_letters_code%/command/%original_file_name%
-  - source: /lang/en/dashboard
-    translation: /lang/%two_letters_code%/dashboard/%original_file_name%
-  - source: /lang/en/server
-    translation: /lang/%two_letters_code%/server/%original_file_name%
+  - source: "/lang/en/**/*.php"
+    translation: "/lang/%two_letters_code%/**/%original_file_name%"
+
+languages_mapping:
+  two_letters_code:
+    'zh-CN': 'zh_CN'
+    'zh-TW': 'zh_TW'
+    'pt-BR': 'pt_BR'
