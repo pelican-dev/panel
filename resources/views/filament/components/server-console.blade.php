@@ -4,6 +4,8 @@
         $userFont = (string) user()?->getCustomization(\App\Enums\CustomizationKey::ConsoleFont);
         $userFontSize = (int) user()?->getCustomization(\App\Enums\CustomizationKey::ConsoleFontSize);
         $userRows = (int) user()?->getCustomization(\App\Enums\CustomizationKey::ConsoleRows);
+
+        $terminalPrelude = str(config('app.name'))->slug()->lower()->toString();
     @endphp
     @if($userFont !== "monospace")
         <link rel="preload" href="{{ asset("storage/fonts/{$userFont}.ttf") }}" as="font" crossorigin>
@@ -116,7 +118,7 @@
             return true;
         });
 
-        const TERMINAL_PRELUDE = '\u001b[1m\u001b[33mpelican@' + '{{ \Filament\Facades\Filament::getTenant()->name }}' + ' ~ \u001b[0m';
+        const TERMINAL_PRELUDE = '\u001b[1m\u001b[33m{{ $terminalPrelude }}@' + '{{ \Filament\Facades\Filament::getTenant()->name }}' + ' ~ \u001b[0m';
 
         const handleConsoleOutput = (line, prelude = false) =>
             terminal.writeln((prelude ? TERMINAL_PRELUDE : '') + line.replace(/(?:\r\n|\r|\n)$/im, '') + '\u001b[0m');

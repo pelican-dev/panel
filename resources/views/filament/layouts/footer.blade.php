@@ -2,7 +2,7 @@
     {{ \Filament\Support\Facades\FilamentView::renderHook(\App\Enums\CustomRenderHooks::FooterStart->value) }}
 
     <a class="font-semibold" href="https://pelican.dev/docs/#core-team" target="_blank">
-        &copy; {{ date('Y') }} Pelican
+        &copy; {{ date('Y') }} {{ config('app.name') }}
     </a>
 
     @if(config('app.debug'))
