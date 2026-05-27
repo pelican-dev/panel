@@ -79,7 +79,7 @@ class EggImporterService
      */
     public function fromUrl(string $url, ?Egg $egg = null): Egg
     {
-        $extension = strtolower(pathinfo(parse_url($egg->update_url, PHP_URL_PATH), PATHINFO_EXTENSION));
+        $extension = strtolower(pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION));
 
         if (empty($extension)) {
             throw new InvalidFileUploadException('Unsupported file format.');
