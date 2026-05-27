@@ -110,6 +110,10 @@ class UploadIcon extends Action
 
                 $extension = strtolower(pathinfo(parse_url($data['icon_url'], PHP_URL_PATH), PATHINFO_EXTENSION));
 
+                if (empty($extension)) {
+                    throw new Exception(trans('admin/egg.import.invalid_url'));
+                }
+
                 $record->writeIcon($extension, $content);
 
                 Notification::make()
