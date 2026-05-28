@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\RolePermissionModels;
 use App\Enums\RolePermissionPrefixes;
 use App\Enums\TablerIcon;
+use App\Traits\HasAdminActivityLogging;
 use BackedEnum;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -41,6 +42,7 @@ use Spatie\Permission\Models\Role as BaseRole;
  */
 class Role extends BaseRole
 {
+    use HasAdminActivityLogging;
     use HasFactory;
 
     public const RESOURCE_NAME = 'role';
@@ -70,6 +72,9 @@ class Role extends BaseRole
         'panelLog' => [
             'view',
         ],
+        'adminAuditLog' => [
+            'view',
+        ],
         'plugin' => [
             'viewList',
             'create',
@@ -82,6 +87,7 @@ class Role extends BaseRole
         'health' => TablerIcon::Heart,
         'activityLog' => TablerIcon::Stack,
         'panelLog' => TablerIcon::FileInfo,
+        'adminAuditLog' => TablerIcon::ShieldSearch,
     ];
 
     /** @var array<string, array<string>> */

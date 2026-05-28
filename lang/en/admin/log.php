@@ -2,6 +2,9 @@
 
 return [
     'empty_table' => 'Yay! No Errors!',
+    'empty_audit_log' => 'No admin actions have been logged yet.',
+    'model_label' => 'Admin Audit Log',
+    'model_label_plural' => 'Admin Audit Logs',
     'total_logs' => 'Total Logs',
     'error' => 'Error',
     'warning' => 'Warning',
@@ -10,6 +13,15 @@ return [
     'debug' => 'Debug',
     'navigation' => [
         'panel_logs' => 'Panel Logs',
+        'admin_audit_log' => 'Admin Audit',
+    ],
+    'table' => [
+        'actor' => 'Actor',
+        'event' => 'Event',
+        'description' => 'Description',
+        'ip' => 'IP Address',
+        'timestamp' => 'Time',
+        'system' => 'System',
     ],
     'actions' => [
         'upload_logs' => 'Upload Logs?',

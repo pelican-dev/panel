@@ -6,6 +6,7 @@ use App\Enums\TablerIcon;
 use App\Extensions\Avatar\AvatarService;
 use App\Extensions\Captcha\CaptchaService;
 use App\Extensions\OAuth\OAuthService;
+use App\Facades\Activity;
 use App\Models\Backup;
 use App\Notifications\MailTested;
 use App\Traits\EnvironmentWriterTrait;
@@ -46,6 +47,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification as MailNotification;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Locked;
 
 /**
  * @property Schema $form
@@ -75,9 +77,14 @@ class Settings extends Page implements HasSchemas
     /** @var array<mixed>|null */
     public ?array $data = [];
 
+    /** @var array<mixed> Snapshot of normalized form state captured on mount, used to detect which settings changed before saving. */
+    #[Locked]
+    public array $initialSettings = [];
+
     public function mount(): void
     {
         $this->form->fill();
+        $this->initialSettings = $this->sanitizeSettingsData($this->form->getState());
     }
 
     public function boot(OAuthService $oauthService, AvatarService $avatarService, CaptchaService $captchaService, IconFactory $iconFactory): void
@@ -865,8 +872,8 @@ class Settings extends Page implements HasSchemas
     public function save(): void
     {
         try {
-            $data = $this->form->getState();
-            unset($data['ConsoleFonts']);
+            $data = $this->sanitizeSettingsData($this->form->getState());
+            $changedSettings = $this->getChangedSettings($this->initialSettings, $data);
 
             $data = array_map(function ($value) {
                 // Convert bools to a string, so they are correctly written to the .env file
@@ -886,6 +893,14 @@ class Settings extends Page implements HasSchemas
 
             Artisan::call('queue:restart');
 
+            if (!empty($changedSettings)) {
+                Activity::event('admin:settings.update')
+                    ->actor(user())
+                    ->property('count', count($changedSettings))
+                    ->property('settings', implode(', ', $changedSettings))
+                    ->log();
+            }
+
             $this->redirect($this->getUrl());
 
             Notification::make()
@@ -899,6 +914,63 @@ class Settings extends Page implements HasSchemas
                 ->danger()
                 ->send();
         }
+    }
+
+    /**
+     * @param  array<mixed>  $data
+     * @return array<mixed>
+     */
+    private function sanitizeSettingsData(array $data): array
+    {
+        unset($data['ConsoleFonts']);
+
+        return $data;
+    }
+
+    /**
+     * @param  array<mixed>  $before
+     * @param  array<mixed>  $after
+     * @return string[]
+     */
+    private function getChangedSettings(array $before, array $after): array
+    {
+        $changed = [];
+
+        foreach (array_unique(array_merge(array_keys($before), array_keys($after))) as $key) {
+            $old = $before[$key] ?? null;
+            $new = $after[$key] ?? null;
+
+            if ($this->normalizeSettingValue($old) !== $this->normalizeSettingValue($new)) {
+                $changed[] = $key;
+            }
+        }
+
+        sort($changed);
+
+        return $changed;
+    }
+
+    /**
+     * Converts a setting value to a normalized string for diffing.
+     * Handles enums, booleans, arrays (JSON-encoded), and scalar values.
+     */
+    private function normalizeSettingValue(mixed $value): string
+    {
+        if ($value instanceof BackedEnum) {
+            return (string) $value->value;
+        }
+
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
+        if (is_array($value)) {
+            $json = json_encode($value);
+
+            return $json === false ? '' : $json;
+        }
+
+        return (string) ($value ?? '');
     }
 
     /** @return array<Action|ActionGroup> */

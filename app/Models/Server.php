@@ -10,6 +10,7 @@ use App\Exceptions\Http\Server\ServerStateConflictException;
 use App\Models\Traits\HasIcon;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Subusers\SubuserDeletionService;
+use App\Traits\HasAdminActivityLogging;
 use App\Traits\HasValidation;
 use Carbon\CarbonInterface;
 use Exception;
@@ -129,6 +130,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Server extends Model implements HasAvatar, Validatable
 {
+    use HasAdminActivityLogging;
     use HasFactory;
     use HasIcon;
     use HasValidation;
