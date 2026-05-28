@@ -79,8 +79,11 @@ class EggImporterService
      */
     public function fromUrl(string $url, ?Egg $egg = null): Egg
     {
-        $info = pathinfo($url);
-        $extension = strtolower($info['extension']);
+        $extension = strtolower(pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION));
+
+        if (empty($extension)) {
+            throw new InvalidFileUploadException('Unsupported file format.');
+        }
 
         $format = match ($extension) {
             'yaml', 'yml' => EggFormat::YAML,
