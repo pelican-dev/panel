@@ -59,9 +59,9 @@ class FilamentServiceProvider extends ServiceProvider
             fn () => Blade::render('@livewire(\App\Livewire\AlertBannerContainer::class)'),
         );
 
-        $appName = config('app.name');
+        $appName = config('app.name', 'Pelican');
 
-        if ($appName !== 'Pelican') {
+        if (strtolower($appName) !== 'pelican') {
             $appName = "{$appName} - Powered by Pelican";
         }
 
