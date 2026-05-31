@@ -13,6 +13,8 @@ use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use App\Traits\Filament\CanCustomizeTabs;
 use BackedEnum;
+use BladeUI\Icons\Exceptions\SvgNotFound;
+use BladeUI\Icons\Factory as IconFactory;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -68,6 +70,8 @@ class Settings extends Page implements HasSchemas
 
     protected CaptchaService $captchaService;
 
+    protected IconFactory $iconFactory;
+
     /** @var array<mixed>|null */
     public ?array $data = [];
 
@@ -76,11 +80,12 @@ class Settings extends Page implements HasSchemas
         $this->form->fill();
     }
 
-    public function boot(OAuthService $oauthService, AvatarService $avatarService, CaptchaService $captchaService): void
+    public function boot(OAuthService $oauthService, AvatarService $avatarService, CaptchaService $captchaService, IconFactory $iconFactory): void
     {
         $this->oauthService = $oauthService;
         $this->avatarService = $avatarService;
         $this->captchaService = $captchaService;
+        $this->iconFactory = $iconFactory;
     }
 
     public static function canAccess(): bool
@@ -565,9 +570,18 @@ class Settings extends Page implements HasSchemas
         foreach ($oauthSchemas as $schema) {
             $key = $schema->getConfigKey();
 
+            $icon = $schema->getIcon();
+            if (is_string($icon)) {
+                try {
+                    $this->iconFactory->svg($icon);
+                } catch (SvgNotFound) {
+                    $icon = null;
+                }
+            }
+
             $formFields[] = Section::make($schema->getName())
                 ->columns(5)
-                ->icon($schema->getIcon() ?? TablerIcon::BrandOauth)
+                ->icon($icon ?? TablerIcon::BrandOauth)
                 ->collapsed(fn () => !$schema->isEnabled())
                 ->collapsible()
                 ->schema([
@@ -669,6 +683,36 @@ class Settings extends Page implements HasSchemas
                 ->collapsible()
                 ->collapsed()
                 ->schema([
+                    Toggle::make('PANEL_SEND_ACCOUNT_CREATED_NOTIFICATION')
+                        ->label(trans('admin/setting.misc.mail_notifications.account_created'))
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_ACCOUNT_CREATED_NOTIFICATION', (bool) $state))
+                        ->default(env('PANEL_SEND_ACCOUNT_CREATED_NOTIFICATION', config('panel.email.send_account_created_notification'))),
+                    Toggle::make('PANEL_SEND_ADDED_TO_SERVER_NOTIFICATION')
+                        ->label(trans('admin/setting.misc.mail_notifications.added_to_server'))
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_ADDED_TO_SERVER_NOTIFICATION', (bool) $state))
+                        ->default(env('PANEL_SEND_ADDED_TO_SERVER_NOTIFICATION', config('panel.email.send_added_to_server_notification'))),
+                    Toggle::make('PANEL_SEND_REMOVED_FROM_SERVER_NOTIFICATION')
+                        ->label(trans('admin/setting.misc.mail_notifications.removed_from_server'))
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REMOVED_FROM_SERVER_NOTIFICATION', (bool) $state))
+                        ->default(env('PANEL_SEND_REMOVED_FROM_SERVER_NOTIFICATION', config('panel.email.send_removed_from_server_notification'))),
                     Toggle::make('PANEL_SEND_INSTALL_NOTIFICATION')
                         ->label(trans('admin/setting.misc.mail_notifications.server_installed'))
                         ->onIcon(TablerIcon::Check)
@@ -689,6 +733,16 @@ class Settings extends Page implements HasSchemas
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REINSTALL_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
+                    Toggle::make('PANEL_SEND_BACKUP_COMPLETED_NOTIFICATION')
+                        ->label(trans('admin/setting.misc.mail_notifications.backup_completed'))
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_BACKUP_COMPLETED_NOTIFICATION', (bool) $state))
+                        ->default(env('PANEL_SEND_BACKUP_COMPLETED_NOTIFICATION', config('panel.email.send_backup_completed_notification'))),
                 ]),
             Section::make(trans('admin/setting.misc.connections.title'))
                 ->description(trans('admin/setting.misc.connections.helper'))

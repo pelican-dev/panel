@@ -79,15 +79,15 @@ class SubuserResource extends Resource
 
             foreach ($data['permissions'] as $permission) {
                 $options[$permission] = str($permission)->headline();
-                $descriptions[$permission] = trans('server/user.permissions.' . $data['name'] . '_' . str($permission)->replace('-', '_'));
+                $descriptions[$permission] = trans($data['translation_prefix']. '.' . $data['name'] . '_' . str($permission)->replace('-', '_'));
                 $permissionsArray[$data['name']][] = $permission;
             }
 
             $tabs[] = Tab::make($data['name'])
-                ->label(str($data['name'])->headline())
+                ->label(trans($data['translation_prefix']. '.' . $data['name'] . '_title'))
                 ->schema([
                     Section::make()
-                        ->description(trans('server/user.permissions.' . $data['name'] . '_desc'))
+                        ->description(trans($data['translation_prefix']. '.' . $data['name'] . '_desc'))
                         ->icon($data['icon'])
                         ->contained(false)
                         ->schema([
@@ -123,18 +123,6 @@ class SubuserResource extends Resource
                     ),
             ])
             ->recordActions([
-                DeleteAction::make()
-                    ->label(trans('server/user.delete'))
-                    ->hidden(fn (Subuser $subuser) => user()?->id === $subuser->user->id)
-                    ->successNotificationTitle(null)
-                    ->action(function (Subuser $subuser, SubuserDeletionService $subuserDeletionService) use ($server) {
-                        $subuserDeletionService->handle($subuser, $server);
-
-                        Notification::make()
-                            ->title(trans('server/user.notification_delete'))
-                            ->success()
-                            ->send();
-                    }),
                 EditAction::make()
                     ->label(trans('server/user.edit'))
                     ->hidden(fn (Subuser $subuser) => user()?->id === $subuser->user->id)
@@ -179,7 +167,7 @@ class SubuserResource extends Resource
                                     ])
                                     ->formatStateUsing(fn (Subuser $subuser) => $subuser->user->email),
                                 Actions::make([
-                                    Action::make('assignAll')
+                                    Action::make('exclude_assignAll')
                                         ->label(trans('server/user.assign_all'))
                                         ->action(function (Set $set) use ($permissionsArray) {
                                             $permissions = $permissionsArray;
@@ -214,6 +202,19 @@ class SubuserResource extends Resource
 
                         return $data;
                     }),
+                DeleteAction::make()
+                    ->label(trans('server/user.delete'))
+                    ->hidden(fn (Subuser $subuser) => user()?->id === $subuser->user->id)
+                    ->authorize(fn () => user()?->can(SubuserPermission::UserDelete, $server))
+                    ->successNotificationTitle(null)
+                    ->action(function (Subuser $subuser, SubuserDeletionService $subuserDeletionService) use ($server) {
+                        $subuserDeletionService->handle($subuser, $server);
+
+                        Notification::make()
+                            ->title(trans('server/user.notification_delete'))
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->toolbarActions([
                 CreateAction::make('invite')
@@ -243,7 +244,7 @@ class SubuserResource extends Resource
                                     ])
                                     ->required(),
                                 Actions::make([
-                                    Action::make('assignAll')
+                                    Action::make('exclude_assignAll')
                                         ->label(trans('server/user.assign_all'))
                                         ->action(function (Set $set, Get $get) use ($permissionsArray) {
                                             $permissions = $permissionsArray;

@@ -18,14 +18,14 @@ return new class extends Migration
         $eggs = DB::table('eggs')->whereNotNull('image')->get();
         foreach ($eggs as $egg) {
             if (!empty($egg->image) && str_starts_with($egg->image, 'data:')) {
-                $this->convertBase64ToFile($egg->image, $egg->uuid, Egg::ICON_STORAGE_PATH);
+                $this->convertBase64ToFile($egg->image, $egg->uuid, Egg::getIconStoragePath());
             }
         }
 
         $servers = DB::table('servers')->whereNotNull('icon')->get();
         foreach ($servers as $server) {
             if (!empty($server->icon) && str_starts_with($server->icon, 'data:')) {
-                $this->convertBase64ToFile($server->icon, $server->uuid, Server::ICON_STORAGE_PATH);
+                $this->convertBase64ToFile($server->icon, $server->uuid, Server::getIconStoragePath());
             }
         }
 

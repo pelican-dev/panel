@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Servers\ServerCreationService;
 use App\Tests\Integration\IntegrationTestCase;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Validation\ValidationException;
@@ -50,13 +51,13 @@ class ServerCreationServiceTest extends IntegrationTestCase
      */
     public function test_server_is_created_with_deployment_object(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
-        /** @var \App\Models\Node $node */
+        /** @var Node $node */
         $node = Node::factory()->create();
 
-        /** @var \App\Models\Allocation[]|\Illuminate\Database\Eloquent\Collection $allocations */
+        /** @var Allocation[]|Collection $allocations */
         $allocations = Allocation::factory()->times(5)->create([
             'node_id' => $node->id,
         ]);
@@ -148,10 +149,10 @@ class ServerCreationServiceTest extends IntegrationTestCase
      */
     public function test_server_without_allocation_is_created_with_deployment_object(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
-        /** @var \App\Models\Node $node */
+        /** @var Node $node */
         $node = Node::factory()->create();
 
         $deployment = new DeploymentObject();
@@ -235,13 +236,13 @@ class ServerCreationServiceTest extends IntegrationTestCase
      */
     public function test_error_encountered_by_daemon_causes_server_to_be_deleted(): void
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
-        /** @var \App\Models\Node $node */
+        /** @var Node $node */
         $node = Node::factory()->create();
 
-        /** @var \App\Models\Allocation $allocation */
+        /** @var Allocation $allocation */
         $allocation = Allocation::factory()->create([
             'node_id' => $node->id,
         ]);

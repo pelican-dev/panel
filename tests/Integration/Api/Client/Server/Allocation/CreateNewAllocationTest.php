@@ -4,6 +4,7 @@ namespace App\Tests\Integration\Api\Client\Server\Allocation;
 
 use App\Enums\SubuserPermission;
 use App\Models\Allocation;
+use App\Models\Server;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -28,7 +29,7 @@ class CreateNewAllocationTest extends ClientApiIntegrationTestCase
     #[DataProvider('permissionDataProvider')]
     public function test_new_allocation_can_be_assigned_to_server(array $permission): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount($permission);
         $server->update(['allocation_limit' => 2]);
 
@@ -47,7 +48,7 @@ class CreateNewAllocationTest extends ClientApiIntegrationTestCase
      */
     public function test_allocation_cannot_be_created_if_user_does_not_have_permission(): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount([SubuserPermission::AllocationUpdate]);
         $server->update(['allocation_limit' => 2]);
 
@@ -61,7 +62,7 @@ class CreateNewAllocationTest extends ClientApiIntegrationTestCase
     {
         config()->set('panel.client_features.allocations.enabled', false);
 
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount();
         $server->update(['allocation_limit' => 2]);
 
@@ -76,7 +77,7 @@ class CreateNewAllocationTest extends ClientApiIntegrationTestCase
      */
     public function test_allocation_cannot_be_created_if_server_is_at_limit(): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount();
         $server->update(['allocation_limit' => 1]);
 

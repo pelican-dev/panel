@@ -32,7 +32,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
 
         $response->assertOk();
 
-        /** @var \App\Models\User $subuser */
+        /** @var User $subuser */
         $subuser = User::query()->where('email', $email)->firstOrFail();
 
         $response->assertJsonPath('object', Subuser::RESOURCE_NAME);
@@ -111,7 +111,7 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
     {
         [$user, $server] = $this->generateTestAccount();
 
-        /** @var \App\Models\User $existing */
+        /** @var User $existing */
         $existing = User::factory()->create(['email' => $this->faker->email()]);
 
         $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [

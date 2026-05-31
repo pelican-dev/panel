@@ -35,7 +35,7 @@ use Illuminate\Support\ServiceProvider;
 use Livewire\Component;
 use Livewire\Livewire;
 
-use function Livewire\on;
+use function Livewire\before;
 use function Livewire\store;
 
 class FilamentServiceProvider extends ServiceProvider
@@ -60,9 +60,15 @@ class FilamentServiceProvider extends ServiceProvider
             fn () => Blade::render('@livewire(\App\Livewire\AlertBannerContainer::class)'),
         );
 
+        $appName = config('app.name', 'Pelican');
+
+        if (strtolower($appName) !== 'pelican') {
+            $appName = "{$appName} - Powered by Pelican";
+        }
+
         FilamentView::registerRenderHook(
             PanelsRenderHook::FOOTER,
-            fn () => Blade::render('filament.layouts.footer'),
+            fn () => Blade::render('filament.layouts.footer', ['appName' => $appName]),
         );
 
         FilamentView::registerRenderHook(
@@ -75,7 +81,7 @@ class FilamentServiceProvider extends ServiceProvider
             fn () => Blade::render("@vite(['resources/js/app.js'])"),
         );
 
-        on('dehydrate', function (Component $component) {
+        before('dehydrate', function (Component $component) {
             if (!Livewire::isLivewireRequest()) {
                 return;
             }
@@ -98,15 +104,35 @@ class FilamentServiceProvider extends ServiceProvider
 
         Select::configureUsing(fn (Select $select) => $select->native(false));
 
-        KeyValue::configureUsing(fn (KeyValue $keyValue) => $keyValue->deleteAction(function (Action $action) {
-            $action->tooltip(fn () => $action->getLabel());
-            $action->iconSize(IconSize::Large);
-        }));
+        KeyValue::configureUsing(fn (KeyValue $keyValue) => $keyValue
+            ->addAction(function (Action $action) {
+                $action->tooltip(fn () => $action->getLabel());
+                $action->iconSize(IconSize::Large);
+            })
+            ->deleteAction(function (Action $action) {
+                $action->tooltip(fn () => $action->getLabel());
+                $action->iconSize(IconSize::Large);
+            })
+            ->reorderAction(function (Action $action) {
+                $action->tooltip(fn () => $action->getLabel());
+                $action->iconSize(IconSize::Large);
+            })
+        );
 
-        Repeater::configureUsing(fn (Repeater $repeater) => $repeater->deleteAction(function (Action $action) {
-            $action->tooltip(fn () => $action->getLabel());
-            $action->iconSize(IconSize::Large);
-        }));
+        Repeater::configureUsing(fn (Repeater $repeater) => $repeater
+            ->addAction(function (Action $action) {
+                $action->tooltip(fn () => $action->getLabel());
+                $action->iconSize(IconSize::Large);
+            })
+            ->deleteAction(function (Action $action) {
+                $action->tooltip(fn () => $action->getLabel());
+                $action->iconSize(IconSize::Large);
+            })
+            ->reorderAction(function (Action $action) {
+                $action->tooltip(fn () => $action->getLabel());
+                $action->iconSize(IconSize::Large);
+            })
+        );
 
         ShowPasswordAction::configureUsing(function (ShowPasswordAction $action) {
             $action->tooltip(fn () => $action->getLabel());

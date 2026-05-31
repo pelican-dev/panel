@@ -6,12 +6,12 @@ use App\Enums\EggFormat;
 use App\Exceptions\Service\InvalidFileUploadException;
 use App\Models\Egg;
 use App\Models\EggVariable;
+use Exception;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use JsonException;
 use Ramsey\Uuid\Uuid;
 use stdClass;
@@ -79,8 +79,11 @@ class EggImporterService
      */
     public function fromUrl(string $url, ?Egg $egg = null): Egg
     {
-        $info = pathinfo($url);
-        $extension = strtolower($info['extension']);
+        $extension = strtolower(pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION));
+
+        if (empty($extension)) {
+            throw new InvalidFileUploadException('Unsupported file format.');
+        }
 
         $format = match ($extension) {
             'yaml', 'yml' => EggFormat::YAML,
@@ -189,6 +192,18 @@ class EggImporterService
             }
         }
 
+        // Convert YAML booleans to strings to prevent Laravel from converting them to 1/0
+        // when saving to TEXT field. Required for validation rules like "in:true,false".
+        if (isset($parsed['variables'])) {
+            $parsed['variables'] = array_map(function ($variable) {
+                if (isset($variable['default_value']) && is_bool($variable['default_value'])) {
+                    $variable['default_value'] = $variable['default_value'] ? 'true' : 'false';
+                }
+
+                return $variable;
+            }, $parsed['variables']);
+        }
+
         // Reserved env var name handling
         [$forbidden, $allowed] = collect($parsed['variables'])
             ->map(fn ($variable) => array_merge(
@@ -211,6 +226,11 @@ class EggImporterService
             }
         }
 
+        if (!empty($parsed['image']) && str_starts_with($parsed['image'], 'data:')) {
+            $parsed['icon'] = $parsed['image'];
+            unset($parsed['image']);
+        }
+
         return $parsed;
     }
 
@@ -219,9 +239,9 @@ class EggImporterService
      */
     protected function fillFromParsed(Egg $model, array $parsed): Egg
     {
-        // Handle image data if present
-        if (!empty($parsed['image']) && str_starts_with($parsed['image'], 'data:')) {
-            $this->saveEggImageFromBase64($parsed['image'], $model);
+        // Handle icon data if present
+        if (!empty($parsed['icon']) && str_starts_with($parsed['icon'], 'data:')) {
+            $this->saveEggIconFromBase64($parsed['icon'], $model);
         }
 
         return $model->forceFill([
@@ -244,28 +264,24 @@ class EggImporterService
     }
 
     /**
-     * Save an egg image from base64 data to a file.
+     * Save an egg icon from base64 data to a file.
      */
-    private function saveEggImageFromBase64(string $base64String, Egg $egg): void
+    private function saveEggIconFromBase64(string $base64String, Egg $egg): void
     {
         if (!preg_match('/^data:image\/([\w+]+);base64,(.+)$/', $base64String, $matches)) {
             return;
         }
 
-        $extension = $matches[1];
-        $data = base64_decode($matches[2]);
+        try {
+            $extension = strtolower($matches[1]);
+            $data = base64_decode($matches[2]);
 
-        if (!$data) {
-            return;
+            if ($data) {
+                $egg->writeIcon($extension, $data);
+            }
+        } catch (Exception $exception) {
+            report($exception);
         }
-
-        $normalizedExtension = match ($extension) {
-            'svg+xml' => 'svg',
-            'jpeg' => 'jpg',
-            default => $extension,
-        };
-
-        Storage::disk('public')->put(Egg::ICON_STORAGE_PATH . "/$egg->uuid.$normalizedExtension", $data);
     }
 
     /**

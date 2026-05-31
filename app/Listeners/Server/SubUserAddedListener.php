@@ -29,6 +29,8 @@ class SubUserAddedListener
             ])
             ->sendToDatabase($event->subuser->user);
 
-        $event->subuser->user->notify(new AddedToServer($event->subuser->server));
+        if (config('panel.email.send_added_to_server_notification', true)) {
+            $event->subuser->user->notify(new AddedToServer($event->subuser->server));
+        }
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use League\Fractal\Serializer\JsonApiSerializer;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -12,7 +14,7 @@ return [
     |
     */
 
-    'default_serializer' => League\Fractal\Serializer\JsonApiSerializer::class,
+    'default_serializer' => JsonApiSerializer::class,
 
     /*
     |--------------------------------------------------------------------------

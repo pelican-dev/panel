@@ -2,6 +2,7 @@
 
 namespace App\Services\Users;
 
+use App\Events\User\PasswordChanged;
 use App\Models\User;
 use App\Traits\Services\HasUserLevels;
 use Illuminate\Contracts\Hashing\Hasher;
@@ -29,6 +30,10 @@ class UserUpdateService
         }
 
         $user->forceFill($data)->saveOrFail();
+
+        if (isset($data['password'])) {
+            PasswordChanged::dispatch($user);
+        }
 
         return $user->refresh();
     }

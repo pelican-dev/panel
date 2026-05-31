@@ -14,14 +14,18 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
  *
  * @property int $id
  * @property int $activity_log_id
- * @property int $subject_id
  * @property string $subject_type
- * @property ActivityLog|null $activityLog
- * @property Model|\Eloquent $subject
+ * @property int $subject_id
+ * @property-read ActivityLog $activityLog
+ * @property-read Model|\Eloquent $subject
  *
- * @method static Builder|ActivityLogSubject newModelQuery()
- * @method static Builder|ActivityLogSubject newQuery()
- * @method static Builder|ActivityLogSubject query()
+ * @method static Builder<static>|ActivityLogSubject newModelQuery()
+ * @method static Builder<static>|ActivityLogSubject newQuery()
+ * @method static Builder<static>|ActivityLogSubject query()
+ * @method static Builder<static>|ActivityLogSubject whereActivityLogId($value)
+ * @method static Builder<static>|ActivityLogSubject whereId($value)
+ * @method static Builder<static>|ActivityLogSubject whereSubjectId($value)
+ * @method static Builder<static>|ActivityLogSubject whereSubjectType($value)
  */
 class ActivityLogSubject extends Pivot
 {

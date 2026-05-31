@@ -36,7 +36,7 @@ class EggTransformer extends BaseTransformer
     {
         $model->loadMissing('configFrom');
 
-        $files = json_decode($model->inherit_config_files, true, 512, JSON_THROW_ON_ERROR);
+        $files = json_decode($model->inherit_config_files ?: '{}', true, 512, JSON_THROW_ON_ERROR);
 
         $model->loadMissing('scriptFrom');
 
@@ -46,16 +46,16 @@ class EggTransformer extends BaseTransformer
             'name' => $model->name,
             'author' => $model->author,
             'description' => $model->description,
-            'image' => $model->image,
+            'icon' => $model->icon,
             'features' => $model->features,
             'tags' => $model->tags,
-            'docker_image' => Arr::first($model->docker_images, default: ''), // docker_images, use startup_commands
+            'docker_image' => Arr::first($model->docker_images, default: ''), // deprecated, use docker_images
             'docker_images' => $model->docker_images,
             'config' => [
                 'files' => $files,
-                'startup' => json_decode($model->inherit_config_startup, true),
+                'startup' => json_decode($model->inherit_config_startup ?: '{}', true),
                 'stop' => $model->inherit_config_stop,
-                'logs' => json_decode($model->inherit_config_logs, true),
+                'logs' => json_decode($model->inherit_config_logs ?: '{}', true),
                 'file_denylist' => $model->inherit_file_denylist,
                 'extends' => $model->config_from,
             ],

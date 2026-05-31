@@ -8,7 +8,6 @@ use App\Services\Eggs\Sharing\EggExporterService;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
-use JsonException;
 use Symfony\Component\Yaml\Yaml;
 
 class CheckEggUpdatesCommand extends Command
@@ -22,14 +21,12 @@ class CheckEggUpdatesCommand extends Command
             try {
                 $this->check($egg, $exporterService);
             } catch (Exception $exception) {
-                $this->error("{$egg->name}: Error ({$exception->getMessage()})");
+                $this->error("$egg->name: Error ({$exception->getMessage()})");
             }
         }
     }
 
-    /**
-     * @throws JsonException
-     */
+    /** @throws Exception */
     private function check(Egg $egg, EggExporterService $exporterService): void
     {
         if (is_null($egg->update_url)) {
@@ -38,14 +35,25 @@ class CheckEggUpdatesCommand extends Command
             return;
         }
 
-        $ext = strtolower(pathinfo(parse_url($egg->update_url, PHP_URL_PATH), PATHINFO_EXTENSION));
-        $isYaml = in_array($ext, ['yaml', 'yml']);
+        $extension = strtolower(pathinfo(parse_url($egg->update_url, PHP_URL_PATH), PATHINFO_EXTENSION));
+
+        if (empty($extension)) {
+            throw new Exception('Unsupported file format.');
+        }
+
+        $isYaml = in_array($extension, ['yaml', 'yml']);
 
         $local = $isYaml
             ? Yaml::parse($exporterService->handle($egg->id, EggFormat::YAML))
             : json_decode($exporterService->handle($egg->id, EggFormat::JSON), true);
 
-        $remote = Http::timeout(5)->connectTimeout(1)->get($egg->update_url)->throw()->body();
+        $remote = Http::timeout(5)->connectTimeout(1)->get($egg->update_url);
+
+        if ($remote->failed()) {
+            throw new Exception("HTTP request returned status code {$remote->status()}");
+        }
+
+        $remote = $remote->body();
         $remote = $isYaml ? Yaml::parse($remote) : json_decode($remote, true);
 
         unset($local['exported_at'], $remote['exported_at']);

@@ -114,7 +114,7 @@ class WebhookResource extends Resource
             ->toolbarActions([
                 CreateAction::make(),
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make('exclude_bulk_delete'),
                 ]),
             ])
             ->emptyStateIcon(TablerIcon::Webhook)

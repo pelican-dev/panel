@@ -38,6 +38,10 @@ class ListEggs extends ListRecords
      */
     public function table(Table $table): Table
     {
+        $defaultEggIcon = config('app.logo');
+        $defaultEggIcon = empty($defaultEggIcon) || !is_file(public_path($defaultEggIcon)) ? 'pelican.svg' : $defaultEggIcon;
+        $defaultEggIcon = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(public_path($defaultEggIcon)));
+
         return $table
             ->searchable(true)
             ->defaultPaginationPageOption(25)
@@ -45,13 +49,11 @@ class ListEggs extends ListRecords
                 TextColumn::make('id')
                     ->label('Id')
                     ->hidden(),
-                ImageColumn::make('image')
+                ImageColumn::make('icon')
                     ->label('')
                     ->alignCenter()
                     ->circular()
-                    ->getStateUsing(fn ($record) => $record->image
-                        ? $record->image
-                        : 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(public_path('pelican.svg')))),
+                    ->getStateUsing(fn (Egg $record) => $record->icon ?: $defaultEggIcon),
                 TextColumn::make('name')
                     ->label(trans('admin/egg.name'))
                     ->description(fn ($record): ?string => (strlen($record->description) > 120) ? substr($record->description, 0, 120).'...' : $record->description)
@@ -86,7 +88,7 @@ class ListEggs extends ListRecords
                     ->multiple(),
                 CreateAction::make(),
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()
+                    DeleteBulkAction::make('exclude_bulk_delete')
                         ->before(function (Collection &$records) {
                             $eggsWithServers = $records->filter(fn (Egg $egg) => $egg->servers_count > 0);
 
@@ -106,7 +108,7 @@ class ListEggs extends ListRecords
                                 $this->halt();
                             }
                         }),
-                    UpdateEggBulkAction::make()
+                    UpdateEggBulkAction::make('exclude_bulk_update')
                         ->before(function (Collection &$records) {
                             $eggsWithoutUpdateUrl = $records->filter(fn (Egg $egg) => $egg->update_url === null);
 

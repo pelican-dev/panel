@@ -49,7 +49,7 @@ class StartupVariable extends Field
 
         $this->hintIcon(TablerIcon::Code, fn (StartupVariable $component) => implode('|', $component->getVariableRules()));
 
-        $this->helperText(fn (StartupVariable $component) => !$component->getVariableDesc() ? '—' : $component->getVariableDesc());
+        $this->helperText(fn (StartupVariable $component) => $component->getVariableDesc());
 
         $this->rules(fn (StartupVariable $component) => $component->getVariableRules());
 
@@ -70,7 +70,7 @@ class StartupVariable extends Field
             ],
             StartupVariableType::Toggle => [
                 ...parent::getDefaultStateCasts(),
-                new BooleanStateCast(false),
+                new BooleanStateCast(false, true),
             ],
             default => parent::getDefaultStateCasts()
         };

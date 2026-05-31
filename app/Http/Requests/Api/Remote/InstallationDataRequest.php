@@ -2,8 +2,15 @@
 
 namespace App\Http\Requests\Api\Remote;
 
-class InstallationDataRequest extends ServerRequest
+use Illuminate\Foundation\Http\FormRequest;
+
+class InstallationDataRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        return true;
+    }
+
     /**
      * @return array<string, string|string[]>
      */

@@ -113,7 +113,10 @@ class AllocationsRelationManager extends RelationManager
                     ->createAnother(false)
                     ->schema(fn () => [
                         Select::make('allocation_ip')
-                            ->options(fn () => collect($this->getOwnerRecord()->node->ipAddresses())->mapWithKeys(fn (string $ip) => [$ip => $ip]))
+                            ->options(fn (Get $get) => collect($this->getOwnerRecord()->node->ipAddresses())
+                                ->when($get('allocation_ip'), fn ($ips, $current) => $ips->push($current))
+                                ->unique()
+                                ->mapWithKeys(fn (string $ip) => [$ip => $ip]))
                             ->label(trans('admin/server.ip_address'))
                             ->inlineLabel()
                             ->ip()
@@ -125,6 +128,18 @@ class AllocationsRelationManager extends RelationManager
                                     ->action(function () {
                                         cache()->forget("nodes.{$this->getOwnerRecord()->node->id}.ips");
                                     })
+                            )
+                            ->suffixAction(
+                                Action::make('custom_ip')
+                                    ->icon(TablerIcon::Keyboard)
+                                    ->tooltip(trans('admin/node.custom_ip'))
+                                    ->schema([
+                                        TextInput::make('custom_ip')
+                                            ->label(trans('admin/node.ip_address'))
+                                            ->ip()
+                                            ->required(),
+                                    ])
+                                    ->action(fn (array $data, Set $set) => $set('allocation_ip', $data['custom_ip']))
                             )
                             ->afterStateUpdated(fn (Set $set) => $set('allocation_ports', []))
                             ->required(),

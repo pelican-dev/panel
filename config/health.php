@@ -1,5 +1,9 @@
 <?php
 
+use Spatie\Health\Notifications\CheckFailedNotification;
+use Spatie\Health\Notifications\Notifiable;
+use Spatie\Health\ResultStores\CacheHealthResultStore;
+
 return [
     /*
      * A result store is responsible for saving the results of the checks. The
@@ -15,7 +19,7 @@ return [
         ],
         */
 
-        Spatie\Health\ResultStores\CacheHealthResultStore::class => [
+        CacheHealthResultStore::class => [
             'store' => 'file',
         ],
 
@@ -40,14 +44,14 @@ return [
         'enabled' => false,
 
         'notifications' => [
-            Spatie\Health\Notifications\CheckFailedNotification::class => ['mail'],
+            CheckFailedNotification::class => ['mail'],
         ],
 
         /*
          * Here you can specify the notifiable to which the notifications should be sent. The default
          * notifiable will use the variables specified in this config file.
          */
-        'notifiable' => Spatie\Health\Notifications\Notifiable::class,
+        'notifiable' => Notifiable::class,
 
         /*
          * When checks start failing, you could potentially end up getting

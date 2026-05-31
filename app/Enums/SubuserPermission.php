@@ -50,6 +50,9 @@ enum SubuserPermission: string
 
     case ActivityRead = 'activity.read';
 
+    case MountRead = 'mount.read';
+    case MountUpdate = 'mount.update';
+
     case StartupRead = 'startup.read';
     case StartupUpdate = 'startup.update';
     case StartupDockerImage = 'startup.docker-image';
@@ -57,6 +60,7 @@ enum SubuserPermission: string
     case SettingsRename = 'settings.rename';
     case SettingsDescription = 'settings.description';
     case SettingsReinstall = 'settings.reinstall';
+    case SettingsChangeIcon = 'settings.change-icon';
 
     /** @return string[] */
     public function split(): array
@@ -84,6 +88,7 @@ enum SubuserPermission: string
             'schedule' => TablerIcon::Clock,
             'settings' => TablerIcon::Settings,
             'activity' => TablerIcon::Stack,
+            'mount' => TablerIcon::LayersLinked,
             default => null,
         };
     }

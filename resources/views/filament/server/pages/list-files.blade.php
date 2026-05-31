@@ -1,19 +1,8 @@
 <x-filament-panels::page>
-    @once
-        <style>
-            .files-selection-merged .fi-ta-header-ctn {
-                position: sticky;
-                top: 0;
-                z-index: 1;
-                -webkit-backdrop-filter: blur(8px);
-                backdrop-filter: blur(8px);
-            }
-        </style>
-    @endonce
-
     <div
         x-data="
         {
+            serverUuid: @js(\Filament\Facades\Filament::getTenant()->uuid),
             isDragging: false,
             dragCounter: 0,
             isUploading: false,
@@ -21,6 +10,15 @@
             currentFileIndex: 0,
             totalFiles: 0,
             autoCloseTimer: 1000,
+
+            async fetchUploadUrl() {
+                const r = await fetch(`/api/client/servers/${this.serverUuid}/files/upload`, {
+                    headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    credentials: 'same-origin',
+                });
+                if (!r.ok) throw new Error(`upload url request failed (${r.status})`);
+                return (await r.json()).attributes.url;
+            },
 
             handleDragEnter(e) {
                 e.preventDefault();
@@ -271,7 +269,7 @@
                 const fileData = this.uploadQueue[index];
                 fileData.status = 'uploading';
                 try {
-                    const uploadUrl = await $wire.getUploadUrl();
+                    const uploadUrl = await this.fetchUploadUrl();
                     const url = new URL(uploadUrl);
                     let basePath = @js($this->path);
 

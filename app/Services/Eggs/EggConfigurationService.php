@@ -32,10 +32,10 @@ class EggConfigurationService
      */
     public function handle(Server $server): array
     {
-        $configs = $this->replacePlaceholders(
-            $server,
-            json_decode($server->egg->inherit_config_files)
-        );
+        $configFiles = json_decode($server->egg->inherit_config_files ?? '{}');
+        $configs = is_object($configFiles) || is_array($configFiles)
+            ? $this->replacePlaceholders($server, $configFiles)
+            : [];
 
         return [
             'startup' => $this->convertStartupToNewFormat(json_decode($server->egg->inherit_config_startup, true)),

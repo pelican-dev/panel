@@ -4,6 +4,7 @@ namespace App\Tests\Integration\Api\Client\Server\Startup;
 
 use App\Enums\SubuserPermission;
 use App\Models\EggVariable;
+use App\Models\Server;
 use App\Models\User;
 use App\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 use Illuminate\Http\Response;
@@ -17,7 +18,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
     #[DataProvider('permissionsDataProvider')]
     public function test_startup_variable_can_be_updated(array $permissions): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
         $server->fill([
             'startup' => 'java {{SERVER_JARFILE}} --version {{BUNGEE_VERSION}}',
@@ -51,7 +52,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
     #[DataProvider('permissionsDataProvider')]
     public function test_startup_variable_cannot_be_updated_if_not_user_viewable_or_editable(array $permissions): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
 
         $egg = $this->cloneEggAndVariables($server->egg);
@@ -86,7 +87,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
      */
     public function test_hidden_variables_are_not_returned_in_startup_command_when_updating_variable(): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount();
 
         $egg = $this->cloneEggAndVariables($server->egg);
@@ -115,7 +116,7 @@ class UpdateStartupVariableTest extends ClientApiIntegrationTestCase
      */
     public function test_egg_variable_with_nullable_string_is_not_required(): void
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         [$user, $server] = $this->generateTestAccount();
 
         $egg = $this->cloneEggAndVariables($server->egg);

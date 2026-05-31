@@ -43,7 +43,7 @@ class DeleteBackupTest extends ClientApiIntegrationTestCase
 
         [$user, $server] = $this->generateTestAccount([SubuserPermission::BackupDelete]);
 
-        /** @var \App\Models\Backup $backup */
+        /** @var Backup $backup */
         $backup = Backup::factory()->create(['server_id' => $server->id]);
 
         $this->repository->expects('setServer->delete')->with(

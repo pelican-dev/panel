@@ -5,12 +5,12 @@ namespace App\Models;
 use App\Contracts\Validatable;
 use App\Enums\CustomizationKey;
 use App\Enums\SubuserPermission;
+use App\Events\User\Deleting;
 use App\Exceptions\DisplayException;
 use App\Extensions\Avatar\AvatarService;
 use App\Models\Traits\HasAccessTokens;
 use App\Traits\HasValidation;
 use BackedEnum;
-use Database\Factories\UserFactory;
 use DateTimeZone;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
@@ -45,56 +45,75 @@ use Illuminate\Validation\Rules\In;
 use ResourceBundle;
 use Spatie\LaravelPasskeys\Models\Concerns\HasPasskeys;
 use Spatie\LaravelPasskeys\Models\Concerns\InteractsWithPasskeys;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
  * App\Models\User.
  *
  * @property int $id
- * @property string|null $external_id
- * @property bool $is_managed_externally
  * @property string $uuid
- * @property string $username
  * @property string $email
  * @property string $password
  * @property string|null $remember_token
  * @property string $language
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property string $username
+ * @property string|null $external_id
  * @property string $timezone
- * @property string[]|null $oauth
+ * @property array<string, mixed>|null $oauth
+ * @property string|array<string, mixed>|null $customization
  * @property string|null $mfa_app_secret
  * @property string[]|null $mfa_app_recovery_codes
  * @property bool $mfa_email_enabled
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property \Illuminate\Database\Eloquent\Collection|ApiKey[] $apiKeys
- * @property int|null $api_keys_count
- * @property DatabaseNotificationCollection|DatabaseNotification[] $notifications
- * @property int|null $notifications_count
- * @property \Illuminate\Database\Eloquent\Collection|Server[] $servers
- * @property int|null $servers_count
- * @property \Illuminate\Database\Eloquent\Collection|UserSSHKey[] $sshKeys
- * @property int|null $ssh_keys_count
- * @property \Illuminate\Database\Eloquent\Collection|ApiKey[] $tokens
- * @property int|null $tokens_count
- * @property \Illuminate\Database\Eloquent\Collection|Role[] $roles
- * @property int|null $roles_count
- * @property string|array<string, mixed>|null $customization
+ * @property bool $is_managed_externally
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ActivityLog> $activity
+ * @property-read int|null $activity_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ApiKey> $apiKeys
+ * @property-read int|null $api_keys_count
+ * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Permission> $permissions
+ * @property-read int|null $permissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Role> $roles
+ * @property-read int|null $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Server> $servers
+ * @property-read int|null $servers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, UserSSHKey> $sshKeys
+ * @property-read int|null $ssh_keys_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Server> $subServers
+ * @property-read int|null $sub_servers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Subuser> $subusers
+ * @property-read int|null $subusers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ApiKey> $tokens
+ * @property-read int|null $tokens_count
  *
- * @method static UserFactory factory(...$parameters)
- * @method static Builder|User newModelQuery()
- * @method static Builder|User newQuery()
- * @method static Builder|User query()
- * @method static Builder|User whereCreatedAt($value)
- * @method static Builder|User whereEmail($value)
- * @method static Builder|User whereExternalId($value)
- * @method static Builder|User whereId($value)
- * @method static Builder|User whereLanguage($value)
- * @method static Builder|User whereTimezone($value)
- * @method static Builder|User wherePassword($value)
- * @method static Builder|User whereRememberToken($value)
- * @method static Builder|User whereUpdatedAt($value)
- * @method static Builder|User whereUsername($value)
- * @method static Builder|User whereUuid($value)
+ * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
+ * @method static Builder<static>|User newModelQuery()
+ * @method static Builder<static>|User newQuery()
+ * @method static Builder<static>|User permission($permissions, $without = false)
+ * @method static Builder<static>|User query()
+ * @method static Builder<static>|User role($roles, $guard = null, $without = false)
+ * @method static Builder<static>|User whereCreatedAt($value)
+ * @method static Builder<static>|User whereCustomization($value)
+ * @method static Builder<static>|User whereEmail($value)
+ * @method static Builder<static>|User whereExternalId($value)
+ * @method static Builder<static>|User whereId($value)
+ * @method static Builder<static>|User whereIsManagedExternally($value)
+ * @method static Builder<static>|User whereLanguage($value)
+ * @method static Builder<static>|User whereMfaAppRecoveryCodes($value)
+ * @method static Builder<static>|User whereMfaAppSecret($value)
+ * @method static Builder<static>|User whereMfaEmailEnabled($value)
+ * @method static Builder<static>|User whereOauth($value)
+ * @method static Builder<static>|User wherePassword($value)
+ * @method static Builder<static>|User whereRememberToken($value)
+ * @method static Builder<static>|User whereTimezone($value)
+ * @method static Builder<static>|User whereUpdatedAt($value)
+ * @method static Builder<static>|User whereUsername($value)
+ * @method static Builder<static>|User whereUuid($value)
+ * @method static Builder<static>|User withoutPermission($permissions)
+ * @method static Builder<static>|User withoutRole($roles, $guard = null)
  */
 class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasEmailAuthentication, HasName, HasPasskeys, HasTenants, Validatable
 {
@@ -186,6 +205,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             'is_managed_externally' => 'boolean',
             'mfa_app_secret' => 'encrypted',
             'mfa_app_recovery_codes' => 'encrypted:array',
+            'mfa_email_enabled' => 'boolean',
             'oauth' => 'array',
             'customization' => 'array',
         ];
@@ -209,6 +229,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             throw_if($user->servers()->count() > 0, new DisplayException(trans('exceptions.users.has_servers')));
 
             throw_if(request()->user()?->id === $user->id, new DisplayException(trans('exceptions.users.is_self')));
+
+            event(new Deleting($user));
         });
     }
 

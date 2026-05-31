@@ -36,7 +36,7 @@ class StartupModificationServiceTest extends IntegrationTestCase
         } catch (\Exception $exception) {
             $this->assertInstanceOf(ValidationException::class, $exception);
 
-            /** @var \Illuminate\Validation\ValidationException $exception */
+            /** @var ValidationException $exception */
             $errors = $exception->validator->errors()->toArray();
 
             $this->assertCount(1, $errors);
@@ -69,7 +69,7 @@ class StartupModificationServiceTest extends IntegrationTestCase
      */
     public function test_server_is_properly_modified_as_admin_user(): void
     {
-        /** @var \App\Models\Egg $nextEgg */
+        /** @var Egg $nextEgg */
         $nextEgg = Egg::query()->findOrFail(2);
 
         $server = $this->createServerModel(['egg_id' => 1]);

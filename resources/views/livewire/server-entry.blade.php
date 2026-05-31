@@ -1,6 +1,6 @@
 @php
     $actiongroup = \App\Filament\App\Resources\Servers\Pages\ListServers::getPowerActionGroup()->record($server);
-    $backgroundImage = $server->icon ?? $server->egg->image;
+    $backgroundImage = $server->icon ?? $server->egg->icon;
 
     $serverEntryColumn = $column ?? \App\Filament\Components\Tables\Columns\ServerEntryColumn::make('server_entry');
     $serverNodeStatistics = $server->node->statistics();
@@ -14,9 +14,7 @@
      x-on:click="{{ $component->redirectUrl() }}"
      x-on:auxclick.prevent="if ($event.button === 1) {{ $component->redirectUrl(true) }}">
 
-    <div class="absolute left-0 top-1 bottom-0 w-1 rounded-lg"
-         style="background-color: {{ $server->condition->getColor(true) }};">
-    </div>
+    <div class="absolute left-0 top-1 bottom-0 w-1 rounded-lg fi-color fi-color-{{ $server->condition->getColor() }} fi-bg-color-600" style="background-color: var(--bg);"> </div>
 
     <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
         @if($backgroundImage)

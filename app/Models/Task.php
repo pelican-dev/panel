@@ -6,11 +6,11 @@ use App\Contracts\Validatable;
 use App\Extensions\Tasks\TaskSchemaInterface;
 use App\Extensions\Tasks\TaskService;
 use App\Traits\HasValidation;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -20,11 +20,26 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
  * @property string $payload
  * @property int $time_offset
  * @property bool $is_queued
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property bool $continue_on_failure
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Schedule $schedule
- * @property Server $server
+ * @property-read Schedule $schedule
+ * @property-read Server|null $server
+ *
+ * @method static \Database\Factories\TaskFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Task newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Task newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Task query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Task whereAction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Task whereContinueOnFailure($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Task whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Task whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Task whereIsQueued($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Task wherePayload($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Task whereScheduleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Task whereSequenceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Task whereTimeOffset($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Task whereUpdatedAt($value)
  */
 class Task extends Model implements Validatable
 {

@@ -147,7 +147,7 @@ class DaemonServerRepository extends DaemonRepository
     }
 
     /**
-     * Deauthorizes a user (disconnects websockets and SFTP) on the Wings instance for the server.
+     * Deauthorizes a user (disconnects websockets and SFTP) on the Wings instance for the server (or all servers of a node).
      *
      * @throws ConnectionException
      */
@@ -156,7 +156,7 @@ class DaemonServerRepository extends DaemonRepository
         $this->getHttpClient()->post('/api/deauthorize-user', [
             'json' => [
                 'user' => $user,
-                'servers' => [$this->server->uuid],
+                'servers' => $this->server ? [$this->server->uuid] : [],
             ],
         ]);
     }

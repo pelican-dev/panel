@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\Nodes\Pages;
 
 use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Nodes\NodeResource;
+use App\Filament\Components\Tables\Columns\NodeClientHealthColumn;
 use App\Filament\Components\Tables\Columns\NodeHealthColumn;
 use App\Filament\Components\Tables\Filters\TagsFilter;
 use App\Models\Node;
@@ -34,6 +35,7 @@ class ListNodes extends ListRecords
                     ->searchable()
                     ->hidden(),
                 NodeHealthColumn::make('health'),
+                NodeClientHealthColumn::make('reachable'),
                 TextColumn::make('name')
                     ->label(trans('admin/node.table.name'))
                     ->sortable()

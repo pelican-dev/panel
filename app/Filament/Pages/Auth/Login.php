@@ -4,6 +4,8 @@ namespace App\Filament\Pages\Auth;
 
 use App\Extensions\Captcha\CaptchaService;
 use App\Extensions\OAuth\OAuthService;
+use BladeUI\Icons\Exceptions\SvgNotFound;
+use BladeUI\Icons\Factory as IconFactory;
 use Filament\Actions\Action;
 use Filament\Auth\Pages\Login as BaseLogin;
 use Filament\Forms\Components\TextInput;
@@ -12,6 +14,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Validation\ValidationException;
 
 class Login extends BaseLogin
@@ -20,10 +23,13 @@ class Login extends BaseLogin
 
     protected CaptchaService $captchaService;
 
-    public function boot(OAuthService $oauthService, CaptchaService $captchaService): void
+    protected IconFactory $iconFactory;
+
+    public function boot(OAuthService $oauthService, CaptchaService $captchaService, IconFactory $iconFactory): void
     {
         $this->oauthService = $oauthService;
         $this->captchaService = $captchaService;
+        $this->iconFactory = $iconFactory;
     }
 
     public function content(Schema $schema): Schema
@@ -38,6 +44,12 @@ class Login extends BaseLogin
 
     public function form(Schema $schema): Schema
     {
+        if (config('auth.disable_password_login', false)) {
+            return $schema->components([
+                $this->getOAuthFormComponent(),
+            ]);
+        }
+
         $components = [
             $this->getLoginFormComponent(),
             $this->getPasswordFormComponent(),
@@ -98,18 +110,38 @@ class Login extends BaseLogin
             $color = $schema->getHexColor();
             $color = is_string($color) ? Color::hex($color) : null;
 
+            $icon = $schema->getIcon();
+            if (is_string($icon)) {
+                try {
+                    $this->iconFactory->svg($icon);
+                } catch (SvgNotFound) {
+                    $icon = null;
+                }
+            }
+
             $actions[] = Action::make("oauth_$id")
                 ->label($schema->getName())
-                ->icon($schema->getIcon())
+                ->icon($icon)
                 ->color($color)
                 ->url(route('auth.oauth.redirect', ['driver' => $id], false));
         }
 
-        return Actions::make($actions);
+        return Actions::make($actions)->alignment(fn () => config('auth.disable_password_login', false) ? Alignment::Center : null);
+    }
+
+    protected function getFormActions(): array
+    {
+        return config('auth.disable_password_login', false) ? [] : parent::getFormActions();
     }
 
     protected function getCredentialsFromFormData(array $data): array
     {
+        if (config('auth.disable_password_login', false)) {
+            throw ValidationException::withMessages([
+                'data.login' => trans('auth.password_login_disabled'),
+            ]);
+        }
+
         $loginType = filter_var($data['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         return [
