@@ -139,7 +139,7 @@ return [
         ],
         'api' => [
             'title' => 'API',
-            'helper' => 'Defines the rate limit for the number of requests per minute that can be executed.',
+            'helper' => 'Defines the rate limit for the number of requests that can be executed per configured period.',
             'requests_per_period' => 'Requests Per Period',
             'requests' => 'Requests',
             'minutes' => 'Minutes',
