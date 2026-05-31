@@ -1,5 +1,13 @@
 <?php
 
+use App\Models\User;
+use Spatie\LaravelPasskeys\Actions\ConfigureCeremonyStepManagerFactoryAction;
+use Spatie\LaravelPasskeys\Actions\FindPasskeyToAuthenticateAction;
+use Spatie\LaravelPasskeys\Actions\GeneratePasskeyAuthenticationOptionsAction;
+use Spatie\LaravelPasskeys\Actions\GeneratePasskeyRegisterOptionsAction;
+use Spatie\LaravelPasskeys\Actions\StorePasskeyAction;
+use Spatie\LaravelPasskeys\Models\Passkey;
+
 return [
     /*
      * After a successful authentication attempt using a passkey
@@ -13,11 +21,11 @@ return [
      * by specifying your custom class name here.
      */
     'actions' => [
-        'generate_passkey_register_options' => Spatie\LaravelPasskeys\Actions\GeneratePasskeyRegisterOptionsAction::class,
-        'store_passkey' => Spatie\LaravelPasskeys\Actions\StorePasskeyAction::class,
-        'generate_passkey_authentication_options' => \Spatie\LaravelPasskeys\Actions\GeneratePasskeyAuthenticationOptionsAction::class,
-        'find_passkey' => Spatie\LaravelPasskeys\Actions\FindPasskeyToAuthenticateAction::class,
-        'configure_ceremony_step_manager_factory' => Spatie\LaravelPasskeys\Actions\ConfigureCeremonyStepManagerFactoryAction::class,
+        'generate_passkey_register_options' => GeneratePasskeyRegisterOptionsAction::class,
+        'store_passkey' => StorePasskeyAction::class,
+        'generate_passkey_authentication_options' => GeneratePasskeyAuthenticationOptionsAction::class,
+        'find_passkey' => FindPasskeyToAuthenticateAction::class,
+        'configure_ceremony_step_manager_factory' => ConfigureCeremonyStepManagerFactoryAction::class,
     ],
 
     /*
@@ -35,7 +43,7 @@ return [
      * You can override this by specifying your own models
      */
     'models' => [
-        'passkey' => Spatie\LaravelPasskeys\Models\Passkey::class,
-        'authenticatable' => env('AUTH_MODEL', App\Models\User::class),
+        'passkey' => Passkey::class,
+        'authenticatable' => env('AUTH_MODEL', User::class),
     ],
 ];
