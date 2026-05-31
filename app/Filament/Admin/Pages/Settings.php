@@ -801,166 +801,166 @@ class Settings extends Page implements HasSchemas
                 ->collapsed()
                 ->schema([
                     Fieldset::make()
-                        ->label('Client API Ratelimit')
+                        ->label(trans('admin/setting.misc.api.client_title'))
                         ->schema([
                             TextInput::make('APP_API_CLIENT_RATELIMIT')
-                                ->label('Requests Per Period')
+                                ->label(trans('admin/setting.misc.api.requests_per_period'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Requests')->default(env('APP_API_CLIENT_RATELIMIT', config('http.rate_limit.client'))),
+                                ->suffix(trans('admin/setting.misc.api.requests'))->default(env('APP_API_CLIENT_RATELIMIT', config('http.rate_limit.client'))),
 
                             TextInput::make('APP_API_CLIENT_RATELIMIT_PERIOD')
-                                ->label('Period Length')
+                                ->label(trans('admin/setting.misc.api.period_length'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Minutes')->default(env('APP_API_CLIENT_RATELIMIT_PERIOD', config('http.rate_limit.client_period'))),
-                            Text::make('Ratelimit is per user, or IP if there is no user'),
+                                ->suffix(trans('admin/setting.misc.api.minutes'))->default(env('APP_API_CLIENT_RATELIMIT_PERIOD', config('http.rate_limit.client_period'))),
+                            Text::make(trans('admin/setting.misc.api.client_helper')),
                         ]),
                     Fieldset::make()
-                        ->label('Application API Ratelimit')
+                        ->label(trans('admin/setting.misc.api.application_title'))
                         ->schema([
                             TextInput::make('APP_API_APPLICATION_RATELIMIT')
-                                ->label('Requests Per Period')
+                                ->label(trans('admin/setting.misc.api.requests_per_period'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Requests')->default(env('APP_API_APPLICATION_RATELIMIT', config('http.rate_limit.application'))),
+                                ->suffix(trans('admin/setting.misc.api.requests'))->default(env('APP_API_APPLICATION_RATELIMIT', config('http.rate_limit.application'))),
 
                             TextInput::make('APP_API_APPLICATION_RATELIMIT_PERIOD')
-                                ->label('Period Length')
+                                ->label(trans('admin/setting.misc.api.period_length'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Minutes')->default(env('APP_API_APPLICATION_RATELIMIT_PERIOD', config('http.rate_limit.application_period'))),
-                            Text::make('Ratelimit is per user, or IP if there is no user'),
+                                ->suffix(trans('admin/setting.misc.api.minutes'))->default(env('APP_API_APPLICATION_RATELIMIT_PERIOD', config('http.rate_limit.application_period'))),
+                            Text::make(trans('admin/setting.misc.api.application_helper')),
                         ]),
                     Fieldset::make()
-                        ->label('Password Reset Ratelimit')
+                        ->label(trans('admin/setting.misc.api.password_reset_title'))
                         ->schema([
                             TextInput::make('APP_API_PASSWORD_RESET_RATELIMIT')
-                                ->label('Requests Per Period')
+                                ->label(trans('admin/setting.misc.api.requests_per_period'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Requests')->default(env('APP_API_PASSWORD_RESET_RATELIMIT', config('http.rate_limit.password_reset'))),
+                                ->suffix(trans('admin/setting.misc.api.requests'))->default(env('APP_API_PASSWORD_RESET_RATELIMIT', config('http.rate_limit.password_reset'))),
 
                             TextInput::make('APP_API_PASSWORD_RESET_RATELIMIT_PERIOD')
-                                ->label('Period Length')
+                                ->label(trans('admin/setting.misc.api.period_length'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Minutes')->default(env('APP_API_PASSWORD_RESET_RATELIMIT_PERIOD', config('http.rate_limit.password_reset_period'))),
-                            Text::make('Ratelimit is per IP'),
+                                ->suffix(trans('admin/setting.misc.api.minutes'))->default(env('APP_API_PASSWORD_RESET_RATELIMIT_PERIOD', config('http.rate_limit.password_reset_period'))),
+                            Text::make(trans('admin/setting.misc.api.password_reset_helper')),
                         ]),
                     Fieldset::make()
-                        ->label('Websocket Ratelimit')
+                        ->label(trans('admin/setting.misc.api.websocket_title'))
                         ->schema([
                             TextInput::make('APP_API_WEBSOCKET_RATELIMIT')
-                                ->label('Requests Per Period')
+                                ->label(trans('admin/setting.misc.api.requests_per_period'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Requests')->default(env('APP_API_WEBSOCKET_RATELIMIT', config('http.rate_limit.websocket'))),
+                                ->suffix(trans('admin/setting.misc.api.requests'))->default(env('APP_API_WEBSOCKET_RATELIMIT', config('http.rate_limit.websocket'))),
 
                             TextInput::make('APP_API_WEBSOCKET_RATELIMIT_PERIOD')
-                                ->label('Period Length')
+                                ->label(trans('admin/setting.misc.api.period_length'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Minutes')->default(env('APP_API_WEBSOCKET_RATELIMIT_PERIOD', config('http.rate_limit.websocket_period'))),
-                            Text::make('Ratelimit is per server'),
+                                ->suffix(trans('admin/setting.misc.api.minutes'))->default(env('APP_API_WEBSOCKET_RATELIMIT_PERIOD', config('http.rate_limit.websocket_period'))),
+                            Text::make(trans('admin/setting.misc.api.websocket_helper')),
                         ]),
                     Fieldset::make()
-                        ->label('Backup and Restore Ratelimit')
+                        ->label(trans('admin/setting.misc.api.backup_restore_title'))
                         ->schema([
                             TextInput::make('APP_API_BACKUP_RESTORE_RATELIMIT')
-                                ->label('Requests Per Period')
+                                ->label(trans('admin/setting.misc.api.requests_per_period'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Requests')->default(env('APP_API_BACKUP_RESTORE_RATELIMIT', config('http.rate_limit.backup_restore'))),
+                                ->suffix(trans('admin/setting.misc.api.requests'))->default(env('APP_API_BACKUP_RESTORE_RATELIMIT', config('http.rate_limit.backup_restore'))),
 
                             TextInput::make('APP_API_BACKUP_RESTORE_RATELIMIT_PERIOD')
-                                ->label('Period Length')
+                                ->label(trans('admin/setting.misc.api.period_length'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Minutes')->default(env('APP_API_BACKUP_RESTORE_RATELIMIT_PERIOD', config('http.rate_limit.backup_restore_period'))),
-                            Text::make('Ratelimit is per server'),
+                                ->suffix(trans('admin/setting.misc.api.minutes'))->default(env('APP_API_BACKUP_RESTORE_RATELIMIT_PERIOD', config('http.rate_limit.backup_restore_period'))),
+                            Text::make(trans('admin/setting.misc.api.backup_restore_helper')),
                         ]),
                     Fieldset::make()
-                        ->label('Database Create Ratelimit')
+                        ->label(trans('admin/setting.misc.api.database_create_title'))
                         ->schema([
                             TextInput::make('APP_API_DATABASE_CREATE_RATELIMIT')
-                                ->label('Requests Per Period')
+                                ->label(trans('admin/setting.misc.api.requests_per_period'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Requests')->default(env('APP_API_DATABASE_CREATE_RATELIMIT', config('http.rate_limit.database_create'))),
+                                ->suffix(trans('admin/setting.misc.api.requests'))->default(env('APP_API_DATABASE_CREATE_RATELIMIT', config('http.rate_limit.database_create'))),
 
                             TextInput::make('APP_API_DATABASE_CREATE_RATELIMIT_PERIOD')
-                                ->label('Period Length')
+                                ->label(trans('admin/setting.misc.api.period_length'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Minutes')->default(env('APP_API_DATABASE_CREATE_RATELIMIT_PERIOD', config('http.rate_limit.database_create_period'))),
-                            Text::make('Ratelimit is per server'),
+                                ->suffix(trans('admin/setting.misc.api.minutes'))->default(env('APP_API_DATABASE_CREATE_RATELIMIT_PERIOD', config('http.rate_limit.database_create_period'))),
+                            Text::make(trans('admin/setting.misc.api.database_create_helper')),
                         ]),
                     Fieldset::make()
-                        ->label('Subuser Create Ratelimit')
+                        ->label(trans('admin/setting.misc.api.subuser_create_title'))
                         ->schema([
                             TextInput::make('APP_API_SUBUSER_CREATE_RATELIMIT')
-                                ->label('Requests Per Period')
+                                ->label(trans('admin/setting.misc.api.requests_per_period'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Requests')->default(env('APP_API_SUBUSER_CREATE_RATELIMIT', config('http.rate_limit.subuser_create'))),
+                                ->suffix(trans('admin/setting.misc.api.requests'))->default(env('APP_API_SUBUSER_CREATE_RATELIMIT', config('http.rate_limit.subuser_create'))),
 
                             TextInput::make('APP_API_SUBUSER_CREATE_RATELIMIT_PERIOD')
-                                ->label('Period Length')
+                                ->label(trans('admin/setting.misc.api.period_length'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Minutes')->default(env('APP_API_SUBUSER_CREATE_RATELIMIT_PERIOD', config('http.rate_limit.subuser_create_period'))),
-                            Text::make('Ratelimit is per server'),
+                                ->suffix(trans('admin/setting.misc.api.minutes'))->default(env('APP_API_SUBUSER_CREATE_RATELIMIT_PERIOD', config('http.rate_limit.subuser_create_period'))),
+                            Text::make(trans('admin/setting.misc.api.subuser_create_helper')),
                         ]),
                     Fieldset::make()
-                        ->label('File Pull Ratelimit')
+                        ->label(trans('admin/setting.misc.api.file_pull_title'))
                         ->schema([
                             TextInput::make('APP_API_FILE_PULL_RATELIMIT')
-                                ->label('Requests Per Period')
+                                ->label(trans('admin/setting.misc.api.requests_per_period'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Requests')->default(env('APP_API_FILE_PULL_RATELIMIT', config('http.rate_limit.file_pull'))),
+                                ->suffix(trans('admin/setting.misc.api.requests'))->default(env('APP_API_FILE_PULL_RATELIMIT', config('http.rate_limit.file_pull'))),
 
                             TextInput::make('APP_API_FILE_PULL_RATELIMIT_PERIOD')
-                                ->label('Period Length')
+                                ->label(trans('admin/setting.misc.api.period_length'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Minutes')->default(env('APP_API_FILE_PULL_RATELIMIT_PERIOD', config('http.rate_limit.file_pull_period'))),
-                            Text::make('Ratelimit is per server'),
+                                ->suffix(trans('admin/setting.misc.api.minutes'))->default(env('APP_API_FILE_PULL_RATELIMIT_PERIOD', config('http.rate_limit.file_pull_period'))),
+                            Text::make(trans('admin/setting.misc.api.file_pull_helper')),
                         ]),
                     Fieldset::make()
-                        ->label('Default Ratelimit')
+                        ->label(trans('admin/setting.misc.api.default_title'))
                         ->schema([
                             TextInput::make('APP_API_DEFAULT_RATELIMIT')
-                                ->label('Requests Per Period')
+                                ->label(trans('admin/setting.misc.api.requests_per_period'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Requests')->default(env('APP_API_DEFAULT_RATELIMIT', config('http.rate_limit.default'))),
+                                ->suffix(trans('admin/setting.misc.api.requests'))->default(env('APP_API_DEFAULT_RATELIMIT', config('http.rate_limit.default'))),
 
                             TextInput::make('APP_API_DEFAULT_RATELIMIT_PERIOD')
-                                ->label('Period Length')
+                                ->label(trans('admin/setting.misc.api.period_length'))
                                 ->required()
                                 ->numeric()
                                 ->minValue(1)
-                                ->suffix('Minutes')->default(env('APP_API_DEFAULT_RATELIMIT_PERIOD', config('http.rate_limit.default_period'))),
-                            Text::make('Ratelimit is per server'),
+                                ->suffix(trans('admin/setting.misc.api.minutes'))->default(env('APP_API_DEFAULT_RATELIMIT_PERIOD', config('http.rate_limit.default_period'))),
+                            Text::make(trans('admin/setting.misc.api.default_helper')),
                         ]),
                 ]),
             Section::make(trans('admin/setting.misc.server.title'))
