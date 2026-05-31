@@ -36,7 +36,7 @@
         "spatie/laravel-data": "^4.23",
         "spatie/laravel-fractal": "^6.4",
         "spatie/laravel-health": "^1.39",
-        "spatie/laravel-passkeys": "^1.5",
+        "spatie/laravel-passkeys": "^1.8",
         "spatie/laravel-permission": "^6.25",
         "spatie/laravel-query-builder": "^6.4",
         "spatie/temporary-directory": "^2.3",

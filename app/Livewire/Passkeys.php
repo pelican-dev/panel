@@ -16,7 +16,7 @@ final class Passkeys extends PasskeysComponent implements HasActions, HasSchemas
     use InteractsWithActions;
     use InteractsWithSchemas;
 
-    public function confirmDelete(int $passkeyId): void
+    public function confirmDelete(int|string $passkeyId): void
     {
         $this->mountAction('deleteAction', ['passkey' => $passkeyId]);
     }
@@ -30,7 +30,7 @@ final class Passkeys extends PasskeysComponent implements HasActions, HasSchemas
             ->action(fn (array $arguments) => $this->deletePasskey((int) $arguments['passkey']));
     }
 
-    public function deletePasskey(int $passkeyId): void
+    public function deletePasskey(int|string $passkeyId): void
     {
         $this->currentUser()->passkeys()->findOrFail($passkeyId);
 

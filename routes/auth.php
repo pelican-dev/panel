@@ -12,7 +12,7 @@ Route::prefix('oauth')->group(function () {
     Route::get('/callback/{driver}', [OAuthController::class, 'callback'])->name('auth.oauth.callback')->withoutMiddleware('guest');
 });
 
-Route::prefix('auth/passkeys')->group(function () {
+Route::prefix('passkeys')->group(function () {
     Route::get('/authentication-options', GeneratePasskeyAuthenticationOptionsController::class)->name('passkeys.authentication_options');
     Route::post('/authenticate', AuthenticateUsingPasskeyController::class)->name('passkeys.login');
 });
