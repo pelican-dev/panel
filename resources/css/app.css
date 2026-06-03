@@ -26,4 +26,4 @@
 
 @source '../../vendor/gboquizosanchez/filament-log-viewer/resources/views/**/*.blade.php';
 
-@variant dark (&:where(.dark, .dark *));
+@custom-variant dark (.dark &);

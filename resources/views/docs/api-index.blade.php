@@ -6,9 +6,9 @@
     <title>API Documentation</title>
     @vite('resources/css/app.css')
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="bg-white shadow-lg rounded-lg py-8 px-8 max-w-md w-full text-center">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">API Documentation</h2>
+<body class="bg-gray-100 dark:bg-gray-950 min-h-screen flex items-center justify-center">
+    <div class="bg-white dark:bg-gray-900 shadow-lg rounded-lg py-8 px-8 max-w-md w-full text-center">
+        <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">API Documentation</h2>
 
         <div class="mb-2">
             <a href="/docs/api/application" class="inline-flex items-center">
