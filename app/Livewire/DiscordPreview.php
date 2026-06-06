@@ -78,7 +78,7 @@ class DiscordPreview extends Component
             : WebhookConfiguration::getWebhookSampleData();
 
         $payloadJson = json_encode($payloadArray) ?: '{}';
-        $replacedPayload = (new WebhookConfiguration)->replaceVars($sampleData, $payloadJson);
+        $replacedPayload = (new WebhookConfiguration())->replaceVars($sampleData, $payloadJson);
         $data = json_decode($replacedPayload, true) ?? [];
 
         return [
