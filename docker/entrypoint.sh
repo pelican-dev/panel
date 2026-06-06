@@ -5,7 +5,7 @@
 if [ -f /pelican-data/.env ]; then
   echo ".env vars exist."
   # load specific env vars from .env used in the entrypoint and they are not already set
-  for VAR in "APP_KEY" "APP_INSTALLED" "DB_CONNECTION" "DB_HOST" "DB_PORT"; do
+  for VAR in "APP_KEY" "APP_INSTALLED" "DB_CONNECTION" "DB_HOST" "DB_PORT" "TRUSTED_PROXIES"; do
     echo "checking for ${VAR}"
     ## skip if it looks like it might try to execute code
     if (grep "${VAR}" .env | grep -qE "\$\(|=\`|\$#"); then echo "var in .env may be executable or a comment, skipping"; continue; fi
