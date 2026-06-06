@@ -80,7 +80,7 @@ class Login extends BaseLogin
                 ->color('gray')
                 ->alpineClickHandler('window.authenticateWithPasskey()')
                 ->extraAttributes(['type' => 'button']),
-        ])->fullWidth();
+        ])->fullWidth()->hidden(fn () => !request()->isSecure());
     }
 
     protected function throwFailureValidationException(): never

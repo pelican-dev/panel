@@ -16,9 +16,12 @@ return new class extends Migration
         Schema::create('passkeys', function (Blueprint $table) use ($authenticatableTableName) {
             $table->id();
 
+            $table->unsignedInteger('authenticatable_id');
+
             $table
-                ->unsignedInteger('authenticatable_id')
-                ->constrained(table: $authenticatableTableName, indexName: 'passkeys_authenticatable_fk')
+                ->foreign('authenticatable_id', 'passkeys_authenticatable_fk')
+                ->references('id')
+                ->on($authenticatableTableName)
                 ->cascadeOnDelete();
 
             $table->text('name');

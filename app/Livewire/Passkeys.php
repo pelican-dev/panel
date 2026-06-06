@@ -52,6 +52,15 @@ final class Passkeys extends PasskeysComponent implements HasActions, HasSchemas
             ->send();
     }
 
+    public function registrationFailed(string $message): void
+    {
+        Notification::make()
+            ->title(trans('passkeys.registration_failed_notification_title'))
+            ->body($message)
+            ->danger()
+            ->send();
+    }
+
     public function render(): View
     {
         return view('passkeys.livewire.passkeys', data: [
