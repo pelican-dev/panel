@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('webhook_configurations', function (Blueprint $table) {
             $table->string('scope')->default('global')->after('id');
-            $table->unsignedBigInteger('server_id')->nullable()->after('scope');
+            $table->unsignedInteger('server_id')->nullable()->after('scope');
             $table->foreign('server_id')->references('id')->on('servers')->onDelete('cascade');
 
             $table->index(['scope', 'server_id']);
