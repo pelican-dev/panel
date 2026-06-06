@@ -9,6 +9,7 @@ use BladeUI\Icons\Factory as IconFactory;
 use Filament\Actions\Action;
 use Filament\Auth\Pages\Login as BaseLogin;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
@@ -31,11 +32,21 @@ class Login extends BaseLogin
         $this->iconFactory = $iconFactory;
     }
 
+    public function mount(): void
+    {
+        parent::mount();
+
+        if ($message = session()->pull('authenticatePasskey::message')) {
+            Notification::make()->title($message)->danger()->send();
+        }
+    }
+
     public function form(Schema $schema): Schema
     {
         if (config('auth.disable_password_login', false)) {
             return $schema->components([
                 $this->getOAuthFormComponent(),
+                $this->getPasskeyFormComponent(),
             ]);
         }
 
@@ -44,6 +55,7 @@ class Login extends BaseLogin
             $this->getPasswordFormComponent(),
             $this->getRememberFormComponent(),
             $this->getOAuthFormComponent(),
+            $this->getPasskeyFormComponent(),
         ];
 
         if ($captchaComponent = $this->getCaptchaComponent()) {
@@ -51,13 +63,24 @@ class Login extends BaseLogin
                 ->hidden(fn () => filled($this->userUndertakingMultiFactorAuthentication));
         }
 
-        return $schema
-            ->components($components);
+        return $schema->components($components);
     }
 
     private function getCaptchaComponent(): ?Component
     {
         return $this->captchaService->getActiveSchema()?->getFormComponent();
+    }
+
+    protected function getPasskeyFormComponent(): Component
+    {
+        return Actions::make([
+            Action::make('passkey')
+                ->label(trans('passkeys.authenticate_using_passkey'))
+                ->icon('heroicon-o-key')
+                ->color('gray')
+                ->alpineClickHandler('window.authenticateWithPasskey()')
+                ->extraAttributes(['type' => 'button']),
+        ])->fullWidth()->hidden(fn () => !request()->isSecure());
     }
 
     protected function throwFailureValidationException(): never
