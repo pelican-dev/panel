@@ -8,6 +8,7 @@ use Filament\Schemas\Components\Concerns\CanPoll;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Support\Carbon;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class DiscordPreview extends Component
@@ -17,8 +18,23 @@ class DiscordPreview extends Component
 
     public ?WebhookConfiguration $record = null;
 
-    /** @var string|array<string, mixed>|null */
-    public string|array|null $payload = null;
+    /** @var array<string, mixed>|null */
+    public ?array $formPayload = null;
+
+    #[On('discord-form-changed')]
+    public function onFormChanged(
+        string $content = '',
+        string $username = '',
+        string $avatar_url = '',
+        mixed $embeds = [],
+    ): void {
+        $this->formPayload = [
+            'content' => $content,
+            'username' => $username,
+            'avatar_url' => $avatar_url,
+            'embeds' => is_array($embeds) ? $embeds : [],
+        ];
+    }
 
     public function render(): View
     {
@@ -36,34 +52,41 @@ class DiscordPreview extends Component
      */
     public function getViewData(): array
     {
-        if (!$this->record || !$this->record->payload) {
-            return [
-                'link' => fn ($href, $child) => $href ? "<a href=\"$href\" target=\"_blank\" class=\"link\">$child</a>" : $child,
-                'content' => null,
-                'sender' => [
-                    'name' => 'Pelican',
-                    'avatar' => 'https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg',
-                ],
-                'embeds' => [],
-                'getTime' => fn () => now()->format('H:i'),
-            ];
+        $default = [
+            'link' => fn ($href, $child) => $href ? "<a href=\"$href\" target=\"_blank\" class=\"link\">$child</a>" : $child,
+            'content' => null,
+            'sender' => [
+                'name' => 'Pelican',
+                'avatar' => 'https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg',
+            ],
+            'embeds' => [],
+            'getTime' => fn () => now()->format('H:i'),
+        ];
+
+        $payloadArray = $this->formPayload;
+
+        if ($payloadArray === null) {
+            if (!$this->record || !$this->record->payload) {
+                return $default;
+            }
+            $payloadArray = $this->record->payload;
         }
 
-        $this->payload = json_encode($this->record->payload);
-
-        $sampleData = $this->record->scope === WebhookScope::SERVER
+        $scope = $this->record !== null ? $this->record->scope : WebhookScope::GLOBAL;
+        $sampleData = $scope === WebhookScope::SERVER
             ? WebhookConfiguration::getServerWebhookSampleData()
             : WebhookConfiguration::getWebhookSampleData();
 
-        $replacedPayload = $this->record->replaceVars($sampleData, $this->payload);
-        $data = json_decode($replacedPayload, true);
+        $payloadJson = json_encode($payloadArray) ?: '{}';
+        $replacedPayload = (new WebhookConfiguration)->replaceVars($sampleData, $payloadJson);
+        $data = json_decode($replacedPayload, true) ?? [];
 
         return [
             'link' => fn ($href, $child) => $href ? "<a href=\"$href\" target=\"_blank\" class=\"link\">$child</a>" : $child,
             'content' => data_get($data, 'content'),
             'sender' => [
-                'name' => data_get($data, 'username', 'Pelican'),
-                'avatar' => data_get($data, 'avatar_url', 'https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg'),
+                'name' => filled(data_get($data, 'username')) ? data_get($data, 'username') : 'Pelican',
+                'avatar' => filled(data_get($data, 'avatar_url')) ? data_get($data, 'avatar_url') : 'https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg',
             ],
             'embeds' => collect(data_get($data, 'embeds', []))
                 ->take(10)
@@ -71,11 +94,18 @@ class DiscordPreview extends Component
                     $embed['color'] = $embed['color'] ?? null;
 
                     if ($embed['color']) {
-                        $embed['color'] = '#' . str_pad(dechex($embed['color']), 6, '0', STR_PAD_LEFT);
+                        // DB stores integer colors; form state stores hex strings
+                        $embed['color'] = is_int($embed['color'])
+                            ? '#' . str_pad(dechex($embed['color']), 6, '0', STR_PAD_LEFT)
+                            : $embed['color'];
+                    }
+
+                    if (!isset($embed['timestamp']) && !empty($embed['has_timestamp'])) {
+                        $embed['timestamp'] = now()->toIso8601String();
                     }
 
                     if (isset($embed['timestamp'])) {
-                        $embed['timestamp'] = Carbon::parse($embed['timestamp'])->format('Y-m-d H:i');
+                        $embed['timestamp'] = Carbon::parse($embed['timestamp'])->format('M j, Y H:i');
                     }
 
                     return $embed;

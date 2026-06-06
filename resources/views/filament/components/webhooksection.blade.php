@@ -68,7 +68,19 @@
         :secondary="$isSecondary"
     >
         <x-slot name="heading">
-            @livewire('discord-preview', ['record' => $getRecord(), 'pollingInterval' => $pollingInterval ?? null])
+            <span
+                x-data
+                x-init="$watch(() => JSON.stringify($wire.data), (json) => {
+                    const d = JSON.parse(json);
+                    $wire.dispatch('discord-form-changed', {
+                        content: d.content ?? '',
+                        username: d.username ?? '',
+                        avatar_url: d.avatar_url ?? '',
+                        embeds: d.embeds ?? [],
+                    });
+                })"
+            ></span>
+            @livewire('discord-preview', ['record' => $getRecord()])
         </x-slot>
 
         {{ $getChildSchema()->gap(! $isDivided)->extraAttributes(['class' => 'fi-section-content']) }}

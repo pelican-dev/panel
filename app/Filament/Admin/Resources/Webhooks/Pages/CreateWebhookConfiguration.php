@@ -66,7 +66,7 @@ class CreateWebhookConfiguration extends CreateRecord
 
             $tmp = collect([
                 'username' => data_get($data, 'username'),
-                'avatar_url' => data_get($data, 'avatar_url'),
+                'avatar_url' => data_get($data, 'avatar_url') ?: 'https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg',
                 'content' => data_get($data, 'content'),
                 'image' => data_get($data, 'image'),
                 'thumbnail' => data_get($data, 'thumbnail'),
