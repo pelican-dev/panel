@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers\Api\Remote\Servers;
 
+use App\Exceptions\Http\HttpForbiddenException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Remote\ServerRequest;
 use App\Models\Allocation;
+use App\Models\Node;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Throwable;
+use Webmozart\Assert\Assert;
 
 class ServerTransferController extends Controller
 {
@@ -29,11 +32,20 @@ class ServerTransferController extends Controller
      *
      * @throws Throwable
      */
-    public function failure(ServerRequest $request, Server $server): JsonResponse
+    public function failure(Request $request, Server $server): JsonResponse
     {
         $transfer = $server->transfer;
         if (is_null($transfer)) {
             throw new ConflictHttpException('Server is not being transferred.');
+        }
+
+        /* @var Node $node */
+        Assert::isInstanceOf($node = $request->attributes->get('node'), Node::class);
+
+        // Either node can tell the panel that the transfer has failed. Only the new node
+        // can tell the panel that it was successful.
+        if (!$node->is($transfer->newNode) && !$node->is($transfer->oldNode)) {
+            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
 
         $this->connection->transaction(function () use ($transfer) {
@@ -53,11 +65,20 @@ class ServerTransferController extends Controller
      *
      * @throws Throwable
      */
-    public function success(ServerRequest $request, Server $server): JsonResponse
+    public function success(Request $request, Server $server): JsonResponse
     {
         $transfer = $server->transfer;
         if (is_null($transfer)) {
             throw new ConflictHttpException('Server is not being transferred.');
+        }
+
+        /* @var Node $node */
+        Assert::isInstanceOf($node = $request->attributes->get('node'), Node::class);
+
+        // Only the new node communicates a successful state to the panel, so we should
+        // not allow the old node to hit this endpoint.
+        if (!$node->is($transfer->newNode)) {
+            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
 
         /** @var Server $server */

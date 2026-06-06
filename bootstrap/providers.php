@@ -1,19 +1,35 @@
 <?php
 
+use App\Providers\ActivityLogServiceProvider;
+use App\Providers\AppServiceProvider;
+use App\Providers\BackupsServiceProvider;
+use App\Providers\EventServiceProvider;
+use App\Providers\Extensions\AvatarServiceProvider;
+use App\Providers\Extensions\CaptchaServiceProvider;
+use App\Providers\Extensions\FeatureServiceProvider;
+use App\Providers\Extensions\OAuthServiceProvider;
+use App\Providers\Extensions\TaskServiceProvider;
+use App\Providers\Filament\AdminPanelProvider;
+use App\Providers\Filament\AppPanelProvider;
+use App\Providers\Filament\FilamentServiceProvider;
+use App\Providers\Filament\ServerPanelProvider;
+use App\Providers\RouteServiceProvider;
+use SocialiteProviders\Manager\ServiceProvider;
+
 return [
-    App\Providers\ActivityLogServiceProvider::class,
-    App\Providers\AppServiceProvider::class,
-    App\Providers\BackupsServiceProvider::class,
-    App\Providers\EventServiceProvider::class,
-    App\Providers\Extensions\AvatarServiceProvider::class,
-    App\Providers\Extensions\CaptchaServiceProvider::class,
-    App\Providers\Extensions\FeatureServiceProvider::class,
-    App\Providers\Extensions\OAuthServiceProvider::class,
-    App\Providers\Extensions\TaskServiceProvider::class,
-    App\Providers\Filament\FilamentServiceProvider::class,
-    App\Providers\Filament\AdminPanelProvider::class,
-    App\Providers\Filament\AppPanelProvider::class,
-    App\Providers\Filament\ServerPanelProvider::class,
-    App\Providers\RouteServiceProvider::class,
-    SocialiteProviders\Manager\ServiceProvider::class,
+    ActivityLogServiceProvider::class,
+    AppServiceProvider::class,
+    BackupsServiceProvider::class,
+    EventServiceProvider::class,
+    AvatarServiceProvider::class,
+    CaptchaServiceProvider::class,
+    FeatureServiceProvider::class,
+    OAuthServiceProvider::class,
+    TaskServiceProvider::class,
+    FilamentServiceProvider::class,
+    AdminPanelProvider::class,
+    AppPanelProvider::class,
+    ServerPanelProvider::class,
+    RouteServiceProvider::class,
+    ServiceProvider::class,
 ];

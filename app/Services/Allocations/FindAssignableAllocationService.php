@@ -56,6 +56,7 @@ class FindAssignableAllocationService
         // those belonging to the current server (making it impossible to find unassigned ones)
         /** @var Allocation|null $allocation */
         $allocation = Allocation::withoutGlobalScopes()
+            ->lockForUpdate()
             ->where('node_id', $server->node_id)
             ->when($server->allocation, function ($query) use ($server) {
                 $query->where('ip', $server->allocation->ip);
@@ -125,6 +126,7 @@ class FindAssignableAllocationService
 
         /** @var Allocation $allocation */
         $allocation = Allocation::withoutGlobalScopes()
+            ->lockForUpdate()
             ->where('node_id', $server->node_id)
             ->where('ip', $server->allocation->ip)
             ->where('port', $port)

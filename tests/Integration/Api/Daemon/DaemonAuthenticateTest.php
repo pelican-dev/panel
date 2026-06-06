@@ -109,7 +109,7 @@ class DaemonAuthenticateTest extends MiddlewareTestCase
      * Provides different tokens that should trigger a bad request exception due to
      * their formatting.
      *
-     * @return array|\string[][]
+     * @return array|string[][]
      */
     public static function badTokenDataProvider(): array
     {

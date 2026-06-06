@@ -6,7 +6,6 @@ use App\Contracts\Validatable;
 use App\Exceptions\Service\HasActiveServersException;
 use App\Repositories\Daemon\DaemonSystemRepository;
 use App\Traits\HasValidation;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,46 +14,84 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * @property int $id
- * @property string $uuid
  * @property bool $public
  * @property string $name
- * @property string|null $description
  * @property string $fqdn
  * @property string $scheme
- * @property bool $behind_proxy
- * @property bool $maintenance_mode
  * @property int $memory
  * @property int $memory_overallocate
  * @property int $disk
  * @property int $disk_overallocate
- * @property int $cpu
- * @property int $cpu_overallocate
- * @property int $upload_size
- * @property string $daemon_token_id
  * @property string $daemon_token
  * @property int $daemon_listen
- * @property int $daemon_connect
  * @property int $daemon_sftp
- * @property string|null $daemon_sftp_alias
  * @property string $daemon_base
- * @property string[] $tags
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Mount[]|Collection $mounts
- * @property int|null $mounts_count
- * @property Server[]|Collection $servers
- * @property int|null $servers_count
- * @property Allocation[]|Collection $allocations
- * @property int|null $allocations_count
- * @property Role[]|Collection $roles
- * @property int|null $roles_count
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property int $upload_size
+ * @property bool $behind_proxy
+ * @property string|null $description
+ * @property bool $maintenance_mode
+ * @property string|null $uuid
+ * @property string|null $daemon_token_id
+ * @property array<array-key, mixed>|null $tags
+ * @property int $cpu
+ * @property int $cpu_overallocate
+ * @property string|null $daemon_sftp_alias
+ * @property int $daemon_connect
+ * @property-read Collection<int, Allocation> $allocations
+ * @property-read int|null $allocations_count
+ * @property-read Collection<int, DatabaseHost> $databaseHosts
+ * @property-read int|null $database_hosts_count
+ * @property-read Collection<int, Mount> $mounts
+ * @property-read int|null $mounts_count
+ * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read Collection<int, Role> $roles
+ * @property-read int|null $roles_count
+ * @property-read Collection<int, Server> $servers
+ * @property-read int|null $servers_count
+ *
+ * @method static \Database\Factories\NodeFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereBehindProxy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereCpu($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereCpuOverallocate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereDaemonBase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereDaemonConnect($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereDaemonListen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereDaemonSftp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereDaemonSftpAlias($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereDaemonToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereDaemonTokenId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereDisk($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereDiskOverallocate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereFqdn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereMaintenanceMode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereMemory($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereMemoryOverallocate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node wherePublic($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereScheme($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereTags($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereUploadSize($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereUuid($value)
  */
 class Node extends Model implements Validatable
 {

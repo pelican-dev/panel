@@ -4,13 +4,12 @@ namespace App\Models;
 
 use App\Exceptions\Service\Allocation\ServerUsingAllocationException;
 use App\Traits\HasValidation;
-use Carbon\Carbon;
-use Database\Factories\AllocationFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * App\Models\Allocation.
@@ -18,32 +17,33 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $node_id
  * @property string $ip
- * @property string|null $ip_alias
  * @property int $port
  * @property int|null $server_id
- * @property string|null $notes
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property string $alias
- * @property bool $has_alias
- * @property string $address
- * @property Server|null $server
- * @property Node $node
+ * @property string|null $ip_alias
+ * @property string|null $notes
  * @property bool $is_locked
+ * @property-read string $address
+ * @property-read string $alias
+ * @property-read bool $has_alias
+ * @property-read Node $node
+ * @property-read Server|null $server
  *
- * @method static AllocationFactory factory(...$parameters)
- * @method static Builder|Allocation newModelQuery()
- * @method static Builder|Allocation newQuery()
- * @method static Builder|Allocation query()
- * @method static Builder|Allocation whereCreatedAt($value)
- * @method static Builder|Allocation whereId($value)
- * @method static Builder|Allocation whereIp($value)
- * @method static Builder|Allocation whereIpAlias($value)
- * @method static Builder|Allocation whereNodeId($value)
- * @method static Builder|Allocation whereNotes($value)
- * @method static Builder|Allocation wherePort($value)
- * @method static Builder|Allocation whereServerId($value)
- * @method static Builder|Allocation whereUpdatedAt($value)
+ * @method static \Database\Factories\AllocationFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Allocation newModelQuery()
+ * @method static Builder<static>|Allocation newQuery()
+ * @method static Builder<static>|Allocation query()
+ * @method static Builder<static>|Allocation whereCreatedAt($value)
+ * @method static Builder<static>|Allocation whereId($value)
+ * @method static Builder<static>|Allocation whereIp($value)
+ * @method static Builder<static>|Allocation whereIpAlias($value)
+ * @method static Builder<static>|Allocation whereIsLocked($value)
+ * @method static Builder<static>|Allocation whereNodeId($value)
+ * @method static Builder<static>|Allocation whereNotes($value)
+ * @method static Builder<static>|Allocation wherePort($value)
+ * @method static Builder<static>|Allocation whereServerId($value)
+ * @method static Builder<static>|Allocation whereUpdatedAt($value)
  */
 class Allocation extends Model
 {

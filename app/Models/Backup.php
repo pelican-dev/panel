@@ -18,20 +18,44 @@ use Illuminate\Database\Query\Builder;
  * @property int $id
  * @property int $server_id
  * @property string $uuid
- * @property bool $is_successful
- * @property bool $is_locked
  * @property string $name
  * @property string[] $ignored_files
  * @property string $disk
  * @property string|null $checksum
  * @property int $bytes
- * @property string|null $upload_id
  * @property CarbonImmutable|null $completed_at
- * @property BackupStatus $status
- * @property CarbonImmutable $created_at
- * @property CarbonImmutable $updated_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  * @property CarbonImmutable|null $deleted_at
- * @property Server $server
+ * @property bool $is_successful
+ * @property string|null $upload_id
+ * @property bool $is_locked
+ * @property-read Server $server
+ * @property-read BackupStatus $status
+ *
+ * @method static \Database\Factories\BackupFactory factory($count = null, $state = [])
+ * @method static BackupQueryBuilder<static>|Backup newModelQuery()
+ * @method static BackupQueryBuilder<static>|Backup newQuery()
+ * @method static BackupQueryBuilder<static>|Backup nonFailed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Backup onlyTrashed()
+ * @method static BackupQueryBuilder<static>|Backup query()
+ * @method static BackupQueryBuilder<static>|Backup whereBytes($value)
+ * @method static BackupQueryBuilder<static>|Backup whereChecksum($value)
+ * @method static BackupQueryBuilder<static>|Backup whereCompletedAt($value)
+ * @method static BackupQueryBuilder<static>|Backup whereCreatedAt($value)
+ * @method static BackupQueryBuilder<static>|Backup whereDeletedAt($value)
+ * @method static BackupQueryBuilder<static>|Backup whereDisk($value)
+ * @method static BackupQueryBuilder<static>|Backup whereId($value)
+ * @method static BackupQueryBuilder<static>|Backup whereIgnoredFiles($value)
+ * @method static BackupQueryBuilder<static>|Backup whereIsLocked($value)
+ * @method static BackupQueryBuilder<static>|Backup whereIsSuccessful($value)
+ * @method static BackupQueryBuilder<static>|Backup whereName($value)
+ * @method static BackupQueryBuilder<static>|Backup whereServerId($value)
+ * @method static BackupQueryBuilder<static>|Backup whereUpdatedAt($value)
+ * @method static BackupQueryBuilder<static>|Backup whereUploadId($value)
+ * @method static BackupQueryBuilder<static>|Backup whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Backup withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Backup withoutTrashed()
  */
 class Backup extends Model implements Validatable
 {

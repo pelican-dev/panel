@@ -5,21 +5,33 @@ namespace App\Models;
 use App\Contracts\Validatable;
 use App\Enums\SubuserPermission;
 use App\Traits\HasValidation;
-use Carbon\Carbon;
+use BackedEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property int $user_id
  * @property int $server_id
- * @property string[] $permissions
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property User $user
- * @property Server $server
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property string[]|null $permissions
+ * @property-read Server $server
+ * @property-read User $user
+ *
+ * @method static \Database\Factories\SubuserFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser wherePermissions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser whereServerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Subuser whereUserId($value)
  */
 class Subuser extends Model implements Validatable
 {
@@ -33,16 +45,20 @@ class Subuser extends Model implements Validatable
      */
     public const RESOURCE_NAME = 'server_subuser';
 
-    /** @var array<string, array{name: string, hidden: ?bool, icon: ?string, permissions: string[]}> */
+    /** @var array<string, array{name: string, hidden: ?bool, icon: null|string|BackedEnum, translation_prefix: ?string, permissions: string[]}> */
     protected static array $customPermissions = [];
 
     /** @param string[] $permissions */
-    public static function registerCustomPermissions(string $name, array $permissions, ?string $icon = null, ?bool $hidden = null): void
+    public static function registerCustomPermissions(string $name, array $permissions, ?string $translationPrefix = null, null|string|BackedEnum $icon = null, ?bool $hidden = null): void
     {
         $customPermission = static::$customPermissions[$name] ?? [];
 
         $customPermission['name'] = $name;
         $customPermission['permissions'] = array_merge($customPermission['permissions'] ?? [], $permissions);
+
+        if (!is_null($translationPrefix)) {
+            $customPermission['translation_prefix'] = $translationPrefix;
+        }
 
         if (!is_null($icon)) {
             $customPermission['icon'] = $icon;
@@ -93,7 +109,7 @@ class Subuser extends Model implements Validatable
         return $this->belongsTo(User::class);
     }
 
-    /** @return array<array{name: string, hidden: bool, icon: string, permissions: string[]}> */
+    /** @return array<array{name: string, hidden: bool, icon: null|string|BackedEnum, translation_prefix: string, permissions: string[]}> */
     public static function allPermissionData(): array
     {
         $allPermissions = [];
@@ -106,6 +122,7 @@ class Subuser extends Model implements Validatable
                 'hidden' => $subuserPermission->isHidden(),
                 'icon' => $subuserPermission->getIcon(),
                 'permissions' => array_merge($allPermissions[$group]['permissions'] ?? [], [$permission]),
+                'translation_prefix' => 'server/user.permissions',
             ];
         }
 
@@ -119,6 +136,7 @@ class Subuser extends Model implements Validatable
                 'hidden' => $customPermission['hidden'] ?? $groupData['hidden'] ?? false,
                 'icon' => $customPermission['icon'] ?? $groupData['icon'],
                 'permissions' => array_unique(array_merge($groupData['permissions'] ?? [], $customPermission['permissions'])),
+                'translation_prefix' => $customPermission['translation_prefix'] ?? $groupData['translation_prefix'] ?? 'server/user.permissions',
             ];
 
             $allPermissions[$name] = $groupData;

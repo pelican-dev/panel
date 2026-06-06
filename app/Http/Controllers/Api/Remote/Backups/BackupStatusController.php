@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Remote\Backups;
 
+use App\Events\Server\BackupCompleted;
 use App\Exceptions\DisplayException;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Extensions\Backups\BackupManager;
@@ -47,7 +48,7 @@ class BackupStatusController extends Controller
         /** @var Server $server */
         $server = $model->server;
         if ($server->node_id !== $node->id) {
-            throw new HttpForbiddenException('You do not have permission to access that backup.');
+            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
 
         if ($model->is_successful) {
@@ -79,6 +80,8 @@ class BackupStatusController extends Controller
             }
         });
 
+        event(new BackupCompleted($model));
+
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
     }
 
@@ -96,6 +99,11 @@ class BackupStatusController extends Controller
     {
         /** @var Backup $model */
         $model = Backup::query()->where('uuid', $backup)->firstOrFail();
+
+        $node = $request->attributes->get('node');
+        if (!$model->server->node->is($node)) {
+            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
+        }
 
         $model->server->update(['status' => null]);
 

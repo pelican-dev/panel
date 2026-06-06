@@ -139,6 +139,7 @@ class ActivityResource extends Resource
             ]);
     }
 
+    /** @return Builder<ActivityLog> */
     public static function getEloquentQuery(): Builder
     {
         /** @var Server $server */

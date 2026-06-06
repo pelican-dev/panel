@@ -35,8 +35,13 @@ class CheckEggUpdatesCommand extends Command
             return;
         }
 
-        $ext = strtolower(pathinfo(parse_url($egg->update_url, PHP_URL_PATH), PATHINFO_EXTENSION));
-        $isYaml = in_array($ext, ['yaml', 'yml']);
+        $extension = strtolower(pathinfo(parse_url($egg->update_url, PHP_URL_PATH), PATHINFO_EXTENSION));
+
+        if (empty($extension)) {
+            throw new Exception('Unsupported file format.');
+        }
+
+        $isYaml = in_array($extension, ['yaml', 'yml']);
 
         $local = $isYaml
             ? Yaml::parse($exporterService->handle($egg->id, EggFormat::YAML))

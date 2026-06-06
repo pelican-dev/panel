@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Validation\ValidationException;
 
 class Login extends BaseLogin
@@ -32,6 +33,12 @@ class Login extends BaseLogin
 
     public function form(Schema $schema): Schema
     {
+        if (config('auth.disable_password_login', false)) {
+            return $schema->components([
+                $this->getOAuthFormComponent(),
+            ]);
+        }
+
         $components = [
             $this->getLoginFormComponent(),
             $this->getPasswordFormComponent(),
@@ -108,11 +115,22 @@ class Login extends BaseLogin
                 ->url(route('auth.oauth.redirect', ['driver' => $id], false));
         }
 
-        return Actions::make($actions);
+        return Actions::make($actions)->alignment(fn () => config('auth.disable_password_login', false) ? Alignment::Center : null);
+    }
+
+    protected function getFormActions(): array
+    {
+        return config('auth.disable_password_login', false) ? [] : parent::getFormActions();
     }
 
     protected function getCredentialsFromFormData(array $data): array
     {
+        if (config('auth.disable_password_login', false)) {
+            throw ValidationException::withMessages([
+                'data.login' => trans('auth.password_login_disabled'),
+            ]);
+        }
+
         $loginType = filter_var($data['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
         return [

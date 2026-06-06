@@ -15,8 +15,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $variable_value
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
- * @property EggVariable $variable
- * @property Server $server
+ * @property-read Server $server
+ * @property-read EggVariable $variable
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerVariable newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerVariable newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerVariable query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerVariable whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerVariable whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerVariable whereServerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerVariable whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerVariable whereVariableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ServerVariable whereVariableValue($value)
  */
 class ServerVariable extends Model implements Validatable
 {

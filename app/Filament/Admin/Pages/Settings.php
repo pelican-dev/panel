@@ -683,6 +683,36 @@ class Settings extends Page implements HasSchemas
                 ->collapsible()
                 ->collapsed()
                 ->schema([
+                    Toggle::make('PANEL_SEND_ACCOUNT_CREATED_NOTIFICATION')
+                        ->label(trans('admin/setting.misc.mail_notifications.account_created'))
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_ACCOUNT_CREATED_NOTIFICATION', (bool) $state))
+                        ->default(env('PANEL_SEND_ACCOUNT_CREATED_NOTIFICATION', config('panel.email.send_account_created_notification'))),
+                    Toggle::make('PANEL_SEND_ADDED_TO_SERVER_NOTIFICATION')
+                        ->label(trans('admin/setting.misc.mail_notifications.added_to_server'))
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_ADDED_TO_SERVER_NOTIFICATION', (bool) $state))
+                        ->default(env('PANEL_SEND_ADDED_TO_SERVER_NOTIFICATION', config('panel.email.send_added_to_server_notification'))),
+                    Toggle::make('PANEL_SEND_REMOVED_FROM_SERVER_NOTIFICATION')
+                        ->label(trans('admin/setting.misc.mail_notifications.removed_from_server'))
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REMOVED_FROM_SERVER_NOTIFICATION', (bool) $state))
+                        ->default(env('PANEL_SEND_REMOVED_FROM_SERVER_NOTIFICATION', config('panel.email.send_removed_from_server_notification'))),
                     Toggle::make('PANEL_SEND_INSTALL_NOTIFICATION')
                         ->label(trans('admin/setting.misc.mail_notifications.server_installed'))
                         ->onIcon(TablerIcon::Check)
@@ -703,6 +733,16 @@ class Settings extends Page implements HasSchemas
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REINSTALL_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
+                    Toggle::make('PANEL_SEND_BACKUP_COMPLETED_NOTIFICATION')
+                        ->label(trans('admin/setting.misc.mail_notifications.backup_completed'))
+                        ->onIcon(TablerIcon::Check)
+                        ->offIcon(TablerIcon::X)
+                        ->onColor('success')
+                        ->offColor('danger')
+                        ->live()
+                        ->formatStateUsing(fn ($state): bool => (bool) $state)
+                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_BACKUP_COMPLETED_NOTIFICATION', (bool) $state))
+                        ->default(env('PANEL_SEND_BACKUP_COMPLETED_NOTIFICATION', config('panel.email.send_backup_completed_notification'))),
                 ]),
             Section::make(trans('admin/setting.misc.connections.title'))
                 ->description(trans('admin/setting.misc.connections.helper'))
@@ -790,13 +830,14 @@ class Settings extends Page implements HasSchemas
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_EDITABLE_SERVER_DESCRIPTIONS', (bool) $state))
                         ->default(env('PANEL_EDITABLE_SERVER_DESCRIPTIONS', config('panel.editable_server_descriptions'))),
-                    FileUpload::make('ConsoleFonts')
+                    FileUpload::make('console_font')
                         ->hint(trans('admin/setting.misc.server.console_font_hint'))
                         ->label(trans('admin/setting.misc.server.console_font_upload'))
                         ->directory('fonts')
                         ->disk('public')
                         ->columnSpan(1)
                         ->maxFiles(1)
+                        ->acceptedFileTypes(['font/*'])
                         ->preserveFilenames(),
                 ]),
             Section::make(trans('admin/setting.misc.webhook.title'))
@@ -824,9 +865,11 @@ class Settings extends Page implements HasSchemas
 
     public function save(): void
     {
+        abort_unless(user()?->can('update settings'), 403);
+
         try {
             $data = $this->form->getState();
-            unset($data['ConsoleFonts']);
+            unset($data['console_font']);
 
             $data = array_map(function ($value) {
                 // Convert bools to a string, so they are correctly written to the .env file

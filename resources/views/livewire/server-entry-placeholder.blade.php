@@ -1,12 +1,12 @@
 @php
-    $backgroundImage = $server->icon ?? $server->egg->image;
+    $backgroundImage = $server->icon ?? $server->egg->icon;
     $serverEntryColumn = $column ?? \App\Filament\Components\Tables\Columns\ServerEntryColumn::make('server_entry');
 @endphp
 
 <div class="relative cursor-pointer"
      x-on:click="{{ $component->redirectUrl() }}"
      x-on:auxclick.prevent="if ($event.button === 1) {{ $component->redirectUrl(true) }}">
-    <div class="absolute left-0 top-1 bottom-0 w-1 rounded-lg" style="background-color: #D97706;"></div>
+    <div class="absolute left-0 top-1 bottom-0 w-1 rounded-lg fi-color fi-color-warning fi-bg-color-600" style="background-color: var(--bg);"></div>
 
     <div class="flex-1 dark:bg-gray-800 dark:text-white rounded-lg overflow-hidden p-3">
         @if($backgroundImage)

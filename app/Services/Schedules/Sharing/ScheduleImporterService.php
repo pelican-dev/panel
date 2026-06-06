@@ -67,9 +67,9 @@ class ScheduleImporterService
 
     public function fromUrl(string $url, Server $server): Schedule
     {
-        $info = pathinfo($url);
+        $basename = pathinfo($url, PATHINFO_BASENAME);
         $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
-        $tmpPath = $tmpDir->path($info['basename']);
+        $tmpPath = $tmpDir->path($basename);
 
         $fileContents = Http::timeout(5)->connectTimeout(1)->get($url)->throw()->body();
 
@@ -77,6 +77,6 @@ class ScheduleImporterService
             throw new InvalidFileUploadException('Could not write temporary file.');
         }
 
-        return $this->fromFile(new UploadedFile($tmpPath, $info['basename'], 'application/json'), $server);
+        return $this->fromFile(new UploadedFile($tmpPath, $basename, 'application/json'), $server);
     }
 }

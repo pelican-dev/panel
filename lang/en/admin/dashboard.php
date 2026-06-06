@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'heading' => 'Welcome to Pelican!',
+    'heading' => 'Welcome to :app!',
     'version' => 'Version: :version',
     'advanced' => 'Advanced',
     'server' => 'Server',
@@ -27,7 +27,7 @@ return [
             'heading' => 'No Nodes Detected',
             'content' => "It looks like you don't have any Nodes set up yet, but don't worry because you click the action button to create your first one!",
             'extra_note' => 'If you run into any issues, please report them on GitHub.',
-            'button_label' => 'Create first Node in Pelican',
+            'button_label' => 'Create first Node',
         ],
         'intro-support' => [
             'heading' => 'Support Pelican',

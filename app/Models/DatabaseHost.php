@@ -21,13 +21,26 @@ use Illuminate\Support\Facades\DB;
  * @property string $username
  * @property string $password
  * @property int|null $max_databases
- * @property int|null $node_id
- * @property CarbonImmutable $created_at
- * @property CarbonImmutable $updated_at
- * @property Collection|Node[] $nodes
- * @property int|null $nodes_count
- * @property Collection|Database[] $databases
- * @property int|null $databases_count
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property-read Collection<int, Database> $databases
+ * @property-read int|null $databases_count
+ * @property-read Collection<int, Node> $nodes
+ * @property-read int|null $nodes_count
+ *
+ * @method static \Database\Factories\DatabaseHostFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseHost newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseHost newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseHost query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseHost whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseHost whereHost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseHost whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseHost whereMaxDatabases($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseHost whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseHost wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseHost wherePort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseHost whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DatabaseHost whereUsername($value)
  */
 class DatabaseHost extends Model implements Validatable
 {

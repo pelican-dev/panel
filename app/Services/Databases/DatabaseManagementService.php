@@ -21,7 +21,7 @@ class DatabaseManagementService
      * The regex used to validate that the database name passed through to the function is
      * in the expected format.
      *
-     * @see \App\Services\Databases\DatabaseManagementService::generateUniqueDatabaseName()
+     * @see DatabaseManagementService::generateUniqueDatabaseName()
      */
     private const MATCH_NAME_REGEX = '/^(s[\d]+_)(.*)$/';
 
@@ -136,7 +136,7 @@ class DatabaseManagementService
     /**
      * Updates a password for a given database.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function rotatePassword(Database $database): void
     {

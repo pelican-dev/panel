@@ -13,7 +13,7 @@ class UpdateEggIndexCommand extends Command
     public function handle(): int
     {
         try {
-            $data = Http::timeout(5)->connectTimeout(1)->get('https://raw.githubusercontent.com/pelican-eggs/pelican-eggs.github.io/refs/heads/main/content/pelican.json')->throw()->json();
+            $data = Http::timeout(5)->connectTimeout(1)->get(config('panel.cdn.egg_index_url'))->throw()->json();
         } catch (Exception $exception) {
             $this->error($exception->getMessage());
 
