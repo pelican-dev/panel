@@ -6,20 +6,24 @@ use App\Enums\WebhookScope;
 use App\Events\ActivityLogged;
 use App\Models\Server;
 use App\Models\WebhookConfiguration;
-use App\Services\WebhookService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class DispatchWebhooks
 {
 
-    public function handle(mixed $event, ?string $action = null): void
+    public function handle(mixed $event, array|string|null $action = null): void
     {
+        if (is_string($event) && is_array($action)) {
+            $this->handleEloquentEvent($action[0], str($event)->between('eloquent.', ':'));
+            return;
+        }
+
         if ($event instanceof ActivityLogged) {
             $this->handleActivityLogged($event);
             $this->handleGlobalWebhooks($event);
         } elseif ($event instanceof Model) {
-            $detectedAction = $action ?? $this->determineEloquentAction($event);
+            $detectedAction = is_string($action) ? $action : $this->determineEloquentAction($event);
             if ($detectedAction) {
                 $this->handleEloquentEvent($event, $detectedAction);
             }
@@ -90,34 +94,33 @@ class DispatchWebhooks
             $server = Server::find($activityLogged->model->properties['server']['id'] ?? null);
         }
 
+        if (!$server) {
+            return;
+        }
 
         $webhooks = $server->webhooks()
             ->whereJsonContains('events', $eventName)
             ->get();
 
-        foreach ($webhooks as $_) {
-            WebhookService::dispatch($eventName, $activityLogged->model->properties?->toArray() ?? [], $server);
-        }
-    }
-
-    protected function handleGlobalWebhooks(ActivityLogged $activityLogged): void
-    {
-        $eventName = $activityLogged->model->event;
-
-        if (!$this->eventIsWatched($eventName)) {
+        if ($webhooks->isEmpty()) {
             return;
         }
 
-        $matchingHooks = cache()->rememberForever("webhooks.$eventName", function () use ($eventName) {
-            return WebhookConfiguration::query()
-                ->where('scope', WebhookScope::GLOBAL)
-                ->whereJsonContains('events', $eventName)
-                ->get();
-        });
+        $webhookData = $this->buildActivityPayload($activityLogged);
 
-        $activityLogData = $activityLogged->model->toArray();
+        if (!$this->hasPayloadContent($webhookData)) {
+            return;
+        }
+
+        foreach ($webhooks as $webhookConfig) {
+            $webhookConfig->run($eventName, [$webhookData]);
+        }
+    }
+
+    protected function buildActivityPayload(ActivityLogged $activityLogged): array
+    {
         $webhookData = [
-            'event' => $eventName,
+            'event' => $activityLogged->model->event,
             'description' => $activityLogged->model->description,
             'ip' => $activityLogged->model->ip,
             'timestamp' => $activityLogged->model->timestamp?->toIso8601String(),
@@ -138,13 +141,31 @@ class DispatchWebhooks
         }
 
         if ($activityLogged->model->subjects->isNotEmpty()) {
-            $webhookData['subjects'] = $activityLogged->model->subjects->map(function ($subject) {
-                return [
-                    'id' => $subject->subject_id,
-                    'type' => $subject->subject_type,
-                ];
-            })->toArray();
+            $webhookData['subjects'] = $activityLogged->model->subjects->map(fn ($subject) => [
+                'id' => $subject->subject_id,
+                'type' => $subject->subject_type,
+            ])->toArray();
         }
+
+        return $webhookData;
+    }
+
+    protected function handleGlobalWebhooks(ActivityLogged $activityLogged): void
+    {
+        $eventName = $activityLogged->model->event;
+
+        if (!$this->eventIsWatched($eventName)) {
+            return;
+        }
+
+        $matchingHooks = cache()->rememberForever("webhooks.$eventName", function () use ($eventName) {
+            return WebhookConfiguration::query()
+                ->where('scope', WebhookScope::GLOBAL)
+                ->whereJsonContains('events', $eventName)
+                ->get();
+        });
+
+        $webhookData = $this->buildActivityPayload($activityLogged);
 
         if (!$this->hasPayloadContent($webhookData)) {
             return;

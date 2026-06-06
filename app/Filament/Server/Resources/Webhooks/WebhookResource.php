@@ -141,8 +141,8 @@ class WebhookResource extends Resource
                     ->label(trans('admin/webhook.endpoint'))
                     ->required()
                     ->afterStateUpdated(fn (string $state, Set $set) => $set('type', str($state)->contains('discord.com') ? WebhookType::Discord : WebhookType::Regular)),
-                TextInput::make('description')
-                    ->label(trans('admin/webhook.description'))
+                TextInput::make('name')
+                    ->label(trans('admin/webhook.name'))
                     ->columnSpanFull()
                     ->required(),
                 Section::make(trans('admin/webhook.regular'))
