@@ -78,7 +78,7 @@ class WebhookResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        /** @var \App\Models\Server|null $server */
+        /** @var Server|null $server */
         $server = Filament::getTenant();
         if (!$server instanceof Server) {
             return null;

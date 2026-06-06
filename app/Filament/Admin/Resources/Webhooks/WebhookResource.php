@@ -18,7 +18,6 @@ use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use BackedEnum;
 use Exception;
-use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
@@ -154,7 +153,7 @@ class WebhookResource extends Resource
                     ->columnSpanFull()
                     ->tabs([
                         Tab::make(trans('admin/webhook.information'))
-                            ->icon(HeroIcon::InformationCircle)
+                            ->icon(Heroicon::InformationCircle)
                             ->schema([
                                 Grid::make()
                                     ->schema([
@@ -186,7 +185,7 @@ class WebhookResource extends Resource
                                     ]),
                             ]),
                         Tab::make(trans('admin/webhook.payload'))
-                            ->icon(HeroIcon::Document)
+                            ->icon(Heroicon::Document)
                             ->schema([
                                 Section::make()
                                     ->schema(fn (Get $get) => $get('type') === WebhookType::Discord
@@ -195,13 +194,20 @@ class WebhookResource extends Resource
                                     ),
                             ]),
                         Tab::make(trans('admin/webhook.events'))
-                            ->icon(HeroIcon::Star)
+                            ->icon(Heroicon::Star)
                             ->schema([
                                 Section::make()
                                     ->schema([
                                         CheckboxList::make('events')
                                             ->live()
-                                            ->options(fn (Get $get) => WebhookConfiguration::filamentCheckboxList($get('scope')))
+                                            ->options(function (Get $get) {
+                                                $scope = $get('scope');
+                                                if (!$scope instanceof WebhookScope) {
+                                                    $scope = WebhookScope::from($scope ?? 'global');
+                                                }
+
+                                                return WebhookConfiguration::filamentCheckboxList($scope);
+                                            })
                                             ->searchable()
                                             ->bulkToggleable()
                                             ->columns(3)

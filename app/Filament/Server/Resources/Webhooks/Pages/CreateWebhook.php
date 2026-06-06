@@ -4,6 +4,7 @@ namespace App\Filament\Server\Resources\Webhooks\Pages;
 
 use App\Enums\WebhookScope;
 use App\Filament\Server\Resources\Webhooks\WebhookResource;
+use App\Models\Server;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
@@ -36,7 +37,7 @@ class CreateWebhook extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        /** @var \App\Models\Server $server */
+        /** @var Server $server */
         $server = Filament::getTenant();
         $data['server_id'] = $server->id;
         $data['scope'] = WebhookScope::SERVER;

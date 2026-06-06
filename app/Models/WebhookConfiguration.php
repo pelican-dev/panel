@@ -113,11 +113,19 @@ class WebhookConfiguration extends Model
         });
 
         $eventList->each(function (string $event) {
-            cache()->forever("webhooks.$event", static::query()->whereJsonContains('events', $event)->get());
+            cache()->forever("webhooks.$event", static::query()
+                ->where('scope', WebhookScope::GLOBAL)
+                ->whereJsonContains('events', $event)
+                ->get());
         });
 
         cache()->forget('watchedWebhooks');
-        cache()->forever('watchedWebhooks', static::pluck('events')->flatten()->unique()->values()->all());
+        cache()->forever('watchedWebhooks', static::where('scope', WebhookScope::GLOBAL)
+            ->pluck('events')
+            ->flatten()
+            ->unique()
+            ->values()
+            ->all());
     }
 
     public function webhooks(): HasMany
@@ -141,7 +149,7 @@ class WebhookConfiguration extends Model
     }
 
     /**
-     * @param array<string> $filterList
+     * @param  array<string>  $filterList
      * @return array<string>
      */
     public static function eventList(array $filterList): array
@@ -151,16 +159,17 @@ class WebhookConfiguration extends Model
                 foreach ($filterList as $filter) {
                     $eventLower = strtolower($event);
                     $filterLower = strtolower($filter);
-                    
+
                     if ($eventLower === $filterLower) {
                         return true;
                     }
-                    
+
                     $pattern = '/(?:\\\\|\\.)' . preg_quote($filterLower) . '(?:\\\\|:|$)/i';
                     if (preg_match($pattern, $eventLower)) {
                         return true;
                     }
                 }
+
                 return false;
             })
             ->values()
@@ -186,7 +195,7 @@ class WebhookConfiguration extends Model
             'EggVariable',
             'Plugin',
             'WebhookConfiguration',
-            'Webhook',  
+            'Webhook',
             'Captcha',
             'Authentication',
             'ActivityLogged',
@@ -299,7 +308,7 @@ class WebhookConfiguration extends Model
             'EggVariable',
             'Plugin',
             'WebhookConfiguration',
-            'Webhook',  
+            'Webhook',
             'Captcha',
             'Authentication',
             'ActivityLogged',
