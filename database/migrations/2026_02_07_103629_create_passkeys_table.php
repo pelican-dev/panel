@@ -25,7 +25,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->text('name');
-            $table->text('credential_id');
+            $table->string('credential_id', 512)->unique();
             $table->json('data');
 
             $table->timestamp('last_used_at')->nullable();
