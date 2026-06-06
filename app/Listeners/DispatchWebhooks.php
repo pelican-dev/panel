@@ -101,11 +101,14 @@ class DispatchWebhooks
         }
 
         $server = null;
-        $firstSubject = $activityLogged->model->subjects->first();
-        if ($firstSubject && $firstSubject->subject_type === (new Server())->getMorphClass()) {
-            $subject = $firstSubject->subject;
-            $server = $subject instanceof Server ? $subject : null;
-        } elseif (isset($activityLogged->model->properties['server'])) {
+        $morphClass = (new Server())->getMorphClass();
+        foreach ($activityLogged->model->subjects as $subject) {
+            if ($subject->subject_type === $morphClass && $subject->subject instanceof Server) {
+                $server = $subject->subject;
+                break;
+            }
+        }
+        if (!$server && isset($activityLogged->model->properties['server'])) {
             $server = Server::find($activityLogged->model->properties['server']['id'] ?? null);
         }
 
@@ -148,7 +151,6 @@ class DispatchWebhooks
                 'id' => $activityLogged->model->actor_id,
                 'type' => $activityLogged->model->actor_type,
                 'username' => $actor instanceof User ? $actor->username : null,
-                'email' => $actor instanceof User ? $actor->email : null,
             ];
         }
 

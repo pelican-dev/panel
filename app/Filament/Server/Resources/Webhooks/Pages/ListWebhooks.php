@@ -30,10 +30,9 @@ class ListWebhooks extends ListRecords
                 ->iconButton()
                 ->iconSize(IconSize::ExtraLarge)
                 ->hidden(function () {
-                    /** @var Server $server */
                     $server = Filament::getTenant();
 
-                    return $server->webhooks()->count() <= 0;
+                    return !$server instanceof Server || $server->webhooks()->count() <= 0;
                 }),
         ];
     }

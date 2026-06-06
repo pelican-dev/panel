@@ -139,7 +139,8 @@ class WebhookResource extends Resource
                 SelectFilter::make('type')
                     ->options(WebhookType::class)
                     ->attribute('type'),
-                SelectFilter::make('server')
+                SelectFilter::make('server_id')
+                    ->label('Server')
                     ->options(Server::query()->pluck('name', 'id')->toArray()),
             ]);
     }
@@ -181,7 +182,7 @@ class WebhookResource extends Resource
                                         TextInput::make('endpoint')
                                             ->label(trans('admin/webhook.endpoint'))
                                             ->required()
-                                            ->afterStateUpdated(fn (string $state, Set $set) => $set('type', str($state)->contains('discord.com') ? WebhookType::Discord : WebhookType::Regular)),
+                                            ->afterStateUpdated(fn (?string $state, Set $set) => $set('type', $state && str($state)->contains('discord.com') ? WebhookType::Discord : WebhookType::Regular)),
                                     ]),
                             ]),
                         Tab::make(trans('admin/webhook.payload'))
@@ -290,7 +291,7 @@ class WebhookResource extends Resource
                                 ]),
                             Repeater::make('embeds')
                                 ->live(debounce: 500)
-                                ->itemLabel(fn (array $state) => $state['title'])
+                                ->itemLabel(fn (array $state) => $state['title'] ?? '')
                                 ->addActionLabel(trans('admin/webhook.discord_embed.add_embed'))
                                 ->required(fn (Get $get) => empty($get('content')))
                                 ->reorderable()

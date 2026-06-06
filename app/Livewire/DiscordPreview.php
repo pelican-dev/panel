@@ -89,15 +89,14 @@ class DiscordPreview extends Component
                 'avatar' => filled(data_get($data, 'avatar_url')) ? data_get($data, 'avatar_url') : 'https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg',
             ],
             'embeds' => collect(data_get($data, 'embeds', []))
+                ->filter(fn (mixed $embed) => is_array($embed))
                 ->take(10)
                 ->map(function (array $embed): array {
-                    $embed['color'] = $embed['color'] ?? null;
-
-                    if ($embed['color']) {
-                        // DB stores integer colors; form state stores hex strings
-                        $embed['color'] = is_int($embed['color'])
-                            ? '#' . str_pad(dechex($embed['color']), 6, '0', STR_PAD_LEFT)
-                            : $embed['color'];
+                    $color = $embed['color'] ?? null;
+                    if (is_int($color)) {
+                        $embed['color'] = '#' . str_pad(dechex($color), 6, '0', STR_PAD_LEFT);
+                    } elseif (!is_string($color)) {
+                        $embed['color'] = null;
                     }
 
                     if (!isset($embed['timestamp']) && !empty($embed['has_timestamp'])) {
@@ -105,11 +104,16 @@ class DiscordPreview extends Component
                     }
 
                     if (isset($embed['timestamp'])) {
-                        $embed['timestamp'] = Carbon::parse($embed['timestamp'])->format('M j, Y H:i');
+                        try {
+                            $embed['timestamp'] = Carbon::parse($embed['timestamp'])->format('M j, Y H:i');
+                        } catch (\Throwable) {
+                            unset($embed['timestamp']);
+                        }
                     }
 
                     return $embed;
                 })
+                ->values()
                 ->all(),
             'getTime' => fn () => now()->format('H:i'),
         ];

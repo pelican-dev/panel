@@ -71,13 +71,15 @@
             <span
                 x-data
                 x-init="$watch(() => JSON.stringify($wire.data), (json) => {
-                    const d = JSON.parse(json);
-                    $wire.dispatch('discord-form-changed', {
-                        content: d.content ?? '',
-                        username: d.username ?? '',
-                        avatar_url: d.avatar_url ?? '',
-                        embeds: d.embeds ?? [],
-                    });
+                    try {
+                        const d = JSON.parse(json);
+                        $wire.dispatch('discord-form-changed', {
+                            content: d.content ?? '',
+                            username: d.username ?? '',
+                            avatar_url: d.avatar_url ?? '',
+                            embeds: d.embeds ?? [],
+                        });
+                    } catch (_) {}
                 })"
             ></span>
             @livewire('discord-preview', ['record' => $getRecord()])

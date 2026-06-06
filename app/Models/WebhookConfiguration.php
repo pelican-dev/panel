@@ -442,7 +442,8 @@ class WebhookConfiguration extends Model
             $eventData ??= static::getWebhookSampleData();
         }
 
-        ProcessWebhook::dispatch($this, $eventName, [$eventData]);
+        $payload = array_is_list($eventData) ? $eventData : [$eventData];
+        ProcessWebhook::dispatch($this, $eventName, $payload);
     }
 
     /**

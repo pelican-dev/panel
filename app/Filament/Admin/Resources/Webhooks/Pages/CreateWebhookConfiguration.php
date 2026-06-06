@@ -11,6 +11,7 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Validation\ValidationException;
 
 class CreateWebhookConfiguration extends CreateRecord
 {
@@ -47,7 +48,7 @@ class CreateWebhookConfiguration extends CreateRecord
     {
         // Ensure name is set (required field)
         if (empty($data['name'] ?? null)) {
-            throw new \Exception('Webhook name is required');
+            throw ValidationException::withMessages(['name' => 'Webhook name is required']);
         }
 
         // Set scope to GLOBAL by default for admin webhooks

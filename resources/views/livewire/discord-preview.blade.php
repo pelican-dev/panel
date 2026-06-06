@@ -284,22 +284,26 @@
                 {{-- Embeds --}}
                 @foreach($embeds as $embed)
                     @php
-                        $eAuthorName  = $embed['author']['name']     ?? null;
-                        $eAuthorUrl   = $embed['author']['url']      ?? null;
-                        $eAuthorIcon  = $embed['author']['icon_url'] ?? null;
-                        $eTitle       = $embed['title']              ?? null;
-                        $eTitleUrl    = $embed['url']                ?? null;
-                        $eDesc        = $embed['description']        ?? null;
-                        $eFields      = $embed['fields']             ?? [];
-                        $eImage       = $embed['image']['url']       ?? null;
-                        $eThumbnail   = $embed['thumbnail']['url']   ?? null;
-                        $eFooterText  = $embed['footer']['text']     ?? null;
-                        $eFooterIcon  = $embed['footer']['icon_url'] ?? null;
-                        $eTimestamp   = $embed['timestamp']          ?? null;
-                        $eColor       = $embed['color']              ?? null;
+                        $safeUrl = fn (?string $url): ?string =>
+                            ($url && preg_match('/^https?:\/\//i', $url)) ? $url : null;
+
+                        $eAuthorName  = $embed['author']['name']              ?? null;
+                        $eAuthorUrl   = $safeUrl($embed['author']['url']      ?? null);
+                        $eAuthorIcon  = $safeUrl($embed['author']['icon_url'] ?? null);
+                        $eTitle       = $embed['title']                       ?? null;
+                        $eTitleUrl    = $safeUrl($embed['url']                ?? null);
+                        $eDesc        = $embed['description']                 ?? null;
+                        $eFields      = $embed['fields']                      ?? [];
+                        $eImage       = $safeUrl($embed['image']['url']       ?? null);
+                        $eThumbnail   = $safeUrl($embed['thumbnail']['url']   ?? null);
+                        $eFooterText  = $embed['footer']['text']              ?? null;
+                        $eFooterIcon  = $safeUrl($embed['footer']['icon_url'] ?? null);
+                        $eTimestamp   = $embed['timestamp']                   ?? null;
+                        $eColor = $embed['color'] ?? null;
+                        $eStyle = $eColor ? 'border-left-color: ' . $eColor : 'border-left-color: #1e1f22';
                     @endphp
 
-                    <div class="dc-embed" style="border-left-color: {{ $eColor ?? '#1e1f22' }}">
+                    <div class="dc-embed" style="{{ $eStyle }}">
                         <div class="dc-embed-body">
                             <div class="dc-embed-grid {{ $eThumbnail ? 'has-thumbnail' : '' }}">
 
@@ -312,7 +316,7 @@
                                                 <img src="{{ $eAuthorIcon }}" class="dc-embed-author-icon" alt="">
                                             @endif
                                             @if($eAuthorUrl)
-                                                <a href="{{ $eAuthorUrl }}" target="_blank" class="dc-embed-author-name dc-link">{{ $eAuthorName }}</a>
+                                                <a href="{{ $eAuthorUrl }}" target="_blank" rel="noopener noreferrer" class="dc-embed-author-name dc-link">{{ $eAuthorName }}</a>
                                             @else
                                                 <span class="dc-embed-author-name">{{ $eAuthorName }}</span>
                                             @endif
@@ -322,7 +326,7 @@
                                     {{-- Title --}}
                                     @if($eTitle)
                                         @if($eTitleUrl)
-                                            <a href="{{ $eTitleUrl }}" target="_blank" class="dc-embed-title">{{ $eTitle }}</a>
+                                            <a href="{{ $eTitleUrl }}" target="_blank" rel="noopener noreferrer" class="dc-embed-title">{{ $eTitle }}</a>
                                         @else
                                             <div class="dc-embed-title">{{ $eTitle }}</div>
                                         @endif
