@@ -116,8 +116,12 @@ return [
         'mail_notifications' => [
             'title' => 'E-mail notificaties',
             'helper' => 'Schakelen welke mailmeldingen naar gebruikers moeten worden verzonden.',
+            'account_created' => 'Account aangemaakt',
+            'added_to_server' => 'Toegevoegd aan server',
+            'removed_from_server' => 'Verwijderd van server',
             'server_installed' => 'Server geïnstalleerd',
             'server_reinstalled' => 'Server opnieuw geïnstalleerd',
+            'backup_completed' => 'Backup gereed',
         ],
         'connections' => [
             'title' => 'Connecties',

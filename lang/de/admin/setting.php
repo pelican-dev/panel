@@ -116,8 +116,12 @@ return [
         'mail_notifications' => [
             'title' => 'E-Mail Benachrichtigungen',
             'helper' => 'Stelle ein, welche E-Mail Benachrichtigung zum Benutzer geschickt werden sollen.',
+            'account_created' => 'Konto erstellt',
+            'added_to_server' => 'Zum Server hinzugefügt',
+            'removed_from_server' => 'Vom Server entfernt',
             'server_installed' => 'Server installiert',
             'server_reinstalled' => 'Server reinstalliert',
+            'backup_completed' => 'Backup abgeschlossen',
         ],
         'connections' => [
             'title' => 'Verbindungen',

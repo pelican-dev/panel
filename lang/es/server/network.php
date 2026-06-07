@@ -2,16 +2,16 @@
 
 return [
     'title' => 'Red',
-    'add' => 'Añadir Asignación',
+    'add' => 'Añadir asignación',
     'limit' => 'Límite de asignaciones alcanzado',
     'address' => 'Dirección',
     'port' => 'Puerto',
     'notes' => 'Notas',
     'no_notes' => 'Sin notas',
-    'make_primary' => 'Convertir en prinicipal',
+    'make_primary' => 'Convertir en principal',
     'primary' => 'Principal',
     'make' => 'Crear',
     'delete' => 'Eliminar',
     'locked' => '¿Bloqueado?',
-    'locked_helper' => 'Las asignaciones bloqueadas sólo pueden ser eliminadas por administradores',
+    'locked_helper' => 'Las asignaciones bloqueadas solo pueden ser eliminadas por administradores',
 ];

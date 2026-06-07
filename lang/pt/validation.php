@@ -19,7 +19,7 @@ return [
     'alpha' => 'O campo :attribute pode conter apenas letras.',
     'alpha_dash' => 'O campo :attribute pode conter apenas letras, números e traços.',
     'alpha_num' => 'O campo :attribute pode conter apenas letras e números.',
-    'array' => 'O campo :attribute deve ser uma matriz.',
+    'array' => 'O campo :attribute deve ser um array.',
     'before' => 'O campo :attribute deve ser uma data anterior a :date.',
     'before_or_equal' => 'O campo :attribute deve ser uma data anterior ou igual a :date.',
     'between' => [
@@ -95,7 +95,7 @@ return [
 
     // Internal validation logic for Panel
     'internal' => [
-        'variable_value' => 'Variável :env',
+        'variable_value' => 'variável :env',
         'invalid_password' => 'A senha fornecida é inválida para esta conta.',
     ],
 ];

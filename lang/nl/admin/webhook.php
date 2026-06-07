@@ -10,7 +10,6 @@ return [
     'help' => 'Help',
     'help_text' => 'Je variabele naam moet tussen {{}} als voorbeeld {{name}}',
     'test_now' => 'Test nu',
-    'test_now_help' => 'Dit voert een `aangemaakte: Server` event uit',
     'table' => [
         'description' => 'Beschrijving',
         'endpoint' => 'Eindpunt',

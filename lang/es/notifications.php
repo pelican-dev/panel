@@ -6,10 +6,14 @@ return [
     'installation_failed' => 'Instalación del servidor fallida',
     'reinstallation_completed' => 'Reinstalación del servidor completada',
     'reinstallation_failed' => 'Reinstalación del servidor fallida',
+    'backup_completed' => 'Copia de seguridad completada',
+    'backup_failed' => 'Copia de seguridad fallida',
+    'backup_body' => 'Copia de seguridad ":name" del servidor ":server"',
+    'view_backups' => 'Ver copias de seguridad',
     'failed' => 'Fallido',
     'user_added' => [
         'title' => 'Añadido al servidor',
-        'body' => 'Has sido añadido como un sub usuario a :server.',
+        'body' => 'Has sido añadido como un subusuario a :server.',
     ],
     'user_removed' => [
         'title' => 'Eliminado del servidor',

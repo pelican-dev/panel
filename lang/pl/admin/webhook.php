@@ -10,7 +10,6 @@ return [
     'help' => 'Wsparcie',
     'help_text' => 'Musisz owijać nazwę zmiennej między {{ }} na przykład jeśli chcesz użyć nazwy z api, możesz użyć {{name}}.',
     'test_now' => 'Sprawdź Teraz',
-    'test_now_help' => 'Spowoduje to uruchomienie zdarzenia `utworzono: Serwer`',
     'table' => [
         'description' => 'Opis',
         'endpoint' => 'Punkt końcowy',

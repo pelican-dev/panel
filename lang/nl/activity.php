@@ -120,6 +120,9 @@ return [
             'update' => 'De machtigingen van de subgebruiker bijgewerkt voor <b>:email</b>',
             'delete' => '<b>:email</b> verwijderd als subgebruiker',
         ],
+        'mount' => [
+            'update' => 'De mounts voor de server zijn bijgewerkt',
+        ],
         'crashed' => 'Server gecrasht',
     ],
 ];

@@ -11,6 +11,7 @@ return [
     'username' => 'Nome Utente',
     'password' => 'Password',
     'remote' => 'Host',
+    'unlimited' => 'Illimitato',
     'created_at' => 'Creato il',
     'name' => 'Nome del database',
     'name_hint' => 'Lasciando questo vuoto, verrà generato automaticamente un nome casuale',

@@ -10,7 +10,6 @@ return [
     'help' => 'Ajutor',
     'help_text' => 'Trebuie să încadrezi numele variabilei între {{ }}, de exemplu, dacă vrei să preiei numele din Api, poți folosi {{name}}.',
     'test_now' => 'Testează acum',
-    'test_now_help' => 'Aceasta va declanșa un eveniment created: Server',
     'table' => [
         'description' => 'Descriere',
         'endpoint' => 'Endpoint',

@@ -20,7 +20,7 @@ return [
             'drop_files' => 'Suelta los archivos para subirlos',
             'success' => 'Archivos subidos correctamente',
             'failed' => 'Error al subir los archivos',
-            'header' => 'Subiendo Archivos',
+            'header' => 'Subiendo archivos',
             'error' => 'Se ha producido un error durante la subida',
         ],
         'rename' => [
@@ -31,17 +31,17 @@ return [
         'move' => [
             'title' => 'Mover',
             'directory' => 'Directorio',
-            'directory_hint' => 'Introduzca el nuevo directorio, relativo al directorio actual.',
+            'directory_hint' => 'Introduce el nuevo directorio, relativo al directorio actual.',
             'new_location' => 'Nueva ubicación',
-            'new_location_hint' => 'Introduzca la ubicación de este fichero o carpeta, relativa al directorio actual.',
+            'new_location_hint' => 'Introduce la ubicación de este archivo o carpeta, relativa al directorio actual.',
             'notification' => 'Archivo movido',
-            'bulk_notification' => ':count Archivos fueron movidos a :directory',
+            'bulk_notification' => ':count archivos fueron movidos a :directory',
         ],
         'permissions' => [
             'title' => 'Permisos',
             'read' => 'Lectura',
             'write' => 'Escritura',
-            'execute' => 'Ejecución',
+            'execute' => 'Ejecutar',
             'owner' => 'Propietario',
             'group' => 'Grupo',
             'public' => 'Público',
@@ -60,12 +60,12 @@ return [
         'new_file' => [
             'title' => 'Nuevo archivo',
             'file_name' => 'Nuevo nombre del archivo',
-            'syntax' => 'Resalte de sintaxis',
+            'syntax' => 'Resaltado de sintaxis',
             'create' => 'Crear',
         ],
         'new_folder' => [
             'title' => 'Nueva carpeta',
-            'folder_name' => 'Renombrar carpeta',
+            'folder_name' => 'Nombre de la nueva carpeta',
         ],
         'nested_search' => [
             'title' => 'Búsqueda anidada',
@@ -105,7 +105,7 @@ return [
         ],
         'pelicanignore' => [
             'title' => '¡Estás editando un archivo <code>.pelicanignore</code>!',
-            'body' => 'Cualquier fichero o directorio listado aquí será excluído de las copias de seguridad. Los comodines están soportados usando un asterisco (<code>*</code>).<br>Además puedes negar una regla previa anteponiendo una exclamación (<code>!</code>).',
+            'body' => 'Cualquier archivo o directorio que se liste aquí se excluirá de las copias de seguridad. Se admiten comodines usando un asterisco (<code>*</code>).<br>Puedes negar una regla anterior anteponiendo un signo de exclamación (<code>!</code>).',
         ],
     ],
 ];

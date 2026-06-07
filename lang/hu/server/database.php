@@ -11,6 +11,7 @@ return [
     'username' => 'Felhasználónév',
     'password' => 'Jelszó',
     'remote' => 'Távoli',
+    'unlimited' => 'Korlátlan',
     'created_at' => 'Létrehozva',
     'name' => 'Adatbázis név',
     'name_hint' => 'Ha ezt üresen hagyod, akkor automatikusan generál egy véletlenszerű nevet.',

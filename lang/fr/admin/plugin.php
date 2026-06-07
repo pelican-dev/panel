@@ -45,17 +45,27 @@ return [
     ],
 
     'notifications' => [
+        'goto_plugins' => 'Aller aux Plugins',
+        'background_info' => 'Ce processus peut prendre quelques secondes. Vous serez notifié une fois terminé.',
+
+        'install_started' => 'L\'installation du plugin a commencé en arrière-plan',
         'installed' => 'Extension installée',
         'install_error' => 'Impossible d’installer l’extension',
+
+        'uninstall_started' => 'Désinstallation du plugin démarrée en arrière-plan',
         'uninstalled' => 'Extension désinstallée',
         'uninstall_error' => 'Impossible de désinstaller l’extension',
-        'deleted' => 'Extension supprimée',
+
+        'update_started' => 'La mise à jour du plugin a commencé en arrière-plan',
         'updated' => 'Extension mise à jour',
         'update_error' => 'Impossible de mettre à jour l’extension',
+
         'enabled' => 'Extension activée',
         'disabled' => 'Extension désactivée',
+        'deleted' => 'Extension supprimée',
+
         'imported' => 'Extension importée',
-        'import_exists' => 'Une extension avec cet Id existe déjà',
+        'import_exists' => 'Une extension avec cet id existe déjà',
         'import_failed' => 'Impossible d’importer l’extension',
     ],
 ];
