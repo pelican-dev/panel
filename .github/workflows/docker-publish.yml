@@ -135,7 +135,7 @@ jobs:
       - name: Update version in config/app.php (tag)
         if: "github.event_name == 'release' && github.event.action == 'published'"
         run: |
-          sed -i "s/'version' => 'canary',/'version' => '${{ steps.build_info.outputs.version_tag }}',/" config/app.php
+          sed -i "s|'version' => 'canary',|'version' => '${{ steps.build_info.outputs.version_tag }}',|" config/app.php
               
       - name: Build and Push (tag)
         uses: docker/build-push-action@v6
