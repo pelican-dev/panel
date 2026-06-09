@@ -1,4 +1,4 @@
-<div class="fi-small-stat-block grid grid-flow-row w-full p-3 rounded-lg shadow-sm overflow-hidden overflow-x-auto ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+<div class="fi-small-stat-block grid grid-flow-row w-full p-3 rounded-lg bg-white shadow-sm overflow-hidden overflow-x-auto ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
 @if ($isCopyable($value = $getValue()))
     <span class="cursor-pointer" x-on:click="
         navigator.clipboard.writeText(@js($value));
