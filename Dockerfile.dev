@@ -1,7 +1,7 @@
 # syntax=docker.io/docker/dockerfile:1.13-labs
 # Pelican Development Dockerfile
 
-FROM --platform=$TARGETOS/$TARGETARCH php:8.4-fpm-alpine AS base
+FROM --platform=$TARGETOS/$TARGETARCH php:8.5-fpm-alpine AS base
 
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
@@ -26,7 +26,7 @@ RUN composer install --no-dev --no-interaction --no-autoloader --no-scripts
 # ================================
 # Stage 1-2: Yarn Install
 # ================================
-FROM --platform=$TARGETOS/$TARGETARCH node:20-alpine AS yarn
+FROM --platform=$TARGETOS/$TARGETARCH node:22-alpine AS yarn
 
 WORKDIR /build
 

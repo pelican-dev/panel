@@ -38,7 +38,9 @@ class ListEggs extends ListRecords
      */
     public function table(Table $table): Table
     {
-        $defaultEggIcon = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(public_path('pelican.svg')));
+        $defaultEggIcon = config('app.logo');
+        $defaultEggIcon = empty($defaultEggIcon) || !is_file(public_path($defaultEggIcon)) ? 'pelican.svg' : $defaultEggIcon;
+        $defaultEggIcon = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(public_path($defaultEggIcon)));
 
         return $table
             ->searchable(true)

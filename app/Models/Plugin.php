@@ -279,7 +279,7 @@ class Plugin extends Model implements HasPluginSettings
                 report($exception);
             }
 
-            return null;
+            return [];
         });
     }
 

@@ -164,7 +164,7 @@ jobs:
             echo "Invalid version tag, refusing to update config"
             exit 1
           fi
-          sed -i "s/'version' => 'canary',/'version' => '$VERSION',/" config/app.php
+          sed -i "s|'version' => 'canary',|'version' => '${{ steps.build_info.outputs.version_tag }}',|" config/app.php
               
       - name: Build and Push (tag)
         uses: docker/build-push-action@v6

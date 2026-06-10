@@ -1,9 +1,12 @@
 import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
-import laravel, { refreshPaths } from 'laravel-vite-plugin';
+import laravel from 'laravel-vite-plugin';
 import { globSync } from 'glob';
 
 export default defineConfig({
+    build: {
+        chunkSizeWarningLimit: 1000,
+    },
     plugins: [
         laravel({
             input: [

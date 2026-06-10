@@ -377,7 +377,7 @@ class PluginService
             }
         }
 
-        $pluginName = str($file->getClientOriginalName())->before('.zip')->toString();
+        $pluginName = str($file->getClientOriginalName())->basename()->before('.zip')->toString();
 
         if ($cleanDownload) {
             File::deleteDirectory(plugin_path($pluginName));
@@ -396,9 +396,9 @@ class PluginService
     /** @throws Exception */
     public function downloadPluginFromUrl(string $url, bool $cleanDownload = false): void
     {
-        $info = pathinfo($url);
+        $basename = pathinfo($url, PATHINFO_BASENAME);
         $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
-        $tmpPath = $tmpDir->path($info['basename']);
+        $tmpPath = $tmpDir->path($basename);
 
         $content = Http::timeout(60)->connectTimeout(5)->throw()->get($url)->body();
 
@@ -412,7 +412,7 @@ class PluginService
             throw new InvalidFileUploadException('Could not write temporary file.');
         }
 
-        $this->downloadPluginFromFile(new UploadedFile($tmpPath, $info['basename'], 'application/zip'), $cleanDownload);
+        $this->downloadPluginFromFile(new UploadedFile($tmpPath, $basename, 'application/zip'), $cleanDownload);
     }
 
     public function deletePlugin(Plugin $plugin): void

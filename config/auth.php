@@ -2,6 +2,8 @@
 
 return [
 
+    'disable_password_login' => env('AUTH_DISABLE_PASSWORD_LOGIN', false),
+
     'lockout' => [
         'time' => 2,
         'attempts' => 3,

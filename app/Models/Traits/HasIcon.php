@@ -49,7 +49,7 @@ trait HasIcon
         };
 
         if (is_null($normalizedExtension)) {
-            throw new Exception(trans('admin/egg.import.unknown_extension'));
+            throw new Exception(trans('admin/egg.import.unknown_extension', ['extension' => $extension]));
         }
 
         $fileName = static::getIconStoragePath() . "/$this->uuid.$normalizedExtension";

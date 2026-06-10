@@ -6,6 +6,7 @@ use App\Enums\EggFormat;
 use App\Exceptions\Service\InvalidFileUploadException;
 use App\Models\Egg;
 use App\Models\EggVariable;
+use Exception;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
@@ -78,8 +79,11 @@ class EggImporterService
      */
     public function fromUrl(string $url, ?Egg $egg = null): Egg
     {
-        $info = pathinfo($url);
-        $extension = strtolower($info['extension']);
+        $extension = strtolower(pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION));
+
+        if (empty($extension)) {
+            throw new InvalidFileUploadException('Unsupported file format.');
+        }
 
         $format = match ($extension) {
             'yaml', 'yml' => EggFormat::YAML,
@@ -268,11 +272,15 @@ class EggImporterService
             return;
         }
 
-        $extension = strtolower($matches[1]);
-        $data = base64_decode($matches[2]);
+        try {
+            $extension = strtolower($matches[1]);
+            $data = base64_decode($matches[2]);
 
-        if ($data) {
-            $egg->writeIcon($extension, $data);
+            if ($data) {
+                $egg->writeIcon($extension, $data);
+            }
+        } catch (Exception $exception) {
+            report($exception);
         }
     }
 

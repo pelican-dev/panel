@@ -137,74 +137,83 @@ class EditNode extends EditRecord
                         ->autofocus()
                         ->live(debounce: 1500)
                         ->rules(Node::getRulesForField('fqdn'))
-                        ->prohibited(fn ($state) => is_ip($state) && request()->isSecure())
                         ->label(fn ($state) => is_ip($state) ? trans('admin/node.ip_address') : trans('admin/node.domain'))
                         ->placeholder(fn ($state) => is_ip($state) ? '192.168.1.1' : 'node.example.com')
-                        ->helperText(function ($state) {
+                        ->helperText(fn () => request()->isSecure() ? trans('admin/node.fqdn_ssl') : null)
+                        ->validationMessages([
+                            'prohibited' => trans('admin/node.dns_error'),
+                        ])
+                        ->prohibited(function ($state, Get $get) {
+                            if (!$state) {
+                                return true;
+                            }
+
+                            if (is_ip($state)) {
+                                return false;
+                            }
+
+                            $ip = $get('ip');
+
+                            return !is_ip($ip);
+                        })
+                        ->hintColor(function ($state, Get $get) {
+                            if (!$state) {
+                                return null;
+                            }
+
                             if (is_ip($state)) {
                                 if (request()->isSecure()) {
-                                    return trans('admin/node.fqdn_help');
+                                    return 'warning';
                                 }
+                            } else {
+                                $ip = $get('ip');
 
-                                return '';
+                                return is_ip($ip) ? 'success' : 'danger';
                             }
 
-                            return trans('admin/node.error');
+                            return null;
                         })
-                        ->hintColor('danger')
-                        ->hint(function ($state) {
-                            if (is_ip($state) && request()->isSecure()) {
-                                return trans('admin/node.ssl_ip');
+                        ->hint(function ($state, Get $get) {
+                            if (!$state) {
+                                return null;
                             }
 
-                            return '';
+                            if (is_ip($state)) {
+                                if (request()->isSecure()) {
+                                    return trans('admin/node.ssl_ip');
+                                }
+                            } else {
+                                $ip = $get('ip');
+
+                                return is_ip($ip) ? trans('admin/node.valid') . ': ' . $ip : trans('admin/node.invalid');
+                            }
+
+                            return null;
                         })
                         ->afterStateUpdated(function (Set $set, ?string $state) {
-                            $set('dns', null);
                             $set('ip', null);
+
+                            if (!$state) {
+                                return;
+                            }
 
                             [$subdomain] = str($state)->explode('.', 2);
                             if (!is_numeric($subdomain)) {
                                 $set('name', $subdomain);
                             }
 
-                            if (!$state || is_ip($state)) {
-                                $set('dns', null);
-
-                                return;
-                            }
-
-                            $ip = get_ip_from_hostname($state);
-                            if ($ip) {
-                                $set('dns', true);
-
-                                $set('ip', $ip);
-                            } else {
-                                $set('dns', false);
+                            if (!is_ip($state)) {
+                                $ip = get_ip_from_hostname($state);
+                                if (is_ip($ip)) {
+                                    $set('ip', $ip);
+                                } else {
+                                    $set('ip', null);
+                                }
                             }
                         })
                         ->maxLength(255),
-                    TextInput::make('ip')
-                        ->disabled()
-                        ->hidden(),
-                    ToggleButtons::make('dns')
-                        ->label(trans('admin/node.dns'))
-                        ->helperText(trans('admin/node.dns_help'))
-                        ->disabled()
-                        ->inline()
-                        ->default(null)
-                        ->hint(fn (Get $get) => $get('ip'))
-                        ->hintColor('success')
-                        ->stateCast(new BooleanStateCast(false, true))
-                        ->options([
-                            1 => trans('admin/node.valid'),
-                            0 => trans('admin/node.invalid'),
-                        ])
-                        ->colors([
-                            1 => 'success',
-                            0 => 'danger',
-                        ])
-                        ->columnSpan(1),
+                    Hidden::make('ip')
+                        ->saved(false),
                     TextInput::make('daemon_connect')
                         ->columnSpan(1)
                         ->label(fn (Get $get) => $get('connection') === 'https_proxy' ? trans('admin/node.connect_port') : trans('admin/node.port'))
@@ -214,6 +223,16 @@ class EditNode extends EditRecord
                         ->default(8080)
                         ->required()
                         ->integer(),
+                    TextInput::make('daemon_listen')
+                        ->columnSpan(1)
+                        ->label(trans('admin/node.listen_port'))
+                        ->helperText(trans('admin/node.listen_port_help'))
+                        ->minValue(1)
+                        ->maxValue(65535)
+                        ->default(8080)
+                        ->required()
+                        ->integer()
+                        ->visible(fn (Get $get) => $get('connection') === 'https_proxy'),
                     TextInput::make('name')
                         ->label(trans('admin/node.display_name'))
                         ->columnSpan([
@@ -224,22 +243,16 @@ class EditNode extends EditRecord
                         ])
                         ->required()
                         ->maxLength(100),
-                    Hidden::make('scheme'),
-                    Hidden::make('behind_proxy'),
                     ToggleButtons::make('connection')
                         ->label(trans('admin/node.ssl'))
-                        ->columnSpan(1)
+                        ->columnSpan(2)
                         ->inline()
-                        ->helperText(function (Get $get) {
+                        ->helperText(function () {
                             if (request()->isSecure()) {
-                                return new HtmlString(trans('admin/node.panel_on_ssl'));
+                                return trans('admin/node.panel_on_ssl');
                             }
 
-                            if (is_ip($get('fqdn'))) {
-                                return trans('admin/node.ssl_help');
-                            }
-
-                            return '';
+                            return null;
                         })
                         ->disableOptionWhen(fn (string $value) => $value === 'http' && request()->isSecure())
                         ->options([
@@ -267,16 +280,10 @@ class EditNode extends EditRecord
                             $set('daemon_connect', $state === 'https_proxy' ? 443 : 8080);
                             $set('daemon_listen', 8080);
                         }),
-                    TextInput::make('daemon_listen')
-                        ->columnSpan(1)
-                        ->label(trans('admin/node.listen_port'))
-                        ->helperText(trans('admin/node.listen_port_help'))
-                        ->minValue(1)
-                        ->maxValue(65535)
-                        ->default(8080)
-                        ->required()
-                        ->integer()
-                        ->visible(fn (Get $get) => $get('connection') === 'https_proxy'),
+                    Hidden::make('scheme')
+                        ->default(fn () => request()->isSecure() ? 'https' : 'http'),
+                    Hidden::make('behind_proxy')
+                        ->default(false),
                 ]),
             Tab::make('advanced_settings')
                 ->label(trans('admin/node.tabs.advanced_settings'))

@@ -25,7 +25,7 @@ class Dashboard extends BaseDashboard
 
     public function getHeading(): string
     {
-        return trans('admin/dashboard.heading');
+        return trans('admin/dashboard.heading', ['app' => config('app.name')]);
     }
 
     public function getSubheading(): string

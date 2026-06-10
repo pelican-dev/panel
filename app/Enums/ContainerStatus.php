@@ -41,17 +41,8 @@ enum ContainerStatus: string implements HasColor, HasIcon, HasLabel
         };
     }
 
-    public function getColor(bool $hex = false): string
+    public function getColor(): string
     {
-        if ($hex) {
-            return match ($this) {
-                self::Created, self::Restarting => '#2563EB',
-                self::Starting, self::Paused, self::Removing, self::Stopping => '#D97706',
-                self::Running => '#22C55E',
-                self::Exited, self::Missing, self::Dead, self::Offline => '#EF4444',
-            };
-        }
-
         return match ($this) {
             self::Created => 'primary',
             self::Starting => 'warning',

@@ -22,7 +22,7 @@ RUN composer install --no-dev --no-interaction --no-autoloader --no-scripts
 # ================================
 # Stage 1-2: Yarn Install
 # ================================
-FROM --platform=$TARGETOS/$TARGETARCH node:20-alpine AS yarn
+FROM --platform=$TARGETOS/$TARGETARCH node:22-alpine AS yarn
 
 WORKDIR /build
 
