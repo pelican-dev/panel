@@ -474,7 +474,7 @@ class Server extends Model implements HasAvatar, Validatable
      */
     public function retrieveResources(): array
     {
-        if (!$this->retrieveStatus()->isStartingOrRunning()) {
+        if ($this->node->isUnderMaintenance()) {
             return [];
         }
 
