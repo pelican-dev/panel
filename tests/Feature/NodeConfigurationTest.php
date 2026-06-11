@@ -22,3 +22,16 @@ it('tracks the panel name dynamically when not overridden', function () {
 
     expect($node->getConfiguration()['app_name'])->toBe('Renamed Panel');
 });
+
+it('trims surrounding whitespace from the daemon name', function () {
+    $node = Node::factory()->create(['daemon_app_name' => '  Pelican Hosting  ']);
+
+    expect($node->daemon_app_name)->toBe('Pelican Hosting');
+});
+
+it('nulls a whitespace-only daemon name so it falls back', function () {
+    $node = Node::factory()->create(['daemon_app_name' => '   ']);
+
+    expect($node->daemon_app_name)->toBeNull()
+        ->and($node->getConfiguration()['app_name'])->toBe(config('app.name'));
+});

@@ -7,6 +7,7 @@ use App\Exceptions\Service\HasActiveServersException;
 use App\Repositories\Daemon\DaemonSystemRepository;
 use App\Traits\HasValidation;
 use Exception;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -189,6 +190,17 @@ class Node extends Model implements Validatable
             'maintenance_mode' => 'boolean',
             'tags' => 'array',
         ];
+    }
+
+    protected function daemonAppName(): Attribute
+    {
+        return Attribute::make(
+            set: function (?string $value): ?string {
+                $value = trim((string) $value);
+
+                return $value === '' ? null : $value;
+            },
+        );
     }
 
     public int $servers_sum_memory = 0;
