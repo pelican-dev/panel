@@ -89,7 +89,7 @@ jobs:
           MYSQL_DATABASE: testing
         ports:
           - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: --tmpfs /var/lib/mysql:rw --health-cmd="mysqladmin ping" --health-interval=2s --health-timeout=5s --health-retries=30
     env:
       DB_CONNECTION: mysql
       DB_HOST: 127.0.0.1
@@ -129,12 +129,6 @@ jobs:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
 
-      - name: Unit tests
-        run: vendor/bin/pest tests/Unit --parallel --do-not-fail-on-phpunit-warning
-        env:
-          DB_HOST: UNIT_NO_DB
-          SKIP_MIGRATIONS: true
-
       - name: Integration tests
         run: vendor/bin/pest tests/Integration --parallel --do-not-fail-on-phpunit-warning
         env:
@@ -157,7 +151,7 @@ jobs:
           MYSQL_DATABASE: testing
         ports:
           - 3306
-        options: --health-cmd="mariadb-admin ping || mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: --tmpfs /var/lib/mysql:rw --health-cmd="mariadb-admin ping || mysqladmin ping" --health-interval=2s --health-timeout=5s --health-retries=30
     env:
       DB_CONNECTION: mariadb
       DB_HOST: 127.0.0.1
@@ -197,12 +191,6 @@ jobs:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
 
-      - name: Unit tests
-        run: vendor/bin/pest tests/Unit --parallel --do-not-fail-on-phpunit-warning
-        env:
-          DB_HOST: UNIT_NO_DB
-          SKIP_MIGRATIONS: true
-
       - name: Integration tests
         run: vendor/bin/pest tests/Integration --parallel --do-not-fail-on-phpunit-warning
         env:
@@ -228,10 +216,12 @@ jobs:
         ports:
           - 5432:5432
         options: >-
+          --tmpfs /var/lib/postgresql:rw
+          --tmpfs /var/lib/postgresql/data:rw
           --health-cmd pg_isready
-          --health-interval 10s
+          --health-interval 2s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 30
     env:
       DB_CONNECTION: pgsql
       DB_HOST: 127.0.0.1
@@ -268,12 +258,6 @@ jobs:
 
       - name: Run Migrations
         run: php artisan migrate --force --seed
-
-      - name: Unit tests
-        run: vendor/bin/pest tests/Unit --parallel --do-not-fail-on-phpunit-warning
-        env:
-          DB_HOST: UNIT_NO_DB
-          SKIP_MIGRATIONS: true
 
       - name: Integration tests
         run: vendor/bin/pest tests/Integration --parallel --do-not-fail-on-phpunit-warning
