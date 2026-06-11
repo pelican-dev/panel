@@ -226,6 +226,7 @@ class Node extends Model implements Validatable
      * @return array{
      *     debug: bool,
      *     uuid: string,
+     *     app_name: string,
      *     token_id: string,
      *     token: string,
      *     api: array{
@@ -244,6 +245,7 @@ class Node extends Model implements Validatable
         return [
             'debug' => false,
             'uuid' => $this->uuid,
+            'app_name' => $this->daemon_app_name ?: config('app.name'),
             'token_id' => $this->daemon_token_id,
             'token' => $this->daemon_token,
             'api' => [
