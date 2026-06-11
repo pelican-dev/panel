@@ -26,6 +26,7 @@ use Symfony\Component\Yaml\Yaml;
  * @property int $id
  * @property bool $public
  * @property string $name
+ * @property string|null $daemon_app_name
  * @property string $fqdn
  * @property string $scheme
  * @property int $memory
@@ -70,6 +71,7 @@ use Symfony\Component\Yaml\Yaml;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereCpu($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereCpuOverallocate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereDaemonAppName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereDaemonBase($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereDaemonConnect($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Node whereDaemonListen($value)
@@ -118,7 +120,7 @@ class Node extends Model implements Validatable
      * Fields that are mass assignable.
      */
     protected $fillable = [
-        'public', 'name',
+        'public', 'name', 'daemon_app_name',
         'fqdn', 'scheme', 'behind_proxy',
         'memory', 'memory_overallocate', 'disk',
         'disk_overallocate', 'cpu', 'cpu_overallocate',
@@ -130,6 +132,7 @@ class Node extends Model implements Validatable
     /** @var array<array-key, string[]> */
     public static array $validationRules = [
         'name' => ['required', 'string', 'min:1', 'max:100'],
+        'daemon_app_name' => ['nullable', 'string', 'max:100'],
         'description' => ['string', 'nullable'],
         'public' => ['boolean'],
         'fqdn' => ['required', 'string', 'notIn:0.0.0.0,127.0.0.1,localhost'],
