@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Enums\JwtScope;
 use App\Enums\SubuserPermission;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Http\Controllers\Api\Client\ClientApiController;
@@ -63,6 +64,7 @@ class WebsocketController extends ClientApiController
                 'server_uuid' => $server->uuid,
                 'permissions' => $permissions,
             ])
+            ->setScopes(JwtScope::Websocket)
             ->handle($node, $user->id . $server->uuid);
 
         $socket = str_replace(['https://', 'http://'], ['wss://', 'ws://'], $node->getConnectionAddress());

@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use App\Enums\JwtScope;
 use App\Models\Allocation;
 use App\Models\Backup;
 use App\Models\Node;
@@ -100,7 +101,8 @@ class TransferServerService
         $token = $this->nodeJWTService
             ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
             ->setSubject($server->uuid)
-            ->handle($transfer->newNode, $server->uuid, 'sha256');
+            ->setScopes(JwtScope::ServerTransfer)
+            ->handle($transfer->newNode, $server->uuid);
 
         // Notify the source node of the pending outgoing transfer.
         $this->notify($transfer, $token, $backup_uuid);

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\JwtScope;
 use App\Enums\TablerIcon;
 use App\Models\Node;
 use App\Services\Nodes\NodeJWTService;
@@ -52,6 +53,7 @@ class NodeClientConnectivity extends Component
                     'server_uuid' => $server->uuid,
                     'permissions' => $permissions,
                 ])
+                ->setScopes(JwtScope::Websocket)
                 ->handle($this->node, $user->id . $server->uuid)->toString();
 
             $wsUrl = str_replace(['https://', 'http://'], ['wss://', 'ws://'], $this->node->getConnectionAddress());

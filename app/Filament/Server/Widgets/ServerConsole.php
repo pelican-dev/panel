@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Widgets;
 
+use App\Enums\JwtScope;
 use App\Enums\SubuserPermission;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Livewire\AlertBanner;
@@ -59,6 +60,7 @@ class ServerConsole extends Widget
                 'server_uuid' => $this->server->uuid,
                 'permissions' => $permissions,
             ])
+            ->setScopes(JwtScope::Websocket)
             ->handle($this->server->node, $this->user->id . $this->server->uuid)->toString();
     }
 

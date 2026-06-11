@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\Files\Pages;
 
+use App\Enums\JwtScope;
 use App\Enums\SubuserPermission;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\Files\FileResource;
@@ -44,6 +45,7 @@ class DownloadFiles extends Page
                 'file_path' => rawurldecode($path),
                 'server_uuid' => $server->uuid,
             ])
+            ->setScopes(JwtScope::FileDownload)
             ->handle($server->node, user()?->id . $server->uuid);
 
         Activity::event('server:file.download')

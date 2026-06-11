@@ -2,6 +2,7 @@
 
 namespace App\Services\Backups;
 
+use App\Enums\JwtScope;
 use App\Extensions\Backups\BackupManager;
 use App\Extensions\Filesystem\S3Filesystem;
 use App\Models\Backup;
@@ -33,6 +34,7 @@ class DownloadLinkService
                 'backup_uuid' => $backup->uuid,
                 'server_uuid' => $backup->server->uuid,
             ])
+            ->setScopes(JwtScope::BackupDownload)
             ->handle($backup->server->node, $user->id . $backup->server->uuid);
 
         return sprintf('%s/download/backup?token=%s', $backup->server->node->getConnectionAddress(), $token->toString());

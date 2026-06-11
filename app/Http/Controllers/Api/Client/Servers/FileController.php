@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Enums\JwtScope;
 use App\Facades\Activity;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\Files\ChmodFilesRequest;
@@ -98,6 +99,7 @@ class FileController extends ClientApiController
                 'file_path' => rawurldecode($request->get('file')),
                 'server_uuid' => $server->uuid,
             ])
+            ->setScopes(JwtScope::FileDownload)
             ->handle($server->node, $request->user()->id . $server->uuid);
 
         Activity::event('server:file.download')->property('file', $request->get('file'))->log();
