@@ -5,7 +5,7 @@
         $userFontSize = (int) user()?->getCustomization(\App\Enums\CustomizationKey::ConsoleFontSize);
         $userRows = (int) user()?->getCustomization(\App\Enums\CustomizationKey::ConsoleRows);
 
-        $terminalPrelude = str(config('app.name'))->slug()->lower()->toString();
+        $terminalPrelude = str(\Filament\Facades\Filament::getTenant()->node->daemon_app_name ?: config('app.name'))->slug()->lower()->toString();
     @endphp
     @if($userFont !== "monospace")
         <link rel="preload" href="{{ asset("storage/fonts/{$userFont}.ttf") }}" as="font" crossorigin>
