@@ -33,13 +33,13 @@ jobs:
             platform: linux/arm64
     steps:
       - name: Code checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       
       - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       
       - name: Build the base PHP image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: ./Dockerfile.base
@@ -54,7 +54,7 @@ jobs:
         run: docker save -o base-php-${{ matrix.arch }}.tar base-php:${{ matrix.arch }}
       
       - name: Push the docker build to the artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: base-php-${{ matrix.arch }}.tar
           path: base-php-${{ matrix.arch }}.tar
@@ -97,13 +97,13 @@ jobs:
           echo "schedule_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
       - name: Code checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ steps.release_info.outputs.schedule_tag || github.ref }}
 
       - name: Docker metadata
         id: docker_meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           flavor: |
@@ -115,16 +115,16 @@ jobs:
             type=ref,event=branch
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       
       # We Need to start it in host mode else it can't acces the local registry on port 5000
       - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
           driver-opts: network=host
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -137,12 +137,12 @@ jobs:
           echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
         # Download the base PHP image AMD64
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: base-php-amd64.tar
         
         # Download the base PHP image ARM64
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: base-php-arm64.tar
 
@@ -167,7 +167,7 @@ jobs:
           sed -i "s|'version' => 'canary',|'version' => '$VERSION',|" config/app.php
               
       - name: Build and Push (tag)
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         if: "(github.event_name == 'release' && github.event.action == 'published') || github.event_name == 'schedule'"
         with:
           context: .
@@ -182,7 +182,7 @@ jobs:
           cache-to: type=gha,scope=tagged${{ matrix.os }},mode=max
         
       - name: Build and Push (main)
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         if: "github.event_name == 'push' && contains(github.ref, 'main')"
         with:
           context: .
