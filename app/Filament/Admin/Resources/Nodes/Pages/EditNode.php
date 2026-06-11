@@ -370,53 +370,63 @@ class EditNode extends EditRecord
                         ])
                         ->label(trans('admin/node.sftp_alias'))
                         ->helperText(trans('admin/node.sftp_alias_help')),
-                    TextInput::make('daemon_app_name')
-                        ->columnSpan([
+                    Grid::make()
+                        ->columns([
                             'default' => 1,
-                            'sm' => 1,
-                            'md' => 2,
-                            'lg' => 2,
+                            'sm' => 2,
+                            'md' => 4,
+                            'lg' => 4,
                         ])
-                        ->label(trans('admin/node.daemon_app_name'))
-                        ->placeholder(config('app.name'))
-                        ->helperText(trans('admin/node.daemon_app_name_help'))
-                        ->maxLength(100),
-                    ToggleButtons::make('public')
-                        ->columnSpan([
-                            'default' => 1,
-                            'sm' => 1,
-                            'md' => 1,
-                            'lg' => 2,
-                        ])
-                        ->label(trans('admin/node.use_for_deploy'))
-                        ->inline()
-                        ->stateCast(new BooleanStateCast(false, true))
-                        ->options([
-                            1 => trans('admin/node.yes'),
-                            0 => trans('admin/node.no'),
-                        ])
-                        ->colors([
-                            1 => 'success',
-                            0 => 'danger',
-                        ]),
-                    ToggleButtons::make('maintenance_mode')
-                        ->columnSpan([
-                            'default' => 1,
-                            'sm' => 1,
-                            'md' => 1,
-                            'lg' => 2,
-                        ])
-                        ->label(trans('admin/node.maintenance_mode'))
-                        ->inline()
-                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/node.maintenance_mode_help'))
-                        ->stateCast(new BooleanStateCast(false, true))
-                        ->options([
-                            1 => trans('admin/node.enabled'),
-                            0 => trans('admin/node.disabled'),
-                        ])
-                        ->colors([
-                            1 => 'danger',
-                            0 => 'success',
+                        ->columnSpanFull()
+                        ->schema([
+                            TextInput::make('daemon_app_name')
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 2,
+                                    'lg' => 2,
+                                ])
+                                ->label(trans('admin/node.daemon_app_name'))
+                                ->placeholder(config('app.name'))
+                                ->helperText(trans('admin/node.daemon_app_name_help'))
+                                ->maxLength(100),
+                            ToggleButtons::make('public')
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 1,
+                                    'lg' => 1,
+                                ])
+                                ->label(trans('admin/node.use_for_deploy'))
+                                ->inline()
+                                ->stateCast(new BooleanStateCast(false, true))
+                                ->options([
+                                    1 => trans('admin/node.yes'),
+                                    0 => trans('admin/node.no'),
+                                ])
+                                ->colors([
+                                    1 => 'success',
+                                    0 => 'danger',
+                                ]),
+                            ToggleButtons::make('maintenance_mode')
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 1,
+                                    'lg' => 1,
+                                ])
+                                ->label(trans('admin/node.maintenance_mode'))
+                                ->inline()
+                                ->hintIcon(TablerIcon::QuestionMark, trans('admin/node.maintenance_mode_help'))
+                                ->stateCast(new BooleanStateCast(false, true))
+                                ->options([
+                                    1 => trans('admin/node.enabled'),
+                                    0 => trans('admin/node.disabled'),
+                                ])
+                                ->colors([
+                                    1 => 'danger',
+                                    0 => 'success',
+                                ]),
                         ]),
                     Grid::make()
                         ->columns([

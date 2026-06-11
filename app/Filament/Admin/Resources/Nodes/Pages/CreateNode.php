@@ -234,30 +234,51 @@ class CreateNode extends CreateRecord
                     'lg' => 4,
                 ])
                 ->schema([
-                    ToggleButtons::make('maintenance_mode')
-                        ->label(trans('admin/node.maintenance_mode'))->inline()
-                        ->columnSpan(1)
-                        ->default(false)
-                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/node.maintenance_mode_help'))
-                        ->options([
-                            true => trans('admin/node.enabled'),
-                            false => trans('admin/node.disabled'),
+                    Grid::make()
+                        ->columns([
+                            'default' => 1,
+                            'sm' => 2,
+                            'md' => 4,
+                            'lg' => 4,
                         ])
-                        ->colors([
-                            true => 'danger',
-                            false => 'success',
-                        ]),
-                    ToggleButtons::make('public')
-                        ->default(true)
-                        ->columnSpan(1)
-                        ->label(trans('admin/node.use_for_deploy'))->inline()
-                        ->options([
-                            true => trans('admin/node.yes'),
-                            false => trans('admin/node.no'),
-                        ])
-                        ->colors([
-                            true => 'success',
-                            false => 'danger',
+                        ->columnSpanFull()
+                        ->schema([
+                            TextInput::make('daemon_app_name')
+                                ->columnSpan([
+                                    'default' => 1,
+                                    'sm' => 2,
+                                    'md' => 2,
+                                    'lg' => 2,
+                                ])
+                                ->label(trans('admin/node.daemon_app_name'))
+                                ->placeholder(config('app.name'))
+                                ->helperText(trans('admin/node.daemon_app_name_help'))
+                                ->maxLength(100),
+                            ToggleButtons::make('public')
+                                ->default(true)
+                                ->columnSpan(1)
+                                ->label(trans('admin/node.use_for_deploy'))->inline()
+                                ->options([
+                                    true => trans('admin/node.yes'),
+                                    false => trans('admin/node.no'),
+                                ])
+                                ->colors([
+                                    true => 'success',
+                                    false => 'danger',
+                                ]),
+                            ToggleButtons::make('maintenance_mode')
+                                ->label(trans('admin/node.maintenance_mode'))->inline()
+                                ->columnSpan(1)
+                                ->default(false)
+                                ->hintIcon(TablerIcon::QuestionMark, trans('admin/node.maintenance_mode_help'))
+                                ->options([
+                                    true => trans('admin/node.enabled'),
+                                    false => trans('admin/node.disabled'),
+                                ])
+                                ->colors([
+                                    true => 'danger',
+                                    false => 'success',
+                                ]),
                         ]),
                     TagsInput::make('tags')
                         ->label(trans('admin/node.tags'))
@@ -290,12 +311,6 @@ class CreateNode extends CreateRecord
                         ->columnSpan(1)
                         ->label(trans('admin/node.sftp_alias'))
                         ->helperText(trans('admin/node.sftp_alias_help')),
-                    TextInput::make('daemon_app_name')
-                        ->columnSpan(1)
-                        ->label(trans('admin/node.daemon_app_name'))
-                        ->placeholder(config('app.name'))
-                        ->helperText(trans('admin/node.daemon_app_name_help'))
-                        ->maxLength(100),
                     Grid::make()
                         ->columns(6)
                         ->columnSpanFull()
