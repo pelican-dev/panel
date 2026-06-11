@@ -290,6 +290,12 @@ class CreateNode extends CreateRecord
                         ->columnSpan(1)
                         ->label(trans('admin/node.sftp_alias'))
                         ->helperText(trans('admin/node.sftp_alias_help')),
+                    TextInput::make('daemon_app_name')
+                        ->columnSpan(1)
+                        ->label(trans('admin/node.daemon_app_name'))
+                        ->placeholder(config('app.name'))
+                        ->helperText(trans('admin/node.daemon_app_name_help'))
+                        ->maxLength(100),
                     Grid::make()
                         ->columns(6)
                         ->columnSpanFull()

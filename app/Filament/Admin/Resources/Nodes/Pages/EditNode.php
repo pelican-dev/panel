@@ -370,6 +370,17 @@ class EditNode extends EditRecord
                         ])
                         ->label(trans('admin/node.sftp_alias'))
                         ->helperText(trans('admin/node.sftp_alias_help')),
+                    TextInput::make('daemon_app_name')
+                        ->columnSpan([
+                            'default' => 1,
+                            'sm' => 1,
+                            'md' => 2,
+                            'lg' => 2,
+                        ])
+                        ->label(trans('admin/node.daemon_app_name'))
+                        ->placeholder(config('app.name'))
+                        ->helperText(trans('admin/node.daemon_app_name_help'))
+                        ->maxLength(100),
                     ToggleButtons::make('public')
                         ->columnSpan([
                             'default' => 1,
