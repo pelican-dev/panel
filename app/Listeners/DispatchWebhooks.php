@@ -85,7 +85,7 @@ class DispatchWebhooks
 
         $obj = $payload[0] ?? null;
         $webhookData = ['event' => $eventName, 'timestamp' => now()->toIso8601String()];
-        if (is_object($obj) && method_exists($obj, 'toArray')) {
+        if (is_object($obj)) {
             $webhookData['data'] = $obj->toArray();
         } elseif (is_array($obj)) {
             $webhookData['data'] = $obj;
