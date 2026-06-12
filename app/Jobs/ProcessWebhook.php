@@ -85,8 +85,9 @@ class ProcessWebhook implements ShouldQueue
         }
 
         if (is_object($data)) {
-                return Arr::wrap($data->toArray());
+            return Arr::wrap($data->toArray());
         }
+
         return Arr::wrap($data);
     }
 }
