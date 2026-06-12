@@ -146,7 +146,7 @@ class EggImporterService
      *
      * @throws InvalidFileUploadException|JsonException
      */
-    protected function parse(string $content, EggFormat $format): array
+    public function parse(string $content, EggFormat $format): array
     {
         try {
             $parsed = match ($format) {

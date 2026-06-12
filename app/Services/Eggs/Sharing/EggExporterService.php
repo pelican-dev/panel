@@ -78,7 +78,7 @@ class EggExporterService
         return null;
     }
 
-    protected function yamlExport(mixed $data): mixed
+    public function yamlExport(mixed $data): mixed
     {
         if ($data instanceof Collection) {
             $data = $data->all();
