@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\TablerIcon;
-use App\Events\ActivityLogged;
 use App\Traits\HasValidation;
 use BackedEnum;
 use Filament\Facades\Filament;
@@ -18,7 +17,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use LogicException;
 
@@ -140,9 +138,6 @@ class ActivityLog extends Model implements HasIcon, HasLabel
             $model->timestamp = Carbon::now();
         });
 
-        static::created(function (self $model) {
-            Event::dispatch(new ActivityLogged($model));
-        });
     }
 
     public function getIcon(): BackedEnum

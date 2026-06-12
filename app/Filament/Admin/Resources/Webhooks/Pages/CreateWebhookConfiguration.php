@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Webhooks\Pages;
 
 use App\Enums\TablerIcon;
+use App\Enums\WebhookScope;
 use App\Enums\WebhookType;
 use App\Filament\Admin\Resources\Webhooks\WebhookResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -10,6 +11,7 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Validation\ValidationException;
 
 class CreateWebhookConfiguration extends CreateRecord
 {
@@ -44,6 +46,15 @@ class CreateWebhookConfiguration extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        // Ensure name is set (required field)
+        if (empty($data['name'] ?? null)) {
+            throw ValidationException::withMessages(['name' => 'Webhook name is required']);
+        }
+
+        // Set scope to GLOBAL by default for admin webhooks
+        $data['scope'] = WebhookScope::Global;
+        unset($data['server_id']);
+
         if (($data['type'] ?? null) === WebhookType::Discord->value) {
             $embeds = data_get($data, 'embeds', []);
 
