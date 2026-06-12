@@ -32,6 +32,7 @@ use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\User;
 use App\Tests\Integration\IntegrationTestCase;
+use Filament\Facades\Filament;
 use Ramsey\Uuid\Uuid;
 
 expect()->extend('toBeOne', function () {
@@ -42,7 +43,11 @@ expect()->extend('toLogActivities', function (int $times) {
     expect(ActivityLog::count())->toBe($times);
 });
 
-uses(IntegrationTestCase::class)->in('Feature', 'Filament');
+uses(IntegrationTestCase::class)->in('Feature');
+
+uses(IntegrationTestCase::class)
+    ->beforeEach(fn () => Filament::setCurrentPanel('admin'))
+    ->in('Filament');
 
 /*
 |--------------------------------------------------------------------------

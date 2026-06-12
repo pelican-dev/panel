@@ -4,6 +4,7 @@ use App\Enums\RolePermissionModels;
 use App\Filament\Admin\Resources\Eggs\Pages\ListEggs;
 use App\Models\Egg;
 use App\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 use function Pest\Livewire\livewire;
 
@@ -22,7 +23,7 @@ it('root admin can see all eggs', function () {
 it('non root admin cannot see any eggs', function () {
     $role = Role::factory()->create(['name' => 'Node Viewer', 'guard_name' => 'web']);
     // Node Permission is on purpose, we check the wrong permissions.
-    $permission = Permission::factory()->create(['name' => RolePermissionModels::Node->viewAny(), 'guard_name' => 'web']);
+    $permission = Permission::create(['name' => RolePermissionModels::Node->viewAny(), 'guard_name' => 'web']);
     $role->permissions()->attach($permission);
     [$user] = generateTestAccount([]);
 
@@ -33,7 +34,7 @@ it('non root admin cannot see any eggs', function () {
 
 it('non root admin with permissions can see eggs', function () {
     $role = Role::factory()->create(['name' => 'Egg Viewer', 'guard_name' => 'web']);
-    $permission = Permission::factory()->create(['name' => RolePermissionModels::Egg->viewAny(), 'guard_name' => 'web']);
+    $permission = Permission::create(['name' => RolePermissionModels::Egg->viewAny(), 'guard_name' => 'web']);
     $role->permissions()->attach($permission);
 
     $eggs = Egg::all();

@@ -7,6 +7,7 @@ use App\Models\WebhookConfiguration;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -34,7 +35,9 @@ class ProcessWebhook implements ShouldQueue
             $data = reset($data);
         }
 
-        if (is_object($data)) {
+        if ($data instanceof Arrayable) {
+            $data = $data->toArray();
+        } elseif (is_object($data)) {
             $data = get_object_vars($data);
         }
 
@@ -64,7 +67,7 @@ class ProcessWebhook implements ShouldQueue
             $headers = [];
 
             if ($this->webhookConfiguration->type === WebhookType::Regular) {
-                foreach ($this->webhookConfiguration->headers as $key => $value) {
+                foreach ($this->webhookConfiguration->headers ?? [] as $key => $value) {
                     $headers[$key] = $this->webhookConfiguration->replaceVars($data, $value);
                 }
             }
