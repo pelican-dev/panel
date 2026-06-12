@@ -65,4 +65,14 @@ class ViewNode extends ViewRecord
             EditAction::make(),
         ];
     }
+
+    protected function getColumnSpan(): ?int
+    {
+        return null;
+    }
+
+    protected function getColumnStart(): ?int
+    {
+        return null;
+    }
 }
