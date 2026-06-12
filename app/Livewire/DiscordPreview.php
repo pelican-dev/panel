@@ -41,7 +41,7 @@ class DiscordPreview extends Component
         return ($url && preg_match('/^https?:\/\//i', $url)) ? $url : null;
     }
 
-    /** @param array<mixed> $embeds */
+    /** @return array<int, array<string, mixed>> */
     private function processEmbeds(mixed $embeds): array
     {
         return collect($embeds)
@@ -68,18 +68,18 @@ class DiscordPreview extends Component
                 }
 
                 $embed['view'] = [
-                    'author_name' => $embed['author']['name']              ?? null,
-                    'author_url'  => $this->safeUrl($embed['author']['url']      ?? null),
+                    'author_name' => $embed['author']['name'] ?? null,
+                    'author_url' => $this->safeUrl($embed['author']['url'] ?? null),
                     'author_icon' => $this->safeUrl($embed['author']['icon_url'] ?? null),
-                    'title'       => $embed['title']                       ?? null,
-                    'title_url'   => $this->safeUrl($embed['url']                ?? null),
-                    'description' => $embed['description']                 ?? null,
-                    'fields'      => $embed['fields']                      ?? [],
-                    'image'       => $this->safeUrl($embed['image']['url']       ?? null),
-                    'thumbnail'   => $this->safeUrl($embed['thumbnail']['url']   ?? null),
-                    'footer_text' => $embed['footer']['text']              ?? null,
+                    'title' => $embed['title'] ?? null,
+                    'title_url' => $this->safeUrl($embed['url'] ?? null),
+                    'description' => $embed['description'] ?? null,
+                    'fields' => $embed['fields'] ?? [],
+                    'image' => $this->safeUrl($embed['image']['url'] ?? null),
+                    'thumbnail' => $this->safeUrl($embed['thumbnail']['url'] ?? null),
+                    'footer_text' => $embed['footer']['text'] ?? null,
                     'footer_icon' => $this->safeUrl($embed['footer']['icon_url'] ?? null),
-                    'timestamp'   => $embed['timestamp']                   ?? null,
+                    'timestamp' => $embed['timestamp'] ?? null,
                     'color_style' => $embed['color']
                         ? 'border-left-color: ' . $embed['color']
                         : 'border-left-color: #1e1f22',

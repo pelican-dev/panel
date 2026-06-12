@@ -77,6 +77,7 @@ class ProcessWebhook implements ShouldQueue
         ]);
     }
 
+    /** @return array<mixed> */
     private function normalizeData(mixed $data): array
     {
         if (is_string($data)) {

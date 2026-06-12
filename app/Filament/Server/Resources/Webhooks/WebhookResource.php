@@ -223,11 +223,11 @@ class WebhookResource extends Resource
                     CheckboxList::make('flags')
                         ->label(trans('admin/webhook.discord_embed.flags'))
                         ->options([
-                            (1 << 2)  => trans('admin/webhook.discord_message.supress_embeds'),        // Discord flag: SUPPRESS_EMBEDS (4)
+                            (1 << 2) => trans('admin/webhook.discord_message.supress_embeds'),        // Discord flag: SUPPRESS_EMBEDS (4)
                             (1 << 12) => trans('admin/webhook.discord_message.supress_notifications'), // Discord flag: SUPPRESS_NOTIFICATIONS (4096)
                         ])
                         ->descriptions([
-                            (1 << 2)  => trans('admin/webhook.discord_message.supress_embeds_text'),
+                            (1 << 2) => trans('admin/webhook.discord_message.supress_embeds_text'),
                             (1 << 12) => trans('admin/webhook.discord_message.supress_notifications_text'),
                         ]),
                     CheckboxList::make('allowed_mentions')
