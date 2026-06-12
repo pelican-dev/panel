@@ -73,6 +73,11 @@ RUN apk add --no-cache \
     # required for installing plugins. Pulled from https://github.com/pelican-dev/panel/pull/2034
     zip unzip 7zip bzip2-dev yarn git
 
+# Allow Caddy to bind privileged ports (80/443) as www-data, including under network_mode: host
+RUN apk add --no-cache --virtual .setcap-deps libcap \
+    && setcap cap_net_bind_service+ep /usr/sbin/caddy \
+    && apk del .setcap-deps
+
 # Copy composer binary for runtime plugin dependency management
 COPY --from=composer /usr/local/bin/composer /usr/local/bin/composer
 COPY --chown=root:www-data --chmod=770 --from=composerbuild /build .
