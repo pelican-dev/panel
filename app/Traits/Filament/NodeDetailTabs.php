@@ -539,6 +539,7 @@ trait NodeDetailTabs
             Tab::make('config_file')
                 ->label(trans('admin/node.tabs.config_file'))
                 ->icon(TablerIcon::Code)
+                ->hidden(fn (string $operation) => $operation === 'view')
                 ->schema([
                     TextEntry::make('instructions')
                         ->label(trans('admin/node.instructions'))

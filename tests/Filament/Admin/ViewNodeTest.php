@@ -30,7 +30,7 @@ function nodeRole(string $name, array $abilities): Role
     return $role;
 }
 
-/** @return array{0: Node, 1: Allocation, 2: Server} */
+/** @return array{Node, Allocation, Server} */
 function nodeWithMultiAllocationServer(): array
 {
     $node = Node::factory()->create();
@@ -39,7 +39,7 @@ function nodeWithMultiAllocationServer(): array
         'node_id' => $node->getKey(),
         'server_id' => $server->getKey(),
     ]);
-    $server->update(['allocation_id' => $allocations->first()->getKey()]);
+    $server->update(['allocation_id' => $allocations->last()->getKey()]);
 
     return [$node, $allocations->first(), $server->refresh()];
 }
@@ -51,7 +51,9 @@ function assertNodeViewIsReadOnly(Node $node, Allocation $allocation, Server $se
     $alias = $allocation->ip_alias;
     $notes = $allocation->notes;
     $primary = $server->allocation_id;
-    $otherAllocationId = $server->allocations->last()->getKey();
+    // the primary column only offers the first allocation (take(1)); target that valid option while a
+    // different allocation is currently primary, so only the isReadOnly gate can stop the switch
+    $switchTarget = (string) $server->allocations->take(1)->first()->getKey();
 
     livewire(AllocationsRelationManager::class, [
         'ownerRecord' => $node,
@@ -67,7 +69,7 @@ function assertNodeViewIsReadOnly(Node $node, Allocation $allocation, Server $se
         'ownerRecord' => $node,
         'pageClass' => ViewNode::class,
     ])
-        ->call('updateTableColumnState', 'allocation.id', (string) $server->getKey(), (string) $otherAllocationId);
+        ->call('updateTableColumnState', 'allocation.id', (string) $server->getKey(), $switchTarget);
 
     expect($allocation->refresh()->ip_alias)->toBe($alias)
         ->and($allocation->notes)->toBe($notes)
@@ -138,6 +140,22 @@ it('hides the reset-token action on the view page but keeps it on edit', functio
     $this->actingAs($viewer);
     livewire(ViewNode::class, ['record' => $node->getKey()])
         ->assertActionDoesNotExist(TestAction::make('exclude_resetKey')->schemaComponent(true));
+});
+
+it('does not expose the wings daemon token on the view page', function () {
+    $node = Node::factory()->create();
+
+    [$viewer] = generateTestAccount([]);
+    $viewer->syncRoles(nodeRole('Node Viewer', [
+        RolePermissionModels::Node->viewAny(),
+        RolePermissionModels::Node->view(),
+    ]));
+
+    // the config_file tab renders the wings config yaml, which embeds daemon_token; it must be gone on view
+    $this->actingAs($viewer);
+    livewire(ViewNode::class, ['record' => $node->getKey()])
+        ->assertDontSee($node->daemon_token)
+        ->assertDontSee($node->daemon_token_id);
 });
 
 it('shows the view row action only when the user cannot edit', function () {
