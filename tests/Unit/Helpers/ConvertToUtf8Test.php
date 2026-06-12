@@ -18,7 +18,7 @@ class ConvertToUtf8Test extends TestCase
      * Every output must be valid UTF-8, regardless of input encoding.
      */
     #[DataProvider('helperDataProvider')]
-    public function test_output_is_valid_utf8(string $input): void
+    public function test_output_is_valid_utf8(string $input, string $expected): void
     {
         $result = convert_to_utf8($input);
         $this->assertTrue(mb_check_encoding($result, 'UTF-8'), 'Output is not valid UTF-8: ' . bin2hex($result));
@@ -28,7 +28,7 @@ class ConvertToUtf8Test extends TestCase
      * Running convert_to_utf8 twice must produce the same result as once.
      */
     #[DataProvider('helperDataProvider')]
-    public function test_idempotent(string $input): void
+    public function test_idempotent(string $input, string $expected): void
     {
         $once = convert_to_utf8($input);
         $twice = convert_to_utf8($once);
