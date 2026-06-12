@@ -8,6 +8,7 @@ use App\Services\Eggs\Sharing\EggImporterService;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
+use Livewire\Component;
 
 class UpdateEggAction extends Action
 {
@@ -36,7 +37,7 @@ class UpdateEggAction extends Action
 
         $this->modalSubmitAction(fn (Action $action) => $action->color('danger'));
 
-        $this->action(function (Egg $egg, EggImporterService $eggImporterService) {
+        $this->action(function (Egg $egg, EggImporterService $eggImporterService, Component $livewire) {
             try {
                 $eggImporterService->fromUrl($egg->update_url, $egg);
 
@@ -58,6 +59,16 @@ class UpdateEggAction extends Action
                 ->body(trans('admin/egg.updated_from', ['url' => $egg->update_url]))
                 ->success()
                 ->send();
+
+            if (method_exists($livewire, 'refreshForm')) {
+                if (isset($this->record) && method_exists($this->record, 'refresh')) {
+                    $this->record->refresh();
+                }
+                if (isset($livewire->record) && method_exists($livewire->record, 'refresh')) {
+                    $livewire->record->refresh();
+                }
+                $livewire->refreshForm();
+            }
         });
 
         $this->authorize(fn () => user()?->can('import egg'));

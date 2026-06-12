@@ -4,6 +4,7 @@ namespace App\Filament\Components\Actions;
 
 use App\Console\Commands\Egg\UpdateEggIndexCommand;
 use App\Enums\TablerIcon;
+use App\Filament\Admin\Resources\Eggs\Pages\EditEgg;
 use App\Jobs\InstallEgg;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
@@ -21,6 +22,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
+use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ImportEggAction extends Action
@@ -44,7 +46,7 @@ class ImportEggAction extends Action
 
         $this->authorize(fn () => user()?->can('import egg'));
 
-        $this->action(function (array $data, EggImporterService $eggImportService): void {
+        $this->action(function (array $data, EggImporterService $eggImportService, Component $livewire): void {
 
             $gitHubEggs = array_get($this->data, 'eggs', []);
             $eggs = array_merge(collect($data['urls'])->flatten()->whereNotNull()->unique()->all(), Arr::wrap($data['files']));
@@ -123,6 +125,16 @@ class ImportEggAction extends Action
                     ->body($bodyParts->join(' | '))
                     ->status($failed->isEmpty() ? 'success' : ($success->isEmpty() ? 'danger' : 'warning'))
                     ->send();
+            }
+
+            if ($livewire instanceof EditEgg) {
+                if (isset($this->record) && method_exists($this->record, 'refresh')) {
+                    $this->record->refresh();
+                }
+                if (isset($livewire->record) && method_exists($livewire->record, 'refresh')) {
+                    $livewire->record->refresh();
+                }
+                $livewire->refreshForm();
             }
         });
     }
