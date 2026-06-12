@@ -153,7 +153,7 @@ class WebhookResource extends Resource
                             ->label(trans('admin/webhook.reset_headers'))
                             ->color('danger')
                             ->icon('heroicon-o-trash')
-                            ->action(fn (Get $get, Set $set) => $set('headers', [
+                            ->action(fn (Set $set) => $set('headers', [
                                 'X-Webhook-Event' => '{{event}}',
                             ])),
                     ])
@@ -171,7 +171,7 @@ class WebhookResource extends Resource
                     ->schema([
                         CheckboxList::make('events')
                             ->live()
-                            ->options(fn () => WebhookConfiguration::filamentCheckboxList(WebhookScope::SERVER))
+                            ->options(fn () => WebhookConfiguration::filamentCheckboxList(WebhookScope::Server))
                             ->searchable()
                             ->bulkToggleable()
                             ->columns(3)
@@ -223,11 +223,11 @@ class WebhookResource extends Resource
                     CheckboxList::make('flags')
                         ->label(trans('admin/webhook.discord_embed.flags'))
                         ->options([
-                            (1 << 2) => trans('admin/webhook.discord_message.supress_embeds'),
-                            (1 << 12) => trans('admin/webhook.discord_message.supress_notifications'),
+                            (1 << 2)  => trans('admin/webhook.discord_message.supress_embeds'),        // Discord flag: SUPPRESS_EMBEDS (4)
+                            (1 << 12) => trans('admin/webhook.discord_message.supress_notifications'), // Discord flag: SUPPRESS_NOTIFICATIONS (4096)
                         ])
                         ->descriptions([
-                            (1 << 2) => trans('admin/webhook.discord_message.supress_embeds_text'),
+                            (1 << 2)  => trans('admin/webhook.discord_message.supress_embeds_text'),
                             (1 << 12) => trans('admin/webhook.discord_message.supress_notifications_text'),
                         ]),
                     CheckboxList::make('allowed_mentions')

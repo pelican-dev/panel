@@ -74,7 +74,7 @@ class WebhookConfiguration extends Model
      * Default values for specific fields in the database.
      */
     protected $attributes = [
-        'scope' => WebhookScope::GLOBAL,
+        'scope' => WebhookScope::Global,
         'type' => WebhookType::Regular,
         'payload' => null,
     ];
@@ -114,13 +114,13 @@ class WebhookConfiguration extends Model
 
         $eventList->each(function (string $event) {
             cache()->forever("webhooks.$event", static::query()
-                ->where('scope', WebhookScope::GLOBAL)
+                ->where('scope', WebhookScope::Global)
                 ->whereJsonContains('events', $event)
                 ->get());
         });
 
         cache()->forget('watchedWebhooks');
-        cache()->forever('watchedWebhooks', static::where('scope', WebhookScope::GLOBAL)
+        cache()->forever('watchedWebhooks', static::where('scope', WebhookScope::Global)
             ->pluck('events')
             ->flatten()
             ->unique()
@@ -329,7 +329,7 @@ class WebhookConfiguration extends Model
     {
         $list = [];
 
-        if ($scope === WebhookScope::SERVER) {
+        if ($scope === WebhookScope::Server) {
             $events = static::allPossibleServerEvents();
             foreach ($events as $event) {
                 $list[$event] = static::transformServerEventName($event);
@@ -434,7 +434,7 @@ class WebhookConfiguration extends Model
     /** @param array<mixed, mixed> $eventData */
     public function run(?string $eventName = null, ?array $eventData = null): void
     {
-        if ($this->scope === WebhookScope::SERVER) {
+        if ($this->scope === WebhookScope::Server) {
             $eventName ??= 'server:file.write';
             $eventData ??= static::getServerWebhookSampleData();
         } else {

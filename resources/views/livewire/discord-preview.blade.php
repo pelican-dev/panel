@@ -269,8 +269,8 @@
             <div class="dc-msg-body">
                 {{-- Meta row --}}
                 <div class="dc-meta">
-                    <span class="dc-username">{{ data_get($sender, 'name', 'Pelican') }}</span>
-                    @if(!data_get($sender, 'human'))
+                    <span class="dc-username">{{ $sender['name'] ?? 'Pelican' }}</span>
+                    @if(!($sender['human'] ?? false))
                         <span class="dc-bot-tag">app</span>
                     @endif
                     <span class="dc-timestamp">{{ $getTime() }}</span>
@@ -283,64 +283,44 @@
 
                 {{-- Embeds --}}
                 @foreach($embeds as $embed)
-                    @php
-                        $safeUrl = fn (?string $url): ?string =>
-                            ($url && preg_match('/^https?:\/\//i', $url)) ? $url : null;
-
-                        $eAuthorName  = $embed['author']['name']              ?? null;
-                        $eAuthorUrl   = $safeUrl($embed['author']['url']      ?? null);
-                        $eAuthorIcon  = $safeUrl($embed['author']['icon_url'] ?? null);
-                        $eTitle       = $embed['title']                       ?? null;
-                        $eTitleUrl    = $safeUrl($embed['url']                ?? null);
-                        $eDesc        = $embed['description']                 ?? null;
-                        $eFields      = $embed['fields']                      ?? [];
-                        $eImage       = $safeUrl($embed['image']['url']       ?? null);
-                        $eThumbnail   = $safeUrl($embed['thumbnail']['url']   ?? null);
-                        $eFooterText  = $embed['footer']['text']              ?? null;
-                        $eFooterIcon  = $safeUrl($embed['footer']['icon_url'] ?? null);
-                        $eTimestamp   = $embed['timestamp']                   ?? null;
-                        $eColor = $embed['color'] ?? null;
-                        $eStyle = $eColor ? 'border-left-color: ' . $eColor : 'border-left-color: #1e1f22';
-                    @endphp
-
-                    <div class="dc-embed" style="{{ $eStyle }}">
+                    <div class="dc-embed" style="{{ $embed['view']['color_style'] }}">
                         <div class="dc-embed-body">
-                            <div class="dc-embed-grid {{ $eThumbnail ? 'has-thumbnail' : '' }}">
+                            <div class="dc-embed-grid {{ $embed['view']['thumbnail'] ? 'has-thumbnail' : '' }}">
 
                                 <div class="dc-embed-content">
 
                                     {{-- Author --}}
-                                    @if($eAuthorName)
+                                    @if($embed['view']['author_name'])
                                         <div class="dc-embed-author">
-                                            @if($eAuthorIcon)
-                                                <img src="{{ $eAuthorIcon }}" class="dc-embed-author-icon" alt="">
+                                            @if($embed['view']['author_icon'])
+                                                <img src="{{ $embed['view']['author_icon'] }}" class="dc-embed-author-icon" alt="">
                                             @endif
-                                            @if($eAuthorUrl)
-                                                <a href="{{ $eAuthorUrl }}" target="_blank" rel="noopener noreferrer" class="dc-embed-author-name dc-link">{{ $eAuthorName }}</a>
+                                            @if($embed['view']['author_url'])
+                                                <a href="{{ $embed['view']['author_url'] }}" target="_blank" rel="noopener noreferrer" class="dc-embed-author-name dc-link">{{ $embed['view']['author_name'] }}</a>
                                             @else
-                                                <span class="dc-embed-author-name">{{ $eAuthorName }}</span>
+                                                <span class="dc-embed-author-name">{{ $embed['view']['author_name'] }}</span>
                                             @endif
                                         </div>
                                     @endif
 
                                     {{-- Title --}}
-                                    @if($eTitle)
-                                        @if($eTitleUrl)
-                                            <a href="{{ $eTitleUrl }}" target="_blank" rel="noopener noreferrer" class="dc-embed-title">{{ $eTitle }}</a>
+                                    @if($embed['view']['title'])
+                                        @if($embed['view']['title_url'])
+                                            <a href="{{ $embed['view']['title_url'] }}" target="_blank" rel="noopener noreferrer" class="dc-embed-title">{{ $embed['view']['title'] }}</a>
                                         @else
-                                            <div class="dc-embed-title">{{ $eTitle }}</div>
+                                            <div class="dc-embed-title">{{ $embed['view']['title'] }}</div>
                                         @endif
                                     @endif
 
                                     {{-- Description --}}
-                                    @if($eDesc)
-                                        <div class="dc-embed-desc">{!! nl2br(e($eDesc)) !!}</div>
+                                    @if($embed['view']['description'])
+                                        <div class="dc-embed-desc">{!! nl2br(e($embed['view']['description'])) !!}</div>
                                     @endif
 
                                     {{-- Fields --}}
-                                    @if(!empty($eFields))
+                                    @if(!empty($embed['view']['fields']))
                                         <div class="dc-embed-fields">
-                                            @foreach($eFields as $field)
+                                            @foreach($embed['view']['fields'] as $field)
                                                 <div class="dc-embed-field {{ !empty($field['inline']) ? 'inline' : '' }}">
                                                     <div class="dc-embed-field-name">{{ $field['name'] ?? '' }}</div>
                                                     <div class="dc-embed-field-value">{!! nl2br(e($field['value'] ?? '')) !!}</div>
@@ -352,27 +332,27 @@
                                 </div>
 
                                 {{-- Thumbnail --}}
-                                @if($eThumbnail)
-                                    <img src="{{ $eThumbnail }}" class="dc-embed-thumbnail" alt="">
+                                @if($embed['view']['thumbnail'])
+                                    <img src="{{ $embed['view']['thumbnail'] }}" class="dc-embed-thumbnail" alt="">
                                 @endif
 
                             </div>{{-- /.dc-embed-grid --}}
 
                             {{-- Large image --}}
-                            @if($eImage)
-                                <img src="{{ $eImage }}" class="dc-embed-image" alt="">
+                            @if($embed['view']['image'])
+                                <img src="{{ $embed['view']['image'] }}" class="dc-embed-image" alt="">
                             @endif
 
                             {{-- Footer --}}
-                            @if($eFooterText || $eTimestamp)
+                            @if($embed['view']['footer_text'] || $embed['view']['timestamp'])
                                 <div class="dc-embed-footer">
-                                    @if($eFooterIcon)
-                                        <img src="{{ $eFooterIcon }}" class="dc-embed-footer-icon" alt="">
+                                    @if($embed['view']['footer_icon'])
+                                        <img src="{{ $embed['view']['footer_icon'] }}" class="dc-embed-footer-icon" alt="">
                                     @endif
                                     <span class="dc-embed-footer-text">
-                                        @if($eFooterText){{ $eFooterText }}@endif
-                                        @if($eFooterText && $eTimestamp)<span class="dc-embed-footer-sep">•</span>@endif
-                                        @if($eTimestamp){{ $eTimestamp }}@endif
+                                        @if($embed['view']['footer_text']){{ $embed['view']['footer_text'] }}@endif
+                                        @if($embed['view']['footer_text'] && $embed['view']['timestamp'])<span class="dc-embed-footer-sep">•</span>@endif
+                                        @if($embed['view']['timestamp']){{ $embed['view']['timestamp'] }}@endif
                                     </span>
                                 </div>
                             @endif

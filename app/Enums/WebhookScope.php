@@ -4,14 +4,14 @@ namespace App\Enums;
 
 enum WebhookScope: string
 {
-    case GLOBAL = 'global';
-    case SERVER = 'server';
+    case Global = 'global';
+    case Server = 'server';
 
     public function getLabel(): string
     {
         return match ($this) {
-            self::GLOBAL => 'Global',
-            self::SERVER => 'Server',
+            self::Global => 'Global',
+            self::Server => 'Server',
         };
     }
 }

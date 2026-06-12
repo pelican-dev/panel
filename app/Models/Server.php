@@ -388,7 +388,7 @@ class Server extends Model implements HasAvatar, Validatable
     public function webhooks(): HasMany
     {
         return $this->hasMany(WebhookConfiguration::class, 'server_id', 'id')
-            ->where('scope', WebhookScope::SERVER);
+            ->where('scope', WebhookScope::Server);
     }
 
     /**

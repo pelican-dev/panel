@@ -44,7 +44,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -154,7 +153,7 @@ class WebhookResource extends Resource
                     ->columnSpanFull()
                     ->tabs([
                         Tab::make(trans('admin/webhook.information'))
-                            ->icon(Heroicon::InformationCircle)
+                            ->icon(TablerIcon::InfoCircle)
                             ->schema([
                                 Grid::make()
                                     ->schema([
@@ -178,7 +177,7 @@ class WebhookResource extends Resource
                                             ->options(WebhookType::class)
                                             ->default(WebhookType::Regular),
                                         Hidden::make('scope')
-                                            ->formatStateUsing(fn (Get $get) => $get('server_id') ? WebhookScope::SERVER : WebhookScope::GLOBAL),
+                                            ->formatStateUsing(fn (Get $get) => $get('server_id') ? WebhookScope::Server : WebhookScope::Global),
                                         TextInput::make('endpoint')
                                             ->label(trans('admin/webhook.endpoint'))
                                             ->required()
@@ -186,7 +185,7 @@ class WebhookResource extends Resource
                                     ]),
                             ]),
                         Tab::make(trans('admin/webhook.payload'))
-                            ->icon(Heroicon::Document)
+                            ->icon(TablerIcon::FileCode)
                             ->schema([
                                 Section::make()
                                     ->schema(fn (Get $get) => $get('type') === WebhookType::Discord
@@ -195,7 +194,7 @@ class WebhookResource extends Resource
                                     ),
                             ]),
                         Tab::make(trans('admin/webhook.events'))
-                            ->icon(Heroicon::Star)
+                            ->icon(TablerIcon::Star)
                             ->schema([
                                 Section::make()
                                     ->schema([
@@ -274,11 +273,11 @@ class WebhookResource extends Resource
                                     CheckboxList::make('flags')
                                         ->label(trans('admin/webhook.discord_embed.flags'))
                                         ->options([
-                                            (1 << 2) => trans('admin/webhook.discord_message.supress_embeds'),
-                                            (1 << 12) => trans('admin/webhook.discord_message.supress_notifications'),
+                                            (1 << 2)  => trans('admin/webhook.discord_message.supress_embeds'),        // Discord flag: SUPPRESS_EMBEDS (4)
+                                            (1 << 12) => trans('admin/webhook.discord_message.supress_notifications'), // Discord flag: SUPPRESS_NOTIFICATIONS (4096)
                                         ])
                                         ->descriptions([
-                                            (1 << 2) => trans('admin/webhook.discord_message.supress_embeds_text'),
+                                            (1 << 2)  => trans('admin/webhook.discord_message.supress_embeds_text'),
                                             (1 << 12) => trans('admin/webhook.discord_message.supress_notifications_text'),
                                         ]),
                                     CheckboxList::make('allowed_mentions')

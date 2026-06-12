@@ -59,7 +59,7 @@ class EditWebhookConfiguration extends EditRecord
 
             $tmp = collect([
                 'username' => data_get($data, 'username'),
-                'avatar_url' => data_get($data, 'avatar_url') ?: 'https://raw.githubusercontent.com/pelican-dev/panel/main/public/pelican.svg',
+                'avatar_url' => data_get($data, 'avatar_url'),
                 'content' => data_get($data, 'content'),
                 'image' => data_get($data, 'image'),
                 'thumbnail' => data_get($data, 'thumbnail'),

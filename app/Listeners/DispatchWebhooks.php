@@ -18,7 +18,11 @@ class DispatchWebhooks
         if (is_string($event) && is_array($action)) {
             if (str_starts_with($event, 'eloquent.')) {
                 $this->handleEloquentEvent($action[0], str($event)->between('eloquent.', ':'));
-            } elseif ($event !== ActivityLogged::class) {
+
+                return;
+            }
+
+            if ($event !== ActivityLogged::class) {
                 $this->handleGenericClassEvent($event, $action);
             }
 
@@ -37,7 +41,7 @@ class DispatchWebhooks
         $eventName = "eloquent.$action: $modelClass";
 
         $webhooks = WebhookConfiguration::query()
-            ->where('scope', WebhookScope::GLOBAL)
+            ->where('scope', WebhookScope::Global)
             ->whereJsonContains('events', $eventName)
             ->get();
 
@@ -70,7 +74,7 @@ class DispatchWebhooks
 
         $matchingHooks = cache()->rememberForever("webhooks.$eventName", function () use ($eventName) {
             return WebhookConfiguration::query()
-                ->where('scope', WebhookScope::GLOBAL)
+                ->where('scope', WebhookScope::Global)
                 ->whereJsonContains('events', $eventName)
                 ->get();
         });
@@ -178,7 +182,7 @@ class DispatchWebhooks
 
         $matchingHooks = cache()->rememberForever("webhooks.$eventName", function () use ($eventName) {
             return WebhookConfiguration::query()
-                ->where('scope', WebhookScope::GLOBAL)
+                ->where('scope', WebhookScope::Global)
                 ->whereJsonContains('events', $eventName)
                 ->get();
         });
@@ -197,7 +201,7 @@ class DispatchWebhooks
     protected function eventIsWatched(string $eventName): bool
     {
         $watchedEvents = cache()->rememberForever('watchedWebhooks', function () {
-            return WebhookConfiguration::where('scope', WebhookScope::GLOBAL)
+            return WebhookConfiguration::where('scope', WebhookScope::Global)
                 ->pluck('events')
                 ->flatten()
                 ->unique()

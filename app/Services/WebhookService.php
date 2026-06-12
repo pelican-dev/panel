@@ -12,7 +12,7 @@ class WebhookService
     /**
      * @param  array<string, mixed>  $contextualData
      */
-    public static function dispatch(string $eventName, array $contextualData, ?Server $server = null): void
+    public function dispatch(string $eventName, array $contextualData, ?Server $server = null): void
     {
         if ($server) {
             $webhooks = $server->webhooks()
@@ -25,7 +25,7 @@ class WebhookService
         }
 
         $globalWebhooks = WebhookConfiguration::query()
-            ->where('scope', WebhookScope::GLOBAL)
+            ->where('scope', WebhookScope::Global)
             ->whereJsonContains('events', $eventName)
             ->get();
 
@@ -37,7 +37,7 @@ class WebhookService
     /**
      * @return array<string, string>
      */
-    public static function getAllEvents(WebhookScope $scope = WebhookScope::GLOBAL): array
+    public function getAllEvents(WebhookScope $scope = WebhookScope::Global): array
     {
         return WebhookConfiguration::filamentCheckboxList($scope);
     }

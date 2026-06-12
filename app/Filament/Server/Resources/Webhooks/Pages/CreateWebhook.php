@@ -38,12 +38,10 @@ class CreateWebhook extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $server = Filament::getTenant();
-        if (!$server instanceof Server) {
-            abort(403);
-        }
+        abort_unless($server instanceof Server, 403);
 
         $data['server_id'] = $server->id;
-        $data['scope'] = WebhookScope::SERVER;
+        $data['scope'] = WebhookScope::Server;
 
         return $data;
     }

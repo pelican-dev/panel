@@ -31,13 +31,12 @@ class ListWebhookConfigurations extends ListRecords
 
     public function getTabs(): array
     {
-        return [
-            'global-webhooks' => Tab::make('Global Webhooks')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('scope', WebhookScope::GLOBAL))
-                ->badge(WebhookConfiguration::where('scope', WebhookScope::GLOBAL)->count()),
-            'server-webhooks' => Tab::make('Server Webhooks')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('scope', WebhookScope::SERVER)->with('server'))
-                ->badge(WebhookConfiguration::where('scope', WebhookScope::SERVER)->count()),
-        ];
+        return collect(WebhookScope::cases())
+            ->mapWithKeys(fn (WebhookScope $scope) => [
+                $scope->value . '-webhooks' => Tab::make($scope->getLabel() . ' Webhooks')
+                    ->modifyQueryUsing(fn (Builder $query) => $query->where('scope', $scope))
+                    ->badge(WebhookConfiguration::where('scope', $scope)->count()),
+            ])
+            ->all();
     }
 }
