@@ -56,16 +56,12 @@ use LogicException;
 use Random\RandomException;
 
 /**
- * Shared between EditServer and ViewServer. The schema is page-bound
- * (it calls $this->getRecord(), $this->redirect(), $this->transferServer()),
- * so it lives in a trait rather than a static like Egg.
+ * Page-bound tab schema shared between EditServer and ViewServer.
  */
 trait ServerDetailTabs
 {
     /**
-     * Whether the edit-time scaffolding (materializing missing server
-     * variable rows) runs. ViewServer overrides this to false so that
-     * merely viewing the page never writes.
+     * Whether to materialize missing server variable rows. View pages disable it so viewing never writes.
      */
     protected function materializesServerVariables(): bool
     {
