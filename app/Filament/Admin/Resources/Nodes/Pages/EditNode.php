@@ -6,11 +6,9 @@ use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Nodes\NodeResource;
 use App\Models\Node;
 use App\Repositories\Daemon\DaemonSystemRepository;
-use App\Services\Nodes\NodeUpdateService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use App\Traits\Filament\CanCustomizeTabs;
-use App\Traits\Filament\NodeDetailTabs;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
@@ -26,18 +24,14 @@ class EditNode extends EditRecord
     use CanCustomizeHeaderActions;
     use CanCustomizeHeaderWidgets;
     use CanCustomizeTabs;
-    use NodeDetailTabs;
 
     protected static string $resource = NodeResource::class;
 
     private DaemonSystemRepository $daemonSystemRepository;
 
-    private NodeUpdateService $nodeUpdateService;
-
-    public function boot(DaemonSystemRepository $daemonSystemRepository, NodeUpdateService $nodeUpdateService): void
+    public function boot(DaemonSystemRepository $daemonSystemRepository): void
     {
         $this->daemonSystemRepository = $daemonSystemRepository;
-        $this->nodeUpdateService = $nodeUpdateService;
     }
 
     public function form(Schema $schema): Schema
@@ -59,7 +53,24 @@ class EditNode extends EditRecord
     /** @return Tab[] */
     protected function getDefaultTabs(): array
     {
-        return $this->detailTabs();
+        return NodeResource::detailTabs();
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $node = Node::findOrFail($data['id']);
+
+        if (!is_ip($node->fqdn)) {
+            $ip = get_ip_from_hostname($node->fqdn);
+            if ($ip) {
+                $data['dns'] = true;
+                $data['ip'] = $ip;
+            } else {
+                $data['dns'] = false;
+            }
+        }
+
+        return $data;
     }
 
     protected function getFormActions(): array

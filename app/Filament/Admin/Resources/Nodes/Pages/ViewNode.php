@@ -3,12 +3,10 @@
 namespace App\Filament\Admin\Resources\Nodes\Pages;
 
 use App\Filament\Admin\Resources\Nodes\NodeResource;
-use App\Repositories\Daemon\DaemonSystemRepository;
-use App\Services\Nodes\NodeUpdateService;
+use App\Models\Node;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use App\Traits\Filament\CanCustomizeTabs;
-use App\Traits\Filament\NodeDetailTabs;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
@@ -22,19 +20,8 @@ class ViewNode extends ViewRecord
     use CanCustomizeHeaderActions;
     use CanCustomizeHeaderWidgets;
     use CanCustomizeTabs;
-    use NodeDetailTabs;
 
     protected static string $resource = NodeResource::class;
-
-    private DaemonSystemRepository $daemonSystemRepository;
-
-    private NodeUpdateService $nodeUpdateService;
-
-    public function boot(DaemonSystemRepository $daemonSystemRepository, NodeUpdateService $nodeUpdateService): void
-    {
-        $this->daemonSystemRepository = $daemonSystemRepository;
-        $this->nodeUpdateService = $nodeUpdateService;
-    }
 
     public function form(Schema $schema): Schema
     {
@@ -55,7 +42,7 @@ class ViewNode extends ViewRecord
     /** @return Tab[] */
     protected function getDefaultTabs(): array
     {
-        return $this->detailTabs();
+        return NodeResource::detailTabs();
     }
 
     /** @return array<Action|ActionGroup> */
@@ -64,6 +51,23 @@ class ViewNode extends ViewRecord
         return [
             EditAction::make(),
         ];
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $node = Node::findOrFail($data['id']);
+
+        if (!is_ip($node->fqdn)) {
+            $ip = get_ip_from_hostname($node->fqdn);
+            if ($ip) {
+                $data['dns'] = true;
+                $data['ip'] = $ip;
+            } else {
+                $data['dns'] = false;
+            }
+        }
+
+        return $data;
     }
 
     protected function getColumnSpan(): ?int
