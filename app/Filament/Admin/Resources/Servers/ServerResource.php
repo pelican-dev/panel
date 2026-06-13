@@ -7,6 +7,7 @@ use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Servers\Pages\CreateServer;
 use App\Filament\Admin\Resources\Servers\Pages\EditServer;
 use App\Filament\Admin\Resources\Servers\Pages\ListServers;
+use App\Filament\Admin\Resources\Servers\Pages\ViewServer;
 use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
 use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManager;
 use App\Models\Mount;
@@ -99,6 +100,7 @@ class ServerResource extends Resource
         return [
             'index' => ListServers::route('/'),
             'create' => CreateServer::route('/create'),
+            'view' => ViewServer::route('/{record}'),
             'edit' => EditServer::route('/{record}/edit'),
         ];
     }

@@ -46,10 +46,12 @@ class AllocationsRelationManager extends RelationManager
                 TextColumn::make('port')
                     ->label(trans('admin/server.port')),
                 TextInputColumn::make('ip_alias')
-                    ->label(trans('admin/server.alias')),
+                    ->label(trans('admin/server.alias'))
+                    ->disabled(fn () => $this->isReadOnly()),
                 TextInputColumn::make('notes')
                     ->label(trans('admin/server.notes'))
-                    ->placeholder(trans('admin/server.no_notes')),
+                    ->placeholder(trans('admin/server.no_notes'))
+                    ->disabled(fn () => $this->isReadOnly()),
                 IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
                         true => TablerIcon::StarFilled,
@@ -60,7 +62,13 @@ class AllocationsRelationManager extends RelationManager
                         default => 'gray',
                     })
                     ->tooltip(fn (Allocation $allocation) => trans('admin/server.' . ($allocation->id === $this->getOwnerRecord()->allocation_id ? 'already' : 'make') . '_primary'))
-                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
+                    ->action(function (Allocation $allocation) {
+                        if ($this->isReadOnly()) {
+                            return;
+                        }
+
+                        $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords();
+                    })
                     ->default(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
                     ->label(trans('admin/server.primary')),
                 IconColumn::make('is_locked')
@@ -73,16 +81,17 @@ class AllocationsRelationManager extends RelationManager
                 Action::make('make-primary')
                     ->label(trans('admin/server.make_primary'))
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
-                    ->hidden(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id),
+                    ->hidden(fn (Allocation $allocation) => $this->isReadOnly() || $allocation->id === $this->getOwnerRecord()->allocation_id),
                 Action::make('lock')
                     ->label(trans('admin/server.lock'))
                     ->action(fn (Allocation $allocation) => $allocation->update(['is_locked' => true]) && $this->deselectAllTableRecords())
-                    ->hidden(fn (Allocation $allocation) => $allocation->is_locked),
+                    ->hidden(fn (Allocation $allocation) => $this->isReadOnly() || $allocation->is_locked),
                 Action::make('unlock')
                     ->label(trans('admin/server.unlock'))
                     ->action(fn (Allocation $allocation) => $allocation->update(['is_locked' => false]) && $this->deselectAllTableRecords())
-                    ->visible(fn (Allocation $allocation) => $allocation->is_locked),
+                    ->visible(fn (Allocation $allocation) => !$this->isReadOnly() && $allocation->is_locked),
                 DissociateAction::make()
+                    ->hidden(fn () => $this->isReadOnly())
                     ->after(function (Allocation $allocation) {
                         $allocation->update([
                             'notes' => null,
@@ -96,6 +105,7 @@ class AllocationsRelationManager extends RelationManager
             ])
             ->toolbarActions([
                 DissociateBulkAction::make()
+                    ->hidden(fn () => $this->isReadOnly())
                     ->after(function () {
                         Allocation::whereNull('server_id')->update([
                             'notes' => null,
@@ -107,6 +117,7 @@ class AllocationsRelationManager extends RelationManager
                         }
                     }),
                 CreateAction::make()
+                    ->hidden(fn () => $this->isReadOnly())
                     ->hiddenLabel()
                     ->tooltip(trans('admin/server.create_allocation'))
                     ->icon(TablerIcon::Network)
@@ -162,6 +173,7 @@ class AllocationsRelationManager extends RelationManager
                     ])
                     ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
                 AssociateAction::make()
+                    ->hidden(fn () => $this->isReadOnly())
                     ->icon(TablerIcon::FilePlus)
                     ->iconButton()->iconSize(IconSize::ExtraLarge)
                     ->multiple()

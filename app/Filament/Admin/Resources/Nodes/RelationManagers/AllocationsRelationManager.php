@@ -64,10 +64,12 @@ class AllocationsRelationManager extends RelationManager
                     ->url(fn (Allocation $allocation): string => $allocation->server ? route('filament.admin.resources.servers.edit', ['record' => $allocation->server]) : ''),
                 TextInputColumn::make('ip_alias')
                     ->searchable()
-                    ->label(trans('admin/node.table.alias')),
+                    ->label(trans('admin/node.table.alias'))
+                    ->disabled(fn () => $this->isReadOnly()),
                 TextInputColumn::make('notes')
                     ->label(trans('admin/node.table.allocation_notes'))
-                    ->placeholder(trans('admin/node.table.no_notes')),
+                    ->placeholder(trans('admin/node.table.no_notes'))
+                    ->disabled(fn () => $this->isReadOnly()),
                 SelectColumn::make('ip')
                     ->options(function (Allocation $allocation) {
                         $ips = Allocation::where('port', $allocation->port)->pluck('ip');
@@ -81,14 +83,17 @@ class AllocationsRelationManager extends RelationManager
                     })
                     ->selectablePlaceholder(false)
                     ->searchable()
-                    ->label(trans('admin/node.table.ip')),
+                    ->label(trans('admin/node.table.ip'))
+                    ->disabled(fn () => $this->isReadOnly()),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make()
-                    ->authorize(fn () => user()?->can('update', $this->getOwnerRecord())),
+                    ->authorize(fn () => user()?->can('update', $this->getOwnerRecord()))
+                    ->hidden(fn () => $this->isReadOnly()),
                 Action::make('create new allocation')
                     ->tooltip(trans('admin/node.create_allocation'))
                     ->icon(TablerIcon::WorldPlus)
+                    ->visible(fn () => !$this->isReadOnly())
                     ->schema(fn () => [
                         Select::make('allocation_ip')
                             ->options(fn (Get $get) => collect($this->getOwnerRecord()->ipAddresses())
@@ -141,7 +146,8 @@ class AllocationsRelationManager extends RelationManager
                     ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord(), $data)),
                 UpdateNodeAllocations::make()
                     ->nodeRecord($this->getOwnerRecord())
-                    ->authorize(fn () => user()?->can('update', $this->getOwnerRecord())),
+                    ->authorize(fn () => user()?->can('update', $this->getOwnerRecord()))
+                    ->hidden(fn () => $this->isReadOnly()),
             ]);
     }
 }

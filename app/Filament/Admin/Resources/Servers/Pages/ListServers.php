@@ -11,6 +11,7 @@ use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -90,8 +91,11 @@ class ListServers extends ListRecords
                     ->sortable(),
             ])
             ->recordActions([
-                Action::make('view')
-                    ->tooltip(trans('admin/server.view'))
+                ViewAction::make()
+                    ->tooltip(trans('filament-actions::view.single.label'))
+                    ->hidden(fn (Server $record) => ServerResource::getEditAuthorizationResponse($record)->allowed()),
+                Action::make('console')
+                    ->tooltip(trans('admin/server.console'))
                     ->icon(TablerIcon::Terminal)
                     ->url(fn (Server $server) => Console::getUrl(panel: 'server', tenant: $server))
                     ->authorize(fn (Server $server) => user()?->canAccessTenant($server)),
