@@ -6,7 +6,6 @@ use App\Filament\Admin\Resources\Servers\ServerResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use App\Traits\Filament\CanCustomizeTabs;
-use App\Traits\Filament\ServerDetailTabs;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
@@ -21,7 +20,6 @@ class ViewServer extends ViewRecord
     use CanCustomizeHeaderActions;
     use CanCustomizeHeaderWidgets;
     use CanCustomizeTabs;
-    use ServerDetailTabs;
 
     protected static string $resource = ServerResource::class;
 
@@ -49,7 +47,7 @@ class ViewServer extends ViewRecord
      */
     protected function getDefaultTabs(): array
     {
-        return $this->detailTabs();
+        return ServerResource::detailTabs(false);
     }
 
     /** @return array<Action|ActionGroup> */
@@ -58,10 +56,5 @@ class ViewServer extends ViewRecord
         return [
             EditAction::make(),
         ];
-    }
-
-    protected function materializesServerVariables(): bool
-    {
-        return false;
     }
 }

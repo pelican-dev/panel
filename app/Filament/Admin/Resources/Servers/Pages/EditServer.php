@@ -11,7 +11,6 @@ use App\Services\Servers\ServerDeletionService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use App\Traits\Filament\CanCustomizeTabs;
-use App\Traits\Filament\ServerDetailTabs;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Notifications\Notification;
@@ -27,7 +26,6 @@ class EditServer extends EditRecord
     use CanCustomizeHeaderActions;
     use CanCustomizeHeaderWidgets;
     use CanCustomizeTabs;
-    use ServerDetailTabs;
 
     protected static string $resource = ServerResource::class;
 
@@ -62,7 +60,7 @@ class EditServer extends EditRecord
      */
     protected function getDefaultTabs(): array
     {
-        return $this->detailTabs();
+        return ServerResource::detailTabs();
     }
 
     /** @return array<Action|ActionGroup> */
