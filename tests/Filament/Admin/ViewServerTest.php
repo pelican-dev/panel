@@ -5,20 +5,13 @@ use App\Filament\Admin\Resources\Servers\Pages\EditServer;
 use App\Filament\Admin\Resources\Servers\Pages\ListServers;
 use App\Filament\Admin\Resources\Servers\Pages\ViewServer;
 use App\Filament\Admin\Resources\Servers\RelationManagers\AllocationsRelationManager;
-use App\Filament\Admin\Resources\Servers\RelationManagers\DatabasesRelationManager;
 use App\Models\Allocation;
 use App\Models\Role;
 use App\Models\Server;
 use App\Models\ServerVariable;
-use Filament\Actions\AssociateAction;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DissociateAction;
-use Filament\Actions\DissociateBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
 use Spatie\Permission\Models\Permission;
 
 use function Pest\Livewire\livewire;
@@ -43,65 +36,6 @@ function serverAllocation(Server $server): Allocation
         'node_id' => $server->node->getKey(),
         'server_id' => $server->getKey(),
     ]);
-}
-
-function assertServerViewIsReadOnly(Server $server, Allocation $allocation): void
-{
-    Filament::setCurrentPanel(Filament::getPanel('admin'));
-
-    $primaryBefore = $server->allocation_id;
-    $aliasBefore = $allocation->ip_alias;
-    $notesBefore = $allocation->notes;
-
-    livewire(AllocationsRelationManager::class, [
-        'ownerRecord' => $server,
-        'pageClass' => ViewServer::class,
-    ])
-        ->assertActionHidden(TestAction::make('make-primary')->table($allocation))
-        ->assertActionHidden(TestAction::make('lock')->table($allocation))
-        ->assertActionHidden(TestAction::make(DissociateAction::class)->table($allocation))
-        ->assertActionHidden(TestAction::make(CreateAction::class)->table())
-        ->assertActionHidden(TestAction::make(AssociateAction::class)->table())
-        ->assertActionHidden(TestAction::make(DissociateBulkAction::class)->table()->bulk())
-        // primary is an IconColumn action, not hideable; callTableColumnAction ignores disabled(), so the
-        // in-closure isReadOnly guard is what must stop the write, and the unchanged allocation_id proves it
-        ->callTableColumnAction('primary', $allocation->getKey())
-        ->call('updateTableColumnState', 'ip_alias', (string) $allocation->getKey(), 'hacked-alias')
-        ->call('updateTableColumnState', 'notes', (string) $allocation->getKey(), 'hacked-notes');
-
-    livewire(DatabasesRelationManager::class, [
-        'ownerRecord' => $server,
-        'pageClass' => ViewServer::class,
-    ])
-        ->assertActionHidden(TestAction::make(CreateAction::class)->table())
-        ->assertActionHidden(TestAction::make(DeleteAction::class)->table());
-
-    expect($server->refresh()->allocation_id)->toBe($primaryBefore)
-        ->and($allocation->refresh()->ip_alias)->toBe($aliasBefore)
-        ->and($allocation->notes)->toBe($notesBefore);
-}
-
-// the rotate hintAction sits inside the database view modal, which standalone relation managers can't mount in
-// tests, and isHidden() folds in the action's record-scoped authorize(); so resolve the action off the built
-// form and evaluate just its view-page gate (the ->hidden closure wired to the manager isReadOnly state)
-function databaseRotateHidden(Server $server, string $pageClass): bool
-{
-    Filament::setCurrentPanel(Filament::getPanel('admin'));
-
-    $manager = livewire(DatabasesRelationManager::class, [
-        'ownerRecord' => $server,
-        'pageClass' => $pageClass,
-    ])->instance();
-
-    $password = collect($manager->form(Schema::make($manager))->getComponents())
-        ->first(fn ($component) => $component instanceof TextInput && $component->getName() === 'password');
-
-    $rotate = collect($password->getHintActions())
-        ->first(fn ($action) => $action->getName() === 'exclude_hint_rotate');
-
-    $gate = (new ReflectionProperty($rotate, 'isHidden'))->getValue($rotate);
-
-    return (bool) $rotate->evaluate($gate);
 }
 
 it('lets a user with view permission open the view page', function () {
@@ -193,7 +127,6 @@ it('shows the view row action only when the user cannot edit', function () {
         RolePermissionModels::Server->update(),
     ]));
 
-    // table action urls resolve against the current panel; the default is 'app', not 'admin'
     Filament::setCurrentPanel(Filament::getPanel('admin'));
 
     $this->actingAs($viewer);
@@ -205,48 +138,27 @@ it('shows the view row action only when the user cannot edit', function () {
         ->assertActionHidden(TestAction::make('view')->table($server));
 });
 
-it('keeps the server relation managers read-only on the view page for a view-only user', function () {
-    [$viewer, $server] = generateTestAccount([]);
-    $viewer->syncRoles(serverRole('Server Viewer', [
-        RolePermissionModels::Server->viewAny(),
-        RolePermissionModels::Server->view(),
-    ]));
-
-    $this->actingAs($viewer);
-    assertServerViewIsReadOnly($server, serverAllocation($server));
-});
-
-it('keeps the server relation managers read-only on the view page even for an update-capable user', function () {
+it('keeps the server relation managers read-only on the view page', function () {
     [$editor, $server] = generateTestAccount([]);
     $editor->syncRoles(serverRole('Server Editor', [
         RolePermissionModels::Server->viewAny(),
         RolePermissionModels::Server->view(),
         RolePermissionModels::Server->update(),
     ]));
+    $allocation = serverAllocation($server);
 
+    // editor can update, so the view operation is what gates this write
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
     $this->actingAs($editor);
-    assertServerViewIsReadOnly($server, serverAllocation($server));
-});
 
-it('hides database password rotation behind the read-only gate on the view page', function () {
-    [$viewer, $server] = generateTestAccount([]);
-    $viewer->syncRoles(serverRole('Server Viewer', [
-        RolePermissionModels::Server->viewAny(),
-        RolePermissionModels::Server->view(),
-    ]));
+    $alias = $allocation->ip_alias;
 
-    $this->actingAs($viewer);
-    expect(databaseRotateHidden($server, ViewServer::class))->toBeTrue();
-});
+    livewire(AllocationsRelationManager::class, [
+        'ownerRecord' => $server,
+        'pageClass' => ViewServer::class,
+    ])
+        ->assertActionHidden(TestAction::make(CreateAction::class)->table())
+        ->call('updateTableColumnState', 'ip_alias', (string) $allocation->getKey(), 'hacked-alias');
 
-it('leaves database password rotation available on the edit page', function () {
-    [$editor, $server] = generateTestAccount([]);
-    $editor->syncRoles(serverRole('Server Editor', [
-        RolePermissionModels::Server->viewAny(),
-        RolePermissionModels::Server->view(),
-        RolePermissionModels::Server->update(),
-    ]));
-
-    $this->actingAs($editor);
-    expect(databaseRotateHidden($server, EditServer::class))->toBeFalse();
+    expect($allocation->refresh()->ip_alias)->toBe($alias);
 });

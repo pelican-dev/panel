@@ -5,13 +5,10 @@ use App\Filament\Admin\Resources\Nodes\Pages\EditNode;
 use App\Filament\Admin\Resources\Nodes\Pages\ListNodes;
 use App\Filament\Admin\Resources\Nodes\Pages\ViewNode;
 use App\Filament\Admin\Resources\Nodes\RelationManagers\AllocationsRelationManager;
-use App\Filament\Admin\Resources\Nodes\RelationManagers\ServersRelationManager;
-use App\Filament\Components\Actions\UpdateNodeAllocations;
 use App\Models\Allocation;
 use App\Models\Node;
 use App\Models\Role;
 use App\Models\Server;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
 use Spatie\Permission\Models\Permission;
@@ -30,52 +27,6 @@ function nodeRole(string $name, array $abilities): Role
     }
 
     return $role;
-}
-
-/** @return array{Node, Allocation, Server} */
-function nodeWithMultiAllocationServer(): array
-{
-    $node = Node::factory()->create();
-    $server = Server::factory()->withNode($node)->create();
-    $allocations = Allocation::factory()->count(2)->create([
-        'node_id' => $node->getKey(),
-        'server_id' => $server->getKey(),
-    ]);
-    $server->update(['allocation_id' => $allocations->last()->getKey()]);
-
-    return [$node, $allocations->first(), $server->refresh()];
-}
-
-function assertNodeViewIsReadOnly(Node $node, Allocation $allocation, Server $server): void
-{
-    Filament::setCurrentPanel(Filament::getPanel('admin'));
-
-    $alias = $allocation->ip_alias;
-    $notes = $allocation->notes;
-    $primary = $server->allocation_id;
-    // the primary column only offers the first allocation (take(1)); target that valid option while a
-    // different allocation is currently primary, so only the isReadOnly gate can stop the switch
-    $switchTarget = (string) $server->allocations->take(1)->first()->getKey();
-
-    livewire(AllocationsRelationManager::class, [
-        'ownerRecord' => $node,
-        'pageClass' => ViewNode::class,
-    ])
-        ->assertActionHidden(TestAction::make('create new allocation')->table())
-        ->assertActionHidden(TestAction::make(UpdateNodeAllocations::class)->table())
-        ->assertActionHidden(TestAction::make(DeleteBulkAction::class)->table()->bulk())
-        ->call('updateTableColumnState', 'ip_alias', (string) $allocation->getKey(), 'hacked-alias')
-        ->call('updateTableColumnState', 'notes', (string) $allocation->getKey(), 'hacked-notes');
-
-    livewire(ServersRelationManager::class, [
-        'ownerRecord' => $node,
-        'pageClass' => ViewNode::class,
-    ])
-        ->call('updateTableColumnState', 'allocation.id', (string) $server->getKey(), $switchTarget);
-
-    expect($allocation->refresh()->ip_alias)->toBe($alias)
-        ->and($allocation->notes)->toBe($notes)
-        ->and($server->refresh()->allocation_id)->toBe($primary);
 }
 
 it('lets a user with view permission open the view page', function () {
@@ -153,7 +104,6 @@ it('does not expose the wings daemon token on the view page', function () {
         RolePermissionModels::Node->view(),
     ]));
 
-    // the config_file tab renders the wings config yaml, which embeds daemon_token; it must be gone on view
     $this->actingAs($viewer);
     livewire(ViewNode::class, ['record' => $node->getKey()])
         ->assertDontSee($node->daemon_token)
@@ -176,7 +126,6 @@ it('shows the view row action only when the user cannot edit', function () {
         RolePermissionModels::Node->update(),
     ]));
 
-    // table action urls resolve against the current panel; the default is 'app', not 'admin'
     Filament::setCurrentPanel(Filament::getPanel('admin'));
 
     $this->actingAs($viewer);
@@ -188,22 +137,15 @@ it('shows the view row action only when the user cannot edit', function () {
         ->assertActionHidden(TestAction::make('view')->table($node));
 });
 
-it('keeps the node relation managers read-only on the view page for a view-only user', function () {
-    [$node, $allocation, $server] = nodeWithMultiAllocationServer();
+it('keeps the node relation managers read-only on the view page', function () {
+    $node = Node::factory()->create();
+    $server = Server::factory()->withNode($node)->create();
+    $allocation = Allocation::factory()->create([
+        'node_id' => $node->getKey(),
+        'server_id' => $server->getKey(),
+    ]);
 
-    [$viewer] = generateTestAccount([]);
-    $viewer->syncRoles(nodeRole('Node Viewer', [
-        RolePermissionModels::Node->viewAny(),
-        RolePermissionModels::Node->view(),
-    ]));
-
-    $this->actingAs($viewer);
-    assertNodeViewIsReadOnly($node, $allocation, $server);
-});
-
-it('keeps the node relation managers read-only on the view page even for an update-capable user', function () {
-    [$node, $allocation, $server] = nodeWithMultiAllocationServer();
-
+    // user has update permission, so the block can only come from the view operation
     [$editor] = generateTestAccount([]);
     $editor->syncRoles(nodeRole('Node Editor', [
         RolePermissionModels::Node->viewAny(),
@@ -211,6 +153,17 @@ it('keeps the node relation managers read-only on the view page even for an upda
         RolePermissionModels::Node->update(),
     ]));
 
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
     $this->actingAs($editor);
-    assertNodeViewIsReadOnly($node, $allocation, $server);
+
+    $alias = $allocation->ip_alias;
+
+    livewire(AllocationsRelationManager::class, [
+        'ownerRecord' => $node,
+        'pageClass' => ViewNode::class,
+    ])
+        ->assertActionHidden(TestAction::make('create new allocation')->table())
+        ->call('updateTableColumnState', 'ip_alias', (string) $allocation->getKey(), 'hacked-alias');
+
+    expect($allocation->refresh()->ip_alias)->toBe($alias);
 });

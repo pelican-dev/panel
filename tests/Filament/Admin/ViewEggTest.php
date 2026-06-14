@@ -108,7 +108,7 @@ it('shows the view row action only when the user cannot edit', function () {
         RolePermissionModels::Egg->update(),
     ]));
 
-    // table action urls resolve against the current panel; the default is 'app', not 'admin'
+    // table action urls resolve against the current panel, which defaults to 'app'
     Filament::setCurrentPanel(Filament::getPanel('admin'));
 
     $this->actingAs($viewer);
