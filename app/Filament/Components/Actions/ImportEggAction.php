@@ -4,7 +4,6 @@ namespace App\Filament\Components\Actions;
 
 use App\Console\Commands\Egg\UpdateEggIndexCommand;
 use App\Enums\TablerIcon;
-use App\Filament\Admin\Resources\Eggs\Pages\EditEgg;
 use App\Jobs\InstallEgg;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggImporterService;
