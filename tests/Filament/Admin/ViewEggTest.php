@@ -12,6 +12,8 @@ use Spatie\Permission\Models\Permission;
 
 use function Pest\Livewire\livewire;
 
+afterEach(fn () => Filament::setCurrentPanel(null));
+
 /** @param string[] $abilities */
 function eggRole(string $name, array $abilities): Role
 {
