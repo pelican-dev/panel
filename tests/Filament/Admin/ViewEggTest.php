@@ -113,9 +113,9 @@ it('shows the view row action only when the user cannot edit', function () {
 
     $this->actingAs($viewer);
     livewire(ListEggs::class)
-        ->assertTableActionVisible('view', $egg);
+        ->assertActionVisible(TestAction::make('view')->table($egg));
 
     $this->actingAs($editor);
     livewire(ListEggs::class)
-        ->assertTableActionHidden('view', $egg);
+        ->assertActionHidden(TestAction::make('view')->table($egg));
 });

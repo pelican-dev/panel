@@ -61,9 +61,9 @@ function assertNodeViewIsReadOnly(Node $node, Allocation $allocation, Server $se
         'ownerRecord' => $node,
         'pageClass' => ViewNode::class,
     ])
-        ->assertTableActionHidden('create new allocation')
-        ->assertTableActionHidden(UpdateNodeAllocations::class)
-        ->assertTableBulkActionHidden(DeleteBulkAction::class)
+        ->assertActionHidden(TestAction::make('create new allocation')->table())
+        ->assertActionHidden(TestAction::make(UpdateNodeAllocations::class)->table())
+        ->assertActionHidden(TestAction::make(DeleteBulkAction::class)->table()->bulk())
         ->call('updateTableColumnState', 'ip_alias', (string) $allocation->getKey(), 'hacked-alias')
         ->call('updateTableColumnState', 'notes', (string) $allocation->getKey(), 'hacked-notes');
 
@@ -181,11 +181,11 @@ it('shows the view row action only when the user cannot edit', function () {
 
     $this->actingAs($viewer);
     livewire(ListNodes::class)
-        ->assertTableActionVisible('view', $node);
+        ->assertActionVisible(TestAction::make('view')->table($node));
 
     $this->actingAs($editor);
     livewire(ListNodes::class)
-        ->assertTableActionHidden('view', $node);
+        ->assertActionHidden(TestAction::make('view')->table($node));
 });
 
 it('keeps the node relation managers read-only on the view page for a view-only user', function () {
