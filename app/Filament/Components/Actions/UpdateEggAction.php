@@ -60,15 +60,6 @@ class UpdateEggAction extends Action
                 ->success()
                 ->send();
 
-            if (method_exists($livewire, 'refreshForm')) {
-                if (isset($this->record) && method_exists($this->record, 'refresh')) {
-                    $this->record->refresh();
-                }
-                if (isset($livewire->record) && method_exists($livewire->record, 'refresh')) {
-                    $livewire->record->refresh();
-                }
-                $livewire->refreshForm();
-            }
         });
 
         $this->authorize(fn () => user()?->can('import egg'));
