@@ -13,6 +13,7 @@ use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\UnencryptedToken;
+use Webmozart\Assert\Assert;
 
 class NodeJWTService
 {
@@ -69,9 +70,7 @@ class NodeJWTService
      */
     public function handle(Node $node, ?string $identifiedBy): UnencryptedToken
     {
-        if (is_null($this->scopes)) {
-            throw new \LogicException('Cannot issue a node JWT without a token type.');
-        }
+        Assert::notEmpty($this->scopes, 'Cannot generate a JWT without providing at least one scope.');
 
         $identifier = hash('sha256', $identifiedBy);
         $config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText($node->daemon_token));
@@ -100,13 +99,14 @@ class NodeJWTService
             $builder = $builder->withClaim('user_uuid', $this->user->uuid);
         }
 
+        $builder = $builder->withClaim('scope', implode(' ', array_map(fn ($scope) => $scope->value, $this->scopes)));
+
         return $builder
-            ->withClaim('token_type', $this->tokenType->value)
             ->withClaim('unique_id', Str::random())
             ->getToken($config->signer(), $config->signingKey());
     }
 
-    public function setScopes(NodeJwtScope $scopes): self
+    public function setScopes(NodeJwtScope ...$scopes): self
     {
         $this->scopes = $scopes;
 

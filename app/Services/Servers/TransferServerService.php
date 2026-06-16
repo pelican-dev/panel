@@ -102,7 +102,7 @@ class TransferServerService
             ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
             ->setScopes(NodeJwtScope::ServerTransfer)
             ->setSubject($server->uuid)
-            ->handle($transfer->newNode, $server->uuid, 'sha256');
+            ->handle($transfer->newNode, $server->uuid);
 
         // Notify the source node of the pending outgoing transfer.
         $this->notify($transfer, $token, $backup_uuid);
