@@ -106,7 +106,7 @@ class NodeJWTService
             ->getToken($config->signer(), $config->signingKey());
     }
 
-    public function setScopes(NodeJwtScope ...$scopes): self
+    public function setScopes(NodeJwtScope $scopes): self
     {
         $this->scopes = $scopes;
 
