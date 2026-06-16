@@ -2,6 +2,7 @@
 
 namespace App\Services\Servers;
 
+use App\Enums\NodeJwtTokenType;
 use App\Models\Allocation;
 use App\Models\Backup;
 use App\Models\Node;
@@ -99,6 +100,7 @@ class TransferServerService
         // Generate a token for the destination node that the source node can use to authenticate with.
         $token = $this->nodeJWTService
             ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
+            ->setTokenType(NodeJwtTokenType::ServerTransfer)
             ->setSubject($server->uuid)
             ->handle($transfer->newNode, $server->uuid, 'sha256');
 

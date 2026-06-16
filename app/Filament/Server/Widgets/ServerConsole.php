@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Widgets;
 
+use App\Enums\NodeJwtTokenType;
 use App\Enums\SubuserPermission;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Livewire\AlertBanner;
@@ -54,6 +55,7 @@ class ServerConsole extends Widget
 
         return $this->nodeJWTService
             ->setExpiresAt(now()->addMinutes(10)->toImmutable())
+            ->setTokenType(NodeJwtTokenType::Websocket)
             ->setUser($this->user)
             ->setClaims([
                 'server_uuid' => $this->server->uuid,

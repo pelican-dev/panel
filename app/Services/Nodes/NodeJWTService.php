@@ -24,6 +24,8 @@ class NodeJWTService
 
     private ?string $subject = null;
 
+    private ?NodeJwtTokenType $tokenType = null;
+
     /**
      * Set the claims to include in this JWT.
      *
@@ -66,6 +68,10 @@ class NodeJWTService
      */
     public function handle(Node $node, ?string $identifiedBy, string $algo = 'sha256'): UnencryptedToken
     {
+        if (is_null($this->tokenType)) {
+            throw new \LogicException('Cannot issue a node JWT without a token type.');
+        }
+
         $identifier = hash($algo, $identifiedBy);
         $config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText($node->daemon_token));
 
@@ -94,7 +100,15 @@ class NodeJWTService
         }
 
         return $builder
+            ->withClaim('token_type', $this->tokenType->value)
             ->withClaim('unique_id', Str::random())
             ->getToken($config->signer(), $config->signingKey());
+    }
+
+    public function setTokenType(NodeJwtTokenType $tokenType): self
+    {
+        $this->tokenType = $tokenType;
+
+        return $this;
     }
 }
