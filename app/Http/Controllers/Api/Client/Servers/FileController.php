@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use App\Enums\NodeJwtTokenType;
+use App\Enums\NodeJwtScope;
 use App\Facades\Activity;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\Files\ChmodFilesRequest;
@@ -94,7 +94,7 @@ class FileController extends ClientApiController
     {
         $token = $this->jwtService
             ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
-            ->setTokenType(NodeJwtTokenType::FileDownload)
+            ->setScopes(NodeJwtScope::FileDownload)
             ->setUser($request->user())
             ->setClaims([
                 'file_path' => rawurldecode($request->get('file')),

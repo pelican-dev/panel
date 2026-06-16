@@ -2,7 +2,7 @@
 
 namespace App\Services\Backups;
 
-use App\Enums\NodeJwtTokenType;
+use App\Enums\NodeJwtScope;
 use App\Extensions\Backups\BackupManager;
 use App\Extensions\Filesystem\S3Filesystem;
 use App\Models\Backup;
@@ -29,7 +29,7 @@ class DownloadLinkService
 
         $token = $this->jwtService
             ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
-            ->setTokenType(NodeJwtTokenType::BackupDownload)
+            ->setScopes(NodeJwtScope::BackupDownload)
             ->setUser($user)
             ->setClaims([
                 'backup_uuid' => $backup->uuid,

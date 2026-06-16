@@ -2,6 +2,7 @@
 
 namespace App\Services\Nodes;
 
+use App\Enums\NodeJwtScope;
 use App\Extensions\Lcobucci\JWT\Encoding\TimestampDates;
 use App\Models\Node;
 use App\Models\User;
@@ -24,7 +25,7 @@ class NodeJWTService
 
     private ?string $subject = null;
 
-    private ?NodeJwtTokenType $tokenType = null;
+    private array $scopes;
 
     /**
      * Set the claims to include in this JWT.
@@ -66,13 +67,13 @@ class NodeJWTService
     /**
      * Generate a new JWT for a given node.
      */
-    public function handle(Node $node, ?string $identifiedBy, string $algo = 'sha256'): UnencryptedToken
+    public function handle(Node $node, ?string $identifiedBy): UnencryptedToken
     {
-        if (is_null($this->tokenType)) {
+        if (is_null($this->scopes)) {
             throw new \LogicException('Cannot issue a node JWT without a token type.');
         }
 
-        $identifier = hash($algo, $identifiedBy);
+        $identifier = hash('sha256', $identifiedBy);
         $config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText($node->daemon_token));
 
         $builder = $config->builder(new TimestampDates())
@@ -105,9 +106,9 @@ class NodeJWTService
             ->getToken($config->signer(), $config->signingKey());
     }
 
-    public function setTokenType(NodeJwtTokenType $tokenType): self
+    public function setScopes(NodeJwtScope ...$scopes): self
     {
-        $this->tokenType = $tokenType;
+        $this->scopes = $scopes;
 
         return $this;
     }
