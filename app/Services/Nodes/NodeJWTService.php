@@ -26,6 +26,7 @@ class NodeJWTService
 
     private ?string $subject = null;
 
+    /** @var NodeJwtScope[] */
     private array $scopes;
 
     /**
