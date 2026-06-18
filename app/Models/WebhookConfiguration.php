@@ -317,7 +317,7 @@ class WebhookConfiguration extends Model
         $serverEvents = collect(static::discoverCustomEvents())
             ->merge(static::allModelEvents())
             ->unique()
-            ->filter(fn ($event) => str_contains($event, 'App\\Models\\Server') && !str_contains($event, 'Subuser'))
+            ->filter(fn ($event) => str($event)->contains('App\\Models\\Server') && !str($event)->contains('Subuser'))
             ->values()
             ->all();
 
@@ -437,10 +437,10 @@ class WebhookConfiguration extends Model
         if ($this->scope === WebhookScope::Server) {
             $eventName ??= 'server:file.write';
             $eventData ??= static::getServerWebhookSampleData();
-        } else {
-            $eventName ??= 'eloquent.created: '.Server::class;
-            $eventData ??= static::getWebhookSampleData();
         }
+
+        $eventName ??= 'eloquent.created: '.Server::class;
+        $eventData ??= static::getWebhookSampleData();
 
         $payload = array_is_list($eventData) ? $eventData : [$eventData];
         ProcessWebhook::dispatch($this, $eventName, $payload);

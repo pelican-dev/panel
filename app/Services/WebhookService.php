@@ -15,7 +15,7 @@ class WebhookService
     public function dispatch(string $eventName, array $contextualData, ?Server $server = null): void
     {
         if ($server) {
-            $webhooks = $server->webhooks()
+            $webhooks = $server->webhookConfigurations()
                 ->whereJsonContains('events', $eventName)
                 ->get();
 

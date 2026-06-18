@@ -120,7 +120,7 @@ class DispatchWebhooks
             return;
         }
 
-        $webhooks = $server->webhooks()
+        $webhooks = $server->webhookConfigurations()
             ->whereJsonContains('events', $eventName)
             ->get();
 
@@ -215,19 +215,13 @@ class DispatchWebhooks
     /** @param array<mixed> $webhookData */
     protected function hasPayloadContent(array $webhookData): bool
     {
-        $contentData = array_filter($webhookData, fn (mixed $_, string $key) => $key !== 'event', ARRAY_FILTER_USE_BOTH);
-
-        $contentData = array_filter($contentData, function ($value) {
-            if (is_array($value)) {
-                return !empty($value);
-            }
-            if ($value instanceof Collection) {
-                return $value->isNotEmpty();
-            }
-
-            return $value !== null && $value !== '';
-        });
-
-        return !empty($contentData);
+        return collect($webhookData)
+            ->except('event')
+            ->reject(fn (mixed $value) => match (true) {
+                is_array($value) => empty($value),
+                $value instanceof Collection => $value->isEmpty(),
+                default => $value === null || $value === '',
+            })
+            ->isNotEmpty();
     }
 }

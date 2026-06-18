@@ -32,7 +32,7 @@ class ListWebhooks extends ListRecords
                 ->hidden(function () {
                     $server = Filament::getTenant();
 
-                    return !$server instanceof Server || $server->webhooks()->count() <= 0;
+                    return !$server instanceof Server || $server->webhookConfigurations()->count() <= 0;
                 }),
         ];
     }
