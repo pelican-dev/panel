@@ -6,10 +6,14 @@ use App\Exceptions\Model\DataValidationException;
 use App\Exceptions\Service\HasActiveServersException;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Eggs\GetEggsRequest;
+use App\Http\Requests\Api\Application\Mounts\DeleteMountRelationRequest;
 use App\Http\Requests\Api\Application\Mounts\DeleteMountRequest;
 use App\Http\Requests\Api\Application\Mounts\GetMountRequest;
 use App\Http\Requests\Api\Application\Mounts\StoreMountRequest;
+use App\Http\Requests\Api\Application\Mounts\UpdateMountEggsRequest;
+use App\Http\Requests\Api\Application\Mounts\UpdateMountNodesRequest;
 use App\Http\Requests\Api\Application\Mounts\UpdateMountRequest;
+use App\Http\Requests\Api\Application\Mounts\UpdateMountServersRequest;
 use App\Http\Requests\Api\Application\Nodes\GetNodesRequest;
 use App\Http\Requests\Api\Application\Servers\GetServerRequest;
 use App\Models\Mount;
@@ -18,7 +22,6 @@ use App\Transformers\Api\Application\MountTransformer;
 use App\Transformers\Api\Application\NodeTransformer;
 use App\Transformers\Api\Application\ServerTransformer;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
 use Spatie\QueryBuilder\QueryBuilder;
 use Throwable;
@@ -164,14 +167,9 @@ class MountController extends ApplicationApiController
      *
      * @return array<array-key, mixed>
      */
-    public function addEggs(Request $request, Mount $mount): array
+    public function addEggs(UpdateMountEggsRequest $request, Mount $mount): array
     {
-        $validatedData = $request->validate([
-            'eggs' => 'required|array|exists:eggs,id',
-            'eggs.*' => 'integer',
-        ]);
-
-        $mount->eggs()->attach($validatedData['eggs']);
+        $mount->eggs()->attach($request->validated('eggs'));
 
         return $this->fractal->item($mount)
             ->transformWith($this->getTransformer(MountTransformer::class))
@@ -185,14 +183,9 @@ class MountController extends ApplicationApiController
      *
      * @return array<array-key, mixed>
      */
-    public function addNodes(Request $request, Mount $mount): array
+    public function addNodes(UpdateMountNodesRequest $request, Mount $mount): array
     {
-        $validatedData = $request->validate([
-            'nodes' => 'required|array|exists:nodes,id',
-            'nodes.*' => 'integer',
-        ]);
-
-        $mount->nodes()->attach($validatedData['nodes']);
+        $mount->nodes()->attach($request->validated('nodes'));
 
         return $this->fractal->item($mount)
             ->transformWith($this->getTransformer(MountTransformer::class))
@@ -206,14 +199,9 @@ class MountController extends ApplicationApiController
      *
      * @return array<array-key, mixed>
      */
-    public function addServers(Request $request, Mount $mount): array
+    public function addServers(UpdateMountServersRequest $request, Mount $mount): array
     {
-        $validatedData = $request->validate([
-            'servers' => 'required|array|exists:servers,id',
-            'servers.*' => 'integer',
-        ]);
-
-        $mount->servers()->attach($validatedData['servers']);
+        $mount->servers()->attach($request->validated('servers'));
 
         return $this->fractal->item($mount)
             ->transformWith($this->getTransformer(MountTransformer::class))
@@ -225,7 +213,7 @@ class MountController extends ApplicationApiController
      *
      * Deletes an egg from the mount's many-to-many relation.
      */
-    public function deleteEgg(Mount $mount, int $egg_id): JsonResponse
+    public function deleteEgg(DeleteMountRelationRequest $request, Mount $mount, int $egg_id): JsonResponse
     {
         $mount->eggs()->detach($egg_id);
 
@@ -237,7 +225,7 @@ class MountController extends ApplicationApiController
      *
      * Deletes a node from the mount's many-to-many relation.
      */
-    public function deleteNode(Mount $mount, int $node_id): JsonResponse
+    public function deleteNode(DeleteMountRelationRequest $request, Mount $mount, int $node_id): JsonResponse
     {
         $mount->nodes()->detach($node_id);
 
@@ -249,7 +237,7 @@ class MountController extends ApplicationApiController
      *
      * Deletes a server from the mount's many-to-many relation.
      */
-    public function deleteServer(Mount $mount, int $server_id): JsonResponse
+    public function deleteServer(DeleteMountRelationRequest $request, Mount $mount, int $server_id): JsonResponse
     {
         $mount->servers()->detach($server_id);
 

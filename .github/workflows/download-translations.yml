@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download Translations from Crowdin
         uses: crowdin/github-action@v2
@@ -24,13 +24,23 @@ jobs:
           upload_translations: false
           download_translations: true
           export_only_approved: true
-          localization_branch_name: i18n_crowdin_translations
-          create_pull_request: true
-          pull_request_title: 'New Crowdin Translations'
-          pull_request_body: 'New Crowdin translations by [Crowdin GH Action](https://github.com/crowdin/github-action)'
-          pull_request_base_branch_name: 'main'
+          push_translations: false
+          create_pull_request: false
           crowdin_branch_name: main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Run Laravel Pint
+        uses: aglipanci/laravel-pint-action@8eedec46a1856977c41667f9c66d5562fa3f9c08 # 2.4
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update translations and format with pint'
+          title: 'New Crowdin Translations'
+          body: 'New Crowdin translations by [Crowdin GH Action](https://github.com/crowdin/github-action), formatted by Laravel Pint.'
+          branch: 'i18n_crowdin_translations'
+          base: 'main'

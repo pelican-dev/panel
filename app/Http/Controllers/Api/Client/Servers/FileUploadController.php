@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Enums\NodeJwtScope;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\Files\UploadFileRequest;
 use App\Models\Server;
@@ -45,6 +46,7 @@ class FileUploadController extends ClientApiController
     {
         $token = $this->jwtService
             ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
+            ->setScopes(NodeJwtScope::FileUpload)
             ->setUser($user)
             ->setClaims(['server_uuid' => $server->uuid])
             ->handle($server->node, $user->id . $server->uuid);
