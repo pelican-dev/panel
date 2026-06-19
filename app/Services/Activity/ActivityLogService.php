@@ -2,6 +2,7 @@
 
 namespace App\Services\Activity;
 
+use App\Events\ActivityLogged;
 use App\Models\ActivityLog;
 use App\Models\Server;
 use App\Models\User;
@@ -12,6 +13,7 @@ use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Request;
 use Throwable;
 use Webmozart\Assert\Assert;
@@ -243,6 +245,8 @@ class ActivityLogService
 
             return $this->activity;
         });
+
+        Event::dispatch(new ActivityLogged($response));
 
         $this->activity = null;
         $this->subjects = [];
