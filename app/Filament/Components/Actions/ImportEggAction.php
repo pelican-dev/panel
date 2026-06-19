@@ -21,7 +21,6 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
-use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ImportEggAction extends Action
@@ -45,7 +44,7 @@ class ImportEggAction extends Action
 
         $this->authorize(fn () => user()?->can('import egg'));
 
-        $this->action(function (array $data, EggImporterService $eggImportService, Component $livewire): void {
+        $this->action(function (array $data, EggImporterService $eggImportService): void {
 
             $gitHubEggs = array_get($this->data, 'eggs', []);
             $eggs = array_merge(collect($data['urls'])->flatten()->whereNotNull()->unique()->all(), Arr::wrap($data['files']));
@@ -125,7 +124,6 @@ class ImportEggAction extends Action
                     ->status($failed->isEmpty() ? 'success' : ($success->isEmpty() ? 'danger' : 'warning'))
                     ->send();
             }
-
         });
     }
 
