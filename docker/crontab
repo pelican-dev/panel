@@ -1,1 +1,2 @@
 * * * * * php /var/www/html/artisan schedule:run
+0 0 * * * php /var/www/html/artisan p:egg:check-updates 

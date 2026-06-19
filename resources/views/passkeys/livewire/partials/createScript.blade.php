@@ -1,15 +1,12 @@
 @script
 <script>
-    Livewire.on('passkeyPropertiesValidated', async function (eventData) {
-        const passkeyOptions = eventData[0].passkeyOptions;
-
+    window.onClickCreatePasskey = async function () {
         try {
-            const passkey = await startRegistration({ optionsJSON: passkeyOptions });
-
-            @this.call('storePasskey', JSON.stringify(passkey));
+            await window.registerPasskey(@this.name);
+            @this.call('onPasskeyRegistered');
         } catch (error) {
             @this.call('registrationFailed', error.message);
         }
-    });
+    };
 </script>
 @endscript

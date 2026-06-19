@@ -2,6 +2,7 @@
 
 namespace App\Services\Nodes;
 
+use App\Enums\NodeJwtScope;
 use App\Extensions\Lcobucci\JWT\Encoding\TimestampDates;
 use App\Models\Node;
 use App\Models\User;
@@ -12,6 +13,7 @@ use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\UnencryptedToken;
+use Webmozart\Assert\Assert;
 
 class NodeJWTService
 {
@@ -23,6 +25,9 @@ class NodeJWTService
     private DateTimeImmutable $expiresAt;
 
     private ?string $subject = null;
+
+    /** @var NodeJwtScope[] */
+    private array $scopes;
 
     /**
      * Set the claims to include in this JWT.
@@ -64,9 +69,11 @@ class NodeJWTService
     /**
      * Generate a new JWT for a given node.
      */
-    public function handle(Node $node, ?string $identifiedBy, string $algo = 'sha256'): UnencryptedToken
+    public function handle(Node $node, ?string $identifiedBy): UnencryptedToken
     {
-        $identifier = hash($algo, $identifiedBy);
+        Assert::notEmpty($this->scopes, 'Cannot generate a JWT without providing at least one scope.');
+
+        $identifier = hash('sha256', $identifiedBy);
         $config = Configuration::forSymmetricSigner(new Sha256(), InMemory::plainText($node->daemon_token));
 
         $builder = $config->builder(new TimestampDates())
@@ -93,8 +100,17 @@ class NodeJWTService
             $builder = $builder->withClaim('user_uuid', $this->user->uuid);
         }
 
+        $builder = $builder->withClaim('scope', implode(' ', array_map(fn ($scope) => $scope->value, $this->scopes)));
+
         return $builder
             ->withClaim('unique_id', Str::random())
             ->getToken($config->signer(), $config->signingKey());
+    }
+
+    public function setScopes(NodeJwtScope ...$scopes): self
+    {
+        $this->scopes = $scopes;
+
+        return $this;
     }
 }

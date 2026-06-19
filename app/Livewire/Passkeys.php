@@ -9,12 +9,14 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Illuminate\View\View;
-use Spatie\LaravelPasskeys\Livewire\PasskeysComponent;
+use Livewire\Component;
 
-final class Passkeys extends PasskeysComponent implements HasActions, HasSchemas
+final class Passkeys extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
+
+    public string $name = '';
 
     public function confirmDelete(int|string $passkeyId): void
     {
@@ -32,9 +34,7 @@ final class Passkeys extends PasskeysComponent implements HasActions, HasSchemas
 
     public function deletePasskey(int|string $passkeyId): void
     {
-        $this->currentUser()->passkeys()->findOrFail($passkeyId);
-
-        parent::deletePasskey($passkeyId);
+        auth()->user()->passkeys()->findOrFail($passkeyId)->delete();
 
         Notification::make()
             ->title(trans('passkeys.deleted_notification_title'))
@@ -42,9 +42,9 @@ final class Passkeys extends PasskeysComponent implements HasActions, HasSchemas
             ->send();
     }
 
-    public function storePasskey(string $passkey): void
+    public function onPasskeyRegistered(): void
     {
-        parent::storePasskey($passkey);
+        $this->name = '';
 
         Notification::make()
             ->title(trans('passkeys.created_notification_title'))
@@ -64,7 +64,7 @@ final class Passkeys extends PasskeysComponent implements HasActions, HasSchemas
     public function render(): View
     {
         return view('passkeys.livewire.passkeys', data: [
-            'passkeys' => $this->currentUser()->passkeys()->get(),
+            'passkeys' => auth()->user()->passkeys()->get(),
         ]);
     }
 }

@@ -43,8 +43,8 @@ use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\In;
 use ResourceBundle;
-use Spatie\LaravelPasskeys\Models\Concerns\HasPasskeys;
-use Spatie\LaravelPasskeys\Models\Concerns\InteractsWithPasskeys;
+use Laravel\Passkeys\Contracts\PasskeyUser;
+use Laravel\Passkeys\PasskeyAuthenticatable;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -115,7 +115,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder<static>|User withoutPermission($permissions)
  * @method static Builder<static>|User withoutRole($roles, $guard = null)
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasEmailAuthentication, HasName, HasPasskeys, HasTenants, Validatable
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasEmailAuthentication, HasName, PasskeyUser, HasTenants, Validatable
 {
     use Authenticatable;
     use Authorizable { can as protected canned; }
@@ -124,7 +124,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use HasFactory;
     use HasRoles;
     use HasValidation { getRules as getValidationRules; }
-    use InteractsWithPasskeys;
+    use PasskeyAuthenticatable;
     use Notifiable;
 
     public const USER_LEVEL_USER = 0;
@@ -535,8 +535,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->username ?? $this->email;
     }
 
-    public function getPasskeyUserId(): int
+    public function getPasskeyUsername(): string
     {
-        return $this->id;
+        return $this->email;
     }
 }
