@@ -44,6 +44,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
@@ -62,9 +63,12 @@ class EditProfile extends BaseEditProfile
 
     protected OAuthService $oauthService;
 
-    public function boot(OAuthService $oauthService): void
+    protected Request $request;
+
+    public function boot(OAuthService $oauthService, Request $request): void
     {
         $this->oauthService = $oauthService;
+        $this->request = $request;
     }
 
     public function getMaxWidth(): Width|string
