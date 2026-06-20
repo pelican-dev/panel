@@ -238,6 +238,7 @@ class EditProfile extends BaseEditProfile
             Tab::make('passkeys')
                 ->label(trans('profile.tabs.passkeys'))
                 ->icon(TablerIcon::Fingerprint)
+                ->hidden(fn () => !$this->request->isSecure())
                 ->schema([
                     Section::make(trans('profile.tabs.passkeys'))
                         ->description(trans('passkeys.description'))
