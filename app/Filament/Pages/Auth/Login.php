@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Enums\TablerIcon;
 use App\Extensions\Captcha\CaptchaService;
 use App\Extensions\OAuth\OAuthService;
 use BladeUI\Icons\Exceptions\SvgNotFound;
@@ -15,6 +16,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 class Login extends BaseLogin
@@ -25,11 +27,14 @@ class Login extends BaseLogin
 
     protected IconFactory $iconFactory;
 
-    public function boot(OAuthService $oauthService, CaptchaService $captchaService, IconFactory $iconFactory): void
+    protected Request $request;
+
+    public function boot(OAuthService $oauthService, CaptchaService $captchaService, IconFactory $iconFactory, Request $request): void
     {
         $this->oauthService = $oauthService;
         $this->captchaService = $captchaService;
         $this->iconFactory = $iconFactory;
+        $this->request = $request;
     }
 
     public function mount(): void
@@ -76,11 +81,11 @@ class Login extends BaseLogin
         return Actions::make([
             Action::make('passkey')
                 ->label(trans('passkeys.authenticate_using_passkey'))
-                ->icon('heroicon-o-key')
+                ->icon(TablerIcon::Key->value)
                 ->color('gray')
                 ->alpineClickHandler('window.authenticateWithPasskey()')
                 ->extraAttributes(['type' => 'button']),
-        ])->fullWidth()->hidden(fn () => !request()->isSecure());
+        ])->fullWidth()->hidden(fn () => !$this->request->isSecure());
     }
 
     protected function throwFailureValidationException(): never

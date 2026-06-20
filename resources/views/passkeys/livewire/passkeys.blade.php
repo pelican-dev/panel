@@ -19,11 +19,11 @@
         </x-filament::button>
     </div>
 
-    @if($passkeys->isNotEmpty())
+    @if ($passkeys->isNotEmpty())
         <div>
             <span class="font-bold text-sm">{{ trans('passkeys.passkeys') }}</span>
             <ul class="space-y-4 mt-4">
-                @foreach($passkeys as $passkey)
+                @foreach ($passkeys as $passkey)
                     <x-filament::fieldset>
                         <div class="flex items-center justify-between">
                             <div class="flex flex-col">
