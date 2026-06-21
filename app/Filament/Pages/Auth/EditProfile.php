@@ -465,13 +465,12 @@ class EditProfile extends BaseEditProfile
                                     'mixed' => trans('profile.mixed'),
                                 ]),
                             ToggleButtons::make('button_style')
-                                ->label('Button Style')
+                                ->label(trans('profile.button_style'))
                                 ->inline()
                                 ->default('icon')
-
                                 ->options([
-                                    true => 'Icon',
-                                    false => 'Icon Button',
+                                    true => trans('profile.icon'),
+                                    false => trans('profile.icon_button'),
                                 ]),
                         ]),
                     Section::make(trans('profile.admin'))

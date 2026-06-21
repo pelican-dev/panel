@@ -7,6 +7,7 @@ return [
     'endpoint' => 'Endpoint',
     'description' => 'Description',
     'name' => 'Name',
+    'type' => 'Type',
     'server' => 'Server',
     'information' => 'Information',
     'payload' => 'Payload',

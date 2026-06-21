@@ -20,6 +20,7 @@ return [
     'disable' => 'Disable',
     'import_from_file' => 'Import from File',
     'import_from_url' => 'Import from URL',
+    'file' => 'File',
     'no_plugins' => 'No Plugins',
     'all' => 'All',
     'change_load_order' => 'Change load order',

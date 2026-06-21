@@ -89,6 +89,7 @@ class DatabaseHostResource extends Resource
                     ->counts('databases')
                     ->label(trans('admin/databasehost.databases')),
                 TextColumn::make('nodes.name')
+                    ->label(trans('admin/databasehost.nodes'))
                     ->badge()
                     ->placeholder(trans('admin/databasehost.no_nodes')),
             ])

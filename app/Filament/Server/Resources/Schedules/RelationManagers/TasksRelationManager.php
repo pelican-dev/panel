@@ -95,6 +95,7 @@ class TasksRelationManager extends RelationManager
                     ->label(trans('server/schedule.tasks.continue_on_failure'))
                     ->boolean(),
             ])
+            ->emptyStateHeading(trans('server/schedule.no_tasks'))
             ->recordActions([
                 EditAction::make()
                     ->schema($this->getTaskForm($schedule))

@@ -242,6 +242,8 @@ class PluginResource extends Resource
             ])
             ->headerActions([
                 Action::make('import_from_file')
+                    ->label(trans('admin/plugin.import_from_file'))
+                    ->modalHeading(trans('admin/plugin.import_from_file'))
                     ->hiddenLabel()
                     ->tooltip(trans('admin/plugin.import_from_file'))
                     ->authorize(fn () => user()?->can('create', Plugin::class))
@@ -249,6 +251,7 @@ class PluginResource extends Resource
                     ->schema([
                         // TODO: switch to new file upload
                         FileUpload::make('file')
+                            ->label(trans('admin/plugin.file'))
                             ->required()
                             ->acceptedFileTypes(['application/zip', 'application/zip-compressed', 'application/x-zip-compressed'])
                             ->preserveFilenames()
@@ -285,6 +288,8 @@ class PluginResource extends Resource
                         }
                     }),
                 Action::make('import_from_url')
+                    ->label(trans('admin/plugin.import_from_url'))
+                    ->modalHeading(trans('admin/plugin.import_from_url'))
                     ->hiddenLabel()
                     ->tooltip(trans('admin/plugin.import_from_url'))
                     ->authorize(fn () => user()?->can('create', Plugin::class))
