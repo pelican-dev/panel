@@ -5,5 +5,8 @@ window.registerPasskey = async function (name) {
 };
 
 window.authenticateWithPasskey = async function () {
-    await Passkeys.verify();
+    const response = await Passkeys.verify();
+    if (response?.redirect) {
+        window.location.href = response.redirect;
+    }
 };
