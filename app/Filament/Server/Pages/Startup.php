@@ -56,6 +56,7 @@ class Startup extends ServerFormPage
                     ->disabled(fn (Server $server) => !user()?->can(SubuserPermission::StartupUpdate, $server))
                     ->formatStateUsing(fn (Server $server) => $server->startup)
                     ->afterStateUpdated(function ($state, Server $server, Set $set) {
+                        abort_unless(user()?->can(SubuserPermission::StartupUpdate, $server), 403);
                         $original = $server->startup;
                         $server->forceFill(['startup' => $state])->saveOrFail();
 
@@ -89,6 +90,7 @@ class Startup extends ServerFormPage
                     ->visible(fn (Server $server) => in_array($server->image, $server->egg->docker_images))
                     ->disabled(fn (Server $server) => !user()?->can(SubuserPermission::StartupDockerImage, $server))
                     ->afterStateUpdated(function ($state, Server $server) {
+                        abort_unless(user()?->can(SubuserPermission::StartupDockerImage, $server), 403);
                         $original = $server->image;
                         $server->forceFill(['image' => $state])->saveOrFail();
 
@@ -151,6 +153,8 @@ class Startup extends ServerFormPage
 
     public function update(null|string|bool $state, ServerVariable $serverVariable): void
     {
+        abort_unless(user()?->can(SubuserPermission::StartupUpdate, $this->getRecord()), 403);
+
         if (!$serverVariable->variable->user_editable) {
             return;
         }
