@@ -52,13 +52,13 @@ class GSLTokenSchema implements FeatureSchemaInterface
 
         return Action::make($this->getId())
             ->requiresConfirmation()
-            ->modalHeading('Invalid GSL token')
-            ->modalDescription('It seems like your Gameserver Login Token (GSL token) is invalid or has expired.')
-            ->modalSubmitActionLabel('Update GSL Token')
+            ->modalHeading(trans('server/feature.gsl_token.heading'))
+            ->modalDescription(trans('server/feature.gsl_token.description'))
+            ->modalSubmitActionLabel(trans('server/feature.gsl_token.submit'))
             ->disabledSchema(fn () => !user()?->can(SubuserPermission::StartupUpdate, $server))
             ->schema([
                 TextEntry::make('info')
-                    ->label(new HtmlString(Blade::render('You can either <x-filament::link href="https://steamcommunity.com/dev/managegameservers" target="_blank">generate a new one</x-filament::link> and enter it below or leave the field blank to remove it completely.'))),
+                    ->label(new HtmlString(Blade::render(trans('server/feature.gsl_token.info')))),
                 TextInput::make('gsltoken')
                     ->label('GSL Token')
                     ->rules([
@@ -104,13 +104,13 @@ class GSLTokenSchema implements FeatureSchemaInterface
                     $serverRepository->setServer($server)->power('restart');
 
                     Notification::make()
-                        ->title('GSL Token updated')
-                        ->body('Server will restart now.')
+                        ->title(trans('server/feature.gsl_token.updated'))
+                        ->body(trans('server/feature.restart_now'))
                         ->success()
                         ->send();
                 } catch (Exception $exception) {
                     Notification::make()
-                        ->title('Could not update GSL Token')
+                        ->title(trans('server/feature.gsl_token.failed'))
                         ->body($exception->getMessage())
                         ->danger()
                         ->send();
