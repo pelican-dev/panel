@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'heading' => '歡迎來到 Pelican!',
+    'heading' => '歡迎使用 :app！',
     'version' => '版本：:version',
-    'advanced' => '進階設定',
+    'advanced' => '進階',
     'server' => '伺服器',
     'user' => '使用者',
     'sections' => [
@@ -16,7 +16,7 @@ return [
         ],
         'intro-update-available' => [
             'heading' => '有可用的更新',
-            'content' => ':latestVersion 現已推出！請閱讀我們的文件以更新您的管理面板。',
+            'content' => ':latestVersion 現已推出！請閱讀我們的文件以更新您的面板。',
             'button_changelog' => '有什麼新功能？',
         ],
         'intro-no-update' => [
@@ -27,7 +27,7 @@ return [
             'heading' => '未偵測到節點',
             'content' => '看起來您尚未設定任何節點，不過別擔心，您可以點擊操作按鈕來建立第一個節點！',
             'extra_note' => '如果您遇到任何問題，請在 GitHub 上回報。',
-            'button_label' => '在 Pelican 建立第一個節點',
+            'button_label' => '建立第一個節點',
         ],
         'intro-support' => [
             'heading' => '支持 Pelican',

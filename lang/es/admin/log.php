@@ -9,12 +9,12 @@ return [
     'info' => 'Información',
     'debug' => 'Depuración',
     'navigation' => [
-        'panel_logs' => 'Registros del Panel',
+        'panel_logs' => 'Registros del panel',
     ],
     'actions' => [
         'upload_logs' => '¿Cargar registros?',
-        'upload_logs_description' => 'Esto subirá :file a :url ¿Seguro que deseas hacerlo?',
-        'view_logs' => 'Ver Registros',
+        'upload_logs_description' => 'Esto subirá :file a :url. ¿Estás seguro de que deseas hacer esto?',
+        'view_logs' => 'Ver registros',
         'log_not_found' => '¡Registro no encontrado!',
         'log_not_found_description' => 'No se pudo encontrar el registro para :filename',
         'failed_to_upload' => 'Error al subir',

@@ -109,6 +109,5 @@ return [
         'migration' => 'Migrace nelze spustit',
         'create_user' => 'Nelze vytvořit admin uživatele',
     ],
-    'next_step' => 'Další krok',
     'finish' => 'Dokončit',
 ];

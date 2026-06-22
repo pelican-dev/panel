@@ -36,7 +36,7 @@ return [
         'cpu_overallocate' => '輸入要超額分配的cpu使用率百分比。若要停用超額分配檢查，請輸入 -1；若輸入 0，則當可能超出此節點的cpu使用率總上限時，將會阻止建立新伺服器。',
         'upload_size' => '輸入最大上傳檔案大小',
         'daemonListen' => '輸入守護程式監聽的連接埠',
-        'daemonConnect' => '輸入守護進程連接阜（可與監聽連接阜相同）',
+        'daemonConnect' => '輸入 Daemon 連線連接埠 (可以與監聽連接埠相同)',
         'daemonSFTP' => '輸入守護程式 SFTP 監聽的連接埠',
         'daemonSFTPAlias' => '輸入守護程式 SFTP 別名（可留空）',
         'daemonBase' => '輸入根資料夾',

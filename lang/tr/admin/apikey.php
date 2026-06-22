@@ -20,6 +20,8 @@ return [
         'never_used' => 'Hiç Kullanılmadı',
     ],
     'permissions' => [
+        'all' => 'Tüm İzinleri Ayarla',
+        'all_description' => 'Aşağıdaki tüm izinleri hızlıca aynı seviyeye getirin.',
         'none' => 'Hiçbiri',
         'read' => 'Okuma',
         'read_write' => 'Okuma & Yazma',
