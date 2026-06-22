@@ -20,5 +20,6 @@ return [
     'password' => 'A senha inserida está incorreta.',
     'throttle' => 'Muitas tentativas de login. Por favor, tente novamente em :seconds segundos.',
     '2fa_must_be_enabled' => 'O administrador exigiu que a Autenticação de 2 Fatores esteja habilitada para a sua conta para poder usar o Painel.',
+    'password_login_disabled' => 'O login com senha está desativado. Por favor, use um provedor OAuth para entrar.',
 
 ];

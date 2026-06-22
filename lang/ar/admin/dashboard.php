@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'heading' => 'مرحبًا بك في Pelican!',
+    'heading' => 'مرحبا بك في :app!',
     'version' => 'الإصدار: :version',
     'advanced' => 'متقدم',
     'server' => 'الخادم',
@@ -27,7 +27,7 @@ return [
             'heading' => 'لم يتم اكتشاف أي عقد',
             'content' => 'يبدو أنه لم يتم إعداد أي عقد حتى الآن، لكن لا تقلق، يمكنك النقر على زر الإجراء لإنشاء العقدة الأولى!',
             'extra_note' => 'إذا واجهت أي مشاكل، يرجى الإبلاغ عنها على GitHub.',
-            'button_label' => 'إنشاء العقدة الأولى في Pelican',
+            'button_label' => 'إنشاء العقدة الأولى',
         ],
         'intro-support' => [
             'heading' => 'دعم Pelican',

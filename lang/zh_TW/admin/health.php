@@ -1,20 +1,20 @@
 <?php
 
 return [
-    'title' => '健康狀態',
-    'results_refreshed' => '健康狀態已更新',
+    'title' => '健康狀況',
+    'results_refreshed' => '健康檢查結果已更新',
     'checked' => '檢查時間：:time',
     'refresh' => '重新整理',
     'results' => [
         'cache' => [
             'label' => '快取',
-            'ok' => '確定',
+            'ok' => '正常',
             'failed_retrieve' => '無法設定或讀取應用程式快取值。',
-            'failed' => '應用程式快取發生錯誤：:error',
+            'failed' => '應用程式快取發生異常：:error',
         ],
         'database' => [
             'label' => '資料庫',
-            'ok' => '確定',
+            'ok' => '正常',
             'failed' => '無法連接到資料庫：:error',
         ],
         'debugmode' => [
@@ -31,10 +31,10 @@ return [
             'label' => '節點版本',
             'ok' => '節點已是最新版本',
             'failed' => ':outdated/:all 個節點不是最新版本',
-            'no_nodes_created' => '沒有建立任何節點',
+            'no_nodes_created' => '尚未建立任何節點',
             'no_nodes' => '沒有節點',
             'all_up_to_date' => '全部為最新版本',
-            'outdated' => ':outdated／:all 已過時',
+            'outdated' => ':outdated/:all 已過時',
         ],
         'panelversion' => [
             'label' => '面板版本',
@@ -55,6 +55,6 @@ return [
     ],
     'checks' => [
         'successful' => '成功',
-        'failed' => '失敗',
+        'failed' => '失敗 :checks',
     ],
 ];

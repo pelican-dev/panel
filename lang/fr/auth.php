@@ -20,5 +20,6 @@ return [
     'password' => 'Le mot de passe saisi est incorrect.',
     'throttle' => 'Trop de tentatives de connexion. Veuillez réessayer dans :secondes secondes.',
     '2fa_must_be_enabled' => 'L\'administrateur a exigé que l\'authentification à 2 facteurs soit activée pour votre compte afin d\'utiliser le Panel.',
+    'password_login_disabled' => 'La connexion par mot de passe est désactivée. Veuillez utiliser un fournisseur OAuth pour vous connecter.',
 
 ];

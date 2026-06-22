@@ -11,6 +11,7 @@ return [
     'username' => 'Benutzername',
     'password' => 'Passwort',
     'remote' => 'Fernzugriff',
+    'unlimited' => 'Unbegrenzt',
     'created_at' => 'Erstellt am',
     'name' => 'Datenbank Name',
     'name_hint' => 'Leer lassen, um einen zufälligen Namen generieren zu lassen',

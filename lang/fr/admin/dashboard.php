@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'heading' => 'Bienvenue sur Pelican!',
+    'heading' => 'Bienvenue sur :app !',
     'version' => 'Version: :version',
     'advanced' => 'Avancé',
     'server' => 'Serveur',
@@ -27,7 +27,7 @@ return [
             'heading' => 'Aucun nœud détecté',
             'content' => "Il semble que vous n'ayez pas encore de nœuds configurés, mais pas d'inquiétude, vous pouvez cliquer sur le bouton d'action pour créer votre premier nœud!",
             'extra_note' => 'Si vous rencontrez des problèmes, merci de les signaler sur GitHub.',
-            'button_label' => 'Créer le premier nœud dans Pelican',
+            'button_label' => 'Créer un premier nœud',
         ],
         'intro-support' => [
             'heading' => 'Soutenir Pelican',

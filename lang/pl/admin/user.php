@@ -11,7 +11,7 @@ return [
     'password' => 'Hasło',
     'external_id' => 'Zewnętrzne ID',
     'is_managed_externally' => 'Czy jest zarządzany zewnętrznie?',
-    'is_managed_externally_helper' => 'Jeśli Twoi użytkownicy są zarządzani przez zewnętrzne oprogramowanie (np. oprogramowanie do rozliczeń), możesz włączyć tę opcję, aby uniemożliwić użytkownikom zmianę nazwy użytkownika, adresu e-mail i hasła z poziomu panelu.',
+    'is_managed_externally_helper' => 'Jeśli Twoi użytkownicy są zarządzani przez zewnętrzne oprogramowanie (np. do rozliczeń), możesz włączyć tę opcję, aby uniemożliwić im zmianę nazwy użytkownika, adresu e-mail i hasła z poziomu panelu.',
     'password_help' => 'Podanie hasła użytkownika jest opcjonalne. Nowy użytkownik otrzyma e-mail, który poprosi go o utworzenie hasła podczas pierwszego logowania.',
     'admin_roles' => 'Role Administratora',
     'roles' => 'Role',

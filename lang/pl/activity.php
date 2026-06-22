@@ -120,6 +120,9 @@ return [
             'update' => 'Zaktualizowano uprawnienia podużytkownika dla <b>:email</b>',
             'delete' => 'Usunięto <b>:email</b> jako podużytkownika',
         ],
+        'mount' => [
+            'update' => 'Zaktualizowano montaże dla serwera',
+        ],
         'crashed' => 'Serwer uległ awarii',
     ],
 ];

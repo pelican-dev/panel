@@ -120,6 +120,9 @@ return [
             'update' => 'Atualizou as permissões do sub-usuário <b>:email</b>',
             'delete' => 'Removeu <b>:email</b> como sub-usuário',
         ],
+        'mount' => [
+            'update' => 'Atualizado as montagens para o servidor',
+        ],
         'crashed' => 'Servidor Falhou',
     ],
 ];

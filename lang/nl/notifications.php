@@ -6,6 +6,10 @@ return [
     'installation_failed' => 'Server installatie mislukt',
     'reinstallation_completed' => 'Server opnieuw installeren voltooid',
     'reinstallation_failed' => 'Server opnieuw installeren mislukt',
+    'backup_completed' => 'Backup gereed',
+    'backup_failed' => 'Backup mislukt',
+    'backup_body' => 'Backup ":name" voor server ":server"',
+    'view_backups' => 'Bekijk backups',
     'failed' => 'Mislukt',
     'user_added' => [
         'title' => 'Toegevoegd aan server',
