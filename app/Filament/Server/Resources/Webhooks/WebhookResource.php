@@ -92,7 +92,8 @@ class WebhookResource extends Resource
     {
         return $table
             ->columns([
-                IconColumn::make('type'),
+                IconColumn::make('type')
+                    ->label(trans('admin/webhook.type')),
                 TextColumn::make('name')
                     ->label(trans('admin/webhook.name')),
                 TextColumn::make('endpoint')
@@ -133,6 +134,7 @@ class WebhookResource extends Resource
         return $schema
             ->components([
                 ToggleButtons::make('type')
+                    ->label(trans('admin/webhook.type'))
                     ->live()
                     ->inline()
                     ->options(WebhookType::class)

@@ -79,6 +79,7 @@ class DatabasesRelationManager extends RelationManager
                 DateTimeColumn::make('created_at')
                     ->label(trans('admin/databasehost.table.created_at')),
             ])
+            ->emptyStateHeading(trans('admin/server.no_databases'))
             ->recordActions([
                 ViewAction::make()
                     ->color('primary'),

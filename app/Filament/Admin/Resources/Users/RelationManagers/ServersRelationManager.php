@@ -89,6 +89,7 @@ class ServersRelationManager extends RelationManager
                     ->label(trans('admin/server.backups'))
                     ->numeric()
                     ->sortable(),
-            ]);
+            ])
+            ->emptyStateHeading(trans('admin/server.no_servers'));
     }
 }

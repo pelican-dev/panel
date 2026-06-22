@@ -99,6 +99,7 @@ return [
     'reset_help' => 'Resetting the daemon token will void any request coming from the old token. This token is used for all sensitive operations on the daemon including server creation and deletion. We suggest changing this token regularly for security.',
 
     'no_nodes' => 'No Nodes',
+    'no_allocations' => 'No Allocations',
     'none' => 'None',
     'cpu_chart' => 'CPU - :cpu% of :max%',
     'memory_chart' => 'Memory - :used of :total',
@@ -122,6 +123,7 @@ return [
         'include_endpoints_hint' => 'Including endpoints will show panel urls within the logs and NOT obscure them.',
         'include_logs' => 'Include Logs',
         'include_logs_hint' => 'Including logs will show recent logs and help track down possible issues.',
+        'log_lines' => 'Log Lines',
         'run_diagnostics' => 'Run Diagnostics',
         'upload_to_pelican' => 'Upload Logs',
         'logs_pulled' => 'Logs Pulled!',

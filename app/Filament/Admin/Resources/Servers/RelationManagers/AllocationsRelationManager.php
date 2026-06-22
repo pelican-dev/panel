@@ -69,6 +69,7 @@ class AllocationsRelationManager extends RelationManager
                     ->trueIcon(TablerIcon::Lock)
                     ->falseIcon(TablerIcon::LockOpen),
             ])
+            ->emptyStateHeading(trans('admin/server.no_allocations'))
             ->recordActions([
                 Action::make('make-primary')
                     ->label(trans('admin/server.make_primary'))

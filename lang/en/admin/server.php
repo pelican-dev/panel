@@ -5,6 +5,7 @@ return [
     'model_label' => 'Server',
     'model_label_plural' => 'Servers',
     'no_servers' => 'No Servers',
+    'no_allocations' => 'No Allocations',
     'create' => 'Create Server',
     'ip_address' => 'IP Address',
     'import_icon' => 'Import Icon',
