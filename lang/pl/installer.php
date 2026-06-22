@@ -110,6 +110,5 @@ return [
         'migration' => 'Nie można uruchomić migracji',
         'create_user' => 'Nie można utworzyć użytkownika administratora.',
     ],
-    'next_step' => 'Następny krok',
     'finish' => 'Zakończ',
 ];

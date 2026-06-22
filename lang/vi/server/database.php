@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title' => 'Cơ sở dữ liệu',
+    'empty' => 'Không có cơ sở dữ liệu',
+    'create_database' => 'Tạo cơ sở dữ liệu',
+    'limit' => 'Đã đạt giới hạn cơ sở dữ liệu',
+    'viewing' => 'Đang xem: :database',
+    'host' => 'Máy chủ',
+    'database' => 'Cơ sở dữ liệu',
+    'username' => 'Tên người dùng',
+    'password' => 'Mật khẩu',
+    'remote' => 'Từ xa',
+    'unlimited' => 'Không giới hạn',
+    'created_at' => 'Tạo lúc',
+    'name' => 'Tên cơ sở dữ liệu',
+    'name_hint' => 'Để trống mục này sẽ tự động tạo ra một tên ngẫu nhiên',
+    'connections_from' => 'Kết nối từ',
+    'max_connections' => 'Kết nối tối đa',
+    'database_host' => 'Máy chủ cơ sở dữ liệu',
+    'database_host_select' => 'Chọn máy chủ cơ sở dữ liệu',
+    'jdbc' => 'Chuỗi kết nối JDBC',
+    'create_notification' => 'Đã tạo :database',
+    'create_notification_fail' => 'Không thể tạo :database',
+    'delete_notification' => 'Đã xóa :database',
+    'delete_notification_fail' => 'Không thể xóa :database',
+];

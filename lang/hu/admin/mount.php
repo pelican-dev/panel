@@ -17,14 +17,19 @@ return [
     'no_mounts' => 'Nincs csatolás',
     'eggs' => 'Egg-ek',
     'nodes' => 'Csomópontok',
+    'user_mountable' => 'Felhasználó által csatolva?',
+    'user_mountable_help' => 'Lehetőséget kellene biztosítani a felhasználóknak arra, hogy ezt a csatlakozást a saját szervereiken be- és kikapcsolhassák?',
     'toggles' => [
         'writable' => 'Írható',
         'read_only' => 'Csak olvasható',
+        'user_mountable' => 'Felhasználó Által Csatolva',
+        'not_user_mountable' => 'Csak Adminisztrátorok Számára',
     ],
     'table' => [
         'name' => 'Név',
         'all_eggs' => 'Minden Egg',
         'all_nodes' => 'Minden csomópont',
         'read_only' => 'Csak olvasható',
+        'user_mountable' => 'Felhasználó Által Csatolva',
     ],
 ];

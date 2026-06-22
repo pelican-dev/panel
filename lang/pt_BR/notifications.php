@@ -6,6 +6,10 @@ return [
     'installation_failed' => 'Instalação do servidor falhou',
     'reinstallation_completed' => 'Reinstalação do servidor concluída',
     'reinstallation_failed' => 'Reinstalação de servidor falhou',
+    'backup_completed' => 'Backup concluído',
+    'backup_failed' => 'Falha no backup',
+    'backup_body' => 'Backup ":name" para o servidor ":server"',
+    'view_backups' => 'Ver backups',
     'failed' => 'Falhou',
     'user_added' => [
         'title' => 'Adicionado ao servidor',

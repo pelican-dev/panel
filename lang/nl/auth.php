@@ -20,5 +20,6 @@ return [
     'password' => 'Wachtwoord is onjuist.',
     'throttle' => 'Te veel inlogpogingen. Probeer het over :seconds seconde(n) opnieuw.',
     '2fa_must_be_enabled' => 'De beheerder heeft vereist dat twee stap verificatie is ingeschakeld voor uw account om Panel te kunnen gebruiken.',
+    'password_login_disabled' => 'Inloggen met een wachtwoord is uitgeschakeld. Gebruik een OAuth provider om in te loggen.',
 
 ];

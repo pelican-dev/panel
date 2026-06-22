@@ -6,6 +6,10 @@ return [
     'installation_failed' => 'Instalacja serwera nie powiodła się',
     'reinstallation_completed' => 'Reinstalacja serwera zakończona pomyślnie',
     'reinstallation_failed' => 'Reinstalacja serwera nie powiodła się',
+    'backup_completed' => 'Kopia zapasowa zakończona',
+    'backup_failed' => 'Nie udało się wykonać kopii zapasowej',
+    'backup_body' => 'Tworzenie kopii zapasowej „:name” dla serwera „:server”',
+    'view_backups' => 'Wyświetl kopie zapasowe',
     'failed' => 'Niepowodzenie',
     'user_added' => [
         'title' => 'Dodano do serwera',

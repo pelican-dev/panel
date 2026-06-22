@@ -64,7 +64,10 @@ return [
     'sidebar' => 'Barra lateral',
     'topbar' => 'Barra superior',
     'mixed' => 'Misto',
+    'redirect_to_admin' => 'Redirecionando para Login do Administrador',
+    'redirect_to_admin_help' => 'Quando ativado, você será redirecionado para a área de administração após fazer login em vez da lista de servidores.',
     'no_oauth' => 'Nenhuma conta vinculada',
     'no_api_keys' => 'Nenhuma chave API',
     'no_ssh_keys' => 'Nenhuma chave SSH',
+    'activity_info' => 'Mostrando os últimos 50 registros de atividades',
 ];

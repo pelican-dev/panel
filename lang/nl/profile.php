@@ -64,7 +64,10 @@ return [
     'sidebar' => 'Balk aan de zijkant',
     'topbar' => 'Balk bovenin',
     'mixed' => 'Gemengd',
+    'redirect_to_admin' => 'Redirect naar administrator bij inloggen',
+    'redirect_to_admin_help' => 'Wanneer ingeschakeld, wordt u doorgestuurd naar de administrator omgeving na het inloggen in plaats van de serverlijst.',
     'no_oauth' => 'Geen accounts gekoppeld',
     'no_api_keys' => 'Geen API-sleutels',
     'no_ssh_keys' => 'Geen SSH-sleutels',
+    'activity_info' => 'Toont de laatste 50 activiteiten logs',
 ];

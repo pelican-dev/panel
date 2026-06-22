@@ -17,14 +17,19 @@ return [
     'no_mounts' => 'Aucune montagne',
     'eggs' => 'Œufs',
     'nodes' => 'Nœuds',
+    'user_mountable' => 'Montage utilisateurs ?',
+    'user_mountable_help' => 'Les utilisateurs doivent-ils pouvoir activer/désactiver ce montage pour leurs serveurs ?',
     'toggles' => [
         'writable' => 'Écriture autorisée',
         'read_only' => 'Lecture seule',
+        'user_mountable' => 'Montage utilisateur',
+        'not_user_mountable' => 'Administrateur uniquement',
     ],
     'table' => [
         'name' => 'Nom',
         'all_eggs' => 'Tous les eggs',
         'all_nodes' => 'Tous les nœuds',
         'read_only' => 'Lecture seule',
+        'user_mountable' => 'Montage utilisateur',
     ],
 ];

@@ -7,7 +7,7 @@ return [
     'whitelist_help' => 'Las claves API pueden ser restringidas para funcionar solamente desde direcciones IPv4 específicas. Introduce cada dirección en una línea nueva.',
     'whitelist_placeholder' => 'Ejemplo: 127.0.0.1 o 192.168.1.1',
     'description' => 'Descripción',
-    'description_help' => 'Una breve descripción de para qué es esta clave.',
+    'description_help' => 'Breve descripción de para qué sirve esta clave.',
     'nav_title' => 'Claves API',
     'model_label' => 'Clave API de la aplicación',
     'model_label_plural' => 'Claves API de la aplicación',
@@ -20,8 +20,10 @@ return [
         'never_used' => 'Nunca usado',
     ],
     'permissions' => [
+        'all' => 'Establecer todos los permisos',
+        'all_description' => 'Establecer rápidamente todos los permisos abajo al mismo nivel.',
         'none' => 'Ninguno',
-        'read' => 'Leer',
+        'read' => 'Lectura',
         'read_write' => 'Lectura y escritura',
     ],
 ];

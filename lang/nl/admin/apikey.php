@@ -20,6 +20,8 @@ return [
         'never_used' => 'Nooit gebruikt',
     ],
     'permissions' => [
+        'all' => 'Voer alle rechten in',
+        'all_description' => 'Voer snel alle onderstaande rechten op hetzelfde niveau in.',
         'none' => 'Geen',
         'read' => 'Lezen',
         'read_write' => 'Lezen & schrijven',

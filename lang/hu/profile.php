@@ -64,7 +64,10 @@ return [
     'sidebar' => 'Oldalsáv',
     'topbar' => 'Felső sáv',
     'mixed' => 'Vegyes',
+    'redirect_to_admin' => 'Bejelentkezéskor átírányitás az admin felületre',
+    'redirect_to_admin_help' => 'Bekapcsolás után a bejelentkezést követően a szerverlista helyett az admin felületre irányít át.',
     'no_oauth' => 'Nincsenek összekapcsolt fiókok',
     'no_api_keys' => 'Nincsenek API-kulcsok',
     'no_ssh_keys' => 'Nincsenek SSH kulcsok',
+    'activity_info' => 'Az utolsó 50 aktivitás mutatása',
 ];

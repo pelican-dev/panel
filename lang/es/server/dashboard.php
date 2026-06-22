@@ -8,7 +8,7 @@ return [
         'other' => 'Servidores de otros',
         'all' => 'Todos los servidores',
     ],
-    'empty_own' => '¡No posees ningún servidor!',
+    'empty_own' => '¡No tienes ningún servidor!',
     'empty_other' => '¡No tienes acceso a ningún servidor!',
 
     'status' => 'Estado',
@@ -17,7 +17,7 @@ return [
     'usage_limit' => 'Límite de uso: :resource',
 
     'cpu' => 'CPU',
-    'memory' => 'Memoria RAM',
+    'memory' => 'Memoria',
     'disk' => 'Almacenamiento',
     'network' => 'Red',
     'none' => 'Ninguno',

@@ -64,7 +64,10 @@ return [
     'sidebar' => 'Barre latérale',
     'topbar' => 'Barre d\'entête',
     'mixed' => 'Mixte',
+    'redirect_to_admin' => 'Rediriger vers la zone d\'admin à la connexion',
+    'redirect_to_admin_help' => 'Lorsqu\'elle est activée, vous serez redirigé vers la zone d\'admin après la connexion, au lieu de la liste des serveurs.',
     'no_oauth' => 'Aucun compte lié',
     'no_api_keys' => 'Aucunes clés API',
     'no_ssh_keys' => 'Aucunes clés SSH',
+    'activity_info' => 'Affichage des 50 derniers logs d\'activité',
 ];

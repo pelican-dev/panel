@@ -45,15 +45,25 @@ return [
     ],
 
     'notifications' => [
+        'goto_plugins' => 'Gehe zu Plugins',
+        'background_info' => 'Dieser Prozess kann einige Sekunden dauern. Sie werden benachrichtigt, sobald er beendet ist.',
+
+        'install_started' => 'Plugin Installation im Hintergrund gestartet',
         'installed' => 'Plugin installiert',
         'install_error' => 'Plugin konnte nicht installiert werden',
+
+        'uninstall_started' => 'Plugin Deinstallation im Hintergrund gestartet',
         'uninstalled' => 'Plugin deinstalliert',
         'uninstall_error' => 'Plugin konnte nicht deinstalliert werden',
-        'deleted' => 'Plugin gelöscht',
+
+        'update_started' => 'Plugin Update im Hintergrund gestartet',
         'updated' => 'Plugin aktualisiert',
         'update_error' => 'Plugin konnte nicht aktualisiert werden',
+
         'enabled' => 'Plugin aktiviert',
         'disabled' => 'Plugin deaktiviert',
+        'deleted' => 'Plugin gelöscht',
+
         'imported' => 'Plugin importiert',
         'import_exists' => 'Ein Plugin mit dieser ID existiert bereits',
         'import_failed' => 'Plugin konnte nicht aktualisiert werden',

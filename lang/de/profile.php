@@ -64,7 +64,10 @@ return [
     'sidebar' => 'Seitenleiste',
     'topbar' => 'Kopfzeile',
     'mixed' => 'Gemischt',
+    'redirect_to_admin' => 'Zur Admin Oberfläche nach dem Login weiterleiten.',
+    'redirect_to_admin_help' => 'Wenn diese Option aktiviert ist, werden Sie nach der Anmeldung zum Admin-Bereich weitergeleitet, anstatt zur Serverliste.',
     'no_oauth' => 'Keine Konten verknüpft',
     'no_api_keys' => 'Keine API-Schlüssel',
     'no_ssh_keys' => 'Keine SSH-Schlüssel',
+    'activity_info' => 'Zeige die letzten 50 Aktivitätsprotokolle',
 ];
