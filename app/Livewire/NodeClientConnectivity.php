@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\NodeJwtScope;
 use App\Enums\TablerIcon;
 use App\Models\Node;
 use App\Services\Nodes\NodeJWTService;
@@ -47,6 +48,7 @@ class NodeClientConnectivity extends Component
 
             $wsToken = $this->nodeJWTService
                 ->setExpiresAt(now()->addMinute()->toImmutable())
+                ->setScopes(NodeJwtScope::Websocket)
                 ->setUser($user)
                 ->setClaims([
                     'server_uuid' => $server->uuid,

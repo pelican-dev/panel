@@ -86,11 +86,13 @@ class AllocationsRelationManager extends RelationManager
                     ->label(trans('admin/node.table.ip'))
                     ->disabled(fn () => $this->isReadOnly()),
             ])
+            ->emptyStateHeading(trans('admin/node.no_allocations'))
             ->toolbarActions([
                 DeleteBulkAction::make()
                     ->authorize(fn () => user()?->can('update', $this->getOwnerRecord()))
                     ->hidden(fn () => $this->isReadOnly()),
                 Action::make('create new allocation')
+                    ->label(trans('admin/node.create_allocation'))
                     ->tooltip(trans('admin/node.create_allocation'))
                     ->icon(TablerIcon::WorldPlus)
                     ->visible(fn () => !$this->isReadOnly())

@@ -93,9 +93,10 @@ class ScheduleResource extends Resource
                     ->required()
                     ->default(1),
                 ToggleButtons::make('status')
+                    ->label(trans('server/schedule.status'))
                     ->enum(ScheduleStatus::class)
                     ->formatStateUsing(fn (?Schedule $schedule) => $schedule?->status->value ?? 'new')
-                    ->options(fn (?Schedule $schedule) => [$schedule?->status->value ?? 'new' => $schedule?->status->getLabel() ?? 'New'])
+                    ->options(fn (?Schedule $schedule) => [$schedule?->status->value ?? 'new' => $schedule?->status->getLabel() ?? trans('server/schedule.schedule_status.new')])
                     ->visibleOn('view'),
                 Section::make(trans('server/schedule.cron'))
                     ->description(function (Get $get) {

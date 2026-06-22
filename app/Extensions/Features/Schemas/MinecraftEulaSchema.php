@@ -32,9 +32,9 @@ class MinecraftEulaSchema implements FeatureSchemaInterface
     {
         return Action::make($this->getId())
             ->requiresConfirmation()
-            ->modalHeading('Minecraft EULA')
-            ->modalDescription(new HtmlString(Blade::render('By pressing "I Accept" below you are indicating your agreement to the <x-filament::link href="https://minecraft.net/eula" target="_blank">Minecraft EULA </x-filament::link>.')))
-            ->modalSubmitActionLabel('I Accept')
+            ->modalHeading(trans('server/feature.eula.heading'))
+            ->modalDescription(new HtmlString(Blade::render(trans('server/feature.eula.description'))))
+            ->modalSubmitActionLabel(trans('server/feature.eula.accept'))
             ->action(function (DaemonFileRepository $fileRepository, DaemonServerRepository $serverRepository) {
                 try {
                     /** @var Server $server */
@@ -45,13 +45,13 @@ class MinecraftEulaSchema implements FeatureSchemaInterface
                     $serverRepository->setServer($server)->power('restart');
 
                     Notification::make()
-                        ->title('Minecraft EULA accepted')
-                        ->body('Server will restart now.')
+                        ->title(trans('server/feature.eula.accepted'))
+                        ->body(trans('server/feature.restart_now'))
                         ->success()
                         ->send();
                 } catch (Exception $exception) {
                     Notification::make()
-                        ->title('Could not accept Minecraft EULA')
+                        ->title(trans('server/feature.eula.failed'))
                         ->body($exception->getMessage())
                         ->danger()
                         ->send();

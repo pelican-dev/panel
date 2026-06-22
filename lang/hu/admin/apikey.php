@@ -20,6 +20,8 @@ return [
         'never_used' => 'Sosem használt',
     ],
     'permissions' => [
+        'all' => 'Összes jogosultság beállítása',
+        'all_description' => 'Az összes alábbi jogosultásg gyors beálítása azonos szintre.',
         'none' => 'Nincs',
         'read' => 'Olvasás',
         'read_write' => 'Olvasás és írás',

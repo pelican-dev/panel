@@ -26,7 +26,8 @@ class ServersRelationManager extends RelationManager
             ->searchable(false)
             ->heading(trans('admin/user.servers'))
             ->headerActions([
-                Action::make('toggleSuspend')
+                Action::make('toggle_suspend')
+                    ->authorize(fn () => user()?->can('update server'))
                     ->hidden(fn () => $user->servers()
                         ->whereNot('status', ServerState::Suspended)
                         ->orWhereNull('status')
@@ -38,7 +39,8 @@ class ServersRelationManager extends RelationManager
                         collect($user->servers)->filter(fn ($server) => !$server->isSuspended())
                             ->each(fn ($server) => $suspensionService->handle($server, SuspendAction::Suspend));
                     }),
-                Action::make('toggleUnsuspend')
+                Action::make('toggle_unsuspend')
+                    ->authorize(fn () => user()?->can('update server'))
                     ->hidden(fn () => $user->servers()->where('status', ServerState::Suspended)->count() === 0)
                     ->label(trans('admin/server.unsuspend_all'))
                     ->color('primary')
@@ -87,6 +89,7 @@ class ServersRelationManager extends RelationManager
                     ->label(trans('admin/server.backups'))
                     ->numeric()
                     ->sortable(),
-            ]);
+            ])
+            ->emptyStateHeading(trans('admin/server.no_servers'));
     }
 }

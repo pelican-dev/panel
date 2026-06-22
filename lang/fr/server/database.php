@@ -11,6 +11,7 @@ return [
     'username' => 'Nom d\'utilisateur',
     'password' => 'Mot de passe',
     'remote' => 'Distant',
+    'unlimited' => 'Illimité',
     'created_at' => 'Créé à',
     'name' => 'Nom de la base de donnée',
     'name_hint' => 'Laisser vide va générer un nom aléatoire',

@@ -705,6 +705,7 @@ class NodeResource extends Resource
                         ->disabled(fn (Get $get) => $get('pulled'))
                         ->headerActions([
                             Action::make('pull')
+                                ->label(trans('admin/node.diagnostics.pull'))
                                 ->tooltip(trans('admin/node.diagnostics.pull'))
                                 ->icon(TablerIcon::CloudDownload)
                                 ->hidden(fn (Get $get) => $get('pulled'))
@@ -804,17 +805,20 @@ class NodeResource extends Resource
                         ])
                         ->schema([
                             ToggleButtons::make('include_endpoints')
+                                ->label(trans('admin/node.diagnostics.include_endpoints'))
                                 ->hintIcon(TablerIcon::QuestionMark)->inline()
                                 ->hintIconTooltip(trans('admin/node.diagnostics.include_endpoints_hint'))
                                 ->formatStateUsing(fn () => 1)
                                 ->boolean(),
                             ToggleButtons::make('include_logs')
+                                ->label(trans('admin/node.diagnostics.include_logs'))
                                 ->live()
                                 ->hintIcon(TablerIcon::QuestionMark)->inline()
                                 ->hintIconTooltip(trans('admin/node.diagnostics.include_logs_hint'))
                                 ->formatStateUsing(fn () => 1)
                                 ->boolean(),
                             Slider::make('log_lines')
+                                ->label(trans('admin/node.diagnostics.log_lines'))
                                 ->columnSpan(2)
                                 ->hiddenLabel()
                                 ->live()

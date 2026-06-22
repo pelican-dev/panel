@@ -34,13 +34,7 @@ class ProcessWebhook implements ShouldQueue
             $data = reset($data);
         }
 
-        if (is_object($data)) {
-            $data = get_object_vars($data);
-        }
-
-        if (is_string($data)) {
-            $data = Arr::wrap(json_decode($data, true) ?? []);
-        }
+        $data = $this->normalizeData($data);
         $data['event'] = $this->webhookConfiguration->transformClassName($this->eventName);
 
         if ($this->webhookConfiguration->type === WebhookType::Discord) {
@@ -81,5 +75,19 @@ class ProcessWebhook implements ShouldQueue
             'event' => $this->eventName,
             'endpoint' => $this->webhookConfiguration->endpoint,
         ]);
+    }
+
+    /** @return array<mixed> */
+    private function normalizeData(mixed $data): array
+    {
+        if (is_string($data)) {
+            return Arr::wrap(json_decode($data, true) ?? []);
+        }
+
+        if (is_object($data)) {
+            return Arr::wrap($data->toArray());
+        }
+
+        return Arr::wrap($data);
     }
 }

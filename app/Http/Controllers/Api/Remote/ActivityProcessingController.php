@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Remote;
 
+use App\Events\ActivityLogged;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Remote\ActivityEventRequest;
 use App\Models\ActivityLog;
@@ -11,6 +12,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Exception;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 
 class ActivityProcessingController extends Controller
@@ -77,6 +79,7 @@ class ActivityProcessingController extends Controller
                     'subject_id' => $server->id,
                     'subject_type' => $server->getMorphClass(),
                 ]);
+                Event::dispatch(new ActivityLogged($activityLog));
             }
         }
     }

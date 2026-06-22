@@ -59,7 +59,7 @@ return [
             'fail' => 'La sauvegarde <b>:name</b> a échoué',
             'lock' => 'La sauvegarde <b>:name</b> a été verrouillée',
             'unlock' => 'La sauvegarde <b>:name</b> a été déverrouillée',
-            'rename' => 'Sauvegarde renommée de "<b>:old_name</b>" en "<b>:new_name</b>',
+            'rename' => 'Sauvegarde renommée de "<b>:old_name</b>" en "<b>:new_name</b>":',
         ],
         'database' => [
             'create' => 'Nouvelle base de données créée <b>:name</b>',
@@ -119,6 +119,9 @@ return [
             'create' => 'Ajout de <b>:email</b> en tant que sous-utilisateur',
             'update' => 'Modification des permissions du sous-utilisateur <b>:email</b>',
             'delete' => 'Suppression du sous-utilisateur <b>:email</b>',
+        ],
+        'mount' => [
+            'update' => 'Les montages du serveur ont été mis à jour',
         ],
         'crashed' => 'Le serveur a planté',
     ],

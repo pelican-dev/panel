@@ -17,14 +17,19 @@ return [
     'no_mounts' => 'Fără montări',
     'eggs' => 'Ouă',
     'nodes' => 'Noduri',
+    'user_mountable' => 'Poate fi montat de către utilizator?',
+    'user_mountable_help' => 'Utilizatorii ar trebui să poată comuta această montare pe pornit sau oprit pentru serverele lor?',
     'toggles' => [
         'writable' => 'Care poate fi scris',
         'read_only' => 'Doar Citire',
+        'user_mountable' => 'Poate fi montat de către utilizator',
+        'not_user_mountable' => 'Numai pentru administratori',
     ],
     'table' => [
         'name' => 'Nume',
         'all_eggs' => 'Toate ouăle',
         'all_nodes' => 'Toate Nodurile',
         'read_only' => 'Doar Citire',
+        'user_mountable' => 'Poate fi montat de către utilizator',
     ],
 ];
