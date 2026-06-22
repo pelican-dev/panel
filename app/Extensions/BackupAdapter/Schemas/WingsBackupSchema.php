@@ -2,6 +2,7 @@
 
 namespace App\Extensions\BackupAdapter\Schemas;
 
+use App\Enums\NodeJwtScope;
 use App\Models\Backup;
 use App\Models\User;
 use App\Repositories\Daemon\DaemonBackupRepository;
@@ -44,6 +45,7 @@ final class WingsBackupSchema extends BackupAdapterSchema
     {
         $token = $this->jwtService
             ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
+            ->setScopes(NodeJwtScope::BackupDownload)
             ->setUser($user)
             ->setClaims([
                 'backup_uuid' => $backup->uuid,
