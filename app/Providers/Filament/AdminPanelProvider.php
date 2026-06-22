@@ -7,6 +7,7 @@ use App\Filament\Admin\Pages\ListLogs;
 use App\Filament\Admin\Pages\ViewLogs;
 use App\Services\Helpers\PluginService;
 use Boquizo\FilamentLogViewer\FilamentLogViewerPlugin;
+use CharrafiMed\GlobalSearchModal\GlobalSearchModalPlugin;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
@@ -46,6 +47,7 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationLabel(fn () => trans('admin/log.navigation.panel_logs'))
                     ->navigationGroup(fn () => trans('admin/dashboard.advanced'))
                     ->navigationIcon(TablerIcon::FileInfo),
+                GlobalSearchModalPlugin::make(),
             ]);
 
         /** @var PluginService $pluginService */

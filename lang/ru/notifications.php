@@ -6,6 +6,10 @@ return [
     'installation_failed' => 'Установка сервера не удалась',
     'reinstallation_completed' => 'Переустановка сервера завершена',
     'reinstallation_failed' => 'Переустановка сервера не удалась',
+    'backup_completed' => 'Создание резервной копии завершено',
+    'backup_failed' => 'Ошибка резервного копирования',
+    'backup_body' => 'Резервная копия ":name" для сервера ":server"',
+    'view_backups' => 'Просмотреть резервные копии',
     'failed' => 'Не удалось',
     'user_added' => [
         'title' => 'Добавлен на сервер',

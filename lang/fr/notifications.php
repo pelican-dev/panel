@@ -6,6 +6,10 @@ return [
     'installation_failed' => 'Échec de l\'installation du serveur',
     'reinstallation_completed' => 'Réinstallation du serveur terminée',
     'reinstallation_failed' => 'Échec de la réinstallation du serveur',
+    'backup_completed' => 'Sauvegarde terminée',
+    'backup_failed' => 'Échec de sauvegarde',
+    'backup_body' => 'Sauvegarde de ":name" sur le serveur ":server"',
+    'view_backups' => 'Afficher les sauvegardes',
     'failed' => 'Échec',
     'user_added' => [
         'title' => 'Ajouté au serveur',

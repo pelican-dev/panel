@@ -1,0 +1,32 @@
+name: Upload Crowdin Sources
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'lang/en/**'
+      - 'crowdin.yml'
+  workflow_dispatch:
+
+jobs:
+  upload-sources:
+    name: Upload Sources to Crowdin
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Upload Sources to Crowdin
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: true
+          upload_translations: false
+          download_translations: false
+          crowdin_branch_name: main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}

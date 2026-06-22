@@ -60,5 +60,11 @@ return [
     ],
     'server' => [
         'marked_as_failed' => 'This server has not yet completed its installation process, please try again later.',
+        'file_too_large' => 'The file you are attempting to open is too large to view in the file editor.',
+        'state_conflict' => 'This server is currently in an unsupported state, please try again later.',
+        'suspended' => 'This server is currently suspended and the functionality requested is unavailable.',
+        'maintenance' => 'The node of this server is currently under maintenance and the functionality requested is unavailable.',
+        'restoring_backup' => 'This server is currently restoring from a backup, please try again later.',
+        'transferring' => 'This server is currently being transferred to a new machine, please try again later.',
     ],
 ];

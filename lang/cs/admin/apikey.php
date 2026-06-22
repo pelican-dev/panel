@@ -20,6 +20,8 @@ return [
         'never_used' => 'Nikdy nepoužito',
     ],
     'permissions' => [
+        'all' => 'Nastavit všechna oprávnění',
+        'all_description' => 'Rychle nastavit všechna níže uvedená oprávnění na stejnou úroveň.',
         'none' => 'Žádný',
         'read' => 'Přečteno',
         'read_write' => 'Čtení / zápis',

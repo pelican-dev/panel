@@ -131,7 +131,7 @@ class ListServers extends ListRecords
             ->contentGrid($usingGrid ? ['default' => 1, 'md' => 2] : null)
             ->emptyStateIcon(TablerIcon::BrandDocker)
             ->emptyStateDescription('')
-            ->emptyStateHeading(fn () => $this->activeTab === 'my' ? 'You don\'t own any servers!' : 'You don\'t have access to any servers!')
+            ->emptyStateHeading(fn () => $this->activeTab === 'my' ? trans('server/dashboard.empty_own') : trans('server/dashboard.empty_other'))
             ->persistFiltersInSession()
             ->filters([
                 SelectFilter::make('egg')

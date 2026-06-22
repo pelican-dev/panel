@@ -1,0 +1,54 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PANEL",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": "https://raw.githubusercontent.com/pelican-dev/panel/refs/heads/main/tests/Unit/Console/Command/Egg/egg-ptdlv2.json"
+    },
+    "exported_at": "2026-06-01T01:02:03+00:00",
+    "name": "Egg Example",
+    "author": "example@example.com",
+    "uuid": "21f1c702-953a-45ca-ae58-c205e8a4ea7e",
+    "description": "Egg for test purposes",
+    "tags": [
+        "test"
+    ],
+    "features": [
+        "eula",
+        "java_version",
+        "pid_limit"
+    ],
+    "docker_images": {
+        "ghcr.io\/pelican-eggs\/yolks:java_8": "ghcr.io\/pelican-eggs\/yolks:java_8",
+        "ghcr.io\/pelican-eggs\/yolks:java_11": "ghcr.io\/pelican-eggs\/yolks:java_11",
+        "ghcr.io\/pelican-eggs\/yolks:java_16": "ghcr.io\/pelican-eggs\/yolks:java_16",
+        "ghcr.io\/pelican-eggs\/yolks:java_17": "ghcr.io\/pelican-eggs\/yolks:java_17"
+    },
+    "file_denylist": [],
+    "startup": "java -Xms128M -Xmx{{SERVER_MEMORY}}M -jar minecraft.jar",
+    "config": {
+        "files": "{\r\n    \"server.properties\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"server-ip\": \"0.0.0.0\",\r\n            \"server-port\": \"{{server.build.default.port}}\"\r\n        }\r\n    }\r\n}",
+        "startup": "{\r\n    \"done\": \")! For help, type \"\r\n}",
+        "logs": "{}",
+        "stop": "stop"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/ash\r\necho test some escaped backslashes (\/), then proper backslashes (/)",
+            "container": "ghcr.io\/pelican-eggs\/installers:alpine",
+            "entrypoint": "ash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Modpack Version",
+            "description": "",
+            "env_variable": "MODPACK_VERSION",
+            "default_value": "1.0.0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:20",
+            "sort": null,
+            "field_type": "text"
+        }
+    ]
+}

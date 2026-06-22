@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Enums\NodeJwtScope;
 use App\Enums\SubuserPermission;
 use App\Exceptions\Http\HttpForbiddenException;
 use App\Http\Controllers\Api\Client\ClientApiController;
@@ -58,6 +59,7 @@ class WebsocketController extends ClientApiController
 
         $token = $this->jwtService
             ->setExpiresAt(CarbonImmutable::now()->addMinutes(10))
+            ->setScopes(NodeJwtScope::Websocket)
             ->setUser($request->user())
             ->setClaims([
                 'server_uuid' => $server->uuid,

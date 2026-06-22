@@ -11,6 +11,7 @@ return [
     'username' => 'Nazwa użytkownika',
     'password' => 'Hasło',
     'remote' => 'Zdalne',
+    'unlimited' => 'Nieograniczone',
     'created_at' => 'Utworzono:',
     'name' => 'Nazwa bazy danych',
     'name_hint' => 'Pozostawienie pustego pola spowoduje automatyczne wygenerowanie losowej nazwy',

@@ -83,10 +83,12 @@ class AllocationsRelationManager extends RelationManager
                     ->searchable()
                     ->label(trans('admin/node.table.ip')),
             ])
+            ->emptyStateHeading(trans('admin/node.no_allocations'))
             ->toolbarActions([
                 DeleteBulkAction::make()
                     ->authorize(fn () => user()?->can('update', $this->getOwnerRecord())),
                 Action::make('create new allocation')
+                    ->label(trans('admin/node.create_allocation'))
                     ->tooltip(trans('admin/node.create_allocation'))
                     ->icon(TablerIcon::WorldPlus)
                     ->schema(fn () => [

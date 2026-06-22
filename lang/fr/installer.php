@@ -109,6 +109,5 @@ return [
         'migration' => 'Impossible d\'exécuter les migrations',
         'create_user' => 'Impossible de créer l\'utilisateur admin',
     ],
-    'next_step' => 'Etape suivante',
     'finish' => 'Terminer',
 ];

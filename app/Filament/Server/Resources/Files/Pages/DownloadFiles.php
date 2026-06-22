@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\Files\Pages;
 
+use App\Enums\NodeJwtScope;
 use App\Enums\SubuserPermission;
 use App\Facades\Activity;
 use App\Filament\Server\Resources\Files\FileResource;
@@ -39,6 +40,7 @@ class DownloadFiles extends Page
 
         $token = $this->nodeJWTService
             ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
+            ->setScopes(NodeJwtScope::FileDownload)
             ->setUser(user())
             ->setClaims([
                 'file_path' => rawurldecode($path),

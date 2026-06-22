@@ -23,6 +23,6 @@ return [
     'none' => '無',
     'loading' => '載入中...',
 
-    'power_actions' => '電源動作',
-    'power_action_sent' => ':action 已傳送至 :name',
+    'power_actions' => '電源操作',
+    'power_action_sent' => '已向 :name 傳送 :action',
 ];

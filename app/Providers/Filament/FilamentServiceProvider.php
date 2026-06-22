@@ -59,9 +59,15 @@ class FilamentServiceProvider extends ServiceProvider
             fn () => Blade::render('@livewire(\App\Livewire\AlertBannerContainer::class)'),
         );
 
+        $appName = config('app.name', 'Pelican');
+
+        if (strtolower($appName) !== 'pelican') {
+            $appName = "{$appName} - Powered by Pelican";
+        }
+
         FilamentView::registerRenderHook(
             PanelsRenderHook::FOOTER,
-            fn () => Blade::render('filament.layouts.footer'),
+            fn () => Blade::render('filament.layouts.footer', ['appName' => $appName]),
         );
 
         FilamentView::registerRenderHook(

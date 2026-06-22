@@ -43,12 +43,12 @@ enum ResourceLimit: string
     public function limit(): Limit
     {
         return match ($this) {
-            self::Websocket => Limit::perMinute(5),
-            self::BackupRestore => Limit::perMinutes(15, 3),
-            self::DatabaseCreate => Limit::perMinute(2),
-            self::SubuserCreate => Limit::perMinutes(15, 10),
-            self::FilePull => Limit::perMinutes(10, 5),
-            default => Limit::perMinute(2),
+            self::Websocket => Limit::perMinutes(config('http.rate_limit.websocket_period'), config('http.rate_limit.websocket')),
+            self::BackupRestore => Limit::perMinutes(config('http.rate_limit.backup_restore_period'), config('http.rate_limit.backup_restore')),
+            self::DatabaseCreate => Limit::perMinutes(config('http.rate_limit.database_create_period'), config('http.rate_limit.database_create')),
+            self::SubuserCreate => Limit::perMinutes(config('http.rate_limit.subuser_create_period'), config('http.rate_limit.subuser_create')),
+            self::FilePull => Limit::perMinutes(config('http.rate_limit.file_pull_period'), config('http.rate_limit.file_pull')),
+            default => Limit::perMinutes(config('http.rate_limit.default_period'), config('http.rate_limit.default')),
         };
     }
 

@@ -303,7 +303,11 @@ class EditEgg extends EditRecord
                 ->tooltip(fn (Egg $egg): string => $egg->servers()->count() <= 0 ? trans('filament-actions::delete.single.label') : trans('admin/egg.in_use')),
             ExportEggAction::make(),
             ImportEggAction::make()
-                ->multiple(false),
+                ->multiple(false)
+                ->after(function () {
+                    $this->record->refresh();
+                    $this->refreshForm();
+                }),
             Action::make('save')
                 ->hiddenLabel()
                 ->action('save')
@@ -316,6 +320,8 @@ class EditEgg extends EditRecord
     public function refreshForm(): void
     {
         $this->fillForm();
+
+        $this->dispatch('setContent', content: $this->record->script_install ?? '');
     }
 
     protected function getFormActions(): array

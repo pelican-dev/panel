@@ -41,15 +41,15 @@ class JavaVersionSchema implements FeatureSchemaInterface
 
         return Action::make($this->getId())
             ->requiresConfirmation()
-            ->modalHeading('Unsupported Java Version')
-            ->modalDescription('This server is currently running an unsupported version of Java and cannot be started.')
-            ->modalSubmitActionLabel('Update Docker Image')
+            ->modalHeading(trans('server/feature.java_version.heading'))
+            ->modalDescription(trans('server/feature.java_version.description'))
+            ->modalSubmitActionLabel(trans('server/feature.java_version.submit'))
             ->disabledSchema(fn () => !user()?->can(SubuserPermission::StartupDockerImage, $server))
             ->schema([
                 TextEntry::make('java')
-                    ->label('Please select a supported version from the list below to continue starting the server.'),
+                    ->label(trans('server/feature.java_version.select_version')),
                 Select::make('image')
-                    ->label('Docker Image')
+                    ->label(trans('server/feature.java_version.docker_image'))
                     ->disabled(fn () => !in_array($server->image, $server->egg->docker_images))
                     ->options(fn () => collect($server->egg->docker_images)->mapWithKeys(fn ($key, $value) => [$key => $value]))
                     ->selectablePlaceholder(false)
@@ -73,13 +73,13 @@ class JavaVersionSchema implements FeatureSchemaInterface
                     $serverRepository->setServer($server)->power('restart');
 
                     Notification::make()
-                        ->title('Docker image updated')
-                        ->body('Server will restart now.')
+                        ->title(trans('server/feature.java_version.updated'))
+                        ->body(trans('server/feature.restart_now'))
                         ->success()
                         ->send();
                 } catch (Exception $exception) {
                     Notification::make()
-                        ->title('Could not update docker image')
+                        ->title(trans('server/feature.java_version.failed'))
                         ->body($exception->getMessage())
                         ->danger()
                         ->send();
