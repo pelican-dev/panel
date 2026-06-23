@@ -11,6 +11,7 @@ return [
     'username' => 'Gebruikersnaam',
     'password' => 'Wachtwoord',
     'remote' => 'Extern',
+    'unlimited' => 'Onbeperkt',
     'created_at' => 'Aangemaakt op',
     'name' => 'Databasenaam',
     'name_hint' => 'Als u dit leeg laat, wordt er automatisch een willekeurige naam gegenereerd',

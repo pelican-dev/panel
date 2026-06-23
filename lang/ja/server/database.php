@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title' => 'データベース',
+    'empty' => 'データベースがありません',
+    'create_database' => 'データベースを作成',
+    'limit' => 'データベースの上限に達しました',
+    'viewing' => '表示中: :Database',
+    'host' => 'ホスト',
+    'database' => 'データベース',
+    'username' => 'ユーザー名',
+    'password' => 'パスワード',
+    'remote' => 'リモート',
+    'unlimited' => '無制限',
+    'created_at' => '作成日時',
+    'name' => 'データベース名',
+    'name_hint' => '空白の場合は自動でランダムな名前が生成されます',
+    'connections_from' => '接続元',
+    'max_connections' => '最大接続数',
+    'database_host' => 'データベースホスト',
+    'database_host_select' => 'データベースホストを選択',
+    'jdbc' => 'JDBC 接続文字列',
+    'create_notification' => ':database を作成',
+    'create_notification_fail' => ':database の作成に失敗しました',
+    'delete_notification' => ':database を削除しました',
+    'delete_notification_fail' => ':database の削除に失敗しました',
+];

@@ -64,7 +64,13 @@ return [
     'sidebar' => '側邊欄',
     'topbar' => '頂部工具列',
     'mixed' => '混合',
+    'button_style' => '按鈕樣式',
+    'icon' => '圖示',
+    'icon_button' => '圖示按鈕',
+    'redirect_to_admin' => '登入時重新導向至管理員區',
+    'redirect_to_admin_help' => '啟用後，您登入後將被重新導向到管理員區域而不是伺服器清單。',
     'no_oauth' => '沒有已連接的帳號',
     'no_api_keys' => '沒有 API 金鑰',
     'no_ssh_keys' => '沒有 SSH 金鑰',
+    'activity_info' => '顯示最近 50 筆操作日誌',
 ];

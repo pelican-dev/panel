@@ -11,6 +11,7 @@ return [
     'username' => 'Uživatelské jméno',
     'password' => 'Heslo',
     'remote' => 'Vzdálené',
+    'unlimited' => 'Neomezeně',
     'created_at' => 'Vytvořeno v',
     'name' => 'Název databáze',
     'name_hint' => 'Ponecháním tohoto prázdného bude automaticky generováno náhodné jméno',

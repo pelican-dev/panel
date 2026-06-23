@@ -20,5 +20,6 @@ return [
     'password' => 'Das angegebene Passwort ist falsch.',
     'throttle' => 'Zu viele Anmeldeversuche. Bitte versuchen Sie es in :seconds Sekunden erneut.',
     '2fa_must_be_enabled' => 'Der Administrator verlangt, dass die 2-Faktor-Authentifizierung für Deinen Account aktiviert sein muss, damit Du das Panel nutzen kannst.',
+    'password_login_disabled' => 'Passwort Login ist deaktiviert. Bitte verwende einen OAuth Provider.',
 
 ];

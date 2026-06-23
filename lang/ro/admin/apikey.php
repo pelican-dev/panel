@@ -20,6 +20,8 @@ return [
         'never_used' => 'Niciodată utilizat',
     ],
     'permissions' => [
+        'all' => 'Setează toate permisiunile',
+        'all_description' => 'Setează rapid toate permisiunile de mai jos la acelaşi nivel.',
         'none' => 'Niciunul',
         'read' => 'Citește',
         'read_write' => 'Citește și scrie',

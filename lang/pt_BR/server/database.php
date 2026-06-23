@@ -11,6 +11,7 @@ return [
     'username' => 'Nome de Usuário',
     'password' => 'Senha',
     'remote' => 'Remoto',
+    'unlimited' => 'Ilimitado',
     'created_at' => 'Criado em',
     'name' => 'Nome do Banco de Dados',
     'name_hint' => 'Deixar este campo em branco irá gerar um nome aleatório automaticamente',

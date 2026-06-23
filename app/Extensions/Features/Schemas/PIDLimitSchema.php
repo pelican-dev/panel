@@ -5,7 +5,6 @@ namespace App\Extensions\Features\Schemas;
 use App\Enums\TablerIcon;
 use App\Extensions\Features\FeatureSchemaInterface;
 use Filament\Actions\Action;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
 class PIDLimitSchema implements FeatureSchemaInterface
@@ -33,35 +32,9 @@ class PIDLimitSchema implements FeatureSchemaInterface
         return Action::make($this->getId())
             ->requiresConfirmation()
             ->icon(TablerIcon::AlertTriangle)
-            ->modalHeading(fn () => user()?->isAdmin() ? 'Memory or process limit reached...' : 'Possible resource limit reached...')
-            ->modalDescription(new HtmlString(Blade::render(
-                user()?->isAdmin() ? <<<'HTML'
-                    <p>
-                        This server has reached the maximum process or memory limit.
-                    </p>
-                    <p class="mt-4">
-                        Increasing <code>container_pid_limit</code> in the wings
-                        configuration, <code>config.yml</code>, might help resolve
-                        this issue.
-                    </p>
-                    <p class="mt-4">
-                        <b>Note: Wings must be restarted for the configuration file changes to take effect</b>
-                    </p>
-                HTML
-                :
-                <<<'HTML'
-                    <p>
-                        This server is attempting to use more resources than allocated. Please contact the administrator
-                        and give them the error below.
-                    </p>
-                    <p class="mt-4">
-                        <code>
-                            pthread_create failed, Possibly out of memory or process/resource limits reached
-                        </code>
-                    </p>
-                HTML
-            )))
-            ->modalCancelActionLabel('Close')
+            ->modalHeading(fn () => user()?->isAdmin() ? trans('server/feature.pid_limit.heading_admin') : trans('server/feature.pid_limit.heading_user'))
+            ->modalDescription(new HtmlString(user()?->isAdmin() ? trans('server/feature.pid_limit.description_admin') : trans('server/feature.pid_limit.description_user')))
+            ->modalCancelActionLabel(trans('server/feature.close'))
             ->action(fn () => null);
     }
 }

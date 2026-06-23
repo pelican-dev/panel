@@ -1,17 +1,17 @@
 <?php
 
 return [
-    'title' => '控制台',
+    'title' => '主控台',
     'command' => '輸入指令…',
-    'command_blocked' => '伺服器離線...',
-    'command_blocked_title' => '伺服器離線時無法發送指令',
-    'open_in_admin' => '在管理頁面開啟',
+    'command_blocked' => '伺服器已離線...',
+    'command_blocked_title' => '伺服器處於離線狀態時無法傳送指令',
+    'open_in_admin' => '前往管理頁面',
     'power_actions' => [
         'start' => '啟動',
         'stop' => '關閉',
         'restart' => '重新啟動',
         'kill' => '強制停止',
-        'kill_tooltip' => '這可能導致資料損壞和/或資料遺失！',
+        'kill_tooltip' => '這可能會導致資料損壞和/或資料遺失！',
     ],
     'labels' => [
         'cpu' => 'CPU',
@@ -26,11 +26,11 @@ return [
     'status' => [
         'created' => '已建立',
         'starting' => '啟動中',
-        'running' => '運行中',
+        'running' => '執行中',
         'restarting' => '正在重啟',
         'exited' => '已退出',
         'paused' => '已暫停',
-        'dead' => '死亡',
+        'dead' => '已崩潰',
         'removing' => '移除中',
         'stopping' => '停止中',
         'offline' => '離線',
