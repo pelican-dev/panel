@@ -5,8 +5,22 @@ window.registerPasskey = async function (name) {
 };
 
 window.authenticateWithPasskey = async function () {
-    const response = await Passkeys.verify();
-    if (response?.redirect) {
-        window.location.href = response.redirect;
+    try {
+        const response = await Passkeys.verify();
+        if (response?.redirect) {
+            window.location.href = response.redirect;
+        }
+    } catch (error) {
+        // Dismissing the OS/password-manager prompt isn't a failure worth surfacing.
+        if (error?.name === 'UserCancelledError') {
+            return;
+        }
+
+        // Surface the server's validation message (e.g. "Passkey not recognized")
+        // instead of failing silently in the console.
+        new window.FilamentNotification()
+            .title(error?.message || 'Passkey authentication failed')
+            .danger()
+            .send();
     }
 };
