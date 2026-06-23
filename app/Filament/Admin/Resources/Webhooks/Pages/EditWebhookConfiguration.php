@@ -56,6 +56,8 @@ class EditWebhookConfiguration extends EditRecord
             }
 
             $flags = collect($data['flags'] ?? [])->reduce(fn ($carry, $bit) => $carry | $bit, 0);
+            $selected = data_get($data, 'allowed_mentions', []);
+            $allowedMentions = $selected ? ['parse' => array_values($selected)] : [];
 
             $tmp = collect([
                 'username' => data_get($data, 'username'),
@@ -66,7 +68,7 @@ class EditWebhookConfiguration extends EditRecord
                 'embeds' => $embeds,
                 'thread_name' => data_get($data, 'thread_name'),
                 'flags' => $flags,
-                'allowed_mentions' => data_get($data, 'allowed_mentions', []),
+                'allowed_mentions' => $allowedMentions,
             ])->filter(fn ($key) => !empty($key))->all();
 
             unset($data['username'], $data['avatar_url'], $data['content'], $data['image'], $data['thumbnail'], $data['embeds'], $data['thread_name'], $data['flags'], $data['allowed_mentions']);
@@ -110,7 +112,7 @@ class EditWebhookConfiguration extends EditRecord
                 'embeds' => $embeds,
                 'thread_name' => data_get($data, 'payload.thread_name'),
                 'flags' => $flags,
-                'allowed_mentions' => data_get($data, 'payload.allowed_mentions'),
+                'allowed_mentions' => data_get($data, 'payload.allowed_mentions.parse'),
             ])->filter(fn ($key) => !empty($key))->all();
 
             unset($data['payload'], $data['created_at'], $data['updated_at'], $data['deleted_at']);
