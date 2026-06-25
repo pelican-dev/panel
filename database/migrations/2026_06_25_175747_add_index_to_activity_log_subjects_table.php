@@ -23,12 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        $driver = DB::getDriverName();
-
-        if ($driver === 'pgsql') {
-            return;
-        }
-
         Schema::table('activity_log_subjects', function (Blueprint $table) {
             $table->dropIndex(['activity_log_id']);
         });
