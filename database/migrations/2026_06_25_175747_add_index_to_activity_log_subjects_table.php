@@ -12,7 +12,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-
         Schema::table('activity_log_subjects', function (Blueprint $table) {
             $table->index('activity_log_id');
         });
