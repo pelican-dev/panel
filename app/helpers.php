@@ -50,8 +50,8 @@ if (!function_exists('convert_bytes_to_readable')) {
         $fromBase = log($bytes) / log($conversionUnit);
         $base ??= floor($fromBase);
 
-        if ($base > count($binarySuffixes) - 1) {
-            $base = count($binarySuffixes) - 1;
+        if ($base > count($suffix) - 1) {
+            $base = count($suffix) - 1;
         }
 
         return format_number(pow($conversionUnit, $fromBase - $base), precision: $decimals) . ' ' . $suffix[$base];
