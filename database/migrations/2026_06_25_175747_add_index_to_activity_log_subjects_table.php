@@ -12,12 +12,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $driver = DB::getDriverName();
-
-        // PostgreSQL auto-indexes foreign keys; skip to avoid duplicate index error.
-        if ($driver === 'pgsql') {
-            return;
-        }
 
         Schema::table('activity_log_subjects', function (Blueprint $table) {
             $table->index('activity_log_id');
