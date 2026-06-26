@@ -390,7 +390,7 @@ class EditServer extends EditRecord
                                                 ->label(trans('admin/server.cpu_pin'))->inlineLabel()->inline()
                                                 ->default(0)
                                                 ->afterStateUpdated(fn (Set $set) => $set('threads', []))
-                                                ->formatStateUsing(fn (Get $get) => !empty($get('threads')))
+                                                ->formatStateUsing(fn (Get $get) => filled($get('threads')))
                                                 ->live()
                                                 ->stateCast(new BooleanStateCast(false, true))
                                                 ->options([
