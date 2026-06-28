@@ -20,17 +20,20 @@ class UninstallPlugin implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(public User $user, public Plugin $plugin) {}
+    public function __construct(public User $user, public string $pluginId) {}
 
     public function handle(PluginService $pluginService): void
     {
         try {
-            $pluginService->uninstallPlugin($this->plugin);
+            Plugin::refreshRows();
+            $plugin = Plugin::findOrFail($this->pluginId);
+
+            $pluginService->uninstallPlugin($plugin);
 
             Notification::make()
                 ->success()
                 ->title(trans('admin/plugin.notifications.uninstalled'))
-                ->body($this->plugin->name)
+                ->body($plugin->name)
                 ->actions([
                     Action::make('goto_plugins')
                         ->label(trans('admin/plugin.notifications.goto_plugins'))
@@ -50,6 +53,6 @@ class UninstallPlugin implements ShouldBeUnique, ShouldQueue
 
     public function uniqueId(): string
     {
-        return 'plugin:uninstall:' . $this->plugin->id;
+        return 'plugin:uninstall:' . $this->pluginId;
     }
 }

@@ -124,7 +124,7 @@ class PluginResource extends Resource
                         ->hidden(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled)
                         ->action(function (Plugin $plugin) {
                             try {
-                                InstallPlugin::dispatch(user(), $plugin);
+                                InstallPlugin::dispatch(user(), $plugin->id);
 
                                 Notification::make()
                                     ->success()
@@ -147,7 +147,7 @@ class PluginResource extends Resource
                         ->visible(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled && $plugin->isUpdateAvailable())
                         ->action(function (Plugin $plugin) {
                             try {
-                                UpdatePlugin::dispatch(user(), $plugin);
+                                UpdatePlugin::dispatch(user(), $plugin->id);
 
                                 Notification::make()
                                     ->success()
@@ -223,7 +223,7 @@ class PluginResource extends Resource
                         ->hidden(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled || $plugin->status === PluginStatus::Errored)
                         ->action(function (Plugin $plugin) {
                             try {
-                                UninstallPlugin::dispatch(user(), $plugin);
+                                UninstallPlugin::dispatch(user(), $plugin->id);
 
                                 Notification::make()
                                     ->success()
