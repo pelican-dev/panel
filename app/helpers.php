@@ -37,15 +37,22 @@ if (!function_exists('is_ipv6')) {
 if (!function_exists('convert_bytes_to_readable')) {
     function convert_bytes_to_readable(int $bytes, int $decimals = 2, ?int $base = null): string
     {
-        $conversionUnit = config('panel.use_binary_prefix') ? 1024 : 1000;
-        $suffix = config('panel.use_binary_prefix') ? ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB'] : ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        $binarySuffixes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+        $decimalSuffixes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        $suffix = config('panel.use_binary_prefix') ? $binarySuffixes : $decimalSuffixes;
 
         if ($bytes <= 0) {
             return '0 ' . $suffix[0];
         }
 
+        $conversionUnit = config('panel.use_binary_prefix') ? 1024 : 1000;
+
         $fromBase = log($bytes) / log($conversionUnit);
         $base ??= floor($fromBase);
+
+        if ($base > count($suffix) - 1) {
+            $base = count($suffix) - 1;
+        }
 
         return format_number(pow($conversionUnit, $fromBase - $base), precision: $decimals) . ' ' . $suffix[$base];
     }
