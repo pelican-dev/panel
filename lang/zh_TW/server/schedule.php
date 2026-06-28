@@ -29,8 +29,9 @@ return [
     'only_online_hint' => '僅在伺服器處於執行狀態時執行此排程。',
     'enabled' => '啟用排程？',
     'enabled_hint' => '如果啟用，此排程將會自動執行。',
+    'timezone' => '時區',
 
-    'cron_body' => '請注意：下方的 Cron 排程輸入一律以 UTC 時區為準。',
+    'cron_body' => '請注意：下方的 Cron 排程輸入將會以您上方設定的時區來進行評估。',
     'cron_timezone' => '在您的時區 (:timezone) 下次執行時間：<b> :next_run </b>',
 
     'invalid' => '無效',

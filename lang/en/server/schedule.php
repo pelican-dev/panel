@@ -29,8 +29,9 @@ return [
     'only_online_hint' => 'Only execute this schedule when the server is in a running state.',
     'enabled' => 'Enable Schedule?',
     'enabled_hint' => 'This schedule will be executed automatically if enabled.',
+    'timezone' => 'Timezone',
 
-    'cron_body' => 'Please keep in mind that the cron inputs below always assume UTC.',
+    'cron_body' => 'The cron inputs below are evaluated in the timezone configured above.',
     'cron_timezone' => 'Next run in your timezone (:timezone): <b> :next_run </b>',
 
     'invalid' => 'Invalid',

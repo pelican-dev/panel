@@ -57,7 +57,8 @@ class CreateSchedule extends CreateRecord
                 $data['cron_hour'],
                 $data['cron_day_of_month'],
                 $data['cron_month'],
-                $data['cron_day_of_week']
+                $data['cron_day_of_week'],
+                $data['timezone'] ?? null
             );
         }
 

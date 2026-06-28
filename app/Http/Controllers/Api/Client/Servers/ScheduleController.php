@@ -73,6 +73,7 @@ class ScheduleController extends ClientApiController
             'cron_day_of_month' => $request->input('day_of_month'),
             'cron_hour' => $request->input('hour'),
             'cron_minute' => $request->input('minute'),
+            'timezone' => $request->input('timezone'),
             'is_active' => (bool) $request->input('is_active'),
             'only_when_online' => (bool) $request->input('only_when_online'),
             'next_run_at' => $this->getNextRunAt($request),
@@ -129,6 +130,7 @@ class ScheduleController extends ClientApiController
             'cron_day_of_month' => $request->input('day_of_month'),
             'cron_hour' => $request->input('hour'),
             'cron_minute' => $request->input('minute'),
+            'timezone' => $request->input('timezone'),
             'is_active' => $active,
             'only_when_online' => (bool) $request->input('only_when_online'),
             'next_run_at' => $this->getNextRunAt($request),
@@ -196,7 +198,8 @@ class ScheduleController extends ClientApiController
                 $request->input('hour'),
                 $request->input('day_of_month'),
                 $request->input('month'),
-                $request->input('day_of_week')
+                $request->input('day_of_week'),
+                $request->input('timezone')
             );
         } catch (Exception) {
             throw new DisplayException('The cron data provided does not evaluate to a valid expression.');

@@ -83,6 +83,7 @@ class Schedule extends Model implements Validatable
         'cron_day_of_month',
         'cron_hour',
         'cron_minute',
+        'timezone',
         'is_active',
         'is_processing',
         'only_when_online',
@@ -97,6 +98,7 @@ class Schedule extends Model implements Validatable
         'cron_day_of_month' => '*',
         'cron_hour' => '*',
         'cron_minute' => '*',
+        'timezone' => null,
         'is_active' => true,
         'is_processing' => false,
         'only_when_online' => false,
@@ -111,6 +113,7 @@ class Schedule extends Model implements Validatable
         'cron_day_of_month' => ['required', 'string'],
         'cron_hour' => ['required', 'string'],
         'cron_minute' => ['required', 'string'],
+        'timezone' => ['nullable', 'string'],
         'is_active' => ['boolean'],
         'is_processing' => ['boolean'],
         'only_when_online' => ['boolean'],
@@ -145,7 +148,7 @@ class Schedule extends Model implements Validatable
      */
     public function getNextRunDate(): string
     {
-        return Utilities::getScheduleNextRunDate($this->cron_minute, $this->cron_hour, $this->cron_day_of_month, $this->cron_month, $this->cron_day_of_week)->toDateTimeString();
+        return Utilities::getScheduleNextRunDate($this->cron_minute, $this->cron_hour, $this->cron_day_of_month, $this->cron_month, $this->cron_day_of_week, $this->timezone)->toDateTimeString();
     }
 
     /**

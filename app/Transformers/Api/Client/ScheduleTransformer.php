@@ -37,6 +37,7 @@ class ScheduleTransformer extends BaseClientTransformer
             ],
             'is_active' => $model->is_active,
             'is_processing' => $model->is_processing,
+            'timezone' => $model->timezone,
             'only_when_online' => $model->only_when_online,
             'last_run_at' => $model->last_run_at?->toAtomString(),
             'next_run_at' => $model->next_run_at?->toAtomString(),

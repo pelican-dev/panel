@@ -25,6 +25,7 @@ class StoreScheduleRequest extends ViewScheduleRequest
             'day_of_month' => $rules['cron_day_of_month'],
             'month' => $rules['cron_month'],
             'day_of_week' => $rules['cron_day_of_week'],
+            'timezone' => array_merge(['nullable', 'string'], $rules['timezone'] ?? []),
         ];
     }
 }
