@@ -367,6 +367,38 @@ class EditServer extends EditRecord
                                         ->numeric()
                                         ->minValue(0),
                                 ]),
+                            Grid::make()
+                                ->columns(4)
+                                ->columnSpanFull()
+                                ->schema([
+                                    ToggleButtons::make('io_toggle')
+                                        ->dehydrated()
+                                        ->label(trans('admin/server.io'))->inlineLabel()->inline()
+                                        ->live()
+                                        ->afterStateUpdated(fn (Set $set) => $set('disk', 0))
+                                        ->formatStateUsing(fn (Get $get) => $get('disk') == 0)
+                                        ->stateCast(new BooleanStateCast(false, true))
+                                        ->options([
+                                            1 => trans('admin/server.default'),
+                                            0 => trans('admin/server.custom'),
+                                        ])
+                                        ->colors([
+                                            1 => 'primary',
+                                            0 => 'warning',
+                                        ])
+                                        ->columnSpan(2),
+
+                                    TextInput::make('io')
+                                        ->dehydratedWhenHidden()
+                                        ->hidden(fn (Get $get) => $get('io_toggle'))
+                                        ->label(trans('admin/server.value'))->inlineLabel()
+                                        ->required()
+                                        ->hintIcon(TablerIcon::QuestionMark, trans('admin/server.io_tooltip'))
+                                        ->columnSpan(2)
+                                        ->numeric()
+                                        ->minValue(0)
+                                        ->maxValue(1024),
+                                ]),
                         ]),
 
                     Fieldset::make(trans('admin/server.advanced_limits'))

@@ -152,4 +152,9 @@ return [
     'notes' => 'Notes',
     'no_notes' => 'No Notes',
     'none' => 'None',
+    'io' => 'I/O',
+    'default' => 'Default',
+    'custom' => 'Custom',
+    'value' => 'Value',
+    'io_tooltip' => 'Controls how the server is prioritized for disk access. 1 lowest, 1024 highest.',
 ];
