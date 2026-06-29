@@ -152,7 +152,7 @@ return [
     'notes' => 'Notes',
     'no_notes' => 'No Notes',
     'none' => 'None',
-    'io' => 'I/O',
+    'io' => 'IO',
     'default' => 'Default',
     'custom' => 'Custom',
     'value' => 'Value',
