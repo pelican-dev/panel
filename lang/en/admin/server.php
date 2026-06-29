@@ -156,5 +156,5 @@ return [
     'default' => 'Default',
     'custom' => 'Custom',
     'value' => 'Value',
-    'io_tooltip' => 'Controls how the server is prioritized for disk access. 1 lowest, 1024 highest.',
+    'io_tooltip' => 'The IO performance relative to other running containers on the same node.',
 ];
