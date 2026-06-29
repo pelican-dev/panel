@@ -492,10 +492,6 @@ class EditServer extends EditRecord
                                         ->integer(),
                                 ]),
 
-                            Hidden::make('io')
-                                ->helperText('The IO performance relative to other running containers')
-                                ->label('Block IO Proportion'),
-
                             Grid::make()
                                 ->columns(4)
                                 ->columnSpanFull()

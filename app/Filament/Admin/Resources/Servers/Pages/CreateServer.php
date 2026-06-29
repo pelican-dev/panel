@@ -665,6 +665,7 @@ class CreateServer extends CreateRecord
                                         ->hidden(fn (Get $get) => $get('io_toggle'))
                                         ->label(trans('admin/server.value'))->inlineLabel()
                                         ->required()
+                                        ->default(500)
                                         ->hintIcon(TablerIcon::QuestionMark, trans('admin/server.io_tooltip'))
                                         ->columnSpan(2)
                                         ->numeric()
@@ -683,11 +684,6 @@ class CreateServer extends CreateRecord
                             'lg' => 3,
                         ])
                         ->schema([
-                            Hidden::make('io')
-                                ->helperText('The IO performance relative to other running containers')
-                                ->label('Block IO Proportion')
-                                ->default(500),
-
                             Grid::make()
                                 ->columns(4)
                                 ->columnSpanFull()
