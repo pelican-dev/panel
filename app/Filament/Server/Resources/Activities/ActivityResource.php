@@ -133,7 +133,7 @@ class ActivityResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('event')
-                    ->options(fn (Table $table) => $table->getQuery()->pluck('event', 'event')->unique()->sort())
+                    ->options(fn (Table $table) => $table->getQuery()->select('event')->distinct()->orderBy('event')->pluck('event', 'event'))
                     ->searchable()
                     ->preload(),
             ]);
