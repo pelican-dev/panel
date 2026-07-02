@@ -2,9 +2,9 @@
 
 return [
     'title' => '啟動',
-    'command' => '啟動命令',
-    'notification_startup' => '啟動命令已更新',
-    'notification_startup_body' => '重新啟動伺服器以使用新的啟動命令。',
+    'command' => '啟動指令',
+    'notification_startup' => '啟動指令已更新',
+    'notification_startup_body' => '重新啟動伺服器以使用新的啟動指令。',
     'enable_preview' => '啟用預覽',
     'disable_preview' => '停用預覽',
     'docker_image' => 'Docker 映像檔',

@@ -7,5 +7,5 @@ return [
     'deleted_user' => '已刪除的使用者',
     'system' => '系統',
     'timestamp' => '時間戳記',
-    'metadata' => '中繼資料 (Metadata)',
+    'metadata' => '中繼資料',
 ];
