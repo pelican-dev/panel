@@ -39,10 +39,12 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
@@ -61,9 +63,12 @@ class EditProfile extends BaseEditProfile
 
     protected OAuthService $oauthService;
 
-    public function boot(OAuthService $oauthService): void
+    protected Request $request;
+
+    public function boot(OAuthService $oauthService, Request $request): void
     {
         $this->oauthService = $oauthService;
+        $this->request = $request;
     }
 
     public function getMaxWidth(): Width|string
@@ -234,6 +239,17 @@ class EditProfile extends BaseEditProfile
                     ->map(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider) => Group::make($multiFactorAuthenticationProvider->getManagementSchemaComponents())
                         ->statePath($multiFactorAuthenticationProvider->getId()))
                     ->all()),
+            Tab::make('passkeys')
+                ->label(trans('profile.tabs.passkeys'))
+                ->icon(TablerIcon::Fingerprint)
+                ->hidden(fn () => !$this->request->isSecure())
+                ->schema([
+                    Section::make(trans('profile.tabs.passkeys'))
+                        ->description(trans('passkeys.description'))
+                        ->schema([
+                            View::make('passkeys.livewire.passkeys-tab'),
+                        ]),
+                ]),
             Tab::make('api_keys')
                 ->label(trans('profile.tabs.api_keys'))
                 ->icon(TablerIcon::Key)
