@@ -27,3 +27,21 @@
 @source '../../vendor/gboquizosanchez/filament-log-viewer/resources/views/**/*.blade.php';
 
 @custom-variant dark (.dark &);
+
+
+/*
+ * Fix: leading icons in table text columns (e.g. file/folder name in the
+ * File Manager) render stacked above the label instead of inline.
+ *
+ * Filament's .fi-ta-text-item applies line-clamp-(--line-clamp,none)
+ * (see vendor/filament/tables resources/css/columns/text.css). Even when
+ * no clamp value is set, Tailwind's line-clamp utility still sets
+ * display: -webkit-box with -webkit-box-orient: vertical, which stacks an
+ * inline leading icon above the text instead of next to it. Restore a
+ * horizontal flex layout whenever the item has a leading icon.
+ */
+.fi-ta-text-item:has(> .fi-icon) {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+}
