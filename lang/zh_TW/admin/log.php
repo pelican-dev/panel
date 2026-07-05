@@ -5,7 +5,7 @@ return [
     'total_logs' => '總日誌數',
     'error' => '錯誤',
     'warning' => '警告',
-    'notice' => '注意',
+    'notice' => '通知',
     'info' => '資訊',
     'debug' => '除錯',
     'navigation' => [
@@ -13,7 +13,7 @@ return [
     ],
     'actions' => [
         'upload_logs' => '上傳日誌？',
-        'upload_logs_description' => '這將上傳 :file 至 :url。您確定要執行此操作嗎？',
+        'upload_logs_description' => '這將把 :file 上傳至 :url，您確定要這麼做嗎？',
         'view_logs' => '檢視日誌',
         'log_not_found' => '找不到日誌！',
         'log_not_found_description' => '找不到 :filename 的日誌',

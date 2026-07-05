@@ -13,5 +13,5 @@ return [
     'make' => '設定',
     'delete' => '刪除',
     'locked' => '已鎖定？',
-    'locked_helper' => '鎖定的分配只能由管理員刪除',
+    'locked_helper' => '已鎖定的分配只能由管理員刪除',
 ];
