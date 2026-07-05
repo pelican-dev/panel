@@ -319,8 +319,6 @@ class PluginService
     /** @throws Exception */
     public function updatePlugin(Plugin $plugin): void
     {
-        $pluginId = $plugin->id;
-
         $downloadUrl = $plugin->getDownloadUrlForUpdate();
         if (!$downloadUrl) {
             throw new Exception('No download url found.');
@@ -328,16 +326,12 @@ class PluginService
 
         $this->downloadPluginFromUrl($downloadUrl, true);
 
-        // The download overwrote plugin.json with the new version, so the Sushi
-        // snapshot (and the $plugin instance) is now stale. Rebuild it before
-        // installing, otherwise installPlugin() would use the old version's
-        // composer_packages, name, etc.
         Plugin::refreshRows();
-        $plugin = Plugin::findOrFail($pluginId);
+        $plugin = $plugin->refresh();
 
         $this->installPlugin($plugin, false);
 
-        cache()->forget("plugins.$pluginId.update");
+        cache()->forget("plugins.$plugin->id.update");
     }
 
     /** @throws Exception */

@@ -412,17 +412,6 @@ class Plugin extends Model implements HasPluginSettings
         });
     }
 
-    /**
-     * Force a re-scan of the plugins/ directory the next time this model is touched.
-     *
-     * Sushi builds an in-memory SQLite snapshot from getRows() exactly once per
-     * process, during the model's boot. Long-running queue workers therefore keep
-     * serving a stale snapshot and never see plugin folders added after they
-     * started, which makes install/update/uninstall jobs fail with
-     * ModelNotFoundException. Clearing the booted flag (and the boot callbacks
-     * Sushi registers via whenBooted) plus the cached connection forces Sushi to
-     * re-run configureSushiConnection() -> getRows() on the next access.
-     */
     public static function refreshRows(): void
     {
         unset(static::$booted[static::class], static::$bootedCallbacks[static::class]);
