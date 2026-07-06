@@ -47,13 +47,9 @@ class BackupStatusController extends Controller
         // from messing with backups that they don't own.
         /** @var Server $server */
         $server = $model->server;
-        if ($server->node_id !== $node->id) {
-            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
-        }
+        throw_if($server->node_id !== $node->id, new HttpForbiddenException('Requesting node does not have permission to access this server.'));
 
-        if ($model->is_successful) {
-            throw new BadRequestHttpException('Cannot update the status of a backup that is already marked as completed.');
-        }
+        throw_if($model->is_successful, new BadRequestHttpException('Cannot update the status of a backup that is already marked as completed.'));
 
         $action = $request->boolean('successful') ? 'server:backup.complete' : 'server:backup.fail';
         $log = Activity::event($action)->subject($model, $model->server)->property('name', $model->name);
@@ -101,9 +97,7 @@ class BackupStatusController extends Controller
         $model = Backup::query()->where('uuid', $backup)->firstOrFail();
 
         $node = $request->attributes->get('node');
-        if (!$model->server->node->is($node)) {
-            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
-        }
+        throw_unless($model->server->node->is($node), new HttpForbiddenException('Requesting node does not have permission to access this server.'));
 
         $model->server->update(['status' => null]);
 

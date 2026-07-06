@@ -68,9 +68,7 @@ trait RequestMockHelpers
     protected function buildRequestMock(): void
     {
         $this->request = m::mock($this->requestMockClass);
-        if (!$this->request instanceof Request) {
-            throw new \InvalidArgumentException('Request mock class must be an instance of ' . Request::class . ' when mocked.');
-        }
+        throw_unless($this->request instanceof Request, new \InvalidArgumentException('Request mock class must be an instance of ' . Request::class . ' when mocked.'));
 
         $this->request->attributes = new ParameterBag();
     }

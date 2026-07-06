@@ -265,9 +265,7 @@ class PluginResource extends Resource
 
                             $pluginName = str($file->getClientOriginalName())->basename()->before('.zip')->toString();
 
-                            if (Plugin::where('id', $pluginName)->exists()) {
-                                throw new Exception(trans('admin/plugin.notifications.import_exists'));
-                            }
+                            throw_if(Plugin::where('id', $pluginName)->exists(), new Exception(trans('admin/plugin.notifications.import_exists')));
 
                             $pluginService->downloadPluginFromFile($file);
 
@@ -304,9 +302,7 @@ class PluginResource extends Resource
                         try {
                             $pluginName = str($data['url'])->before('.zip')->explode('/')->last();
 
-                            if (Plugin::where('id', $pluginName)->exists()) {
-                                throw new Exception(trans('admin/plugin.notifications.import_exists'));
-                            }
+                            throw_if(Plugin::where('id', $pluginName)->exists(), new Exception(trans('admin/plugin.notifications.import_exists')));
 
                             $pluginService->downloadPluginFromUrl($data['url']);
 

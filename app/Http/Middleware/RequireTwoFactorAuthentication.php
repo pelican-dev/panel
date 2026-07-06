@@ -49,9 +49,7 @@ class RequireTwoFactorAuthentication
         }
 
         // For API calls return an exception which gets rendered nicely in the API response...
-        if ($request->isJson() || Str::startsWith($request->path(), '/api')) {
-            throw new TwoFactorAuthRequiredException();
-        }
+        throw_if($request->isJson() || Str::startsWith($request->path(), '/api'), new TwoFactorAuthRequiredException());
 
         // ... otherwise display banner and redirect to profile
         AlertBanner::make('2fa_must_be_enabled')

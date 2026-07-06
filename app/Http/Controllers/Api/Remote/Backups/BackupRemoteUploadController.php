@@ -42,9 +42,7 @@ class BackupRemoteUploadController extends Controller
 
         // Get the size query parameter.
         $size = (int) $request->query('size');
-        if (empty($size)) {
-            throw new BadRequestHttpException('A non-empty "size" query parameter must be provided.');
-        }
+        throw_if(empty($size), new BadRequestHttpException('A non-empty "size" query parameter must be provided.'));
 
         /** @var Backup $model */
         $model = Backup::query()
@@ -55,21 +53,15 @@ class BackupRemoteUploadController extends Controller
         // from messing with backups that they don't own.
         /** @var Server $server */
         $server = $model->server;
-        if ($server->node_id !== $node->id) {
-            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
-        }
+        throw_if($server->node_id !== $node->id, new HttpForbiddenException('Requesting node does not have permission to access this server.'));
 
         // Prevent backups that have already been completed from trying to
         // be uploaded again.
-        if (!is_null($model->completed_at)) {
-            throw new ConflictHttpException('This backup is already in a completed state.');
-        }
+        throw_unless(is_null($model->completed_at), new ConflictHttpException('This backup is already in a completed state.'));
 
         // Ensure we are using the S3 adapter.
         $adapter = $this->backupManager->adapter();
-        if (!$adapter instanceof S3Filesystem) {
-            throw new BadRequestHttpException('The configured backup adapter is not an S3 compatible adapter.');
-        }
+        throw_unless($adapter instanceof S3Filesystem, new BadRequestHttpException('The configured backup adapter is not an S3 compatible adapter.'));
 
         // The path where backup will be uploaded to
         $path = sprintf('%s/%s.tar.gz', $model->server->uuid, $model->uuid);

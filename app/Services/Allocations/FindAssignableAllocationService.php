@@ -35,9 +35,7 @@ class FindAssignableAllocationService
      */
     public function handle(Server $server): Allocation
     {
-        if (!config('panel.client_features.allocations.enabled')) {
-            throw new AutoAllocationNotEnabledException();
-        }
+        throw_unless(config('panel.client_features.allocations.enabled'), new AutoAllocationNotEnabledException());
 
         $createNew = config('panel.client_features.allocations.create_new', true);
 
@@ -67,9 +65,7 @@ class FindAssignableAllocationService
             ->first();
 
         // If create_new is disabled, only pick from existing allocations
-        if (!$createNew && !$allocation) {
-            throw new NoAutoAllocationSpaceAvailableException();
-        }
+        throw_if(!$createNew && !$allocation, new NoAutoAllocationSpaceAvailableException());
 
         // If create_new is enabled, create a new allocation if none available
         $allocation ??= $this->createNewAllocation($server, $start, $end);
@@ -92,9 +88,7 @@ class FindAssignableAllocationService
      */
     protected function createNewAllocation(Server $server, ?int $start, ?int $end): Allocation
     {
-        if (!$start || !$end) {
-            throw new NoAutoAllocationSpaceAvailableException();
-        }
+        throw_if(!$start || !$end, new NoAutoAllocationSpaceAvailableException());
 
         // Get all the currently allocated ports for the node so that we can figure out
         // which port might be available.
@@ -111,9 +105,7 @@ class FindAssignableAllocationService
         $available = array_diff(range($start, $end), $ports->toArray());
 
         // If we've already allocated all the ports, just abort.
-        if (empty($available)) {
-            throw new NoAutoAllocationSpaceAvailableException();
-        }
+        throw_if(empty($available), new NoAutoAllocationSpaceAvailableException());
 
         // Pick a random port out of the remaining available ports.
         /** @var int $port */

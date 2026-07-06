@@ -75,9 +75,7 @@ class TurnstileSchema extends BaseSchema implements CaptchaSchemaInterface
     {
         $captchaResponse ??= request()->get('cf-turnstile-response');
 
-        if (!$secret = env('CAPTCHA_TURNSTILE_SECRET_KEY')) {
-            throw new Exception('Turnstile secret key is not defined.');
-        }
+        throw_unless($secret = env('CAPTCHA_TURNSTILE_SECRET_KEY'), new Exception('Turnstile secret key is not defined.'));
 
         $response = Http::asJson()
             ->timeout(15)
@@ -101,9 +99,7 @@ class TurnstileSchema extends BaseSchema implements CaptchaSchemaInterface
             };
         }
 
-        if (!$this->verifyDomain($response['hostname'] ?? '')) {
-            throw new Exception('Domain verification failed.');
-        }
+        throw_unless($this->verifyDomain($response['hostname'] ?? ''), new Exception('Domain verification failed.'));
     }
 
     private function verifyDomain(string $hostname): bool

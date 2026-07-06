@@ -64,9 +64,7 @@ class BackupManager
     {
         $config = $this->getConfig($name);
 
-        if (empty($config['adapter'])) {
-            throw new InvalidArgumentException("Backup disk [$name] does not have a configured adapter.");
-        }
+        throw_if(empty($config['adapter']), new InvalidArgumentException("Backup disk [$name] does not have a configured adapter."));
 
         $adapter = $config['adapter'];
 

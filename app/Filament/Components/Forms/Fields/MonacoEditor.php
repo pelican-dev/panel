@@ -36,9 +36,7 @@ class MonacoEditor extends Field
     {
         $theme = $this->evaluate($this->theme);
 
-        if (!isset(config('monaco-editor.themes')[$theme])) {
-            throw new Exception("Theme {$theme} not found in config file.");
-        }
+        throw_unless(isset(config('monaco-editor.themes')[$theme]), new Exception("Theme {$theme} not found in config file."));
 
         return json_encode([
             'base' => config("monaco-editor.themes.{$theme}.base"),

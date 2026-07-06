@@ -48,9 +48,7 @@ class BackupController extends ClientApiController
      */
     public function index(Request $request, Server $server): array
     {
-        if (!$request->user()->can(SubuserPermission::BackupRead, $server)) {
-            throw new AuthorizationException();
-        }
+        throw_unless($request->user()->can(SubuserPermission::BackupRead, $server), new AuthorizationException());
 
         $limit = min($request->query('per_page') ?? 20, 50);
 
@@ -116,9 +114,7 @@ class BackupController extends ClientApiController
      */
     public function toggleLock(Request $request, Server $server, Backup $backup): array
     {
-        if (!$request->user()->can(SubuserPermission::BackupDelete, $server)) {
-            throw new AuthorizationException();
-        }
+        throw_unless($request->user()->can(SubuserPermission::BackupDelete, $server), new AuthorizationException());
 
         $action = $backup->is_locked ? 'server:backup.unlock' : 'server:backup.lock';
 
@@ -142,9 +138,7 @@ class BackupController extends ClientApiController
      */
     public function view(Request $request, Server $server, Backup $backup): array
     {
-        if (!$request->user()->can(SubuserPermission::BackupRead, $server)) {
-            throw new AuthorizationException();
-        }
+        throw_unless($request->user()->can(SubuserPermission::BackupRead, $server), new AuthorizationException());
 
         return $this->fractal->item($backup)
             ->transformWith($this->getTransformer(BackupTransformer::class))
@@ -161,9 +155,7 @@ class BackupController extends ClientApiController
      */
     public function delete(Request $request, Server $server, Backup $backup): JsonResponse
     {
-        if (!$request->user()->can(SubuserPermission::BackupDelete, $server)) {
-            throw new AuthorizationException();
-        }
+        throw_unless($request->user()->can(SubuserPermission::BackupDelete, $server), new AuthorizationException());
 
         $this->deleteBackupService->handle($backup);
 
@@ -187,13 +179,9 @@ class BackupController extends ClientApiController
      */
     public function download(Request $request, Server $server, Backup $backup): JsonResponse
     {
-        if (!$request->user()->can(SubuserPermission::BackupDownload, $server)) {
-            throw new AuthorizationException();
-        }
+        throw_unless($request->user()->can(SubuserPermission::BackupDownload, $server), new AuthorizationException());
 
-        if ($backup->disk !== Backup::ADAPTER_AWS_S3 && $backup->disk !== Backup::ADAPTER_DAEMON) {
-            throw new BadRequestHttpException('The backup requested references an unknown disk driver type and cannot be downloaded.');
-        }
+        throw_if($backup->disk !== Backup::ADAPTER_AWS_S3 && $backup->disk !== Backup::ADAPTER_DAEMON, new BadRequestHttpException('The backup requested references an unknown disk driver type and cannot be downloaded.'));
 
         $url = $this->downloadLinkService->handle($backup, $request->user());
 
@@ -251,13 +239,9 @@ class BackupController extends ClientApiController
     {
         // Cannot restore a backup unless a server is fully installed and not currently
         // processing a different backup restoration request.
-        if (!is_null($server->status)) {
-            throw new BadRequestHttpException('This server is not currently in a state that allows for a backup to be restored.');
-        }
+        throw_unless(is_null($server->status), new BadRequestHttpException('This server is not currently in a state that allows for a backup to be restored.'));
 
-        if (!$backup->is_successful && is_null($backup->completed_at)) {
-            throw new BadRequestHttpException('This backup cannot be restored at this time: not completed or failed.');
-        }
+        throw_if(!$backup->is_successful && is_null($backup->completed_at), new BadRequestHttpException('This backup cannot be restored at this time: not completed or failed.'));
 
         $log = Activity::event('server:backup.restore')
             ->subject($backup)

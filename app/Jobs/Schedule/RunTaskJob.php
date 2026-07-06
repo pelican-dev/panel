@@ -56,17 +56,13 @@ class RunTaskJob implements ShouldQueue
         try {
             $taskSchema = $taskService->get($this->task->action);
 
-            if (!$taskSchema) {
-                throw new InvalidArgumentException('Invalid task action provided: ' . $this->task->action);
-            }
+            throw_unless($taskSchema, new InvalidArgumentException('Invalid task action provided: ' . $this->task->action));
 
             $taskSchema->runTask($this->task);
         } catch (Exception $exception) {
             // If this isn't a ConnectionException on a task that allows for failures
             // throw the exception back up the chain so that the task is stopped.
-            if (!($this->task->continue_on_failure && $exception instanceof ConnectionException)) {
-                throw $exception;
-            }
+            throw_unless(($this->task->continue_on_failure && $exception instanceof ConnectionException), $exception);
         }
 
         $this->markTaskNotQueued();
