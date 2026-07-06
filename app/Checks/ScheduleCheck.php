@@ -2,8 +2,8 @@
 
 namespace App\Checks;
 
-use Illuminate\Support\Carbon;
 use Composer\InstalledVersions;
+use Illuminate\Support\Carbon;
 use Spatie\Health\Checks\Checks\ScheduleCheck as BaseCheck;
 use Spatie\Health\Checks\Result;
 

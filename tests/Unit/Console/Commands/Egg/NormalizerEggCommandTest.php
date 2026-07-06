@@ -2,8 +2,8 @@
 
 namespace App\Tests\Unit\Console\Commands\Egg {
     use App\Tests\TestCase;
-    use Illuminate\Support\Carbon;
     use Carbon\CarbonInterface;
+    use Illuminate\Support\Carbon;
     use Illuminate\Testing\PendingCommand;
     use Symfony\Component\Uid\Uuid;
 

@@ -7,8 +7,8 @@ use App\Exceptions\Service\InvalidFileUploadException;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggExporterService;
 use App\Services\Eggs\Sharing\EggImporterService;
-use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Symfony\Component\Yaml\Yaml;
 
 class NormalizeEggCommand extends Command
