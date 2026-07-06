@@ -411,4 +411,11 @@ class Plugin extends Model implements HasPluginSettings
             return File::get($path);
         });
     }
+
+    public static function refreshRows(): void
+    {
+        unset(static::$booted[static::class], static::$bootedCallbacks[static::class]);
+
+        static::$sushiConnection = null;
+    }
 }
