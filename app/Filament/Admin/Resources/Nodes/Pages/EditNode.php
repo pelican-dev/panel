@@ -110,21 +110,21 @@ class EditNode extends EditRecord
                                 ->label(trans('admin/node.kernel'))
                                 ->state(fn (Node $node) => $node->systemInformation()['kernel_version'] ?? trans('admin/node.unknown')),
                         ]),
-                    View::make('filament.components.node-cpu-chart')
+                    view('filament.components.node-cpu-chart')
                         ->columnSpan([
                             'default' => 4,
                             'sm' => 1,
                             'md' => 2,
                             'lg' => 2,
                         ]),
-                    View::make('filament.components.node-memory-chart')
+                    view('filament.components.node-memory-chart')
                         ->columnSpan([
                             'default' => 4,
                             'sm' => 1,
                             'md' => 2,
                             'lg' => 2,
                         ]),
-                    View::make('filament.components.node-storage-chart')
+                    view('filament.components.node-storage-chart')
                         ->columnSpanFull(),
                 ]),
             Tab::make('basic_settings')

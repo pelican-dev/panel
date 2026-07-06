@@ -247,7 +247,7 @@ class EditProfile extends BaseEditProfile
                     Section::make(trans('profile.tabs.passkeys'))
                         ->description(trans('passkeys.description'))
                         ->schema([
-                            View::make('passkeys.livewire.passkeys-tab'),
+                            view('passkeys.livewire.passkeys-tab'),
                         ]),
                 ]),
             Tab::make('api_keys')
