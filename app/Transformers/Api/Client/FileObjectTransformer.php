@@ -2,7 +2,7 @@
 
 namespace App\Transformers\Api\Client;
 
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Arr;
 
 class FileObjectTransformer extends BaseClientTransformer

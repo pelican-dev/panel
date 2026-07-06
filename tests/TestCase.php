@@ -3,7 +3,7 @@
 namespace App\Tests;
 
 use App\Tests\Seeders\EggSeeder;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;

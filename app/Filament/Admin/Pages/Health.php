@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Pages;
 
 use App\Enums\TablerIcon;
 use BackedEnum;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;

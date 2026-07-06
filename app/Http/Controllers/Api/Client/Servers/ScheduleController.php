@@ -16,7 +16,7 @@ use App\Models\Schedule;
 use App\Models\Server;
 use App\Services\Schedules\ProcessScheduleService;
 use App\Transformers\Api\Client\ScheduleTransformer;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Dedoc\Scramble\Attributes\Group;
 use Exception;
 use Illuminate\Http\JsonResponse;

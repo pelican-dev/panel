@@ -4,7 +4,7 @@ namespace App\Filament\Server\Widgets;
 
 use App\Enums\CustomizationKey;
 use App\Models\Server;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Filament\Facades\Filament;
 use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;

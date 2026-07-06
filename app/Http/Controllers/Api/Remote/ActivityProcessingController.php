@@ -9,7 +9,7 @@ use App\Models\ActivityLog;
 use App\Models\Node;
 use App\Models\Server;
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use DateTimeInterface;
 use Exception;
 use Illuminate\Support\Facades\Event;

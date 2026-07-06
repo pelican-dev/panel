@@ -21,7 +21,7 @@ use App\Traits\Filament\CanCustomizeRelations;
 use App\Traits\Filament\CanModifyForm;
 use App\Traits\Filament\CanModifyTable;
 use BackedEnum;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Exception;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;

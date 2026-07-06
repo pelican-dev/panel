@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;

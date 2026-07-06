@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Cron\CronExpression;
 use Exception;
 use Illuminate\Support\Str;

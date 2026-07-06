@@ -1,7 +1,7 @@
 <?php
 
 use App\Contracts\Repository\DaemonKeyRepositoryInterface;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

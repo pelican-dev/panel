@@ -7,7 +7,7 @@ use App\Exceptions\Service\InvalidFileUploadException;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggExporterService;
 use App\Services\Eggs\Sharing\EggImporterService;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
 use Symfony\Component\Yaml\Yaml;
 
