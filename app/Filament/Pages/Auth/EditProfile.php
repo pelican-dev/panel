@@ -448,7 +448,7 @@ class EditProfile extends BaseEditProfile
                         ->deletable(false)
                         ->addable(false)
                         ->relationship(null, function (Builder $query) {
-                            $query->orderBy('timestamp', 'desc')->limit(50);
+                            $query->orderByDesc('timestamp')->limit(50);
                         })
                         ->schema([
                             TextEntry::make('log')

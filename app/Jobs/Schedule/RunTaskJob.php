@@ -85,7 +85,7 @@ class RunTaskJob implements ShouldQueue
     {
         /** @var Task|null $nextTask */
         $nextTask = Task::query()->where('schedule_id', $this->task->schedule_id)
-            ->orderBy('sequence_id', 'asc')
+            ->orderBy('sequence_id')
             ->where('sequence_id', '>', $this->task->sequence_id)
             ->first();
 
