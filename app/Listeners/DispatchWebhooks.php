@@ -210,8 +210,12 @@ class DispatchWebhooks
         }
     }
 
-    protected function eventIsWatched(string $eventName): bool
+    protected function eventIsWatched(?string $eventName): bool
     {
+        if ($eventName === null) {
+            return false;
+        }
+
         $watchedEvents = cache()->rememberForever('watchedWebhooks', function () {
             return WebhookConfiguration::where('scope', WebhookScope::Global)
                 ->pluck('events')
