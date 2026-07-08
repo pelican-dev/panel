@@ -77,5 +77,6 @@ return Application::configure(basePath: dirname(__DIR__))
         ExceptionHandler::class => Handler::class,
     ])
     ->withExceptions(function (Exceptions $exceptions) {
+        //
     })
     ->create();
