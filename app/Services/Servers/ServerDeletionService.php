@@ -3,6 +3,8 @@
 namespace App\Services\Servers;
 
 use App\Exceptions\DisplayException;
+use App\Extensions\BackupAdapter\BackupAdapterService;
+use App\Extensions\BackupAdapter\Schemas\WingsBackupSchema;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Databases\DatabaseManagementService;
@@ -22,7 +24,8 @@ class ServerDeletionService
     public function __construct(
         private ConnectionInterface $connection,
         private DaemonServerRepository $daemonServerRepository,
-        private DatabaseManagementService $databaseManagementService
+        private DatabaseManagementService $databaseManagementService,
+        private BackupAdapterService $backupService
     ) {}
 
     /**
@@ -73,6 +76,26 @@ class ServerDeletionService
                     // the host instance, but we couldn't delete it anyways so not sure how we would
                     // handle this better anyways.
                     $database->delete();
+
+                    logger()->warning($exception);
+                }
+            }
+
+            foreach ($server->backups as $backup) {
+                try {
+                    $schema = $this->backupService->get($backup->backupHost->schema);
+
+                    if ($schema) {
+                        if ($schema instanceof WingsBackupSchema) {
+                            // Local wings backups are already deleted by the daemon
+                        } else {
+                            $schema->deleteBackup($backup);
+                        }
+                    }
+                } catch (Exception $exception) {
+                    if (!$this->force) {
+                        throw $exception;
+                    }
 
                     logger()->warning($exception);
                 }
