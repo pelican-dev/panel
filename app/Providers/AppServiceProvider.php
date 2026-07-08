@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Laravel\Passkeys\Passkeys;
 use Laravel\Sanctum\Sanctum;
 use Spatie\Health\Facades\Health;
 
@@ -86,6 +87,8 @@ class AppServiceProvider extends ServiceProvider
                 ->connectTimeout(config('panel.guzzle.connect_timeout'))
                 ->baseUrl($node->getConnectionAddress())
         );
+
+        Passkeys::useUserModel(User::class);
 
         Sanctum::usePersonalAccessTokenModel(ApiKey::class);
 

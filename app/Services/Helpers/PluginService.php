@@ -326,6 +326,9 @@ class PluginService
 
         $this->downloadPluginFromUrl($downloadUrl, true);
 
+        Plugin::refreshRows();
+        $plugin = $plugin->refresh();
+
         $this->installPlugin($plugin, false);
 
         cache()->forget("plugins.$plugin->id.update");

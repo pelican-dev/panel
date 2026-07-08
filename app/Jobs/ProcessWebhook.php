@@ -51,6 +51,13 @@ class ProcessWebhook implements ShouldQueue
                     }
                 }
                 $data['embeds'] = $embeds;
+                if (isset($data['flags'])) {
+                    $data['flags'] &= ~(1 << 2);
+                }
+            }
+
+            if (isset($data['content']) && $data['content'] === '') {
+                unset($data['content']);
             }
         }
 

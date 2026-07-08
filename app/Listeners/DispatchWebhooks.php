@@ -175,17 +175,29 @@ class DispatchWebhooks
     protected function handleGlobalWebhooks(ActivityLogged $activityLogged): void
     {
         $eventName = $activityLogged->model->event;
+        $activityLoggedClass = ActivityLogged::class;
 
-        if (!$this->eventIsWatched($eventName)) {
-            return;
+        $matchingHooks = collect();
+
+        if ($this->eventIsWatched($eventName)) {
+            $matchingHooks = $matchingHooks->merge(
+                cache()->rememberForever("webhooks.$eventName", fn () => WebhookConfiguration::query()
+                    ->where('scope', WebhookScope::Global)
+                    ->whereJsonContains('events', $eventName)
+                    ->get())
+            );
         }
 
-        $matchingHooks = cache()->rememberForever("webhooks.$eventName", function () use ($eventName) {
-            return WebhookConfiguration::query()
+        $matchingHooks = $matchingHooks->merge(
+            cache()->rememberForever("webhooks.$activityLoggedClass", fn () => WebhookConfiguration::query()
                 ->where('scope', WebhookScope::Global)
-                ->whereJsonContains('events', $eventName)
-                ->get();
-        });
+                ->whereJsonContains('events', $activityLoggedClass)
+                ->get())
+        )->unique('id');
+
+        if ($matchingHooks->isEmpty()) {
+            return;
+        }
 
         $webhookData = $this->buildActivityPayload($activityLogged);
 
