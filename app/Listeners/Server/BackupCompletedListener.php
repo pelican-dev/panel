@@ -12,6 +12,10 @@ class BackupCompletedListener
 {
     public function handle(BackupCompleted $event): void
     {
+        if ($event->backup->is_automated && $event->backup->is_successful) {
+            return;
+        }
+
         $event->backup->loadMissing('server');
         $event->backup->server->loadMissing('user');
 

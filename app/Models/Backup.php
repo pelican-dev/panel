@@ -30,6 +30,7 @@ use Illuminate\Database\Query\Builder;
  * @property bool $is_successful
  * @property string|null $upload_id
  * @property bool $is_locked
+ * @property bool $is_automated
  * @property-read Server $server
  * @property-read BackupStatus $status
  *
@@ -49,6 +50,7 @@ use Illuminate\Database\Query\Builder;
  * @method static BackupQueryBuilder<static>|Backup whereIgnoredFiles($value)
  * @method static BackupQueryBuilder<static>|Backup whereIsLocked($value)
  * @method static BackupQueryBuilder<static>|Backup whereIsSuccessful($value)
+ * @method static BackupQueryBuilder<static>|Backup whereIsAutomated($value)
  * @method static BackupQueryBuilder<static>|Backup whereName($value)
  * @method static BackupQueryBuilder<static>|Backup whereServerId($value)
  * @method static BackupQueryBuilder<static>|Backup whereUpdatedAt($value)
@@ -72,6 +74,7 @@ class Backup extends Model implements Validatable
     protected $attributes = [
         'is_successful' => false,
         'is_locked' => false,
+        'is_automated' => false,
         'checksum' => null,
         'bytes' => 0,
         'upload_id' => null,
@@ -85,6 +88,7 @@ class Backup extends Model implements Validatable
         'uuid' => ['required', 'uuid'],
         'is_successful' => ['boolean'],
         'is_locked' => ['boolean'],
+        'is_automated' => ['boolean'],
         'name' => ['required', 'string'],
         'ignored_files' => ['array'],
         'disk' => ['required', 'string'],
@@ -99,6 +103,7 @@ class Backup extends Model implements Validatable
             'id' => 'int',
             'is_successful' => 'bool',
             'is_locked' => 'bool',
+            'is_automated' => 'bool',
             'ignored_files' => 'array',
             'bytes' => 'int',
             'completed_at' => 'immutable_datetime',

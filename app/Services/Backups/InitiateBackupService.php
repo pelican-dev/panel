@@ -71,7 +71,7 @@ class InitiateBackupService
      * @throws TooManyBackupsException
      * @throws TooManyRequestsHttpException
      */
-    public function handle(Server $server, ?string $name = null, bool $override = false): Backup
+    public function handle(Server $server, ?string $name = null, bool $override = false, bool $isAutomated = false): Backup
     {
         $limit = config('backups.throttles.limit');
         $period = config('backups.throttles.period');
@@ -110,7 +110,7 @@ class InitiateBackupService
             $this->deleteBackupService->handle($oldest);
         }
 
-        return $this->connection->transaction(function () use ($server, $name) {
+        return $this->connection->transaction(function () use ($server, $name, $isAutomated) {
             /** @var Backup $backup */
             $backup = Backup::query()->create([
                 'server_id' => $server->id,
@@ -119,6 +119,7 @@ class InitiateBackupService
                 'ignored_files' => array_values($this->ignoredFiles ?? []),
                 'disk' => $this->backupManager->getDefaultAdapter(),
                 'is_locked' => $this->isLocked,
+                'is_automated' => $isAutomated,
             ]);
 
             $this->daemonBackupRepository->setServer($server)
