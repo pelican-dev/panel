@@ -29,6 +29,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->redirectGuestsTo(fn () => route('filament.app.auth.login'));
 
+        $middleware->append(\App\Http\Middleware\RedirectIfNotInstalled::class);
+
         $middleware->web([
             LanguageMiddleware::class,
             SetSecurityHeaders::class,
