@@ -19,7 +19,7 @@ class RedirectIfNotInstalled
             return $next($request);
         }
 
-        if ($request->is('installer', 'installer/*', 'livewire/*')) {
+        if ($request->is('installer', 'installer/*', 'livewire/*', 'up')) {
             return $next($request);
         }
 
