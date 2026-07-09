@@ -35,6 +35,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\RawJs;
@@ -109,21 +110,21 @@ class EditNode extends EditRecord
                                 ->label(trans('admin/node.kernel'))
                                 ->state(fn (Node $node) => $node->systemInformation()['kernel_version'] ?? trans('admin/node.unknown')),
                         ]),
-                    view('filament.components.node-cpu-chart')
+                    View::make('filament.components.node-cpu-chart')
                         ->columnSpan([
                             'default' => 4,
                             'sm' => 1,
                             'md' => 2,
                             'lg' => 2,
                         ]),
-                    view('filament.components.node-memory-chart')
+                    View::make('filament.components.node-memory-chart')
                         ->columnSpan([
                             'default' => 4,
                             'sm' => 1,
                             'md' => 2,
                             'lg' => 2,
                         ]),
-                    view('filament.components.node-storage-chart')
+                    View::make('filament.components.node-storage-chart')
                         ->columnSpanFull(),
                 ]),
             Tab::make('basic_settings')

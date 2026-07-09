@@ -39,6 +39,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
@@ -246,7 +247,7 @@ class EditProfile extends BaseEditProfile
                     Section::make(trans('profile.tabs.passkeys'))
                         ->description(trans('passkeys.description'))
                         ->schema([
-                            view('passkeys.livewire.passkeys-tab'),
+                            View::make('passkeys.livewire.passkeys-tab'),
                         ]),
                 ]),
             Tab::make('api_keys')
