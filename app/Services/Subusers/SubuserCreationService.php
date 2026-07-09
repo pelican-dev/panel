@@ -46,14 +46,10 @@ class SubuserCreationService
                     'root_admin' => false,
                 ]);
             } else {
-                if ($server->owner_id === $user->id) {
-                    throw new UserIsServerOwnerException(trans('exceptions.subusers.user_is_owner'));
-                }
+                throw_if($server->owner_id === $user->id, new UserIsServerOwnerException(trans('exceptions.subusers.user_is_owner')));
 
                 $subuserCount = $server->subusers()->where('user_id', $user->id)->count();
-                if ($subuserCount !== 0) {
-                    throw new ServerSubuserExistsException(trans('exceptions.subusers.subuser_exists'));
-                }
+                throw_if($subuserCount !== 0, new ServerSubuserExistsException(trans('exceptions.subusers.subuser_exists')));
             }
 
             $cleanedPermissions = collect($permissions)

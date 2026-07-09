@@ -481,7 +481,7 @@ class UserResource extends Resource
                         ->deletable(false)
                         ->addable(false)
                         ->relationship(null, function (Builder $query) {
-                            $query->orderBy('timestamp', 'desc');
+                            $query->orderByDesc('timestamp');
                         })
                         ->schema([
                             TextEntry::make('log')

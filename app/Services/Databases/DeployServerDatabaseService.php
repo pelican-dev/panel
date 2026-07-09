@@ -21,15 +21,11 @@ readonly class DeployServerDatabaseService
         Assert::notEmpty($data['remote'] ?? null);
 
         $hosts = DatabaseHost::query()->get();
-        if ($hosts->isEmpty()) {
-            throw new NoSuitableDatabaseHostException();
-        }
+        throw_if($hosts->isEmpty(), new NoSuitableDatabaseHostException());
 
         $nodeHosts = $server->node->databaseHosts()->get();
         // TODO: @areyouscared remove allow random feature for database hosts
-        if ($nodeHosts->isEmpty() && !config('panel.client_features.databases.allow_random')) {
-            throw new NoSuitableDatabaseHostException();
-        }
+        throw_if($nodeHosts->isEmpty() && !config('panel.client_features.databases.allow_random'), new NoSuitableDatabaseHostException());
 
         return $this->managementService->create($server, [
             'database_host_id' => $nodeHosts->isEmpty()

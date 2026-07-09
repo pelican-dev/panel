@@ -133,9 +133,7 @@ class Plugin extends Model implements HasPluginSettings
                 $data = File::json($path, JSON_THROW_ON_ERROR);
                 $data['id'] = Str::lower($data['id']);
 
-                if ($data['id'] !== Str::lower($plugin)) {
-                    throw new PluginIdMismatchException("Plugin id mismatch for folder name ($plugin) and id in plugin.json ({$data['id']})!");
-                }
+                throw_if($data['id'] !== Str::lower($plugin), new PluginIdMismatchException("Plugin id mismatch for folder name ($plugin) and id in plugin.json ({$data['id']})!"));
 
                 $panels = null;
                 if (array_key_exists('panels', $data)) {
@@ -171,9 +169,7 @@ class Plugin extends Model implements HasPluginSettings
 
                 $plugins[] = $data;
             } catch (Exception $exception) {
-                if (config('panel.plugin.dev_mode', false)) {
-                    throw ($exception);
-                }
+                throw_if(config('panel.plugin.dev_mode', false), ($exception));
 
                 report($exception);
 

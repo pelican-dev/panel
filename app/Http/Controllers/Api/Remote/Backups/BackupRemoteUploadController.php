@@ -37,9 +37,7 @@ class BackupRemoteUploadController extends Controller
         $node = $request->attributes->get('node');
 
         $size = (int) $request->query('size');
-        if (empty($size)) {
-            throw new BadRequestHttpException('A non-empty "size" query parameter must be provided.');
-        }
+        throw_if(empty($size), new BadRequestHttpException('A non-empty "size" query parameter must be provided.'));
 
         $backup = Backup::where('uuid', $backup)->firstOrFail();
 

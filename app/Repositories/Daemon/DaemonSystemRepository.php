@@ -22,9 +22,7 @@ class DaemonSystemRepository extends DaemonRepository
             ->get('/api/system')
             ->throwIf(function ($result) {
                 $this->enforceValidNodeToken($result);
-                if (!$result->collect()->has(['architecture', 'cpu_count', 'kernel_version', 'os', 'version'])) {
-                    throw new ConnectionException($result->effectiveUri()->__toString() . ' is not Pelican Wings !');
-                }
+                throw_unless($result->collect()->has(['architecture', 'cpu_count', 'kernel_version', 'os', 'version']), new ConnectionException($result->effectiveUri()->__toString() . ' is not Pelican Wings !'));
 
                 return true;
             })->json();

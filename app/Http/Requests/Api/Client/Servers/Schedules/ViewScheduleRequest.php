@@ -28,9 +28,7 @@ class ViewScheduleRequest extends ClientApiRequest
         if ($server instanceof Server && $schedule instanceof Schedule) {
             $task = $this->route()->parameter('task');
 
-            if ($schedule->server_id !== $server->id || ($task instanceof Task && $task->schedule_id !== $schedule->id)) {
-                throw new NotFoundHttpException('The requested resource does not exist on the system.');
-            }
+            throw_if($schedule->server_id !== $server->id || ($task instanceof Task && $task->schedule_id !== $schedule->id), new NotFoundHttpException('The requested resource does not exist on the system.'));
         }
 
         return true;

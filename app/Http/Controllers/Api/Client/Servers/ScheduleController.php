@@ -16,12 +16,12 @@ use App\Models\Schedule;
 use App\Models\Server;
 use App\Services\Schedules\ProcessScheduleService;
 use App\Transformers\Api\Client\ScheduleTransformer;
-use Carbon\Carbon;
 use Dedoc\Scramble\Attributes\Group;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -97,9 +97,7 @@ class ScheduleController extends ClientApiController
      */
     public function view(ViewScheduleRequest $request, Server $server, Schedule $schedule): array
     {
-        if ($schedule->server_id !== $server->id) {
-            throw new NotFoundHttpException();
-        }
+        throw_if($schedule->server_id !== $server->id, new NotFoundHttpException());
 
         $schedule->loadMissing('tasks');
 

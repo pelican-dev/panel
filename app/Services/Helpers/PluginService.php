@@ -147,9 +147,7 @@ class PluginService
 
                 $pluginClass = $plugin->fullClass();
 
-                if (!class_exists($pluginClass)) {
-                    throw new Exception('Class "' . $pluginClass . '" not found');
-                }
+                throw_unless(class_exists($pluginClass), new Exception('Class "' . $pluginClass . '" not found'));
 
                 $panel->plugin(new $pluginClass());
 
@@ -199,9 +197,7 @@ class PluginService
 
         if (count($oldPackages) > 0) {
             $result = Process::path(base_path())->timeout(600)->run(['composer', 'remove', ...$oldPackages]);
-            if ($result->failed()) {
-                throw new Exception('Could not remove old composer packages: ' . $result->errorOutput());
-            }
+            throw_if($result->failed(), new Exception('Could not remove old composer packages: ' . $result->errorOutput()));
         }
 
         $newPackages = collect($newPackages)
@@ -212,9 +208,7 @@ class PluginService
 
         if (count($newPackages) > 0) {
             $result = Process::path(base_path())->timeout(600)->run(['composer', 'require', ...$newPackages]);
-            if ($result->failed()) {
-                throw new Exception('Could not require new composer packages: ' . $result->errorOutput());
-            }
+            throw_if($result->failed(), new Exception('Could not require new composer packages: ' . $result->errorOutput()));
         }
     }
 
@@ -265,20 +259,14 @@ class PluginService
     {
         try {
             $result = Process::path(base_path())->timeout(300)->run('yarn install');
-            if ($result->failed()) {
-                throw new Exception('Could not install yarn dependencies: ' . $result->errorOutput());
-            }
+            throw_if($result->failed(), new Exception('Could not install yarn dependencies: ' . $result->errorOutput()));
 
             $result = Process::path(base_path())->timeout(600)->run('yarn build');
-            if ($result->failed()) {
-                throw new Exception('Could not build assets: ' . $result->errorOutput());
-            }
+            throw_if($result->failed(), new Exception('Could not build assets: ' . $result->errorOutput()));
 
             return true;
         } catch (Exception $exception) {
-            if ($throw || $this->isDevModeActive()) {
-                throw ($exception);
-            }
+            throw_if($throw || $this->isDevModeActive(), ($exception));
 
             Log::warning($exception->getMessage(), ['exception' => $exception]);
         }
@@ -320,9 +308,7 @@ class PluginService
     public function updatePlugin(Plugin $plugin): void
     {
         $downloadUrl = $plugin->getDownloadUrlForUpdate();
-        if (!$downloadUrl) {
-            throw new Exception('No download url found.');
-        }
+        throw_unless($downloadUrl, new Exception('No download url found.'));
 
         $this->downloadPluginFromUrl($downloadUrl, true);
 
@@ -361,15 +347,11 @@ class PluginService
     {
         // Validate file size to prevent zip bombs
         $maxSize = config('panel.plugin.max_import_size');
-        if ($file->getSize() > $maxSize) {
-            throw new Exception("Zip file too large. ($maxSize  MiB)");
-        }
+        throw_if($file->getSize() > $maxSize, new Exception("Zip file too large. ($maxSize  MiB)"));
 
         $zip = new ZipArchive();
 
-        if (!$zip->open($file->getPathname())) {
-            throw new Exception('Could not open zip file.');
-        }
+        throw_unless($zip->open($file->getPathname()), new Exception('Could not open zip file.'));
 
         // Validate zip contents before extraction
         for ($i = 0; $i < $zip->numFiles; $i++) {
@@ -407,13 +389,9 @@ class PluginService
 
         // Validate file size to prevent zip bombs
         $maxSize = config('panel.plugin.max_import_size');
-        if (strlen($content) > $maxSize) {
-            throw new InvalidFileUploadException("Zip file too large. ($maxSize  MiB)");
-        }
+        throw_if(strlen($content) > $maxSize, new InvalidFileUploadException("Zip file too large. ($maxSize  MiB)"));
 
-        if (!file_put_contents($tmpPath, $content)) {
-            throw new InvalidFileUploadException('Could not write temporary file.');
-        }
+        throw_unless(file_put_contents($tmpPath, $content), new InvalidFileUploadException('Could not write temporary file.'));
 
         $this->downloadPluginFromFile(new UploadedFile($tmpPath, $basename, 'application/zip'), $cleanDownload);
     }
@@ -509,9 +487,7 @@ class PluginService
 
     private function handlePluginException(Plugin $plugin, Exception $exception): void
     {
-        if ($this->isDevModeActive()) {
-            throw ($exception);
-        }
+        throw_if($this->isDevModeActive(), ($exception));
 
         report($exception);
 

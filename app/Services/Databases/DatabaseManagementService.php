@@ -70,22 +70,16 @@ class DatabaseManagementService
      */
     public function create(Server $server, array $data): Database
     {
-        if (!config('panel.client_features.databases.enabled')) {
-            throw new DatabaseClientFeatureNotEnabledException();
-        }
+        throw_unless(config('panel.client_features.databases.enabled'), new DatabaseClientFeatureNotEnabledException());
 
         if ($this->validateDatabaseLimit) {
             // If the server has a limit assigned and we've already reached that limit, throw back
             // an exception and kill the process.
-            if (!is_null($server->database_limit) && $server->databases()->count() >= $server->database_limit) {
-                throw new TooManyDatabasesException();
-            }
+            throw_if(!is_null($server->database_limit) && $server->databases()->count() >= $server->database_limit, new TooManyDatabasesException());
         }
 
         // Protect against developer mistakes...
-        if (empty($data['database']) || !preg_match(self::MATCH_NAME_REGEX, $data['database'])) {
-            throw new InvalidArgumentException('The database name passed to DatabaseManagementService::handle MUST be prefixed with "s{server_id}_".');
-        }
+        throw_if(empty($data['database']) || !preg_match(self::MATCH_NAME_REGEX, $data['database']), new InvalidArgumentException('The database name passed to DatabaseManagementService::handle MUST be prefixed with "s{server_id}_".'));
 
         $data = array_merge($data, [
             'server_id' => $server->id,
@@ -171,9 +165,7 @@ class DatabaseManagementService
             ->where('database', $data['database'])
             ->exists();
 
-        if ($exists) {
-            throw new DuplicateDatabaseNameException('A database with that name already exists for this server.');
-        }
+        throw_if($exists, new DuplicateDatabaseNameException('A database with that name already exists for this server.'));
 
         $database = (new Database())->forceFill($data);
         $database->saveOrFail();
