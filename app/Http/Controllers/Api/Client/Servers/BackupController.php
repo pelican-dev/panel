@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Client\Servers;
 
 use App\Enums\ServerState;
 use App\Enums\SubuserPermission;
+use App\Extensions\BackupAdapter\BackupAdapterService;
 use App\Facades\Activity;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\Backups\RenameBackupRequest;
@@ -33,6 +34,7 @@ class BackupController extends ClientApiController
         private readonly DeleteBackupService $deleteBackupService,
         private readonly InitiateBackupService $initiateBackupService,
         private readonly DownloadLinkService $downloadLinkService,
+        private readonly BackupAdapterService $backupService
     ) {
         parent::__construct();
     }
@@ -181,7 +183,10 @@ class BackupController extends ClientApiController
     {
         throw_unless($request->user()->can(SubuserPermission::BackupDownload, $server), new AuthorizationException());
 
-        throw_if($backup->disk !== Backup::ADAPTER_AWS_S3 && $backup->disk !== Backup::ADAPTER_DAEMON, new BadRequestHttpException('The backup requested references an unknown disk driver type and cannot be downloaded.'));
+        $schema = $this->backupService->get($backup->backupHost->schema);
+        if (!$schema) {
+            throw new BadRequestHttpException('The backup requested references an unknown disk driver type and cannot be downloaded.');
+        }
 
         $url = $this->downloadLinkService->handle($backup, $request->user());
 
@@ -248,17 +253,13 @@ class BackupController extends ClientApiController
             ->property(['name' => $backup->name, 'truncate' => $request->input('truncate')]);
 
         $log->transaction(function () use ($backup, $server, $request) {
-            // If the backup is for an S3 file we need to generate a unique Download link for
-            // it that will allow daemon to actually access the file.
-            if ($backup->disk === Backup::ADAPTER_AWS_S3) {
-                $url = $this->downloadLinkService->handle($backup, $request->user());
-            }
+            $url = $this->downloadLinkService->handle($backup, $request->user());
 
             // Update the status right away for the server so that we know not to allow certain
             // actions against it via the Panel API.
             $server->update(['status' => ServerState::RestoringBackup]);
 
-            $this->daemonRepository->setServer($server)->restore($backup, $url ?? null, $request->input('truncate'));
+            $this->daemonRepository->setServer($server)->restore($backup, $url, $request->input('truncate'));
         });
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);

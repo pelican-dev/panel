@@ -61,6 +61,8 @@ use Symfony\Component\Yaml\Yaml;
  * @property-read int|null $roles_count
  * @property-read Collection<int, Server> $servers
  * @property-read int|null $servers_count
+ * @property-read Collection<int, BackupHost> $backupHosts
+ * @property-read int|null $backup_hosts_count
  *
  * @method static \Database\Factories\NodeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Node newModelQuery()
@@ -308,12 +310,15 @@ class Node extends Model implements Validatable
         return $this->hasMany(Allocation::class);
     }
 
-    /**
-     * @return BelongsToMany<DatabaseHost, $this>
-     */
+    /** @return BelongsToMany<DatabaseHost, $this> */
     public function databaseHosts(): BelongsToMany
     {
         return $this->belongsToMany(DatabaseHost::class);
+    }
+
+    public function backupHosts(): BelongsToMany
+    {
+        return $this->belongsToMany(BackupHost::class);
     }
 
     public function roles(): HasManyThrough
