@@ -30,9 +30,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->redirectGuestsTo(fn () => route('filament.app.auth.login'));
 
-        $middleware->append(RedirectIfNotInstalled::class);
-
         $middleware->web([
+            RedirectIfNotInstalled::class,
             LanguageMiddleware::class,
             SetSecurityHeaders::class,
         ]);
@@ -76,7 +75,5 @@ return Application::configure(basePath: dirname(__DIR__))
         Illuminate\Contracts\Console\Kernel::class => Kernel::class,
         ExceptionHandler::class => Handler::class,
     ])
-    ->withExceptions(function (Exceptions $exceptions) {
-        //
-    })
+    ->withExceptions(function (Exceptions $exceptions) {})
     ->create();

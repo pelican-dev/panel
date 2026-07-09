@@ -19,13 +19,6 @@ class RedirectIfNotInstalled
             return $next($request);
         }
 
-        if ($request->is('installer', 'installer/*', 'livewire/*', 'up')) {
-            return $next($request);
-        }
-
-        if ($request->expectsJson() || $request->is('api/*')) {
-            return response()->json(['error' => 'Installation incomplete.'], 503);
-        }
 
         return redirect()->route('installer');
     }
