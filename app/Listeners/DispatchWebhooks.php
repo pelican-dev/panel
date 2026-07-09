@@ -100,6 +100,10 @@ class DispatchWebhooks
     {
         $eventName = $activityLogged->model->event;
 
+        if ($eventName === null) {
+            return;
+        }
+
         if (!$activityLogged->isServerEvent()) {
             return;
         }
@@ -176,6 +180,10 @@ class DispatchWebhooks
     {
         $eventName = $activityLogged->model->event;
         $activityLoggedClass = ActivityLogged::class;
+
+        if ($eventName === null) {
+            return;
+        }
 
         $matchingHooks = collect();
 
