@@ -145,6 +145,7 @@ class ListLogs extends BaseListLogs
     {
         return BulkAction::make('exclude_download')
             ->label(trans('filament-log-viewer::log.table.actions.download.bulk.label'))
+            ->icon(tablerIcon::FileZip)
             ->color('success')
             ->requiresConfirmation()
             ->modalHeading(trans('filament-log-viewer::log.table.actions.download.bulk.label'))
