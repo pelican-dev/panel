@@ -47,10 +47,10 @@ class OAuthController extends Controller
         }
 
         // Check for errors (https://www.oauth.com/oauth2-servers/server-side-apps/possible-errors/)
-        if ($request->get('error')) {
-            report($request->get('error_description') ?? $request->get('error'));
+        if ($request->input('error')) {
+            report($request->input('error_description') ?? $request->input('error'));
 
-            return $this->errorRedirect($request->get('error'));
+            return $this->errorRedirect($request->input('error'));
         }
 
         $oauthUser = Socialite::driver($driver->getId())->user();
@@ -75,6 +75,10 @@ class OAuthController extends Controller
 
         if (!$email) {
             return $this->errorRedirect('No email was linked to your account on the OAuth provider.');
+        }
+
+        if (isset($oauthUser->email_verified) && !filter_var($oauthUser->email_verified, FILTER_VALIDATE_BOOLEAN)) {
+            return $this->errorRedirect('Email not verified on OAuth provider.');
         }
 
         $user = User::whereEmail($email)->first();
