@@ -276,10 +276,12 @@ class Node extends Model implements Validatable
 
     /**
      * Returns the configuration in JSON format.
+     *
+     * @throws \JsonException
      */
     public function getJsonConfiguration(bool $pretty = false): string
     {
-        return json_encode($this->getConfiguration(), JSON_THROW_ON_ERROR | ($pretty ? JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT : JSON_UNESCAPED_SLASHES));
+        return json_encode($this->getConfiguration(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | ($pretty ? JSON_PRETTY_PRINT : 0));
     }
 
     public function isUnderMaintenance(): bool
