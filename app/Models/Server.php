@@ -440,9 +440,11 @@ class Server extends Model implements HasAvatar, Validatable
      */
     public function validateTransferState(): void
     {
-        throw_if(!$this->isInstalled() ||
+        if (!$this->isInstalled() ||
             $this->status === ServerState::RestoringBackup ||
-            !is_null($this->transfer), new ServerStateConflictException($this));
+            !is_null($this->transfer)) {
+            throw new ServerStateConflictException($this);
+        }
     }
 
     /**

@@ -207,7 +207,9 @@ class File extends Model
                 $contents = $fileRepository->getDirectory(self::$path ?? '/');
             }
 
-            throw_if(isset($contents['error']), new Exception($contents['error']));
+            if (isset($contents['error'])) {
+                throw new Exception($contents['error']);
+            }
 
             $rows = array_map(function ($file) {
                 return [
