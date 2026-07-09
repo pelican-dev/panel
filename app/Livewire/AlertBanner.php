@@ -10,6 +10,7 @@ use Filament\Notifications\Concerns\HasStatus;
 use Filament\Notifications\Concerns\HasTitle;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Livewire;
 
 final class AlertBanner extends ViewComponent implements Arrayable
@@ -40,7 +41,7 @@ final class AlertBanner extends ViewComponent implements Arrayable
     }
 
     /**
-     * @return array{id: string, title: ?string, body: ?string, status: ?string, icon: ?string, closeable: bool}
+     * @return array{id: string, title: ?string, body: ?string, status: ?string, icon: string|\BackedEnum|Htmlable|null, closeable: bool}
      */
     public function toArray(): array
     {
@@ -55,7 +56,7 @@ final class AlertBanner extends ViewComponent implements Arrayable
     }
 
     /**
-     * @param  array{id: string, title: ?string, body: ?string, status: ?string, icon: ?string, closeable: bool}  $data
+     * @param  array{id: string, title: ?string, body: ?string, status: ?string, icon: string|\BackedEnum|Htmlable|null, closeable: bool}  $data
      */
     public static function fromArray(array $data): AlertBanner
     {

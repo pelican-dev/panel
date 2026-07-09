@@ -224,8 +224,8 @@ class Node extends Model implements Validatable
      *
      * @return array{
      *     debug: bool,
-     *     uuid: string,
-     *     token_id: string,
+     *     uuid: string|null,
+     *     token_id: string|null,
      *     token: string,
      *     api: array{
      *         host: string,
@@ -234,7 +234,7 @@ class Node extends Model implements Validatable
      *         upload_limit: int
      *     },
      *     system: array{data: string, sftp: array{bind_port: int}},
-     *     allowed_mounts: string[],
+     *     allowed_mounts: array<mixed>,
      *     remote: string,
      * }
      */
@@ -262,7 +262,7 @@ class Node extends Model implements Validatable
                 ],
             ],
             'allowed_mounts' => $this->mounts->pluck('source')->toArray(),
-            'remote' => config('app.url'),
+            'remote' => (string) config('app.url'),
         ];
     }
 
@@ -279,7 +279,7 @@ class Node extends Model implements Validatable
      */
     public function getJsonConfiguration(bool $pretty = false): string
     {
-        return json_encode($this->getConfiguration(), $pretty ? JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT : JSON_UNESCAPED_SLASHES);
+        return json_encode($this->getConfiguration(), JSON_THROW_ON_ERROR | ($pretty ? JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT : JSON_UNESCAPED_SLASHES));
     }
 
     public function isUnderMaintenance(): bool
