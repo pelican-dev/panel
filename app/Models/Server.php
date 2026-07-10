@@ -429,9 +429,7 @@ class Server extends Model implements HasAvatar, Validatable
      */
     public function validateCurrentState(): void
     {
-        if ($this->isInConflictState()) {
-            throw new ServerStateConflictException($this);
-        }
+        throw_if($this->isInConflictState(), new ServerStateConflictException($this));
     }
 
     /**
@@ -442,11 +440,9 @@ class Server extends Model implements HasAvatar, Validatable
      */
     public function validateTransferState(): void
     {
-        if (
-            !$this->isInstalled() ||
+        if (!$this->isInstalled() ||
             $this->status === ServerState::RestoringBackup ||
-            !is_null($this->transfer)
-        ) {
+            !is_null($this->transfer)) {
             throw new ServerStateConflictException($this);
         }
     }

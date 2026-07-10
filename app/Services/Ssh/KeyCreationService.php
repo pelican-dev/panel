@@ -23,18 +23,12 @@ class KeyCreationService
             throw new Exception('The public key provided is not valid');
         }
 
-        if ($key instanceof DSA) {
-            throw new Exception('DSA keys are not supported');
-        }
+        throw_if($key instanceof DSA, new Exception('DSA keys are not supported'));
 
-        if ($key instanceof RSA && $key->getLength() < 2048) {
-            throw new Exception('RSA keys must be at least 2048 bytes in length');
-        }
+        throw_if($key instanceof RSA && $key->getLength() < 2048, new Exception('RSA keys must be at least 2048 bytes in length'));
 
         $fingerprint = $key->getFingerprint('sha256');
-        if ($user->sshKeys()->where('fingerprint', $fingerprint)->exists()) {
-            throw new Exception('The public key provided already exists on your account');
-        }
+        throw_if($user->sshKeys()->where('fingerprint', $fingerprint)->exists(), new Exception('The public key provided already exists on your account'));
 
         /** @var UserSSHKey $sshKey */
         $sshKey = $user->sshKeys()->create([

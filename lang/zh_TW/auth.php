@@ -13,13 +13,13 @@ return [
     |
     */
 
-    'failed' => '帳號或密碼不正確。',
-    'failed-two-factor' => '雙重驗證碼不正確',
-    'two-factor-code' => '雙重驗證碼',
-    'two-factor-hint' => '如果你無法存取裝置，可以使用備用驗證碼。',
-    'password' => '密碼不正確。',
-    'throttle' => '嘗試登入次數過多，請在 :seconds 秒後再試。',
-    '2fa_must_be_enabled' => '管理員已要求你的帳號必須啟用雙重驗證，才能使用控制面板。',
-    'password_login_disabled' => '已停用密碼登入。請使用 OAuth 提供者登入。',
+    'failed' => '您輸入的憑證與我們的記錄不符。',
+    'failed-two-factor' => '雙重驗證代碼不正確',
+    'two-factor-code' => '雙重驗證代碼',
+    'two-factor-hint' => '如果您無法存取您的裝置，您可以使用備用代碼。',
+    'password' => '提供的密碼不正確。',
+    'throttle' => '登入嘗試次數過多。請在 :seconds 秒後再試一次。',
+    '2fa_must_be_enabled' => '管理員規定您的帳號必須啟用雙重驗證才能使用面板。',
+    'password_login_disabled' => '密碼登入已停用。請使用 OAuth 供應商進行登入。',
 
 ];

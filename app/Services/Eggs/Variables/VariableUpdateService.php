@@ -46,9 +46,7 @@ class VariableUpdateService
     public function handle(EggVariable $variable, array $data): EggVariable
     {
         if (!is_null(array_get($data, 'env_variable'))) {
-            if (in_array(strtoupper(array_get($data, 'env_variable')), EggVariable::RESERVED_ENV_NAMES)) {
-                throw new ReservedVariableNameException(trans('exceptions.variables.reserved_name', ['name' => array_get($data, 'env_variable')]));
-            }
+            throw_if(in_array(strtoupper(array_get($data, 'env_variable')), EggVariable::RESERVED_ENV_NAMES), new ReservedVariableNameException(trans('exceptions.variables.reserved_name', ['name' => array_get($data, 'env_variable')])));
 
             $search = EggVariable::query()
                 ->where('env_variable', $data['env_variable'])
@@ -56,9 +54,7 @@ class VariableUpdateService
                 ->whereNot('id', $variable->id)
                 ->count();
 
-            if ($search > 0) {
-                throw new DisplayException(trans('exceptions.variables.env_not_unique', ['name' => array_get($data, 'env_variable')]));
-            }
+            throw_if($search > 0, new DisplayException(trans('exceptions.variables.env_not_unique', ['name' => array_get($data, 'env_variable')])));
         }
 
         if (!empty($data['rules'] ?? [])) {

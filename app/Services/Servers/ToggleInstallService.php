@@ -9,9 +9,7 @@ class ToggleInstallService
 {
     public function handle(Server $server): void
     {
-        if ($server->isFailedInstall()) {
-            abort(500, trans('exceptions.server.marked_as_failed'));
-        }
+        abort_if($server->isFailedInstall(), 500, trans('exceptions.server.marked_as_failed'));
 
         $server->status = $server->isInstalled() ? ServerState::Installing : null;
         $server->save();

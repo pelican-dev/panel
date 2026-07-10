@@ -632,9 +632,7 @@ class ListFiles extends ListRecords
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        if (!user()?->can(SubuserPermission::FileCreate, $server)) {
-            abort(403, 'You do not have permission to create folders.');
-        }
+        abort_unless(user()?->can(SubuserPermission::FileCreate, $server), 403, 'You do not have permission to create folders.');
 
         try {
             $this->getDaemonFileRepository()->createDirectory($folderPath, $this->path);

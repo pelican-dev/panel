@@ -44,9 +44,7 @@ class VariableCreationService
      */
     public function handle(int $egg, array $data): EggVariable
     {
-        if (in_array(strtoupper(array_get($data, 'env_variable')), EggVariable::RESERVED_ENV_NAMES)) {
-            throw new ReservedVariableNameException(sprintf('Cannot use the protected name %s for this environment variable.', array_get($data, 'env_variable')));
-        }
+        throw_if(in_array(strtoupper(array_get($data, 'env_variable')), EggVariable::RESERVED_ENV_NAMES), new ReservedVariableNameException(sprintf('Cannot use the protected name %s for this environment variable.', array_get($data, 'env_variable'))));
 
         if (!empty($data['rules'] ?? [])) {
             $this->validateRules($data['rules']);

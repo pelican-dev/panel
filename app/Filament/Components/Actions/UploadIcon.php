@@ -104,15 +104,11 @@ class UploadIcon extends Action
 
                 $content = Http::timeout(5)->connectTimeout(1)->withoutRedirecting()->get($data['icon_url'])->body();
 
-                if (empty($content)) {
-                    throw new Exception(trans('admin/egg.import.invalid_url'));
-                }
+                throw_if(empty($content), new Exception(trans('admin/egg.import.invalid_url')));
 
                 $extension = strtolower(pathinfo(parse_url($data['icon_url'], PHP_URL_PATH), PATHINFO_EXTENSION));
 
-                if (empty($extension)) {
-                    throw new Exception(trans('admin/egg.import.invalid_url'));
-                }
+                throw_if(empty($extension), new Exception(trans('admin/egg.import.invalid_url')));
 
                 $record->writeIcon($extension, $content);
 
@@ -136,20 +132,14 @@ class UploadIcon extends Action
 
     protected function validateIconUrl(string $url): void
     {
-        if (!in_array(parse_url($url, PHP_URL_SCHEME), ['http', 'https'], true)) {
-            throw new Exception(trans('admin/egg.import.invalid_url'));
-        }
+        throw_unless(in_array(parse_url($url, PHP_URL_SCHEME), ['http', 'https'], true), new Exception(trans('admin/egg.import.invalid_url')));
 
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            throw new Exception(trans('admin/egg.import.invalid_url'));
-        }
+        throw_unless(filter_var($url, FILTER_VALIDATE_URL), new Exception(trans('admin/egg.import.invalid_url')));
 
         $host = parse_url($url, PHP_URL_HOST);
         $ip = gethostbyname($host);
 
-        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
-            throw new Exception(trans('admin/egg.import.no_local_ip'));
-        }
+        throw_if(filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false, new Exception(trans('admin/egg.import.no_local_ip')));
     }
 
     /** @param string[] $iconFormats */

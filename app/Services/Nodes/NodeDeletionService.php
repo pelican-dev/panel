@@ -18,9 +18,7 @@ class NodeDeletionService
             $node = Node::findOrFail($node);
         }
 
-        if ($node->servers()->count() > 0) {
-            throw new HasActiveServersException(trans('exceptions.node.servers_attached'));
-        }
+        throw_if($node->servers()->count() > 0, new HasActiveServersException(trans('exceptions.node.servers_attached')));
 
         return (int) $node->delete();
     }

@@ -17,12 +17,12 @@ return [
             'title' => '建立備份',
             'limit' => '已達備份限制',
             'created' => ':name 已建立',
-            'notification_success' => '成功建立備份',
-            'notification_fail' => '建立備份失敗',
+            'notification_success' => '備份建立成功',
+            'notification_fail' => '備份建立失敗',
             'name' => '名稱',
-            'ignored' => '忽略的檔案和目錄',
+            'ignored' => '忽略的檔案與目錄',
             'locked' => '已鎖定？',
-            'lock_helper' => '防止此備份被刪除，直到手動解除鎖定為止。',
+            'lock_helper' => '防止此備份被刪除，直到明確解除鎖定為止。',
         ],
         'lock' => [
             'lock' => '鎖定',
@@ -36,7 +36,7 @@ return [
         ],
         'restore' => [
             'title' => '還原',
-            'helper' => '您的伺服器將會被停止。在此程序完成之前，您將無法控制電源狀態、無法使用檔案管理器，也無法建立額外的備份。',
+            'helper' => '您的伺服器將被停止。在此程序完成之前，您將無法控制電源狀態、存取檔案管理員或建立其他備份。',
             'delete_all' => '在還原備份之前刪除所有檔案？',
             'notification_started' => '正在還原備份',
             'notification_success' => '備份還原成功',
@@ -46,10 +46,10 @@ return [
         ],
         'delete' => [
             'title' => '刪除備份',
-            'description' => '您希望刪除 :backup 嗎？',
+            'description' => '您想要刪除 :backup 嗎？',
             'notification_success' => '備份已刪除',
             'notification_fail' => '無法刪除備份',
-            'notification_fail_body' => '連線到節點失敗。請再試一次。',
+            'notification_fail_body' => '連線至節點失敗。請再試一次。',
         ],
     ],
 ];

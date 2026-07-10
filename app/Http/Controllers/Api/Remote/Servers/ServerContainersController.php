@@ -16,9 +16,7 @@ class ServerContainersController extends Controller
      */
     public function status(Request $request, Server $server): JsonResponse
     {
-        if (!$server->node->is($request->attributes->get('node'))) {
-            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
-        }
+        throw_unless($server->node->is($request->attributes->get('node')), new HttpForbiddenException('Requesting node does not have permission to access this server.'));
 
         $status = ContainerStatus::tryFrom($request->json('data.new_state')) ?? ContainerStatus::Missing;
 

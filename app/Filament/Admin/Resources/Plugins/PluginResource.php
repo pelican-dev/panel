@@ -124,7 +124,7 @@ class PluginResource extends Resource
                         ->hidden(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled)
                         ->action(function (Plugin $plugin) {
                             try {
-                                InstallPlugin::dispatch(user(), $plugin);
+                                InstallPlugin::dispatch(user(), $plugin->id);
 
                                 Notification::make()
                                     ->success()
@@ -147,7 +147,7 @@ class PluginResource extends Resource
                         ->visible(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled && $plugin->isUpdateAvailable())
                         ->action(function (Plugin $plugin) {
                             try {
-                                UpdatePlugin::dispatch(user(), $plugin);
+                                UpdatePlugin::dispatch(user(), $plugin->id);
 
                                 Notification::make()
                                     ->success()
@@ -223,7 +223,7 @@ class PluginResource extends Resource
                         ->hidden(fn (Plugin $plugin) => $plugin->status === PluginStatus::NotInstalled || $plugin->status === PluginStatus::Errored)
                         ->action(function (Plugin $plugin) {
                             try {
-                                UninstallPlugin::dispatch(user(), $plugin);
+                                UninstallPlugin::dispatch(user(), $plugin->id);
 
                                 Notification::make()
                                     ->success()
@@ -265,9 +265,7 @@ class PluginResource extends Resource
 
                             $pluginName = str($file->getClientOriginalName())->basename()->before('.zip')->toString();
 
-                            if (Plugin::where('id', $pluginName)->exists()) {
-                                throw new Exception(trans('admin/plugin.notifications.import_exists'));
-                            }
+                            throw_if(Plugin::where('id', $pluginName)->exists(), new Exception(trans('admin/plugin.notifications.import_exists')));
 
                             $pluginService->downloadPluginFromFile($file);
 
@@ -304,9 +302,7 @@ class PluginResource extends Resource
                         try {
                             $pluginName = str($data['url'])->before('.zip')->explode('/')->last();
 
-                            if (Plugin::where('id', $pluginName)->exists()) {
-                                throw new Exception(trans('admin/plugin.notifications.import_exists'));
-                            }
+                            throw_if(Plugin::where('id', $pluginName)->exists(), new Exception(trans('admin/plugin.notifications.import_exists')));
 
                             $pluginService->downloadPluginFromUrl($data['url']);
 
