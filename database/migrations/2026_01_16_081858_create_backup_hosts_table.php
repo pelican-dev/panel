@@ -13,57 +13,92 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('backup_hosts', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('schema');
-            $table->json('configuration')->nullable();
-            $table->timestamps();
-        });
-
-        Schema::create('backup_host_node', function (Blueprint $table) {
-            $table->unsignedInteger('node_id');
-            $table->foreign('node_id')->references('id')->on('nodes')->cascadeOnDelete();
-
-            $table->unsignedInteger('backup_host_id');
-            $table->foreign('backup_host_id')->references('id')->on('backup_hosts')->cascadeOnDelete();
-
-            $table->timestamps();
-
-            $table->unique(['node_id']);
-        });
-
-        Schema::table('backups', function (Blueprint $table) {
-            $table->unsignedInteger('backup_host_id')->after('disk');
-            $table->foreign('backup_host_id')->references('id')->on('backup_hosts');
-
-            $table->dropColumn('disk');
-        });
-
-        $oldDriver = env('APP_BACKUP_DRIVER', 'wings');
-
-        $oldConfiguration = null;
-        if ($oldDriver === 's3') {
-            $oldConfiguration = [
-                'region' => env('AWS_DEFAULT_REGION'),
-                'key' => env('AWS_ACCESS_KEY_ID'),
-                'secret' => env('AWS_SECRET_ACCESS_KEY'),
-                'bucket' => env('AWS_BACKUPS_BUCKET'),
-                'prefix' => env('AWS_BACKUPS_BUCKET', ''),
-                'endpoint' => env('AWS_ENDPOINT'),
-                'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-                'use_accelerate_endpoint' => env('AWS_BACKUPS_USE_ACCELERATE', false),
-                'storage_class' => env('AWS_BACKUPS_STORAGE_CLASS'),
-            ];
+        if (!Schema::hasTable('backup_hosts')) {
+            Schema::create('backup_hosts', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name');
+                $table->string('schema');
+                $table->json('configuration')->nullable();
+                $table->timestamps();
+            });
         }
 
-        $backupHost = BackupHost::create([
-            'name' => $oldDriver === 's3' ? 'Remote' : 'Local',
-            'schema' => $oldDriver,
-            'configuration' => $oldConfiguration,
-        ]);
+        if (!Schema::hasTable('backup_host_node')) {
+            Schema::create('backup_host_node', function (Blueprint $table) {
+                $table->unsignedInteger('node_id');
+                $table->foreign('node_id')->references('id')->on('nodes')->cascadeOnDelete();
 
-        DB::table('backups')->update(['backup_host_id' => $backupHost->id]);
+                $table->unsignedInteger('backup_host_id');
+                $table->foreign('backup_host_id')->references('id')->on('backup_hosts')->cascadeOnDelete();
+
+                $table->timestamps();
+
+                $table->unique(['node_id']);
+            });
+        }
+
+        $backupHost = BackupHost::first();
+        if (!$backupHost) {
+            $oldDriver = env('APP_BACKUP_DRIVER', 'wings');
+
+            $oldConfiguration = null;
+            if ($oldDriver === 's3') {
+                $oldConfiguration = [
+                    'region' => env('AWS_DEFAULT_REGION'),
+                    'key' => env('AWS_ACCESS_KEY_ID'),
+                    'secret' => env('AWS_SECRET_ACCESS_KEY'),
+                    'bucket' => env('AWS_BACKUPS_BUCKET'),
+                    'prefix' => env('AWS_BACKUPS_BUCKET', ''),
+                    'endpoint' => env('AWS_ENDPOINT'),
+                    'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+                    'use_accelerate_endpoint' => env('AWS_BACKUPS_USE_ACCELERATE', false),
+                    'storage_class' => env('AWS_BACKUPS_STORAGE_CLASS'),
+                ];
+            }
+
+            $backupHost = BackupHost::create([
+                'name' => $oldDriver === 's3' ? 'Remote' : 'Local',
+                'schema' => $oldDriver,
+                'configuration' => $oldConfiguration,
+            ]);
+        }
+
+        // The column must start out nullable: adding it NOT NULL would give existing
+        // rows a value of 0, which the foreign key below would reject.
+        if (!Schema::hasColumn('backups', 'backup_host_id')) {
+            $hasDiskColumn = Schema::hasColumn('backups', 'disk');
+
+            Schema::table('backups', function (Blueprint $table) use ($hasDiskColumn) {
+                $column = $table->unsignedInteger('backup_host_id')->nullable();
+
+                // The disk column may already be gone on installs that were repaired by hand.
+                if ($hasDiskColumn) {
+                    $column->after('disk');
+                }
+            });
+        }
+
+        DB::table('backups')
+            ->whereNull('backup_host_id')
+            ->orWhere('backup_host_id', 0)
+            ->update(['backup_host_id' => $backupHost->id]);
+
+        Schema::table('backups', function (Blueprint $table) {
+            $table->unsignedInteger('backup_host_id')->nullable(false)->change();
+        });
+
+        $foreignKeys = array_column(Schema::getForeignKeys('backups'), 'name');
+        if (!in_array('backups_backup_host_id_foreign', $foreignKeys)) {
+            Schema::table('backups', function (Blueprint $table) {
+                $table->foreign('backup_host_id')->references('id')->on('backup_hosts');
+            });
+        }
+
+        if (Schema::hasColumn('backups', 'disk')) {
+            Schema::table('backups', function (Blueprint $table) {
+                $table->dropColumn('disk');
+            });
+        }
     }
 
     /**
@@ -78,8 +113,8 @@ return new class extends Migration
             $table->dropColumn('backup_host_id');
         });
 
-        Schema::dropIfExists('backup_hosts');
-
         Schema::dropIfExists('backup_host_node');
+
+        Schema::dropIfExists('backup_hosts');
     }
 };
