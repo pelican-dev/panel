@@ -45,9 +45,7 @@ class ServerDetailsController extends Controller
         // to fetch these details.
         $valid = $transfer ? $node->id === $transfer->old_node || $node->id === $transfer->new_node : $node->id === $server->node_id;
 
-        if (!$valid) {
-            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
-        }
+        throw_unless($valid, new HttpForbiddenException('Requesting node does not have permission to access this server.'));
 
         return new JsonResponse([
             'settings' => $this->configurationStructureService->handle($server),

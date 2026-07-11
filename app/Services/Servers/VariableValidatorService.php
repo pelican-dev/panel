@@ -42,9 +42,7 @@ class VariableValidatorService
         }
 
         $validator = $this->validator->make($data, $rules, [], $customAttributes);
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
+        throw_if($validator->fails(), new ValidationException($validator));
 
         return Collection::make($variables)->map(function ($item) use ($fields) {
             return (object) [

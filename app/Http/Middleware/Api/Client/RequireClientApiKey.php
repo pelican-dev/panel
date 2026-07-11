@@ -17,9 +17,7 @@ class RequireClientApiKey
     {
         $token = $request->user()->currentAccessToken();
 
-        if ($token instanceof ApiKey && $token->key_type === ApiKey::TYPE_APPLICATION) {
-            throw new AccessDeniedHttpException('You are attempting to use an application API key on an endpoint that requires a client API key.');
-        }
+        throw_if($token instanceof ApiKey && $token->key_type === ApiKey::TYPE_APPLICATION, new AccessDeniedHttpException('You are attempting to use an application API key on an endpoint that requires a client API key.'));
 
         return $next($request);
     }

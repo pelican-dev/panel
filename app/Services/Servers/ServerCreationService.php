@@ -73,9 +73,7 @@ class ServerCreationService
                 $deployment->getTags(),
             )->pluck('id');
 
-            if ($nodes->isEmpty()) {
-                throw new NoViableNodeException(trans('exceptions.deployment.no_viable_nodes'));
-            }
+            throw_if($nodes->isEmpty(), new NoViableNodeException(trans('exceptions.deployment.no_viable_nodes')));
 
             $ports = $deployment->getPorts();
             if (!empty($ports)) {

@@ -7,10 +7,10 @@ use App\Http\Requests\Api\Client\Servers\GetServerRequest;
 use App\Models\Server;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Transformers\Api\Client\StatsTransformer;
-use Carbon\Carbon;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Cache\Repository;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Carbon;
 
 #[Group('Server', weight: 3)]
 class ResourceUtilizationController extends ClientApiController

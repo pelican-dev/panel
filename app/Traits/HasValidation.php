@@ -101,8 +101,6 @@ trait HasValidation
             )
         );
 
-        if (!$validator->passes()) {
-            throw new ValidationException($validator);
-        }
+        throw_unless($validator->passes(), new ValidationException($validator));
     }
 }

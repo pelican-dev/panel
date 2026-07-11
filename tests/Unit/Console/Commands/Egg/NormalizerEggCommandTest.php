@@ -2,8 +2,8 @@
 
 namespace App\Tests\Unit\Console\Commands\Egg {
     use App\Tests\TestCase;
-    use Carbon\Carbon;
     use Carbon\CarbonInterface;
+    use Illuminate\Support\Carbon;
     use Illuminate\Testing\PendingCommand;
     use Symfony\Component\Uid\Uuid;
 
@@ -109,12 +109,9 @@ namespace App\Tests\Unit\Console\Commands\Egg {
 
         private function copyExampleFile(string $filename): void
         {
-            if (!copy(
+            throw_unless(copy(
                 dirname(__FILE__) . '/' . $filename,
-                $this->tmpdir . '/' . $filename)
-            ) {
-                throw new \Exception('unable to copy json file to tmpdir');
-            }
+                $this->tmpdir . '/' . $filename), new \Exception('unable to copy json file to tmpdir'));
         }
 
         protected function setUp(): void
@@ -124,9 +121,7 @@ namespace App\Tests\Unit\Console\Commands\Egg {
             register_shutdown_function([$this, 'shutdownHandler']);
 
             $this->tmpdir = sys_get_temp_dir() . '/' . Uuid::v4()->toRfc4122();
-            if (!mkdir($this->tmpdir)) {
-                throw new \Exception('unable to create tmp dir');
-            }
+            throw_unless(mkdir($this->tmpdir), new \Exception('unable to create tmp dir'));
 
             // save the datetime set by the test framework to restore it after out tests
             $this->origTime = Carbon::getTestNow();
