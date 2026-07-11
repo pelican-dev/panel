@@ -120,20 +120,20 @@ abstract class OAuthSchema implements OAuthSchemaInterface
 
     public function isEnabled(): bool
     {
-        return env($this->getConfigKey(), false);
+        return (bool) env($this->getConfigKey(), false);
     }
 
     public function shouldCreateMissingUser(OAuthUser $user): bool
     {
         $id = Str::upper($this->getId());
 
-        return env("OAUTH_{$id}_SHOULD_CREATE_MISSING_USERS", false);
+        return (bool) env("OAUTH_{$id}_SHOULD_CREATE_MISSING_USERS", false);
     }
 
     public function shouldLinkMissingUser(User $user, OAuthUser $oauthUser): bool
     {
         $id = Str::upper($this->getId());
 
-        return env("OAUTH_{$id}_SHOULD_LINK_MISSING_USERS", false);
+        return (bool) env("OAUTH_{$id}_SHOULD_LINK_MISSING_USERS", false);
     }
 }

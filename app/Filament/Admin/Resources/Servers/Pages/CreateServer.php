@@ -305,7 +305,7 @@ class CreateServer extends CreateRecord
                         ->createOptionUsing(function (array $data, Get $get, AssignmentService $assignmentService): int {
                             return collect(
                                 $assignmentService->handle(Node::find($get('node_id')), $data)
-                            )->first();
+                            )->firstOrFail();
                         }),
                     Repeater::make('allocation_additional')
                         ->label(trans('admin/server.additional_allocations'))

@@ -91,7 +91,11 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return user()?->getCustomization(CustomizationKey::TopNavigation) ? false : trans('admin/dashboard.user');
+        if (user()?->getCustomization(CustomizationKey::TopNavigation)) {
+            return null;
+        }
+
+        return trans('admin/dashboard.user');
     }
 
     public static function getNavigationBadge(): ?string
