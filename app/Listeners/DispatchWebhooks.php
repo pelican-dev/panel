@@ -100,6 +100,10 @@ class DispatchWebhooks
     {
         $eventName = $activityLogged->model->event;
 
+        if ($eventName === null) {
+            return;
+        }
+
         if (!$activityLogged->isServerEvent()) {
             return;
         }
@@ -177,6 +181,10 @@ class DispatchWebhooks
         $eventName = $activityLogged->model->event;
         $activityLoggedClass = ActivityLogged::class;
 
+        if ($eventName === null) {
+            return;
+        }
+
         $matchingHooks = collect();
 
         if ($this->eventIsWatched($eventName)) {
@@ -210,8 +218,12 @@ class DispatchWebhooks
         }
     }
 
-    protected function eventIsWatched(string $eventName): bool
+    protected function eventIsWatched(?string $eventName): bool
     {
+        if ($eventName === null) {
+            return false;
+        }
+
         $watchedEvents = cache()->rememberForever('watchedWebhooks', function () {
             return WebhookConfiguration::where('scope', WebhookScope::Global)
                 ->pluck('events')
