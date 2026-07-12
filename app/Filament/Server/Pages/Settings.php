@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Pages;
 
+use App\Enums\ServerUserSettingKey;
 use App\Enums\SubuserPermission;
 use App\Enums\TablerIcon;
 use App\Facades\Activity;
@@ -14,6 +15,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Fieldset;
@@ -254,7 +256,35 @@ class Settings extends ServerFormPage
                         TextEntry::make('files_info')
                             ->label(trans('server/setting.reinstall.body2')),
                     ]),
+                Section::make(trans('server/setting.notifications.title'))
+                    ->columnSpanFull()
+                    ->schema([
+                        Toggle::make('backup_notifications')
+                            ->label(trans('server/setting.notifications.backup.label'))
+                            ->helperText(trans('server/setting.notifications.backup.helper'))
+                            ->live()
+                            ->afterStateUpdated(fn ($state, Server $server) => $this->updateBackupNotifications((bool) $state, $server)),
+                    ]),
             ]);
+    }
+
+    protected function fillForm(): void
+    {
+        $data = $this->getRecord()->attributesToArray();
+
+        $data['backup_notifications'] = (bool) user()?->getServerSetting($this->getRecord(), ServerUserSettingKey::BackupNotifications);
+
+        $this->form->fill($data);
+    }
+
+    public function updateBackupNotifications(bool $state, Server $server): void
+    {
+        user()?->updateServerSetting($server, ServerUserSettingKey::BackupNotifications, $state);
+
+        Notification::make()
+            ->title(trans('server/setting.notifications.saved'))
+            ->success()
+            ->send();
     }
 
     public function updateName(string $name, Server $server): void

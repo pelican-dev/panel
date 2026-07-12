@@ -12,6 +12,12 @@ return [
         'successful' => 'Successful',
         'failed' => 'Failed',
     ],
+    'notifications' => [
+        'action' => 'Notification Settings',
+        'toggle' => 'Backup Notifications',
+        'helper' => 'Receive a notification and email when a backup for this server completes or fails.',
+        'saved' => 'Notification Settings Updated',
+    ],
     'actions' => [
         'create' => [
             'title' => 'Create Backup',
