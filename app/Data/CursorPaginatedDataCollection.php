@@ -11,14 +11,20 @@ class CursorPaginatedDataCollection extends SpatieCursorPaginatedDataCollection
     public function setFractal(bool $value = true): static
     {
         $this->isFractal = $value;
+
         return $this;
     }
 
+    /** @var array<string, mixed> */
     protected array $_additional = [];
 
+    /**
+     * @param  array<string, mixed>  $additional
+     */
     public function additional(array $additional): static
     {
         $this->_additional = array_merge($this->_additional, $additional);
+
         return $this;
     }
 
@@ -26,8 +32,8 @@ class CursorPaginatedDataCollection extends SpatieCursorPaginatedDataCollection
     {
         $array = parent::toArray();
         if ($this->isFractal) {
-            $resourceKey = method_exists($this->dataClass, 'getResourceNameStatic') 
-                ? ($this->dataClass)::getResourceNameStatic() 
+            $resourceKey = method_exists($this->dataClass, 'getResourceNameStatic')
+                ? ($this->dataClass)::getResourceNameStatic()
                 : strtolower(class_basename($this->dataClass));
 
             $formattedData = [];
@@ -52,7 +58,7 @@ class CursorPaginatedDataCollection extends SpatieCursorPaginatedDataCollection
 
             $meta = $array['meta'] ?? [];
             unset($meta['path'], $meta['per_page'], $meta['next_page_url'], $meta['prev_page_url']);
-            
+
             if (isset($this->_additional['meta'])) {
                 $meta = array_merge($meta, $this->_additional['meta']);
             }
@@ -65,6 +71,7 @@ class CursorPaginatedDataCollection extends SpatieCursorPaginatedDataCollection
                 'meta' => $meta,
             ];
         }
+
         return $array;
     }
 }

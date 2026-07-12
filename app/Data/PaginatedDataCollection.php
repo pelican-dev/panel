@@ -2,6 +2,7 @@
 
 namespace App\Data;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\LaravelData\PaginatedDataCollection as SpatiePaginatedDataCollection;
 
 class PaginatedDataCollection extends SpatiePaginatedDataCollection
@@ -11,14 +12,20 @@ class PaginatedDataCollection extends SpatiePaginatedDataCollection
     public function setFractal(bool $value = true): static
     {
         $this->isFractal = $value;
+
         return $this;
     }
 
+    /** @var array<string, mixed> */
     protected array $_additional = [];
 
+    /**
+     * @param  array<string, mixed>  $additional
+     */
     public function additional(array $additional): static
     {
         $this->_additional = array_merge($this->_additional, $additional);
+
         return $this;
     }
 
@@ -26,8 +33,8 @@ class PaginatedDataCollection extends SpatiePaginatedDataCollection
     {
         $array = parent::toArray();
         if ($this->isFractal) {
-            $resourceKey = method_exists($this->dataClass, 'getResourceNameStatic') 
-                ? ($this->dataClass)::getResourceNameStatic() 
+            $resourceKey = method_exists($this->dataClass, 'getResourceNameStatic')
+                ? ($this->dataClass)::getResourceNameStatic()
                 : strtolower(class_basename($this->dataClass));
 
             $formattedData = [];
@@ -43,7 +50,10 @@ class PaginatedDataCollection extends SpatiePaginatedDataCollection
             }
 
             $paginator = $this->items;
-            
+            if (!$paginator instanceof LengthAwarePaginator) {
+                throw new \InvalidArgumentException('Paginator must be an instance of LengthAwarePaginator');
+            }
+
             $pagination = [
                 'total' => $paginator->total(),
                 'count' => $paginator->count(),
@@ -61,24 +71,24 @@ class PaginatedDataCollection extends SpatiePaginatedDataCollection
 
             $meta = $array['meta'] ?? [];
             unset(
-                $meta['current_page'], 
-                $meta['first_page_url'], 
-                $meta['from'], 
-                $meta['last_page'], 
-                $meta['last_page_url'], 
-                $meta['next_page_url'], 
-                $meta['path'], 
-                $meta['per_page'], 
-                $meta['prev_page_url'], 
-                $meta['to'], 
+                $meta['current_page'],
+                $meta['first_page_url'],
+                $meta['from'],
+                $meta['last_page'],
+                $meta['last_page_url'],
+                $meta['next_page_url'],
+                $meta['path'],
+                $meta['per_page'],
+                $meta['prev_page_url'],
+                $meta['to'],
                 $meta['total']
             );
-            
+
             // Merge custom additional meta
             if (isset($this->_additional['meta'])) {
                 $meta = array_merge($meta, $this->_additional['meta']);
             }
-            
+
             $meta['pagination'] = $pagination;
 
             return [
@@ -87,6 +97,7 @@ class PaginatedDataCollection extends SpatiePaginatedDataCollection
                 'meta' => $meta,
             ];
         }
+
         return $array;
     }
 }

@@ -6,6 +6,9 @@ use App\Models\ApiKey;
 
 class ApiKeyData extends Data
 {
+    /**
+     * @param  array<int, string>|null  $allowed_ips
+     */
     public function __construct(
         public string $identifier,
         public ?string $description,

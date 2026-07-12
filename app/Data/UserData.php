@@ -4,7 +4,6 @@ namespace App\Data;
 
 use App\Models\User;
 use Illuminate\Support\Str;
-
 use Spatie\LaravelData\Attributes\MapOutputName;
 
 class UserData extends Data

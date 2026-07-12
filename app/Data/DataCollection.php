@@ -11,14 +11,20 @@ class DataCollection extends SpatieDataCollection
     public function setFractal(bool $value = true): static
     {
         $this->isFractal = $value;
+
         return $this;
     }
 
+    /** @var array<string, mixed> */
     protected array $_additional = [];
 
+    /**
+     * @param  array<string, mixed>  $additional
+     */
     public function additional(array $additional): static
     {
         $this->_additional = array_merge($this->_additional, $additional);
+
         return $this;
     }
 
@@ -26,10 +32,10 @@ class DataCollection extends SpatieDataCollection
     {
         $array = parent::toArray();
         if ($this->isFractal) {
-            $resourceKey = method_exists($this->dataClass, 'getResourceNameStatic') 
-                ? ($this->dataClass)::getResourceNameStatic() 
+            $resourceKey = method_exists($this->dataClass, 'getResourceNameStatic')
+                ? ($this->dataClass)::getResourceNameStatic()
                 : strtolower(class_basename($this->dataClass));
-            
+
             $formattedData = [];
             foreach ($array as $item) {
                 // If the item itself has additional data merged, remove it from attributes
@@ -53,6 +59,7 @@ class DataCollection extends SpatieDataCollection
 
             return $response;
         }
+
         return $array;
     }
 }
