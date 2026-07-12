@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Client;
 
+use App\Data\ApiKeyData;
 use App\Exceptions\DisplayException;
 use App\Facades\Activity;
 use App\Http\Requests\Api\Client\Account\StoreApiKeyRequest;
 use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Models\ApiKey;
-use App\Transformers\Api\Client\ApiKeyTransformer;
 use Illuminate\Http\JsonResponse;
 
 class ApiKeyController extends ClientApiController
@@ -21,8 +21,8 @@ class ApiKeyController extends ClientApiController
      */
     public function index(ClientApiRequest $request): array
     {
-        return $this->fractal->collection($request->user()->apiKeys)
-            ->transformWith($this->getTransformer(ApiKeyTransformer::class))
+        return ApiKeyData::collection($request->user()->apiKeys)
+            ->setFractal(true)
             ->toArray();
     }
 
@@ -49,9 +49,9 @@ class ApiKeyController extends ClientApiController
             ->property('identifier', $token->accessToken->identifier)
             ->log();
 
-        return $this->fractal->item($token->accessToken)
-            ->transformWith($this->getTransformer(ApiKeyTransformer::class))
-            ->addMeta(['secret_token' => $token->plainTextToken])
+        return ApiKeyData::from($token->accessToken)
+            ->setFractal(true)
+            ->additional(['meta' => ['secret_token' => $token->plainTextToken]])
             ->toArray();
     }
 
