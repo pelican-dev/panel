@@ -22,6 +22,12 @@ Route::prefix('/users')->group(function () {
     Route::patch('/{user:id}/roles/assign', [Application\Users\UserController::class, 'assignRoles']);
     Route::patch('/{user:id}/roles/remove', [Application\Users\UserController::class, 'removeRoles']);
 
+    Route::prefix('/{user:id}/api-keys')->group(function () {
+        Route::get('/', [Application\Users\ApiKeyController::class, 'index']);
+        Route::post('/', [Application\Users\ApiKeyController::class, 'store']);
+        Route::delete('/{identifier}', [Application\Users\ApiKeyController::class, 'delete']);
+    });
+
     Route::delete('/{user:id}', [Application\Users\UserController::class, 'delete']);
 });
 
