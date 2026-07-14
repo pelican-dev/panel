@@ -113,6 +113,7 @@ class PluginResource extends Resource
                     ->color('primary')
                     ->visible(fn (Plugin $plugin) => $plugin->status === PluginStatus::Enabled && $plugin->hasSettings())
                     ->schema(fn (Plugin $plugin) => $plugin->getSettingsForm())
+                    ->fillForm(fn (Plugin $plugin) => $plugin->getSettingsFormData())
                     ->action(fn (array $data, Plugin $plugin) => $plugin->saveSettings($data))
                     ->slideOver(),
                 ActionGroup::make([
