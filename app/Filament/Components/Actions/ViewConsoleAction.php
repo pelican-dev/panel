@@ -39,6 +39,9 @@ class ViewConsoleAction extends Action
 
     public function getServer(): ?Server
     {
-        return $this->server ?? Filament::getTenant();
+        /** @var ?Server $tenant */
+        $tenant = Filament::getTenant();
+
+        return $this->server ?? $tenant;
     }
 }
