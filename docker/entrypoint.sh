@@ -4,19 +4,34 @@
 # check for .env file or symlink and generate app keys if missing
 if [ -f /pelican-data/.env ]; then
   echo ".env vars exist."
-  # load specific env vars from .env used in the entrypoint and they are not already set
-  for VAR in "APP_KEY" "APP_INSTALLED" "DB_CONNECTION" "DB_HOST" "DB_PORT" "TRUSTED_PROXIES"; do
+  # load specific env vars from .env used in the entrypoint if they are not already set
+  for VAR in APP_KEY APP_INSTALLED DB_CONNECTION DB_HOST DB_PORT TRUSTED_PROXIES; do
     echo "checking for ${VAR}"
-    ## skip if it looks like it might try to execute code
-    if (grep "${VAR}" .env | grep -qE "\$\(|=\`|\$#"); then echo "var in .env may be executable or a comment, skipping"; continue; fi
-    # if the variable is in .env then set it
-    if (grep -q "${VAR}" .env); then 
-      echo "loading ${VAR} from .env"
-      export "$(grep "${VAR}" .env | sed 's/"//g')"
+
+    # the container environment takes precedence, matching Laravel's own behavior
+    eval "CURRENT=\${${VAR}:-}"
+    if [ -n "${CURRENT}" ]; then
+      echo "${VAR} already set in environment, skipping"
       continue
     fi
-    ## variable wasn't loaded or in the env to set
-    echo "didn't find variable to set"
+
+    # match only a real assignment at the start of a line, never comments or
+    # other variables that merely contain the name
+    if ! LINE=$(grep -m1 "^${VAR}=" .env); then
+      echo "didn't find variable to set"
+      continue
+    fi
+
+    ## skip if it looks like it might try to execute code
+    case "$LINE" in
+      *'$('*|*'`'*)
+        echo "var in .env may be executable, skipping"
+        continue
+        ;;
+    esac
+
+    echo "loading ${VAR} from .env"
+    export "$(echo "$LINE" | sed 's/"//g')"
   done
 else
   echo ".env vars don't exist."
@@ -26,7 +41,7 @@ else
   # manually generate a key because key generate --force fails
   if [ -z "${APP_KEY}" ]; then
     echo "No key set, Generating key."
-    APP_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    APP_KEY="base64:$(head -c 32 /dev/urandom | base64)"
     echo "APP_KEY=$APP_KEY" > /pelican-data/.env
     echo "Generated app key written to .env file"
   else
@@ -57,8 +72,13 @@ if [ "${APP_INSTALLED}" = "true" ];  then
     echo "using sqlite database"
   fi
   
-  # run migration
-  php artisan migrate --force
+  # run migration, unless disabled (e.g. when running multiple replicas
+  # against the same database)
+  if [ "${SKIP_MIGRATIONS:-false}" = "true" ]; then
+    echo "Skipping migrations (SKIP_MIGRATIONS=true)"
+  else
+    php artisan migrate --force
+  fi
 
   php artisan p:plugin:composer
 fi
