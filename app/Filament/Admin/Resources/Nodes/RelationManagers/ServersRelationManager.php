@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Resources\Nodes\RelationManagers;
 use App\Enums\ServerResourceType;
 use App\Enums\TablerIcon;
 use App\Filament\Admin\Resources\Eggs\Pages\EditEgg;
-use App\Filament\Admin\Resources\Nodes\Pages\EditNode;
 use App\Filament\Admin\Resources\Servers\Pages\EditServer;
 use App\Filament\Admin\Resources\Users\Pages\EditUser;
 use App\Filament\Components\Actions\ViewConsoleAction;
@@ -39,7 +38,7 @@ class ServersRelationManager extends RelationManager
                     ->searchable(),
                 TextColumn::make('name')
                     ->label(trans('admin/node.table.name'))
-                    ->url(fn (Server $server) => user()?->can('update', $server->node) ? EditNode::getUrl(['record' => $server->node]) : null)
+                    ->url(fn (Server $server) => user()?->can('update', $serve) ? EditServer::getUrl(['record' => $server]) : null)
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('egg.name')
