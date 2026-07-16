@@ -25,6 +25,8 @@ return [
         'owner' => 'Owner',
         'allocation_notes' => 'Notes',
         'no_notes' => 'No notes',
+        'no_server' => 'No server',
+        'no_alias' => 'No alias',
     ],
     'node_info' => 'Node Information',
     'wings_version' => 'Wings Version',

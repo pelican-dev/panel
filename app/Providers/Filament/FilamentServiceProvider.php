@@ -6,8 +6,11 @@ use App\Enums\CustomizationKey;
 use App\Enums\TablerIcon;
 use App\Livewire\Passkeys;
 use Filament\Actions\Action;
+use Filament\Actions\AssociateAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DissociateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Actions\ViewAction;
@@ -164,6 +167,18 @@ class FilamentServiceProvider extends ServiceProvider
             }
         });
 
+        DeleteBulkAction::configureUsing(function (DeleteBulkAction $action) {
+            $action->icon(TablerIcon::Trash);
+            $action->tooltip(fn () => $action->getLabel());
+            $action->hiddenLabel();
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
+        });
+
         CreateAction::configureUsing(function (CreateAction $action) {
             $action->icon(TablerIcon::Plus);
             $action->tooltip(fn () => $action->getLabel());
@@ -190,6 +205,30 @@ class FilamentServiceProvider extends ServiceProvider
 
         ViewAction::configureUsing(function (ViewAction $action) {
             $action->icon(TablerIcon::Eye);
+            $action->tooltip(fn () => $action->getLabel());
+            $action->hiddenLabel();
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
+        });
+
+        AssociateAction::configureUsing(function (AssociateAction $action) {
+            $action->icon(TablerIcon::Link);
+            $action->tooltip(fn () => $action->getLabel());
+            $action->hiddenLabel();
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
+        });
+
+        DissociateAction::configureUsing(function (DissociateAction $action) {
+            $action->icon(TablerIcon::Unlink);
             $action->tooltip(fn () => $action->getLabel());
             $action->hiddenLabel();
             $action->iconSize(IconSize::Large);

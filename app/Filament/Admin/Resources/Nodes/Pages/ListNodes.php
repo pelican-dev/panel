@@ -27,7 +27,6 @@ class ListNodes extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->searchable(false)
             ->checkIfRecordIsSelectableUsing(fn (Node $node) => $node->servers_count <= 0)
             ->columns([
                 TextColumn::make('uuid')
