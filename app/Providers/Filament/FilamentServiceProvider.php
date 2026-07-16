@@ -27,6 +27,7 @@ use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\View\SupportIconAlias;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\View\TablesIconAlias;
 use Filament\View\PanelsIconAlias;
 use Filament\View\PanelsRenderHook;
@@ -103,6 +104,8 @@ class FilamentServiceProvider extends ServiceProvider
         });
 
         Select::configureUsing(fn (Select $select) => $select->native(false));
+
+        SelectColumn::configureUsing(fn (SelectColumn $select) => $select->native(false));
 
         KeyValue::configureUsing(fn (KeyValue $keyValue) => $keyValue
             ->addAction(function (Action $action) {
