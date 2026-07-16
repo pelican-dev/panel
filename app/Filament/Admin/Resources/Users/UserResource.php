@@ -91,7 +91,7 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        if (user()?->getCustomization(CustomizationKey::TopNavigation)) {
+        if (user()?->getCustomization(CustomizationKey::TopNavigation) === 'topbar') {
             return null;
         }
 
