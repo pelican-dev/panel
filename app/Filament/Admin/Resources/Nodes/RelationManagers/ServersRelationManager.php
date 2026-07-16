@@ -38,7 +38,7 @@ class ServersRelationManager extends RelationManager
                     ->searchable(),
                 TextColumn::make('name')
                     ->label(trans('admin/node.table.name'))
-                    ->url(fn (Server $server) => user()?->can('update', $serve) ? EditServer::getUrl(['record' => $server]) : null)
+                    ->url(fn (Server $server) => user()?->can('update', $server) ? EditServer::getUrl(['record' => $server]) : null)
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('egg.name')
