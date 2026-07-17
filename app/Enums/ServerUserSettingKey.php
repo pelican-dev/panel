@@ -4,7 +4,8 @@ namespace App\Enums;
 
 enum ServerUserSettingKey: string
 {
-    case BackupNotifications = 'backup_notifications';
+    case ManualBackupNotifications = 'manual_backup_notifications';
+    case ScheduledBackupNotifications = 'scheduled_backup_notifications';
 
     /**
      * The default value for users without an explicit setting.
@@ -12,7 +13,7 @@ enum ServerUserSettingKey: string
     public function getDefaultValue(): bool
     {
         return match ($this) {
-            self::BackupNotifications => false,
+            self::ManualBackupNotifications, self::ScheduledBackupNotifications => false,
         };
     }
 

@@ -34,7 +34,7 @@ return new class extends Migration
             DB::table('server_user_settings')->insert($servers->map(fn ($server) => [
                 'user_id' => $server->owner_id,
                 'server_id' => $server->id,
-                'settings' => json_encode(['backup_notifications' => true]),
+                'settings' => json_encode(['manual_backup_notifications' => true, 'scheduled_backup_notifications' => true]),
                 'created_at' => $now,
                 'updated_at' => $now,
             ])->all());

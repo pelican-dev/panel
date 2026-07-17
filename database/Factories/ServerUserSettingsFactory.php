@@ -22,31 +22,34 @@ class ServerUserSettingsFactory extends Factory
     {
         return [
             'settings' => [
-                ServerUserSettingKey::BackupNotifications->value => true,
+                ServerUserSettingKey::ManualBackupNotifications->value => true,
+                ServerUserSettingKey::ScheduledBackupNotifications->value => true,
             ],
         ];
     }
 
     /**
-     * Indicate the user has opted in to backup notifications.
+     * Indicate the user has opted in to all backup notifications.
      */
     public function optedIn(): static
     {
         return $this->state([
             'settings' => [
-                ServerUserSettingKey::BackupNotifications->value => true,
+                ServerUserSettingKey::ManualBackupNotifications->value => true,
+                ServerUserSettingKey::ScheduledBackupNotifications->value => true,
             ],
         ]);
     }
 
     /**
-     * Indicate the user has opted out of backup notifications.
+     * Indicate the user has opted out of all backup notifications.
      */
     public function optedOut(): static
     {
         return $this->state([
             'settings' => [
-                ServerUserSettingKey::BackupNotifications->value => false,
+                ServerUserSettingKey::ManualBackupNotifications->value => false,
+                ServerUserSettingKey::ScheduledBackupNotifications->value => false,
             ],
         ]);
     }

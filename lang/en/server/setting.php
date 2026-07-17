@@ -44,9 +44,13 @@ return [
     'notifications' => [
         'title' => 'Notifications',
         'saved' => 'Notification Settings Updated',
-        'backup' => [
-            'label' => 'Backup Notifications',
-            'helper' => 'Receive a notification and email when a backup for this server completes or fails.',
+        'backup_manual' => [
+            'label' => 'Manual Backup Notifications',
+            'helper' => 'Receive a notification and email when a manually created backup for this server completes or fails.',
+        ],
+        'backup_scheduled' => [
+            'label' => 'Scheduled Backup Notifications',
+            'helper' => 'Receive a notification and email when a scheduled backup for this server completes or fails.',
         ],
     ],
     'reinstall' => [

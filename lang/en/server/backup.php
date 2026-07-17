@@ -14,8 +14,10 @@ return [
     ],
     'notifications' => [
         'action' => 'Notification Settings',
-        'toggle' => 'Backup Notifications',
-        'helper' => 'Receive a notification and email when a backup for this server completes or fails.',
+        'toggle_manual' => 'Manual Backup Notifications',
+        'helper_manual' => 'Receive a notification and email when a manually created backup for this server completes or fails.',
+        'toggle_scheduled' => 'Scheduled Backup Notifications',
+        'helper_scheduled' => 'Receive a notification and email when a scheduled backup for this server completes or fails.',
         'saved' => 'Notification Settings Updated',
     ],
     'actions' => [

@@ -30,11 +30,13 @@ class BackupCompletedListener
             ->get()
             ->keyBy('user_id');
 
-        // Users only receive notifications if they opted in.
-        $recipients = $candidates->filter(function (User $user) use ($settings) {
+        // Users only receive notifications if they opted in for this kind of backup.
+        $key = $event->backup->is_scheduled ? ServerUserSettingKey::ScheduledBackupNotifications : ServerUserSettingKey::ManualBackupNotifications;
+
+        $recipients = $candidates->filter(function (User $user) use ($settings, $key) {
             $userSettings = $settings->get($user->id)->settings ?? [];
 
-            return (bool) ($userSettings[ServerUserSettingKey::BackupNotifications->value] ?? ServerUserSettingKey::BackupNotifications->getDefaultValue());
+            return (bool) ($userSettings[$key->value] ?? $key->getDefaultValue());
         });
 
         foreach ($recipients as $user) {

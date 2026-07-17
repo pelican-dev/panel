@@ -32,13 +32,19 @@ class ListBackups extends ListRecords
                 ->label(trans('server/backup.notifications.action'))
                 ->icon(TablerIcon::Bell)
                 ->schema([
-                    Toggle::make('backup_notifications')
-                        ->label(trans('server/backup.notifications.toggle'))
-                        ->helperText(trans('server/backup.notifications.helper'))
-                        ->default(fn () => (bool) user()?->getServerSetting($server, ServerUserSettingKey::BackupNotifications)),
+                    Toggle::make(ServerUserSettingKey::ManualBackupNotifications->value)
+                        ->label(trans('server/backup.notifications.toggle_manual'))
+                        ->helperText(trans('server/backup.notifications.helper_manual'))
+                        ->default(fn () => (bool) user()?->getServerSetting($server, ServerUserSettingKey::ManualBackupNotifications)),
+                    Toggle::make(ServerUserSettingKey::ScheduledBackupNotifications->value)
+                        ->label(trans('server/backup.notifications.toggle_scheduled'))
+                        ->helperText(trans('server/backup.notifications.helper_scheduled'))
+                        ->default(fn () => (bool) user()?->getServerSetting($server, ServerUserSettingKey::ScheduledBackupNotifications)),
                 ])
                 ->action(function (array $data) use ($server) {
-                    user()?->updateServerSetting($server, ServerUserSettingKey::BackupNotifications, (bool) $data['backup_notifications']);
+                    foreach (ServerUserSettingKey::cases() as $key) {
+                        user()?->updateServerSetting($server, $key, (bool) $data[$key->value]);
+                    }
 
                     Notification::make()
                         ->title(trans('server/backup.notifications.saved'))

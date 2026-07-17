@@ -53,7 +53,8 @@ class ServerUserSettings extends Model implements Validatable
         'user_id' => ['required', 'numeric', 'exists:users,id'],
         'server_id' => ['required', 'numeric', 'exists:servers,id'],
         'settings' => ['nullable', 'array'],
-        'settings.backup_notifications' => ['boolean'],
+        'settings.manual_backup_notifications' => ['boolean'],
+        'settings.scheduled_backup_notifications' => ['boolean'],
     ];
 
     protected function casts(): array

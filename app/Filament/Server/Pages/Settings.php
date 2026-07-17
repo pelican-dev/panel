@@ -259,11 +259,16 @@ class Settings extends ServerFormPage
                 Section::make(trans('server/setting.notifications.title'))
                     ->columnSpanFull()
                     ->schema([
-                        Toggle::make('backup_notifications')
-                            ->label(trans('server/setting.notifications.backup.label'))
-                            ->helperText(trans('server/setting.notifications.backup.helper'))
+                        Toggle::make(ServerUserSettingKey::ManualBackupNotifications->value)
+                            ->label(trans('server/setting.notifications.backup_manual.label'))
+                            ->helperText(trans('server/setting.notifications.backup_manual.helper'))
                             ->live()
-                            ->afterStateUpdated(fn ($state, Server $server) => $this->updateBackupNotifications((bool) $state, $server)),
+                            ->afterStateUpdated(fn ($state, Server $server) => $this->updateNotificationSetting(ServerUserSettingKey::ManualBackupNotifications, (bool) $state, $server)),
+                        Toggle::make(ServerUserSettingKey::ScheduledBackupNotifications->value)
+                            ->label(trans('server/setting.notifications.backup_scheduled.label'))
+                            ->helperText(trans('server/setting.notifications.backup_scheduled.helper'))
+                            ->live()
+                            ->afterStateUpdated(fn ($state, Server $server) => $this->updateNotificationSetting(ServerUserSettingKey::ScheduledBackupNotifications, (bool) $state, $server)),
                     ]),
             ]);
     }
@@ -272,14 +277,16 @@ class Settings extends ServerFormPage
     {
         $data = $this->getRecord()->attributesToArray();
 
-        $data['backup_notifications'] = (bool) user()?->getServerSetting($this->getRecord(), ServerUserSettingKey::BackupNotifications);
+        foreach (ServerUserSettingKey::cases() as $key) {
+            $data[$key->value] = (bool) user()?->getServerSetting($this->getRecord(), $key);
+        }
 
         $this->form->fill($data);
     }
 
-    public function updateBackupNotifications(bool $state, Server $server): void
+    public function updateNotificationSetting(ServerUserSettingKey $key, bool $state, Server $server): void
     {
-        user()?->updateServerSetting($server, ServerUserSettingKey::BackupNotifications, $state);
+        user()?->updateServerSetting($server, $key, $state);
 
         Notification::make()
             ->title(trans('server/setting.notifications.saved'))
