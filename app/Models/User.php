@@ -364,10 +364,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         $settings = $this->serverSettings()->where('server_id', $server->id)->first()->settings ?? [];
 
-        return $settings[$key->value] ?? match ($key) {
-            // Owners receive backup notifications unless they explicitly opt out.
-            ServerUserSettingKey::BackupNotifications => $this->id === $server->owner_id,
-        };
+        return $settings[$key->value] ?? $key->getDefaultValue();
     }
 
     public function updateServerSetting(Server $server, ServerUserSettingKey $key, string|int|bool $value): void

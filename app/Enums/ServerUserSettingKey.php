@@ -7,8 +7,7 @@ enum ServerUserSettingKey: string
     case BackupNotifications = 'backup_notifications';
 
     /**
-     * The default value for users without an explicit setting. Server owners
-     * may receive different defaults, see User::getServerSetting().
+     * The default value for users without an explicit setting.
      */
     public function getDefaultValue(): bool
     {

@@ -30,14 +30,12 @@ class BackupCompletedListener
             ->get()
             ->keyBy('user_id');
 
-        // Owners receive notifications unless they opt out, subusers only if they opt in.
-        $recipients = $candidates->filter(function (User $user) use ($server, $settings) {
+        // Users only receive notifications if they opted in.
+        $recipients = $candidates->filter(function (User $user) use ($settings) {
             $userSettings = $settings->get($user->id)->settings ?? [];
 
-            return (bool) ($userSettings[ServerUserSettingKey::BackupNotifications->value] ?? ($user->id === $server->owner_id));
+            return (bool) ($userSettings[ServerUserSettingKey::BackupNotifications->value] ?? ServerUserSettingKey::BackupNotifications->getDefaultValue());
         });
-
-        $sendEmail = config()->get('panel.email.send_backup_completed_notification', true);
 
         foreach ($recipients as $user) {
             $locale = $user->language ?? 'en';
@@ -55,9 +53,7 @@ class BackupCompletedListener
                 ])
                 ->sendToDatabase($user);
 
-            if ($sendEmail) {
-                $user->notify(new BackupCompletedNotification($event->backup));
-            }
+            $user->notify(new BackupCompletedNotification($event->backup));
         }
     }
 }
