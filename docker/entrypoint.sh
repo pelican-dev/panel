@@ -31,7 +31,9 @@ if [ -f /pelican-data/.env ]; then
     esac
 
     echo "loading ${VAR} from .env"
-    export "$(echo "$LINE" | sed 's/"//g')"
+    # strip quotes and carriage returns so values from quoted or
+    # Windows-edited .env files export cleanly
+    export "$(echo "$LINE" | tr -d "\r\"'")"
   done
 else
   echo ".env vars don't exist."
