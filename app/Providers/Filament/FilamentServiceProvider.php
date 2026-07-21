@@ -9,7 +9,6 @@ use Filament\Actions\Action;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DissociateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\View\ActionsIconAlias;
@@ -156,18 +155,6 @@ class FilamentServiceProvider extends ServiceProvider
         });
 
         DeleteAction::configureUsing(function (DeleteAction $action) {
-            $action->icon(TablerIcon::Trash);
-            $action->tooltip(fn () => $action->getLabel());
-            $action->hiddenLabel();
-            $action->iconSize(IconSize::Large);
-
-            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
-                $action->iconButton();
-                $action->iconSize(IconSize::ExtraLarge);
-            }
-        });
-
-        DeleteBulkAction::configureUsing(function (DeleteBulkAction $action) {
             $action->icon(TablerIcon::Trash);
             $action->tooltip(fn () => $action->getLabel());
             $action->hiddenLabel();
