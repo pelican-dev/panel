@@ -9,8 +9,7 @@
     $warningPercent = $serverEntryColumn->getWarningThresholdPercent() ?? 0.7;
     $dangerPercent = $serverEntryColumn->getDangerThresholdPercent() ?? 0.9;
 @endphp
-<div wire:poll.15s
-     class="relative cursor-pointer"
+<div class="relative cursor-pointer"
      x-on:click="{{ $component->redirectUrl() }}"
      x-on:auxclick.prevent="if ($event.button === 1) {{ $component->redirectUrl(true) }}">
 
