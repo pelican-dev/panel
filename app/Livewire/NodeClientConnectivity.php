@@ -64,11 +64,11 @@ class NodeClientConnectivity extends Component
             'httpUrl' => $httpUrl,
             'wsUrl' => $wsUrl,
             'wsToken' => $wsToken,
-            'loadingIcon' => $this->makeIcon(TablerIcon::WorldQuestion, 'warning', 'Checking...'),
-            'offlineIcon' => $this->makeIcon(TablerIcon::WorldX, 'danger', 'Node is not reachable from your browser'),
-            'onlineIcon' => $this->makeIcon(TablerIcon::WorldCheck, 'success', 'Node is reachable'),
-            'warningIcon' => $this->makeIcon(TablerIcon::WorldExclamation, 'warning', 'Node is reachable, but WebSocket failed. Check reverse proxy config.'),
-            'onlineNoWsIcon' => $this->makeIcon(TablerIcon::WorldCheck, 'success', 'Node is reachable (WebSocket not tested — no servers)'),
+            'loadingIcon' => $this->makeIcon(TablerIcon::WorldQuestion, 'warning', trans('admin/node.connectivity.checking')),
+            'offlineIcon' => $this->makeIcon(TablerIcon::WorldX, 'danger', trans('admin/node.connectivity.offline')),
+            'onlineIcon' => $this->makeIcon(TablerIcon::WorldCheck, 'success', trans('admin/node.connectivity.online')),
+            'warningIcon' => $this->makeIcon(TablerIcon::WorldExclamation, 'warning', trans('admin/node.connectivity.websocket_failed')),
+            'onlineNoWsIcon' => $this->makeIcon(TablerIcon::WorldCheck, 'success', trans('admin/node.connectivity.websocket_not_tested')),
         ]);
     }
 

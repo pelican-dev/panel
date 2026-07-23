@@ -53,7 +53,7 @@ class AllocationsRelationManager extends RelationManager
             ->selectCurrentPageOnly() //Prevent people from trying to nuke 30,000 ports at once.... -,-
             ->columns([
                 TextColumn::make('id')
-                    ->label('ID')
+                    ->label(trans('admin/node.table.id'))
                     ->sortable()
                     ->toggleable()
                     ->toggledHiddenByDefault(),

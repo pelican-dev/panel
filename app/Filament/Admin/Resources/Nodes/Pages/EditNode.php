@@ -580,7 +580,7 @@ class EditNode extends EditRecord
                         ->columnSpanFull()
                         ->state(new HtmlString(trans('admin/node.instructions_help'))),
                     CodeEntry::make('config')
-                        ->label('/etc/pelican/config.yml')
+                        ->label(trans('admin/node.config_path'))
                         ->grammar(Grammar::Yaml)
                         ->state(fn (Node $node) => $node->getYamlConfiguration())
                         ->copyable()

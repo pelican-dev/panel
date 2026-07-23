@@ -108,7 +108,7 @@ class CreateServer extends CreateRecord
                         ->prefixIcon(TablerIcon::Server)
                         ->label(trans('admin/server.name'))
                         ->suffixAction(Action::make('hint_random')
-                            ->tooltip('Random')
+                            ->tooltip(trans('admin/server.random'))
                             ->icon('tabler-dice-' . random_int(1, 6))
                             ->action(function (Set $set, Get $get) {
                                 $egg = Egg::find($get('egg_id'));
@@ -651,8 +651,8 @@ class CreateServer extends CreateRecord
                         ])
                         ->schema([
                             Hidden::make('io')
-                                ->helperText('The IO performance relative to other running containers')
-                                ->label('Block IO Proportion')
+                                ->helperText(trans('admin/server.block_io_helper'))
+                                ->label(trans('admin/server.block_io'))
                                 ->default(500),
 
                             Grid::make()
