@@ -84,6 +84,9 @@ RUN mkdir -p /pelican-data/storage /var/run/supervisord \
     && chown -R www-data: /pelican-data .env ./storage ./bootstrap/cache /var/run/supervisord /var/www/html/public/storage \
     && chmod -R 770 /pelican-data ./storage ./bootstrap/cache /var/run/supervisord \
     && chown -R www-data: /usr/local/etc/php/ /usr/local/etc/php-fpm.d/ /var/www/html/composer.json /var/www/html/composer.lock
+# Configure PHP and PHP-FPM
+COPY docker/php/pelican.ini /usr/local/etc/php/conf.d/zz-pelican.ini
+COPY docker/php/pelican-pool.conf /usr/local/etc/php-fpm.d/zz-pelican.conf
 # Configure Supervisor
 COPY docker/supervisord.conf /etc/supervisord.conf
 COPY docker/Caddyfile /etc/caddy/Caddyfile
