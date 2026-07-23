@@ -91,7 +91,11 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return user()?->getCustomization(CustomizationKey::TopNavigation) ? false : trans('admin/dashboard.user');
+        if (user()?->getCustomization(CustomizationKey::TopNavigation) === 'topbar') {
+            return null;
+        }
+
+        return trans('admin/dashboard.user');
     }
 
     public static function getNavigationBadge(): ?string
@@ -114,10 +118,12 @@ class UserResource extends Resource
                     ->defaultImageUrl(fn (User $user) => Filament::getUserAvatarUrl($user)),
                 TextColumn::make('username')
                     ->label(trans('admin/user.username'))
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('email')
                     ->label(trans('admin/user.email'))
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 IconColumn::make('mfa_email_enabled')
                     ->label(trans('profile.tabs.2fa'))
                     ->visibleFrom('lg')

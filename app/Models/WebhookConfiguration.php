@@ -428,7 +428,7 @@ class WebhookConfiguration extends Model
                 return data_get($replacement, $trimmed, $trimmed);
             },
             $subject
-        );
+        ) ?? $subject;
     }
 
     /** @param array<mixed, mixed> $eventData */

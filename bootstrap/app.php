@@ -13,6 +13,7 @@ use App\Http\Middleware\LanguageMiddleware;
 use App\Http\Middleware\MaintenanceMiddleware;
 use App\Http\Middleware\PreventRequestForgery;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\RedirectIfNotInstalled;
 use App\Http\Middleware\SetSecurityHeaders;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Application;
@@ -30,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo(fn () => route('filament.app.auth.login'));
 
         $middleware->web([
+            RedirectIfNotInstalled::class,
             LanguageMiddleware::class,
             SetSecurityHeaders::class,
         ]);

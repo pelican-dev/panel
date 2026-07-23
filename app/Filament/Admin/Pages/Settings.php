@@ -91,7 +91,7 @@ class Settings extends Page implements HasSchemas
 
     public static function canAccess(): bool
     {
-        return user()?->can('view settings');
+        return user()?->can('view settings') ?? false;
     }
 
     public function getTitle(): string
