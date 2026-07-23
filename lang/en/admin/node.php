@@ -98,7 +98,6 @@ return [
     'no' => 'No',
 
     'instructions' => 'Instructions',
-    'config_path' => '/etc/pelican/config.yml',
     'instructions_help' => 'Save this file to your daemon\'s root directory, named config.yml',
 
     'auto_deploy' => 'Auto Deploy Command',
