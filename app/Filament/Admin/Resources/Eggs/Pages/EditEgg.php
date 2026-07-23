@@ -137,7 +137,7 @@ class EditEgg extends EditRecord
                         ->label(trans('admin/egg.features'))
                         ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 2, 'lg' => 3]),
                     Hidden::make('script_is_privileged')
-                        ->helperText('The docker images available to servers using this egg.'),
+                        ->helperText(trans('admin/egg.docker_help')),
                     TagsInput::make('tags')
                         ->label(trans('admin/egg.tags'))
                         ->columnSpan(['default' => 2, 'sm' => 2, 'md' => 2, 'lg' => 3]),

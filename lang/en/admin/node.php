@@ -13,6 +13,9 @@ return [
         'diagnostics' => 'Diagnostics',
     ],
     'table' => [
+        'id' => 'ID',
+        'uuid' => 'UUID',
+        'ssl' => 'SSL',
         'health' => 'Health',
         'reachable' => 'Reachable',
         'name' => 'Name',
@@ -27,6 +30,13 @@ return [
         'no_notes' => 'No notes',
         'no_server' => 'No server',
         'no_alias' => 'No alias',
+    ],
+    'connectivity' => [
+        'checking' => 'Checking...',
+        'offline' => 'Node is not reachable from your browser',
+        'online' => 'Node is reachable',
+        'websocket_failed' => 'Node is reachable, but WebSocket failed. Check reverse proxy config.',
+        'websocket_not_tested' => 'Node is reachable (WebSocket not tested — no servers)',
     ],
     'node_info' => 'Node Information',
     'wings_version' => 'Wings Version',
