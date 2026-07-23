@@ -74,12 +74,14 @@ class NodeClientConnectivity extends Component
 
     private function makeIcon(TablerIcon $icon, string $color, string $tooltip): string
     {
+        $tooltip = json_encode($tooltip, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR);
+
         return generate_icon_html($icon, attributes: (new ComponentAttributeBag())
             ->merge([
                 'x-tooltip' => '{
-                    content: "' . $tooltip . '",
+                    content: ' . $tooltip . ',
                     theme: $store.theme,
-                    allowHTML: true,
+                    allowHTML: false,
                     placement: "bottom",
                 }',
                 'style' => 'color: var(--dark-text, var(--text))',
