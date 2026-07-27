@@ -136,6 +136,16 @@ class ActivityResource extends Resource
                     ->options(fn (Table $table) => $table->getQuery()->select('event')->distinct()->orderBy('event')->pluck('event', 'event'))
                     ->searchable()
                     ->preload(),
+                SelectFilter::make('actor_id')
+                    ->label(trans('server/activity.user'))
+                    ->options(function () {
+                        /** @var Server $server */
+                        $server = Filament::getTenant();
+
+                        return $server->activity()->get()->pluck('actor.username', 'actor.id');
+                    })
+                    ->searchable()
+                    ->preload(),
             ]);
     }
 
