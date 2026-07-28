@@ -138,7 +138,7 @@ class ActivityResource extends Resource
                     ->preload(),
                 SelectFilter::make('actor_id')
                     ->label(trans('server/activity.user'))
-                    ->options(fn (Table $table) => $table->getQuery()->with('actor')->get()->pluck('actor.username', 'actor.id'))
+                    ->options(fn (Table $table) => $table->getQuery()->with('actor')->get()->pluck('actor.username', 'actor.id')->filter())
                     ->searchable()
                     ->preload(),
             ]);
