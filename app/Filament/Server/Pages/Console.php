@@ -54,7 +54,7 @@ class Console extends Page
             $server->validateCurrentState();
         } catch (ServerStateConflictException $exception) {
             AlertBanner::make('server_conflict')
-                ->title('Warning')
+                ->title(trans('admin/log.warning'))
                 ->body($exception->getMessage())
                 ->warning()
                 ->send();

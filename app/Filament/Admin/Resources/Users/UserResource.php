@@ -128,7 +128,7 @@ class UserResource extends Resource
                     ->label(trans('profile.tabs.2fa'))
                     ->visibleFrom('lg')
                     ->icon(fn (User $user) => filled($user->mfa_app_secret) ? TablerIcon::Qrcode : ($user->mfa_email_enabled ? TablerIcon::Mail : TablerIcon::LockOpenOff))
-                    ->tooltip(fn (User $user) => filled($user->mfa_app_secret) ? 'App' : ($user->mfa_email_enabled ? 'E-Mail' : 'None')),
+                    ->tooltip(fn (User $user) => filled($user->mfa_app_secret) ? trans('profile.mfa.app') : ($user->mfa_email_enabled ? trans('profile.mfa.email') : trans('profile.mfa.none'))),
                 TextColumn::make('roles.name')
                     ->label(trans('admin/user.roles'))
                     ->badge()

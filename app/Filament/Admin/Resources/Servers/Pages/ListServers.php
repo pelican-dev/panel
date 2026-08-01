@@ -45,7 +45,7 @@ class ListServers extends ListRecords
                     ->color(fn (Server $server) => $server->condition->getColor()),
                 TextColumn::make('uuid')
                     ->hidden()
-                    ->label('UUID')
+                    ->label(trans('admin/server.uuid'))
                     ->searchable(),
                 TextColumn::make('name')
                     ->label(trans('admin/server.name'))

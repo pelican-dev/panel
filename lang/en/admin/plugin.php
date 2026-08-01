@@ -13,6 +13,7 @@ return [
     'status' => 'Status',
     'visit_website' => 'Visit Website',
     'settings' => 'Settings',
+    'readme' => 'Readme',
     'install' => 'Install',
     'uninstall' => 'Uninstall',
     'update' => 'Update',

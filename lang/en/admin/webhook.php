@@ -9,6 +9,14 @@ return [
     'name' => 'Name',
     'type' => 'Type',
     'server' => 'Server',
+    'scope' => [
+        'global' => 'Global',
+        'server' => 'Server',
+    ],
+    'tabs' => [
+        'global' => 'Global Webhooks',
+        'server' => 'Server Webhooks',
+    ],
     'information' => 'Information',
     'payload' => 'Payload',
     'events' => 'Events',
