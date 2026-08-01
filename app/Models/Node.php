@@ -63,6 +63,9 @@ use Symfony\Component\Yaml\Yaml;
  * @property-read int|null $servers_count
  * @property-read Collection<int, BackupHost> $backupHosts
  * @property-read int|null $backup_hosts_count
+ * @property-read int|null $servers_sum_memory
+ * @property-read int|null $servers_sum_disk
+ * @property-read int|null $servers_sum_cpu
  *
  * @method static \Database\Factories\NodeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Node newModelQuery()
@@ -189,12 +192,6 @@ class Node extends Model implements Validatable
             'tags' => 'array',
         ];
     }
-
-    public int $servers_sum_memory = 0;
-
-    public int $servers_sum_disk = 0;
-
-    public int $servers_sum_cpu = 0;
 
     protected static function booted(): void
     {
@@ -334,22 +331,25 @@ class Node extends Model implements Validatable
     public function isViable(int $memory, int $disk, int $cpu): bool
     {
         if ($this->memory > 0 && $this->memory_overallocate >= 0) {
+            $memorySum = $this->servers_sum_memory ?? $this->servers()->sum('memory');
             $memoryLimit = $this->memory * (1 + ($this->memory_overallocate / 100));
-            if ($this->servers_sum_memory + $memory > $memoryLimit) {
+            if ($memorySum + $memory > $memoryLimit) {
                 return false;
             }
         }
 
         if ($this->disk > 0 && $this->disk_overallocate >= 0) {
+            $diskSum = $this->servers_sum_disk ?? $this->servers()->sum('disk');
             $diskLimit = $this->disk * (1 + ($this->disk_overallocate / 100));
-            if ($this->servers_sum_disk + $disk > $diskLimit) {
+            if ($diskSum + $disk > $diskLimit) {
                 return false;
             }
         }
 
         if ($this->cpu > 0 && $this->cpu_overallocate >= 0) {
+            $cpuSum = $this->servers_sum_cpu ?? $this->servers()->sum('cpu');
             $cpuLimit = $this->cpu * (1 + ($this->cpu_overallocate / 100));
-            if ($this->servers_sum_cpu + $cpu > $cpuLimit) {
+            if ($cpuSum + $cpu > $cpuLimit) {
                 return false;
             }
         }
