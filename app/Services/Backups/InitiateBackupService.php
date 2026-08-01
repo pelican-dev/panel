@@ -21,6 +21,8 @@ class InitiateBackupService
 
     private bool $isLocked = false;
 
+    private bool $isScheduled = false;
+
     /**
      * InitiateBackupService constructor.
      */
@@ -37,6 +39,16 @@ class InitiateBackupService
     public function setIsLocked(bool $isLocked): self
     {
         $this->isLocked = $isLocked;
+
+        return $this;
+    }
+
+    /**
+     * Set if the backup was initiated by a schedule rather than a user.
+     */
+    public function setIsScheduled(bool $isScheduled): self
+    {
+        $this->isScheduled = $isScheduled;
 
         return $this;
     }
@@ -125,6 +137,7 @@ class InitiateBackupService
                 'ignored_files' => array_values($this->ignoredFiles ?? []),
                 'backup_host_id' => $backupHost->id,
                 'is_locked' => $this->isLocked,
+                'is_scheduled' => $this->isScheduled,
             ]);
 
             $schema->createBackup($backup);

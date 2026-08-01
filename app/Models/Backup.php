@@ -31,6 +31,7 @@ use Illuminate\Database\Query\Builder;
  * @property bool $is_successful
  * @property string|null $upload_id
  * @property bool $is_locked
+ * @property bool $is_scheduled
  * @property-read Server $server
  * @property-read BackupStatus $status
  *
@@ -69,6 +70,7 @@ class Backup extends Model implements Validatable
     protected $attributes = [
         'is_successful' => false,
         'is_locked' => false,
+        'is_scheduled' => false,
         'checksum' => null,
         'bytes' => 0,
         'upload_id' => null,
@@ -82,6 +84,7 @@ class Backup extends Model implements Validatable
         'uuid' => ['required', 'uuid'],
         'is_successful' => ['boolean'],
         'is_locked' => ['boolean'],
+        'is_scheduled' => ['boolean'],
         'name' => ['required', 'string'],
         'ignored_files' => ['array'],
         'backup_host_id' => ['required', 'integer', 'exists:backup_hosts,id'],
@@ -96,6 +99,7 @@ class Backup extends Model implements Validatable
             'id' => 'int',
             'is_successful' => 'bool',
             'is_locked' => 'bool',
+            'is_scheduled' => 'bool',
             'ignored_files' => 'array',
             'bytes' => 'int',
             'completed_at' => 'immutable_datetime',

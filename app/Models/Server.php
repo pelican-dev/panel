@@ -90,6 +90,8 @@ use Psr\Http\Message\ResponseInterface;
  * @property-read int|null $server_variables_count
  * @property-read Collection<int, Subuser> $subusers
  * @property-read int|null $subusers_count
+ * @property-read Collection<int, ServerUserSettings> $userSettings
+ * @property-read int|null $user_settings_count
  * @property-read ServerTransfer|null $transfer
  * @property-read User $user
  * @property-read Collection<int, EggVariable> $variables
@@ -269,6 +271,16 @@ class Server extends Model implements HasAvatar, Validatable
     public function subusers(): HasMany
     {
         return $this->hasMany(Subuser::class, 'server_id', 'id');
+    }
+
+    /**
+     * Gets the per-user settings associated with a server.
+     *
+     * @return HasMany<ServerUserSettings, $this>
+     */
+    public function userSettings(): HasMany
+    {
+        return $this->hasMany(ServerUserSettings::class);
     }
 
     /**
