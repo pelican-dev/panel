@@ -92,17 +92,15 @@
         terminal.loadAddon(searchAddonBar);
         terminal.loadAddon(webglAddon);
 
-        terminal.open(document.getElementById('terminal'));
+        // Clear any node preserved across navigation (#terminal is wire:ignore) so we never stack a second canvas.
+        const terminalEl = document.getElementById('terminal');
+        terminalEl.replaceChildren();
+        terminal.open(terminalEl);
 
         fitAddon.fit(); // Fixes SPA issues.
 
-        window.addEventListener('load', () => {
-            fitAddon.fit();
-        });
-
-        window.addEventListener('resize', () => {
-            fitAddon.fit();
-        });
+        const onResize = () => fitAddon.fit();
+        window.addEventListener('resize', onResize);
 
         terminal.attachCustomKeyEventHandler((event) => {
             if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
@@ -184,7 +182,7 @@
             $wire.dispatchSelf('token-request');
         };
 
-        Livewire.on('setServerState', ({ state, uuid }) => {
+        const offSetServerState = Livewire.on('setServerState', ({ state, uuid }) => {
             const serverUuid = "{{ $this->server->uuid }}";
             if (uuid !== serverUuid) {
                 return;
@@ -209,6 +207,16 @@
                 'args': [command]
             }));
         });
+
+        // Tear everything down before an SPA navigation away from the console, otherwise the socket,
+        // the window resize listener and the global Livewire subscription leak, and disposing the
+        // terminal frees the WebglAddon's GL context (browsers cap these at ~16).
+        document.addEventListener('livewire:navigating', () => {
+            try { socket.close(); } catch (e) {}
+            window.removeEventListener('resize', onResize);
+            offSetServerState?.();
+            terminal.dispose();
+        }, { once: true });
     </script>
     @endscript
 </x-filament::widget>
