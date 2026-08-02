@@ -492,7 +492,7 @@ class UserResource extends Resource
                         ->schema([
                             TextEntry::make('log')
                                 ->hiddenLabel()
-                                ->state(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
+                                ->state(fn (ActivityLog $record) => new HtmlString($record->htmlable())),
                         ]),
                 ]),
         ];
