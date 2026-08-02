@@ -121,7 +121,6 @@ return [
             'removed_from_server' => 'Rimosso dal server',
             'server_installed' => 'Server installato',
             'server_reinstalled' => 'Server Reinstallato',
-            'backup_completed' => 'Backup completato',
         ],
         'connections' => [
             'title' => 'Connessioni',

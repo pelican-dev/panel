@@ -121,7 +121,6 @@ return [
             'removed_from_server' => 'Удален с сервера',
             'server_installed' => 'Сервер установлен',
             'server_reinstalled' => 'Сервер переустановлен',
-            'backup_completed' => 'Резервное копирование завершено',
         ],
         'connections' => [
             'title' => 'Подключения',

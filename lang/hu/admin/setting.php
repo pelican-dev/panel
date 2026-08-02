@@ -122,7 +122,6 @@ return [
             'removed_from_server' => 'Eltávolítva a Szerverről',
             'server_installed' => 'Szerver telepítve',
             'server_reinstalled' => 'Szerver újratelepítve',
-            'backup_completed' => 'Biztonsági Mentés Befejezve',
         ],
         'connections' => [
             'title' => 'Kapcsolatok',
