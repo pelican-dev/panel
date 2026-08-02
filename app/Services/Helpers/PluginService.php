@@ -343,7 +343,7 @@ class PluginService
     }
 
     /** @throws Exception */
-    public function downloadPluginFromFile(UploadedFile $file, bool $cleanDownload = false): void
+    public function downloadPluginFromFile(UploadedFile $file, bool $cleanDownload = false): string
     {
         // Validate file size to prevent zip bombs
         $maxSize = config('panel.plugin.max_import_size');
@@ -362,24 +362,64 @@ class PluginService
             }
         }
 
-        $pluginName = str($file->getClientOriginalName())->basename()->before('.zip')->toString();
+        // Extract to a temporary directory first so we can derive the plugin's identity from
+        // its own plugin.json rather than trusting the (possibly renamed) upload filename.
+        $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
 
-        if ($cleanDownload) {
-            File::deleteDirectory(plugin_path($pluginName));
-        }
-
-        $extractPath = $zip->locateName($pluginName . '/plugin.json') !== false ? base_path('plugins') : plugin_path($pluginName);
-
-        if (!$zip->extractTo($extractPath)) {
+        if (!$zip->extractTo($tmpDir->path())) {
             $zip->close();
             throw new Exception('Could not extract zip file.');
         }
 
         $zip->close();
+
+        // Locate plugin.json, either at the archive root (flat zip) or one level deep
+        // (single top-level folder). Prefer the shallowest match.
+        $manifest = $this->locatePluginManifest($tmpDir->path());
+        throw_if($manifest === null, new Exception(trans('admin/plugin.notifications.import_no_manifest')));
+
+        $data = File::json($manifest, JSON_THROW_ON_ERROR);
+        $pluginName = Str::lower($data['id'] ?? '');
+        throw_if($pluginName === '', new Exception(trans('admin/plugin.notifications.import_no_manifest')));
+
+        $target = plugin_path($pluginName);
+
+        if ($cleanDownload) {
+            File::deleteDirectory($target);
+        }
+
+        throw_if(File::isDirectory($target), new Exception(trans('admin/plugin.notifications.import_exists')));
+
+        // Move the folder containing plugin.json to plugins/<id> so the layout is correct
+        // regardless of the archive's internal folder name.
+        File::moveDirectory(dirname($manifest), $target);
+
+        return $pluginName;
+    }
+
+    /**
+     * Find a plugin.json inside an extracted archive, either at its root or within a single
+     * top-level directory. Returns the absolute path to the manifest, or null if none exists.
+     */
+    private function locatePluginManifest(string $path): ?string
+    {
+        $rootManifest = join_paths($path, 'plugin.json');
+        if (File::exists($rootManifest)) {
+            return $rootManifest;
+        }
+
+        foreach (File::directories($path) as $directory) {
+            $manifest = join_paths($directory, 'plugin.json');
+            if (File::exists($manifest)) {
+                return $manifest;
+            }
+        }
+
+        return null;
     }
 
     /** @throws Exception */
-    public function downloadPluginFromUrl(string $url, bool $cleanDownload = false): void
+    public function downloadPluginFromUrl(string $url, bool $cleanDownload = false): string
     {
         $basename = pathinfo($url, PATHINFO_BASENAME);
         $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
@@ -393,7 +433,7 @@ class PluginService
 
         throw_unless(file_put_contents($tmpPath, $content), new InvalidFileUploadException('Could not write temporary file.'));
 
-        $this->downloadPluginFromFile(new UploadedFile($tmpPath, $basename, 'application/zip'), $cleanDownload);
+        return $this->downloadPluginFromFile(new UploadedFile($tmpPath, $basename, 'application/zip'), $cleanDownload);
     }
 
     public function deletePlugin(Plugin $plugin): void
