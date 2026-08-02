@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 
 if (!function_exists('is_digit')) {
     /**
@@ -164,5 +165,12 @@ if (!function_exists('user')) {
     function user(): ?User
     {
         return auth(config('auth.defaults.guard', 'web'))->user();
+    }
+}
+
+if (!function_exists('get_plugin_name_from_zip')) {
+    function get_plugin_name_from_zip(UploadedFile $file): string
+    {
+        return str($file->getClientOriginalName())->basename()->before('.zip')->replaceMatches('/\(\d+\)(?=\.[^.]+$|$)/', '')->trim()->toString();
     }
 }

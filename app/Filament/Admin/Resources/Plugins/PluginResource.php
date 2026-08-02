@@ -264,7 +264,7 @@ class PluginResource extends Resource
                             /** @var UploadedFile $file */
                             $file = $data['file'];
 
-                            $pluginName = str($file->getClientOriginalName())->basename()->before('.zip')->toString();
+                            $pluginName = get_plugin_name_from_zip($file);
 
                             throw_if(Plugin::where('id', $pluginName)->exists(), new Exception(trans('admin/plugin.notifications.import_exists')));
 
