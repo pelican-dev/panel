@@ -379,20 +379,37 @@ class PluginService
         throw_if($manifest === null, new Exception(trans('admin/plugin.notifications.import_no_manifest')));
 
         $data = File::json($manifest, JSON_THROW_ON_ERROR);
-        $pluginName = Str::lower($data['id'] ?? '');
-        throw_if($pluginName === '', new Exception(trans('admin/plugin.notifications.import_no_manifest')));
+        $id = $data['id'] ?? null;
+        throw_if(!is_string($id) || trim($id) === '', new Exception(trans('admin/plugin.notifications.import_no_manifest')));
 
+        $pluginName = Str::lower($id);
         $target = plugin_path($pluginName);
+        $source = dirname($manifest);
 
-        if ($cleanDownload) {
-            File::deleteDirectory($target);
+        // For a clean re-download of an existing plugin, set the current install aside as a
+        // rollback until the new copy is in place, so a failed move can't leave nothing behind.
+        $rollback = null;
+        if ($cleanDownload && File::isDirectory($target)) {
+            $rollback = $target . '.bak';
+            File::deleteDirectory($rollback);
+            File::moveDirectory($target, $rollback);
         }
 
         throw_if(File::isDirectory($target), new Exception(trans('admin/plugin.notifications.import_exists')));
 
         // Move the folder containing plugin.json to plugins/<id> so the layout is correct
         // regardless of the archive's internal folder name.
-        File::moveDirectory(dirname($manifest), $target);
+        if (!File::moveDirectory($source, $target)) {
+            if ($rollback !== null) {
+                File::moveDirectory($rollback, $target);
+            }
+
+            throw new Exception('Could not move plugin into place.');
+        }
+
+        if ($rollback !== null) {
+            File::deleteDirectory($rollback);
+        }
 
         return $pluginName;
     }
