@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Backup::onlyTrashed()->delete();
+        Backup::whereNotNull('deleted_at')->delete();
 
         Schema::table('backups', function (Blueprint $table) {
             $table->dropSoftDeletes();
