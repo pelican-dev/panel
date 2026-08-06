@@ -112,7 +112,7 @@ final class S3BackupSchema extends BackupAdapterSchema
             'ContentType' => 'application/x-gzip',
         ];
 
-        $storageClass = $backup->backupHost->configuration['storage_class'];
+        $storageClass = $backup->backupHost->configuration['storage_class'] ?? null;
         if (!is_null($storageClass)) {
             $params['StorageClass'] = $storageClass;
         }
