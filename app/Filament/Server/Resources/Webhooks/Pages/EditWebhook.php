@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Resources\Webhooks\Pages;
 
+use App\Facades\WebhookTypes;
 use App\Filament\Server\Resources\Webhooks\WebhookResource;
 use App\Models\WebhookConfiguration;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -37,5 +38,23 @@ class EditWebhook extends EditRecord
     protected function getFormActions(): array
     {
         return [];
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if ($schema = WebhookTypes::get($data['type'] ?? null)) {
+            $data = $schema->mutateFormDataBeforeSave($data);
+        }
+
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        if ($schema = WebhookTypes::get($data['type'] ?? null)) {
+            $data = $schema->mutateFormDataBeforeFill($data);
+        }
+
+        return $data;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Filament\Server\Resources\Webhooks\Pages;
 
 use App\Enums\WebhookScope;
+use App\Facades\WebhookTypes;
 use App\Filament\Server\Resources\Webhooks\WebhookResource;
 use App\Models\Server;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -42,6 +43,10 @@ class CreateWebhook extends CreateRecord
 
         $data['server_id'] = $server->id;
         $data['scope'] = WebhookScope::Server;
+
+        if ($schema = WebhookTypes::get($data['type'] ?? null)) {
+            $data = $schema->mutateFormDataBeforeSave($data);
+        }
 
         return $data;
     }
