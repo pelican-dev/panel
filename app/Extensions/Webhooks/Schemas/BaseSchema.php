@@ -7,6 +7,8 @@ use App\Enums\WebhookScope;
 use App\Models\WebhookConfiguration;
 use BackedEnum;
 use Filament\Schemas\Components\Component;
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 abstract class BaseSchema implements WebhookSchemaInterface
@@ -50,6 +52,12 @@ abstract class BaseSchema implements WebhookSchemaInterface
         return false;
     }
 
+    /** @return array<string, mixed> */
+    public function getPayloadRules(): array
+    {
+        return [];
+    }
+
     /**
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
@@ -78,11 +86,41 @@ abstract class BaseSchema implements WebhookSchemaInterface
     }
 
     /**
+     * @param  array<string, mixed>  $payload
      * @param  array<string, mixed>  $eventData
      * @return array<string, string>
      */
-    public function prepareHeaders(WebhookConfiguration $webhookConfiguration, array $eventData): array
+    public function prepareHeaders(WebhookConfiguration $webhookConfiguration, array $payload, array $eventData): array
     {
         return [];
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @param  array<string, string>  $headers
+     */
+    public function deliver(WebhookConfiguration $webhookConfiguration, array $payload, array $headers): Response
+    {
+        return Http::withHeaders($headers)
+            ->timeout($this->getTimeout())
+            ->post($webhookConfiguration->endpoint, $payload);
+    }
+
+    public function wasSuccessful(Response $response): bool
+    {
+        return $response->successful();
+    }
+
+    public function retryAfter(Response $response): ?int
+    {
+        return null;
+    }
+
+    /**
+     * Request timeout in seconds, used by the default deliver() implementation.
+     */
+    protected function getTimeout(): int
+    {
+        return config('panel.webhook.timeout', 30);
     }
 }

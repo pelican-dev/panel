@@ -40,15 +40,27 @@ class ProcessWebhook implements ShouldQueue
 
         if ($schema) {
             $payload = $schema->preparePayload($this->webhookConfiguration, $data);
-            $headers = $schema->prepareHeaders($this->webhookConfiguration, $data);
+            $headers = $schema->prepareHeaders($this->webhookConfiguration, $payload, $data);
         } else {
             $payload = $this->replaceStoredPayloadVars($data);
             $headers = [];
         }
 
+        $retryAfter = null;
+
         try {
-            Http::withHeaders($headers)->post($this->webhookConfiguration->endpoint, $payload)->throw();
-            $successful = now();
+            // The type owns the request, so it is free to change the verb, encoding or timeout
+            $response = $schema
+                ? $schema->deliver($this->webhookConfiguration, $payload, $headers)
+                : Http::withHeaders($headers)->post($this->webhookConfiguration->endpoint, $payload);
+
+            $successful = ($schema?->wasSuccessful($response) ?? $response->successful()) ? now() : null;
+
+            if (!$successful) {
+                report("Webhook delivery to {$this->webhookConfiguration->endpoint} failed with status {$response->status()}.");
+
+                $retryAfter = $schema?->retryAfter($response);
+            }
         } catch (Exception $exception) {
             report($exception->getMessage());
             $successful = null;
@@ -60,6 +72,11 @@ class ProcessWebhook implements ShouldQueue
             'event' => $this->eventName,
             'endpoint' => $this->webhookConfiguration->endpoint,
         ]);
+
+        // Only types that ask for it are retried, so default behaviour is unchanged
+        if ($retryAfter !== null) {
+            $this->release($retryAfter);
+        }
     }
 
     /**

@@ -327,7 +327,11 @@ class WebhookConfiguration extends Model
             ->values()
             ->all();
 
-        return array_values(array_unique(array_merge($events, $serverEvents)));
+        $events = array_merge($events, $serverEvents);
+
+        Event::dispatch('global:webhook.events', [&$events]);
+
+        return array_values(array_unique($events));
     }
 
     /** @return array<string, string> */

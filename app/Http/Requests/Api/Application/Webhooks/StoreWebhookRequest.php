@@ -20,6 +20,42 @@ class StoreWebhookRequest extends ApplicationApiRequest
     /** @return array<string, string|array<string|\Stringable|ValidationRule>> */
     public function rules(): array
     {
+        return array_merge($this->baseRules(), $this->payloadRules());
+    }
+
+    /**
+     * Rules the selected type declares for its own payload, namespaced under `payload`.
+     *
+     * @return array<string, mixed>
+     */
+    protected function payloadRules(): array
+    {
+        $schema = WebhookTypes::get($this->resolveType());
+
+        if (!$schema) {
+            return [];
+        }
+
+        $rules = [];
+        foreach ($schema->getPayloadRules() as $key => $rule) {
+            $rules["payload.$key"] = $rule;
+        }
+
+        return $rules;
+    }
+
+    protected function resolveType(): ?string
+    {
+        if ($this->filled('type')) {
+            return $this->input('type');
+        }
+
+        return WebhookTypes::detect($this->input('endpoint'));
+    }
+
+    /** @return array<string, string|array<string|\Stringable|ValidationRule>> */
+    protected function baseRules(): array
+    {
         return [
             'name' => ['required', 'string', 'max:191'],
             'description' => ['nullable', 'string', 'max:191'],

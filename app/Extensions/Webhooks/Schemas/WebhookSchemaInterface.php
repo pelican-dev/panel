@@ -6,6 +6,7 @@ use App\Enums\WebhookScope;
 use App\Models\WebhookConfiguration;
 use BackedEnum;
 use Filament\Schemas\Components\Component;
+use Illuminate\Http\Client\Response;
 
 interface WebhookSchemaInterface
 {
@@ -47,6 +48,14 @@ interface WebhookSchemaInterface
     public function matchesEndpoint(string $endpoint): bool;
 
     /**
+     * Validation rules applied to the stored payload, keyed relative to `payload`.
+     * For example `['content' => ['string', 'max:2000']]` validates `payload.content`.
+     *
+     * @return array<string, mixed>
+     */
+    public function getPayloadRules(): array;
+
+    /**
      * Turn form state into model attributes, usually by collapsing the type specific
      * fields into `payload`.
      *
@@ -72,10 +81,37 @@ interface WebhookSchemaInterface
     public function preparePayload(WebhookConfiguration $webhookConfiguration, array $eventData): array;
 
     /**
-     * Build the request headers posted to the endpoint.
+     * Build the request headers.
      *
+     * The prepared body is passed in as well as the raw event data, so a type that has to
+     * sign its requests can compute an HMAC over exactly what will be sent.
+     *
+     * @param  array<string, mixed>  $payload
      * @param  array<string, mixed>  $eventData
      * @return array<string, string>
      */
-    public function prepareHeaders(WebhookConfiguration $webhookConfiguration, array $eventData): array;
+    public function prepareHeaders(WebhookConfiguration $webhookConfiguration, array $payload, array $eventData): array;
+
+    /**
+     * Send the payload to the endpoint.
+     *
+     * Owning the whole request means a type is free to change the verb, the encoding, the
+     * timeout or the retry policy instead of being locked to a JSON POST.
+     *
+     * @param  array<string, mixed>  $payload
+     * @param  array<string, string>  $headers
+     */
+    public function deliver(WebhookConfiguration $webhookConfiguration, array $payload, array $headers): Response;
+
+    /**
+     * Whether the response counts as a successful delivery. Override for endpoints that
+     * report failures with a 2xx status and an error body.
+     */
+    public function wasSuccessful(Response $response): bool;
+
+    /**
+     * Seconds to wait before retrying a failed delivery, or null to not retry.
+     * Lets a type honour rate limiting, such as Discord's `Retry-After` on a 429.
+     */
+    public function retryAfter(Response $response): ?int;
 }

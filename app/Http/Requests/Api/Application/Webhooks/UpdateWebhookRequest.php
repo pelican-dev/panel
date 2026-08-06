@@ -44,6 +44,19 @@ class UpdateWebhookRequest extends StoreWebhookRequest
         return parent::hasServer() || $this->record()->server_id !== null;
     }
 
+    /**
+     * Fall back to the type already stored on the record, so payload rules still apply
+     * when the request only changes the payload.
+     */
+    protected function resolveType(): ?string
+    {
+        if (!$this->filled('type') && !$this->filled('endpoint')) {
+            return $this->record()->type;
+        }
+
+        return parent::resolveType();
+    }
+
     protected function record(): WebhookConfiguration
     {
         return $this->parameter('webhook', WebhookConfiguration::class);

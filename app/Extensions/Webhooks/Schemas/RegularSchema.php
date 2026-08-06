@@ -80,10 +80,11 @@ class RegularSchema extends BaseSchema
     }
 
     /**
+     * @param  array<string, mixed>  $payload
      * @param  array<string, mixed>  $eventData
      * @return array<string, string>
      */
-    public function prepareHeaders(WebhookConfiguration $webhookConfiguration, array $eventData): array
+    public function prepareHeaders(WebhookConfiguration $webhookConfiguration, array $payload, array $eventData): array
     {
         $headers = [];
 

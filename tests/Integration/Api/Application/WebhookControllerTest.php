@@ -3,6 +3,7 @@
 namespace App\Tests\Integration\Api\Application;
 
 use App\Enums\WebhookScope;
+use App\Extensions\Webhooks\Schemas\BaseSchema;
 use App\Extensions\Webhooks\WebhookTypeService;
 use App\Models\Server;
 use App\Models\Webhook;
@@ -172,6 +173,25 @@ class WebhookControllerTest extends ApplicationApiIntegrationTestCase
         $this->assertDatabaseCount(Webhook::class, 1);
     }
 
+    public function test_it_enforces_the_payload_rules_a_type_declares(): void
+    {
+        $this->app->make(WebhookTypeService::class)->register(new LimitedPayloadSchema());
+
+        $body = [
+            'name' => 'Limited',
+            'endpoint' => 'https://example.com/hook',
+            'type' => 'limited',
+            'events' => ['eloquent.created: ' . Server::class],
+        ];
+
+        $this->postJson('/api/application/webhooks', $body + ['payload' => ['note' => 'way too long']])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonPath('errors.0.meta.source_field', 'payload.note');
+
+        $this->postJson('/api/application/webhooks', $body + ['payload' => ['note' => 'ok']])
+            ->assertStatus(Response::HTTP_CREATED);
+    }
+
     public function test_it_requires_permission(): void
     {
         $webhook = WebhookConfiguration::factory()->create();
@@ -182,5 +202,19 @@ class WebhookControllerTest extends ApplicationApiIntegrationTestCase
 
         $this->getJson('/api/application/webhooks')->assertForbidden();
         $this->postJson('/api/application/webhooks/' . $webhook->id . '/test')->assertForbidden();
+    }
+}
+
+class LimitedPayloadSchema extends BaseSchema
+{
+    public function getId(): string
+    {
+        return 'limited';
+    }
+
+    /** @return array<string, mixed> */
+    public function getPayloadRules(): array
+    {
+        return ['note' => ['string', 'max:5']];
     }
 }
