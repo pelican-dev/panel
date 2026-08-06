@@ -19,6 +19,10 @@ class RedirectIfNotInstalled
             return $next($request);
         }
 
+        if ($request->routeIs('installer')) {
+            return $next($request);
+        }
+
         return redirect()->route('installer');
     }
 }
