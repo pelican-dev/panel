@@ -549,7 +549,9 @@ class Server extends Model implements HasAvatar, Validatable
         $username ??= user()?->username;
 
         if (!is_null($directory)) {
-            $directory = '/' . trim($directory, '/');
+            $directory = explode('/', trim($directory, '/'));
+            $directory = array_map(fn (string $part) => rawurlencode($part), $directory);
+            $directory = '/' . implode('/', $directory);
         }
 
         if ($directory === '/') {
