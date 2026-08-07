@@ -26,10 +26,10 @@ class ConnectSftpAction extends Action
         $this->label(trans('server/setting.server_info.sftp.action'));
 
         $this->authorize(function (?Server $server) {
-            /** @var Server $server */
+            /** @var ?Server $server */
             $server ??= Filament::getTenant();
 
-            return user()?->can(SubuserPermission::FileSftp, $server);
+            return !is_null($server) && user()?->can(SubuserPermission::FileSftp, $server);
         });
 
         $this->color('success');
@@ -37,8 +37,12 @@ class ConnectSftpAction extends Action
         $this->icon(TablerIcon::Plug);
 
         $this->url(function (?Server $server) {
-            /** @var Server $server */
+            /** @var ?Server $server */
             $server ??= Filament::getTenant();
+
+            if (is_null($server)) {
+                return null;
+            }
 
             return $server->getSftpUrl($this->getUsername(), $this->getDirectory());
         });

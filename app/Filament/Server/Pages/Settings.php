@@ -183,7 +183,7 @@ class Settings extends ServerFormPage
                                     ->disabled()
                                     ->copyable()
                                     ->hintAction(ConnectSftpAction::make('hint_connect_sftp'))
-                                    ->formatStateUsing(fn (Server $server) => $server->getSftpUrl(user()?->username)),
+                                    ->formatStateUsing(fn (Server $server) => $server->getSftpUrl()),
                                 TextInput::make('username')
                                     ->label(trans('server/setting.server_info.sftp.username'))
                                     ->columnSpan(1)
