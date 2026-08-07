@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use ZipArchive;
 
@@ -27,9 +28,15 @@ class PluginServiceTest extends IntegrationTestCase
 
     protected function tearDown(): void
     {
-        // Clean up anything the service extracted into the real plugins directory.
+        // Clean up anything the service touched in the real plugins directory: installed
+        // plugins, their rollback backups, and any leftover extraction working directories.
         foreach ($this->importedPlugins as $id) {
             File::deleteDirectory(plugin_path($id));
+            File::deleteDirectory(plugin_path('.' . $id . '.bak'));
+        }
+
+        foreach (File::glob(plugin_path('.import-*')) as $leftover) {
+            File::deleteDirectory($leftover);
         }
 
         parent::tearDown();
@@ -40,7 +47,7 @@ class PluginServiceTest extends IntegrationTestCase
         // Zip contains a top-level folder "test-import-plugin", but the upload is renamed as
         // a browser would on a duplicate download.
         $file = $this->makeUpload('test-import-plugin(1).zip', [
-            'test-import-plugin/plugin.json' => json_encode(['id' => 'test-import-plugin']),
+            'test-import-plugin/plugin.json' => $this->manifest('test-import-plugin'),
         ]);
 
         $this->importedPlugins[] = 'test-import-plugin';
@@ -56,7 +63,7 @@ class PluginServiceTest extends IntegrationTestCase
     public function test_import_handles_flat_zip_without_a_top_level_folder(): void
     {
         $file = $this->makeUpload('renamed(2).zip', [
-            'plugin.json' => json_encode(['id' => 'test-flat-plugin']),
+            'plugin.json' => $this->manifest('test-flat-plugin'),
         ]);
 
         $this->importedPlugins[] = 'test-flat-plugin';
@@ -65,6 +72,32 @@ class PluginServiceTest extends IntegrationTestCase
 
         $this->assertSame('test-flat-plugin', $id);
         $this->assertFileExists(plugin_path('test-flat-plugin', 'plugin.json'));
+    }
+
+    public function test_import_lowercases_the_manifest_id(): void
+    {
+        $file = $this->makeUpload('Test-Upper.zip', [
+            'Test-Upper/plugin.json' => $this->manifest('Test-Upper'),
+        ]);
+
+        $this->importedPlugins[] = 'test-upper';
+
+        $id = $this->service->downloadPluginFromFile($file);
+
+        $this->assertSame('test-upper', $id);
+        $this->assertFileExists(plugin_path('test-upper', 'plugin.json'));
+    }
+
+    public function test_import_cleans_up_its_extraction_directory(): void
+    {
+        $this->importedPlugins[] = 'test-cleanup-plugin';
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-cleanup-plugin.zip', [
+            'test-cleanup-plugin/plugin.json' => $this->manifest('test-cleanup-plugin'),
+        ]));
+
+        // The temporary ".import-*" working directory must not linger under plugins/.
+        $this->assertSame([], File::glob(plugin_path('.import-*')));
     }
 
     public function test_import_without_a_manifest_fails_loudly(): void
@@ -91,17 +124,101 @@ class PluginServiceTest extends IntegrationTestCase
         $this->service->downloadPluginFromFile($file);
     }
 
+    public function test_import_with_a_missing_id_fails_loudly(): void
+    {
+        $file = $this->makeUpload('no-id.zip', [
+            'plugin.json' => json_encode(['name' => 'No Id']),
+        ]);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage(trans('admin/plugin.notifications.import_no_manifest'));
+
+        $this->service->downloadPluginFromFile($file);
+    }
+
+    /**
+     * @param  string  $id  an id that is a non-empty string but not a safe directory slug
+     */
+    #[DataProvider('unsafeIds')]
+    public function test_import_rejects_an_unsafe_plugin_id(string $id): void
+    {
+        // A clean entry name (so it passes the archive path-traversal check) whose manifest
+        // still carries a dangerous id must be rejected before anything is moved into place.
+        $file = $this->makeUpload('sneaky.zip', [
+            'plugin.json' => json_encode(['id' => $id]),
+        ]);
+
+        try {
+            $this->service->downloadPluginFromFile($file);
+            $this->fail('Expected the import to be rejected for id: ' . $id);
+        } catch (Exception $e) {
+            $this->assertSame(trans('admin/plugin.notifications.import_invalid_id'), $e->getMessage());
+        }
+
+        // Nothing should have escaped the plugins directory.
+        $this->assertDirectoryDoesNotExist(base_path('evil'));
+        $this->assertDirectoryDoesNotExist(base_path('plugins/../evil'));
+    }
+
+    /** @return array<string, array{string}> */
+    public static function unsafeIds(): array
+    {
+        return [
+            'parent traversal' => ['../../evil'],
+            'single parent' => ['../evil'],
+            'contains slash' => ['foo/bar'],
+            'leading dot' => ['.hidden'],
+            'just dots' => ['..'],
+            'contains space' => ['foo bar'],
+        ];
+    }
+
+    public function test_import_rejects_a_duplicate_plugin(): void
+    {
+        $this->importedPlugins[] = 'test-dupe-plugin';
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-dupe-plugin.zip', [
+            'test-dupe-plugin/plugin.json' => $this->manifest('test-dupe-plugin'),
+        ]));
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage(trans('admin/plugin.notifications.import_exists'));
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-dupe-plugin.zip', [
+            'test-dupe-plugin/plugin.json' => $this->manifest('test-dupe-plugin'),
+        ]));
+    }
+
+    public function test_clean_download_replaces_the_existing_plugin(): void
+    {
+        $this->importedPlugins[] = 'test-replace-plugin';
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-replace-plugin.zip', [
+            'test-replace-plugin/plugin.json' => $this->manifest('test-replace-plugin', '1.0.0'),
+        ]), true);
+
+        $this->assertSame('1.0.0', $this->installedVersion('test-replace-plugin'));
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-replace-plugin.zip', [
+            'test-replace-plugin/plugin.json' => $this->manifest('test-replace-plugin', '2.0.0'),
+        ]), true);
+
+        // The new copy is in place and no rollback backup is left behind.
+        $this->assertSame('2.0.0', $this->installedVersion('test-replace-plugin'));
+        $this->assertDirectoryDoesNotExist(plugin_path('.test-replace-plugin.bak'));
+    }
+
     public function test_clean_download_keeps_the_existing_plugin_when_the_move_fails(): void
     {
         $this->importedPlugins[] = 'test-clean-plugin';
 
         $this->service->downloadPluginFromFile($this->makeUpload('test-clean-plugin.zip', [
-            'test-clean-plugin/plugin.json' => json_encode(['id' => 'test-clean-plugin', 'version' => '1.0.0']),
+            'test-clean-plugin/plugin.json' => $this->manifest('test-clean-plugin', '1.0.0'),
         ]), true);
 
-        // Force the move into plugins/<id> to fail, standing in for any filesystem-level
-        // failure mid-replace. The set-aside and restore moves (to/from the .bak dir) run
-        // for real so we can assert the original install survives.
+        // Force only the move into plugins/<id> to fail, standing in for a filesystem-level
+        // failure mid-replace. The set-aside and restore moves (to/from the .bak dir) run for
+        // real so we can prove the original install is restored intact.
         $real = new Filesystem();
         File::partialMock()
             ->shouldReceive('moveDirectory')
@@ -114,34 +231,30 @@ class PluginServiceTest extends IntegrationTestCase
             });
 
         $file = $this->makeUpload('test-clean-plugin.zip', [
-            'test-clean-plugin/plugin.json' => json_encode(['id' => 'test-clean-plugin', 'version' => '2.0.0']),
+            'test-clean-plugin/plugin.json' => $this->manifest('test-clean-plugin', '2.0.0'),
         ]);
 
         try {
             $this->service->downloadPluginFromFile($file, true);
             $this->fail('Expected the import to fail.');
-        } catch (Exception) {
-            // The original install must still be there after a failed clean download.
+        } catch (Exception $e) {
+            $this->assertSame('Could not move plugin into place.', $e->getMessage());
         }
 
-        $this->assertFileExists(plugin_path('test-clean-plugin', 'plugin.json'));
-        $this->assertDirectoryDoesNotExist(plugin_path('test-clean-plugin.bak'));
+        // The original 1.0.0 install must survive — not the failed 2.0.0 replacement — and the
+        // backup directory must be gone.
+        $this->assertSame('1.0.0', $this->installedVersion('test-clean-plugin'));
+        $this->assertDirectoryDoesNotExist(plugin_path('.test-clean-plugin.bak'));
     }
 
-    public function test_import_rejects_a_duplicate_plugin(): void
+    private function installedVersion(string $id): string
     {
-        $this->importedPlugins[] = 'test-dupe-plugin';
+        return File::json(plugin_path($id, 'plugin.json'))['version'];
+    }
 
-        $this->service->downloadPluginFromFile($this->makeUpload('test-dupe-plugin.zip', [
-            'test-dupe-plugin/plugin.json' => json_encode(['id' => 'test-dupe-plugin']),
-        ]));
-
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage(trans('admin/plugin.notifications.import_exists'));
-
-        $this->service->downloadPluginFromFile($this->makeUpload('test-dupe-plugin.zip', [
-            'test-dupe-plugin/plugin.json' => json_encode(['id' => 'test-dupe-plugin']),
-        ]));
+    private function manifest(string $id, string $version = '1.0.0'): string
+    {
+        return json_encode(['id' => $id, 'version' => $version]);
     }
 
     /**

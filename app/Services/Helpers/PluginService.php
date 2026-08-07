@@ -362,11 +362,19 @@ class PluginService
             }
         }
 
-        // Extract to a temporary directory first so we can derive the plugin's identity from
-        // its own plugin.json rather than trusting the (possibly renamed) upload filename.
-        $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
+        // Extract into a temporary directory that lives on the same filesystem as the plugins
+        // directory (named as a dotfile so plugin discovery ignores it). Deriving the id from
+        // the extracted plugin.json — rather than the upload filename — means a renamed zip
+        // still imports, and keeping temp + target on one volume makes every move below an
+        // atomic same-filesystem rename instead of a cross-device copy that can fail.
+        $tmpDir = (new TemporaryDirectory(base_path('plugins')))
+            ->name('.import-' . Str::random(16))
+            ->deleteWhenDestroyed()
+            ->create();
 
-        if (!$zip->extractTo($tmpDir->path())) {
+        $extractPath = $tmpDir->path('contents');
+
+        if (!$zip->extractTo($extractPath)) {
             $zip->close();
             throw new Exception('Could not extract zip file.');
         }
@@ -375,24 +383,31 @@ class PluginService
 
         // Locate plugin.json, either at the archive root (flat zip) or one level deep
         // (single top-level folder). Prefer the shallowest match.
-        $manifest = $this->locatePluginManifest($tmpDir->path());
+        $manifest = $this->locatePluginManifest($extractPath);
         throw_if($manifest === null, new Exception(trans('admin/plugin.notifications.import_no_manifest')));
 
         $data = File::json($manifest, JSON_THROW_ON_ERROR);
         $id = $data['id'] ?? null;
         throw_if(!is_string($id) || trim($id) === '', new Exception(trans('admin/plugin.notifications.import_no_manifest')));
 
-        $pluginName = Str::lower($id);
+        // The id becomes the install directory name and must equal it once installed (see
+        // Plugin::getRows()), so guard against anything that isn't a safe slug — e.g. an id of
+        // "../../evil" that would escape the plugins directory when passed to plugin_path().
+        $pluginName = Str::lower(trim($id));
+        throw_unless(preg_match('/^[a-z0-9][a-z0-9._-]*$/', $pluginName), new Exception(trans('admin/plugin.notifications.import_invalid_id')));
+
         $target = plugin_path($pluginName);
         $source = dirname($manifest);
 
         // For a clean re-download of an existing plugin, set the current install aside as a
         // rollback until the new copy is in place, so a failed move can't leave nothing behind.
+        // The backup is a dotfile so discovery ignores it during the swap; temp, target and
+        // backup all sit under plugins/, so each move is a same-filesystem rename.
         $rollback = null;
         if ($cleanDownload && File::isDirectory($target)) {
-            $rollback = $target . '.bak';
+            $rollback = plugin_path('.' . $pluginName . '.bak');
             File::deleteDirectory($rollback);
-            File::moveDirectory($target, $rollback);
+            throw_unless(File::moveDirectory($target, $rollback), new Exception('Could not set the existing plugin aside.'));
         }
 
         throw_if(File::isDirectory($target), new Exception(trans('admin/plugin.notifications.import_exists')));
