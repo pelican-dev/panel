@@ -92,7 +92,6 @@ class InitiateBackupService
                 ->backups()
                 ->where('created_at', '>=', now()->subSeconds($period))
                 ->nonFailed()
-                ->withTrashed()
                 ->get();
 
             if ($previous->count() >= $limit) {
