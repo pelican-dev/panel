@@ -44,6 +44,7 @@ class ConnectSftpAction extends Action
                 return null;
             }
 
+            /** @var Server $server */
             return $server->getSftpUrl($this->getUsername(), $this->getDirectory());
         });
     }
