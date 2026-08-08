@@ -310,7 +310,7 @@ class PluginService
         $downloadUrl = $plugin->getDownloadUrlForUpdate();
         throw_unless($downloadUrl, new Exception('No download url found.'));
 
-        $this->downloadPluginFromUrl($downloadUrl, true);
+        $this->downloadPluginFromUrl($downloadUrl);
 
         Plugin::refreshRows();
         $plugin = $plugin->refresh();
@@ -343,7 +343,7 @@ class PluginService
     }
 
     /** @throws Exception */
-    public function downloadPluginFromFile(UploadedFile $file, bool $cleanDownload = false): string
+    public function downloadPluginFromFile(UploadedFile $file): string
     {
         // Validate file size to prevent zip bombs
         $maxSize = config('panel.plugin.max_import_size');
@@ -399,18 +399,16 @@ class PluginService
         $target = plugin_path($pluginName);
         $source = dirname($manifest);
 
-        // For a clean re-download of an existing plugin, set the current install aside as a
+        // Importing over an existing plugin replaces it. Set the current install aside as a
         // rollback until the new copy is in place, so a failed move can't leave nothing behind.
         // The backup is a dotfile so discovery ignores it during the swap; temp, target and
         // backup all sit under plugins/, so each move is a same-filesystem rename.
         $rollback = null;
-        if ($cleanDownload && File::isDirectory($target)) {
+        if (File::isDirectory($target)) {
             $rollback = plugin_path('.' . $pluginName . '.bak');
             File::deleteDirectory($rollback);
             throw_unless(File::moveDirectory($target, $rollback), new Exception('Could not set the existing plugin aside.'));
         }
-
-        throw_if(File::isDirectory($target), new Exception(trans('admin/plugin.notifications.import_exists')));
 
         // Move the folder containing plugin.json to plugins/<id> so the layout is correct
         // regardless of the archive's internal folder name.
@@ -451,7 +449,7 @@ class PluginService
     }
 
     /** @throws Exception */
-    public function downloadPluginFromUrl(string $url, bool $cleanDownload = false): string
+    public function downloadPluginFromUrl(string $url): string
     {
         $basename = pathinfo($url, PATHINFO_BASENAME);
         $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
@@ -465,7 +463,7 @@ class PluginService
 
         throw_unless(file_put_contents($tmpPath, $content), new InvalidFileUploadException('Could not write temporary file.'));
 
-        return $this->downloadPluginFromFile(new UploadedFile($tmpPath, $basename, 'application/zip'), $cleanDownload);
+        return $this->downloadPluginFromFile(new UploadedFile($tmpPath, $basename, 'application/zip'));
     }
 
     public function deletePlugin(Plugin $plugin): void

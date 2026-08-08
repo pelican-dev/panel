@@ -173,48 +173,34 @@ class PluginServiceTest extends IntegrationTestCase
         ];
     }
 
-    public function test_import_rejects_a_duplicate_plugin(): void
-    {
-        $this->importedPlugins[] = 'test-dupe-plugin';
-
-        $this->service->downloadPluginFromFile($this->makeUpload('test-dupe-plugin.zip', [
-            'test-dupe-plugin/plugin.json' => $this->manifest('test-dupe-plugin'),
-        ]));
-
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage(trans('admin/plugin.notifications.import_exists'));
-
-        $this->service->downloadPluginFromFile($this->makeUpload('test-dupe-plugin.zip', [
-            'test-dupe-plugin/plugin.json' => $this->manifest('test-dupe-plugin'),
-        ]));
-    }
-
-    public function test_clean_download_replaces_the_existing_plugin(): void
+    public function test_import_over_an_existing_plugin_replaces_it(): void
     {
         $this->importedPlugins[] = 'test-replace-plugin';
 
         $this->service->downloadPluginFromFile($this->makeUpload('test-replace-plugin.zip', [
             'test-replace-plugin/plugin.json' => $this->manifest('test-replace-plugin', '1.0.0'),
-        ]), true);
+        ]));
 
         $this->assertSame('1.0.0', $this->installedVersion('test-replace-plugin'));
 
-        $this->service->downloadPluginFromFile($this->makeUpload('test-replace-plugin.zip', [
+        // Re-importing the same id is allowed and replaces the existing install.
+        $id = $this->service->downloadPluginFromFile($this->makeUpload('test-replace-plugin.zip', [
             'test-replace-plugin/plugin.json' => $this->manifest('test-replace-plugin', '2.0.0'),
-        ]), true);
+        ]));
 
         // The new copy is in place and no rollback backup is left behind.
+        $this->assertSame('test-replace-plugin', $id);
         $this->assertSame('2.0.0', $this->installedVersion('test-replace-plugin'));
         $this->assertDirectoryDoesNotExist(plugin_path('.test-replace-plugin.bak'));
     }
 
-    public function test_clean_download_keeps_the_existing_plugin_when_the_move_fails(): void
+    public function test_import_keeps_the_existing_plugin_when_the_move_fails(): void
     {
         $this->importedPlugins[] = 'test-clean-plugin';
 
         $this->service->downloadPluginFromFile($this->makeUpload('test-clean-plugin.zip', [
             'test-clean-plugin/plugin.json' => $this->manifest('test-clean-plugin', '1.0.0'),
-        ]), true);
+        ]));
 
         // Force only the move into plugins/<id> to fail, standing in for a filesystem-level
         // failure mid-replace. The set-aside and restore moves (to/from the .bak dir) run for
@@ -235,7 +221,7 @@ class PluginServiceTest extends IntegrationTestCase
         ]);
 
         try {
-            $this->service->downloadPluginFromFile($file, true);
+            $this->service->downloadPluginFromFile($file);
             $this->fail('Expected the import to fail.');
         } catch (Exception $e) {
             $this->assertSame('Could not move plugin into place.', $e->getMessage());
