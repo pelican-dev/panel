@@ -19,6 +19,9 @@ class PluginServiceTest extends IntegrationTestCase
     /** @var string[] */
     private array $importedPlugins = [];
 
+    /** @var TemporaryDirectory[] */
+    private array $uploadDirs = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -37,6 +40,11 @@ class PluginServiceTest extends IntegrationTestCase
 
         foreach (File::glob(plugin_path('.import-*')) as $leftover) {
             File::deleteDirectory($leftover);
+        }
+
+        // TemporaryDirectory::make() does not clean up on its own; remove the upload fixtures.
+        foreach ($this->uploadDirs as $dir) {
+            $dir->delete();
         }
 
         parent::tearDown();
@@ -294,6 +302,7 @@ class PluginServiceTest extends IntegrationTestCase
     private function makeUpload(string $clientName, array $entries): UploadedFile
     {
         $tmpDir = TemporaryDirectory::make();
+        $this->uploadDirs[] = $tmpDir;
         $zipPath = $tmpDir->path('upload.zip');
 
         $zip = new ZipArchive();
