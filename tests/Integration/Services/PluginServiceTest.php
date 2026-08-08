@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use ZipArchive;
@@ -142,6 +143,77 @@ class PluginServiceTest extends IntegrationTestCase
         $this->expectExceptionMessage(trans('admin/plugin.notifications.import_no_manifest'));
 
         $this->service->downloadPluginFromFile($file);
+    }
+
+    public function test_import_with_an_empty_id_fails_loudly(): void
+    {
+        $file = $this->makeUpload('empty-id.zip', [
+            'plugin.json' => json_encode(['id' => '']),
+        ]);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage(trans('admin/plugin.notifications.import_no_manifest'));
+
+        $this->service->downloadPluginFromFile($file);
+    }
+
+    public function test_import_ignores_a_plugin_json_nested_too_deep(): void
+    {
+        // locatePluginManifest only looks at the root and one level deep; anything deeper is
+        // not treated as a plugin.
+        $file = $this->makeUpload('deep.zip', [
+            'a/b/plugin.json' => $this->manifest('too-deep'),
+        ]);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage(trans('admin/plugin.notifications.import_no_manifest'));
+
+        $this->service->downloadPluginFromFile($file);
+    }
+
+    public function test_import_rejects_a_zip_with_a_path_traversal_entry(): void
+    {
+        // A malicious archive entry that would write outside the extraction directory must be
+        // rejected before extraction, even if it also carries a valid plugin.json.
+        $file = $this->makeUpload('evil.zip', [
+            '../evil.txt' => 'pwned',
+            'evil/plugin.json' => $this->manifest('evil'),
+        ]);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Zip file contains invalid path traversal sequences.');
+
+        $this->service->downloadPluginFromFile($file);
+    }
+
+    public function test_import_rejects_a_zip_larger_than_the_configured_max(): void
+    {
+        config()->set('panel.plugin.max_import_size', 10);
+
+        $file = $this->makeUpload('too-big.zip', [
+            'too-big/plugin.json' => $this->manifest('too-big'),
+        ]);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Zip file too large');
+
+        $this->service->downloadPluginFromFile($file);
+    }
+
+    public function test_import_from_url_downloads_and_installs_the_plugin(): void
+    {
+        $this->importedPlugins[] = 'test-url-plugin';
+
+        $bytes = file_get_contents($this->makeUpload('whatever.zip', [
+            'test-url-plugin/plugin.json' => $this->manifest('test-url-plugin'),
+        ])->getPathname());
+
+        Http::fake(['*' => Http::response($bytes)]);
+
+        $id = $this->service->downloadPluginFromUrl('https://example.test/download/test-url-plugin.zip');
+
+        $this->assertSame('test-url-plugin', $id);
+        $this->assertFileExists(plugin_path('test-url-plugin', 'plugin.json'));
     }
 
     /**
