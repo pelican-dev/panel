@@ -347,11 +347,18 @@ class PluginService
     {
         // Validate file size to prevent zip bombs
         $maxSize = config('panel.plugin.max_import_size');
-        throw_if($file->getSize() > $maxSize, new Exception("Zip file too large. ($maxSize  MiB)"));
+        $maxSizeLabel = round($maxSize / 1024 / 1024, 2);
+        throw_if($file->getSize() > $maxSize, new Exception("Zip file too large. ($maxSizeLabel MiB)"));
 
         $zip = new ZipArchive();
 
         throw_unless($zip->open($file->getPathname()), new Exception('Could not open zip file.'));
+
+        // The check above only sees the compressed bytes, which say nothing about what the
+        // archive expands to — a small, highly compressible zip can still fill the plugins
+        // volume. Total the uncompressed entry sizes while walking the entries and bail as
+        // soon as they exceed the same limit, before anything is written to disk.
+        $uncompressedSize = 0;
 
         // Validate zip contents before extraction
         for ($i = 0; $i < $zip->numFiles; $i++) {
@@ -359,6 +366,14 @@ class PluginService
             if (Str::contains($filename, '..') || Str::startsWith($filename, '/')) {
                 $zip->close();
                 throw new Exception('Zip file contains invalid path traversal sequences.');
+            }
+
+            $stat = $zip->statIndex($i) ?: [];
+            $uncompressedSize += $stat['size'] ?? 0;
+
+            if ($uncompressedSize > $maxSize) {
+                $zip->close();
+                throw new Exception("Zip file contents too large. ($maxSizeLabel MiB)");
             }
         }
 
@@ -463,7 +478,8 @@ class PluginService
 
         // Validate file size to prevent zip bombs
         $maxSize = config('panel.plugin.max_import_size');
-        throw_if(strlen($content) > $maxSize, new InvalidFileUploadException("Zip file too large. ($maxSize  MiB)"));
+        $maxSizeLabel = round($maxSize / 1024 / 1024, 2);
+        throw_if(strlen($content) > $maxSize, new InvalidFileUploadException("Zip file too large. ($maxSizeLabel MiB)"));
 
         throw_unless(file_put_contents($tmpPath, $content), new InvalidFileUploadException('Could not write temporary file.'));
 

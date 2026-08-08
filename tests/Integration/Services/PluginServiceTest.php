@@ -200,6 +200,38 @@ class PluginServiceTest extends IntegrationTestCase
         $this->service->downloadPluginFromFile($file);
     }
 
+    public function test_import_rejects_a_zip_that_expands_beyond_the_configured_max(): void
+    {
+        // Clean up in case a regression lets the archive through and it actually installs.
+        $this->importedPlugins[] = 'zip-bomb';
+
+        config()->set('panel.plugin.max_import_size', 4096);
+
+        $file = $this->makeUpload('zip-bomb.zip', [
+            'zip-bomb/plugin.json' => $this->manifest('zip-bomb'),
+            'zip-bomb/payload.txt' => str_repeat('a', 100_000),
+        ]);
+
+        // The archive compresses down small enough to clear the compressed-size check, so only
+        // the uncompressed total catches it.
+        $this->assertLessThan(4096, $file->getSize());
+
+        $thrown = null;
+
+        try {
+            $this->service->downloadPluginFromFile($file);
+        } catch (Exception $exception) {
+            $thrown = $exception;
+        }
+
+        $this->assertNotNull($thrown, 'Expected the oversized archive to be rejected.');
+        $this->assertStringContainsString('Zip file contents too large', $thrown->getMessage());
+
+        // Nothing should have been written: no install, and no leftover extraction directory.
+        $this->assertDirectoryDoesNotExist(plugin_path('zip-bomb'));
+        $this->assertSame([], File::glob(plugin_path('.import-*')));
+    }
+
     public function test_import_from_url_downloads_and_installs_the_plugin(): void
     {
         $this->importedPlugins[] = 'test-url-plugin';
