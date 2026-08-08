@@ -10,6 +10,9 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
+use App\Extensions\Dedoc\Scramble\FractalResponseTypeInfer;
+use App\Extensions\Dedoc\Scramble\TransformerFactoryTypeInfer;
+use App\Extensions\Dedoc\Scramble\TransformerModelBindingExtension;
 use App\Http\Responses\LoginResponse;
 use App\Models\Allocation;
 use App\Models\ApiKey;
@@ -95,6 +98,14 @@ class AppServiceProvider extends ServiceProvider
         Sanctum::usePersonalAccessTokenModel(ApiKey::class);
 
         Gate::define('viewApiDocs', fn () => true);
+
+        // ApiRequestDocumentationExtension is registered via config/scramble.php so it's
+        // available before Scramble reads its own config; keep the type-infer extensions here.
+        Scramble::registerExtensions([
+            TransformerModelBindingExtension::class,
+            TransformerFactoryTypeInfer::class,
+            FractalResponseTypeInfer::class,
+        ]);
 
         $bearerTokens = fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer'));
         Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
