@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Enums\WebhookType;
+use App\Extensions\Webhooks\WebhookTypeService;
 use App\Models\WebhookConfiguration;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -11,7 +11,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class ProcessWebhook implements ShouldQueue
@@ -27,7 +26,7 @@ class ProcessWebhook implements ShouldQueue
         private array $data
     ) {}
 
-    public function handle(): void
+    public function handle(WebhookTypeService $webhookTypeService): void
     {
         $data = $this->data[0] ?? [];
         if (count($data) === 1) {
@@ -37,51 +36,65 @@ class ProcessWebhook implements ShouldQueue
         $data = $this->normalizeData($data);
         $data['event'] = $this->webhookConfiguration->transformClassName($this->eventName);
 
-        if ($this->webhookConfiguration->type === WebhookType::Discord) {
-            $payload = json_encode($this->webhookConfiguration->payload);
-            $tmp = $this->webhookConfiguration->replaceVars($data, $payload);
-            $data = json_decode($tmp, true);
+        $schema = $webhookTypeService->get($this->webhookConfiguration->type);
 
-            $embeds = data_get($data, 'embeds');
-            if ($embeds) {
-                foreach ($embeds as &$embed) {
-                    if (data_get($embed, 'has_timestamp')) {
-                        $embed['timestamp'] = Carbon::now();
-                        unset($embed['has_timestamp']);
-                    }
-                }
-                $data['embeds'] = $embeds;
-                if (isset($data['flags'])) {
-                    $data['flags'] &= ~(1 << 2);
-                }
-            }
-
-            if (isset($data['content']) && $data['content'] === '') {
-                unset($data['content']);
-            }
+        if ($schema) {
+            $payload = $schema->preparePayload($this->webhookConfiguration, $data);
+            $headers = $schema->prepareHeaders($this->webhookConfiguration, $payload, $data);
+        } else {
+            $payload = $this->replaceStoredPayloadVars($data);
+            $headers = [];
         }
 
-        try {
-            $headers = [];
+        $retryAfter = null;
 
-            if ($this->webhookConfiguration->type === WebhookType::Regular) {
-                foreach ($this->webhookConfiguration->headers as $key => $value) {
-                    $headers[$key] = $this->webhookConfiguration->replaceVars($data, $value);
-                }
+        try {
+            // The type owns the request, so it is free to change the verb, encoding or timeout
+            $response = $schema
+                ? $schema->deliver($this->webhookConfiguration, $payload, $headers)
+                : Http::withHeaders($headers)->post($this->webhookConfiguration->endpoint, $payload);
+
+            $successful = ($schema?->wasSuccessful($response) ?? $response->successful()) ? now() : null;
+
+            if (!$successful) {
+                report("Webhook delivery to {$this->webhookConfiguration->endpoint} failed with status {$response->status()}.");
+
+                $retryAfter = $schema?->retryAfter($response);
             }
-            Http::withHeaders($headers)->post($this->webhookConfiguration->endpoint, $data)->throw();
-            $successful = now();
         } catch (Exception $exception) {
             report($exception->getMessage());
             $successful = null;
         }
 
         $this->webhookConfiguration->webhooks()->create([
-            'payload' => $data,
+            'payload' => $payload,
             'successful_at' => $successful,
             'event' => $this->eventName,
             'endpoint' => $this->webhookConfiguration->endpoint,
         ]);
+
+        // Only types that ask for it are retried, so default behaviour is unchanged
+        if ($retryAfter !== null) {
+            $this->release($retryAfter);
+        }
+    }
+
+    /**
+     * @param  array<mixed>  $data
+     * @return array<mixed>
+     */
+    private function replaceStoredPayloadVars(array $data): array
+    {
+        if (blank($this->webhookConfiguration->payload)) {
+            return $data;
+        }
+
+        $payload = json_encode($this->webhookConfiguration->payload);
+        if ($payload === false) {
+            return $data;
+        }
+
+        return json_decode($this->webhookConfiguration->replaceVars($data, $payload), true) ?? $data;
     }
 
     /** @return array<mixed> */
