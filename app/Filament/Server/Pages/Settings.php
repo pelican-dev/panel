@@ -6,6 +6,7 @@ use App\Enums\ServerUserSettingKey;
 use App\Enums\SubuserPermission;
 use App\Enums\TablerIcon;
 use App\Facades\Activity;
+use App\Filament\Components\Actions\ConnectSftpAction;
 use App\Filament\Components\Actions\DeleteIcon;
 use App\Filament\Components\Actions\UploadIcon;
 use App\Models\Server;
@@ -181,22 +182,8 @@ class Settings extends ServerFormPage
                                     ->columnSpan(1)
                                     ->disabled()
                                     ->copyable()
-                                    ->hintAction(
-                                        Action::make('hint_connect_sftp')
-                                            ->label(trans('server/setting.server_info.sftp.action'))
-                                            ->color('success')
-                                            ->icon(TablerIcon::Plug)
-                                            ->url(function (Server $server) {
-                                                $fqdn = $server->node->daemon_sftp_alias ?? $server->node->fqdn;
-
-                                                return 'sftp://' . rawurlencode(user()?->username) . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
-                                            }),
-                                    )
-                                    ->formatStateUsing(function (Server $server) {
-                                        $fqdn = $server->node->daemon_sftp_alias ?? $server->node->fqdn;
-
-                                        return 'sftp://' . rawurlencode(user()?->username) . '.' . $server->uuid_short . '@' . $fqdn . ':' . $server->node->daemon_sftp;
-                                    }),
+                                    ->hintAction(ConnectSftpAction::make('hint_connect_sftp'))
+                                    ->formatStateUsing(fn (Server $server) => $server->getSftpUrl()),
                                 TextInput::make('username')
                                     ->label(trans('server/setting.server_info.sftp.username'))
                                     ->columnSpan(1)
