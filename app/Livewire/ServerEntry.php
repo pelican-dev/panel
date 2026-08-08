@@ -6,10 +6,12 @@ use App\Filament\Server\Pages\Console;
 use App\Models\Server;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\View\View;
+use Livewire\Attributes\Reactive;
 use Livewire\Component;
 
 class ServerEntry extends Component
 {
+    #[Reactive]
     public Server $server;
 
     public function render(): View
