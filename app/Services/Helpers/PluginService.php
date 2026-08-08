@@ -310,7 +310,7 @@ class PluginService
         $downloadUrl = $plugin->getDownloadUrlForUpdate();
         throw_unless($downloadUrl, new Exception('No download url found.'));
 
-        $this->downloadPluginFromUrl($downloadUrl);
+        $this->downloadPluginFromUrl($downloadUrl, $plugin->id);
 
         Plugin::refreshRows();
         $plugin = $plugin->refresh();
@@ -343,7 +343,7 @@ class PluginService
     }
 
     /** @throws Exception */
-    public function downloadPluginFromFile(UploadedFile $file): string
+    public function downloadPluginFromFile(UploadedFile $file, ?string $expectedId = null): string
     {
         // Validate file size to prevent zip bombs
         $maxSize = config('panel.plugin.max_import_size');
@@ -395,6 +395,10 @@ class PluginService
         // "../../evil" that would escape the plugins directory when passed to plugin_path().
         $pluginName = Str::lower(trim($id));
         throw_unless(preg_match('/^[a-z0-9][a-z0-9._-]*$/', $pluginName), new Exception(trans('admin/plugin.notifications.import_invalid_id')));
+
+        // When updating a known plugin, the archive must be for that same plugin — reject a
+        // mismatched id before moving anything, so an update can't overwrite a different plugin.
+        throw_if($expectedId !== null && $pluginName !== $expectedId, new Exception(trans('admin/plugin.notifications.import_id_mismatch', ['expected' => $expectedId, 'actual' => $pluginName])));
 
         $target = plugin_path($pluginName);
         $source = dirname($manifest);
@@ -449,7 +453,7 @@ class PluginService
     }
 
     /** @throws Exception */
-    public function downloadPluginFromUrl(string $url): string
+    public function downloadPluginFromUrl(string $url, ?string $expectedId = null): string
     {
         $basename = pathinfo($url, PATHINFO_BASENAME);
         $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
@@ -463,7 +467,7 @@ class PluginService
 
         throw_unless(file_put_contents($tmpPath, $content), new InvalidFileUploadException('Could not write temporary file.'));
 
-        return $this->downloadPluginFromFile(new UploadedFile($tmpPath, $basename, 'application/zip'));
+        return $this->downloadPluginFromFile(new UploadedFile($tmpPath, $basename, 'application/zip'), $expectedId);
     }
 
     public function deletePlugin(Plugin $plugin): void

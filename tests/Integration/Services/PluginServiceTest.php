@@ -194,6 +194,49 @@ class PluginServiceTest extends IntegrationTestCase
         $this->assertDirectoryDoesNotExist(plugin_path('.test-replace-plugin.bak'));
     }
 
+    public function test_import_succeeds_when_the_id_matches_the_expected_id(): void
+    {
+        $this->importedPlugins[] = 'test-expected-plugin';
+
+        $id = $this->service->downloadPluginFromFile($this->makeUpload('test-expected-plugin.zip', [
+            'test-expected-plugin/plugin.json' => $this->manifest('test-expected-plugin'),
+        ]), 'test-expected-plugin');
+
+        $this->assertSame('test-expected-plugin', $id);
+        $this->assertFileExists(plugin_path('test-expected-plugin', 'plugin.json'));
+    }
+
+    public function test_import_rejects_an_archive_for_a_different_plugin_than_expected(): void
+    {
+        // Stand in for an update whose archive actually claims to be a *different* plugin than
+        // the one being updated. It must be rejected before anything is written, so the update
+        // can neither reinstall the wrong plugin nor overwrite an unrelated one.
+        $this->importedPlugins[] = 'test-target-plugin';
+        $this->importedPlugins[] = 'test-other-plugin';
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-target-plugin.zip', [
+            'test-target-plugin/plugin.json' => $this->manifest('test-target-plugin', '1.0.0'),
+        ]));
+
+        $file = $this->makeUpload('update.zip', [
+            'test-other-plugin/plugin.json' => $this->manifest('test-other-plugin', '9.9.9'),
+        ]);
+
+        try {
+            $this->service->downloadPluginFromFile($file, 'test-target-plugin');
+            $this->fail('Expected a mismatched update to be rejected.');
+        } catch (Exception $e) {
+            $this->assertSame(
+                trans('admin/plugin.notifications.import_id_mismatch', ['expected' => 'test-target-plugin', 'actual' => 'test-other-plugin']),
+                $e->getMessage()
+            );
+        }
+
+        // The intended plugin is untouched and the archive's plugin was never written.
+        $this->assertSame('1.0.0', $this->installedVersion('test-target-plugin'));
+        $this->assertDirectoryDoesNotExist(plugin_path('test-other-plugin'));
+    }
+
     public function test_import_keeps_the_existing_plugin_when_the_move_fails(): void
     {
         $this->importedPlugins[] = 'test-clean-plugin';
