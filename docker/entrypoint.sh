@@ -66,6 +66,12 @@ fi
 echo "Optimizing Filament"
 php artisan filament:optimize
 
+# Note: config/route/event caches are intentionally NOT built here. Settings
+# live in .env and are edited at runtime, and plugins register providers (and
+# routes) at runtime - those caches would freeze them until the next restart.
+echo "Caching Blade views"
+php artisan view:cache
+
 # default to caddy not starting
 export SUPERVISORD_CADDY=false
 export CADDY_APP_URL="${APP_URL}"
