@@ -119,9 +119,13 @@ class ListServers extends ListRecords
 
         $usingGrid = user()?->getCustomization(CustomizationKey::DashboardLayout) === 'grid';
 
+        $pageOptions = $usingGrid ? [10, 20, 30, 40] : [10, 20, 50, 100];
+        $storedPerPage = (int) user()?->getCustomization(CustomizationKey::ServersPerPage);
+        $defaultPerPage = in_array($storedPerPage, $pageOptions, true) ? $storedPerPage : ($usingGrid ? 10 : 20);
+
         return $table
-            ->paginated($usingGrid ? [10, 20, 30, 40] : [10, 20, 50, 100])
-            ->defaultPaginationPageOption($usingGrid ? 10 : 20)
+            ->paginated($pageOptions)
+            ->defaultPaginationPageOption($defaultPerPage)
             ->query(fn () => $baseQuery)
             ->poll('15s')
             ->columns($usingGrid ? $this->gridColumns() : $this->tableColumns())
@@ -149,6 +153,25 @@ class ListServers extends ListRecords
     public function updatedActiveTab(): void
     {
         $this->resetTable();
+    }
+
+    public function updatedTableRecordsPerPage(): void
+    {
+        parent::updatedTableRecordsPerPage();
+
+        $perPage = $this->getTableRecordsPerPage();
+
+        // Livewire delivers the <select> value as a numeric string, not an int.
+        if (!is_numeric($perPage)) {
+            return;
+        }
+
+        user()?->update([
+            'customization' => array_merge(
+                user()->getCustomization(),
+                [CustomizationKey::ServersPerPage->value => (int) $perPage],
+            ),
+        ]);
     }
 
     public function getTabs(): array
