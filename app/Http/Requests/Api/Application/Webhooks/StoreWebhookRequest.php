@@ -46,11 +46,22 @@ class StoreWebhookRequest extends ApplicationApiRequest
 
     protected function resolveType(): ?string
     {
-        if ($this->filled('type')) {
-            return $this->input('type');
+        if ($type = $this->scalarInput('type')) {
+            return $type;
         }
 
-        return WebhookTypes::detect($this->input('endpoint'));
+        return WebhookTypes::detect($this->scalarInput('endpoint'));
+    }
+
+    /**
+     * Request input is attacker controlled, so anything that is not a plain scalar is
+     * treated as absent here and left for the normal rules to reject with a 422.
+     */
+    protected function scalarInput(string $key): ?string
+    {
+        $value = $this->input($key);
+
+        return is_scalar($value) && filled($value) ? (string) $value : null;
     }
 
     /** @return array<string, string|array<string|\Stringable|ValidationRule>> */
@@ -97,8 +108,8 @@ class StoreWebhookRequest extends ApplicationApiRequest
 
     protected function resolveScope(): WebhookScope
     {
-        if ($this->filled('scope')) {
-            return WebhookScope::tryFrom($this->input('scope')) ?? WebhookScope::Global;
+        if ($scope = $this->scalarInput('scope')) {
+            return WebhookScope::tryFrom($scope) ?? WebhookScope::Global;
         }
 
         return $this->hasServer() ? WebhookScope::Server : WebhookScope::Global;
@@ -107,5 +118,15 @@ class StoreWebhookRequest extends ApplicationApiRequest
     protected function hasServer(): bool
     {
         return $this->filled('server_id');
+    }
+
+    /**
+     * Attributes to persist. Overridden on update to keep scope and type consistent.
+     *
+     * @return array<string, mixed>
+     */
+    public function resolvedAttributes(): array
+    {
+        return $this->validated();
     }
 }

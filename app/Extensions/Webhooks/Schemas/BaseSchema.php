@@ -121,6 +121,6 @@ abstract class BaseSchema implements WebhookSchemaInterface
      */
     protected function getTimeout(): int
     {
-        return config('panel.webhook.timeout', 30);
+        return (int) config('panel.webhook.timeout', 30);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Extensions\Webhooks;
 
 use App\Extensions\Webhooks\Schemas\WebhookSchemaInterface;
 use BackedEnum;
+use Illuminate\Support\Facades\Log;
 
 class WebhookTypeService
 {
@@ -18,6 +19,8 @@ class WebhookTypeService
     public function register(WebhookSchemaInterface $schema): void
     {
         if (array_key_exists($schema->getId(), $this->schemas)) {
+            Log::warning("A webhook type with the id \"{$schema->getId()}\" is already registered, keeping the existing one.");
+
             return;
         }
 
@@ -84,5 +87,18 @@ class WebhookTypeService
         }
 
         return self::Default;
+    }
+
+    /**
+     * Detection is only a convenience for a type that has not been chosen yet, so it
+     * never overwrites a deliberate selection or a type provided by a plugin.
+     */
+    public function detectFor(?string $endpoint, ?string $currentType): string
+    {
+        if (filled($currentType) && $currentType !== self::Default) {
+            return $currentType;
+        }
+
+        return $this->detect($endpoint);
     }
 }

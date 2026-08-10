@@ -3,11 +3,11 @@
 namespace App\Filament\Admin\Resources\Webhooks\Pages;
 
 use App\Enums\TablerIcon;
-use App\Facades\WebhookTypes;
 use App\Filament\Admin\Resources\Webhooks\WebhookResource;
 use App\Models\WebhookConfiguration;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use App\Traits\Filament\MutatesWebhookFormData;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
@@ -17,6 +17,7 @@ class EditWebhookConfiguration extends EditRecord
 {
     use CanCustomizeHeaderActions;
     use CanCustomizeHeaderWidgets;
+    use MutatesWebhookFormData;
 
     protected static string $resource = WebhookResource::class;
 
@@ -47,20 +48,12 @@ class EditWebhookConfiguration extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        if ($schema = WebhookTypes::get($data['type'] ?? null)) {
-            $data = $schema->mutateFormDataBeforeSave($data);
-        }
-
-        return $data;
+        return $this->mutateWebhookDataBeforeSave($data);
     }
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        if ($schema = WebhookTypes::get($data['type'] ?? null)) {
-            $data = $schema->mutateFormDataBeforeFill($data);
-        }
-
-        return $data;
+        return $this->mutateWebhookDataBeforeFill($data);
     }
 
     protected function afterSave(): void

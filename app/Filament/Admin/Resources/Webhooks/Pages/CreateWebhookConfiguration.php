@@ -4,10 +4,10 @@ namespace App\Filament\Admin\Resources\Webhooks\Pages;
 
 use App\Enums\TablerIcon;
 use App\Enums\WebhookScope;
-use App\Facades\WebhookTypes;
 use App\Filament\Admin\Resources\Webhooks\WebhookResource;
 use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
+use App\Traits\Filament\MutatesWebhookFormData;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Resources\Pages\CreateRecord;
@@ -17,6 +17,7 @@ class CreateWebhookConfiguration extends CreateRecord
 {
     use CanCustomizeHeaderActions;
     use CanCustomizeHeaderWidgets;
+    use MutatesWebhookFormData;
 
     protected static string $resource = WebhookResource::class;
 
@@ -55,11 +56,7 @@ class CreateWebhookConfiguration extends CreateRecord
         $data['scope'] = WebhookScope::Global;
         unset($data['server_id']);
 
-        if ($schema = WebhookTypes::get($data['type'] ?? null)) {
-            $data = $schema->mutateFormDataBeforeSave($data);
-        }
-
-        return $data;
+        return $this->mutateWebhookDataBeforeSave($data);
     }
 
     protected function getRedirectUrl(): string

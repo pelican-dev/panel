@@ -33,5 +33,6 @@ return [
     'regular' => 'Regular',
     'reset_headers' => 'Reset Headers',
     'unavailable_type' => 'Unavailable Type',
+    'unavailable_type_option' => ':type (unavailable)',
     'unavailable_type_text' => 'This webhook uses the ":type" type, which is provided by a plugin that is not installed or enabled. It keeps firing with its saved payload, but cannot be edited until that plugin is available again.',
 ];

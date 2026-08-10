@@ -18,6 +18,11 @@ abstract class WebhookPreview extends Component
     public ?WebhookConfiguration $record = null;
 
     /**
+     * Scope the form is being edited under, passed in because a create page has no record yet.
+     */
+    public ?string $scope = null;
+
+    /**
      * The live form state, limited to the keys the schema asked for.
      * Null until the form reports its first change.
      *
@@ -47,12 +52,24 @@ abstract class WebhookPreview extends Component
 
         $configuration = $this->record ?? new WebhookConfiguration();
 
-        $sampleData = $configuration->scope === WebhookScope::Server
+        $sampleData = $this->resolveScope() === WebhookScope::Server
             ? WebhookConfiguration::getServerWebhookSampleData()
             : WebhookConfiguration::getWebhookSampleData();
 
         $replaced = $configuration->replaceVars($sampleData, json_encode($payload) ?: '{}');
 
         return json_decode($replaced, true) ?? [];
+    }
+
+    /**
+     * The scope the form declared wins, because it is known before a record exists.
+     */
+    protected function resolveScope(): WebhookScope
+    {
+        if ($scope = WebhookScope::tryFrom($this->scope ?? '')) {
+            return $scope;
+        }
+
+        return $this->record === null ? WebhookScope::Global : $this->record->scope;
     }
 }

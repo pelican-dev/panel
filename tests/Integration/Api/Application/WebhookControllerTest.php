@@ -192,6 +192,77 @@ class WebhookControllerTest extends ApplicationApiIntegrationTestCase
             ->assertStatus(Response::HTTP_CREATED);
     }
 
+    public function test_a_patch_that_omits_the_payload_is_not_blocked_by_required_payload_rules(): void
+    {
+        $this->app->make(WebhookTypeService::class)->register(new RequiredPayloadSchema());
+
+        $webhook = WebhookConfiguration::factory()->create([
+            'type' => 'requiredpayload',
+            'events' => ['eloquent.created: ' . Server::class],
+        ]);
+
+        $this->patchJson('/api/application/webhooks/' . $webhook->id, ['name' => 'Renamed'])
+            ->assertStatus(Response::HTTP_OK);
+
+        $this->patchJson('/api/application/webhooks/' . $webhook->id, ['payload' => []])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    public function test_it_rejects_a_malformed_type_instead_of_erroring(): void
+    {
+        foreach ([['type' => ['a', 'b']], ['endpoint' => ['a']], ['scope' => ['a']]] as $malformed) {
+            $this->postJson('/api/application/webhooks', array_merge([
+                'name' => 'Malformed',
+                'endpoint' => 'https://example.com/hook',
+                'events' => ['eloquent.created: ' . Server::class],
+            ], $malformed))->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
+
+    public function test_it_bounds_the_page_size(): void
+    {
+        $this->getJson('/api/application/webhooks?per_page=100000')
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        $this->getJson('/api/application/webhooks?per_page=10')->assertStatus(Response::HTTP_OK);
+    }
+
+    public function test_it_rejects_an_unknown_scope_on_the_events_endpoint(): void
+    {
+        $this->getJson('/api/application/webhooks/events?scope=nonsense')
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    public function test_assigning_a_server_also_stores_the_server_scope(): void
+    {
+        $server = $this->createServerModel();
+        $webhook = WebhookConfiguration::factory()->create([
+            'events' => ['eloquent.created: ' . Server::class],
+        ]);
+
+        $this->patchJson('/api/application/webhooks/' . $webhook->id, [
+            'server_id' => $server->id,
+            'events' => ['server:power.start'],
+        ])->assertStatus(Response::HTTP_OK);
+
+        $this->assertSame(WebhookScope::Server, $webhook->refresh()->scope);
+    }
+
+    public function test_it_rejects_unassigning_the_server_of_a_server_scoped_webhook(): void
+    {
+        $server = $this->createServerModel();
+        $webhook = WebhookConfiguration::factory()->create([
+            'scope' => WebhookScope::Server,
+            'server_id' => $server->id,
+            'events' => ['server:power.start'],
+        ]);
+
+        $this->patchJson('/api/application/webhooks/' . $webhook->id, ['server_id' => null])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        $this->assertSame($server->id, $webhook->refresh()->server_id);
+    }
+
     public function test_it_requires_permission(): void
     {
         $webhook = WebhookConfiguration::factory()->create();
@@ -216,5 +287,19 @@ class LimitedPayloadSchema extends BaseSchema
     public function getPayloadRules(): array
     {
         return ['note' => ['string', 'max:5']];
+    }
+}
+
+class RequiredPayloadSchema extends BaseSchema
+{
+    public function getId(): string
+    {
+        return 'requiredpayload';
+    }
+
+    /** @return array<string, mixed> */
+    public function getPayloadRules(): array
+    {
+        return ['content' => ['required', 'string']];
     }
 }

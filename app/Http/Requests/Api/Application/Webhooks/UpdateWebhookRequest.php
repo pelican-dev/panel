@@ -3,13 +3,14 @@
 namespace App\Http\Requests\Api\Application\Webhooks;
 
 use App\Enums\WebhookScope;
+use App\Facades\WebhookTypes;
 use App\Models\WebhookConfiguration;
 use Illuminate\Contracts\Validation\ValidationRule;
 
 class UpdateWebhookRequest extends StoreWebhookRequest
 {
     /**
-     * Everything is optional on update, so only the fields actually sent are validated.
+     * A PATCH only sends what it changes, so the fields it omits must not be required.
      *
      * @return array<string, string|array<string|\Stringable|ValidationRule>>
      */
@@ -28,20 +29,45 @@ class UpdateWebhookRequest extends StoreWebhookRequest
     }
 
     /**
-     * Fall back to the scope already stored on the record when the request does not change it.
+     * A type may require fields inside its payload, but that must not block an update
+     * that only changes another attribute, so the rules apply only when a payload is sent.
+     *
+     * @return array<string, mixed>
+     */
+    protected function payloadRules(): array
+    {
+        return $this->has('payload') ? parent::payloadRules() : [];
+    }
+
+    /**
+     * Assigning a server implies the server scope, but clearing one does not imply the
+     * global scope: the stored scope is kept so the request is rejected rather than
+     * silently leaving a server scoped webhook with no server and unusable events.
      */
     protected function resolveScope(): WebhookScope
     {
-        if (!$this->filled('scope') && !$this->filled('server_id')) {
-            return $this->record()->scope;
+        if ($scope = $this->scalarInput('scope')) {
+            return WebhookScope::tryFrom($scope) ?? WebhookScope::Global;
         }
 
-        return parent::resolveScope();
+        if ($this->filled('server_id')) {
+            return WebhookScope::Server;
+        }
+
+        return $this->record()->scope;
     }
 
+    /**
+     * An explicit `server_id: null` is a deliberate unassign, so it must not silently
+     * fall back to the server already stored on the record.
+     */
     protected function hasServer(): bool
     {
-        return parent::hasServer() || $this->record()->server_id !== null;
+        if ($this->has('server_id')) {
+            return parent::hasServer();
+        }
+
+        return $this->record()->server_id !== null;
     }
 
     /**
@@ -50,11 +76,33 @@ class UpdateWebhookRequest extends StoreWebhookRequest
      */
     protected function resolveType(): ?string
     {
-        if (!$this->filled('type') && !$this->filled('endpoint')) {
+        if (!$this->has('type') && !$this->has('endpoint')) {
             return $this->record()->type;
         }
 
         return parent::resolveType();
+    }
+
+    /**
+     * Scope and type are validated against values the request only implies, so those same
+     * values are persisted, otherwise a record could be saved in a state its own
+     * validation would reject.
+     *
+     * @return array<string, mixed>
+     */
+    public function resolvedAttributes(): array
+    {
+        $data = $this->validated();
+
+        if (array_key_exists('server_id', $data) && !array_key_exists('scope', $data)) {
+            $data['scope'] = $this->resolveScope();
+        }
+
+        if (array_key_exists('endpoint', $data) && !array_key_exists('type', $data)) {
+            $data['type'] = WebhookTypes::detectFor($data['endpoint'], $this->record()->type);
+        }
+
+        return $data;
     }
 
     protected function record(): WebhookConfiguration

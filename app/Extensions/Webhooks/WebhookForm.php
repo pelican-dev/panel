@@ -22,10 +22,25 @@ class WebhookForm
             ->label(trans('admin/webhook.type'))
             ->live()
             ->inline()
-            ->options(fn () => WebhookTypes::getOptions())
-            ->icons(fn () => WebhookTypes::getIcons())
-            ->colors(fn () => WebhookTypes::getColors())
+            ->options(fn (?string $state) => self::withUnavailableType($state, WebhookTypes::getOptions(), fn (string $type) => trans('admin/webhook.unavailable_type_option', ['type' => $type])))
+            ->icons(fn (?string $state) => self::withUnavailableType($state, WebhookTypes::getIcons(), fn () => TablerIcon::PuzzleOff))
+            ->colors(fn (?string $state) => self::withUnavailableType($state, WebhookTypes::getColors(), fn () => 'gray'))
             ->default(WebhookTypeService::Default);
+    }
+
+    /**
+     * Append the currently stored type to a registry driven list when no plugin provides it.
+     *
+     * @param  array<string, mixed>  $values
+     * @return array<string, mixed>
+     */
+    private static function withUnavailableType(?string $state, array $values, callable $fallback): array
+    {
+        if (filled($state) && !array_key_exists($state, $values)) {
+            $values[$state] = $fallback($state);
+        }
+
+        return $values;
     }
 
     /**
@@ -55,6 +70,7 @@ class WebhookForm
                 ->viewData([
                     'previewComponent' => $previewComponent,
                     'previewFields' => $schema->getPreviewFields(),
+                    'previewScope' => $scope->value,
                 ]);
         }
 

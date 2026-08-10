@@ -12,6 +12,11 @@ use League\Fractal\Resource\NullResource;
 class WebhookConfigurationTransformer extends BaseTransformer
 {
     /**
+     * Most recent deliveries returned by the `deliveries` include.
+     */
+    public const DeliveryLimit = 25;
+
+    /**
      * List of resources that can be included.
      */
     protected array $availableIncludes = ['server', 'deliveries'];
@@ -66,14 +71,21 @@ class WebhookConfigurationTransformer extends BaseTransformer
     }
 
     /**
-     * Return the delivery log for this webhook.
+     * Return the most recent deliveries for this webhook.
+     *
+     * A busy webhook accumulates a delivery per fired event until pruning removes them,
+     * so this include is deliberately bounded and ordered rather than loading the
+     * whole relation into memory.
      */
     public function includeDeliveries(WebhookConfiguration $webhookConfiguration): Collection
     {
-        $webhookConfiguration->loadMissing('webhooks');
+        $deliveries = $webhookConfiguration->webhooks()
+            ->orderByDesc('id')
+            ->limit(self::DeliveryLimit)
+            ->get();
 
         return $this->collection(
-            $webhookConfiguration->getRelation('webhooks'),
+            $deliveries,
             $this->makeTransformer(WebhookDeliveryTransformer::class),
             'webhook_delivery'
         );

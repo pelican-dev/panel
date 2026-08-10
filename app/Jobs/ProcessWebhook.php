@@ -57,7 +57,12 @@ class ProcessWebhook implements ShouldQueue
             $successful = ($schema?->wasSuccessful($response) ?? $response->successful()) ? now() : null;
 
             if (!$successful) {
-                report("Webhook delivery to {$this->webhookConfiguration->endpoint} failed with status {$response->status()}.");
+                report(sprintf(
+                    'Webhook #%d delivery to %s failed with status %d.',
+                    $this->webhookConfiguration->id,
+                    $this->redactedEndpoint(),
+                    $response->status(),
+                ));
 
                 $retryAfter = $schema?->retryAfter($response);
             }
@@ -77,6 +82,15 @@ class ProcessWebhook implements ShouldQueue
         if ($retryAfter !== null) {
             $this->release($retryAfter);
         }
+    }
+
+    /**
+     * Webhook URLs routinely embed a secret, a Discord webhook token for example, so
+     * only the host is ever written to the logs.
+     */
+    private function redactedEndpoint(): string
+    {
+        return parse_url($this->webhookConfiguration->endpoint, PHP_URL_HOST) ?: 'unknown host';
     }
 
     /**

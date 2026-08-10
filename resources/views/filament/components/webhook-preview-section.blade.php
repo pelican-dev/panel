@@ -82,7 +82,7 @@
                     } catch (_) {}
                 })"
             ></span>
-            @livewire($previewComponent, ['record' => $getRecord()])
+            @livewire($previewComponent, ['record' => $getRecord(), 'scope' => $previewScope])
         </x-slot>
 
         {{ $getChildSchema()->gap(! $isDivided)->extraAttributes(['class' => 'fi-section-content']) }}

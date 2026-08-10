@@ -31,7 +31,7 @@ class WebhookController extends ApplicationApiController
         $webhooks = QueryBuilder::for(WebhookConfiguration::class)
             ->allowedFilters(['name', 'description', 'endpoint', 'type', 'scope', 'server_id'])
             ->allowedSorts(['id', 'name', 'type', 'created_at'])
-            ->paginate($request->query('per_page') ?? 50);
+            ->paginate($request->perPage());
 
         return $this->fractal->collection($webhooks)
             ->transformWith($this->getTransformer(WebhookConfigurationTransformer::class))
@@ -88,7 +88,7 @@ class WebhookController extends ApplicationApiController
      */
     public function update(UpdateWebhookRequest $request, WebhookConfiguration $webhook): array
     {
-        $webhook->fill($request->validated())->saveOrFail();
+        $webhook->fill($request->resolvedAttributes())->saveOrFail();
 
         return $this->fractal->item($webhook->fresh())
             ->transformWith($this->getTransformer(WebhookConfigurationTransformer::class))
@@ -159,7 +159,7 @@ class WebhookController extends ApplicationApiController
      */
     public function events(GetWebhookRequest $request): array
     {
-        $scope = WebhookScope::tryFrom($request->query('scope', '') ?? '') ?? WebhookScope::Global;
+        $scope = $request->scope();
 
         return [
             'data' => collect(WebhookConfiguration::filamentCheckboxList($scope))
