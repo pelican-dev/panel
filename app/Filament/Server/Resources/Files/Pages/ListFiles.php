@@ -590,6 +590,7 @@ class ListFiles extends ListRecords
                         'path' => $this->path,
                     ]))),
                 ConnectSftpAction::make()
+                    ->hiddenLabel()
                     ->tooltip(trans('server/file.actions.connect_sftp'))
                     ->directory($this->path),
             ]);
