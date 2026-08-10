@@ -29,8 +29,25 @@ class UpdateWebhookRequest extends StoreWebhookRequest
     }
 
     /**
+     * A PATCH is validated against the configuration it would produce, not just the
+     * fields it sends. Changing the type or the scope pulls the values the request keeps
+     * into validation, so a webhook can never be saved in a state its own rules reject.
+     */
+    protected function prepareForValidation(): void
+    {
+        if (!$this->has('payload') && $this->resolveType() !== $this->record()->type) {
+            $this->merge(['payload' => $this->record()->payload ?? []]);
+        }
+
+        if (!$this->has('events') && $this->resolveScope() !== $this->record()->scope) {
+            $this->merge(['events' => $this->record()->events ?? []]);
+        }
+    }
+
+    /**
      * A type may require fields inside its payload, but that must not block an update
      * that only changes another attribute, so the rules apply only when a payload is sent.
+     * prepareForValidation() supplies the stored payload when the type itself changes.
      *
      * @return array<string, mixed>
      */
@@ -71,16 +88,20 @@ class UpdateWebhookRequest extends StoreWebhookRequest
     }
 
     /**
-     * Fall back to the type already stored on the record, so payload rules still apply
-     * when the request only changes the payload.
+     * The type the record would end up with. Detection from a new endpoint respects the
+     * type already stored, so validation and persistence never disagree.
      */
     protected function resolveType(): ?string
     {
-        if (!$this->has('type') && !$this->has('endpoint')) {
-            return $this->record()->type;
+        if ($type = $this->scalarInput('type')) {
+            return $type;
         }
 
-        return parent::resolveType();
+        if ($endpoint = $this->scalarInput('endpoint')) {
+            return WebhookTypes::detectFor($endpoint, $this->record()->type);
+        }
+
+        return $this->record()->type;
     }
 
     /**
@@ -99,7 +120,7 @@ class UpdateWebhookRequest extends StoreWebhookRequest
         }
 
         if (array_key_exists('endpoint', $data) && !array_key_exists('type', $data)) {
-            $data['type'] = WebhookTypes::detectFor($data['endpoint'], $this->record()->type);
+            $data['type'] = $this->resolveType();
         }
 
         return $data;

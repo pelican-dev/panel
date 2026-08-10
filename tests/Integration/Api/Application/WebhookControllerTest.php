@@ -208,6 +208,46 @@ class WebhookControllerTest extends ApplicationApiIntegrationTestCase
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
+    public function test_switching_to_a_type_that_requires_a_payload_validates_the_stored_payload(): void
+    {
+        $this->app->make(WebhookTypeService::class)->register(new RequiredPayloadSchema());
+
+        $webhook = WebhookConfiguration::factory()->create([
+            'payload' => [],
+            'events' => ['eloquent.created: ' . Server::class],
+        ]);
+
+        // The stored payload does not satisfy the new type, so the switch must be rejected
+        $this->patchJson('/api/application/webhooks/' . $webhook->id, ['type' => 'requiredpayload'])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        $this->assertSame(WebhookTypeService::Default, $webhook->refresh()->type);
+
+        // Supplying a payload that does satisfy it succeeds
+        $this->patchJson('/api/application/webhooks/' . $webhook->id, [
+            'type' => 'requiredpayload',
+            'payload' => ['content' => 'hello'],
+        ])->assertStatus(Response::HTTP_OK);
+
+        $this->assertSame('requiredpayload', $webhook->refresh()->type);
+    }
+
+    public function test_switching_scope_validates_the_events_the_webhook_keeps(): void
+    {
+        $server = $this->createServerModel();
+
+        $webhook = WebhookConfiguration::factory()->create([
+            'events' => ['eloquent.created: ' . Server::class],
+        ]);
+
+        // Global-only events cannot survive a move to the server scope
+        $this->patchJson('/api/application/webhooks/' . $webhook->id, ['server_id' => $server->id])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        $this->assertSame(WebhookScope::Global, $webhook->refresh()->scope);
+        $this->assertNull($webhook->server_id);
+    }
+
     public function test_it_rejects_a_malformed_type_instead_of_erroring(): void
     {
         foreach ([['type' => ['a', 'b']], ['endpoint' => ['a']], ['scope' => ['a']]] as $malformed) {

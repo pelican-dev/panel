@@ -35,8 +35,9 @@ interface WebhookSchemaInterface
     public function getPreviewComponent(): ?string;
 
     /**
-     * Top level form keys forwarded to the preview component whenever the form changes.
-     * Keeping this list small avoids sending the entire form state on every keystroke.
+     * Form keys forwarded to the preview component whenever the form changes. Dotted
+     * names are resolved as nested paths, so a grouped field such as `author.name`
+     * works. Keeping this list small avoids sending the whole form on every keystroke.
      *
      * @return string[]
      */

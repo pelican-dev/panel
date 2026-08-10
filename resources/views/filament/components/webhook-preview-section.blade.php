@@ -74,9 +74,14 @@
                 x-init="$watch(() => JSON.stringify($wire.data), (json) => {
                     try {
                         const formData = JSON.parse(json);
+                        // A field name may be a dotted path, because Filament nests grouped
+                        // fields rather than storing them under a literal dotted key
+                        const read = (source, path) => path
+                            .split('.')
+                            .reduce((value, key) => (value == null ? null : value[key]), source);
                         const payload = {};
                         @foreach ($previewFields as $previewField)
-                            payload[@js($previewField)] = formData[@js($previewField)] ?? null;
+                            payload[@js($previewField)] = read(formData, @js($previewField)) ?? null;
                         @endforeach
                         $wire.dispatch('webhook-form-changed', { data: payload });
                     } catch (_) {}
