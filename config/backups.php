@@ -10,7 +10,7 @@ return [
     // This value defines the maximal size of a single part for the S3 multipart upload during backups
     // The maximal part size must be given in bytes. The default value is 128MiB.
     // Note that 5GiB is the maximum for a single part when using AWS S3.
-    'max_part_size' => (int) min(5 * 1024 * 1024 * 1024, env('BACKUP_MAX_PART_SIZE', BackupRemoteUploadController::DEFAULT_MAX_PART_SIZE)),
+    'max_part_size' => (int) env('BACKUP_MAX_PART_SIZE', BackupRemoteUploadController::DEFAULT_MAX_PART_SIZE),
 
     // The time to wait before automatically failing a backup, time is in minutes and defaults
     // to 6 hours.  To disable this feature, set the value to `0`.

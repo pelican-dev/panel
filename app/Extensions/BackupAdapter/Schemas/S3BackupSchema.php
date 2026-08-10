@@ -128,7 +128,7 @@ final class S3BackupSchema extends BackupAdapterSchema
 
         // Retrieve configured part size
         $maxPartSize = config('backups.max_part_size', BackupRemoteUploadController::DEFAULT_MAX_PART_SIZE);
-        if ($maxPartSize <= 0) {
+        if ($maxPartSize < BackupRemoteUploadController::MIN_MAX_PART_SIZE || $maxPartSize > BackupRemoteUploadController::MAX_MAX_PART_SIZE) {
             $maxPartSize = BackupRemoteUploadController::DEFAULT_MAX_PART_SIZE;
         }
 
