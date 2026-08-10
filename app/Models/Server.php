@@ -543,4 +543,23 @@ class Server extends Model implements HasAvatar, Validatable
     {
         return $this->icon ?? $this->egg->icon;
     }
+
+    public function getSftpUrl(?string $username = null, ?string $directory = null): string
+    {
+        $username ??= user()?->username;
+
+        if (!is_null($directory)) {
+            $directory = explode('/', trim($directory, '/'));
+            $directory = array_map(fn (string $part) => rawurlencode($part), $directory);
+            $directory = '/' . implode('/', $directory);
+        }
+
+        if ($directory === '/') {
+            $directory = null;
+        }
+
+        $fqdn = $this->node->daemon_sftp_alias ?? $this->node->fqdn;
+
+        return 'sftp://' . rawurlencode($username) . '.' . $this->uuid_short . '@' . $fqdn . ':' . $this->node->daemon_sftp . $directory;
+    }
 }

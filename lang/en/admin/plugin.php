@@ -68,6 +68,9 @@ return [
 
         'imported' => 'Plugin imported',
         'import_exists' => 'A plugin with that id already exists',
+        'import_no_manifest' => 'The zip does not contain a valid plugin.json',
+        'import_invalid_id' => 'The plugin.json contains an invalid id',
+        'import_id_mismatch' => 'The zip is for plugin ":actual", not ":expected"',
         'import_failed' => 'Could not import plugin',
     ],
 ];

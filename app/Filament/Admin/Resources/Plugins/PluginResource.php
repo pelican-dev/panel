@@ -264,10 +264,6 @@ class PluginResource extends Resource
                             /** @var UploadedFile $file */
                             $file = $data['file'];
 
-                            $pluginName = str($file->getClientOriginalName())->basename()->before('.zip')->toString();
-
-                            throw_if(Plugin::where('id', $pluginName)->exists(), new Exception(trans('admin/plugin.notifications.import_exists')));
-
                             $pluginService->downloadPluginFromFile($file);
 
                             Notification::make()
@@ -301,10 +297,6 @@ class PluginResource extends Resource
                     ])
                     ->action(function ($data, $livewire, PluginService $pluginService) {
                         try {
-                            $pluginName = str($data['url'])->before('.zip')->explode('/')->last();
-
-                            throw_if(Plugin::where('id', $pluginName)->exists(), new Exception(trans('admin/plugin.notifications.import_exists')));
-
                             $pluginService->downloadPluginFromUrl($data['url']);
 
                             Notification::make()
