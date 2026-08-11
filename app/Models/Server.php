@@ -90,6 +90,8 @@ use Psr\Http\Message\ResponseInterface;
  * @property-read int|null $server_variables_count
  * @property-read Collection<int, Subuser> $subusers
  * @property-read int|null $subusers_count
+ * @property-read Collection<int, ServerUserSettings> $userSettings
+ * @property-read int|null $user_settings_count
  * @property-read ServerTransfer|null $transfer
  * @property-read User $user
  * @property-read Collection<int, EggVariable> $variables
@@ -272,6 +274,16 @@ class Server extends Model implements HasAvatar, Validatable
     }
 
     /**
+     * Gets the per-user settings associated with a server.
+     *
+     * @return HasMany<ServerUserSettings, $this>
+     */
+    public function userSettings(): HasMany
+    {
+        return $this->hasMany(ServerUserSettings::class);
+    }
+
+    /**
      * Gets the default allocation for a server.
      */
     public function allocation(): BelongsTo
@@ -429,9 +441,7 @@ class Server extends Model implements HasAvatar, Validatable
      */
     public function validateCurrentState(): void
     {
-        if ($this->isInConflictState()) {
-            throw new ServerStateConflictException($this);
-        }
+        throw_if($this->isInConflictState(), new ServerStateConflictException($this));
     }
 
     /**
@@ -442,11 +452,9 @@ class Server extends Model implements HasAvatar, Validatable
      */
     public function validateTransferState(): void
     {
-        if (
-            !$this->isInstalled() ||
+        if (!$this->isInstalled() ||
             $this->status === ServerState::RestoringBackup ||
-            !is_null($this->transfer)
-        ) {
+            !is_null($this->transfer)) {
             throw new ServerStateConflictException($this);
         }
     }
@@ -534,5 +542,24 @@ class Server extends Model implements HasAvatar, Validatable
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->icon ?? $this->egg->icon;
+    }
+
+    public function getSftpUrl(?string $username = null, ?string $directory = null): string
+    {
+        $username ??= user()?->username;
+
+        if (!is_null($directory)) {
+            $directory = explode('/', trim($directory, '/'));
+            $directory = array_map(fn (string $part) => rawurlencode($part), $directory);
+            $directory = '/' . implode('/', $directory);
+        }
+
+        if ($directory === '/') {
+            $directory = null;
+        }
+
+        $fqdn = $this->node->daemon_sftp_alias ?? $this->node->fqdn;
+
+        return 'sftp://' . rawurlencode($username) . '.' . $this->uuid_short . '@' . $fqdn . ':' . $this->node->daemon_sftp . $directory;
     }
 }

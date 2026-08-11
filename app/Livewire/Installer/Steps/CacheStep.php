@@ -79,9 +79,7 @@ class CacheStep
             ->afterValidation(function (Get $get, Application $app) use ($installer) {
                 $driver = $get('env_cache.CACHE_STORE');
 
-                if (!self::testConnection($app, $driver, $get('env_cache.REDIS_HOST'), $get('env_cache.REDIS_PORT'), $get('env_cache.REDIS_USERNAME'), $get('env_cache.REDIS_PASSWORD'))) {
-                    throw new Halt('Redis connection failed');
-                }
+                throw_unless(self::testConnection($app, $driver, $get('env_cache.REDIS_HOST'), $get('env_cache.REDIS_PORT'), $get('env_cache.REDIS_USERNAME'), $get('env_cache.REDIS_PASSWORD')), new Halt('Redis connection failed'));
 
                 $installer->writeToEnv('env_cache');
             });

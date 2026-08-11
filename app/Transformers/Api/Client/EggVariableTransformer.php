@@ -20,9 +20,7 @@ class EggVariableTransformer extends BaseClientTransformer
         // This guards against someone incorrectly retrieving variables (haha, me) and then passing
         // them into the transformer and along to the user. Just throw an exception and break the entire
         // pathway since you should never be exposing these types of variables to a client.
-        if (!$variable->user_viewable) {
-            throw new BadMethodCallException('Cannot transform a hidden egg variable in a client transformer.');
-        }
+        throw_unless($variable->user_viewable, new BadMethodCallException('Cannot transform a hidden egg variable in a client transformer.'));
 
         return [
             'name' => $variable->name,

@@ -5,6 +5,7 @@ namespace App\Http\Requests\Api\Application;
 use App\Exceptions\PanelException;
 use App\Models\ApiKey;
 use App\Services\Acl\Api\AdminAcl;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
@@ -33,9 +34,7 @@ abstract class ApplicationApiRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        if (is_null($this->resource)) {
-            throw new PanelException('An ACL resource must be defined on API requests.');
-        }
+        throw_if(is_null($this->resource), new PanelException('An ACL resource must be defined on API requests.'));
 
         /** @var TransientToken|ApiKey $token */
         $token = $this->user()->currentAccessToken();
@@ -55,7 +54,7 @@ abstract class ApplicationApiRequest extends FormRequest
         return AdminAcl::check($token, $this->resource, $this->permission);
     }
 
-    /** @return array<string, string|string[]> */
+    /** @return array<string, string|array<string|\Stringable|ValidationRule>> */
     public function rules(): array
     {
         return [];

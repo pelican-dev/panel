@@ -47,9 +47,7 @@ class ServerConsole extends Widget
 
     protected function getToken(): string
     {
-        if (!$this->user || !$this->server || $this->user->cannot(SubuserPermission::WebsocketConnect, $this->server)) {
-            throw new HttpForbiddenException('You do not have permission to connect to this server\'s websocket.');
-        }
+        throw_if(!$this->user || !$this->server || $this->user->cannot(SubuserPermission::WebsocketConnect, $this->server), new HttpForbiddenException('You do not have permission to connect to this server\'s websocket.'));
 
         $permissions = $this->getUserPermissionsService->handle($this->server, $this->user);
 

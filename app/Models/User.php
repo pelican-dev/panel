@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Contracts\Validatable;
 use App\Enums\CustomizationKey;
+use App\Enums\ServerUserSettingKey;
 use App\Enums\SubuserPermission;
 use App\Events\User\Deleting;
 use App\Exceptions\DisplayException;
@@ -86,6 +87,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $sub_servers_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Subuser> $subusers
  * @property-read int|null $subusers_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ServerUserSettings> $serverSettings
+ * @property-read int|null $server_settings_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, ApiKey> $tokens
  * @property-read int|null $tokens_count
  *
@@ -349,6 +352,30 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function subServers(): BelongsToMany
     {
         return $this->belongsToMany(Server::class, 'subusers');
+    }
+
+    /** @return HasMany<ServerUserSettings, $this> */
+    public function serverSettings(): HasMany
+    {
+        return $this->hasMany(ServerUserSettings::class);
+    }
+
+    public function getServerSetting(Server $server, ServerUserSettingKey $key): string|int|bool
+    {
+        $settings = $this->serverSettings()->where('server_id', $server->id)->first()->settings ?? [];
+
+        return $settings[$key->value] ?? $key->getDefaultValue();
+    }
+
+    public function updateServerSetting(Server $server, ServerUserSettingKey $key, string|int|bool $value): void
+    {
+        $row = $this->serverSettings()->firstOrNew(['server_id' => $server->id]);
+
+        $settings = $row->settings ?? [];
+        $settings[$key->value] = $value;
+
+        $row->settings = array_intersect_key($settings, ServerUserSettingKey::getDefaultSettings());
+        $row->save();
     }
 
     /** @return ($key is null ? array<string, string|int|bool> : string|int|bool) */

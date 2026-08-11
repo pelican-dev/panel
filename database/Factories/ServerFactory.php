@@ -7,8 +7,8 @@ use App\Models\Egg;
 use App\Models\Node;
 use App\Models\Server;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 

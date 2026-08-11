@@ -23,9 +23,7 @@ class ProcessScheduleService
     {
         $task = $schedule->firstTask();
 
-        if (!$task) {
-            throw new DisplayException('Cannot process schedule for task execution: no tasks are registered.');
-        }
+        throw_unless($task, new DisplayException('Cannot process schedule for task execution: no tasks are registered.'));
 
         $this->connection->transaction(function () use ($schedule, $task) {
             $schedule->forceFill([

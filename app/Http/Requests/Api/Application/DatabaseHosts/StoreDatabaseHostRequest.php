@@ -5,6 +5,7 @@ namespace App\Http\Requests\Api\Application\DatabaseHosts;
 use App\Http\Requests\Api\Application\ApplicationApiRequest;
 use App\Models\DatabaseHost;
 use App\Services\Acl\Api\AdminAcl;
+use Illuminate\Contracts\Validation\ValidationRule;
 
 class StoreDatabaseHostRequest extends ApplicationApiRequest
 {
@@ -13,8 +14,8 @@ class StoreDatabaseHostRequest extends ApplicationApiRequest
     protected int $permission = AdminAcl::WRITE;
 
     /**
-     * @param  array<string, string|string[]>|null  $rules
-     * @return array<string, string|string[]>
+     * @param  array<string, string|array<string|\Stringable|ValidationRule>>|null  $rules
+     * @return array<string, string|array<string|\Stringable|ValidationRule>>
      */
     public function rules(?array $rules = null): array
     {

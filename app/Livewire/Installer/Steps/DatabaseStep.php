@@ -97,9 +97,7 @@ class DatabaseStep
             ->afterValidation(function (Get $get) use ($installer) {
                 $driver = $get('env_database.DB_CONNECTION');
 
-                if (!self::testConnection($driver, $get('env_database.DB_HOST'), $get('env_database.DB_PORT'), $get('env_database.DB_DATABASE'), $get('env_database.DB_USERNAME'), $get('env_database.DB_PASSWORD'))) {
-                    throw new Halt(trans('installer.database.exceptions.connection'));
-                }
+                throw_unless(self::testConnection($driver, $get('env_database.DB_HOST'), $get('env_database.DB_PORT'), $get('env_database.DB_DATABASE'), $get('env_database.DB_USERNAME'), $get('env_database.DB_PASSWORD')), new Halt(trans('installer.database.exceptions.connection')));
 
                 $installer->writeToEnv('env_database');
             });

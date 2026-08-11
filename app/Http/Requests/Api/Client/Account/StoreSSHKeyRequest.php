@@ -5,6 +5,7 @@ namespace App\Http\Requests\Api\Client\Account;
 use App\Http\Requests\Api\Client\ClientApiRequest;
 use App\Models\UserSSHKey;
 use Exception;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Validator;
 use phpseclib3\Crypt\Common\PublicKey;
 use phpseclib3\Crypt\DSA;
@@ -16,7 +17,7 @@ class StoreSSHKeyRequest extends ClientApiRequest
 {
     protected ?PublicKey $key;
 
-    /** @return array<string, string|string[]> */
+    /** @return array<string, string|array<string|\Stringable|ValidationRule>> */
     public function rules(): array
     {
         return [
@@ -68,9 +69,7 @@ class StoreSSHKeyRequest extends ClientApiRequest
      */
     public function getKeyFingerprint(): string
     {
-        if (!$this->key) {
-            throw new Exception('The public key was not properly loaded for this request.');
-        }
+        throw_unless($this->key, new Exception('The public key was not properly loaded for this request.'));
 
         return $this->key->getFingerprint('sha256');
     }

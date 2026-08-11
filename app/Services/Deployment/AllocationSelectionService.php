@@ -63,9 +63,7 @@ class AllocationSelectionService
             // Ranges are stored in the ports array as an array which can be
             // better processed in the repository.
             if (preg_match(AssignmentService::PORT_RANGE_REGEX, $port, $matches)) {
-                if (abs((int) $matches[2] - (int) $matches[1]) > AssignmentService::PORT_RANGE_LIMIT) {
-                    throw new DisplayException(trans('exceptions.allocations.too_many_ports'));
-                }
+                throw_if(((int) $matches[2] - (int) $matches[1] + 1) > AssignmentService::PORT_RANGE_LIMIT, new DisplayException(trans('exceptions.allocations.too_many_ports')));
 
                 $stored[] = [$matches[1], $matches[2]];
             }
@@ -85,9 +83,7 @@ class AllocationSelectionService
     {
         $allocation = $this->getRandomAllocation($this->nodes, $this->ports, $this->dedicated);
 
-        if (is_null($allocation)) {
-            throw new NoViableAllocationException(trans('exceptions.deployment.no_viable_allocations'));
-        }
+        throw_if(is_null($allocation), new NoViableAllocationException(trans('exceptions.deployment.no_viable_allocations')));
 
         return $allocation;
     }

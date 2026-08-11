@@ -20,9 +20,7 @@ class ScheduleImporterService
 
     public function fromFile(UploadedFile $file, Server $server): Schedule
     {
-        if ($file->getError() !== UPLOAD_ERR_OK) {
-            throw new InvalidFileUploadException('The selected file was not uploaded successfully');
-        }
+        throw_if($file->getError() !== UPLOAD_ERR_OK, new InvalidFileUploadException('The selected file was not uploaded successfully'));
 
         try {
             $parsed = json_decode($file->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -73,9 +71,7 @@ class ScheduleImporterService
 
         $fileContents = Http::timeout(5)->connectTimeout(1)->get($url)->throw()->body();
 
-        if (!$fileContents || !file_put_contents($tmpPath, $fileContents)) {
-            throw new InvalidFileUploadException('Could not write temporary file.');
-        }
+        throw_if(!$fileContents || !file_put_contents($tmpPath, $fileContents), new InvalidFileUploadException('Could not write temporary file.'));
 
         return $this->fromFile(new UploadedFile($tmpPath, $basename, 'application/json'), $server);
     }

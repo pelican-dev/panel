@@ -70,8 +70,6 @@ abstract class SubuserRequest extends ClientApiRequest
         /** @var GetUserPermissionsService $service */
         $service = $this->container->make(GetUserPermissionsService::class);
 
-        if (count(array_diff($permissions, $service->handle($server, $user))) > 0) {
-            throw new HttpForbiddenException('Cannot assign permissions to a subuser that your account does not actively possess.');
-        }
+        throw_if(count(array_diff($permissions, $service->handle($server, $user))) > 0, new HttpForbiddenException('Cannot assign permissions to a subuser that your account does not actively possess.'));
     }
 }

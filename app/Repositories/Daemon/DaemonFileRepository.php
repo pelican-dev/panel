@@ -30,21 +30,15 @@ class DaemonFileRepository extends DaemonRepository
         } catch (RequestException $exception) {
             $status = $exception->response->status();
 
-            if ($status === 400) {
-                throw new FileNotEditableException();
-            }
+            throw_if($status === 400, new FileNotEditableException());
 
-            if ($status === 404) {
-                throw new FileNotFoundException();
-            }
+            throw_if($status === 404, new FileNotFoundException());
 
             throw $exception;
         }
 
         $length = $response->header('Content-Length');
-        if ($notLargerThan && $length > $notLargerThan) {
-            throw new FileSizeTooLargeException();
-        }
+        throw_if($notLargerThan && $length > $notLargerThan, new FileSizeTooLargeException());
 
         return $response;
     }
@@ -64,9 +58,7 @@ class DaemonFileRepository extends DaemonRepository
                 ->withBody($content)
                 ->post("/api/servers/{$this->server->uuid}/files/write");
         } catch (RequestException $exception) {
-            if ($exception->response->status() === 400) {
-                throw new FileExistsException();
-            }
+            throw_if($exception->response->status() === 400, new FileExistsException());
 
             throw $exception;
         }
@@ -102,9 +94,7 @@ class DaemonFileRepository extends DaemonRepository
                 ]
             );
         } catch (RequestException $exception) {
-            if ($exception->response->status() === 400) {
-                throw new FileExistsException();
-            }
+            throw_if($exception->response->status() === 400, new FileExistsException());
 
             throw $exception;
         }

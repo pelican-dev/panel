@@ -68,9 +68,7 @@ class PluginController extends ApplicationApiController
      */
     public function importFile(WritePluginRequest $request): Response
     {
-        if (!$request->hasFile('plugin')) {
-            throw new PanelException("No 'plugin' file in request");
-        }
+        throw_unless($request->hasFile('plugin'), new PanelException("No 'plugin' file in request"));
 
         $this->pluginService->downloadPluginFromFile($request->file('plugin'));
 
@@ -102,9 +100,7 @@ class PluginController extends ApplicationApiController
      */
     public function install(WritePluginRequest $request, Plugin $plugin): array
     {
-        if ($plugin->status !== PluginStatus::NotInstalled) {
-            throw new PanelException('Plugin is already installed');
-        }
+        throw_if($plugin->status !== PluginStatus::NotInstalled, new PanelException('Plugin is already installed'));
 
         $this->pluginService->installPlugin($plugin);
 
@@ -124,9 +120,7 @@ class PluginController extends ApplicationApiController
      */
     public function update(WritePluginRequest $request, Plugin $plugin): array
     {
-        if (!$plugin->isUpdateAvailable()) {
-            throw new PanelException("Plugin doesn't need updating");
-        }
+        throw_unless($plugin->isUpdateAvailable(), new PanelException("Plugin doesn't need updating"));
 
         $this->pluginService->updatePlugin($plugin);
 
@@ -146,9 +140,7 @@ class PluginController extends ApplicationApiController
      */
     public function uninstall(UninstallPluginRequest $request, Plugin $plugin): array
     {
-        if ($plugin->status === PluginStatus::NotInstalled) {
-            throw new PanelException('Plugin is not installed');
-        }
+        throw_if($plugin->status === PluginStatus::NotInstalled, new PanelException('Plugin is not installed'));
 
         $this->pluginService->uninstallPlugin($plugin, $request->boolean('delete'));
 
@@ -168,9 +160,7 @@ class PluginController extends ApplicationApiController
      */
     public function enable(WritePluginRequest $request, Plugin $plugin): array
     {
-        if (!$plugin->canEnable()) {
-            throw new PanelException("Plugin can't be enabled");
-        }
+        throw_unless($plugin->canEnable(), new PanelException("Plugin can't be enabled"));
 
         $this->pluginService->enablePlugin($plugin);
 
@@ -190,9 +180,7 @@ class PluginController extends ApplicationApiController
      */
     public function disable(WritePluginRequest $request, Plugin $plugin): array
     {
-        if (!$plugin->canDisable()) {
-            throw new PanelException("Plugin can't be disabled");
-        }
+        throw_unless($plugin->canDisable(), new PanelException("Plugin can't be disabled"));
 
         $this->pluginService->disablePlugin($plugin);
 

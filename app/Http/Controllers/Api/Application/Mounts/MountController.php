@@ -115,9 +115,7 @@ class MountController extends ApplicationApiController
      */
     public function delete(DeleteMountRequest $request, Mount $mount): JsonResponse
     {
-        if ($mount->servers()->count() > 0) {
-            throw new HasActiveServersException(trans('exceptions.mount.servers_attached'));
-        }
+        throw_if($mount->servers()->count() > 0, new HasActiveServersException(trans('exceptions.mount.servers_attached')));
 
         $mount->delete();
 

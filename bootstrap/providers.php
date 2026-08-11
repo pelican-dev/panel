@@ -2,9 +2,9 @@
 
 use App\Providers\ActivityLogServiceProvider;
 use App\Providers\AppServiceProvider;
-use App\Providers\BackupsServiceProvider;
 use App\Providers\EventServiceProvider;
 use App\Providers\Extensions\AvatarServiceProvider;
+use App\Providers\Extensions\BackupAdapterServiceProvider;
 use App\Providers\Extensions\CaptchaServiceProvider;
 use App\Providers\Extensions\FeatureServiceProvider;
 use App\Providers\Extensions\OAuthServiceProvider;
@@ -19,9 +19,9 @@ use SocialiteProviders\Manager\ServiceProvider;
 return [
     ActivityLogServiceProvider::class,
     AppServiceProvider::class,
-    BackupsServiceProvider::class,
     EventServiceProvider::class,
     AvatarServiceProvider::class,
+    BackupAdapterServiceProvider::class,
     CaptchaServiceProvider::class,
     FeatureServiceProvider::class,
     OAuthServiceProvider::class,

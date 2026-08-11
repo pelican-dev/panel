@@ -31,9 +31,7 @@ class ResourceBelongsToServer
         $params = $request->route()->parameters();
 
         $server = $params['server'] ?? null;
-        if (!$server instanceof Server) {
-            throw new InvalidArgumentException('This middleware cannot be used in a context that is missing a server in the parameters.');
-        }
+        throw_unless($server instanceof Server, new InvalidArgumentException('This middleware cannot be used in a context that is missing a server in the parameters.'));
 
         /** @var Server $server */
         $server = $request->route()->parameter('server');
@@ -55,17 +53,13 @@ class ResourceBelongsToServer
                 case Database::class:
                 case Schedule::class:
                 case Subuser::class:
-                    if ($model->server_id !== $server->id) {
-                        throw $exception;
-                    }
+                    throw_if($model->server_id !== $server->id, $exception);
                     break;
                     // Regular users are a special case here as we need to make sure they're
                     // currently assigned as a subuser on the server.
                 case User::class:
                     $subuser = $server->subusers()->where('user_id', $model->id)->first();
-                    if (is_null($subuser)) {
-                        throw $exception;
-                    }
+                    throw_if(is_null($subuser), $exception);
                     // This is a special case to avoid an additional query being triggered
                     // in the underlying logic.
                     $request->attributes->set('subuser', $subuser);
@@ -75,9 +69,7 @@ class ResourceBelongsToServer
                 case Task::class:
                     /** @var Schedule $schedule */
                     $schedule = $request->route()->parameter('schedule');
-                    if ($model->schedule_id !== $schedule->id || $schedule->server_id !== $server->id) {
-                        throw $exception;
-                    }
+                    throw_if($model->schedule_id !== $schedule->id || $schedule->server_id !== $server->id, $exception);
                     break;
                 default:
                     // Don't return a 404 here since we want to make sure no one relies

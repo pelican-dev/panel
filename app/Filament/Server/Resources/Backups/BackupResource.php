@@ -170,7 +170,7 @@ class BackupResource extends Resource
                         ->color('primary')
                         ->icon(TablerIcon::Download)
                         ->authorize(fn () => user()?->can(SubuserPermission::BackupDownload, $server))
-                        ->url(fn (DownloadLinkService $downloadLinkService, Backup $backup, Request $request) => $downloadLinkService->handle($backup, $request->user()), true)
+                        ->url(fn (DownloadLinkService $downloadLinkService, Backup $backup) => $downloadLinkService->handle($backup, user()), true)
                         ->visible(fn (Backup $backup) => $backup->status === BackupStatus::Successful),
                     Action::make('exclude_restore')
                         ->label(trans('server/backup.actions.restore.title'))
@@ -207,17 +207,13 @@ class BackupResource extends Resource
                                 ->property(['name' => $backup->name, 'truncate' => $data['truncate']]);
 
                             $log->transaction(function () use ($downloadLinkService, $daemonRepository, $backup, $server, $data) {
-                                // If the backup is for an S3 file we need to generate a unique Download link for
-                                // it that will allow daemon to actually access the file.
-                                if ($backup->disk === Backup::ADAPTER_AWS_S3) {
-                                    $url = $downloadLinkService->handle($backup, user());
-                                }
+                                $url = $downloadLinkService->handle($backup, user());
 
                                 // Update the status right away for the server so that we know not to allow certain
                                 // actions against it via the Panel API.
                                 $server->update(['status' => ServerState::RestoringBackup]);
 
-                                $daemonRepository->setServer($server)->restore($backup, $url ?? null, $data['truncate']);
+                                $daemonRepository->setServer($server)->restore($backup, $url, $data['truncate']);
                             });
 
                             return Notification::make()

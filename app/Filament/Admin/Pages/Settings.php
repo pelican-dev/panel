@@ -6,7 +6,6 @@ use App\Enums\TablerIcon;
 use App\Extensions\Avatar\AvatarService;
 use App\Extensions\Captcha\CaptchaService;
 use App\Extensions\OAuth\OAuthService;
-use App\Models\Backup;
 use App\Notifications\MailTested;
 use App\Traits\EnvironmentWriterTrait;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -92,7 +91,7 @@ class Settings extends Page implements HasSchemas
 
     public static function canAccess(): bool
     {
-        return user()?->can('view settings');
+        return user()?->can('view settings') ?? false;
     }
 
     public function getTitle(): string
@@ -492,16 +491,6 @@ class Settings extends Page implements HasSchemas
     private function backupSettings(): array
     {
         return [
-            ToggleButtons::make('APP_BACKUP_DRIVER')
-                ->label(trans('admin/setting.backup.backup_driver'))
-                ->columnSpanFull()
-                ->inline()
-                ->options([
-                    Backup::ADAPTER_DAEMON => 'Wings',
-                    Backup::ADAPTER_AWS_S3 => 'S3',
-                ])
-                ->live()
-                ->default(env('APP_BACKUP_DRIVER', config('backups.default'))),
             Section::make(trans('admin/setting.backup.throttle'))
                 ->description(trans('admin/setting.backup.throttle_help'))
                 ->columns()
@@ -520,41 +509,6 @@ class Settings extends Page implements HasSchemas
                         ->minValue(0)
                         ->suffix('Seconds')
                         ->default(config('backups.throttles.period')),
-                ]),
-            Section::make(trans('admin/setting.backup.s3.s3_title'))
-                ->columns()
-                ->visible(fn (Get $get) => $get('APP_BACKUP_DRIVER') === Backup::ADAPTER_AWS_S3)
-                ->schema([
-                    TextInput::make('AWS_DEFAULT_REGION')
-                        ->label(trans('admin/setting.backup.s3.default_region'))
-                        ->required()
-                        ->default(config('backups.disks.s3.region')),
-                    TextInput::make('AWS_ACCESS_KEY_ID')
-                        ->label(trans('admin/setting.backup.s3.access_key'))
-                        ->required()
-                        ->default(config('backups.disks.s3.key')),
-                    TextInput::make('AWS_SECRET_ACCESS_KEY')
-                        ->label(trans('admin/setting.backup.s3.secret_key'))
-                        ->required()
-                        ->default(config('backups.disks.s3.secret')),
-                    TextInput::make('AWS_BACKUPS_BUCKET')
-                        ->label(trans('admin/setting.backup.s3.bucket'))
-                        ->required()
-                        ->default(config('backups.disks.s3.bucket')),
-                    TextInput::make('AWS_ENDPOINT')
-                        ->label(trans('admin/setting.backup.s3.endpoint'))
-                        ->required()
-                        ->default(config('backups.disks.s3.endpoint')),
-                    Toggle::make('AWS_USE_PATH_STYLE_ENDPOINT')
-                        ->label(trans('admin/setting.backup.s3.use_path_style_endpoint'))
-                        ->inline(false)
-                        ->onIcon(TablerIcon::Check)
-                        ->offIcon(TablerIcon::X)
-                        ->onColor('success')
-                        ->offColor('danger')
-                        ->live()
-                        ->stateCast(new BooleanStateCast(false))
-                        ->default(env('AWS_USE_PATH_STYLE_ENDPOINT', config('backups.disks.s3.use_path_style_endpoint'))),
                 ]),
         ];
     }
@@ -735,16 +689,6 @@ class Settings extends Page implements HasSchemas
                         ->formatStateUsing(fn ($state): bool => (bool) $state)
                         ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_REINSTALL_NOTIFICATION', (bool) $state))
                         ->default(env('PANEL_SEND_REINSTALL_NOTIFICATION', config('panel.email.send_reinstall_notification'))),
-                    Toggle::make('PANEL_SEND_BACKUP_COMPLETED_NOTIFICATION')
-                        ->label(trans('admin/setting.misc.mail_notifications.backup_completed'))
-                        ->onIcon(TablerIcon::Check)
-                        ->offIcon(TablerIcon::X)
-                        ->onColor('success')
-                        ->offColor('danger')
-                        ->live()
-                        ->formatStateUsing(fn ($state): bool => (bool) $state)
-                        ->afterStateUpdated(fn ($state, Set $set) => $set('PANEL_SEND_BACKUP_COMPLETED_NOTIFICATION', (bool) $state))
-                        ->default(env('PANEL_SEND_BACKUP_COMPLETED_NOTIFICATION', config('panel.email.send_backup_completed_notification'))),
                 ]),
             Section::make(trans('admin/setting.misc.connections.title'))
                 ->description(trans('admin/setting.misc.connections.helper'))

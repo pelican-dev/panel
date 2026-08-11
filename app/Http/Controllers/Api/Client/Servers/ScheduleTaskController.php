@@ -46,13 +46,9 @@ class ScheduleTaskController extends ClientApiController
     public function store(StoreTaskRequest $request, Server $server, Schedule $schedule): array
     {
         $limit = config('panel.client_features.schedules.per_schedule_task_limit', 10);
-        if ($schedule->tasks()->count() >= $limit) {
-            throw new ServiceLimitExceededException("Schedules may not have more than $limit tasks associated with them. Creating this task would put this schedule over the limit.");
-        }
+        throw_if($schedule->tasks()->count() >= $limit, new ServiceLimitExceededException("Schedules may not have more than $limit tasks associated with them. Creating this task would put this schedule over the limit."));
 
-        if ($server->backup_limit === 0 && $request->action === 'backup') {
-            throw new HttpForbiddenException("A backup task cannot be created when the server's backup limit is set to 0.");
-        }
+        throw_if($server->backup_limit === 0 && $request->action === 'backup', new HttpForbiddenException("A backup task cannot be created when the server's backup limit is set to 0."));
 
         /** @var Task|null $lastTask */
         $lastTask = $schedule->tasks()->orderByDesc('sequence_id')->first();
@@ -109,13 +105,9 @@ class ScheduleTaskController extends ClientApiController
      */
     public function update(StoreTaskRequest $request, Server $server, Schedule $schedule, Task $task): array
     {
-        if ($schedule->id !== $task->schedule_id || $server->id !== $schedule->server_id) {
-            throw new NotFoundHttpException();
-        }
+        throw_if($schedule->id !== $task->schedule_id || $server->id !== $schedule->server_id, new NotFoundHttpException());
 
-        if ($server->backup_limit === 0 && $request->action === 'backup') {
-            throw new HttpForbiddenException("A backup task cannot be created when the server's backup limit is set to 0.");
-        }
+        throw_if($server->backup_limit === 0 && $request->action === 'backup', new HttpForbiddenException("A backup task cannot be created when the server's backup limit is set to 0."));
 
         $this->connection->transaction(function () use ($request, $schedule, $task) {
             $sequenceId = $request->integer('sequence_id', $task->sequence_id);
@@ -166,13 +158,9 @@ class ScheduleTaskController extends ClientApiController
      */
     public function delete(ClientApiRequest $request, Server $server, Schedule $schedule, Task $task): JsonResponse
     {
-        if ($task->schedule_id !== $schedule->id || $schedule->server_id !== $server->id) {
-            throw new NotFoundHttpException();
-        }
+        throw_if($task->schedule_id !== $schedule->id || $schedule->server_id !== $server->id, new NotFoundHttpException());
 
-        if (!$request->user()->can(SubuserPermission::ScheduleDelete, $server)) {
-            throw new HttpForbiddenException('You do not have permission to perform this action.');
-        }
+        throw_unless($request->user()->can(SubuserPermission::ScheduleDelete, $server), new HttpForbiddenException('You do not have permission to perform this action.'));
 
         $schedule->tasks()
             ->where('sequence_id', '>', $task->sequence_id)

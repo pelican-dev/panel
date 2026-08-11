@@ -9,9 +9,9 @@ use App\Models\Server;
 use App\Models\Task;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Tests\Integration\IntegrationTestCase;
-use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
 use PHPUnit\Framework\Attributes\DataProvider;
 

@@ -448,12 +448,12 @@ class EditProfile extends BaseEditProfile
                         ->deletable(false)
                         ->addable(false)
                         ->relationship(null, function (Builder $query) {
-                            $query->orderBy('timestamp', 'desc')->limit(50);
+                            $query->orderByDesc('timestamp')->limit(50);
                         })
                         ->schema([
                             TextEntry::make('log')
                                 ->hiddenLabel()
-                                ->state(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
+                                ->state(fn (ActivityLog $record) => new HtmlString($record->htmlable())),
                         ]),
                 ]),
             Tab::make('customization')

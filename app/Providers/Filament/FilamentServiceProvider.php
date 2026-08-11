@@ -6,8 +6,10 @@ use App\Enums\CustomizationKey;
 use App\Enums\TablerIcon;
 use App\Livewire\Passkeys;
 use Filament\Actions\Action;
+use Filament\Actions\AssociateAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\DissociateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Actions\ViewAction;
@@ -27,6 +29,7 @@ use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\View\SupportIconAlias;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\View\TablesIconAlias;
 use Filament\View\PanelsIconAlias;
 use Filament\View\PanelsRenderHook;
@@ -103,6 +106,8 @@ class FilamentServiceProvider extends ServiceProvider
         });
 
         Select::configureUsing(fn (Select $select) => $select->native(false));
+
+        SelectColumn::configureUsing(fn (SelectColumn $select) => $select->native(false));
 
         KeyValue::configureUsing(fn (KeyValue $keyValue) => $keyValue
             ->addAction(function (Action $action) {
@@ -187,6 +192,30 @@ class FilamentServiceProvider extends ServiceProvider
 
         ViewAction::configureUsing(function (ViewAction $action) {
             $action->icon(TablerIcon::Eye);
+            $action->tooltip(fn () => $action->getLabel());
+            $action->hiddenLabel();
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
+        });
+
+        AssociateAction::configureUsing(function (AssociateAction $action) {
+            $action->icon(TablerIcon::Link);
+            $action->tooltip(fn () => $action->getLabel());
+            $action->hiddenLabel();
+            $action->iconSize(IconSize::Large);
+
+            if (user()?->getCustomization(CustomizationKey::ButtonStyle)) {
+                $action->iconButton();
+                $action->iconSize(IconSize::ExtraLarge);
+            }
+        });
+
+        DissociateAction::configureUsing(function (DissociateAction $action) {
+            $action->icon(TablerIcon::Unlink);
             $action->tooltip(fn () => $action->getLabel());
             $action->hiddenLabel();
             $action->iconSize(IconSize::Large);

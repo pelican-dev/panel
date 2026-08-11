@@ -317,7 +317,7 @@ class WebhookConfiguration extends Model
         $serverEvents = collect(static::discoverCustomEvents())
             ->merge(static::allModelEvents())
             ->unique()
-            ->filter(fn ($event) => str($event)->contains('App\\Models\\Server') && !str($event)->contains('Subuser'))
+            ->filter(fn ($event) => str($event)->contains(Server::class) && !str($event)->contains('Subuser'))
             ->values()
             ->all();
 
@@ -428,7 +428,7 @@ class WebhookConfiguration extends Model
                 return data_get($replacement, $trimmed, $trimmed);
             },
             $subject
-        );
+        ) ?? $subject;
     }
 
     /** @param array<mixed, mixed> $eventData */

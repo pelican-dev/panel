@@ -37,9 +37,7 @@ class CheckEggUpdatesCommand extends Command
 
         $extension = strtolower(pathinfo(parse_url($egg->update_url, PHP_URL_PATH), PATHINFO_EXTENSION));
 
-        if (empty($extension)) {
-            throw new Exception('Unsupported file format.');
-        }
+        throw_if(empty($extension), new Exception('Unsupported file format.'));
 
         $isYaml = in_array($extension, ['yaml', 'yml']);
 
@@ -49,9 +47,7 @@ class CheckEggUpdatesCommand extends Command
 
         $remote = Http::timeout(5)->connectTimeout(1)->get($egg->update_url);
 
-        if ($remote->failed()) {
-            throw new Exception("HTTP request returned status code {$remote->status()}");
-        }
+        throw_if($remote->failed(), new Exception("HTTP request returned status code {$remote->status()}"));
 
         $remote = $remote->body();
         $remote = $isYaml ? Yaml::parse($remote) : json_decode($remote, true);

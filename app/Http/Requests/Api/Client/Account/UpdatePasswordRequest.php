@@ -21,9 +21,7 @@ class UpdatePasswordRequest extends ClientApiRequest
         $hasher = Container::getInstance()->make(Hasher::class);
 
         // Verify password matches when changing password or email.
-        if (!$hasher->check($this->input('current_password'), $this->user()->password)) {
-            throw new InvalidPasswordProvidedException(trans('validation.internal.invalid_password'));
-        }
+        throw_unless($hasher->check($this->input('current_password'), $this->user()->password), new InvalidPasswordProvidedException(trans('validation.internal.invalid_password')));
 
         return !$this->user()->is_managed_externally;
     }

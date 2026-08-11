@@ -103,7 +103,7 @@ class WebhookResource extends Resource
                 IconColumn::make('type')
                     ->label(trans('admin/webhook.type')),
                 TextColumn::make('server.name')
-                    ->label('Server')
+                    ->label(trans('admin/webhook.server'))
                     ->placeholder('—')
                     ->icon('tabler-server')
                     ->iconColor('info'),
@@ -140,7 +140,7 @@ class WebhookResource extends Resource
                     ->options(WebhookType::class)
                     ->attribute('type'),
                 SelectFilter::make('server_id')
-                    ->label('Server')
+                    ->label(trans('admin/webhook.server'))
                     ->options(Server::query()->pluck('name', 'id')->toArray()),
             ]);
     }

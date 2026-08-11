@@ -7,8 +7,8 @@ use App\Exceptions\Service\InvalidFileUploadException;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggExporterService;
 use App\Services\Eggs\Sharing\EggImporterService;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Symfony\Component\Yaml\Yaml;
 
 class NormalizeEggCommand extends Command
@@ -112,7 +112,7 @@ class NormalizeEggCommand extends Command
 
     private static function replaceExtension(string $path): string
     {
-        return preg_replace('/^(.*\.)(?:yml|json|yaml)$/', '$1yaml', $path);
+        return preg_replace('/^(.*\.)(?:yml|json|yaml)$/', '$1yaml', $path) ?? $path;
     }
 
     /**

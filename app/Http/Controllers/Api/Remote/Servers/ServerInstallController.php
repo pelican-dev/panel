@@ -20,9 +20,7 @@ class ServerInstallController extends Controller
      */
     public function index(Request $request, Server $server): JsonResponse
     {
-        if (!$server->node->is($request->attributes->get('node'))) {
-            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
-        }
+        throw_unless($server->node->is($request->attributes->get('node')), new HttpForbiddenException('Requesting node does not have permission to access this server.'));
 
         $egg = $server->egg;
 
@@ -42,9 +40,7 @@ class ServerInstallController extends Controller
     {
         $status = null;
 
-        if (!$server->node->is($request->attributes->get('node'))) {
-            throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
-        }
+        throw_unless($server->node->is($request->attributes->get('node')), new HttpForbiddenException('Requesting node does not have permission to access this server.'));
 
         $successful = $request->boolean('successful');
 

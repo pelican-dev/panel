@@ -8,6 +8,7 @@ use App\Enums\SubuserPermission;
 use App\Enums\TablerIcon;
 use App\Exceptions\Repository\FileExistsException;
 use App\Facades\Activity;
+use App\Filament\Components\Actions\ConnectSftpAction;
 use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
@@ -588,6 +589,10 @@ class ListFiles extends ListRecords
                         'searchTerm' => $data['searchTerm'],
                         'path' => $this->path,
                     ]))),
+                ConnectSftpAction::make()
+                    ->hiddenLabel()
+                    ->tooltip(trans('server/file.actions.connect_sftp'))
+                    ->directory($this->path),
             ]);
     }
 
@@ -632,9 +637,7 @@ class ListFiles extends ListRecords
         /** @var Server $server */
         $server = Filament::getTenant();
 
-        if (!user()?->can(SubuserPermission::FileCreate, $server)) {
-            abort(403, 'You do not have permission to create folders.');
-        }
+        abort_unless(user()?->can(SubuserPermission::FileCreate, $server), 403, 'You do not have permission to create folders.');
 
         try {
             $this->getDaemonFileRepository()->createDirectory($folderPath, $this->path);

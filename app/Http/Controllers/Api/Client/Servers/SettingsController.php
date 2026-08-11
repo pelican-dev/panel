@@ -96,9 +96,7 @@ class SettingsController extends ClientApiController
      */
     public function dockerImage(SetDockerImageRequest $request, Server $server): JsonResponse
     {
-        if (!in_array($server->image, $server->egg->docker_images)) {
-            throw new BadRequestHttpException('This server\'s Docker image has been manually set by an administrator and cannot be updated.');
-        }
+        throw_unless(in_array($server->image, $server->egg->docker_images), new BadRequestHttpException('This server\'s Docker image has been manually set by an administrator and cannot be updated.'));
 
         $original = $server->image;
         $server->forceFill(['image' => $request->input('docker_image')])->saveOrFail();

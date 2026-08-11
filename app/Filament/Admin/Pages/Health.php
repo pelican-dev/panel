@@ -4,10 +4,10 @@ namespace App\Filament\Admin\Pages;
 
 use App\Enums\TablerIcon;
 use BackedEnum;
-use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\Health\Commands\RunHealthChecksCommand;
 use Spatie\Health\Enums\Status;
@@ -41,7 +41,7 @@ class Health extends Page
 
     public static function canAccess(): bool
     {
-        return user()?->can('view health');
+        return user()?->can('view health') ?? false;
     }
 
     protected function getActions(): array

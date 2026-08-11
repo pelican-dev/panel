@@ -2,9 +2,9 @@
 
 namespace App\Helpers;
 
-use Carbon\Carbon;
 use Cron\CronExpression;
 use Exception;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\ViewErrorBag;
 

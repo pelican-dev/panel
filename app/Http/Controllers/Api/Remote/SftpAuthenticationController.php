@@ -32,9 +32,7 @@ class SftpAuthenticationController extends Controller
     public function __invoke(SftpAuthenticationFormRequest $request): JsonResponse
     {
         $connection = $this->parseUsername($request->input('username'));
-        if (empty($connection['server'])) {
-            throw new BadRequestHttpException('No valid server identifier was included in the request.');
-        }
+        throw_if(empty($connection['server']), new BadRequestHttpException('No valid server identifier was included in the request.'));
 
         if ($this->hasTooManyLoginAttempts($request)) {
             $seconds = $this->limiter()->availableIn($this->throttleKey($request));
@@ -124,7 +122,7 @@ class SftpAuthenticationController extends Controller
     /**
      * Rejects the request and increments the login attempts.
      */
-    protected function reject(Request $request, bool $increment = true): void
+    protected function reject(Request $request, bool $increment = true): never
     {
         if ($increment) {
             $this->incrementLoginAttempts($request);
