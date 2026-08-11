@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\Remote\Backups\BackupRemoteUploadController;
-use App\Models\Backup;
 
 return [
     // This value is used to determine the lifespan of UploadPart presigned urls that daemon
@@ -9,8 +8,8 @@ return [
     'presigned_url_lifespan' => (int) env('BACKUP_PRESIGNED_URL_LIFESPAN', 60),
 
     // This value defines the maximal size of a single part for the S3 multipart upload during backups
-    // The maximal part size must be given in bytes. The default value is 5GB.
-    // Note that 5GB is the maximum for a single part when using AWS S3.
+    // The maximal part size must be given in bytes. The default value is 128MiB.
+    // Note that 5GiB is the maximum for a single part when using AWS S3.
     'max_part_size' => (int) env('BACKUP_MAX_PART_SIZE', BackupRemoteUploadController::DEFAULT_MAX_PART_SIZE),
 
     // The time to wait before automatically failing a backup, time is in minutes and defaults
