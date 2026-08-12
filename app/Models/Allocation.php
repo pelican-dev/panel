@@ -24,8 +24,10 @@ use Illuminate\Support\Carbon;
  * @property string|null $ip_alias
  * @property string|null $notes
  * @property bool $is_locked
+ * @property bool $show_port
  * @property-read string $address
  * @property-read string $alias
+ * @property-read string $display_address
  * @property-read bool $has_alias
  * @property-read Node $node
  * @property-read Server|null $server
@@ -43,6 +45,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|Allocation whereNotes($value)
  * @method static Builder<static>|Allocation wherePort($value)
  * @method static Builder<static>|Allocation whereServerId($value)
+ * @method static Builder<static>|Allocation whereShowPort($value)
  * @method static Builder<static>|Allocation whereUpdatedAt($value)
  */
 class Allocation extends Model
@@ -58,6 +61,7 @@ class Allocation extends Model
 
     protected $attributes = [
         'is_locked' => false,
+        'show_port' => true,
     ];
 
     /**
@@ -74,6 +78,7 @@ class Allocation extends Model
         'server_id' => ['nullable', 'exists:servers,id'],
         'notes' => ['nullable', 'string', 'max:256'],
         'is_locked' => ['boolean'],
+        'show_port' => ['boolean'],
     ];
 
     protected static function booted(): void
@@ -81,6 +86,7 @@ class Allocation extends Model
         static::updating(function (self $allocation) {
             if (is_null($allocation->server_id)) {
                 $allocation->is_locked = false;
+                $allocation->show_port = true;
             }
         });
 
@@ -96,6 +102,7 @@ class Allocation extends Model
             'port' => 'integer',
             'server_id' => 'integer',
             'is_locked' => 'bool',
+            'show_port' => 'bool',
         ];
     }
 
@@ -120,6 +127,14 @@ class Allocation extends Model
     {
         return Attribute::make(
             get: fn () => (is_ipv6($this->alias) ? "[$this->alias]" : $this->alias) . ":$this->port",
+        );
+    }
+
+    /** @return Attribute<string, never> */
+    protected function displayAddress(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->show_port ? $this->address : $this->alias,
         );
     }
 

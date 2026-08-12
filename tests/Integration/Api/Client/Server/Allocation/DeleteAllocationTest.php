@@ -27,11 +27,17 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
             'server_id' => $server->id,
             'node_id' => $server->node_id,
             'notes' => 'hodor',
+            'show_port' => false,
         ]);
 
         $this->actingAs($user)->deleteJson($this->link($allocation))->assertStatus(Response::HTTP_NO_CONTENT);
 
-        $this->assertDatabaseHas('allocations', ['id' => $allocation->id, 'server_id' => null, 'notes' => null]);
+        $this->assertDatabaseHas('allocations', [
+            'id' => $allocation->id,
+            'server_id' => null,
+            'notes' => null,
+            'show_port' => true,
+        ]);
     }
 
     /**

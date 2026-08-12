@@ -23,6 +23,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 
 /**
@@ -51,6 +52,8 @@ class AllocationsRelationManager extends RelationManager
                     ->label(trans('admin/server.port'))
                     ->searchable()
                     ->sortable(),
+                ToggleColumn::make('show_port')
+                    ->label(trans('admin/server.show_port')),
                 TextInputColumn::make('ip_alias')
                     ->label(trans('admin/server.alias'))
                     ->placeholder(trans('admin/server.no_alias'))
@@ -105,6 +108,7 @@ class AllocationsRelationManager extends RelationManager
                         $allocation->update([
                             'notes' => null,
                             'is_locked' => false,
+                            'show_port' => true,
                         ]);
 
                         if (!$this->getOwnerRecord()->allocation_id) {
@@ -118,6 +122,7 @@ class AllocationsRelationManager extends RelationManager
                         Allocation::whereNull('server_id')->update([
                             'notes' => null,
                             'is_locked' => false,
+                            'show_port' => true,
                         ]);
 
                         if (!$this->getOwnerRecord()->allocation_id) {

@@ -63,7 +63,7 @@ class NetworkAllocationController extends ClientApiController
         if ($original !== $allocation->notes) {
             Activity::event('server:allocation.notes')
                 ->subject($allocation)
-                ->property(['allocation' => $allocation->address, 'old' => $original, 'new' => $allocation->notes])
+                ->property(['allocation' => $allocation->display_address, 'old' => $original, 'new' => $allocation->notes])
                 ->log();
         }
 
@@ -88,7 +88,7 @@ class NetworkAllocationController extends ClientApiController
 
         Activity::event('server:allocation.primary')
             ->subject($allocation)
-            ->property('allocation', $allocation->address)
+            ->property('allocation', $allocation->display_address)
             ->log();
 
         return $this->fractal->item($allocation)
@@ -114,7 +114,7 @@ class NetworkAllocationController extends ClientApiController
 
             $allocation = $this->assignableAllocationService->handle($server);
 
-            $log->subject($allocation)->property('allocation', $allocation->address);
+            $log->subject($allocation)->property('allocation', $allocation->display_address);
 
             return $allocation;
         });
@@ -139,12 +139,13 @@ class NetworkAllocationController extends ClientApiController
 
         Allocation::query()->where('id', $allocation->id)->update([
             'notes' => null,
+            'show_port' => true,
             'server_id' => null,
         ]);
 
         Activity::event('server:allocation.delete')
             ->subject($allocation)
-            ->property('allocation', $allocation->address)
+            ->property('allocation', $allocation->display_address)
             ->log();
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);

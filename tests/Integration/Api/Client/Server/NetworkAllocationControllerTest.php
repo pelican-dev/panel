@@ -27,6 +27,18 @@ class NetworkAllocationControllerTest extends ClientApiIntegrationTestCase
         $this->assertJsonTransformedWith($response->json('data.0.attributes'), $server->allocation);
     }
 
+    public function test_port_visibility_preference_is_returned(): void
+    {
+        [$user, $server] = $this->generateTestAccount();
+        $server->allocation->update(['show_port' => false]);
+
+        $this->actingAs($user)
+            ->getJson($this->link($server, '/network/allocations'))
+            ->assertOk()
+            ->assertJsonPath('data.0.attributes.port', $server->allocation->port)
+            ->assertJsonPath('data.0.attributes.show_port', false);
+    }
+
     /**
      * Test that allocations cannot be returned without the required user permissions.
      */
