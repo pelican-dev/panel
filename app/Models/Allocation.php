@@ -134,7 +134,7 @@ class Allocation extends Model
     protected function displayAddress(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->show_port ? $this->address : $this->alias,
+            get: fn () => $this->show_port ? $this->address : ($this->ip_alias ?? $this->ip),
         );
     }
 

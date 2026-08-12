@@ -26,6 +26,7 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
         $allocation = Allocation::factory()->create([
             'server_id' => $server->id,
             'node_id' => $server->node_id,
+            'is_locked' => true,
             'notes' => 'hodor',
             'show_port' => false,
         ]);
@@ -34,6 +35,7 @@ class DeleteAllocationTest extends ClientApiIntegrationTestCase
 
         $this->assertDatabaseHas('allocations', [
             'id' => $allocation->id,
+            'is_locked' => false,
             'server_id' => null,
             'notes' => null,
             'show_port' => true,

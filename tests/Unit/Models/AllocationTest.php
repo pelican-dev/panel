@@ -32,6 +32,18 @@ class AllocationTest extends TestCase
         $this->assertSame('192.0.2.1:25565', $allocation->display_address);
     }
 
+    public function test_hidden_port_falls_back_to_ip_when_alias_is_missing(): void
+    {
+        $allocation = new Allocation([
+            'ip' => '192.0.2.1',
+            'ip_alias' => null,
+            'port' => 25565,
+            'show_port' => false,
+        ]);
+
+        $this->assertSame('192.0.2.1', $allocation->display_address);
+    }
+
     public static function displayAddressDataProvider(): array
     {
         return [
