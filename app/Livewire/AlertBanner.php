@@ -95,14 +95,4 @@ final class AlertBanner extends ViewComponent implements Arrayable
 
         return $this;
     }
-
-    public function getColorClasses(): string
-    {
-        return match ($this->getStatus()) {
-            'success' => 'text-success-600 dark:text-success-500',
-            'warning' => 'text-warning-600 dark:text-warning-500',
-            'danger' => 'text-danger-600 dark:text-danger-500',
-            default => 'text-info-600 dark:text-info-500',
-        };
-    }
 }
