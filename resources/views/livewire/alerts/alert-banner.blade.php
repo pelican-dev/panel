@@ -1,6 +1,6 @@
 @php
     $icon = $getIcon();
-    $status = $getStatus();
+    $status = $getStatus() ?? 'info';
     $title = $getTitle();
     $body = $getBody();
 @endphp
