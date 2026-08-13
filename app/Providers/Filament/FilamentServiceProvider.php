@@ -312,6 +312,11 @@ class FilamentServiceProvider extends ServiceProvider
             FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_REORDER => TablerIcon::ArrowsSort,
 
             SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP => TablerIcon::Check,
+
+            SchemaIconAlias::COMPONENTS_CALLOUT_INFO => TablerIcon::InfoCircle,
+            SchemaIconAlias::COMPONENTS_CALLOUT_SUCCESS => TablerIcon::CircleCheck,
+            SchemaIconAlias::COMPONENTS_CALLOUT_WARNING => TablerIcon::AlertTriangle,
+            SchemaIconAlias::COMPONENTS_CALLOUT_DANGER => TablerIcon::AlertCircle,
         ]);
         Livewire::component('filament-passkeys', Passkeys::class);
     }
