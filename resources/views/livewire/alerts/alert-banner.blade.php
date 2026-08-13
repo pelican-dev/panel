@@ -23,7 +23,12 @@
     
     @if ($isCloseable())
         <x-slot name="controls">
-            <x-filament::icon-button color="gray" icon="tabler-x" wire:click="remove('{{$getId()}}')" />
+            <x-filament::icon-button
+                icon="tabler-x"
+                color="gray"
+                label="Close"
+                wire:click="remove('{{$getId()}}')"
+            />
         </x-slot>
     @endif
 </x-filament::callout>
