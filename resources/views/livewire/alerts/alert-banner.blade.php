@@ -3,6 +3,7 @@
     $status = $getStatus() ?? 'info';
     $title = $getTitle();
     $body = $getBody();
+    $actions = $getActions();
 @endphp
 
 <x-filament::callout
@@ -18,6 +19,14 @@
     @if (filled($body))
         <x-slot name="description">
             {{str($body)->sanitizeHtml()->toHtmlString()}}
+        </x-slot>
+    @endif
+
+    @if (count($actions) > 0)
+        <x-slot name="footer">
+            @foreach ($actions as $action)
+                {{ $action }}
+            @endforeach
         </x-slot>
     @endif
     

@@ -3,6 +3,9 @@
 namespace App\Livewire;
 
 use Closure;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Notifications\Concerns\HasActions;
 use Filament\Notifications\Concerns\HasBody;
 use Filament\Notifications\Concerns\HasIcon;
 use Filament\Notifications\Concerns\HasId;
@@ -15,6 +18,7 @@ use Livewire\Livewire;
 
 final class AlertBanner extends ViewComponent implements Arrayable
 {
+    use HasActions;
     use HasBody;
     use HasIcon;
     use HasId;
@@ -52,6 +56,7 @@ final class AlertBanner extends ViewComponent implements Arrayable
             'status' => $this->getStatus(),
             'icon' => $this->getIcon(),
             'closeable' => $this->isCloseable(),
+            'actions' => collect($this->getActions())->toArray(),
         ];
     }
 
@@ -67,6 +72,13 @@ final class AlertBanner extends ViewComponent implements Arrayable
         $static->status($data['status']);
         $static->icon($data['icon']);
         $static->closable($data['closeable']);
+        $static->actions(array_map(
+            fn (array $action): Action|ActionGroup => match (array_key_exists('actions', $action)) {
+                true => ActionGroup::fromArray($action),
+                false => Action::fromArray($action),
+            },
+            $data['actions'] ?? [],
+        ));
 
         return $static;
     }
