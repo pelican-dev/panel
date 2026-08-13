@@ -45,7 +45,7 @@ final class AlertBanner extends ViewComponent implements Arrayable
     }
 
     /**
-     * @return array{id: string, title: ?string, body: ?string, status: ?string, icon: string|\BackedEnum|Htmlable|null, closeable: bool}
+     * @return array{id: string, title: ?string, body: ?string, status: ?string, icon: string|\BackedEnum|Htmlable|null, closeable: bool, actions: array<array<string, mixed>>}
      */
     public function toArray(): array
     {
@@ -61,7 +61,7 @@ final class AlertBanner extends ViewComponent implements Arrayable
     }
 
     /**
-     * @param  array{id: string, title: ?string, body: ?string, status: ?string, icon: string|\BackedEnum|Htmlable|null, closeable: bool}  $data
+     * @param  array{id: string, title: ?string, body: ?string, status: ?string, icon: string|\BackedEnum|Htmlable|null, closeable: bool, actions: array<array<string, mixed>>}  $data
      */
     public static function fromArray(array $data): AlertBanner
     {
