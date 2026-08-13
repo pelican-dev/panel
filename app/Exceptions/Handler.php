@@ -18,12 +18,14 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Laravel\Passkeys\Passkeys;
 use PDOException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Throwable;
+use Webauthn\Exception\AuthenticatorResponseVerificationException;
 
 class Handler extends ExceptionHandler
 {
@@ -39,6 +41,7 @@ class Handler extends ExceptionHandler
      */
     protected $dontReport = [
         AuthenticationException::class,
+        AuthenticatorResponseVerificationException::class,
         AuthorizationException::class,
         HttpException::class,
         ModelNotFoundException::class,
@@ -55,6 +58,7 @@ class Handler extends ExceptionHandler
     protected static array $exceptionResponseCodes = [
         AuthenticationException::class => 401,
         AuthorizationException::class => 403,
+        AuthenticatorResponseVerificationException::class => 422,
         ValidationException::class => 422,
     ];
 
@@ -89,6 +93,37 @@ class Handler extends ExceptionHandler
         $this->reportable(function (TransportException $ex) {
             $ex = $this->generateCleanedExceptionStack($ex);
         });
+
+        $this->renderable(fn (AuthenticatorResponseVerificationException $ex, Request $request) => $this->invalidPasskey($ex, $request));
+    }
+
+    /**
+     * Turn a failed WebAuthn ceremony into an actionable response.
+     *
+     * The library only reports that the browser's origin wasn't accepted, which on its
+     * own is impossible to act on, so log the origin we received alongside the ones the
+     * panel is configured for and tell the user which address passkeys work at.
+     */
+    private function invalidPasskey(AuthenticatorResponseVerificationException $exception, Request $request): JsonResponse
+    {
+        $isOriginFailure = Str::startsWith($exception->getMessage(), ['Invalid origin', 'Invalid scheme']);
+
+        if ($isOriginFailure) {
+            logger()->warning('Passkey rejected: ' . $exception->getMessage(), [
+                'origin' => $request->headers->get('Origin'),
+                'allowed_origins' => Passkeys::allowedOrigins(),
+                'relying_party_id' => Passkeys::relyingPartyId(),
+            ]);
+        }
+
+        $detail = $isOriginFailure
+            ? trans('passkeys.invalid_origin', ['domain' => Passkeys::relyingPartyId()])
+            : trans('passkeys.invalid');
+
+        return new JsonResponse(
+            $this->convertExceptionToArray($exception, ['detail' => $detail]),
+            JsonResponse::HTTP_UNPROCESSABLE_ENTITY,
+        );
     }
 
     private function generateCleanedExceptionStack(Throwable $exception): string
