@@ -8,13 +8,16 @@ use Dedoc\Scramble\Infer\Services\ReferenceTypeResolver;
 use Dedoc\Scramble\Support\Type\ArrayItemType_;
 use Dedoc\Scramble\Support\Type\ArrayType;
 use Dedoc\Scramble\Support\Type\Generic;
+use Dedoc\Scramble\Support\Type\IntegerType;
 use Dedoc\Scramble\Support\Type\KeyedArrayType;
 use Dedoc\Scramble\Support\Type\Literal\LiteralIntegerType;
 use Dedoc\Scramble\Support\Type\Literal\LiteralStringType;
 use Dedoc\Scramble\Support\Type\ObjectType;
 use Dedoc\Scramble\Support\Type\Reference\MethodCallReferenceType;
+use Dedoc\Scramble\Support\Type\StringType;
 use Dedoc\Scramble\Support\Type\Type;
 use Dedoc\Scramble\Support\Type\UnknownType;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use League\Fractal\TransformerAbstract;
 use Spatie\Fractalistic\Fractal;
@@ -39,6 +42,10 @@ class FractalResponseTypeInfer implements MethodReturnTypeExtension
 
     private const META = 3;
 
+    private const DATA = 4;
+
+    private const SLOTS = 5;
+
     public function shouldHandle(ObjectType|string $callee): bool
     {
         return $callee instanceof ObjectType && $callee->isInstanceOf(Fractal::class);
@@ -50,7 +57,7 @@ class FractalResponseTypeInfer implements MethodReturnTypeExtension
 
         $current = $instance instanceof Generic && $instance->name === Fractal::class
             ? $instance->templateTypes
-            : [new UnknownType(), new UnknownType(), new UnknownType(), new UnknownType()];
+            : array_fill(0, self::SLOTS, new UnknownType());
 
         return match ($event->name) {
             'item' => $this->withData($current, 'item', $event),
@@ -74,6 +81,7 @@ class FractalResponseTypeInfer implements MethodReturnTypeExtension
     private function withData(array $current, string $mode, MethodCallEvent $event): Generic
     {
         $current[self::MODE] = new LiteralStringType($mode);
+        $current[self::DATA] = $event->getArg('data', 0, new UnknownType());
 
         $transformer = $event->getArg('transformer', 1, new UnknownType());
 
@@ -135,6 +143,7 @@ class FractalResponseTypeInfer implements MethodReturnTypeExtension
             $current[self::TRANSFORMER] ?? new UnknownType(),
             $current[self::RESOURCE_NAME] ?? new UnknownType(),
             $current[self::META] ?? new UnknownType(),
+            $current[self::DATA] ?? new UnknownType(),
         ];
     }
 
@@ -190,13 +199,48 @@ class FractalResponseTypeInfer implements MethodReturnTypeExtension
             $items[] = new ArrayItemType_('attributes', $itemShape);
         }
 
+        $metaItems = [];
+
+        // Fractal::createData() attaches a paginator adapter on its own whenever the data is a
+        // paginator, so the pagination block shows up without anyone asking for it.
+        if ($this->isPaginated($current[self::DATA] ?? null)) {
+            $metaItems[] = new ArrayItemType_('pagination', $this->paginationShape());
+        }
+
         $meta = $current[self::META] ?? null;
 
         if ($meta instanceof KeyedArrayType) {
-            $items[] = new ArrayItemType_('meta', $meta, isOptional: true);
+            $metaItems = [...$metaItems, ...$meta->items];
+        }
+
+        if ($metaItems !== []) {
+            $items[] = new ArrayItemType_('meta', new KeyedArrayType($metaItems), isOptional: true);
         }
 
         return new KeyedArrayType($items);
+    }
+
+    private function isPaginated(?Type $data): bool
+    {
+        return $data instanceof ObjectType && $data->isInstanceOf(LengthAwarePaginator::class);
+    }
+
+    /**
+     * The shape `League\Fractal\Serializer\ArraySerializer::paginator()` writes.
+     */
+    private function paginationShape(): KeyedArrayType
+    {
+        return new KeyedArrayType([
+            new ArrayItemType_('total', new IntegerType()),
+            new ArrayItemType_('count', new IntegerType()),
+            new ArrayItemType_('per_page', new IntegerType()),
+            new ArrayItemType_('current_page', new IntegerType()),
+            new ArrayItemType_('total_pages', new IntegerType()),
+            new ArrayItemType_('links', new KeyedArrayType([
+                new ArrayItemType_('previous', new StringType(), isOptional: true),
+                new ArrayItemType_('next', new StringType(), isOptional: true),
+            ])),
+        ]);
     }
 
     private function resolveTransformerFields(MethodCallEvent $event, ObjectType $transformerType): ?KeyedArrayType
