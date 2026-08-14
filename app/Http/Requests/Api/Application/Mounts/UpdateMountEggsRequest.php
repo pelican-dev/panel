@@ -11,7 +11,7 @@ class UpdateMountEggsRequest extends StoreMountRequest
     public function rules(?array $rules = null): array
     {
         return [
-            /** IDs of the eggs allowed to use this mount. Eggs left out of this list are unassigned. */
+            /** IDs of eggs to add to this mount. Eggs already assigned are left untouched. */
             'eggs' => 'required|array|exists:eggs,id',
             /** ID of an egg allowed to use this mount. */
             'eggs.*' => 'integer',

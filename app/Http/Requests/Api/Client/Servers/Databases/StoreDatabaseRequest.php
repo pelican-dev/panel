@@ -26,7 +26,7 @@ class StoreDatabaseRequest extends ClientApiRequest implements ClientPermissions
         Assert::isInstanceOf($server, Server::class);
 
         return [
-            /** Name of the database to create. The final name is prefixed so it stays unique on the host. */
+            /** Name of the database to create. The final name is prefixed so it stays unique for this server. */
             'database' => [
                 'required',
                 'alpha_dash',

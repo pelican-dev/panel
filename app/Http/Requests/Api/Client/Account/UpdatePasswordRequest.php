@@ -10,7 +10,7 @@ use Illuminate\Contracts\Hashing\Hasher;
 
 // current_password is checked in authorize() rather than validated, so it has no rule to comment.
 #[BodyParameter('current_password', description: 'The account\'s current password, which must be given to change it.', required: true, type: 'string')]
-#[BodyParameter('password_confirmation', description: 'Repeat of the new password.')]
+#[BodyParameter('password_confirmation', description: 'Repeat of the new password.', required: true)]
 class UpdatePasswordRequest extends ClientApiRequest
 {
     /**
