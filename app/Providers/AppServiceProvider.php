@@ -97,14 +97,6 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('viewApiDocs', fn () => true);
 
-        // ApiRequestDocumentationExtension is registered via config/scramble.php so it's
-        // available before Scramble reads its own config; keep the type-infer extensions here.
-        Scramble::registerExtensions([
-            TransformerModelBindingExtension::class,
-            TransformerFactoryTypeInfer::class,
-            FractalResponseTypeInfer::class,
-        ]);
-
         $bearerTokens = fn (OpenApi $openApi) => $openApi->secure(SecurityScheme::http('bearer'));
         Scramble::registerApi('application', ['api_path' => 'api/application', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
         Scramble::registerApi('client', ['api_path' => 'api/client', 'info' => ['version' => '1.0']])->afterOpenApiGenerated($bearerTokens);
@@ -142,6 +134,15 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LoginResponseContract::class, LoginResponse::class);
 
         Scramble::ignoreDefaultRoutes();
+
+        // Registered here rather than in boot() because Scramble's own provider boots first, and
+        // it reads some kinds of extension right then. Registering during register() works for
+        // every kind, so this keeps holding once an operation extension is added.
+        Scramble::registerExtensions([
+            TransformerModelBindingExtension::class,
+            TransformerFactoryTypeInfer::class,
+            FractalResponseTypeInfer::class,
+        ]);
 
         /** @var PluginService $pluginService */
         $pluginService = app(PluginService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
