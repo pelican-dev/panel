@@ -56,7 +56,7 @@ body:
   attributes:
     label: Docker Image
     description: The specific Docker image you are using for the game(s) above.
-    placeholder: ghcr.io/pelican-dev/yolks:java_17
+    placeholder: ghcr.io/pelican-eggs/yolks:java_17
 
 - type: textarea
   id: panel-logs
