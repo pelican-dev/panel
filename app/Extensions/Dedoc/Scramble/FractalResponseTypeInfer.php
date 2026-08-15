@@ -123,18 +123,27 @@ class FractalResponseTypeInfer implements MethodReturnTypeExtension
      */
     private function withMeta(array $current, MethodCallEvent $event): Generic
     {
-        $existingItems = $current[self::META] instanceof KeyedArrayType ? $current[self::META]->items : [];
-        $existingKeys = array_map(fn (ArrayItemType_ $item): string => (string) $item->key, $existingItems);
+        $items = $current[self::META] instanceof KeyedArrayType ? $current[self::META]->items : [];
+        $keys = array_map(fn (ArrayItemType_ $item): string => (string) $item->key, $items);
 
-        // Fractal's addMeta() does `$this->meta += $meta`, so earlier calls win on key conflicts.
-        $newItems = [];
-        foreach ($event->arguments->all() as $key => $value) {
-            if (!in_array((string) $key, $existingKeys, true)) {
-                $newItems[] = new ArrayItemType_($key, $value);
+        // addMeta() takes any number of arrays and does `$this->meta += $meta` with each of them,
+        // so the keys of every argument land on the meta block itself and earlier ones win.
+        foreach ($event->arguments->all() as $argument) {
+            if (!$argument instanceof KeyedArrayType) {
+                continue;
+            }
+
+            foreach ($argument->items as $item) {
+                if (in_array((string) $item->key, $keys, true)) {
+                    continue;
+                }
+
+                $keys[] = (string) $item->key;
+                $items[] = $item;
             }
         }
 
-        $current[self::META] = new KeyedArrayType([...$existingItems, ...$newItems]);
+        $current[self::META] = new KeyedArrayType($items);
 
         return new Generic(Fractal::class, $this->padded($current));
     }

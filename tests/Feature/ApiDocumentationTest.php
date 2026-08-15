@@ -39,6 +39,19 @@ it('documents the transformed collection envelope with pagination', function () 
         ->toHaveKeys(['total', 'count', 'per_page', 'current_page', 'total_pages', 'links']);
 });
 
+it('documents the meta block each addMeta() call contributes to', function () {
+    $document = generateDocument('client');
+
+    $item = $document['paths']['/servers/{server}']['get']['responses'][200]['content']['application/json']['schema'];
+
+    expect($item['properties']['meta']['properties'])->toHaveKeys(['is_server_owner', 'user_permissions']);
+
+    // A paginated listing gets the pagination block Fractal adds plus whatever the controller asked for.
+    $collection = $document['paths']['/servers/{server}/backups']['get']['responses'][200]['content']['application/json']['schema'];
+
+    expect($collection['properties']['meta']['properties'])->toHaveKeys(['pagination', 'backup_count']);
+});
+
 it('documents the transformed item envelope without pagination', function () {
     $schema = generateDocument('application')['paths']['/servers/{server}']['get']['responses'][200]['content']['application/json']['schema'];
 
