@@ -26,7 +26,7 @@ class StoreServerDatabaseRequest extends ApplicationApiRequest
         $server = $this->route()->parameter('server');
 
         return [
-            /** Name of the database to create. The final name is prefixed so it stays unique for this server. */
+            /** Name of the database to create. The final name is prefixed with the server ID, and must not already be in use by this server. */
             'database' => [
                 'required',
                 'alpha_dash',
