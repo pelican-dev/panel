@@ -73,7 +73,7 @@ WORKDIR /var/www/html
 RUN apk add --no-cache \
     # packages for running the panel
     caddy ca-certificates supervisor supercronic fcgi coreutils \
-    # required for installing plugins. Pulled from https://github.com/pelican-dev/panel/pull/2034
+    # required for installing plugins. Pulled from https://github.com/pelican/panel/pull/2034
     zip unzip 7zip bzip2-dev yarn git
 
 # Copy composer binary for runtime plugin dependency management
