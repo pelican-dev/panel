@@ -245,7 +245,7 @@ class CreateServer extends CreateRecord
                                 ->where('node_id', $get('node_id'))
                                 ->whereNull('server_id'),
                         )
-                        ->createOptionAction(fn (Action $action) => $action->authorize(fn (Get $get) => user()?->can('create', Node::find($get('node_id')))))
+                        ->createOptionAction(fn (Action $action) => $action->authorize(fn () => user()?->can('create', Allocation::class)))
                         ->createOptionForm(function (Get $get) {
                             $getPage = $get;
 
