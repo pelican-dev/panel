@@ -8,9 +8,11 @@ use App\Filament\Components\Forms\Fields\StartupVariable;
 use App\Models\Allocation;
 use App\Models\Egg;
 use App\Models\Node;
+use App\Models\Server;
 use App\Models\User;
 use App\Services\Allocations\AssignmentService;
 use App\Services\Servers\RandomWordService;
+use App\Services\Servers\ServerCloneService;
 use App\Services\Servers\ServerCreationService;
 use App\Services\Users\UserCreationService;
 use App\Traits\Filament\CanCustomizeHeaderActions;
@@ -58,11 +60,35 @@ class CreateServer extends CreateRecord
 
     public ?Node $node = null;
 
+    public ?int $cloneFrom = null;
+
     private ServerCreationService $serverCreationService;
 
-    public function boot(ServerCreationService $serverCreationService): void
+    private ServerCloneService $serverCloneService;
+
+    private ?Server $cloneSource = null;
+
+    public function boot(ServerCreationService $serverCreationService, ServerCloneService $serverCloneService): void
     {
         $this->serverCreationService = $serverCreationService;
+        $this->serverCloneService = $serverCloneService;
+    }
+
+    public function mount(): void
+    {
+        $this->cloneFrom = request()->integer('clone_from') ?: null;
+
+        parent::mount();
+
+        $server = $this->getServerToClone();
+
+        if ($server) {
+            Notification::make()
+                ->title(trans('admin/server.notifications.clone_loaded', ['server' => $server->name]))
+                ->body(trans('admin/server.notifications.clone_loaded_body'))
+                ->info()
+                ->send();
+        }
     }
 
     public function form(Schema $schema): Schema
@@ -855,6 +881,41 @@ class CreateServer extends CreateRecord
     public function refreshForm(): void
     {
         $this->fillForm();
+    }
+
+    protected function fillForm(): void
+    {
+        $server = $this->getServerToClone();
+
+        if (!$server) {
+            parent::fillForm();
+
+            return;
+        }
+
+        $this->node = $server->node;
+
+        $this->form->fill($this->serverCloneService->handle($server));
+    }
+
+    private function getServerToClone(): ?Server
+    {
+        if ($this->cloneSource) {
+            return $this->cloneSource;
+        }
+
+        if (!$this->cloneFrom) {
+            return null;
+        }
+
+        /** @var ?Server $server */
+        $server = Server::query()->find($this->cloneFrom);
+
+        if (!$server || !user()?->can('view', $server)) {
+            return null;
+        }
+
+        return $this->cloneSource = $server;
     }
 
     protected function getFormActions(): array

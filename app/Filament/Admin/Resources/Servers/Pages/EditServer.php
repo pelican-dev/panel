@@ -7,6 +7,7 @@ use App\Enums\TablerIcon;
 use App\Extensions\BackupAdapter\BackupAdapterService;
 use App\Extensions\BackupAdapter\Schemas\WingsBackupSchema;
 use App\Filament\Admin\Resources\Servers\ServerResource;
+use App\Filament\Components\Actions\CloneServerAction;
 use App\Filament\Components\Actions\DeleteIcon;
 use App\Filament\Components\Actions\PreviewStartupAction;
 use App\Filament\Components\Actions\UploadIcon;
@@ -1023,6 +1024,8 @@ class EditServer extends EditRecord
                 })
                 ->visible(fn () => $canForceDelete)
                 ->authorize(fn (Server $server) => user()?->can('delete server', $server)),
+            CloneServerAction::make()
+                ->hiddenLabel(),
             Action::make('console')
                 ->hiddenLabel()
                 ->tooltip(trans('admin/server.console'))
