@@ -6,7 +6,7 @@ use App\Data\Api\ApiResource;
 use App\Data\Api\IncludeContext;
 use App\Models\Schedule;
 
-class ScheduleData extends ApiResource
+final class ScheduleData extends ApiResource
 {
     /** @var string[] */
     public static array $availableIncludes = ['tasks'];

@@ -12,7 +12,7 @@ use App\Models\Server;
 use App\Models\User;
 use App\Services\Servers\EnvironmentService;
 
-class ServerData extends ApiResource
+final class ServerData extends ApiResource
 {
     /** @var string[] */
     public static array $availableIncludes = [

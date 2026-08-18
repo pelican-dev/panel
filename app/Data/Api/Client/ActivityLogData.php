@@ -8,7 +8,7 @@ use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class ActivityLogData extends ApiResource
+final class ActivityLogData extends ApiResource
 {
     /** @var string[] */
     public static array $availableIncludes = ['actor'];

@@ -6,7 +6,7 @@ use App\Data\Api\ApiResource;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 
-class FileObjectData extends ApiResource
+final class FileObjectData extends ApiResource
 {
     public function __construct(
         public ?string $name,

@@ -6,7 +6,7 @@ use App\Data\Api\ApiResource;
 use App\Models\EggVariable;
 use BadMethodCallException;
 
-class EggVariableData extends ApiResource
+final class EggVariableData extends ApiResource
 {
     public function __construct(
         public string $name,

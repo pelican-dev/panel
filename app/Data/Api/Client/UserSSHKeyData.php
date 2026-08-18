@@ -5,7 +5,7 @@ namespace App\Data\Api\Client;
 use App\Data\Api\ApiResource;
 use App\Models\UserSSHKey;
 
-class UserSSHKeyData extends ApiResource
+final class UserSSHKeyData extends ApiResource
 {
     public function __construct(
         public string $name,

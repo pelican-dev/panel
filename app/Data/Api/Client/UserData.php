@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Spatie\LaravelData\Attributes\MapOutputName;
 
-class UserData extends ApiResource
+final class UserData extends ApiResource
 {
     public function __construct(
         public string $uuid,

@@ -5,10 +5,11 @@ namespace App\Data\Api\Application;
 use App\Data\Api\ApiResource;
 use App\Models\Plugin;
 
-class PluginData extends ApiResource
+final class PluginData extends ApiResource
 {
     /**
      * @param  array<string, mixed>  $meta
+     * @param  string[]|null  $panels
      */
     public function __construct(
         public string $id,

@@ -5,7 +5,7 @@ namespace App\Data\Api\Client;
 use App\Data\Api\ApiResource;
 use App\Models\Backup;
 
-class BackupData extends ApiResource
+final class BackupData extends ApiResource
 {
     /**
      * @param  string[]  $ignored_files

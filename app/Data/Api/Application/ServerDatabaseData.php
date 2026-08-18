@@ -7,7 +7,7 @@ use App\Data\Api\IncludeContext;
 use App\Models\Database;
 use App\Models\DatabaseHost;
 
-class ServerDatabaseData extends ApiResource
+final class ServerDatabaseData extends ApiResource
 {
     /** @var string[] */
     public static array $availableIncludes = ['password', 'host'];

@@ -6,7 +6,7 @@ use App\Data\Api\ApiResource;
 use App\Models\Subuser;
 use Spatie\LaravelData\Attributes\MapOutputName;
 
-class SubuserData extends ApiResource
+final class SubuserData extends ApiResource
 {
     /**
      * @param  string[]  $permissions

@@ -8,7 +8,7 @@ use App\Models\Server;
 use App\Models\Subuser;
 use App\Models\User;
 
-class SubuserData extends ApiResource
+final class SubuserData extends ApiResource
 {
     /** @var string[] */
     public static array $availableIncludes = ['user', 'server'];

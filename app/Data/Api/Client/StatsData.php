@@ -5,7 +5,7 @@ namespace App\Data\Api\Client;
 use App\Data\Api\ApiResource;
 use Illuminate\Support\Arr;
 
-class StatsData extends ApiResource
+final class StatsData extends ApiResource
 {
     /**
      * @param  array<string, int|float>  $resources

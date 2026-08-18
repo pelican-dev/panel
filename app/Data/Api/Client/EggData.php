@@ -5,7 +5,7 @@ namespace App\Data\Api\Client;
 use App\Data\Api\ApiResource;
 use App\Models\Egg;
 
-class EggData extends ApiResource
+final class EggData extends ApiResource
 {
     public function __construct(
         public string $uuid,

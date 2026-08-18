@@ -9,7 +9,7 @@ use App\Models\Mount;
 use App\Models\Node;
 use App\Models\Server;
 
-class MountData extends ApiResource
+final class MountData extends ApiResource
 {
     /** @var string[] */
     public static array $availableIncludes = ['eggs', 'nodes', 'servers'];

@@ -9,7 +9,7 @@ use App\Models\EggVariable;
 use App\Models\Server;
 use Illuminate\Support\Arr;
 
-class EggData extends ApiResource
+final class EggData extends ApiResource
 {
     /** @var string[] */
     public static array $availableIncludes = [

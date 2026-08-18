@@ -6,7 +6,7 @@ use App\Data\Api\ApiResource;
 use App\Data\Api\IncludeContext;
 use App\Models\Role;
 
-class RoleData extends ApiResource
+final class RoleData extends ApiResource
 {
     /** @var string[] */
     public static array $availableIncludes = ['permissions'];

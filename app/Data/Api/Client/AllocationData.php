@@ -5,7 +5,7 @@ namespace App\Data\Api\Client;
 use App\Data\Api\ApiResource;
 use App\Models\Allocation;
 
-class AllocationData extends ApiResource
+final class AllocationData extends ApiResource
 {
     public function __construct(
         public int $id,

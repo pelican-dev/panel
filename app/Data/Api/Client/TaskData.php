@@ -5,7 +5,7 @@ namespace App\Data\Api\Client;
 use App\Data\Api\ApiResource;
 use App\Models\Task;
 
-class TaskData extends ApiResource
+final class TaskData extends ApiResource
 {
     public function __construct(
         public int $id,

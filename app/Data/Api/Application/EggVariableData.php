@@ -6,7 +6,7 @@ use App\Data\Api\ApiResource;
 use App\Models\Egg;
 use App\Models\EggVariable;
 
-class EggVariableData extends ApiResource
+final class EggVariableData extends ApiResource
 {
     /**
      * @param  array<string, mixed>  $attributes

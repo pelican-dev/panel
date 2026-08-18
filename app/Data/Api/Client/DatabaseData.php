@@ -7,7 +7,7 @@ use App\Data\Api\IncludeContext;
 use App\Enums\SubuserPermission;
 use App\Models\Database;
 
-class DatabaseData extends ApiResource
+final class DatabaseData extends ApiResource
 {
     /** @var string[] */
     public static array $availableIncludes = ['password'];

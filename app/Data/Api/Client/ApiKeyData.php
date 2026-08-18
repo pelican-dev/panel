@@ -5,7 +5,7 @@ namespace App\Data\Api\Client;
 use App\Data\Api\ApiResource;
 use App\Models\ApiKey;
 
-class ApiKeyData extends ApiResource
+final class ApiKeyData extends ApiResource
 {
     /**
      * @param  string[]  $allowed_ips

@@ -8,7 +8,7 @@ use App\Models\Database;
 use App\Models\DatabaseHost;
 use App\Models\Node;
 
-class DatabaseHostData extends ApiResource
+final class DatabaseHostData extends ApiResource
 {
     /** @var string[] */
     public static array $availableIncludes = [

@@ -7,7 +7,7 @@ use App\Data\Api\IncludeContext;
 use App\Models\Egg;
 use App\Models\EggVariable;
 
-class ServerVariableData extends ApiResource
+final class ServerVariableData extends ApiResource
 {
     /** @var string[] */
     public static array $availableIncludes = ['parent'];

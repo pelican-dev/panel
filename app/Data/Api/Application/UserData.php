@@ -9,7 +9,7 @@ use App\Models\Server;
 use App\Models\User;
 use Spatie\LaravelData\Attributes\MapOutputName;
 
-class UserData extends ApiResource
+final class UserData extends ApiResource
 {
     /** @var string[] */
     public static array $availableIncludes = [

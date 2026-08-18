@@ -104,7 +104,7 @@ class PanelResponse
         $meta = $this->meta;
 
         if ($this->data instanceof LengthAwarePaginator) {
-            $envelope = Envelope::collection($this->data, $this->dataClass, $context);
+            $envelope = Envelope::collection($this->data->items(), $this->dataClass, $context);
             $meta['pagination'] = $this->pagination($this->data);
         } elseif (is_null($this->data)) {
             $envelope = $context->null();

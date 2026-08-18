@@ -8,7 +8,7 @@ use App\Models\Allocation;
 use App\Models\Node;
 use App\Models\Server;
 
-class NodeData extends ApiResource
+final class NodeData extends ApiResource
 {
     /** @var string[] */
     public static array $availableIncludes = ['allocations', 'servers'];

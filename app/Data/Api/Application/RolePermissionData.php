@@ -5,7 +5,7 @@ namespace App\Data\Api\Application;
 use App\Data\Api\ApiResource;
 use Spatie\Permission\Models\Permission;
 
-class RolePermissionData extends ApiResource
+final class RolePermissionData extends ApiResource
 {
     public function __construct(
         public string $name,

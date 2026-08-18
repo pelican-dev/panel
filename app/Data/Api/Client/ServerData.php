@@ -11,7 +11,7 @@ use App\Services\Servers\StartupCommandService;
 use Illuminate\Http\Request;
 use Spatie\LaravelData\Optional;
 
-class ServerData extends ApiResource
+final class ServerData extends ApiResource
 {
     /** @var string[] */
     public static array $availableIncludes = ['egg', 'subusers'];
