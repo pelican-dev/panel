@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Environment;
 
+use App\Enums\DatabaseDriver;
 use App\Traits\EnvironmentWriterTrait;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel;
@@ -11,13 +12,6 @@ use PDOException;
 class DatabaseSettingsCommand extends Command
 {
     use EnvironmentWriterTrait;
-
-    public const DATABASE_DRIVERS = [
-        'sqlite' => 'SQLite (recommended)',
-        'mariadb' => 'MariaDB',
-        'mysql' => 'MySQL',
-        'pgsql' => 'PostgreSQL',
-    ];
 
     protected $description = 'Configure database settings for the Panel.';
 
@@ -54,10 +48,11 @@ class DatabaseSettingsCommand extends Command
         }
 
         $selected = config('database.default', 'sqlite');
+        $databaseDrivers = DatabaseDriver::options(recommendSQLite: true);
         $this->variables['DB_CONNECTION'] = $this->option('driver') ?? $this->choice(
             'Database Driver',
-            self::DATABASE_DRIVERS,
-            array_key_exists($selected, self::DATABASE_DRIVERS) ? $selected : null
+            $databaseDrivers,
+            array_key_exists($selected, $databaseDrivers) ? $selected : null
         );
 
         if ($this->variables['DB_CONNECTION'] === 'mysql') {
