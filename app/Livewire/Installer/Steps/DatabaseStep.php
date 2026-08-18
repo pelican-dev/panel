@@ -4,6 +4,7 @@ namespace App\Livewire\Installer\Steps;
 
 use App\Enums\TablerIcon;
 use App\Livewire\Installer\PanelInstaller;
+use App\Services\Environment\InstallationHealthService;
 use Exception;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
@@ -23,7 +24,7 @@ class DatabaseStep
         'pgsql' => 'PostgreSQL',
     ];
 
-    public static function make(PanelInstaller $installer): Step
+    public static function make(PanelInstaller $installer, InstallationHealthService $health): Step
     {
         return Step::make('database')
             ->label(trans('installer.database.title'))
@@ -94,8 +95,19 @@ class DatabaseStep
                     ->revealable()
                     ->hidden(fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite'),
             ])
-            ->afterValidation(function (Get $get) use ($installer) {
+            ->afterValidation(function (Get $get) use ($installer, $health) {
                 $driver = $get('env_database.DB_CONNECTION');
+                $extensionCheck = $health->databaseDriverExtension($driver);
+
+                if ($extensionCheck->failed()) {
+                    Notification::make()
+                        ->title($extensionCheck->label)
+                        ->body($extensionCheck->message)
+                        ->danger()
+                        ->send();
+
+                    throw new Halt($extensionCheck->message);
+                }
 
                 throw_unless(self::testConnection($driver, $get('env_database.DB_HOST'), $get('env_database.DB_PORT'), $get('env_database.DB_DATABASE'), $get('env_database.DB_USERNAME'), $get('env_database.DB_PASSWORD')), new Halt(trans('installer.database.exceptions.connection')));
 
