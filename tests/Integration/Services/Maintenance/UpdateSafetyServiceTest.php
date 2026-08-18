@@ -52,7 +52,13 @@ class UpdateSafetyServiceTest extends IntegrationTestCase
     {
         $root = $this->temporaryDirectory();
         $environmentPath = $root->path('.env');
+        $databasePath = $root->path('database.sqlite');
         File::put($environmentPath, "APP_ENV=testing\n");
+        File::put($databasePath, 'sqlite fixture');
+        config()->set([
+            'database.default' => 'sqlite',
+            'database.connections.sqlite.database' => $databasePath,
+        ]);
 
         $snapshot = $this->app->make(UpdateSnapshotService::class)->capture('v1.2.3', $root->path(), $environmentPath);
 
