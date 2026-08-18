@@ -15,38 +15,55 @@ class UpdateServerBuildConfigurationRequest extends ServerWriteRequest
         $rules = $this->route() ? Server::getRulesForUpdate($this->parameter('server', Server::class)) : Server::getRules();
 
         return [
+            /** ID of the allocation the server listens on by default. */
             'allocation' => $rules['allocation_id'],
+            /** Let the kernel's out of memory killer stop the server when it exceeds its memory limit. */
             'oom_killer' => $rules['oom_killer'],
 
+            /** Resource limits applied to the server's container. */
             'limits' => 'sometimes|array',
+            /** Memory the server may use, in MiB. Use `0` for unlimited. */
             'limits.memory' => $this->requiredToOptional('memory', $rules['memory'], true),
+            /** Swap the server may use, in MiB. Use `0` to disable swap and `-1` for unlimited. */
             'limits.swap' => $this->requiredToOptional('swap', $rules['swap'], true),
+            /** Block IO weight of the container relative to other containers on the node. */
             'limits.io' => $this->requiredToOptional('io', $rules['io'], true),
+            /** CPU the server may use, where each 100 is one core. Use `0` for unlimited. */
             'limits.cpu' => $this->requiredToOptional('cpu', $rules['cpu'], true),
+            /** Physical CPU threads the container is pinned to, such as `0`, `0-2` or `0,2`. */
             'limits.threads' => $this->requiredToOptional('threads', $rules['threads'], true),
+            /** Disk space the server may use, in MiB. Use `0` for unlimited. */
             'limits.disk' => $this->requiredToOptional('disk', $rules['disk'], true),
 
-            // Deprecated - use limits.memory
+            /** @deprecated Use `limits.memory` instead. */
             'memory' => $this->requiredToOptional('memory', $rules['memory']),
-            // Deprecated - use limits.swap
+            /** @deprecated Use `limits.swap` instead. */
             'swap' => $this->requiredToOptional('swap', $rules['swap']),
-            // Deprecated - use limits.io
+            /** @deprecated Use `limits.io` instead. */
             'io' => $this->requiredToOptional('io', $rules['io']),
-            // Deprecated - use limits.cpu
+            /** @deprecated Use `limits.cpu` instead. */
             'cpu' => $this->requiredToOptional('cpu', $rules['cpu']),
-            // Deprecated - use limits.threads
+            /** @deprecated Use `limits.threads` instead. */
             'threads' => $this->requiredToOptional('threads', $rules['threads']),
-            // Deprecated - use limits.disk
+            /** @deprecated Use `limits.disk` instead. */
             'disk' => $this->requiredToOptional('disk', $rules['disk']),
 
+            /** IDs of allocations to assign to the server on top of the ones it already has. */
             'add_allocations' => 'bail|array',
+            /** ID of an allocation to assign to the server. */
             'add_allocations.*' => 'integer',
+            /** IDs of allocations to take away from the server. */
             'remove_allocations' => 'bail|array',
+            /** ID of an allocation to take away from the server. */
             'remove_allocations.*' => 'integer',
 
+            /** Caps on the resources the server's own users may create for it. */
             'feature_limits' => 'required|array',
+            /** How many databases may be created for the server. */
             'feature_limits.databases' => $rules['database_limit'],
+            /** How many additional allocations may be assigned to the server. */
             'feature_limits.allocations' => $rules['allocation_limit'],
+            /** How many backups may be stored for the server. */
             'feature_limits.backups' => $rules['backup_limit'],
         ];
     }

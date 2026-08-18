@@ -10,6 +10,9 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
+use App\Extensions\Dedoc\Scramble\FractalResponseTypeInfer;
+use App\Extensions\Dedoc\Scramble\TransformerFactoryTypeInfer;
+use App\Extensions\Dedoc\Scramble\TransformerModelBindingExtension;
 use App\Http\Responses\LoginResponse;
 use App\Models\Allocation;
 use App\Models\ApiKey;
@@ -133,6 +136,15 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LoginResponseContract::class, LoginResponse::class);
 
         Scramble::ignoreDefaultRoutes();
+
+        // Registered here rather than in boot() because Scramble's own provider boots first, and
+        // it reads some kinds of extension right then. Registering during register() works for
+        // every kind, so this keeps holding once an operation extension is added.
+        Scramble::registerExtensions([
+            TransformerModelBindingExtension::class,
+            TransformerFactoryTypeInfer::class,
+            FractalResponseTypeInfer::class,
+        ]);
 
         /** @var PluginService $pluginService */
         $pluginService = app(PluginService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions

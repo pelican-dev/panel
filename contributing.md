@@ -52,6 +52,6 @@ Depending on the pull request size this process can take multiple days.
 ## Community and Support
 
 * Help: [Discord](https://discord.gg/pelican-panel)
-* Bugs: [GitHub Issues](https://github.com/pelican-dev/panel/issues)
-* Features: [GitHub Discussions](https://github.com/pelican-dev/panel/discussions)
+* Bugs: [GitHub Issues](https://github.com/pelican/panel/issues)
+* Features: [GitHub Discussions](https://github.com/pelican/panel/discussions)
 * Security vulnerabilities: See our [security policy](./security.md).

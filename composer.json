@@ -1,5 +1,5 @@
 {
-    "name": "pelican-dev/panel",
+    "name": "pelican/panel",
     "description": "The free, open-source game management panel. Supporting Minecraft, Spigot, BungeeCord, and SRCDS servers.",
     "license": "AGPL-3.0-only",
     "require": {
