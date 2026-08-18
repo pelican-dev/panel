@@ -81,7 +81,11 @@ class DatabaseStep
                     ->minValue(1)
                     ->maxValue(65535)
                     ->required(fn (Get $get) => $get('env_database.DB_CONNECTION') !== 'sqlite')
-                    ->default(fn (Get $get) => self::getConnectionDefault($get, 'port', '3306'))
+                    ->default(fn (Get $get) => self::getConnectionDefault(
+                        $get,
+                        'port',
+                        $get('env_database.DB_CONNECTION') === 'pgsql' ? '5432' : '3306',
+                    ))
                     ->hidden(fn (Get $get) => $get('env_database.DB_CONNECTION') === 'sqlite'),
                 TextInput::make('env_database.DB_USERNAME')
                     ->label(trans('installer.database.fields.username'))
@@ -132,10 +136,7 @@ class DatabaseStep
             return true;
         }
 
-        $configuredPassword = config("database.connections.{$driver}.password");
-        if ($password === null && $driver === config('database.default') && is_string($configuredPassword)) {
-            $password = $configuredPassword;
-        }
+        $password = self::getConnectionPassword($driver, $password);
 
         try {
             config()->set('database.connections._panel_install_test', [
@@ -163,5 +164,15 @@ class DatabaseStep
         }
 
         return true;
+    }
+
+    private static function getConnectionPassword(string $driver, ?string $password): ?string
+    {
+        $configuredPassword = config("database.connections.{$driver}.password");
+        if (($password === null || $password === '') && $driver === config('database.default') && is_string($configuredPassword)) {
+            return $configuredPassword;
+        }
+
+        return $password;
     }
 }

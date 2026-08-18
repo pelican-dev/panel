@@ -3,8 +3,10 @@
 namespace App\Tests\Integration\Installer;
 
 use App\Livewire\Installer\PanelInstaller;
+use App\Livewire\Installer\Steps\DatabaseStep;
 use App\Tests\Integration\IntegrationTestCase;
 use Livewire\Livewire;
+use ReflectionMethod;
 
 class PanelInstallerTest extends IntegrationTestCase
 {
@@ -59,5 +61,34 @@ class PanelInstallerTest extends IntegrationTestCase
             ->assertSet('data.env_database.DB_PASSWORD', null);
 
         $component->assertSuccessful();
+    }
+
+    public function test_postgresql_uses_its_default_port_when_no_port_is_configured(): void
+    {
+        config()->set('app.installed', false);
+        config()->set('database.default', 'pgsql');
+        config()->set('database.connections.pgsql', [
+            'driver' => 'pgsql',
+            'host' => 'pelican-db',
+            'database' => 'pelican',
+            'username' => 'pelican-user',
+            'password' => 'pelican-password',
+        ]);
+
+        Livewire::test(PanelInstaller::class)
+            ->assertSet('data.env_database.DB_CONNECTION', 'pgsql')
+            ->assertSet('data.env_database.DB_PORT', '5432')
+            ->assertSuccessful();
+    }
+
+    public function test_empty_database_password_uses_the_configured_password(): void
+    {
+        config()->set('database.default', 'mariadb');
+        config()->set('database.connections.mariadb.password', 'pelican-password');
+
+        $resolver = new ReflectionMethod(DatabaseStep::class, 'getConnectionPassword');
+
+        $this->assertSame('pelican-password', $resolver->invoke(null, 'mariadb', ''));
+        $this->assertSame('entered-password', $resolver->invoke(null, 'mariadb', 'entered-password'));
     }
 }
