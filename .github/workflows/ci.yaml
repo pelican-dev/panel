@@ -135,7 +135,7 @@ jobs:
           DB_USERNAME: root
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration --parallel --do-not-fail-on-phpunit-warning --exclude-group contract-freeze
+        run: vendor/bin/pest tests/Integration --parallel --do-not-fail-on-phpunit-warning --exclude-group api-fixtures
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -197,7 +197,7 @@ jobs:
           DB_USERNAME: root
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration --parallel --do-not-fail-on-phpunit-warning --exclude-group contract-freeze
+        run: vendor/bin/pest tests/Integration --parallel --do-not-fail-on-phpunit-warning --exclude-group api-fixtures
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
@@ -271,7 +271,7 @@ jobs:
         run: php artisan migrate --force --seed
 
       - name: Integration tests
-        run: vendor/bin/pest tests/Integration --parallel --do-not-fail-on-phpunit-warning --exclude-group contract-freeze
+        run: vendor/bin/pest tests/Integration --parallel --do-not-fail-on-phpunit-warning --exclude-group api-fixtures
 
   openapi:
     name: OpenAPI
