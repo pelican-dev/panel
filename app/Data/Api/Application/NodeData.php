@@ -29,8 +29,8 @@ final class NodeData extends ApiResource
             ->mapWithKeys(fn ($value, $key) => [snake_case($key) => $value])
             ->toArray();
 
-        $attributes[$model->getUpdatedAtColumn()] = static::formatTimestamp($model->updated_at);
-        $attributes[$model->getCreatedAtColumn()] = static::formatTimestamp($model->created_at);
+        $attributes[$model->getUpdatedAtColumn()] = self::formatTimestamp($model->updated_at);
+        $attributes[$model->getCreatedAtColumn()] = self::formatTimestamp($model->created_at);
 
         $resources = $model->servers()->select(['memory', 'disk', 'cpu'])->get();
 
@@ -40,7 +40,7 @@ final class NodeData extends ApiResource
             'cpu' => $resources->sum('cpu'),
         ];
 
-        return new static($attributes);
+        return new self($attributes);
     }
 
     /**

@@ -55,7 +55,7 @@ final class ServerData extends ApiResource
     {
         $user = $request->user();
 
-        return new static(
+        return new self(
             server_owner: $user->id === $model->owner_id,
             identifier: $model->uuid_short,
             internal_id: $model->id,

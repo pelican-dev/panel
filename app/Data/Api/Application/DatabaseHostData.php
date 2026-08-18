@@ -33,7 +33,7 @@ final class DatabaseHostData extends ApiResource
 
     public static function fromModel(DatabaseHost $model): static
     {
-        return new static(
+        return new self(
             id: $model->id,
             name: $model->name,
             host: $model->host,

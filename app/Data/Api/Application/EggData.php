@@ -53,7 +53,7 @@ final class EggData extends ApiResource
 
         $model->loadMissing('scriptFrom');
 
-        return new static(
+        return new self(
             id: $model->id,
             uuid: $model->uuid,
             name: $model->name,
@@ -81,8 +81,8 @@ final class EggData extends ApiResource
                 'container' => $model->copy_script_container,
                 'extends' => $model->copy_script_from,
             ],
-            created_at: static::formatTimestamp($model->created_at),
-            updated_at: static::formatTimestamp($model->updated_at),
+            created_at: self::formatTimestamp($model->created_at),
+            updated_at: self::formatTimestamp($model->updated_at),
         );
     }
 

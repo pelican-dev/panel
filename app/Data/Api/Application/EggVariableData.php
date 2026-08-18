@@ -20,7 +20,7 @@ final class EggVariableData extends ApiResource
 
     public static function fromModel(EggVariable $model): static
     {
-        return new static($model->toArray());
+        return new self($model->toArray());
     }
 
     /**

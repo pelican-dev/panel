@@ -29,13 +29,13 @@ final class SubuserData extends ApiResource
 
     public static function fromModel(Subuser $model): static
     {
-        return new static(
+        return new self(
             id: $model->id,
             user_id: $model->user_id,
             server_id: $model->server_id,
             permissions: $model->permissions,
-            created_at: static::formatTimestamp($model->created_at),
-            updated_at: static::formatTimestamp($model->updated_at),
+            created_at: self::formatTimestamp($model->created_at),
+            updated_at: self::formatTimestamp($model->updated_at),
         );
     }
 

@@ -37,7 +37,7 @@ final class ScheduleData extends ApiResource
 
     public static function fromModel(Schedule $model): static
     {
-        return new static(
+        return new self(
             id: $model->id,
             name: $model->name,
             cron: [

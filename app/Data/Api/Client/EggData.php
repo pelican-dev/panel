@@ -19,7 +19,7 @@ final class EggData extends ApiResource
 
     public static function fromModel(Egg $model): static
     {
-        return new static(
+        return new self(
             uuid: $model->uuid,
             name: $model->name,
         );

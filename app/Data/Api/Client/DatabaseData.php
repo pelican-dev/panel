@@ -33,7 +33,7 @@ final class DatabaseData extends ApiResource
     {
         $model->loadMissing('host');
 
-        return new static(
+        return new self(
             id: $model->id,
             host: [
                 'address' => $model->getRelation('host')->host,

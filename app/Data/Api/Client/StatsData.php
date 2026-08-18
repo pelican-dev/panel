@@ -26,7 +26,7 @@ final class StatsData extends ApiResource
      */
     public static function fromModel(array $model): static
     {
-        return new static(
+        return new self(
             current_state: Arr::get($model, 'state', 'stopped'),
             is_suspended: Arr::get($model, 'is_suspended', false),
             resources: [

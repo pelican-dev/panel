@@ -30,7 +30,7 @@ final class FileObjectData extends ApiResource
      */
     public static function fromModel(array $model): static
     {
-        return new static(
+        return new self(
             name: Arr::get($model, 'name'),
             mode: Arr::get($model, 'mode'),
             mode_bits: Arr::get($model, 'mode_bits'),

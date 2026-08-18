@@ -25,7 +25,7 @@ final class RoleData extends ApiResource
 
     public static function fromModel(Role $model): static
     {
-        return new static(
+        return new self(
             id: $model->id,
             name: $model->name,
             created_at: $model->created_at->toAtomString(),

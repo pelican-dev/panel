@@ -30,7 +30,7 @@ final class EggVariableData extends ApiResource
         // pathway since you should never be exposing these types of variables to a client.
         throw_unless($model->user_viewable, new BadMethodCallException('Cannot transform a hidden egg variable in a client transformer.'));
 
-        return new static(
+        return new self(
             name: $model->name,
             description: $model->description,
             env_variable: $model->env_variable,

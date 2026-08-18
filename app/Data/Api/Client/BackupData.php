@@ -30,7 +30,7 @@ final class BackupData extends ApiResource
 
     public static function fromModel(Backup $model): static
     {
-        return new static(
+        return new self(
             uuid: $model->uuid,
             is_successful: $model->is_successful,
             is_locked: $model->is_locked,

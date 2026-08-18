@@ -35,7 +35,7 @@ final class PluginData extends ApiResource
 
     public static function fromModel(Plugin $model): static
     {
-        return new static(
+        return new self(
             id: $model->id,
             name: $model->name,
             author: $model->author,

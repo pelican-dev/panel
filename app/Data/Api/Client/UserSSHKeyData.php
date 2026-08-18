@@ -21,7 +21,7 @@ final class UserSSHKeyData extends ApiResource
 
     public static function fromModel(UserSSHKey $model): static
     {
-        return new static(
+        return new self(
             name: $model->name,
             fingerprint: $model->fingerprint,
             public_key: $model->public_key,

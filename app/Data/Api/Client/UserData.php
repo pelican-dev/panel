@@ -30,7 +30,7 @@ final class UserData extends ApiResource
 
     public static function fromModel(User $model): static
     {
-        return new static(
+        return new self(
             uuid: $model->uuid,
             username: $model->username,
             email: $model->email,
@@ -39,8 +39,8 @@ final class UserData extends ApiResource
             admin: $model->isRootAdmin(), // deprecated, use "root_admin"
             root_admin: $model->isRootAdmin(),
             two_factor_enabled: filled($model->mfa_app_secret),
-            created_at: static::formatTimestamp($model->created_at),
-            updated_at: static::formatTimestamp($model->updated_at),
+            created_at: self::formatTimestamp($model->created_at),
+            updated_at: self::formatTimestamp($model->updated_at),
         );
     }
 }

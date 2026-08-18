@@ -31,7 +31,7 @@ final class ServerDatabaseData extends ApiResource
 
     public static function fromModel(Database $model): static
     {
-        return new static(
+        return new self(
             id: $model->id,
             server: $model->server_id,
             host: $model->database_host_id,

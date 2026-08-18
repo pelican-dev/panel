@@ -29,7 +29,7 @@ final class AllocationData extends ApiResource
 
     public static function fromModel(Allocation $model): static
     {
-        return new static(
+        return new self(
             id: $model->id,
             ip: $model->ip,
             alias: $model->ip_alias,

@@ -41,7 +41,7 @@ final class UserData extends ApiResource
 
     public static function fromModel(User $model): static
     {
-        return new static(
+        return new self(
             id: $model->id,
             external_id: $model->external_id,
             is_managed_externally: $model->is_managed_externally,
@@ -52,8 +52,8 @@ final class UserData extends ApiResource
             root_admin: $model->isRootAdmin(),
             twoFactorEnabled: filled($model->mfa_app_secret),
             twoFactorLegacy: filled($model->mfa_app_secret), // deprecated, use "2fa_enabled"
-            created_at: static::formatTimestamp($model->created_at),
-            updated_at: static::formatTimestamp($model->updated_at),
+            created_at: self::formatTimestamp($model->created_at),
+            updated_at: self::formatTimestamp($model->updated_at),
         );
     }
 

@@ -25,7 +25,7 @@ final class ApiKeyData extends ApiResource
 
     public static function fromModel(ApiKey $model): static
     {
-        return new static(
+        return new self(
             identifier: $model->identifier,
             description: $model->memo,
             allowed_ips: $model->allowed_ips,

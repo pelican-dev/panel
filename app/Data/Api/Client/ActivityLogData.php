@@ -38,7 +38,7 @@ final class ActivityLogData extends ApiResource
         // the actor that performed the action or because they are an administrator.
         $canViewIp = $model->actor?->is($request->user()) || $request->user()->can('seeIps activityLog');
 
-        return new static(
+        return new self(
             // This is not for security, it is only to provide a unique identifier to
             // the front-end for each entry to improve rendering performance since there
             // is nothing else sufficiently unique to key off at this point.

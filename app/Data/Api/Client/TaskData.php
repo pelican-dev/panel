@@ -26,7 +26,7 @@ final class TaskData extends ApiResource
 
     public static function fromModel(Task $model): static
     {
-        return new static(
+        return new self(
             id: $model->id,
             sequence_id: $model->sequence_id,
             action: $model->action,

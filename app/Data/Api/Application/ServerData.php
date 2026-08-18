@@ -57,7 +57,7 @@ final class ServerData extends ApiResource
 
     public static function fromModel(Server $model, EnvironmentService $environmentService): static
     {
-        return new static(
+        return new self(
             id: $model->getKey(),
             external_id: $model->external_id,
             uuid: $model->uuid,
@@ -94,8 +94,8 @@ final class ServerData extends ApiResource
                 'installed' => $model->isInstalled() ? 1 : 0,
                 'environment' => $environmentService->handle($model),
             ],
-            updated_at: static::formatTimestamp($model->updated_at),
-            created_at: static::formatTimestamp($model->created_at),
+            updated_at: self::formatTimestamp($model->updated_at),
+            created_at: self::formatTimestamp($model->created_at),
         );
     }
 

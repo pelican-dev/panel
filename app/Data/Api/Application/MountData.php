@@ -26,7 +26,7 @@ final class MountData extends ApiResource
 
     public static function fromModel(Mount $model): static
     {
-        return new static($model->toArray());
+        return new self($model->toArray());
     }
 
     /**

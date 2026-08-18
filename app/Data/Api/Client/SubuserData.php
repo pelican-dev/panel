@@ -35,7 +35,7 @@ final class SubuserData extends ApiResource
     {
         $user = UserData::fromModel($model->user);
 
-        return new static(
+        return new self(
             uuid: $user->uuid,
             username: $user->username,
             email: $user->email,
