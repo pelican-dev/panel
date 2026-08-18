@@ -83,6 +83,8 @@ trait BuildsContractWorld
 
     protected ActivityLog $contractActivityLog;
 
+    protected ActivityLog $contractAccountActivityLog;
+
     protected function buildContractWorld(): void
     {
         $this->contractAdmin = User::factory()->create([
@@ -358,6 +360,24 @@ trait BuildsContractWorld
         $this->contractActivityLog->subjects()->forceCreate([
             'subject_type' => 'server',
             'subject_id' => $this->contractServer->id,
+        ]);
+
+        // The account activity endpoint lists logs whose subject is the user, so it
+        // needs its own entry; the server-subject log above never shows up there.
+        $this->contractAccountActivityLog = ActivityLog::query()->forceCreate([
+            'id' => 101,
+            'event' => 'user:account.email-changed',
+            'ip' => '192.0.2.1',
+            'description' => null,
+            'actor_type' => 'user',
+            'actor_id' => $this->contractOwner->id,
+            'api_key_id' => null,
+            'properties' => [],
+            'timestamp' => now(),
+        ]);
+        $this->contractAccountActivityLog->subjects()->forceCreate([
+            'subject_type' => 'user',
+            'subject_id' => $this->contractOwner->id,
         ]);
     }
 
