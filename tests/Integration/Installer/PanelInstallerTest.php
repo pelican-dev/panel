@@ -53,6 +53,11 @@ class PanelInstallerTest extends IntegrationTestCase
 
         $component
             ->set('data.env_database.DB_CONNECTION', 'sqlite')
+            ->assertSet('data.env_database.DB_DATABASE', 'database.sqlite')
+            ->assertSet('data.env_database.DB_HOST', null)
+            ->assertSet('data.env_database.DB_PORT', null)
+            ->assertSet('data.env_database.DB_USERNAME', null)
+            ->assertSet('data.env_database.DB_PASSWORD', null)
             ->set('data.env_database.DB_CONNECTION', 'mariadb')
             ->assertSet('data.env_database.DB_HOST', 'pelican-db')
             ->assertSet('data.env_database.DB_PORT', '3307')
@@ -89,6 +94,7 @@ class PanelInstallerTest extends IntegrationTestCase
         $resolver = new ReflectionMethod(DatabaseStep::class, 'getConnectionPassword');
 
         $this->assertSame('pelican-password', $resolver->invoke(null, 'mariadb', ''));
+        $this->assertSame('pelican-password', $resolver->invoke(null, 'mariadb', null));
         $this->assertSame('entered-password', $resolver->invoke(null, 'mariadb', 'entered-password'));
     }
 }
