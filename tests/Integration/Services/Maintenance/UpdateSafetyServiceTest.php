@@ -51,8 +51,10 @@ class UpdateSafetyServiceTest extends IntegrationTestCase
     public function test_snapshot_captures_environment_release_metadata_and_sqlite_database(): void
     {
         $root = $this->temporaryDirectory();
+        $environmentPath = $root->path('.env');
+        File::put($environmentPath, "APP_ENV=testing\n");
 
-        $snapshot = $this->app->make(UpdateSnapshotService::class)->capture('v1.2.3', $root->path());
+        $snapshot = $this->app->make(UpdateSnapshotService::class)->capture('v1.2.3', $root->path(), $environmentPath);
 
         $this->assertFileExists($snapshot->path . DIRECTORY_SEPARATOR . '.env');
         $this->assertFileExists($snapshot->path . DIRECTORY_SEPARATOR . 'composer.json');

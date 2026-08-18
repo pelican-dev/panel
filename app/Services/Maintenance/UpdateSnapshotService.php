@@ -12,10 +12,13 @@ class UpdateSnapshotService
 {
     public function __construct(private readonly SoftwareVersionService $versionService) {}
 
-    public function capture(?string $targetVersion = null, ?string $snapshotRoot = null): UpdateSnapshot
-    {
+    public function capture(
+        ?string $targetVersion = null,
+        ?string $snapshotRoot = null,
+        ?string $environmentPath = null,
+    ): UpdateSnapshot {
         $snapshotRoot ??= storage_path('app/private/update-snapshots');
-        $environmentPath = base_path('.env');
+        $environmentPath ??= base_path('.env');
         if (!File::isFile($environmentPath)) {
             throw new RuntimeException(trans('commands.update.environment_missing'));
         }
