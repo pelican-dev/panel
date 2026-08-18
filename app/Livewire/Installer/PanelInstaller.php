@@ -12,11 +12,13 @@ use App\Livewire\Installer\Steps\QueueStep;
 use App\Livewire\Installer\Steps\RequirementsStep;
 use App\Livewire\Installer\Steps\SessionStep;
 use App\Models\User;
+use App\Services\Environment\InstallationHealthService;
 use App\Services\Helpers\LanguageService;
 use App\Services\Users\UserCreationService;
 use App\Traits\CheckMigrationsTrait;
 use App\Traits\EnvironmentWriterTrait;
 use App\Traits\Filament\CanCustomizeSteps;
+use App\ValueObjects\EnvironmentCheckResult;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -50,7 +52,14 @@ class PanelInstaller extends SimplePage implements HasForms
     /** @var array<string, mixed> */
     public array $data = [];
 
+    private InstallationHealthService $installationHealth;
+
     protected string $view = 'filament.pages.installer';
+
+    public function boot(InstallationHealthService $installationHealth): void
+    {
+        $this->installationHealth = $installationHealth;
+    }
 
     public function getTitle(): string
     {
@@ -106,9 +115,9 @@ class PanelInstaller extends SimplePage implements HasForms
     protected function getDefaultSteps(): array
     {
         return [
-            RequirementsStep::make(),
+            RequirementsStep::make($this->installationHealth),
             EnvironmentStep::make($this),
-            DatabaseStep::make($this),
+            DatabaseStep::make($this, $this->installationHealth),
             EggSelectionStep::make(),
             CacheStep::make($this),
             QueueStep::make($this),
@@ -136,14 +145,16 @@ class PanelInstaller extends SimplePage implements HasForms
         return 'data';
     }
 
-    public function submit(UserCreationService $userCreationService): void
-    {
+    public function submit(
+        UserCreationService $userCreationService,
+        InstallationHealthService $health,
+    ): void {
         try {
-            // Disable installer
-            $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
-
             // Run migrations
             $this->runMigrations();
+
+            // Verify that asynchronous jobs will actually be processed before creating an account.
+            $this->verifyQueueWorker($health);
 
             // Create admin user & login
             $user = $this->createAdminUser($userCreationService);
@@ -155,10 +166,46 @@ class PanelInstaller extends SimplePage implements HasForms
             // Install selected eggs
             $this->installEggs();
 
+            // Disable installer only after every required first-boot action completed.
+            $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
+            config()->set('app.installed', true);
+
+            $results = $health->completeInstallation(includeQueue: false);
+            if ($health->hasFailures($results)) {
+                $failedChecks = array_map(
+                    fn (EnvironmentCheckResult $result) => $result->message,
+                    array_filter($results, fn (EnvironmentCheckResult $result) => $result->failed()),
+                );
+
+                Notification::make()
+                    ->title(trans('installer.health.installation_failed'))
+                    ->body(implode("\n", $failedChecks) . "\n\n" . trans('installer.health.installation_failed_body'))
+                    ->danger()
+                    ->persistent()
+                    ->send();
+            }
+
             // Redirect to admin panel
             $this->redirect(Filament::getPanel('admin')->getUrl());
         } catch (Halt) {
         }
+    }
+
+    public function verifyQueueWorker(InstallationHealthService $health): void
+    {
+        $result = $health->queueWorker();
+        if (!$result->failed()) {
+            return;
+        }
+
+        Notification::make()
+            ->title(trans('installer.health.queue_failed'))
+            ->body($result->message . "\n\n" . $result->remediation)
+            ->danger()
+            ->persistent()
+            ->send();
+
+        throw new Halt($result->message);
     }
 
     public function writeToEnv(string $key): void
