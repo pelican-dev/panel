@@ -1,0 +1,26 @@
+{
+    "debug": false,
+    "uuid": "00000000-0000-4000-8000-000000000200",
+    "token_id": "contractnodetoken",
+    "token": "contractfreezenodedaemontokenvalue000001",
+    "api": {
+        "host": "0.0.0.0",
+        "port": 8080,
+        "ssl": {
+            "enabled": false,
+            "cert": "/etc/letsencrypt/live/node.contract.test/fullchain.pem",
+            "key": "/etc/letsencrypt/live/node.contract.test/privkey.pem"
+        },
+        "upload_limit": 100
+    },
+    "system": {
+        "data": "/var/lib/panel/volumes",
+        "sftp": {
+            "bind_port": 2022
+        }
+    },
+    "allowed_mounts": [
+        "/srv/contract"
+    ],
+    "remote": "http://localhost/"
+}
