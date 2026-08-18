@@ -44,7 +44,7 @@ Other languages are translated via [Crowdin](https://crowdin.com/project/pelican
 
 ### API changes
 
-The HTTP API is a frozen contract; see [api-versioning.md](./api-versioning.md) before changing anything a response returns or a request accepts.
+The HTTP API is frozen for 1.0; see [api-versioning.md](./api-versioning.md) before changing anything a response returns or a request accepts.
 
 ## Code Review Process
 
