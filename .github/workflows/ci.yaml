@@ -6,6 +6,9 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
 env:
   APP_ENV: testing
   APP_DEBUG: "false"
