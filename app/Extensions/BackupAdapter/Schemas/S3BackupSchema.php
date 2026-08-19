@@ -149,7 +149,7 @@ final class S3BackupSchema extends BackupAdapterSchema
         return [
             'parts' => $parts,
             'part_size' => $maxPartSize,
-            'max_concurrent_uploads' => $maxConcurrentUploads
+            'max_concurrent_uploads' => $maxConcurrentUploads,
         ];
     }
 
