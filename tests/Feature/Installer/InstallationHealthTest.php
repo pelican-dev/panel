@@ -5,6 +5,7 @@ use App\Checks\PhpExtensionsCheck;
 use App\Checks\PhpVersionCheck;
 use App\Checks\WritablePathsCheck;
 use App\Console\Commands\Environment\AppSettingsCommand;
+use App\Console\Commands\User\MakeUserCommand;
 use App\Enums\DatabaseDriver;
 use App\Jobs\InstallEgg;
 use App\Livewire\Installer\PanelInstaller;
@@ -52,6 +53,8 @@ it('fails when a required PHP extension is unavailable', function () {
 
 it('reports unsupported configured database drivers as failed health results', function () {
     config()->set('database.default', 'invalid');
+
+    expect(fn () => app(MakeUserCommand::class))->not->toThrow(InvalidArgumentException::class);
 
     $result = app(InstallationHealthService::class)->databaseDriverExtension('invalid');
 

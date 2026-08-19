@@ -15,20 +15,12 @@ class MakeUserCommand extends Command
     protected $signature = 'p:user:make {--email=} {--username=} {--password=} {--admin=} {--no-password}';
 
     /**
-     * MakeUserCommand constructor.
-     */
-    public function __construct(private UserCreationService $creationService)
-    {
-        parent::__construct();
-    }
-
-    /**
      * Handle command request to create a new user.
      *
      * @throws Exception
      * @throws DataValidationException
      */
-    public function handle(): int
+    public function handle(UserCreationService $creationService): int
     {
         try {
             DB::connection()->getPdo();
@@ -48,7 +40,7 @@ class MakeUserCommand extends Command
             $password = $this->secret(trans('command/messages.user.ask_password'));
         }
 
-        $user = $this->creationService->handle(compact('email', 'username', 'password', 'root_admin'));
+        $user = $creationService->handle(compact('email', 'username', 'password', 'root_admin'));
         $this->table(['Field', 'Value'], [
             ['UUID', $user->uuid],
             ['Email', $user->email],
