@@ -60,6 +60,7 @@ it('reports unsupported configured database drivers as failed health results', f
 
     $this->artisan('p:environment:preflight', ['--with-database' => true])
         ->expectsOutputToContain('invalid')
+        ->doesntExpectOutputToContain('Database Connection')
         ->assertFailed();
 });
 
@@ -107,6 +108,9 @@ it('provides an explicit preflight bypass for emergency setup', function () {
 
 it('runs the shared preflight from the command line', function () {
     $this->artisan('p:environment:preflight', ['--with-database' => true])
+        ->doesntExpectOutputToContain(trans('installer.health.php.remediation', [
+            'minimum' => PhpVersionCheck::MINIMUM_VERSION,
+        ]))
         ->assertSuccessful();
 });
 

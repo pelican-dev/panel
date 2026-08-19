@@ -21,10 +21,14 @@ class EnvironmentPreflightCommand extends Command
         $results = $health->systemRequirements();
 
         if ($this->option('with-database')) {
-            $results->push($health->databaseDriverExtension((string) config('database.default')));
-            $results->push($health->runCheck(
-                DatabaseCheck::new()->label(trans('installer.health.database.label')),
-            ));
+            $driverResult = $health->databaseDriverExtension((string) config('database.default'));
+            $results->push($driverResult);
+
+            if (!$health->hasFailures([$driverResult])) {
+                $results->push($health->runCheck(
+                    DatabaseCheck::new()->label(trans('installer.health.database.label')),
+                ));
+            }
         }
 
         $this->displayHealthResults($results);

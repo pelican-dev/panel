@@ -13,7 +13,10 @@ trait DisplaysHealthResults
         $rows = [];
 
         foreach ($results as $result) {
-            $remediation = $result->meta['remediation'] ?? null;
+            $remediation = $result->status === Status::ok()
+                ? null
+                : ($result->meta['remediation'] ?? null);
+
             $rows[] = [
                 $result->check->getLabel(),
                 $this->formatHealthStatus($result->status),
