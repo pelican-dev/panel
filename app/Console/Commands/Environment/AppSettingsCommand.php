@@ -2,13 +2,17 @@
 
 namespace App\Console\Commands\Environment;
 
+use App\Traits\EnvironmentWriterTrait;
 use Illuminate\Console\Command;
 
 class AppSettingsCommand extends Command
 {
+    use EnvironmentWriterTrait;
+
     protected $description = 'Configure basic environment settings for the Panel.';
 
-    protected $signature = 'p:environment:setup';
+    protected $signature = 'p:environment:setup
+                            {--url= : The URL that this Panel is running on.}';
 
     public function handle(): void
     {
@@ -17,6 +21,11 @@ class AppSettingsCommand extends Command
             $this->comment('Copying example .env file');
             copy($path . '.example', $path);
         }
+
+        $appUrl = $this->option('url') ?? $this->ask('Application URL', config('app.url'));
+
+        $this->comment('Writing APP_URL to .env file');
+        $this->writeToEnvironment(['APP_URL' => $appUrl]);
 
         if (!config('app.key')) {
             $this->comment('Generating app key');
