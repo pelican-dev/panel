@@ -111,7 +111,7 @@ class AppServiceProvider extends ServiceProvider
                 EnvironmentCheck::new(),
                 CacheCheck::new(),
                 DatabaseCheck::new(),
-                QueueCheck::new()->failWhenHealthJobTakesLongerThanMinutes(5),
+                QueueCheck::new(),
                 ScheduleCheck::new(),
                 UsedDiskSpaceCheck::new(),
                 PanelVersionCheck::new(),
