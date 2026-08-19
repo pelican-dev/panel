@@ -41,6 +41,8 @@ return [
             'label' => 'Database Extension',
             'passed' => 'The required :extension extension is available.',
             'failed' => ':driver requires the :extension PHP extension.',
+            'unsupported' => 'The configured database driver ":driver" is not supported.',
+            'unsupported_remediation' => 'Set DB_CONNECTION to sqlite, mariadb, mysql, or pgsql.',
         ],
         'database' => [
             'label' => 'Database Connection',

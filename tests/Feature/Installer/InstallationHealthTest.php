@@ -50,6 +50,19 @@ it('fails when a required PHP extension is unavailable', function () {
         ->and($result->getNotificationMessage())->toContain('pelican_missing_extension');
 });
 
+it('reports unsupported configured database drivers as failed health results', function () {
+    config()->set('database.default', 'invalid');
+
+    $result = app(InstallationHealthService::class)->databaseDriverExtension('invalid');
+
+    expect($result->status)->toEqual(Status::failed())
+        ->and($result->getNotificationMessage())->toContain('invalid');
+
+    $this->artisan('p:environment:preflight', ['--with-database' => true])
+        ->expectsOutputToContain('invalid')
+        ->assertFailed();
+});
+
 it('maps database drivers to their PDO extensions and default ports', function () {
     expect(DatabaseDriver::SQLite->requiredExtension())->toBe('pdo_sqlite')
         ->and(DatabaseDriver::SQLite->defaultPort())->toBeNull()
