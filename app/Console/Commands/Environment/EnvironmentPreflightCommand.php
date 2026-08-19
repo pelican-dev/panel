@@ -16,6 +16,9 @@ class EnvironmentPreflightCommand extends Command
     protected $signature = 'p:environment:preflight
         {--with-database : Also verify the currently configured database extension and connection.}';
 
+    /**
+     * Run and report the pre-installation requirement checks.
+     */
     public function handle(InstallationHealthService $health): int
     {
         $results = $health->systemRequirements();

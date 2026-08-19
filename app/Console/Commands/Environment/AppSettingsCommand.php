@@ -15,6 +15,9 @@ class AppSettingsCommand extends Command
     protected $signature = 'p:environment:setup
                             {--skip-preflight : Skip server requirement checks before setup.}';
 
+    /**
+     * Configure the application after enforcing the installer preflight checks.
+     */
     public function handle(InstallationHealthService $health): int
     {
         if (!$this->option('skip-preflight')) {

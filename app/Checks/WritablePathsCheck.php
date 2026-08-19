@@ -10,7 +10,11 @@ class WritablePathsCheck extends Check
     /** @var string[]|null */
     protected ?array $paths = null;
 
-    /** @param string[] $paths */
+    /**
+     * Override the filesystem paths that must be writable.
+     *
+     * @param  string[]  $paths
+     */
     public function paths(array $paths): self
     {
         $this->paths = $paths;
@@ -18,6 +22,9 @@ class WritablePathsCheck extends Check
         return $this;
     }
 
+    /**
+     * Verify that every required installer path is writable.
+     */
     public function run(): Result
     {
         $paths = $this->paths ?? [

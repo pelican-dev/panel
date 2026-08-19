@@ -13,6 +13,9 @@ use Spatie\Health\Checks\Result;
 
 class RequirementsStep
 {
+    /**
+     * Build the installer step that displays and enforces system requirements.
+     */
     public static function make(): Step
     {
         $health = app(InstallationHealthService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions

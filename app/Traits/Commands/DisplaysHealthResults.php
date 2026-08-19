@@ -7,7 +7,11 @@ use Spatie\Health\Enums\Status;
 
 trait DisplaysHealthResults
 {
-    /** @param iterable<Result> $results */
+    /**
+     * Render health check results as a console table with actionable failures.
+     *
+     * @param  iterable<Result>  $results
+     */
     protected function displayHealthResults(iterable $results): void
     {
         $rows = [];
@@ -31,6 +35,9 @@ trait DisplaysHealthResults
         ], $rows);
     }
 
+    /**
+     * Format a health status for colorized console output.
+     */
     private function formatHealthStatus(Status $status): string
     {
         return match ($status) {

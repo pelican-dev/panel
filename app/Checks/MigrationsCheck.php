@@ -9,8 +9,14 @@ use Throwable;
 
 class MigrationsCheck extends Check
 {
+    /**
+     * Create a migration health check using the configured migrator.
+     */
     public function __construct(private readonly Migrator $migrator) {}
 
+    /**
+     * Verify that the migration repository exists and has no pending migrations.
+     */
     public function run(): Result
     {
         $result = Result::make()->meta([

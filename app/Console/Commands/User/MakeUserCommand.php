@@ -20,7 +20,7 @@ class MakeUserCommand extends Command
      * @throws Exception
      * @throws DataValidationException
      */
-    public function handle(UserCreationService $creationService): int
+    public function handle(): int
     {
         try {
             DB::connection()->getPdo();
@@ -29,6 +29,9 @@ class MakeUserCommand extends Command
 
             return 1;
         }
+
+        /** @var UserCreationService $creationService */
+        $creationService = $this->getLaravel()->make(UserCreationService::class);
 
         $root_admin = $this->option('admin') ?? $this->confirm(trans('command/messages.user.ask_admin'));
         $email = $this->option('email') ?? $this->ask(trans('command/messages.user.ask_email'));

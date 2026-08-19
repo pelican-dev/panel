@@ -23,7 +23,11 @@ class PhpExtensionsCheck extends Check
     /** @var string[] */
     protected array $requiredExtensions = self::REQUIRED_EXTENSIONS;
 
-    /** @param string[] $extensions */
+    /**
+     * Override the PHP extensions required by this check.
+     *
+     * @param  string[]  $extensions
+     */
     public function requireExtensions(array $extensions): self
     {
         $this->requiredExtensions = $extensions;
@@ -31,6 +35,9 @@ class PhpExtensionsCheck extends Check
         return $this;
     }
 
+    /**
+     * Verify the required PHP and PDO extensions are loaded.
+     */
     public function run(): Result
     {
         $missing = array_values(array_filter(

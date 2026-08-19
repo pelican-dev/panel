@@ -14,6 +14,9 @@ class EnvironmentHealthCommand extends Command
 
     protected $signature = 'p:environment:health';
 
+    /**
+     * Run and report the complete post-installation health checks.
+     */
     public function handle(InstallationHealthService $health): int
     {
         $results = $health->completeInstallation();

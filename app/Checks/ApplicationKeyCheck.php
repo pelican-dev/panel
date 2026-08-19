@@ -8,6 +8,9 @@ use Spatie\Health\Checks\Result;
 
 class ApplicationKeyCheck extends Check
 {
+    /**
+     * Verify that the configured application key supports the selected cipher.
+     */
     public function run(): Result
     {
         $key = config('app.key');

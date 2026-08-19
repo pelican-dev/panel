@@ -13,6 +13,9 @@ class PhpVersionCheck extends Check
 
     protected string $currentVersion = PHP_VERSION;
 
+    /**
+     * Override the minimum supported PHP version.
+     */
     public function minimumVersion(string $version): self
     {
         $this->minimumVersion = $version;
@@ -20,6 +23,9 @@ class PhpVersionCheck extends Check
         return $this;
     }
 
+    /**
+     * Override the current PHP version for evaluation.
+     */
     public function currentVersion(string $version): self
     {
         $this->currentVersion = $version;
@@ -27,6 +33,9 @@ class PhpVersionCheck extends Check
         return $this;
     }
 
+    /**
+     * Verify that the current PHP version meets the minimum requirement.
+     */
     public function run(): Result
     {
         $passed = version_compare($this->currentVersion, $this->minimumVersion, '>=');

@@ -5,7 +5,6 @@ use App\Checks\PhpExtensionsCheck;
 use App\Checks\PhpVersionCheck;
 use App\Checks\WritablePathsCheck;
 use App\Console\Commands\Environment\AppSettingsCommand;
-use App\Console\Commands\User\MakeUserCommand;
 use App\Enums\DatabaseDriver;
 use App\Jobs\InstallEgg;
 use App\Livewire\Installer\PanelInstaller;
@@ -54,8 +53,6 @@ it('fails when a required PHP extension is unavailable', function () {
 it('reports unsupported configured database drivers as failed health results', function () {
     config()->set('database.default', 'invalid');
 
-    expect(fn () => app(MakeUserCommand::class))->not->toThrow(InvalidArgumentException::class);
-
     $result = app(InstallationHealthService::class)->databaseDriverExtension('invalid');
 
     expect($result->status)->toEqual(Status::failed())
@@ -64,6 +61,14 @@ it('reports unsupported configured database drivers as failed health results', f
     $this->artisan('p:environment:preflight', ['--with-database' => true])
         ->expectsOutputToContain('invalid')
         ->doesntExpectOutputToContain('Database Connection')
+        ->assertFailed();
+
+    $this->artisan('p:user:make', [
+        '--email' => 'invalid-driver@example.com',
+        '--username' => 'invalid-driver',
+        '--no-password' => true,
+    ])
+        ->expectsOutputToContain('Database connection [invalid] not configured.')
         ->assertFailed();
 });
 
@@ -103,10 +108,25 @@ it('reports unwritable installer paths', function () {
         ->and($result->getNotificationMessage())->toContain('pelican-path-that-does-not-exist');
 });
 
-it('provides an explicit preflight bypass for emergency setup', function () {
-    $command = app(AppSettingsCommand::class);
+it('only bypasses failed setup preflight checks when explicitly requested', function () {
+    $failedResult = app(InstallationHealthService::class)->runCheck(
+        PhpVersionCheck::new()
+            ->minimumVersion('999.0.0')
+            ->label('PHP Version'),
+    );
 
-    expect($command->getDefinition()->hasOption('skip-preflight'))->toBeTrue();
+    $health = Mockery::mock(InstallationHealthService::class);
+    $health->shouldReceive('systemRequirements')->once()->andReturn(collect([$failedResult]));
+    $health->shouldReceive('hasFailures')->once()->andReturnTrue();
+    $this->app->instance(InstallationHealthService::class, $health);
+
+    $this->artisan('p:environment:setup')
+        ->expectsOutputToContain(trans('commands.environment_check.preflight_failed'))
+        ->assertFailed();
+
+    $this->artisan('p:environment:setup', ['--skip-preflight' => true])
+        ->expectsOutputToContain('Creating storage link')
+        ->assertSuccessful();
 });
 
 it('runs the shared preflight from the command line', function () {

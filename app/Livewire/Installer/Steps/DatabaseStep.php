@@ -16,6 +16,9 @@ use Filament\Support\Exceptions\Halt;
 
 class DatabaseStep
 {
+    /**
+     * Build the database configuration step and validate it before persistence.
+     */
     public static function make(PanelInstaller $installer): Step
     {
         return Step::make('database')

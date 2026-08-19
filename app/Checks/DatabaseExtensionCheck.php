@@ -10,6 +10,9 @@ class DatabaseExtensionCheck extends Check
 {
     protected DatabaseDriver|string $driver = DatabaseDriver::SQLite;
 
+    /**
+     * Select the database driver whose PHP extension should be checked.
+     */
     public function driver(DatabaseDriver|string $driver): self
     {
         $this->driver = $driver;
@@ -17,6 +20,9 @@ class DatabaseExtensionCheck extends Check
         return $this;
     }
 
+    /**
+     * Verify that the configured database driver is supported and available.
+     */
     public function run(): Result
     {
         $driver = is_string($this->driver) ? DatabaseDriver::tryFrom($this->driver) : $this->driver;

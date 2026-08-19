@@ -11,6 +11,9 @@ enum DatabaseDriver: string implements HasLabel
     case MySQL = 'mysql';
     case PostgreSQL = 'pgsql';
 
+    /**
+     * Return the human-readable database driver label.
+     */
     public function getLabel(): string
     {
         return match ($this) {
@@ -21,6 +24,9 @@ enum DatabaseDriver: string implements HasLabel
         };
     }
 
+    /**
+     * Return the PDO extension required by this database driver.
+     */
     public function requiredExtension(): string
     {
         return match ($this) {
@@ -30,6 +36,9 @@ enum DatabaseDriver: string implements HasLabel
         };
     }
 
+    /**
+     * Return the driver's default network port, when applicable.
+     */
     public function defaultPort(): ?int
     {
         return match ($this) {
@@ -39,7 +48,11 @@ enum DatabaseDriver: string implements HasLabel
         };
     }
 
-    /** @return array<string, string> */
+    /**
+     * Build the database driver options shown by installers and commands.
+     *
+     * @return array<string, string>
+     */
     public static function options(bool $recommendSQLite = false): array
     {
         return collect(self::cases())

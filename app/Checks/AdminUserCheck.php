@@ -10,6 +10,9 @@ use Throwable;
 
 class AdminUserCheck extends Check
 {
+    /**
+     * Verify that at least one root administrator account exists.
+     */
     public function run(): Result
     {
         $result = Result::make()->meta([

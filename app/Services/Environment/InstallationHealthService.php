@@ -22,7 +22,11 @@ use Throwable;
 
 class InstallationHealthService
 {
-    /** @return Collection<int, Result> */
+    /**
+     * Run the requirements that must pass before Panel configuration begins.
+     *
+     * @return Collection<int, Result>
+     */
     public function systemRequirements(): Collection
     {
         return $this->run([
@@ -32,6 +36,9 @@ class InstallationHealthService
         ]);
     }
 
+    /**
+     * Verify that a database driver is supported by the current PHP runtime.
+     */
     public function databaseDriverExtension(DatabaseDriver|string $driver): Result
     {
         return $this->runCheck(
@@ -41,7 +48,11 @@ class InstallationHealthService
         );
     }
 
-    /** @param array{host?: mixed, port?: mixed, database?: mixed, username?: mixed, password?: mixed} $settings */
+    /**
+     * Verify database connectivity using temporary, non-persistent settings.
+     *
+     * @param  array{host?: mixed, port?: mixed, database?: mixed, username?: mixed, password?: mixed}  $settings
+     */
     public function databaseConnection(DatabaseDriver $driver, array $settings): Result
     {
         $database = (string) ($settings['database'] ?? '');
@@ -83,7 +94,11 @@ class InstallationHealthService
         }
     }
 
-    /** @return Collection<int, Result> */
+    /**
+     * Run health checks that require an already configured environment.
+     *
+     * @return Collection<int, Result>
+     */
     public function configuredEnvironment(): Collection
     {
         return $this->systemRequirements()->concat($this->run([
@@ -94,7 +109,11 @@ class InstallationHealthService
         ]));
     }
 
-    /** @return Collection<int, Result> */
+    /**
+     * Run the complete set of post-installation health checks.
+     *
+     * @return Collection<int, Result>
+     */
     public function completeInstallation(): Collection
     {
         return $this->configuredEnvironment()->concat($this->run([
@@ -104,6 +123,8 @@ class InstallationHealthService
     }
 
     /**
+     * Execute a set of health checks and collect their normalized results.
+     *
      * @param  iterable<Check>  $checks
      * @return Collection<int, Result>
      */
@@ -112,6 +133,9 @@ class InstallationHealthService
         return collect($checks)->map(fn (Check $check) => $this->runCheck($check))->values();
     }
 
+    /**
+     * Execute one health check and convert thrown errors into crashed results.
+     */
     public function runCheck(Check $check): Result
     {
         try {
@@ -128,7 +152,11 @@ class InstallationHealthService
             ->endedAt(now());
     }
 
-    /** @param iterable<Result> $results */
+    /**
+     * Determine whether any result represents a failed or crashed check.
+     *
+     * @param  iterable<Result>  $results
+     */
     public function hasFailures(iterable $results): bool
     {
         foreach ($results as $result) {
