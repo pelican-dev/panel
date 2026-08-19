@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Installer\Steps;
 
-use App\Checks\DatabaseCheck;
 use App\Enums\DatabaseDriver;
 use App\Enums\TablerIcon;
 use App\Livewire\Installer\PanelInstaller;
@@ -14,7 +13,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Exceptions\Halt;
-use Illuminate\Support\Facades\DB;
 
 class DatabaseStep
 {
@@ -98,35 +96,22 @@ class DatabaseStep
                     throw new Halt($extensionResult->getNotificationMessage());
                 }
 
-                if ($driver !== DatabaseDriver::SQLite) {
-                    config()->set('database.connections._panel_install_test', [
-                        'driver' => $driver->value,
-                        'host' => $get('env_database.DB_HOST'),
-                        'port' => $get('env_database.DB_PORT'),
-                        'database' => $get('env_database.DB_DATABASE'),
-                        'username' => $get('env_database.DB_USERNAME'),
-                        'password' => $get('env_database.DB_PASSWORD'),
-                        'collation' => 'utf8mb4_unicode_ci',
-                        'strict' => true,
-                    ]);
+                $connectionResult = $health->databaseConnection($driver, [
+                    'host' => $get('env_database.DB_HOST'),
+                    'port' => $get('env_database.DB_PORT'),
+                    'database' => $get('env_database.DB_DATABASE'),
+                    'username' => $get('env_database.DB_USERNAME'),
+                    'password' => $get('env_database.DB_PASSWORD'),
+                ]);
 
-                    DB::purge('_panel_install_test');
-                    $connectionResult = $health->runCheck(
-                        DatabaseCheck::new()
-                            ->connectionName('_panel_install_test')
-                            ->label(trans('installer.health.database.label')),
-                    );
-                    DB::disconnect('_panel_install_test');
+                if ($health->hasFailures([$connectionResult])) {
+                    Notification::make()
+                        ->title(trans('installer.database.exceptions.connection'))
+                        ->body($connectionResult->getNotificationMessage())
+                        ->danger()
+                        ->send();
 
-                    if ($health->hasFailures([$connectionResult])) {
-                        Notification::make()
-                            ->title(trans('installer.database.exceptions.connection'))
-                            ->body($connectionResult->getNotificationMessage())
-                            ->danger()
-                            ->send();
-
-                        throw new Halt($connectionResult->getNotificationMessage());
-                    }
+                    throw new Halt($connectionResult->getNotificationMessage());
                 }
 
                 $installer->writeToEnv('env_database');

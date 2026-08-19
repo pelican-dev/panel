@@ -59,6 +59,24 @@ it('maps database drivers to their PDO extensions and default ports', function (
         ->and(DatabaseDriver::PostgreSQL->defaultPort())->toBe(5432);
 });
 
+it('rejects unsupported database driver command options', function () {
+    $this->artisan('p:environment:database', ['--driver' => 'invalid'])
+        ->expectsOutput('Unsupported database driver [invalid].')
+        ->assertFailed();
+});
+
+it('checks SQLite database paths before installer configuration is written', function () {
+    $health = app(InstallationHealthService::class);
+
+    $valid = $health->databaseConnection(DatabaseDriver::SQLite, ['database' => ':memory:']);
+    $invalid = $health->databaseConnection(DatabaseDriver::SQLite, [
+        'database' => 'missing-directory/database.sqlite',
+    ]);
+
+    expect($valid->status)->toEqual(Status::ok())
+        ->and($invalid->status)->toEqual(Status::failed());
+});
+
 it('reports unwritable installer paths', function () {
     $result = WritablePathsCheck::new()
         ->paths([base_path('pelican-path-that-does-not-exist')])

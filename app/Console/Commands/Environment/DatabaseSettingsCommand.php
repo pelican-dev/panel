@@ -40,6 +40,13 @@ class DatabaseSettingsCommand extends Command
      */
     public function handle(): int
     {
+        $driver = $this->option('driver');
+        if ($driver !== null && (!is_string($driver) || DatabaseDriver::tryFrom($driver) === null)) {
+            $this->error(sprintf('Unsupported database driver [%s].', is_scalar($driver) ? $driver : get_debug_type($driver)));
+
+            return self::FAILURE;
+        }
+
         $this->error('Changing the database driver will NOT move any database data!');
         $this->error('Please make sure you made a database backup first!');
         $this->error('After changing the driver you will have to manually move the old data to the new database.');
@@ -49,7 +56,7 @@ class DatabaseSettingsCommand extends Command
 
         $selected = config('database.default', 'sqlite');
         $databaseDrivers = DatabaseDriver::options(recommendSQLite: true);
-        $this->variables['DB_CONNECTION'] = $this->option('driver') ?? $this->choice(
+        $this->variables['DB_CONNECTION'] = $driver ?? $this->choice(
             'Database Driver',
             $databaseDrivers,
             array_key_exists($selected, $databaseDrivers) ? $selected : null
