@@ -388,6 +388,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return !$key ? $customization : $customization[$key->value];
     }
 
+    public function setCustomization(CustomizationKey $key, string|int|bool $value): void
+    {
+        // Merge into the raw stored data, not getCustomization(), which mixes in
+        // enum defaults that don't all pass this model's validation rules.
+        $customization = (is_string($this->customization) ? json_decode($this->customization, true) : $this->customization) ?? [];
+        $customization[$key->value] = $value;
+
+        $this->update(['customization' => $customization]);
+    }
+
     protected function hasPermission(Server $server, string $permission = ''): bool
     {
         if ($this->canned('update', $server) || $server->owner_id === $this->id) {

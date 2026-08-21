@@ -113,11 +113,23 @@ class ListServers extends ListRecords
         ];
     }
 
+    protected function usingGrid(): bool
+    {
+        return user()?->getCustomization(CustomizationKey::DashboardLayout) === 'grid';
+    }
+
+    public function getTablePerPageSessionKey(): string
+    {
+        // Grid and list offer different page options, so a session value cached in
+        // one layout must not bleed into (and get invalidated by) the other.
+        return parent::getTablePerPageSessionKey() . ($this->usingGrid() ? '_grid' : '_list');
+    }
+
     public function table(Table $table): Table
     {
         $baseQuery = user()?->accessibleServers();
 
-        $usingGrid = user()?->getCustomization(CustomizationKey::DashboardLayout) === 'grid';
+        $usingGrid = $this->usingGrid();
 
         $pageOptions = $usingGrid ? [10, 20, 30, 40] : [10, 20, 50, 100];
         $storedPerPage = (int) user()?->getCustomization(CustomizationKey::ServersPerPage);
@@ -159,19 +171,15 @@ class ListServers extends ListRecords
     {
         parent::updatedTableRecordsPerPage();
 
-        $perPage = $this->getTableRecordsPerPage();
+        // Livewire delivers the <select> value as a numeric string, and the
+        // client can send anything, so only persist a currently offered option.
+        $perPage = (int) $this->getTableRecordsPerPage();
 
-        // Livewire delivers the <select> value as a numeric string, not an int.
-        if (!is_numeric($perPage)) {
+        if (!in_array($perPage, $this->getTable()->getPaginationPageOptions(), true)) {
             return;
         }
 
-        user()?->update([
-            'customization' => array_merge(
-                user()->getCustomization(),
-                [CustomizationKey::ServersPerPage->value => (int) $perPage],
-            ),
-        ]);
+        user()?->setCustomization(CustomizationKey::ServersPerPage, $perPage);
     }
 
     public function getTabs(): array
