@@ -41,6 +41,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Context;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\In;
 use Laravel\Passkeys\Contracts\PasskeyUser;
@@ -390,12 +391,17 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function setCustomization(CustomizationKey $key, string|int|bool $value): void
     {
-        // Merge into the raw stored data, not getCustomization(), which mixes in
-        // enum defaults that don't all pass this model's validation rules.
-        $customization = (is_string($this->customization) ? json_decode($this->customization, true) : $this->customization) ?? [];
-        $customization[$key->value] = $value;
+        DB::transaction(function () use ($key, $value) {
+            // Re-read the raw stored data under lock so concurrent updates to other
+            // keys aren't lost, and merge into it rather than getCustomization(),
+            // which mixes in enum defaults that don't all pass this model's
+            // validation rules.
+            $raw = static::query()->whereKey($this->getKey())->lockForUpdate()->value('customization');
+            $customization = (is_string($raw) ? json_decode($raw, true) : $raw) ?? [];
+            $customization[$key->value] = $value;
 
-        $this->update(['customization' => $customization]);
+            $this->update(['customization' => $customization]);
+        });
     }
 
     protected function hasPermission(Server $server, string $permission = ''): bool
