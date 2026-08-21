@@ -28,6 +28,7 @@ class AppSettingsCommand extends Command
         }
         if (blank($appUrl)) {
             $this->error('Application URL is required.');
+
             return 1;
         }
         $this->comment('Writing APP_URL to .env file');
