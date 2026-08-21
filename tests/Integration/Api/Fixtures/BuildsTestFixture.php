@@ -167,7 +167,7 @@ trait BuildsTestFixture
         $this->fixtureNode->forceFill([
             'uuid' => '00000000-0000-4000-8000-000000000200',
             'daemon_token_id' => 'fixturenodetoken',
-            'daemon_token' => 'fixturenodedaemontokenvalue0001',
+            'daemon_token' => str_pad('fixturenodedaemontokenvalue', Node::DAEMON_TOKEN_LENGTH, '0'),
         ])->saveQuietly();
 
         $this->primaryAllocation = Allocation::factory()->create([
