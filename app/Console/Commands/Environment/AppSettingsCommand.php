@@ -14,7 +14,7 @@ class AppSettingsCommand extends Command
     protected $signature = 'p:environment:setup
                             {--url= : The URL that this Panel is running on.}';
 
-    public function handle(): void
+    public function handle(): int
     {
         $path = base_path('.env');
         if (!file_exists($path)) {
@@ -22,8 +22,14 @@ class AppSettingsCommand extends Command
             copy($path . '.example', $path);
         }
 
-        $appUrl = $this->option('url') ?? $this->ask('Application URL', config('app.url'));
-
+        $appUrl = $this->option('url');
+        if (blank($appUrl)) {
+            $appUrl = $this->ask('Application URL', config('app.url'));
+        }
+        if (blank($appUrl)) {
+            $this->error('Application URL is required.');
+            return 1;
+        }
         $this->comment('Writing APP_URL to .env file');
         $this->writeToEnvironment(['APP_URL' => $appUrl]);
 
@@ -37,5 +43,7 @@ class AppSettingsCommand extends Command
 
         $this->comment('Caching components & icons');
         $this->call('filament:optimize');
+
+        return 0;
     }
 }
