@@ -313,7 +313,7 @@ jobs:
         if: env.COMPOSER_AUTH != ''
         run: |
           composer config repositories.dedoc composer https://satis.dedoc.co
-          composer require dedoc/scramble-pro --no-interaction --no-progress --no-scripts
+          composer require dedoc/scramble-pro:0.9.15 --no-interaction --no-progress --no-scripts
 
       - name: Create SQLite file
         run: touch database/testing.sqlite
@@ -336,7 +336,7 @@ jobs:
           done
 
       - name: Lint specs
-        run: npx --yes @redocly/cli lint application-openapi.json client-openapi.json
+        run: npx --yes @redocly/cli@2.47.0 lint application-openapi.json client-openapi.json
 
       - name: Upload specs
         uses: actions/upload-artifact@v4
