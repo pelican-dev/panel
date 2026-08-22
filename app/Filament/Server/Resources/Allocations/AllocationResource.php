@@ -56,7 +56,7 @@ class AllocationResource extends Resource
                 TextColumn::make('port')
                     ->label(trans('server/network.port'))
                     ->state(fn (Allocation $allocation) => $allocation->show_port ? $allocation->port : null)
-                    ->placeholder('—'),
+                    ->placeholder(trans('server/network.port_hidden')),
                 TextInputColumn::make('notes')
                     ->label(trans('server/network.notes'))
                     ->visibleFrom('sm')
@@ -96,7 +96,7 @@ class AllocationResource extends Resource
 
                         Activity::event('server:allocation.delete')
                             ->subject($allocation)
-                            ->property('allocation', $allocation->display_address)
+                            ->property('allocation', $allocation->address)
                             ->log();
                     })
                     ->after(fn (Allocation $allocation) => $allocation->id === $server->allocation_id && $server->update(['allocation_id' => $server->allocations()->first()?->id])),
@@ -119,7 +119,7 @@ class AllocationResource extends Resource
 
                         Activity::event('server:allocation.create')
                             ->subject($allocation)
-                            ->property('allocation', $allocation->display_address)
+                            ->property('allocation', $allocation->address)
                             ->log();
                     }),
             ]);

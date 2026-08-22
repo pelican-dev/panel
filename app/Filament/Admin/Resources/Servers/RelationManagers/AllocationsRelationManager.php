@@ -25,6 +25,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @method Server getOwnerRecord()
@@ -105,11 +106,7 @@ class AllocationsRelationManager extends RelationManager
                     ->authorize(fn (Allocation $allocation) => user()?->can('update', $allocation))
                     ->tooltip(trans('admin/server.remove_allocation'))
                     ->after(function (Allocation $allocation) {
-                        $allocation->update([
-                            'notes' => null,
-                            'is_locked' => false,
-                            'show_port' => true,
-                        ]);
+                        $allocation->update(Allocation::RELEASE_ATTRIBUTES);
 
                         if (!$this->getOwnerRecord()->allocation_id) {
                             $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id]);
@@ -118,12 +115,8 @@ class AllocationsRelationManager extends RelationManager
             ])
             ->toolbarActions([
                 DissociateBulkAction::make()
-                    ->after(function () {
-                        Allocation::whereNull('server_id')->update([
-                            'notes' => null,
-                            'is_locked' => false,
-                            'show_port' => true,
-                        ]);
+                    ->after(function (Collection $records) {
+                        Allocation::whereIn('id', $records->pluck('id'))->update(Allocation::RELEASE_ATTRIBUTES);
 
                         if (!$this->getOwnerRecord()->allocation_id) {
                             $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id]);

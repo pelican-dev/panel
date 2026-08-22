@@ -59,6 +59,21 @@ class Allocation extends Model
      */
     public const RESOURCE_NAME = 'allocation';
 
+    /**
+     * Attribute resets applied whenever an allocation is released back to the pool,
+     * so per-server state never carries over to the next server. Query-builder
+     * updates bypass the model's `updating` hook, so release paths must apply
+     * these explicitly.
+     *
+     * @var array<string, mixed>
+     */
+    public const RELEASE_ATTRIBUTES = [
+        'server_id' => null,
+        'notes' => null,
+        'is_locked' => false,
+        'show_port' => true,
+    ];
+
     protected $attributes = [
         'is_locked' => false,
         'show_port' => true,
@@ -134,7 +149,7 @@ class Allocation extends Model
     protected function displayAddress(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->show_port ? $this->address : ($this->ip_alias ?? $this->ip),
+            get: fn () => $this->show_port ? $this->address : $this->alias,
         );
     }
 

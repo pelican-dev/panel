@@ -63,7 +63,7 @@ class NetworkAllocationController extends ClientApiController
         if ($original !== $allocation->notes) {
             Activity::event('server:allocation.notes')
                 ->subject($allocation)
-                ->property(['allocation' => $allocation->display_address, 'old' => $original, 'new' => $allocation->notes])
+                ->property(['allocation' => $allocation->address, 'old' => $original, 'new' => $allocation->notes])
                 ->log();
         }
 
@@ -88,7 +88,7 @@ class NetworkAllocationController extends ClientApiController
 
         Activity::event('server:allocation.primary')
             ->subject($allocation)
-            ->property('allocation', $allocation->display_address)
+            ->property('allocation', $allocation->address)
             ->log();
 
         return $this->fractal->item($allocation)
@@ -114,7 +114,7 @@ class NetworkAllocationController extends ClientApiController
 
             $allocation = $this->assignableAllocationService->handle($server);
 
-            $log->subject($allocation)->property('allocation', $allocation->display_address);
+            $log->subject($allocation)->property('allocation', $allocation->address);
 
             return $allocation;
         });
@@ -137,16 +137,11 @@ class NetworkAllocationController extends ClientApiController
         // allocation limit set.
         throw_if(empty($server->allocation_limit), new DisplayException('You cannot delete allocations for this server: no allocation limit is set.'));
 
-        Allocation::query()->where('id', $allocation->id)->update([
-            'is_locked' => false,
-            'notes' => null,
-            'show_port' => true,
-            'server_id' => null,
-        ]);
+        Allocation::query()->where('id', $allocation->id)->update(Allocation::RELEASE_ATTRIBUTES);
 
         Activity::event('server:allocation.delete')
             ->subject($allocation)
-            ->property('allocation', $allocation->display_address)
+            ->property('allocation', $allocation->address)
             ->log();
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
