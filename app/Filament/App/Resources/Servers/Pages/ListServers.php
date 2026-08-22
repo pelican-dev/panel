@@ -83,12 +83,12 @@ class ListServers extends ListRecords
                 ->grow()
                 ->searchable()
                 ->sortable(),
-            TextColumn::make('allocation.address')
+            TextColumn::make('allocation.display_address')
                 ->label('')
                 ->badge()
                 ->visibleFrom('md')
                 ->copyable()
-                ->state(fn (Server $server) => $server->allocation->address ?? 'None'),
+                ->state(fn (Server $server) => $server->allocation->display_address ?? 'None'),
             ProgressBarColumn::make('cpuUsage')
                 ->label('')
                 ->warningThresholdPercent(static::WARNING_THRESHOLD)
