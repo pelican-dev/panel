@@ -21,7 +21,9 @@ class StoreSSHKeyRequest extends ClientApiRequest
     public function rules(): array
     {
         return [
+            /** Name the key is listed under in the Panel. */
             'name' => UserSSHKey::getRulesForField('name'),
+            /** The public half of the SSH key, in OpenSSH format. */
             'public_key' => UserSSHKey::getRulesForField('public_key'),
         ];
     }

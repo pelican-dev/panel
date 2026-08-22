@@ -10,6 +10,9 @@ use App\Checks\NodeVersionsCheck;
 use App\Checks\PanelVersionCheck;
 use App\Checks\ScheduleCheck;
 use App\Checks\UsedDiskSpaceCheck;
+use App\Extensions\Dedoc\Scramble\FractalResponseTypeInfer;
+use App\Extensions\Dedoc\Scramble\TransformerFactoryTypeInfer;
+use App\Extensions\Dedoc\Scramble\TransformerModelBindingExtension;
 use App\Http\Responses\LoginResponse;
 use App\Models\Allocation;
 use App\Models\ApiKey;
@@ -40,6 +43,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Passkeys\Passkeys;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Health\Checks\Checks\QueueCheck;
 use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
@@ -107,6 +111,7 @@ class AppServiceProvider extends ServiceProvider
                 EnvironmentCheck::new(),
                 CacheCheck::new(),
                 DatabaseCheck::new(),
+                QueueCheck::new(),
                 ScheduleCheck::new(),
                 UsedDiskSpaceCheck::new(),
                 PanelVersionCheck::new(),
@@ -133,6 +138,15 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LoginResponseContract::class, LoginResponse::class);
 
         Scramble::ignoreDefaultRoutes();
+
+        // Registered here rather than in boot() because Scramble's own provider boots first, and
+        // it reads some kinds of extension right then. Registering during register() works for
+        // every kind, so this keeps holding once an operation extension is added.
+        Scramble::registerExtensions([
+            TransformerModelBindingExtension::class,
+            TransformerFactoryTypeInfer::class,
+            FractalResponseTypeInfer::class,
+        ]);
 
         /** @var PluginService $pluginService */
         $pluginService = app(PluginService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions

@@ -1,5 +1,5 @@
 {
-    "name": "pelican-dev/panel",
+    "name": "pelican/panel",
     "description": "The free, open-source game management panel. Supporting Minecraft, Spigot, BungeeCord, and SRCDS servers.",
     "license": "AGPL-3.0-only",
     "require": {
@@ -9,14 +9,14 @@
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "ext-zip": "*",
-        "aws/aws-sdk-php": "^3.391",
+        "aws/aws-sdk-php": "^3.393",
         "calebporzio/sushi": "^2.5",
         "charrafimed/global-search-modal": "^5.0",
         "dedoc/scramble": "^0.13",
         "filament/filament": "^5.7",
         "gboquizosanchez/filament-log-viewer": "^2.3",
         "guzzlehttp/guzzle": "^7.15",
-        "laravel/framework": "^13.24",
+        "laravel/framework": "^13.26",
         "laravel/helpers": "^1.8",
         "laravel/passkeys": "^0.2",
         "laravel/sanctum": "^4.3",
@@ -57,7 +57,8 @@
         "nunomaduro/collision": "^8.9",
         "pestphp/pest": "^4.7",
         "pestphp/pest-plugin-faker": "^4.0",
-        "pestphp/pest-plugin-livewire": "^4.0"
+        "pestphp/pest-plugin-livewire": "^4.0",
+        "spatie/pest-plugin-snapshots": "^2.3"
     },
     "autoload": {
         "files": [
