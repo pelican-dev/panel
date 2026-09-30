@@ -49,6 +49,10 @@ Some of our popular eggs include:
 | [Storage](https://github.com/pelican-eggs/storage)                   | S3              | SFTP Share    |                    |                |
 | [Monitoring](https://github.com/pelican-eggs/monitoring)             | Prometheus      | Loki          |                    |                |
 
+## ☁️ One-Click Deploy
+
+[![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploylobe.svg)](https://repocloud.io/details/Pelican/)
+
 ## Contributing
 
 We welcome contributions from developers, designers, translators, testers, documentation writers, and egg maintainers.
