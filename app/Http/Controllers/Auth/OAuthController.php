@@ -56,6 +56,17 @@ class OAuthController extends Controller
         $oauthUser = Socialite::driver($driver->getId())->user();
 
         if ($request->user()) {
+            // The callback is a plain GET request and stateless providers (like Steam) have no state
+            // check, so only link accounts when this session started linking the provider from the profile.
+            if ($request->session()->pull('oauth_link') !== $driver->getId()) {
+                Notification::make()
+                    ->title(trans('profile.link_failed', ['name' => $driver->getName()]))
+                    ->danger()
+                    ->send();
+
+                return redirect(EditProfile::getUrl(['tab' => 'oauth::data::tab'], panel: 'app'));
+            }
+
             $this->oauthService->linkUser($request->user(), $driver, $oauthUser);
 
             return redirect(EditProfile::getUrl(['tab' => 'oauth::data::tab'], panel: 'app'));
