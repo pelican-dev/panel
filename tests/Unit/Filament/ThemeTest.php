@@ -83,6 +83,18 @@ class ThemeTest extends TestCase
         $this->assertSame('beta', $this->activeThemeId());
     }
 
+    public function test_a_forced_default_overrides_the_users_theme(): void
+    {
+        config()->set('panel.filament.default-theme', 'beta');
+        config()->set('panel.filament.force-theme', true);
+
+        $this->panel();
+        $this->actingAsUserWithTheme('alpha');
+
+        $this->assertSame('beta', $this->activeThemeId());
+        $this->assertFalse($this->app->make(ThemeService::class)->canChooseTheme());
+    }
+
     public function test_an_uninstalled_theme_is_ignored(): void
     {
         $this->panel();
