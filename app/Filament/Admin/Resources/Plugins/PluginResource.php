@@ -175,7 +175,7 @@ class PluginResource extends Resource
                         ->color('success')
                         ->visible(fn (Plugin $plugin) => $plugin->canEnable())
                         ->requiresConfirmation(fn (Plugin $plugin, PluginService $pluginService) => $plugin->isTheme() && !$plugin->isSwitchableTheme() && $pluginService->hasAnyThemeEnabled())
-                        ->modalHidden(fn (Plugin $plugin) => $plugin->isSwitchableTheme() && !user()->can('update settings'))
+                        ->modalHidden(fn (Plugin $plugin, PluginService $pluginService) => $plugin->isSwitchableTheme() ? !user()?->can('update settings') : !($plugin->isTheme() && $pluginService->hasAnyThemeEnabled()))
                         ->modalHeading(fn (Plugin $plugin) => $plugin->isSwitchableTheme() ? trans('admin/plugin.default_theme_modal.heading') : trans('admin/plugin.enable_theme_modal.heading'))
                         ->modalDescription(fn (Plugin $plugin) => $plugin->isSwitchableTheme() ? trans('admin/plugin.default_theme_modal.description') : trans('admin/plugin.enable_theme_modal.description'))
                         ->schema(fn (Plugin $plugin) => $plugin->isSwitchableTheme() && user()?->can('update settings') ? static::defaultThemeSchema() : null)
