@@ -95,6 +95,25 @@ class ThemeTest extends TestCase
         $this->assertFalse($this->app->make(ThemeService::class)->canChooseTheme());
     }
 
+    public function test_an_uninstalled_pick_falls_back_to_the_global_default(): void
+    {
+        config()->set('panel.filament.default-theme', 'beta');
+
+        $this->panel();
+        $this->actingAsUserWithTheme('gone');
+
+        $this->assertSame(ThemeService::Default, $this->app->make(ThemeService::class)->getSelectedOption());
+        $this->assertSame('beta', $this->activeThemeId());
+    }
+
+    public function test_no_theme_stays_selected(): void
+    {
+        $this->panel();
+        $this->actingAsUserWithTheme(ThemeService::None);
+
+        $this->assertSame(ThemeService::None, $this->app->make(ThemeService::class)->getSelectedOption());
+    }
+
     public function test_an_uninstalled_theme_is_ignored(): void
     {
         $this->panel();
