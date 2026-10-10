@@ -661,6 +661,11 @@ class PluginService
 
         report($exception);
 
+        // Reporting may have already marked it as crashed, which must stick so it's skipped next time.
+        if (Plugin::find($plugin->id)?->status === PluginStatus::Crashed) {
+            return;
+        }
+
         $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
     }
 }
