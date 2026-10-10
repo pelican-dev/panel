@@ -4,6 +4,8 @@ namespace App\Tests\Integration\Services;
 
 use App\Enums\PluginStatus;
 use App\Models\Plugin;
+use App\Models\Role;
+use App\Models\User;
 use App\Services\Helpers\HubCredentials;
 use App\Services\Helpers\PluginService;
 use App\Tests\Integration\IntegrationTestCase;
@@ -15,6 +17,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Process;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Symfony\Component\ErrorHandler\Error\FatalError;
 use ZipArchive;
 
 class PluginServiceTest extends IntegrationTestCase
@@ -605,6 +608,72 @@ class PluginServiceTest extends IntegrationTestCase
         $this->service->downloadPluginFromUrl('https://hub.pelican.dev/plugins/test-hub-plugin/download/1/test-hub-plugin.zip');
 
         Http::assertSent(fn ($request) => !$request->hasHeader('X-Panel-Api-Key'));
+    }
+
+    public function test_a_fatal_error_in_a_plugin_marks_it_crashed_and_notifies_root_admins(): void
+    {
+        $plugin = $this->installedPluginForFatal();
+
+        $admin = User::factory()->create();
+        $admin->syncRoles(Role::getRootAdmin());
+        $user = User::factory()->create();
+
+        $this->service->handleFatalError($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
+
+        $meta = File::json(plugin_path($plugin, 'plugin.json'))['meta'];
+        $this->assertSame(PluginStatus::Crashed->value, $meta['status']);
+        $this->assertSame('Trait "Missing" not found', $meta['status_message']);
+
+        $this->assertSame(1, $admin->notifications()->count());
+        $this->assertSame(0, $user->notifications()->count());
+
+        // Requests still running when it crashed don't notify again.
+        Plugin::refreshRows();
+        $this->service->handleFatalError($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
+        $this->assertSame(1, $admin->notifications()->count());
+    }
+
+    /** @return array<string, array{0: string, 1: ?string, 2: bool}> */
+    public static function ignoredFatalProvider(): array
+    {
+        return [
+            'memory limit' => ['Allowed memory size of 134217728 bytes exhausted', 'src/Plugin.php', false],
+            'execution time' => ['Maximum execution time of 30 seconds exceeded', 'src/Plugin.php', false],
+            'outside plugins' => ['Trait "Missing" not found', null, false],
+            'dev mode' => ['Trait "Missing" not found', 'src/Plugin.php', true],
+        ];
+    }
+
+    #[DataProvider('ignoredFatalProvider')]
+    public function test_a_fatal_error_is_ignored_when_it_is_not_the_plugins_fault(string $message, ?string $file, bool $devMode): void
+    {
+        $plugin = $this->installedPluginForFatal();
+        config()->set('panel.plugin.dev_mode', $devMode);
+
+        $this->service->handleFatalError($this->fatal($message, $file ? plugin_path($plugin, $file) : base_path('app/Models/User.php')));
+
+        $this->assertSame(PluginStatus::Enabled->value, File::json(plugin_path($plugin, 'plugin.json'))['meta']['status']);
+    }
+
+    private function installedPluginForFatal(): string
+    {
+        $this->importedPlugins[] = 'test-crash-plugin';
+
+        $manifest = json_decode($this->updatableManifest('test-crash-plugin', '1.0.0', 'https://example.test/update.json'), true);
+        $manifest['meta'] = ['status' => PluginStatus::Enabled->value];
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-crash-plugin.zip', [
+            'test-crash-plugin/plugin.json' => json_encode($manifest),
+        ]));
+
+        Plugin::refreshRows();
+
+        return 'test-crash-plugin';
+    }
+
+    private function fatal(string $message, string $file): FatalError
+    {
+        return new FatalError($message, 0, ['type' => E_ERROR, 'message' => $message, 'file' => $file, 'line' => 9]);
     }
 
     private function installedVersion(string $id): string

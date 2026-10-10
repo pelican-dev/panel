@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Services\Helpers\PluginService;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -16,10 +17,12 @@ use Illuminate\Http\Request;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Laravel\Passkeys\Passkeys;
 use PDOException;
+use Symfony\Component\ErrorHandler\Error\FatalError;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -103,6 +106,36 @@ class Handler extends ExceptionHandler
         });
 
         $this->renderable(fn (AuthenticatorResponseVerificationException $ex, Request $request) => $this->invalidPasskey($ex, $request));
+
+        $this->reportable(fn (FatalError $ex) => $this->container->make(PluginService::class)->handleFatalError($ex));
+
+        $this->renderable(fn (FatalError $ex, Request $request) => $this->crashedPlugin($ex, $request));
+    }
+
+    /**
+     * Tell the request that hit a plugin's fatal error that the plugin was disabled, so a
+     * reload gets the panel back. Debug mode keeps the full error page.
+     */
+    private function crashedPlugin(FatalError $ex, Request $request): ?Response
+    {
+        if (config('app.debug') || $request->expectsJson()) {
+            return null;
+        }
+
+        $plugin = $this->container->make(PluginService::class)->crashedPluginFromFatal($ex);
+        if (!$plugin) {
+            return null;
+        }
+
+        // The crash happens while panels register, so the Filament based error pages can't render.
+        $this->registerErrorViewPaths();
+
+        return response(Blade::render(<<<'BLADE'
+            @extends('errors::minimal')
+            @section('title', 'Server Error')
+            @section('code', '500')
+            @section('message', $message)
+            BLADE, ['message' => trans('admin/plugin.crashed_reload', ['name' => $plugin->name])]), 500);
     }
 
     /**
