@@ -45,6 +45,11 @@ class PluginService
 
         $plugins = Plugin::orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
+            // A crashed plugin's files are what crashed, so don't touch them at all (not even its config)
+            if ($plugin->status === PluginStatus::Crashed) {
+                continue;
+            }
+
             try {
                 // Filter out plugins that require a newer plugin api than this panel supports
                 // (only in production, so plugin developers can work on fixing their plugin locally)
@@ -600,13 +605,14 @@ class PluginService
     }
 
     /**
-     * A fatal error can't be caught while a plugin loads and takes every request down with it,
-     * so when one comes from a plugin's files that plugin is marked as crashed and skipped.
+     * A fatal error, or any error while the app boots (e.g. in a plugin provider's boot()), takes
+     * every request down with it, so when one comes from a plugin's files that plugin is marked
+     * as crashed and skipped.
      */
-    public function handleFatalError(FatalError $error): void
+    public function handlePluginCrash(Throwable $error): void
     {
         try {
-            $plugin = $this->crashedPluginFromFatal($error);
+            $plugin = $this->crashedPluginFrom($error);
             if (!$plugin || $plugin->status === PluginStatus::Crashed) {
                 return;
             }
@@ -623,8 +629,13 @@ class PluginService
         }
     }
 
-    public function crashedPluginFromFatal(FatalError $error): ?Plugin
+    public function crashedPluginFrom(Throwable $error): ?Plugin
     {
+        // Once the app has booted, a plain error only breaks the request it happened in.
+        if (!$error instanceof FatalError && $this->app->isBooted()) {
+            return null;
+        }
+
         // Resource limits can trip inside a healthy plugin on a heavy request.
         if ($this->isDevModeActive() || Str::startsWith($error->getMessage(), ['Allowed memory size', 'Maximum execution time'])) {
             return null;

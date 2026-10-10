@@ -22,7 +22,6 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Laravel\Passkeys\Passkeys;
 use PDOException;
-use Symfony\Component\ErrorHandler\Error\FatalError;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -107,22 +106,22 @@ class Handler extends ExceptionHandler
 
         $this->renderable(fn (AuthenticatorResponseVerificationException $ex, Request $request) => $this->invalidPasskey($ex, $request));
 
-        $this->reportable(fn (FatalError $ex) => $this->container->make(PluginService::class)->handleFatalError($ex));
+        $this->reportable(fn (Throwable $ex) => $this->container->make(PluginService::class)->handlePluginCrash($ex));
 
-        $this->renderable(fn (FatalError $ex, Request $request) => $this->crashedPlugin($ex, $request));
+        $this->renderable(fn (Throwable $ex, Request $request) => $this->crashedPlugin($ex, $request));
     }
 
     /**
-     * Tell the request that hit a plugin's fatal error that the plugin was disabled, so a
+     * Tell the request that hit a plugin's crash that the plugin was disabled, so a
      * reload gets the panel back. Debug mode keeps the full error page.
      */
-    private function crashedPlugin(FatalError $ex, Request $request): ?Response
+    private function crashedPlugin(Throwable $ex, Request $request): ?Response
     {
         if (config('app.debug') || $request->expectsJson()) {
             return null;
         }
 
-        $plugin = $this->container->make(PluginService::class)->crashedPluginFromFatal($ex);
+        $plugin = $this->container->make(PluginService::class)->crashedPluginFrom($ex);
         if (!$plugin) {
             return null;
         }

@@ -9,13 +9,17 @@ use App\Models\User;
 use App\Services\Helpers\HubCredentials;
 use App\Services\Helpers\PluginService;
 use App\Tests\Integration\IntegrationTestCase;
+use Error;
 use Exception;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Process;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionProperty;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Symfony\Component\ErrorHandler\Error\FatalError;
 use ZipArchive;
@@ -618,7 +622,7 @@ class PluginServiceTest extends IntegrationTestCase
         $admin->syncRoles(Role::getRootAdmin());
         $user = User::factory()->create();
 
-        $this->service->handleFatalError($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
+        $this->service->handlePluginCrash($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
 
         $meta = File::json(plugin_path($plugin, 'plugin.json'))['meta'];
         $this->assertSame(PluginStatus::Crashed->value, $meta['status']);
@@ -629,7 +633,7 @@ class PluginServiceTest extends IntegrationTestCase
 
         // Requests still running when it crashed don't notify again.
         Plugin::refreshRows();
-        $this->service->handleFatalError($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
+        $this->service->handlePluginCrash($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
         $this->assertSame(1, $admin->notifications()->count());
     }
 
@@ -650,9 +654,26 @@ class PluginServiceTest extends IntegrationTestCase
         $plugin = $this->installedPluginForFatal();
         config()->set('panel.plugin.dev_mode', $devMode);
 
-        $this->service->handleFatalError($this->fatal($message, $file ? plugin_path($plugin, $file) : base_path('app/Models/User.php')));
+        $this->service->handlePluginCrash($this->fatal($message, $file ? plugin_path($plugin, $file) : base_path('app/Models/User.php')));
 
         $this->assertSame(PluginStatus::Enabled->value, File::json(plugin_path($plugin, 'plugin.json'))['meta']['status']);
+    }
+
+    public function test_an_error_from_a_plugin_only_crashes_it_while_the_app_boots(): void
+    {
+        $plugin = $this->installedPluginForFatal();
+        $error = new Error('Call to undefined function missing()');
+        (new ReflectionProperty($error, 'file'))->setValue($error, plugin_path($plugin, 'src', 'Providers', 'PluginProvider.php'));
+
+        // A runtime error only breaks the request it happened in.
+        $this->service->handlePluginCrash($error);
+        $this->assertSame(PluginStatus::Enabled->value, File::json(plugin_path($plugin, 'plugin.json'))['meta']['status']);
+
+        $booting = Mockery::mock(Application::class)->makePartial();
+        $booting->shouldReceive('isBooted')->andReturnFalse();
+
+        (new PluginService($booting))->handlePluginCrash($error);
+        $this->assertSame(PluginStatus::Crashed->value, File::json(plugin_path($plugin, 'plugin.json'))['meta']['status']);
     }
 
     private function installedPluginForFatal(): string
