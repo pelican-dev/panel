@@ -623,7 +623,7 @@ class PluginService
                 ->danger()
                 ->title(trans('admin/plugin.notifications.crashed'))
                 ->body($plugin->name . ': ' . $error->getMessage())
-                ->sendToDatabase(User::role(Role::ROOT_ADMIN)->get());
+                ->sendToDatabase(user()?->isRootAdmin() ? user() : User::role(Role::ROOT_ADMIN)->get());
         } catch (Throwable) {
             // Best effort, this runs while the original error is being reported.
         }

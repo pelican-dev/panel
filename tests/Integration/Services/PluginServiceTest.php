@@ -622,6 +622,8 @@ class PluginServiceTest extends IntegrationTestCase
         $admin->syncRoles(Role::getRootAdmin());
         $user = User::factory()->create();
 
+        // A regular user who hit the crash can't fix it, so it goes to the root admins instead.
+        $this->actingAs($user);
         $this->service->handlePluginCrash($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
 
         $meta = File::json(plugin_path($plugin, 'plugin.json'))['meta'];
@@ -635,6 +637,22 @@ class PluginServiceTest extends IntegrationTestCase
         Plugin::refreshRows();
         $this->service->handlePluginCrash($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
         $this->assertSame(1, $admin->notifications()->count());
+    }
+
+    public function test_a_root_admin_who_hits_a_plugin_crash_is_the_one_notified(): void
+    {
+        $plugin = $this->installedPluginForFatal();
+
+        $admin = User::factory()->create();
+        $admin->syncRoles(Role::getRootAdmin());
+        $other = User::factory()->create();
+        $other->syncRoles(Role::getRootAdmin());
+
+        $this->actingAs($admin);
+        $this->service->handlePluginCrash($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
+
+        $this->assertSame(1, $admin->notifications()->count());
+        $this->assertSame(0, $other->notifications()->count());
     }
 
     /** @return array<string, array{0: string, 1: ?string, 2: bool}> */

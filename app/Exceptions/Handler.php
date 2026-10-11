@@ -113,11 +113,11 @@ class Handler extends ExceptionHandler
 
     /**
      * Tell the request that hit a plugin's crash that the plugin was disabled, so a
-     * reload gets the panel back. Debug mode keeps the full error page.
+     * reload gets the panel back. Plugin dev mode keeps the full error page.
      */
     private function crashedPlugin(Throwable $ex, Request $request): ?Response
     {
-        if (config('app.debug') || $request->expectsJson()) {
+        if ($request->expectsJson()) {
             return null;
         }
 
