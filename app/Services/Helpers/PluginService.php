@@ -5,9 +5,12 @@ namespace App\Services\Helpers;
 use App\Enums\PluginStatus;
 use App\Exceptions\Service\InvalidFileUploadException;
 use App\Models\Plugin;
+use App\Models\Role;
+use App\Models\User;
 use Composer\Autoload\ClassLoader;
 use Exception;
 use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
 use Filament\Panel;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Console\Command;
@@ -22,6 +25,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use JsonException;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Symfony\Component\ErrorHandler\Error\FatalError;
+use Throwable;
 use ZipArchive;
 
 class PluginService
@@ -30,8 +35,8 @@ class PluginService
 
     public function loadPlugins(): void
     {
-        // Don't load any plugins during tests
-        if ($this->app->runningUnitTests()) {
+        // Don't load any plugins during tests, or in safe mode where a broken plugin can't be traced
+        if ($this->app->runningUnitTests() || $this->isSafeModeActive()) {
             return;
         }
 
@@ -40,6 +45,11 @@ class PluginService
 
         $plugins = Plugin::orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
+            // A crashed plugin's files are what crashed, so don't touch them at all (not even its config)
+            if ($plugin->status === PluginStatus::Crashed) {
+                continue;
+            }
+
             try {
                 // Filter out plugins that require a newer plugin api than this panel supports
                 // (only in production, so plugin developers can work on fixing their plugin locally)
@@ -132,7 +142,7 @@ class PluginService
                         $view->addNamespace($plugin->id, $views);
                     });
                 }
-            } catch (Exception $exception) {
+            } catch (Throwable $exception) {
                 $this->handlePluginException($plugin, $exception);
             }
         }
@@ -140,8 +150,8 @@ class PluginService
 
     public function loadPanelPlugins(Panel $panel): void
     {
-        // Don't load any plugins during tests
-        if ($this->app->runningUnitTests()) {
+        // Don't load any plugins during tests, or in safe mode where a broken plugin can't be traced
+        if ($this->app->runningUnitTests() || $this->isSafeModeActive()) {
             return;
         }
 
@@ -161,7 +171,7 @@ class PluginService
                 if ($plugin->status === PluginStatus::Errored) {
                     $this->enablePlugin($plugin);
                 }
-            } catch (Exception $exception) {
+            } catch (Throwable $exception) {
                 $this->handlePluginException($plugin, $exception);
             }
         }
@@ -612,11 +622,72 @@ class PluginService
         return config('panel.plugin.dev_mode', false);
     }
 
-    private function handlePluginException(Plugin $plugin, Exception $exception): void
+    public function isSafeModeActive(): bool
+    {
+        return config('panel.plugin.safe_mode', false);
+    }
+
+    /**
+     * A fatal error, or any error while the app boots (e.g. in a plugin provider's boot()), takes
+     * every request down with it, so when one comes from a plugin's files that plugin is marked
+     * as crashed and skipped.
+     */
+    public function handlePluginCrash(Throwable $error): void
+    {
+        try {
+            $plugin = $this->crashedPluginFrom($error);
+            if (!$plugin || $plugin->status === PluginStatus::Crashed) {
+                return;
+            }
+
+            $this->setStatus($plugin, PluginStatus::Crashed, $error->getMessage());
+
+            Notification::make()
+                ->danger()
+                ->title(trans('admin/plugin.notifications.crashed'))
+                ->body($plugin->name . ': ' . $error->getMessage())
+                ->sendToDatabase(user()?->isRootAdmin() ? user() : User::role(Role::ROOT_ADMIN)->get());
+        } catch (Throwable) {
+            // Best effort, this runs while the original error is being reported.
+        }
+    }
+
+    public function crashedPluginFrom(Throwable $error): ?Plugin
+    {
+        // Once the app has booted, a plain error only breaks the request it happened in.
+        if (!$error instanceof FatalError && $this->app->isBooted()) {
+            return null;
+        }
+
+        // Resource limits can trip inside a healthy plugin on a heavy request.
+        if ($this->isDevModeActive() || Str::startsWith($error->getMessage(), ['Allowed memory size', 'Maximum execution time'])) {
+            return null;
+        }
+
+        $plugins = base_path('plugins') . DIRECTORY_SEPARATOR;
+        if (!str_starts_with($error->getFile(), $plugins)) {
+            return null;
+        }
+
+        // Dot directories are imports and backups in progress, not plugins.
+        $id = Str::before(Str::after($error->getFile(), $plugins), DIRECTORY_SEPARATOR);
+        if ($id === '' || str_starts_with($id, '.')) {
+            return null;
+        }
+
+        return Plugin::find($id);
+    }
+
+    private function handlePluginException(Plugin $plugin, Throwable $exception): void
     {
         throw_if($this->isDevModeActive(), ($exception));
 
         report($exception);
+
+        // Reporting may have already marked it as crashed, which must stick so it's skipped next time.
+        if (Plugin::find($plugin->id)?->status === PluginStatus::Crashed) {
+            return;
+        }
 
         $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
     }
