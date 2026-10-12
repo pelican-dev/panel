@@ -224,7 +224,7 @@ class PluginService
             ->toArray();
 
         if (count($newPackages) > 0) {
-            $result = Process::path(base_path())->timeout(600)->run(['composer', 'require', ...$newPackages]);
+            $result = Process::path(base_path())->timeout(600)->run(['composer', 'require', '--update-no-dev', ...$newPackages]);
             throw_if($result->failed(), new Exception('Could not require new composer packages: ' . $result->errorOutput()));
         }
     }
