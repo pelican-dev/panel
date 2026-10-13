@@ -121,14 +121,14 @@ class ListFiles extends ListRecords
             ])
             ->recordUrl(function (File $file) use ($server) {
                 if ($file->is_directory) {
-                    return self::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]);
+                    return self::getUrl(['path' => join_paths($this->path, $file->name)]);
                 }
 
                 if (!user()?->can(SubuserPermission::FileReadContent, $server)) {
                     return null;
                 }
 
-                return $file->canEdit() ? EditFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]) : null;
+                return $file->canEdit() ? EditFiles::getUrl(['path' => join_paths($this->path, $file->name)]) : null;
             })
             ->recordActions([
                 Action::make('view')
@@ -136,11 +136,11 @@ class ListFiles extends ListRecords
                     ->label(trans('server/file.actions.open'))
                     ->icon(TablerIcon::Eye)
                     ->visible(fn (File $file) => $file->is_directory)
-                    ->url(fn (File $file) => self::getUrl(['path' => encode_path(join_paths($this->path, $file->name))])),
+                    ->url(fn (File $file) => self::getUrl(['path' => join_paths($this->path, $file->name)])),
                 EditAction::make('edit')
                     ->authorize(fn () => user()?->can(SubuserPermission::FileReadContent, $server))
                     ->visible(fn (File $file) => $file->canEdit())
-                    ->url(fn (File $file) => EditFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))])),
+                    ->url(fn (File $file) => EditFiles::getUrl(['path' => join_paths($this->path, $file->name)])),
                 ActionGroup::make([
                     Action::make('fm_rename')
                         ->authorize(fn () => user()?->can(SubuserPermission::FileUpdate, $server))
@@ -196,7 +196,7 @@ class ListFiles extends ListRecords
                         ->label(trans('server/file.actions.download'))
                         ->icon(TablerIcon::Download)->iconSize(IconSize::Large)
                         ->visible(fn (File $file) => $file->is_file)
-                        ->url(fn (File $file) => DownloadFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]), true),
+                        ->url(fn (File $file) => DownloadFiles::getUrl(['path' => join_paths($this->path, $file->name)]), true),
                     Action::make('fm_move')
                         ->authorize(fn () => user()?->can(SubuserPermission::FileUpdate, $server))
                         ->label(trans('server/file.actions.move.title'))
