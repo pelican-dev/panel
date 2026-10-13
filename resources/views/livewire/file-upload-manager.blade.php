@@ -43,7 +43,7 @@
         <div
             x-trap.noscroll="open && !minimized"
             role="dialog"
-            aria-modal="true"
+            :aria-modal="open && !minimized ? 'true' : null"
             aria-labelledby="file-upload-heading"
             class="flex max-h-[50vh] w-full max-w-2xl flex-col overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-800"
         >
