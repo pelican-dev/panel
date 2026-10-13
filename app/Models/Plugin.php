@@ -226,7 +226,17 @@ class Plugin extends Model implements HasPluginSettings
 
     public function shouldLoad(?string $panelId = null): bool
     {
-        return $this->fullClass() !== '\\Error\\Error' && ($this->status === PluginStatus::Enabled || $this->status === PluginStatus::Errored) && (is_null($panelId) || !$this->panels || in_array($panelId, explode(',', $this->panels)));
+        if ($this->fullClass() === '\\Error\\Error') {
+            return false;
+        }
+
+        if ($panelId) {
+            if ($this->panels && !in_array($panelId, explode(',', $this->panels)) && !$this->isTheme()) {
+                return false;
+            }
+        }
+
+        return $this->status === PluginStatus::Enabled || $this->status === PluginStatus::Errored;
     }
 
     public function canEnable(): bool
