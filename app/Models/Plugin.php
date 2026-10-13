@@ -231,7 +231,7 @@ class Plugin extends Model implements HasPluginSettings
         }
 
         if ($panelId) {
-            if ($this->panels && !in_array($panelId, explode(',', $this->panels)) && !$this->isTheme()) {
+            if ($this->panels && !in_array($panelId, explode(',', $this->panels)) && $this->category === PluginCategory::Plugin) {
                 return false;
             }
         }
