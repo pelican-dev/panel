@@ -138,10 +138,9 @@ class PanelInstaller extends SimplePage implements HasForms
 
     public function submit(UserCreationService $userCreationService): void
     {
-        try {
-            // Disable installer
-            $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
+        abort_if(self::isInstalled(), 404);
 
+        try {
             // Run migrations
             $this->runMigrations();
 
@@ -155,6 +154,9 @@ class PanelInstaller extends SimplePage implements HasForms
             // Install selected eggs
             $this->installEggs();
 
+            // Disable installer
+            $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
+
             // Redirect to admin panel
             $this->redirect(Filament::getPanel('admin')->getUrl());
         } catch (Halt) {
@@ -163,6 +165,8 @@ class PanelInstaller extends SimplePage implements HasForms
 
     public function writeToEnv(string $key): void
     {
+        abort_if(self::isInstalled(), 404);
+
         try {
             $variables = array_get($this->data, $key);
             $variables = array_filter($variables); // Filter array to remove NULL values
@@ -183,6 +187,8 @@ class PanelInstaller extends SimplePage implements HasForms
 
     public function runMigrations(): void
     {
+        abort_if(self::isInstalled(), 404);
+
         try {
             Artisan::call('migrate', [
                 '--force' => true,
@@ -214,6 +220,8 @@ class PanelInstaller extends SimplePage implements HasForms
 
     public function createAdminUser(UserCreationService $userCreationService): User
     {
+        abort_if(self::isInstalled(), 404);
+
         try {
             $userData = array_get($this->data, 'user');
             $userData['root_admin'] = true;
@@ -235,6 +243,8 @@ class PanelInstaller extends SimplePage implements HasForms
 
     public function installEggs(): void
     {
+        abort_if(self::isInstalled(), 404);
+
         try {
             $selectedEggs = array_get($this->data, 'eggs', []);
             if (!$selectedEggs) {
