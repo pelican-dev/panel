@@ -148,9 +148,13 @@ class AppServiceProvider extends ServiceProvider
             PanelResponseTypeInfer::class,
         ]);
 
-        /** @var PluginService $pluginService */
-        $pluginService = app(PluginService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
+        // Wait for the app to be installed before loading plugins, because some
+        // plugins may depend on the database being set up
+        if (config('app.installed')) {
+            /** @var PluginService $pluginService */
+            $pluginService = app(PluginService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
 
-        $pluginService->loadPlugins();
+            $pluginService->loadPlugins();
+        }
     }
 }
