@@ -157,6 +157,11 @@ class PanelInstaller extends SimplePage implements HasForms
             // Disable installer
             $this->writeToEnvironment(['APP_INSTALLED' => 'true']);
 
+            // Drop any Filament component cache built while the panel was still
+            // not installed. A stale cache may make the web runtime restore an
+            // empty panel (no pages/resources), which breaks the root route
+            Artisan::call('filament:clear-cached-components');
+
             // Redirect to admin panel
             $this->redirect(Filament::getPanel('admin')->getUrl());
         } catch (Halt) {
