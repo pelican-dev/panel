@@ -15,10 +15,15 @@ use Filament\Panel;
 
 class AdminPanelProvider extends PanelProvider
 {
-    public function panel(Panel $panel): Panel
+    protected function panelId(): string
     {
-        $panel = parent::panel($panel)
-            ->id('admin')
+        return 'admin';
+    }
+
+    protected function configurePanel(Panel $panel): Panel
+    {
+        $panel = $panel
+            ->id($this->panelId())
             ->path('admin')
             ->homeUrl('/')
             ->breadcrumbs(false)

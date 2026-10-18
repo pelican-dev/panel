@@ -11,10 +11,20 @@ use Filament\Panel;
 
 class AppPanelProvider extends PanelProvider
 {
-    public function panel(Panel $panel): Panel
+    protected function panelId(): string
     {
-        $panel = parent::panel($panel)
-            ->id('app')
+        return 'app';
+    }
+
+    protected function isDefaultPanel(): bool
+    {
+        return true;
+    }
+
+    protected function configurePanel(Panel $panel): Panel
+    {
+        $panel = $panel
+            ->id($this->panelId())
             ->default()
             ->breadcrumbs(false)
             ->navigation(false)

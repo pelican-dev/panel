@@ -29,6 +29,35 @@ abstract class PanelProvider extends BasePanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        if (!config('app.installed')) {
+            $panel = $panel
+                ->id($this->panelId())
+                ->middleware([
+                    RedirectIfNotInstalled::class,
+                ]);
+
+            return $this->isDefaultPanel() ? $panel->default() : $panel;
+        }
+        return $this->configurePanel($this->basePanel($panel));
+    }
+
+    /**
+     * The panel id, so Filament can register it
+     */
+    abstract protected function panelId(): string;
+
+    protected function isDefaultPanel(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Configure the panel once the app is installed
+     */
+    abstract protected function configurePanel(Panel $panel): Panel;
+
+    protected function basePanel(Panel $panel): Panel
+    {
         return $panel
             ->spa(fn () => !request()->routeIs('filament.server.pages.console'))
             ->spaUrlExceptions([

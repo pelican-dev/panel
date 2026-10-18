@@ -17,10 +17,15 @@ use Illuminate\Support\Facades\Blade;
 
 class ServerPanelProvider extends PanelProvider
 {
-    public function panel(Panel $panel): Panel
+    protected function panelId(): string
     {
-        $panel = parent::panel($panel)
-            ->id('server')
+        return 'server';
+    }
+
+    protected function configurePanel(Panel $panel): Panel
+    {
+        $panel = $panel
+            ->id($this->panelId())
             ->path('server')
             ->homeUrl(fn () => Filament::getPanel('app')->getUrl())
             ->tenant(Server::class, 'uuid_short')
