@@ -32,6 +32,7 @@ abstract class PanelProvider extends BasePanelProvider
         if (!config('app.installed')) {
             $panel = $panel
                 ->id($this->panelId())
+                ->path($this->panelPath())
                 ->middleware([
                     RedirectIfNotInstalled::class,
                 ]);
@@ -47,6 +48,14 @@ abstract class PanelProvider extends BasePanelProvider
      */
     abstract protected function panelId(): string;
 
+    /**
+     * The panel path, so its routes stay available before installation
+     */
+    protected function panelPath(): string
+    {
+        return '';
+    }
+
     protected function isDefaultPanel(): bool
     {
         return false;
@@ -60,6 +69,8 @@ abstract class PanelProvider extends BasePanelProvider
     protected function basePanel(Panel $panel): Panel
     {
         return $panel
+            ->id($this->panelId())
+            ->path($this->panelPath())
             ->spa(fn () => !request()->routeIs('filament.server.pages.console'))
             ->spaUrlExceptions([
                 '*/oauth/redirect/*',

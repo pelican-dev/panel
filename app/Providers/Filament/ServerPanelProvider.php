@@ -22,11 +22,14 @@ class ServerPanelProvider extends PanelProvider
         return 'server';
     }
 
+    protected function panelPath(): string
+    {
+        return 'server';
+    }
+
     protected function configurePanel(Panel $panel): Panel
     {
         $panel = $panel
-            ->id($this->panelId())
-            ->path('server')
             ->homeUrl(fn () => Filament::getPanel('app')->getUrl())
             ->tenant(Server::class, 'uuid_short')
             ->userMenuItems([

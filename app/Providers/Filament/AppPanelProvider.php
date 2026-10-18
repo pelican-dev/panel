@@ -24,7 +24,6 @@ class AppPanelProvider extends PanelProvider
     protected function configurePanel(Panel $panel): Panel
     {
         $panel = $panel
-            ->id($this->panelId())
             ->default()
             ->breadcrumbs(false)
             ->navigation(false)

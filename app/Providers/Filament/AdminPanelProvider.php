@@ -20,11 +20,14 @@ class AdminPanelProvider extends PanelProvider
         return 'admin';
     }
 
+    protected function panelPath(): string
+    {
+        return 'admin';
+    }
+
     protected function configurePanel(Panel $panel): Panel
     {
         $panel = $panel
-            ->id($this->panelId())
-            ->path('admin')
             ->homeUrl('/')
             ->breadcrumbs(false)
             ->sidebarCollapsibleOnDesktop(fn () => !$panel->hasTopNavigation())
