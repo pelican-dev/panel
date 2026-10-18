@@ -38,6 +38,7 @@ abstract class PanelProvider extends BasePanelProvider
 
             return $this->isDefaultPanel() ? $panel->default() : $panel;
         }
+
         return $this->configurePanel($this->basePanel($panel));
     }
 
