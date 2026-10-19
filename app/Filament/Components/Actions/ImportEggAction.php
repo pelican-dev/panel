@@ -46,7 +46,7 @@ class ImportEggAction extends Action
 
         $this->action(function (array $data, EggImporterService $eggImportService): void {
 
-            $gitHubEggs = array_get($this->data, 'eggs', []);
+            $gitHubEggs = array_filter(array_get($this->data, 'eggs', []));
             $eggs = array_merge(collect($data['urls'])->flatten()->whereNotNull()->unique()->all(), Arr::wrap($data['files']));
 
             if ($gitHubEggs) {
