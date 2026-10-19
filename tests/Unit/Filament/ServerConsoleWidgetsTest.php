@@ -35,5 +35,5 @@ it('does not listen for stats over livewire', function () {
 it('still finds filament listening for updateChartData in the browser', function () {
     $chartJs = file_get_contents(dirname(__DIR__, 3) . '/vendor/filament/widgets/dist/components/chart.js');
 
-    expect($chartJs)->toMatch('/\$on\((["\'])updateChartData\1/');
+    expect($chartJs)->toMatch('/addEventListener\((["\'])updateChartData\1/');
 });
