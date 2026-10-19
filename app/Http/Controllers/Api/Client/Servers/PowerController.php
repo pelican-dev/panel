@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
-use App\Facades\Activity;
 use App\Http\Controllers\Api\Client\ClientApiController;
 use App\Http\Requests\Api\Client\Servers\SendPowerRequest;
 use App\Models\Server;
@@ -34,8 +33,6 @@ class PowerController extends ClientApiController
         $this->repository->setServer($server)->power(
             $request->input('signal')
         );
-
-        Activity::event(strtolower("server:power.{$request->input('signal')}"))->log();
 
         return $this->returnNoContent();
     }
