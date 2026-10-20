@@ -6,8 +6,14 @@ use App\Contracts\Plugins\HasTheme;
 use App\Enums\CustomizationKey;
 use App\Models\Plugin;
 use App\Traits\EnvironmentWriterTrait;
+use Closure;
 use Filament\Facades\Filament;
+use Filament\FontProviders\BunnyFontProvider;
 use Filament\Panel;
+use Filament\Support\Facades\FilamentColor;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Foundation\Vite;
 
 class ThemeService
 {
@@ -23,7 +29,7 @@ class ThemeService
         return Plugin::query()
             ->themes()
             ->get()
-            ->filter(fn (Plugin $plugin) => $this->isTheme($plugin->id))
+            ->filter(fn (Plugin $plugin) => $plugin->isSwitchableTheme())
             ->mapWithKeys(fn (Plugin $plugin) => [$plugin->id => $plugin->name])
             ->all();
     }
@@ -32,23 +38,6 @@ class ThemeService
     public function getThemeOptions(): array
     {
         return [self::None => trans('profile.no_theme')] + $this->getThemes();
-    }
-
-    /** @return array<string, string> */
-    public function getAllThemes(): array
-    {
-        return Plugin::query()
-            ->themes()
-            ->get()
-            ->filter(fn (Plugin $plugin) => $plugin->isSwitchableTheme())
-            ->mapWithKeys(fn (Plugin $plugin) => [$plugin->id => $plugin->name])
-            ->all();
-    }
-
-    /** @return array<string, string> */
-    public function getAllThemeOptions(): array
-    {
-        return [self::None => trans('profile.no_theme')] + $this->getAllThemes();
     }
 
     /** @return array<string, string> */
@@ -65,7 +54,7 @@ class ThemeService
             $themeId = config('panel.filament.default-theme');
         }
 
-        return is_string($themeId) && $this->isTheme($themeId) ? $themeId : null;
+        return is_string($themeId) && $this->isRegisteredTheme($themeId) ? $themeId : null;
     }
 
     public function isForced(): bool
@@ -86,7 +75,7 @@ class ThemeService
             return self::None;
         }
 
-        return is_string($themeId) && $this->isTheme($themeId) ? $themeId : self::Default;
+        return is_string($themeId) && $this->isRegisteredTheme($themeId) ? $themeId : self::Default;
     }
 
     public function isActive(string $themeId): bool
@@ -109,7 +98,44 @@ class ThemeService
         ]);
     }
 
-    private function isTheme(string $themeId): bool
+    /** Applies each theme on the panel, gated so only the active one renders. */
+    public function registerThemes(Panel $panel): void
+    {
+        foreach ($panel->getPlugins() as $theme) {
+            if (!$theme instanceof HasTheme) {
+                continue;
+            }
+
+            $whenActive = fn (Closure $hook): Closure => function (Container $container, array $data = [], array $scopes = []) use ($theme, $hook): string {
+                if (!$this->isActive($theme->getId())) {
+                    return '';
+                }
+
+                return (string) $container->call($hook, ['data' => $data, 'scopes' => $scopes]);
+            };
+
+            $panel->renderHook(PanelsRenderHook::STYLES_AFTER, $whenActive(fn (Vite $vite): string => filled($entry = $theme->getThemeViteEntry()) ? $vite($entry)->toHtml() : ''));
+
+            $panel->renderHook(PanelsRenderHook::HEAD_END, $whenActive(function (BunnyFontProvider $fontProvider) use ($theme): string {
+                $font = $theme->getThemeFont();
+
+                if (blank($font)) {
+                    return '';
+                }
+
+                return $fontProvider->getHtml($font)->toHtml() . "<style>:root{--font-family:'" . e($font) . "';}</style>";
+            }));
+
+            foreach ($theme->getThemeRenderHooks() as $name => $hook) {
+                $panel->renderHook($name, $whenActive($hook));
+            }
+
+            // Registered on boot so the theme's colors override the panel's own.
+            $panel->bootUsing(fn () => FilamentColor::register(fn (): array => $this->isActive($theme->getId()) ? $theme->getThemeColors() : []));
+        }
+    }
+
+    private function isRegisteredTheme(string $themeId): bool
     {
         $panel = $this->getPanel();
 

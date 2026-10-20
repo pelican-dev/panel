@@ -39,6 +39,7 @@ abstract class PanelProvider extends BasePanelProvider
             $panel = $this->panel(Panel::make());
 
             $this->app->make(PluginService::class)->loadPanelPlugins($panel);
+            $this->app->make(ThemeService::class)->registerThemes($panel);
 
             return $panel;
         });

@@ -592,26 +592,12 @@ class PluginService
 
     public function hasAnyThemeEnabled(): bool
     {
-        $plugins = Plugin::orderBy('load_order')->get();
-        foreach ($plugins as $plugin) {
-            if ($plugin->isTheme() && $plugin->status === PluginStatus::Enabled) {
-                return true;
-            }
-        }
-
-        return false;
+        return Plugin::themes()->exists();
     }
 
-    public function hasThemePluginEnabled(): bool
+    public function hasExclusiveThemeEnabled(): bool
     {
-        $plugins = Plugin::orderBy('load_order')->get();
-        foreach ($plugins as $plugin) {
-            if ($plugin->isTheme() && !$plugin->isSwitchableTheme() && $plugin->status === PluginStatus::Enabled) {
-                return true;
-            }
-        }
-
-        return false;
+        return Plugin::themes()->get()->contains(fn (Plugin $plugin) => !$plugin->isSwitchableTheme());
     }
 
     /** @return string[] */

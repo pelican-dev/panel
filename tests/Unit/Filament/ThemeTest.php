@@ -7,7 +7,6 @@ use App\Enums\CustomizationKey;
 use App\Models\User;
 use App\Services\Helpers\ThemeService;
 use App\Tests\TestCase;
-use App\Traits\Filament\IsTheme;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Panel;
@@ -26,6 +25,8 @@ class ThemeTest extends TestCase
             ->plugin(new FakeTheme('beta', ['primary' => Color::Lime]));
 
         Filament::setCurrentPanel($panel);
+
+        $this->app->make(ThemeService::class)->registerThemes($panel);
 
         return $panel;
     }
@@ -171,8 +172,6 @@ class ThemeTest extends TestCase
 
 final class FakeTheme implements HasTheme
 {
-    use IsTheme;
-
     /** @param array<string, array<int|string, string|int>|string> $colors */
     public function __construct(
         private readonly string $id,
@@ -185,6 +184,10 @@ final class FakeTheme implements HasTheme
         return $this->id;
     }
 
+    public function register(Panel $panel): void {}
+
+    public function boot(Panel $panel): void {}
+
     public function getThemeColors(): array
     {
         return $this->colors;
@@ -193,6 +196,11 @@ final class FakeTheme implements HasTheme
     public function getThemeFont(): ?string
     {
         return $this->font;
+    }
+
+    public function getThemeViteEntry(): ?string
+    {
+        return null;
     }
 
     /** @return array<string, Closure> */

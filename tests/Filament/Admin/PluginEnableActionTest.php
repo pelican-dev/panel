@@ -10,9 +10,9 @@ use App\Models\Plugin;
 use App\Models\Role;
 use App\Services\Helpers\PluginService;
 use App\Tests\Integration\IntegrationTestCase;
-use App\Traits\Filament\IsTheme;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Panel;
 use Filament\Tables\Table;
 
 class PluginEnableActionTest extends IntegrationTestCase
@@ -81,10 +81,32 @@ class PluginEnableActionTest extends IntegrationTestCase
 
 final class SwitchableTheme implements HasTheme
 {
-    use IsTheme;
-
     public function getId(): string
     {
         return 'fake';
+    }
+
+    public function register(Panel $panel): void {}
+
+    public function boot(Panel $panel): void {}
+
+    public function getThemeColors(): array
+    {
+        return [];
+    }
+
+    public function getThemeFont(): ?string
+    {
+        return null;
+    }
+
+    public function getThemeViteEntry(): ?string
+    {
+        return null;
+    }
+
+    public function getThemeRenderHooks(): array
+    {
+        return [];
     }
 }

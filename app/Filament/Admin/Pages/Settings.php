@@ -234,9 +234,9 @@ class Settings extends Page implements HasSchemas
             Select::make('FILAMENT_DEFAULT_THEME')
                 ->label(trans('admin/setting.general.default_theme'))
                 ->hintIcon(TablerIcon::QuestionMark, trans('admin/setting.general.default_theme_help'))
-                ->options($this->themeService->getAllThemeOptions())
+                ->options($this->themeService->getThemeOptions())
                 ->selectablePlaceholder(false)
-                ->visible(fn () => $this->themeService->getAllThemes() !== [])
+                ->visible(fn () => $this->themeService->getThemes() !== [])
                 ->default(config('panel.filament.default-theme')),
             Toggle::make('FILAMENT_FORCE_THEME')
                 ->label(trans('admin/setting.general.force_theme'))
@@ -247,7 +247,7 @@ class Settings extends Page implements HasSchemas
                 ->onColor('success')
                 ->offColor('danger')
                 ->stateCast(new BooleanStateCast(false))
-                ->visible(fn () => $this->themeService->getAllThemes() !== [])
+                ->visible(fn () => $this->themeService->getThemes() !== [])
                 ->default(env('FILAMENT_FORCE_THEME', config('panel.filament.force-theme'))),
             ToggleButtons::make('APP_2FA_REQUIRED')
                 ->label(trans('admin/setting.general.2fa_requirement'))
