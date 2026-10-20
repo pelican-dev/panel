@@ -149,7 +149,7 @@ class ActivityResource extends Resource
         $server = Filament::getTenant();
 
         return ActivityLog::whereHas('subjects', fn (Builder $query) => $query->where('subject_id', $server->id)->where('subject_type', $server->getMorphClass()))
-            ->visibleToCustomers()
+            ->visibleEvents()
             ->when(config('activity.hide_admin_activity'), fn (Builder $builder) => $builder->hideAdminActivity($server));
     }
 

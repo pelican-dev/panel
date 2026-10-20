@@ -10,12 +10,12 @@ use Illuminate\Support\Str;
 /**
  * Writes {key}:create|update|delete audit events for the models it observes.
  *
- * Customer-facing surfaces (server panel, app panel, client API) already log
+ * User-facing surfaces (server panel, app panel, client API) already log
  * their own richer events, and daemon callbacks are not admin actions, so both
  * are skipped. Everything else is logged: admin panel, application API, console.
  *
- * Events are prefixed "audit:" so the customer-facing activity feeds, which
- * list rows by subject, can leave them out (ActivityLog::visibleToCustomers).
+ * Events are prefixed "audit:" so the user-facing activity feeds, which
+ * list rows by subject, can leave them out (ActivityLog::visibleEvents).
  */
 class AuditObserver
 {

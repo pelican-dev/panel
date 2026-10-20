@@ -450,7 +450,7 @@ class EditProfile extends BaseEditProfile
                         ->addable(false)
                         ->relationship(null, function (Builder $query) {
                             /** @var Builder<ActivityLog> $query */
-                            $query->visibleToCustomers()->orderByDesc('timestamp')->limit(50);
+                            $query->visibleEvents()->orderByDesc('timestamp')->limit(50);
                         })
                         ->schema([
                             TextEntry::make('log')
