@@ -4,18 +4,25 @@ namespace App\Tests\Integration\Services;
 
 use App\Enums\PluginStatus;
 use App\Models\Plugin;
+use App\Models\Role;
+use App\Models\User;
 use App\Services\Helpers\HubCredentials;
 use App\Services\Helpers\PluginService;
 use App\Services\Helpers\ThemeService;
 use App\Tests\Integration\IntegrationTestCase;
+use Error;
 use Exception;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Process;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionProperty;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Symfony\Component\ErrorHandler\Error\FatalError;
 use ZipArchive;
 
 class PluginServiceTest extends IntegrationTestCase
@@ -383,6 +390,28 @@ class PluginServiceTest extends IntegrationTestCase
         $this->assertDirectoryDoesNotExist(plugin_path('test-other-plugin'));
     }
 
+    public function test_import_keeps_the_install_state_of_the_plugin_it_replaces(): void
+    {
+        $this->importedPlugins[] = 'test-reimport-plugin';
+
+        $installed = json_decode($this->manifest('test-reimport-plugin', '1.0.0'), true);
+        $installed['meta'] = ['status' => PluginStatus::Disabled->value, 'load_order' => 2];
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-reimport-plugin.zip', [
+            'test-reimport-plugin/plugin.json' => json_encode($installed),
+        ]));
+
+        $this->assertTrue($this->service->isInstalled('test-reimport-plugin'));
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-reimport-plugin.zip', [
+            'test-reimport-plugin/plugin.json' => $this->manifest('test-reimport-plugin', '2.0.0'),
+        ]));
+
+        $manifest = File::json(plugin_path('test-reimport-plugin', 'plugin.json'));
+        $this->assertSame('2.0.0', $manifest['version']);
+        $this->assertSame(['status' => PluginStatus::Disabled->value, 'load_order' => 2], $manifest['meta']);
+    }
+
     public function test_import_keeps_the_existing_plugin_when_the_move_fails(): void
     {
         $this->importedPlugins[] = 'test-clean-plugin';
@@ -422,7 +451,7 @@ class PluginServiceTest extends IntegrationTestCase
         $this->assertDirectoryDoesNotExist(plugin_path('.test-clean-plugin.bak'));
     }
 
-    public function test_update_downloads_and_reinstalls_the_new_version(): void
+    public function test_update_only_swaps_the_files_of_a_plugin_that_is_not_installed(): void
     {
         $this->importedPlugins[] = 'test-update-plugin';
 
@@ -437,8 +466,12 @@ class PluginServiceTest extends IntegrationTestCase
             'test-update-plugin/plugin.json' => $this->updatableManifest('test-update-plugin', '1.0.0', $updateUrl),
         ]));
 
+        // The archive claiming to be enabled must not get the plugin installed.
+        $archived = json_decode($this->updatableManifest('test-update-plugin', '2.0.0', $updateUrl), true);
+        $archived['meta'] = ['status' => PluginStatus::Enabled->value];
+
         $update = file_get_contents($this->makeUpload('2.0.0.zip', [
-            'test-update-plugin/plugin.json' => $this->updatableManifest('test-update-plugin', '2.0.0', $updateUrl),
+            'test-update-plugin/plugin.json' => json_encode($archived),
         ])->getPathname());
 
         Http::fake([
@@ -454,11 +487,46 @@ class PluginServiceTest extends IntegrationTestCase
         $this->assertSame('2.0.0', $updated->version);
         $this->assertSame('2.0.0', $this->installedVersion('test-update-plugin'));
 
-        // installPlugin() ran against the reloaded row and recorded the plugin as installed but disabled.
-        $this->assertSame(PluginStatus::Disabled->value, File::json(plugin_path('test-update-plugin', 'plugin.json'))['meta']['status']);
+        // A plugin that was never installed only has its files swapped, nothing gets installed.
+        $this->assertFalse($this->service->isInstalled('test-update-plugin'));
+        Process::assertNothingRan();
 
         Plugin::refreshRows();
         $this->assertSame('2.0.0', Plugin::findOrFail('test-update-plugin')->version);
+        $this->assertSame(PluginStatus::NotInstalled, Plugin::findOrFail('test-update-plugin')->status);
+    }
+
+    public function test_update_keeps_the_status_and_load_order_of_an_installed_plugin(): void
+    {
+        $this->importedPlugins[] = 'test-update-plugin';
+
+        config()->set('app.version', '1.0.0');
+        Process::fake();
+
+        $updateUrl = 'https://example.test/test-update-plugin/update.json';
+        $downloadUrl = 'https://example.test/test-update-plugin/2.0.0.zip';
+
+        $installed = json_decode($this->updatableManifest('test-update-plugin', '1.0.0', $updateUrl), true);
+        $installed['meta'] = ['status' => PluginStatus::Enabled->value, 'load_order' => 3];
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-update-plugin.zip', [
+            'test-update-plugin/plugin.json' => json_encode($installed),
+        ]));
+
+        Http::fake([
+            $updateUrl => Http::response(['*' => ['version' => '2.0.0', 'download_url' => $downloadUrl]]),
+            $downloadUrl => Http::response(file_get_contents($this->makeUpload('2.0.0.zip', [
+                'test-update-plugin/plugin.json' => $this->updatableManifest('test-update-plugin', '2.0.0', $updateUrl),
+            ])->getPathname())),
+        ]);
+
+        Plugin::refreshRows();
+        $this->service->updatePlugin(Plugin::findOrFail('test-update-plugin'));
+
+        $meta = File::json(plugin_path('test-update-plugin', 'plugin.json'))['meta'];
+        $this->assertSame(PluginStatus::Enabled->value, $meta['status']);
+        $this->assertSame(3, $meta['load_order']);
+        $this->assertSame('2.0.0', $this->installedVersion('test-update-plugin'));
     }
 
     public function test_update_verifies_the_checksum_from_the_update_feed(): void
@@ -632,6 +700,107 @@ class PluginServiceTest extends IntegrationTestCase
         $this->service->downloadPluginFromUrl('https://hub.pelican.dev/plugins/test-hub-plugin/download/1/test-hub-plugin.zip');
 
         Http::assertSent(fn ($request) => !$request->hasHeader('X-Panel-Api-Key'));
+    }
+
+    public function test_a_fatal_error_in_a_plugin_marks_it_crashed_and_notifies_root_admins(): void
+    {
+        $plugin = $this->installedPluginForFatal();
+
+        $admin = User::factory()->create();
+        $admin->syncRoles(Role::getRootAdmin());
+        $user = User::factory()->create();
+
+        // A regular user who hit the crash can't fix it, so it goes to the root admins instead.
+        $this->actingAs($user);
+        $this->service->handlePluginCrash($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
+
+        $meta = File::json(plugin_path($plugin, 'plugin.json'))['meta'];
+        $this->assertSame(PluginStatus::Crashed->value, $meta['status']);
+        $this->assertSame('Trait "Missing" not found', $meta['status_message']);
+
+        $this->assertSame(1, $admin->notifications()->count());
+        $this->assertSame(0, $user->notifications()->count());
+
+        // Requests still running when it crashed don't notify again.
+        Plugin::refreshRows();
+        $this->service->handlePluginCrash($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
+        $this->assertSame(1, $admin->notifications()->count());
+    }
+
+    public function test_a_root_admin_who_hits_a_plugin_crash_is_the_one_notified(): void
+    {
+        $plugin = $this->installedPluginForFatal();
+
+        $admin = User::factory()->create();
+        $admin->syncRoles(Role::getRootAdmin());
+        $other = User::factory()->create();
+        $other->syncRoles(Role::getRootAdmin());
+
+        $this->actingAs($admin);
+        $this->service->handlePluginCrash($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
+
+        $this->assertSame(1, $admin->notifications()->count());
+        $this->assertSame(0, $other->notifications()->count());
+    }
+
+    /** @return array<string, array{0: string, 1: ?string, 2: bool}> */
+    public static function ignoredFatalProvider(): array
+    {
+        return [
+            'memory limit' => ['Allowed memory size of 134217728 bytes exhausted', 'src/Plugin.php', false],
+            'execution time' => ['Maximum execution time of 30 seconds exceeded', 'src/Plugin.php', false],
+            'outside plugins' => ['Trait "Missing" not found', null, false],
+            'dev mode' => ['Trait "Missing" not found', 'src/Plugin.php', true],
+        ];
+    }
+
+    #[DataProvider('ignoredFatalProvider')]
+    public function test_a_fatal_error_is_ignored_when_it_is_not_the_plugins_fault(string $message, ?string $file, bool $devMode): void
+    {
+        $plugin = $this->installedPluginForFatal();
+        config()->set('panel.plugin.dev_mode', $devMode);
+
+        $this->service->handlePluginCrash($this->fatal($message, $file ? plugin_path($plugin, $file) : base_path('app/Models/User.php')));
+
+        $this->assertSame(PluginStatus::Enabled->value, File::json(plugin_path($plugin, 'plugin.json'))['meta']['status']);
+    }
+
+    public function test_an_error_from_a_plugin_only_crashes_it_while_the_app_boots(): void
+    {
+        $plugin = $this->installedPluginForFatal();
+        $error = new Error('Call to undefined function missing()');
+        (new ReflectionProperty($error, 'file'))->setValue($error, plugin_path($plugin, 'src', 'Providers', 'PluginProvider.php'));
+
+        // A runtime error only breaks the request it happened in.
+        $this->service->handlePluginCrash($error);
+        $this->assertSame(PluginStatus::Enabled->value, File::json(plugin_path($plugin, 'plugin.json'))['meta']['status']);
+
+        $booting = Mockery::mock(Application::class)->makePartial();
+        $booting->shouldReceive('isBooted')->andReturnFalse();
+
+        (new PluginService($booting))->handlePluginCrash($error);
+        $this->assertSame(PluginStatus::Crashed->value, File::json(plugin_path($plugin, 'plugin.json'))['meta']['status']);
+    }
+
+    private function installedPluginForFatal(): string
+    {
+        $this->importedPlugins[] = 'test-crash-plugin';
+
+        $manifest = json_decode($this->updatableManifest('test-crash-plugin', '1.0.0', 'https://example.test/update.json'), true);
+        $manifest['meta'] = ['status' => PluginStatus::Enabled->value];
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-crash-plugin.zip', [
+            'test-crash-plugin/plugin.json' => json_encode($manifest),
+        ]));
+
+        Plugin::refreshRows();
+
+        return 'test-crash-plugin';
+    }
+
+    private function fatal(string $message, string $file): FatalError
+    {
+        return new FatalError($message, 0, ['type' => E_ERROR, 'message' => $message, 'file' => $file, 'line' => 9]);
     }
 
     private function installedVersion(string $id): string

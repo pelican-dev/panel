@@ -25,7 +25,7 @@ return [
         'environment' => [
             'label' => 'Environment',
             'ok' => 'Ok, Set to :actual',
-            'failed' => 'Environment is set to :actual , Expected :expected',
+            'failed' => 'Environment is set to :actual, Expected :expected',
         ],
         'nodeversions' => [
             'label' => 'Node Versions',
@@ -53,6 +53,9 @@ return [
         ],
         'useddiskspace' => [
             'label' => 'Disk Space',
+        ],
+        'queue' => [
+            'label' => 'Queue',
         ],
     ],
     'checks' => [

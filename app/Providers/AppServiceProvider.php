@@ -65,21 +65,6 @@ class AppServiceProvider extends ServiceProvider
             $config->set('app.key', '');
         }
 
-        Relation::enforceMorphMap([
-            'allocation' => Allocation::class,
-            'api_key' => ApiKey::class,
-            'backup' => Backup::class,
-            'database' => Database::class,
-            'egg' => Egg::class,
-            'egg_variable' => EggVariable::class,
-            'schedule' => Schedule::class,
-            'server' => Server::class,
-            'ssh_key' => UserSSHKey::class,
-            'task' => Task::class,
-            'user' => User::class,
-            'node' => Node::class,
-        ]);
-
         Http::macro(
             'daemon',
             fn (Node $node, array $headers = []) => Http::acceptJson()
@@ -136,6 +121,23 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(LoginResponseContract::class, LoginResponse::class);
+
+        // Registered here rather than in boot() so it's in place before the panel providers load
+        // plugins, and a plugin crashing them can still notify users and look up their roles.
+        Relation::enforceMorphMap([
+            'allocation' => Allocation::class,
+            'api_key' => ApiKey::class,
+            'backup' => Backup::class,
+            'database' => Database::class,
+            'egg' => Egg::class,
+            'egg_variable' => EggVariable::class,
+            'schedule' => Schedule::class,
+            'server' => Server::class,
+            'ssh_key' => UserSSHKey::class,
+            'task' => Task::class,
+            'user' => User::class,
+            'node' => Node::class,
+        ]);
 
         Scramble::ignoreDefaultRoutes();
 

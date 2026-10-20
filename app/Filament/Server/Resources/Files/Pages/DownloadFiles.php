@@ -43,7 +43,7 @@ class DownloadFiles extends Page
             ->setScopes(NodeJwtScope::FileDownload)
             ->setUser(user())
             ->setClaims([
-                'file_path' => rawurldecode($path),
+                'file_path' => $path,
                 'server_uuid' => $server->uuid,
             ])
             ->handle($server->node, user()?->id . $server->uuid);

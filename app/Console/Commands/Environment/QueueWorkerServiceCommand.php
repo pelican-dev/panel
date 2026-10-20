@@ -16,18 +16,18 @@ class QueueWorkerServiceCommand extends Command
         {--group= : The group that PHP runs under.}
         {--overwrite : Force overwrite if the service file already exists.}';
 
-    public function handle(): void
+    public function handle(): int
     {
         if (@file_exists('/.dockerenv')) {
             $result = Process::run('supervisorctl restart queue-worker');
             if ($result->failed()) {
                 $this->error('Error restarting service: ' . $result->errorOutput());
 
-                return;
+                return self::FAILURE;
             }
             $this->line('Queue worker service file updated successfully.');
 
-            return;
+            return self::SUCCESS;
         }
         $serviceName = $this->option('service-name') ?? $this->ask('Queue worker service name', 'pelican-queue');
         $path = '/etc/systemd/system/' . $serviceName  . '.service';
@@ -36,7 +36,7 @@ class QueueWorkerServiceCommand extends Command
         if ($fileExists && !$this->option('overwrite') && !$this->confirm('The service file already exists. Do you want to overwrite it?')) {
             $this->line('Creation of queue worker service file aborted because service file already exists.');
 
-            return;
+            return self::SUCCESS;
         }
 
         $user = $this->option('user') ?? $this->ask('Webserver User', 'www-data');
@@ -70,7 +70,7 @@ WantedBy=multi-user.target
         if (!$success) {
             $this->error('Error creating service file');
 
-            return;
+            return self::FAILURE;
         }
 
         if ($fileExists) {
@@ -78,7 +78,7 @@ WantedBy=multi-user.target
             if ($result->failed()) {
                 $this->error('Error restarting service: ' . $result->errorOutput());
 
-                return;
+                return self::FAILURE;
             }
 
             $this->line('Queue worker service file updated successfully.');
@@ -87,10 +87,12 @@ WantedBy=multi-user.target
             if ($result->failed()) {
                 $this->error('Error enabling service: ' . $result->errorOutput());
 
-                return;
+                return self::FAILURE;
             }
 
             $this->line('Queue worker service file created successfully.');
         }
+
+        return self::SUCCESS;
     }
 }

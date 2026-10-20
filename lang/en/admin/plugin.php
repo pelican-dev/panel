@@ -28,6 +28,8 @@ return [
     'all' => 'All',
     'change_load_order' => 'Change load order',
     'apply_load_order' => 'Apply load order',
+    'crashed_reload' => ':name crashed and has been disabled, reload the page to continue.',
+    'safe_mode_active' => 'Safe mode is on, so no plugins are loaded. Unset PANEL_PLUGIN_SAFE_MODE to load them again.',
 
     'enable_theme_modal' => [
         'heading' => 'Theme already enabled',
@@ -48,6 +50,7 @@ return [
         'enabled' => 'Enabled',
         'errored' => 'Errored',
         'incompatible' => 'Incompatible',
+        'crashed' => 'Crashed',
     ],
 
     'category_enum' => [
@@ -72,6 +75,7 @@ return [
         'update_started' => 'Plugin update started in the background',
         'updated' => 'Plugin updated',
         'update_error' => 'Could not update plugin',
+        'crashed' => 'A plugin crashed and has been disabled',
 
         'enabled' => 'Plugin enabled',
         'disabled' => 'Plugin disabled',
