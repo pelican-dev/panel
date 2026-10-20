@@ -148,3 +148,17 @@ it('sends power actions for a server the user owns', function () {
 
     Http::assertSent(powerRequest($server->uuid, 'start'));
 });
+
+it('logs power activity so server webhooks fire', function () {
+    Http::fake(['*' => Http::response(['state' => 'running', 'utilization' => []])]);
+
+    [$user, $server] = generateTestAccount();
+
+    $this->actingAs($user);
+
+    livewire(ListServers::class)
+        ->call('powerAction', $server->id, 'stop')
+        ->assertSuccessful();
+
+    $this->assertActivityFor('server:power.stop', $user, $server);
+});

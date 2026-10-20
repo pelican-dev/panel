@@ -9,15 +9,20 @@ use App\Http\Controllers\Api\Application\ApplicationApiController;
 use App\Http\Requests\Api\Application\Plugins\ImportFilePluginRequest;
 use App\Http\Requests\Api\Application\Plugins\ReadPluginRequest;
 use App\Http\Requests\Api\Application\Plugins\UninstallPluginRequest;
+use App\Http\Requests\Api\Application\Plugins\UpdateHubCredentialsRequest;
 use App\Http\Requests\Api\Application\Plugins\WritePluginRequest;
 use App\Models\Plugin;
 use App\Services\Helpers\PluginService;
+use App\Traits\EnvironmentWriterTrait;
 use Exception;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Artisan;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class PluginController extends ApplicationApiController
 {
+    use EnvironmentWriterTrait;
+
     /**
      * PluginController constructor.
      */
@@ -70,7 +75,12 @@ class PluginController extends ApplicationApiController
     {
         throw_unless($request->hasFile('plugin'), new PanelException("No 'plugin' file in request"));
 
-        $this->pluginService->downloadPluginFromFile($request->file('plugin'));
+        $id = $this->pluginService->downloadPluginFromFile($request->file('plugin'));
+
+        // Importing over an installed plugin is an update, so reinstall it.
+        if ($this->pluginService->isInstalled($id)) {
+            $this->pluginService->installPlugin(Plugin::findOrFail($id), false);
+        }
 
         return new Response('', Response::HTTP_CREATED);
     }
@@ -84,7 +94,12 @@ class PluginController extends ApplicationApiController
      */
     public function importUrl(ImportFilePluginRequest $request): Response
     {
-        $this->pluginService->downloadPluginFromUrl($request->input('url'));
+        $id = $this->pluginService->downloadPluginFromUrl($request->input('url'));
+
+        // Importing over an installed plugin is an update, so reinstall it.
+        if ($this->pluginService->isInstalled($id)) {
+            $this->pluginService->installPlugin(Plugin::findOrFail($id), false);
+        }
 
         return new Response('', Response::HTTP_CREATED);
     }
@@ -187,5 +202,30 @@ class PluginController extends ApplicationApiController
         return $this->response->item($plugin)
             ->transformWith(PluginData::class)
             ->toArray();
+    }
+
+    /**
+     * Connect to Pelican Hub
+     *
+     * Stores the Hub URL and this panel's Hub-issued key. The key is only sent to
+     * that Hub over https, so the Hub can serve beta builds this panel was
+     * explicitly enrolled in. Called by the Hub when the panel owner enrolls it.
+     */
+    public function hub(UpdateHubCredentialsRequest $request): Response
+    {
+        $this->writeToEnvironment([
+            'PANEL_PLUGIN_HUB_URL' => rtrim($request->string('hub_url')->toString(), '/'),
+            'PANEL_PLUGIN_HUB_API_KEY' => $request->string('api_key')->toString(),
+        ]);
+
+        // Plugin updates run on the queue; restart workers so they pick up the key.
+        Artisan::call('queue:restart');
+
+        // Update checks cached without the key would hide beta builds until they expire.
+        foreach (Plugin::query()->pluck('id') as $pluginId) {
+            cache()->forget("plugins.$pluginId.update");
+        }
+
+        return $this->returnNoContent();
     }
 }

@@ -1,10 +1,14 @@
 <?php
 
+use App\Enums\EggFormat;
 use App\Enums\RolePermissionModels;
 use App\Filament\Admin\Resources\Eggs\Pages\ListEggs;
 use App\Models\Egg;
 use App\Models\Role;
+use App\Services\Eggs\Sharing\EggExporterService;
+use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
+use Illuminate\Http\UploadedFile;
 use Spatie\Permission\Models\Permission;
 
 use function Pest\Livewire\livewire;
@@ -51,3 +55,20 @@ it('non root admin with permissions can see eggs', function () {
         ->assertCountTableRecords($eggs->count())
         ->assertCanSeeTableRecords($eggs);
 });
+
+it('imports an exported egg file', function (EggFormat $format) {
+    $egg = cloneEggAndVariables(getBungeecordEgg());
+    $file = UploadedFile::fake()->createWithContent("egg-test.{$format->value}", app(EggExporterService::class)->handle($egg->id, $format));
+    // Report the MIME type sniffed from the contents, like a real upload, not the one guessed from the extension.
+    $file->mimeType(mime_content_type($file->getPathname()));
+    $egg->delete();
+
+    [$admin] = generateTestAccount([]);
+    $this->actingAs($admin->syncRoles(Role::getRootAdmin()));
+
+    livewire(ListEggs::class)
+        ->callAction(TestAction::make('import')->table(), ['files' => [$file]])
+        ->assertHasNoFormErrors();
+
+    expect(Egg::where('uuid', $egg->uuid)->exists())->toBeTrue();
+})->with([EggFormat::YAML, EggFormat::JSON]);

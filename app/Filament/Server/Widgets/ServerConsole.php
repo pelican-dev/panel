@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Widgets;
 
+use App\Enums\ContainerStatus;
 use App\Enums\NodeJwtScope;
 use App\Enums\SubuserPermission;
 use App\Exceptions\Http\HttpForbiddenException;
@@ -113,26 +114,13 @@ class ServerConsole extends Widget
         $this->dispatch('sendAuthRequest', token: $this->getToken());
     }
 
-    #[On('store-stats')]
-    public function storeStats(string $data): void
+    // Without the old per-frame stats round trip nothing else re-renders this widget,
+    // so cache the new state here or the command input stays locked until a reload.
+    #[On('console-status')]
+    public function receivedConsoleStatus(?string $state = null): void
     {
-        $data = json_decode($data);
-
-        if (!is_object($data)) {
-            return;
-        }
-
-        $data = array_intersect_key(get_object_vars($data), array_flip(['cpu_absolute', 'memory_bytes', 'disk_bytes', 'network', 'uptime']));
-
-        $timestamp = now()->getTimestamp();
-
-        foreach ($data as $key => $value) {
-            $cacheKey = "servers.{$this->server->id}.$key";
-            $cachedStats = cache()->get($cacheKey, []);
-
-            $cachedStats[$timestamp] = $value;
-
-            cache()->put($cacheKey, array_slice($cachedStats, -120), now()->addMinute());
+        if ($state && ($status = ContainerStatus::tryFrom($state))) {
+            cache()->put("servers.{$this->server->uuid}.status", $status, now()->addSeconds(15));
         }
     }
 
