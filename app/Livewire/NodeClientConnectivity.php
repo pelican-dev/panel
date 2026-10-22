@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Enums\NodeJwtScope;
+use App\Enums\ServerState;
 use App\Enums\TablerIcon;
 use App\Models\Node;
 use App\Services\Nodes\NodeJWTService;
@@ -39,7 +40,10 @@ class NodeClientConnectivity extends Component
         $wsUrl = null;
         $wsToken = null;
 
-        $server = $this->node->servers()->first();
+        // Wings closes the websocket of a suspended server, so test with one that isn't
+        $server = $this->node->servers()
+            ->where(fn ($query) => $query->whereNull('status')->orWhereNot('status', ServerState::Suspended))
+            ->first();
 
         if ($server) {
             $user = Auth::user();
