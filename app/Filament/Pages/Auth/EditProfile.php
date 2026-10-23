@@ -224,7 +224,7 @@ class EditProfile extends BaseEditProfile
                                         ->success()
                                         ->send();
                                 } else {
-                                    session()->put('oauth_link', $id);
+                                    session()->put('oauth_link', ['id' => $id, 'at' => now()->timestamp]);
 
                                     redirect(Socialite::with($id)->redirect()->getTargetUrl());
                                 }

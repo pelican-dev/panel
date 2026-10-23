@@ -51,12 +51,25 @@ it('links an oauth account the user started linking from their profile', functio
     fakeSteamUser('76561190000000001');
 
     $this->actingAs($user)
-        ->withSession(['oauth_link' => 'steam'])
+        ->withSession(['oauth_link' => ['id' => 'steam', 'at' => now()->timestamp]])
         ->get('/auth/oauth/callback/steam')
         ->assertRedirect(EditProfile::getUrl(['tab' => 'oauth::data::tab'], panel: 'app'))
         ->assertSessionMissing('oauth_link');
 
     expect($user->refresh()->oauth)->toHaveKey('steam', '76561190000000001');
+});
+
+it('does not link when the profile started linking too long ago', function () {
+    /** @var User $user */
+    $user = User::factory()->create();
+    fakeSteamUser('76561190000000001');
+
+    $this->actingAs($user)
+        ->withSession(['oauth_link' => ['id' => 'steam', 'at' => now()->subMinutes(10)->timestamp]])
+        ->get('/auth/oauth/callback/steam')
+        ->assertSessionMissing('oauth_link');
+
+    expect($user->refresh()->oauth)->not->toHaveKey('steam');
 });
 
 it('starts linking from the profile page', function () {
@@ -74,5 +87,5 @@ it('starts linking from the profile page', function () {
         ->callAction(TestAction::make('oauth_steam')->schemaComponent(true))
         ->assertRedirect('https://steamcommunity.com/openid/login');
 
-    expect(session('oauth_link'))->toBe('steam');
+    expect(session('oauth_link.id'))->toBe('steam');
 });

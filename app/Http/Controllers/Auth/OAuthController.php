@@ -57,8 +57,10 @@ class OAuthController extends Controller
 
         if ($request->user()) {
             // The callback is a plain GET request and stateless providers (like Steam) have no state
-            // check, so only link accounts when this session started linking the provider from the profile.
-            if ($request->session()->pull('oauth_link') !== $driver->getId()) {
+            // check, so only link accounts when this session started linking the provider from the profile
+            // in the last few minutes.
+            $link = $request->session()->pull('oauth_link');
+            if (($link['id'] ?? null) !== $driver->getId() || now()->timestamp - ($link['at'] ?? 0) > 300) {
                 Notification::make()
                     ->title(trans('profile.link_failed', ['name' => $driver->getName()]))
                     ->danger()
