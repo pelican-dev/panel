@@ -51,8 +51,8 @@ it('links an oauth account the user started linking from their profile', functio
     fakeSteamUser('76561190000000001');
 
     $this->actingAs($user)
-        ->withSession(['oauth_link' => ['id' => 'steam', 'at' => now()->timestamp]])
-        ->get('/auth/oauth/callback/steam')
+        ->withSession(['oauth_link' => ['id' => 'steam', 'at' => now()->timestamp, 'nonce' => 'abc']])
+        ->get('/auth/oauth/callback/steam?link=abc')
         ->assertRedirect(EditProfile::getUrl(['tab' => 'oauth::data::tab'], panel: 'app'))
         ->assertSessionMissing('oauth_link');
 
@@ -65,8 +65,21 @@ it('does not link when the profile started linking too long ago', function () {
     fakeSteamUser('76561190000000001');
 
     $this->actingAs($user)
-        ->withSession(['oauth_link' => ['id' => 'steam', 'at' => now()->subMinutes(10)->timestamp]])
-        ->get('/auth/oauth/callback/steam')
+        ->withSession(['oauth_link' => ['id' => 'steam', 'at' => now()->subMinutes(10)->timestamp, 'nonce' => 'abc']])
+        ->get('/auth/oauth/callback/steam?link=abc')
+        ->assertSessionMissing('oauth_link');
+
+    expect($user->refresh()->oauth)->not->toHaveKey('steam');
+});
+
+it('does not link a steam account without the nonce from the profile', function () {
+    /** @var User $user */
+    $user = User::factory()->create();
+    fakeSteamUser('76561190000000001');
+
+    $this->actingAs($user)
+        ->withSession(['oauth_link' => ['id' => 'steam', 'at' => now()->timestamp, 'nonce' => 'abc']])
+        ->get('/auth/oauth/callback/steam?link=xyz')
         ->assertSessionMissing('oauth_link');
 
     expect($user->refresh()->oauth)->not->toHaveKey('steam');
@@ -77,6 +90,7 @@ it('starts linking from the profile page', function () {
     $user = User::factory()->create();
 
     $provider = Mockery::mock(Provider::class);
+    $provider->shouldReceive('redirectUrl')->once()->with(Mockery::on(fn (string $url) => $url === url('/auth/oauth/callback/steam?link=' . session('oauth_link.nonce'))));
     $provider->shouldReceive('redirect')->andReturn(new RedirectResponse('https://steamcommunity.com/openid/login'));
     Socialite::shouldReceive('with')->with('steam')->andReturn($provider);
 

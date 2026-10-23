@@ -14,6 +14,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Contracts\User as OAuthUser;
 use Laravel\Socialite\Facades\Socialite;
+use SocialiteProviders\Steam\Provider as SteamProvider;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 
 class OAuthController extends Controller
@@ -60,7 +61,9 @@ class OAuthController extends Controller
             // check, so only link accounts when this session started linking the provider from the profile
             // in the last few minutes.
             $link = $request->session()->pull('oauth_link');
-            if (($link['id'] ?? null) !== $driver->getId() || now()->timestamp - ($link['at'] ?? 0) > 300) {
+            $nonceMismatch = Socialite::driver($driver->getId()) instanceof SteamProvider
+                && !hash_equals($link['nonce'] ?? '', (string) $request->query('link'));
+            if (($link['id'] ?? null) !== $driver->getId() || now()->timestamp - ($link['at'] ?? 0) > 300 || $nonceMismatch) {
                 Notification::make()
                     ->title(trans('profile.link_failed', ['name' => $driver->getName()]))
                     ->danger()
