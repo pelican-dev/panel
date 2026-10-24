@@ -95,7 +95,7 @@ it('logs an anonymous update outside any panel, such as the application API or c
     $this->assertActivityFor('audit:mount.update', null, $mount);
 });
 
-it('logs nothing from the customer-facing surfaces', function () {
+it('logs nothing from the user-facing surfaces', function () {
     Filament::setCurrentPanel(Filament::getPanel('app'));
 
     $mount = makeMount();

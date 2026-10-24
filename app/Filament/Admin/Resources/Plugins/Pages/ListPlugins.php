@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\Plugins\Pages;
 
 use App\Enums\PluginCategory;
 use App\Filament\Admin\Resources\Plugins\PluginResource;
+use App\Livewire\AlertBanner;
 use App\Models\Plugin;
 use App\Services\Helpers\PluginService;
 use Filament\Resources\Pages\ListRecords;
@@ -21,6 +22,18 @@ class ListPlugins extends ListRecords
         $pluginService = app(PluginService::class); // @phpstan-ignore myCustomRules.forbiddenGlobalFunctions
 
         $pluginService->updateLoadOrder($order);
+    }
+
+    public function mount(): void
+    {
+        parent::mount();
+
+        if (config('panel.plugin.safe_mode')) {
+            AlertBanner::make('plugin_safe_mode')
+                ->title(trans('admin/plugin.safe_mode_active'))
+                ->warning()
+                ->send();
+        }
     }
 
     public function getTabs(): array

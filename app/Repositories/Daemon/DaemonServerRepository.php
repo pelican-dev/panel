@@ -4,6 +4,7 @@ namespace App\Repositories\Daemon;
 
 use App\Enums\ContainerStatus;
 use App\Enums\HttpStatusCode;
+use App\Facades\Activity;
 use Exception;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Client\ConnectionException;
@@ -167,8 +168,12 @@ class DaemonServerRepository extends DaemonRepository
      */
     public function power(string $action): Response
     {
-        return $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/power",
+        $response = $this->getHttpClient()->post("/api/servers/{$this->server->uuid}/power",
             ['action' => $action],
         );
+
+        Activity::event(strtolower("server:power.$action"))->subject($this->server)->log();
+
+        return $response;
     }
 }

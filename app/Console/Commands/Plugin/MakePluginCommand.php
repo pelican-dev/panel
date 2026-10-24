@@ -60,8 +60,9 @@ class MakePluginCommand extends Command
         $description = $this->option('description') ?? $this->ask('Description (can be empty)');
 
         $category = $this->option('category') ?? $this->choice('Category', collect(PluginCategory::cases())->mapWithKeys(fn (PluginCategory $category) => [$category->value => $category->getLabel()])->toArray(), PluginCategory::Plugin->value);
+        $category = PluginCategory::tryFrom($category);
 
-        if (!PluginCategory::tryFrom($category)) {
+        if (is_null($category)) {
             $this->error('Unknown plugin category!');
 
             return;
@@ -70,19 +71,25 @@ class MakePluginCommand extends Command
         $url = $this->option('url') ?? $this->ask('URL (can be empty)');
         $updateUrl = $this->option('updateUrl') ?? $this->ask('Update URL (can be empty)');
 
-        $panels = $this->option('panels');
-        if (!$panels) {
-            if ($this->confirm('Should the plugin be available on all panels?', true)) {
-                $panels = null;
-            } else {
-                $panels = $this->choice('Panels (comma separated list)', [
-                    'admin' => 'Admin Area',
-                    'server' => 'Client Area',
-                    'app' => 'Server List',
-                ], multiple: true);
+        if ($category === PluginCategory::Plugin) {
+            $panels = $this->option('panels');
+
+            if (!$panels) {
+                if ($this->confirm('Should the plugin be available on all panels?', true)) {
+                    $panels = null;
+                } else {
+                    $panels = $this->choice('Panels (comma separated list)', [
+                        'admin' => 'Admin Area',
+                        'server' => 'Client Area',
+                        'app' => 'Server List',
+                    ], multiple: true);
+                }
             }
+
+            $panels = is_string($panels) ? explode(',', $panels) : $panels;
+        } else {
+            $panels = null;
         }
-        $panels = is_string($panels) ? explode(',', $panels) : $panels;
 
         $panelVersion = $this->option('panelVersion');
         if (!$panelVersion) {
@@ -106,7 +113,7 @@ class MakePluginCommand extends Command
             'author' => $author,
             'version' => '1.0.0',
             'description' => $description,
-            'category' => $category,
+            'category' => $category->value,
             'url' => $url,
             'update_url' => $updateUrl,
             'namespace' => $namespace,
