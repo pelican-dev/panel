@@ -25,7 +25,7 @@ return [
         'environment' => [
             'label' => 'Environment',
             'ok' => 'Ok, Set to :actual',
-            'failed' => 'Environment is set to :actual , Expected :expected',
+            'failed' => 'Environment is set to :actual, Expected :expected',
         ],
         'nodeversions' => [
             'label' => 'Node Versions',
@@ -42,6 +42,8 @@ return [
             'failed' => 'Installed version is :currentVersion but latest is :latestVersion',
             'up_to_date' => 'Up to date',
             'outdated' => 'Outdated',
+            'unknown' => 'Unknown',
+            'unavailable' => 'The latest version could not be fetched from GitHub',
         ],
         'schedule' => [
             'label' => 'Schedule',
@@ -51,6 +53,9 @@ return [
         ],
         'useddiskspace' => [
             'label' => 'Disk Space',
+        ],
+        'queue' => [
+            'label' => 'Queue',
         ],
     ],
     'checks' => [

@@ -7,15 +7,18 @@ use App\Enums\PluginCategory;
 use App\Enums\PluginStatus;
 use App\Exceptions\PluginIdMismatchException;
 use App\Facades\Plugins;
+use App\Services\Helpers\HubCredentials;
+use App\Services\Helpers\SoftwareVersionService;
 use Exception;
 use Filament\Schemas\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use JsonException;
 use Sushi\Sushi;
+use Throwable;
 
 /**
  * @property string $id
@@ -30,6 +33,7 @@ use Sushi\Sushi;
  * @property string $class
  * @property string|null $panels
  * @property string|null $panel_version
+ * @property int|null $api_version
  * @property string|null $composer_packages
  * @property PluginStatus $status
  * @property string|null $status_message
@@ -61,6 +65,9 @@ class Plugin extends Model implements HasPluginSettings
 
     public const RESOURCE_NAME = 'plugin';
 
+    /** The highest plugin.json api_version this panel supports. */
+    public const SUPPORTED_API_VERSION = 1;
+
     protected $primaryKey = 'id';
 
     protected $keyType = 'string';
@@ -89,6 +96,7 @@ class Plugin extends Model implements HasPluginSettings
             'class' => 'string',
             'panels' => 'string',
             'panel_version' => 'string',
+            'api_version' => 'integer',
             'composer_packages' => 'string',
             'status' => 'string',
             'status_message' => 'string',
@@ -110,6 +118,7 @@ class Plugin extends Model implements HasPluginSettings
      *     class: string,
      *     panels: ?string,
      *     panel_version: ?string,
+     *     api_version: ?int,
      *     composer_packages: ?string,
      *     status: string,
      *     status_message: ?string,
@@ -160,6 +169,7 @@ class Plugin extends Model implements HasPluginSettings
                     'class' => $data['class'],
                     'panels' => $panels,
                     'panel_version' => Arr::get($data, 'panel_version', null),
+                    'api_version' => Arr::get($data, 'api_version', null),
                     'composer_packages' => $composerPackages,
 
                     'status' => Str::lower(Arr::get($data, 'meta.status', PluginStatus::NotInstalled->value)),
@@ -187,6 +197,7 @@ class Plugin extends Model implements HasPluginSettings
                         'class' => 'Error',
                         'panels' => null,
                         'panel_version' => null,
+                        'api_version' => null,
                         'composer_packages' => null,
 
                         'status' => PluginStatus::Errored->value,
@@ -215,12 +226,22 @@ class Plugin extends Model implements HasPluginSettings
 
     public function shouldLoad(?string $panelId = null): bool
     {
-        return $this->fullClass() !== '\\Error\\Error' && ($this->status === PluginStatus::Enabled || $this->status === PluginStatus::Errored) && (is_null($panelId) || !$this->panels || in_array($panelId, explode(',', $this->panels)));
+        if ($this->fullClass() === '\\Error\\Error') {
+            return false;
+        }
+
+        if ($panelId) {
+            if ($this->panels && !in_array($panelId, explode(',', $this->panels)) && $this->category === PluginCategory::Plugin) {
+                return false;
+            }
+        }
+
+        return $this->status === PluginStatus::Enabled || $this->status === PluginStatus::Errored;
     }
 
     public function canEnable(): bool
     {
-        return $this->status === PluginStatus::Disabled && $this->isCompatible();
+        return ($this->status === PluginStatus::Disabled || $this->status === PluginStatus::Crashed) && $this->isCompatible();
     }
 
     public function canDisable(): bool
@@ -230,9 +251,39 @@ class Plugin extends Model implements HasPluginSettings
 
     public function isCompatible(): bool
     {
-        $currentPanelVersion = config('app.version', 'canary');
+        $currentPanelVersion = App::call(fn (SoftwareVersionService $service) => $service->currentComparableVersion());
 
-        return !$this->panel_version || $currentPanelVersion === 'canary' || version_compare($currentPanelVersion, str($this->panel_version)->trim('^'), $this->isPanelVersionStrict() ? '=' : '>=');
+        if (!$this->panel_version || $currentPanelVersion === null) {
+            return true;
+        }
+
+        if ($this->isPanelVersionStrict()) {
+            return version_compare($currentPanelVersion, $this->panel_version, '=');
+        }
+
+        // ^X.Y.Z means >=X.Y.Z and below the next major, like composer's caret,
+        // capping at the next minor for 0.x and the next patch for 0.0.x
+        $parts = explode('.', ltrim($this->panel_version, '^'));
+        $minimum = implode('.', array_pad($parts, 3, '0'));
+        $upper = match (true) {
+            $parts[0] !== '0' || !isset($parts[1]) => ((int) $parts[0] + 1) . '.0.0',
+            $parts[1] !== '0' || !isset($parts[2]) => '0.' . ((int) $parts[1] + 1) . '.0',
+            default => '0.0.' . ((int) $parts[2] + 1),
+        };
+
+        // ponytail: prereleases of the upper bound (2.0.0-rc1 vs ^1.0) pass version_compare's '<'
+        // where composer would exclude them; swap to composer/semver if that ever bites
+        return version_compare($currentPanelVersion, $minimum, '>=') && version_compare($currentPanelVersion, $upper, '<');
+    }
+
+    public function effectiveApiVersion(): int
+    {
+        return $this->api_version ?? 1;
+    }
+
+    public function isApiVersionSupported(): bool
+    {
+        return $this->effectiveApiVersion() <= self::SUPPORTED_API_VERSION;
     }
 
     public function isPanelVersionStrict(): bool
@@ -254,7 +305,7 @@ class Plugin extends Model implements HasPluginSettings
         return $this->category === PluginCategory::Language;
     }
 
-    /** @return null|array<string, array{version: string, download_url: string}> */
+    /** @return null|array<string, array{version: string, download_url: string, sha256?: string}> */
     private function getUpdateData(): ?array
     {
         if (!$this->update_url) {
@@ -263,7 +314,8 @@ class Plugin extends Model implements HasPluginSettings
 
         return cache()->remember("plugins.$this->id.update", now()->addMinutes(10), function () {
             try {
-                $data = Http::timeout(5)->connectTimeout(1)->get($this->update_url)->throw()->json();
+                $data = HubCredentials::request($this->update_url)
+                    ->timeout(5)->connectTimeout(1)->get($this->update_url)->throw()->json();
 
                 // Support update jsons that cover multiple plugins
                 if (array_key_exists($this->id, $data)) {
@@ -279,48 +331,67 @@ class Plugin extends Model implements HasPluginSettings
         });
     }
 
-    public function isUpdateAvailable(): bool
+    /** @return null|array{version: string, download_url: string, sha256?: string} */
+    private function getUpdateEntry(): ?array
     {
-        $panelVersion = config('app.version', 'canary');
+        $panelVersion = App::call(fn (SoftwareVersionService $service) => $service->currentComparableVersion());
 
-        if ($panelVersion === 'canary') {
-            return false;
-        }
-
-        $updateData = $this->getUpdateData();
-        if ($updateData) {
-            if (array_key_exists($panelVersion, $updateData)) {
-                return version_compare($updateData[$panelVersion]['version'], $this->version, '>');
-            }
-
-            if (array_key_exists('*', $updateData)) {
-                return version_compare($updateData['*']['version'], $this->version, '>');
-            }
-        }
-
-        return false;
-    }
-
-    public function getDownloadUrlForUpdate(): ?string
-    {
-        $panelVersion = config('app.version', 'canary');
-
-        if ($panelVersion === 'canary') {
+        if ($panelVersion === null) {
             return null;
         }
 
         $updateData = $this->getUpdateData();
         if ($updateData) {
             if (array_key_exists($panelVersion, $updateData)) {
-                return $updateData[$panelVersion]['download_url'];
+                return $updateData[$panelVersion];
             }
 
             if (array_key_exists('*', $updateData)) {
-                return $updateData['*']['download_url'];
+                return $updateData['*'];
             }
         }
 
         return null;
+    }
+
+    public function isUpdateAvailable(): bool
+    {
+        $entry = $this->getUpdateEntry();
+
+        if ($entry === null) {
+            return false;
+        }
+
+        return version_compare($entry['version'], $this->version, '>');
+    }
+
+    public function getDownloadUrlForUpdate(): ?string
+    {
+        return $this->getUpdateEntry()['download_url'] ?? null;
+    }
+
+    /**
+     * Download URL and advertised checksum taken from one read of the update
+     * feed, so the two always describe the same archive. The checksum is null
+     * only when the feed doesn't include one; a present but empty or invalid
+     * value is kept so verification rejects it.
+     *
+     * @return null|array{url: string, sha256: ?string}
+     */
+    public function getUpdateDownload(): ?array
+    {
+        $entry = $this->getUpdateEntry();
+
+        if (blank($entry['download_url'] ?? null)) {
+            return null;
+        }
+
+        $sha256 = null;
+        if (array_key_exists('sha256', $entry)) {
+            $sha256 = (string) $entry['sha256'];
+        }
+
+        return ['url' => (string) $entry['download_url'], 'sha256' => $sha256];
     }
 
     public function hasSettings(): bool
@@ -329,10 +400,25 @@ class Plugin extends Model implements HasPluginSettings
             $pluginObject = new ($this->fullClass());
 
             return $pluginObject instanceof HasPluginSettings;
-        } catch (Exception) {
+        } catch (Throwable) {
         }
 
         return false;
+    }
+
+    /** @return array<string, mixed> */
+    public function getSettingsFormData(): array
+    {
+        try {
+            $pluginObject = new ($this->fullClass());
+
+            if ($pluginObject instanceof HasPluginSettings) {
+                return $pluginObject->getSettingsFormData();
+            }
+        } catch (Throwable) {
+        }
+
+        return [];
     }
 
     /** @return Component[] */
@@ -344,7 +430,7 @@ class Plugin extends Model implements HasPluginSettings
             if ($pluginObject instanceof HasPluginSettings) {
                 return $pluginObject->getSettingsForm();
             }
-        } catch (Exception) {
+        } catch (Throwable) {
         }
 
         return [];
@@ -359,7 +445,7 @@ class Plugin extends Model implements HasPluginSettings
             if ($pluginObject instanceof HasPluginSettings) {
                 $pluginObject->saveSettings($data);
             }
-        } catch (Exception) {
+        } catch (Throwable) {
         }
     }
 

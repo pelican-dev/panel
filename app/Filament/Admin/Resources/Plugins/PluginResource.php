@@ -83,6 +83,7 @@ class PluginResource extends Resource
                     ->label(trans('admin/plugin.status'))
                     ->badge()
                     ->tooltip(fn (Plugin $plugin) => $plugin->status_message)
+                    ->description(fn (Plugin $plugin) => is_null($plugin->api_version) ? trans('admin/plugin.api_version_missing') : null)
                     ->sortable(),
             ])
             ->recordActions([
@@ -93,7 +94,7 @@ class PluginResource extends Resource
                     ->visible(fn (Plugin $plugin) => $plugin->getReadme() || $plugin->url)
                     ->url(fn (Plugin $plugin) => !$plugin->getReadme() ? $plugin->url : null, true)
                     ->slideOver(true)
-                    ->modalHeading('Readme')
+                    ->modalHeading(trans('admin/plugin.readme'))
                     ->modalSubmitAction(fn (Plugin $plugin) => Action::make('exclude_visit_website')
                         ->label(trans('admin/plugin.visit_website'))
                         ->visible(!is_null($plugin->url))
@@ -113,6 +114,7 @@ class PluginResource extends Resource
                     ->color('primary')
                     ->visible(fn (Plugin $plugin) => $plugin->status === PluginStatus::Enabled && $plugin->hasSettings())
                     ->schema(fn (Plugin $plugin) => $plugin->getSettingsForm())
+                    ->fillForm(fn (Plugin $plugin) => $plugin->getSettingsFormData())
                     ->action(fn (array $data, Plugin $plugin) => $plugin->saveSettings($data))
                     ->slideOver(),
                 ActionGroup::make([
@@ -144,7 +146,7 @@ class PluginResource extends Resource
                         ->authorize(fn (Plugin $plugin) => user()?->can('update', $plugin))
                         ->icon(TablerIcon::Download)
                         ->color('success')
-                        ->visible(fn (Plugin $plugin) => $plugin->status !== PluginStatus::NotInstalled && $plugin->isUpdateAvailable())
+                        ->visible(fn (Plugin $plugin) => $plugin->isUpdateAvailable())
                         ->action(function (Plugin $plugin) {
                             try {
                                 UpdatePlugin::dispatch(user(), $plugin->id);
@@ -263,11 +265,12 @@ class PluginResource extends Resource
                             /** @var UploadedFile $file */
                             $file = $data['file'];
 
-                            $pluginName = str($file->getClientOriginalName())->basename()->before('.zip')->toString();
+                            $id = $pluginService->downloadPluginFromFile($file);
 
-                            throw_if(Plugin::where('id', $pluginName)->exists(), new Exception(trans('admin/plugin.notifications.import_exists')));
-
-                            $pluginService->downloadPluginFromFile($file);
+                            // Importing over an installed plugin is an update: reinstall it in the background.
+                            if ($pluginService->isInstalled($id)) {
+                                InstallPlugin::dispatch(user(), $id, reinstall: true);
+                            }
 
                             Notification::make()
                                 ->success()
@@ -300,11 +303,12 @@ class PluginResource extends Resource
                     ])
                     ->action(function ($data, $livewire, PluginService $pluginService) {
                         try {
-                            $pluginName = str($data['url'])->before('.zip')->explode('/')->last();
+                            $id = $pluginService->downloadPluginFromUrl($data['url']);
 
-                            throw_if(Plugin::where('id', $pluginName)->exists(), new Exception(trans('admin/plugin.notifications.import_exists')));
-
-                            $pluginService->downloadPluginFromUrl($data['url']);
+                            // Importing over an installed plugin is an update: reinstall it in the background.
+                            if ($pluginService->isInstalled($id)) {
+                                InstallPlugin::dispatch(user(), $id, reinstall: true);
+                            }
 
                             Notification::make()
                                 ->success()

@@ -48,9 +48,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Socialite\Facades\Socialite;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use SocialiteProviders\Steam\Provider as SteamProvider;
 
 /**
  * @method User getUser()
@@ -183,8 +185,9 @@ class EditProfile extends BaseEditProfile
                                 return $file->delete();
                             }
 
-                            if ($fileUpload->getDisk()->exists($file)) {
-                                return $fileUpload->getDisk()->delete($file);
+                            $path = $fileUpload->getDirectory() . '/' . $this->getUser()->id . '.png';
+                            if ($fileUpload->getDisk()->exists($path)) {
+                                return $fileUpload->getDisk()->delete($path);
                             }
                         }),
                 ]),
@@ -223,7 +226,17 @@ class EditProfile extends BaseEditProfile
                                         ->success()
                                         ->send();
                                 } else {
-                                    redirect(Socialite::with($id)->redirect()->getTargetUrl());
+                                    $nonce = Str::random(40);
+                                    session()->put('oauth_link', ['id' => $id, 'at' => now()->timestamp, 'nonce' => $nonce]);
+
+                                    $provider = Socialite::with($id);
+
+                                    // Steam has no OAuth state, so carry a nonce through its return URL instead.
+                                    if ($provider instanceof SteamProvider) {
+                                        $provider->redirectUrl(url("/auth/oauth/callback/$id?link=$nonce"));
+                                    }
+
+                                    redirect($provider->redirect()->getTargetUrl());
                                 }
                             });
                     }
@@ -310,8 +323,8 @@ class EditProfile extends BaseEditProfile
                                                 $items = $component->getState();
                                                 $key = $items[$arguments['item']];
 
-                                                $apiKey = ApiKey::find($key['id'] ?? null);
-                                                if ($apiKey->exists()) {
+                                                $apiKey = $user->apiKeys()->find($key['id'] ?? null);
+                                                if ($apiKey) {
                                                     $apiKey->delete();
 
                                                     Activity::event('user:api-key.delete')
@@ -405,8 +418,8 @@ class EditProfile extends BaseEditProfile
                                             $items = $component->getState();
                                             $key = $items[$arguments['item']];
 
-                                            $sshKey = UserSSHKey::find($key['id'] ?? null);
-                                            if ($sshKey->exists()) {
+                                            $sshKey = $user->sshKeys()->find($key['id'] ?? null);
+                                            if ($sshKey) {
                                                 $sshKey->delete();
 
                                                 Activity::event('user:ssh-key.delete')
@@ -453,7 +466,7 @@ class EditProfile extends BaseEditProfile
                         ->schema([
                             TextEntry::make('log')
                                 ->hiddenLabel()
-                                ->state(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
+                                ->state(fn (ActivityLog $record) => new HtmlString($record->htmlable())),
                         ]),
                 ]),
             Tab::make('customization')

@@ -1,63 +1,63 @@
 {
-    "name": "pelican-dev/panel",
+    "name": "pelican/panel",
     "description": "The free, open-source game management panel. Supporting Minecraft, Spigot, BungeeCord, and SRCDS servers.",
     "license": "AGPL-3.0-only",
     "require": {
-        "php": "^8.3 || ^8.4 || ^8.5",
+        "php": "^8.4 || ^8.5",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
         "ext-zip": "*",
-        "aws/aws-sdk-php": "^3.387",
+        "aws/aws-sdk-php": "^3.401",
         "calebporzio/sushi": "^2.5",
         "charrafimed/global-search-modal": "^5.0",
         "dedoc/scramble": "^0.13",
-        "filament/filament": "^5.6",
-        "gboquizosanchez/filament-log-viewer": "^2.3",
-        "guzzlehttp/guzzle": "^7.13",
-        "laravel/framework": "^13.19",
+        "filament/filament": "^5.10",
+        "gboquizosanchez/filament-log-viewer": "^2.4",
+        "guzzlehttp/guzzle": "^8.2",
+        "laravel/framework": "^13.38",
         "laravel/helpers": "^1.8",
         "laravel/passkeys": "^0.2",
         "laravel/sanctum": "^4.3",
-        "laravel/socialite": "^5.28",
+        "laravel/socialite": "^5.31",
         "laravel/tinker": "^3.0",
         "laravel/ui": "^4.6",
         "lcobucci/jwt": "^5.6",
         "league/flysystem-aws-s3-v3": "^3.35",
         "league/flysystem-memory": "^3.31",
         "phiki/phiki": "^2.2",
-        "phpseclib/phpseclib": "^3.0.52",
-        "predis/predis": "^2.4",
+        "phpseclib/phpseclib": "^4.0",
+        "predis/predis": "^3.7",
         "s1lentium/iptools": "^1.2",
-        "secondnetwork/blade-tabler-icons": "^3.41",
+        "secondnetwork/blade-tabler-icons": "^3.46",
         "socialiteproviders/authentik": "^5.3",
         "socialiteproviders/discord": "^4.2",
-        "socialiteproviders/steam": "^4.3",
+        "socialiteproviders/steam": "^4.4",
         "spatie/laravel-data": "^4.23",
-        "spatie/laravel-fractal": "^6.4",
         "spatie/laravel-health": "^1.40",
-        "spatie/laravel-permission": "^6.25",
-        "spatie/laravel-query-builder": "^6.4",
+        "spatie/laravel-permission": "^8.3",
+        "spatie/laravel-query-builder": "^7.3",
         "spatie/temporary-directory": "^2.4",
         "symfony/http-client": "^7.4",
         "symfony/mailgun-mailer": "^7.4",
         "symfony/postmark-mailer": "^7.4",
         "symfony/yaml": "^7.4",
-        "webmozart/assert": "^1.12"
+        "webmozart/assert": "^2.5"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.7",
         "fakerphp/faker": "^1.24",
-        "larastan/larastan": "^3.9",
-        "laravel/pail": "^1.2.6",
-        "laravel/pint": "^1.29",
-        "laravel/sail": "^1.58",
+        "larastan/larastan": "^3.10",
+        "laravel/pail": "^1.2.7",
+        "laravel/pint": "^1.30",
+        "laravel/sail": "^1.65",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.9",
-        "pestphp/pest": "^4.0",
+        "pestphp/pest": "^4.7",
         "pestphp/pest-plugin-faker": "^4.0",
-        "pestphp/pest-plugin-livewire": "^4.0"
+        "pestphp/pest-plugin-livewire": "^4.0",
+        "spatie/pest-plugin-snapshots": "^2.3"
     },
     "autoload": {
         "files": [
@@ -72,7 +72,10 @@
     "autoload-dev": {
         "psr-4": {
             "App\\Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "tests/Integration/Api/Fixtures/random_int.php"
+        ]
     },
     "scripts": {
         "pint": "pint",
@@ -94,7 +97,7 @@
             "pestphp/pest-plugin": true
         },
         "platform": {
-            "php": "8.3"
+            "php": "8.4"
         }
     },
     "minimum-stability": "stable",

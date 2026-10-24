@@ -12,14 +12,13 @@ use App\Models\Node;
 use App\Models\Role;
 use App\Models\Server;
 use App\Models\User;
+use App\Models\WebhookConfiguration;
 use App\Services\Acl\Api\AdminAcl;
 use App\Tests\Integration\IntegrationTestCase;
 use App\Tests\Traits\Http\IntegrationJsonRequestAssertions;
 use App\Tests\Traits\Integration\CreatesTestModels;
-use App\Transformers\Api\Application\BaseTransformer;
-use App\Transformers\Api\Client\BaseClientTransformer;
+use Illuminate\Container\Container;
 use Illuminate\Http\Request;
-use PHPUnit\Framework\Assert;
 
 abstract class ApplicationApiIntegrationTestCase extends IntegrationTestCase
 {
@@ -97,25 +96,24 @@ abstract class ApplicationApiIntegrationTestCase extends IntegrationTestCase
                 Database::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
                 Mount::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
                 Role::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
+                WebhookConfiguration::RESOURCE_NAME => AdminAcl::READ | AdminAcl::WRITE,
             ], $permissions),
         ]);
     }
 
     /**
-     * Return a transformer that can be used for testing purposes.
+     * Return the attributes the given application Data class produces for a model,
+     * hydrated through the container the same way the response envelope does.
      */
-    protected function getTransformer(string $abstract): BaseTransformer
+    protected function getExpectedData(string $dataClass, mixed $model): array
     {
         $request = Request::createFromGlobals();
         $request->setUserResolver(function () {
             return $this->getApiKey()->user;
         });
 
-        $transformer = $abstract::fromRequest($request);
-
-        Assert::assertInstanceOf(BaseTransformer::class, $transformer);
-        Assert::assertNotInstanceOf(BaseClientTransformer::class, $transformer);
-
-        return $transformer;
+        return Container::getInstance()
+            ->call([$dataClass, 'fromModel'], ['model' => $model, 'request' => $request])
+            ->toArray();
     }
 }

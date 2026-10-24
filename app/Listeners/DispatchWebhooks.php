@@ -7,6 +7,7 @@ use App\Events\ActivityLogged;
 use App\Models\Server;
 use App\Models\User;
 use App\Models\WebhookConfiguration;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -61,7 +62,7 @@ class DispatchWebhooks
 
         /** @var WebhookConfiguration $webhookConfig */
         foreach ($webhooks as $webhookConfig) {
-            $webhookConfig->run($eventName, [$webhookData]);
+            $webhookConfig->run($eventName, $webhookData);
         }
     }
 
@@ -85,14 +86,19 @@ class DispatchWebhooks
 
         $obj = $payload[0] ?? null;
         $webhookData = ['event' => $eventName, 'timestamp' => now()->toIso8601String()];
-        if (is_object($obj)) {
+        if ($obj instanceof Arrayable) {
             $webhookData['data'] = $obj->toArray();
+        } elseif (is_object($obj)) {
+            // Custom events are plain classes with public properties, not Arrayable
+            $webhookData['data'] = collect(get_object_vars($obj))
+                ->map(fn ($value) => $value instanceof Arrayable ? $value->toArray() : $value)
+                ->all();
         } elseif (is_array($obj)) {
             $webhookData['data'] = $obj;
         }
 
         foreach ($matchingHooks as $webhookConfig) {
-            $webhookConfig->run($eventName, [$webhookData]);
+            $webhookConfig->run($eventName, $webhookData);
         }
     }
 
@@ -139,7 +145,7 @@ class DispatchWebhooks
         }
 
         foreach ($webhooks as $webhookConfig) {
-            $webhookConfig->run($eventName, [$webhookData]);
+            $webhookConfig->run($eventName, $webhookData);
         }
     }
 
@@ -214,7 +220,7 @@ class DispatchWebhooks
         }
 
         foreach ($matchingHooks as $webhookConfig) {
-            $webhookConfig->run($eventName, [$webhookData]);
+            $webhookConfig->run($eventName, $webhookData);
         }
     }
 

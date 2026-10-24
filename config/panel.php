@@ -55,8 +55,6 @@ return [
         'send_install_notification' => env('PANEL_SEND_INSTALL_NOTIFICATION', true),
         // Should an email be sent to a server owner whenever their server is reinstalled?
         'send_reinstall_notification' => env('PANEL_SEND_REINSTALL_NOTIFICATION', true),
-        // Should an email be sent to a server owner whenever a backup is completed?
-        'send_backup_completed_notification' => env('PANEL_SEND_BACKUP_COMPLETED_NOTIFICATION', true),
     ],
 
     'filament' => [
@@ -77,10 +75,23 @@ return [
 
     'webhook' => [
         'prune_days' => env('APP_WEBHOOK_PRUNE_DAYS', 30),
+
+        /*
+        | Request timeout in seconds used when delivering a webhook. A webhook type can
+        | override this by implementing its own deliver() method.
+        */
+        'timeout' => env('APP_WEBHOOK_TIMEOUT', 30),
     ],
 
     'plugin' => [
         'dev_mode' => env('PANEL_PLUGIN_DEV_MODE', false),
+        // Skip loading every plugin, to get back into a panel a broken plugin keeps crashing. If the config
+        // is cached, delete bootstrap/cache/config.php after setting it, since a cached config ignores .env.
+        'safe_mode' => env('PANEL_PLUGIN_SAFE_MODE', false),
         'max_import_size' => env('PANEL_PLUGIN_MAX_IMPORT_SIZE', 1024 * 1024 * 100),
+        // Optional Pelican Hub key for this panel. Only sent to hub_url over https,
+        // so the Hub can serve beta builds this panel was explicitly enrolled in.
+        'hub_url' => env('PANEL_PLUGIN_HUB_URL', 'https://hub.pelican.dev'),
+        'hub_api_key' => env('PANEL_PLUGIN_HUB_API_KEY'),
     ],
 ];

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Data\Api\Client\BackupData;
 use App\Enums\ServerState;
 use App\Enums\SubuserPermission;
 use App\Extensions\BackupAdapter\BackupAdapterService;
@@ -16,13 +17,10 @@ use App\Repositories\Daemon\DaemonBackupRepository;
 use App\Services\Backups\DeleteBackupService;
 use App\Services\Backups\DownloadLinkService;
 use App\Services\Backups\InitiateBackupService;
-use App\Transformers\Api\Client\BackupTransformer;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Spatie\Fractalistic\Exceptions\InvalidTransformation;
-use Spatie\Fractalistic\Exceptions\NoTransformerSpecified;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Throwable;
 
@@ -54,8 +52,8 @@ class BackupController extends ClientApiController
 
         $limit = min($request->query('per_page') ?? 20, 50);
 
-        return $this->fractal->collection($server->backups()->paginate($limit))
-            ->transformWith($this->getTransformer(BackupTransformer::class))
+        return $this->response->collection($server->backups()->paginate($limit))
+            ->transformWith(BackupData::class)
             ->addMeta([
                 'backup_count' => $server->backups()->nonFailed()->count(),
             ])
@@ -69,8 +67,6 @@ class BackupController extends ClientApiController
      *
      * @return array<array-key, mixed>
      *
-     * @throws InvalidTransformation
-     * @throws NoTransformerSpecified
      * @throws Throwable
      */
     public function store(StoreBackupRequest $request, Server $server): array
@@ -87,7 +83,9 @@ class BackupController extends ClientApiController
         }
 
         $backup = Activity::event('server:backup.start')->transaction(function ($log) use ($action, $server, $request) {
-            $server->backups()->lockForUpdate()->count();
+            // Serialize concurrent creates for this server so the limit check in the service holds.
+            // Locking the parent row works everywhere; a COUNT(*) FOR UPDATE is rejected by Postgres.
+            $server->newQuery()->whereKey($server->getKey())->lockForUpdate()->value('id');
 
             $backup = $action->handle($server, $request->input('name'));
 
@@ -99,8 +97,8 @@ class BackupController extends ClientApiController
             return $backup;
         });
 
-        return $this->fractal->item($backup)
-            ->transformWith($this->getTransformer(BackupTransformer::class))
+        return $this->response->item($backup)
+            ->transformWith(BackupData::class)
             ->toArray();
     }
 
@@ -124,8 +122,8 @@ class BackupController extends ClientApiController
 
         Activity::event($action)->subject($backup)->property('name', $backup->name)->log();
 
-        return $this->fractal->item($backup)
-            ->transformWith($this->getTransformer(BackupTransformer::class))
+        return $this->response->item($backup)
+            ->transformWith(BackupData::class)
             ->toArray();
     }
 
@@ -142,8 +140,8 @@ class BackupController extends ClientApiController
     {
         throw_unless($request->user()->can(SubuserPermission::BackupRead, $server), new AuthorizationException());
 
-        return $this->fractal->item($backup)
-            ->transformWith($this->getTransformer(BackupTransformer::class))
+        return $this->response->item($backup)
+            ->transformWith(BackupData::class)
             ->toArray();
     }
 
@@ -222,8 +220,8 @@ class BackupController extends ClientApiController
                 ->log();
         }
 
-        return $this->fractal->item($backup)
-            ->transformWith($this->getTransformer(BackupTransformer::class))
+        return $this->response->item($backup)
+            ->transformWith(BackupData::class)
             ->toArray();
     }
 

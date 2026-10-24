@@ -14,6 +14,7 @@ enum PluginStatus: string implements HasColor, HasIcon, HasLabel
     case Enabled = 'enabled';
     case Errored = 'errored';
     case Incompatible = 'incompatible';
+    case Crashed = 'crashed';
 
     public function getIcon(): BackedEnum
     {
@@ -23,6 +24,7 @@ enum PluginStatus: string implements HasColor, HasIcon, HasLabel
             self::Enabled => TablerIcon::HeartCheck,
             self::Errored => TablerIcon::HeartBroken,
             self::Incompatible => TablerIcon::HeartCancel,
+            self::Crashed => TablerIcon::HeartBolt,
         };
     }
 
@@ -34,6 +36,7 @@ enum PluginStatus: string implements HasColor, HasIcon, HasLabel
             self::Enabled => 'success',
             self::Errored => 'danger',
             self::Incompatible => 'danger',
+            self::Crashed => 'danger',
         };
     }
 

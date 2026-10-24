@@ -2,6 +2,7 @@
 
 namespace App\Filament\Server\Widgets;
 
+use App\Enums\ContainerStatus;
 use App\Enums\NodeJwtScope;
 use App\Enums\SubuserPermission;
 use App\Exceptions\Http\HttpForbiddenException;
@@ -10,6 +11,7 @@ use App\Models\Server;
 use App\Models\User;
 use App\Services\Nodes\NodeJWTService;
 use App\Services\Servers\GetUserPermissionsService;
+use Filament\Actions\Action;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Arr;
 use Livewire\Attributes\On;
@@ -112,20 +114,13 @@ class ServerConsole extends Widget
         $this->dispatch('sendAuthRequest', token: $this->getToken());
     }
 
-    #[On('store-stats')]
-    public function storeStats(string $data): void
+    // Without the old per-frame stats round trip nothing else re-renders this widget,
+    // so cache the new state here or the command input stays locked until a reload.
+    #[On('console-status')]
+    public function receivedConsoleStatus(?string $state = null): void
     {
-        $data = json_decode($data);
-
-        $timestamp = now()->getTimestamp();
-
-        foreach ($data as $key => $value) {
-            $cacheKey = "servers.{$this->server->id}.$key";
-            $cachedStats = cache()->get($cacheKey, []);
-
-            $cachedStats[$timestamp] = $value;
-
-            cache()->put($cacheKey, array_slice($cachedStats, -120), now()->addMinute());
+        if ($state && ($status = ContainerStatus::tryFrom($state))) {
+            cache()->put("servers.{$this->server->uuid}.status", $status, now()->addSeconds(15));
         }
     }
 
@@ -135,6 +130,12 @@ class ServerConsole extends Widget
         AlertBanner::make('websocket_error')
             ->title(trans('server/console.websocket_error.title'))
             ->body(trans('server/console.websocket_error.body'))
+            ->actions(fn () => user()->can('update', $this->server->node) ? [
+                Action::make('exclude_troubleshooting')
+                    ->label('Open troubleshooting guide')
+                    ->color('gray')
+                    ->url('https://pelican.dev/docs/troubleshooting/#wings-connection-issues', true),
+            ] : [])
             ->danger()
             ->send();
     }

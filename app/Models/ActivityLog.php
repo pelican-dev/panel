@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -39,6 +40,7 @@ use LogicException;
  *
  * @method static Builder<static>|ActivityLog forActor(\Illuminate\Database\Eloquent\Model $actor)
  * @method static Builder<static>|ActivityLog forEvent(string $action)
+ * @method static Builder<static>|ActivityLog hideAdminActivity(\App\Models\Server $server)
  * @method static Builder<static>|ActivityLog newModelQuery()
  * @method static Builder<static>|ActivityLog newQuery()
  * @method static Builder<static>|ActivityLog query()
@@ -121,6 +123,26 @@ class ActivityLog extends Model implements HasIcon, HasLabel
         return $builder->whereMorphedTo('actor', $actor);
     }
 
+    /**
+     * Hides entries whose actor holds any role (an admin) but is not the owner
+     * or a subuser of the given server.
+     */
+    public function scopeHideAdminActivity(Builder $builder, Server $server): Builder
+    {
+        $members = $server->subusers()->pluck('user_id')->merge([$server->owner_id]);
+
+        return $builder->select('activity_logs.*')
+            ->leftJoin('users', function (JoinClause $join) {
+                $join->on('users.id', 'activity_logs.actor_id')
+                    ->where('activity_logs.actor_type', (new User())->getMorphClass());
+            })
+            ->where(function (Builder $builder) use ($members) {
+                $builder->whereNull('users.id')
+                    ->orWhereNotIn('users.id', User::whereHas('roles')->select('id'))
+                    ->orWhereIn('users.id', $members);
+            });
+    }
+
     public function prunable(): Builder
     {
         throw_if(is_null(config('activity.prune_days')), new LogicException('Cannot prune activity logs: no "prune_days" configuration value is set.'));
@@ -136,6 +158,11 @@ class ActivityLog extends Model implements HasIcon, HasLabel
             $model->timestamp = Carbon::now();
         });
 
+        // Activity logs are append-only. Pruning still works because MassPrunable
+        // deletes through the query builder and never fires these model events;
+        // switching to the non-mass Prunable trait would break it.
+        static::updating(fn () => throw new LogicException('Activity logs are append-only and cannot be updated.'));
+        static::deleting(fn () => throw new LogicException('Activity logs are append-only and cannot be deleted.'));
     }
 
     public function getIcon(): BackedEnum

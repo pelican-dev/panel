@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Data\Api\Client\DatabaseData;
 use App\Exceptions\Service\Database\DatabaseClientFeatureNotEnabledException;
 use App\Exceptions\Service\Database\TooManyDatabasesException;
 use App\Facades\Activity;
@@ -14,9 +15,9 @@ use App\Models\Database;
 use App\Models\Server;
 use App\Services\Databases\DatabaseManagementService;
 use App\Services\Databases\DeployServerDatabaseService;
-use App\Transformers\Api\Client\DatabaseTransformer;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Throwable;
 
 #[Group('Server - Database')]
@@ -41,8 +42,8 @@ class DatabaseController extends ClientApiController
      */
     public function index(GetDatabasesRequest $request, Server $server): array
     {
-        return $this->fractal->collection($server->databases)
-            ->transformWith($this->getTransformer(DatabaseTransformer::class))
+        return $this->response->collection($server->databases)
+            ->transformWith(DatabaseData::class)
             ->toArray();
     }
 
@@ -59,19 +60,17 @@ class DatabaseController extends ClientApiController
      */
     public function store(StoreDatabaseRequest $request, Server $server): array
     {
-        $database = Activity::event('server:database.create')->transaction(function ($log) use ($request, $server) {
-            $server->databases()->lockForUpdate()->count();
+        $database = DB::transaction(function () use ($request, $server) {
+            // Serialize concurrent creates for this server so the limit check in the service holds.
+            // Locking the parent row works everywhere; a COUNT(*) FOR UPDATE is rejected by Postgres.
+            $server->newQuery()->whereKey($server->getKey())->lockForUpdate()->value('id');
 
-            $database = $this->deployDatabaseService->handle($server, $request->validated());
-
-            $log->subject($database)->property('name', $database->database);
-
-            return $database;
+            return $this->deployDatabaseService->handle($server, $request->validated());
         });
 
-        return $this->fractal->item($database)
+        return $this->response->item($database)
             ->parseIncludes(['password'])
-            ->transformWith($this->getTransformer(DatabaseTransformer::class))
+            ->transformWith(DatabaseData::class)
             ->toArray();
     }
 
@@ -92,9 +91,9 @@ class DatabaseController extends ClientApiController
             ->property('name', $database->database)
             ->transaction(fn () => $this->managementService->rotatePassword($database));
 
-        return $this->fractal->item($database->refresh())
+        return $this->response->item($database->refresh())
             ->parseIncludes(['password'])
-            ->transformWith($this->getTransformer(DatabaseTransformer::class))
+            ->transformWith(DatabaseData::class)
             ->toArray();
     }
 
@@ -106,11 +105,6 @@ class DatabaseController extends ClientApiController
     public function delete(DeleteDatabaseRequest $request, Server $server, Database $database): Response
     {
         $this->managementService->delete($database);
-
-        Activity::event('server:database.delete')
-            ->subject($database)
-            ->property('name', $database->database)
-            ->log();
 
         return new Response('', Response::HTTP_NO_CONTENT);
     }

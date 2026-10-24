@@ -11,10 +11,17 @@
         <testsuite name="Unit">
             <directory>./tests/Unit</directory>
         </testsuite>
+        <testsuite name="Filament">
+            <directory>./tests/Filament</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory>./tests/Feature</directory>
+        </testsuite>
     </testsuites>
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
+        <env name="APP_URL" value="http://localhost/" force="true"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_STORE" value="array"/>
         <env name="DB_CONNECTION" value="sqlite"/>

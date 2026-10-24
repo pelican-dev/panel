@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Services\Helpers\PluginService;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -16,14 +17,17 @@ use Illuminate\Http\Request;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Laravel\Passkeys\Passkeys;
 use PDOException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Throwable;
+use Webauthn\Exception\AuthenticatorResponseVerificationException;
 
 class Handler extends ExceptionHandler
 {
@@ -35,10 +39,19 @@ class Handler extends ExceptionHandler
     private const PANEL_RULE_STRING = 'App\_rules\_';
 
     /**
+     * Message prefixes web-auth/webauthn-lib 5.3 uses when it rejects a ceremony over its
+     * origin, in CheckAllowedOrigins and CheckOrigin. Matching on wording is unpleasant,
+     * but the library throws one exception type for every verification failure and carries
+     * no code to switch on. Recheck these whenever that dependency is bumped.
+     */
+    private const PASSKEY_ORIGIN_FAILURES = ['Invalid origin', 'Invalid scheme'];
+
+    /**
      * A list of the exception types that should not be reported.
      */
     protected $dontReport = [
         AuthenticationException::class,
+        AuthenticatorResponseVerificationException::class,
         AuthorizationException::class,
         HttpException::class,
         ModelNotFoundException::class,
@@ -55,6 +68,7 @@ class Handler extends ExceptionHandler
     protected static array $exceptionResponseCodes = [
         AuthenticationException::class => 401,
         AuthorizationException::class => 403,
+        AuthenticatorResponseVerificationException::class => 422,
         ValidationException::class => 422,
     ];
 
@@ -89,6 +103,102 @@ class Handler extends ExceptionHandler
         $this->reportable(function (TransportException $ex) {
             $ex = $this->generateCleanedExceptionStack($ex);
         });
+
+        $this->renderable(fn (AuthenticatorResponseVerificationException $ex, Request $request) => $this->invalidPasskey($ex, $request));
+
+        $this->reportable(fn (Throwable $ex) => $this->container->make(PluginService::class)->handlePluginCrash($ex));
+
+        $this->renderable(fn (Throwable $ex, Request $request) => $this->crashedPlugin($ex, $request));
+    }
+
+    /**
+     * Tell the request that hit a plugin's crash that the plugin was disabled, so a
+     * reload gets the panel back. Plugin dev mode keeps the full error page.
+     */
+    private function crashedPlugin(Throwable $ex, Request $request): ?Response
+    {
+        if ($request->expectsJson()) {
+            return null;
+        }
+
+        $plugin = $this->container->make(PluginService::class)->crashedPluginFrom($ex);
+        if (!$plugin) {
+            return null;
+        }
+
+        // The crash happens while panels register, so the Filament based error pages can't render.
+        $this->registerErrorViewPaths();
+
+        return response(Blade::render(<<<'BLADE'
+            @extends('errors::minimal')
+            @section('title', 'Server Error')
+            @section('code', '500')
+            @section('message', $message)
+            BLADE, ['message' => trans('admin/plugin.crashed_reload', ['name' => $plugin->name])]), 500);
+    }
+
+    /**
+     * Turn a failed WebAuthn ceremony into an actionable response.
+     *
+     * The library only reports that the browser's origin wasn't accepted, which on its
+     * own is impossible to act on, so log the origin the ceremony ran on alongside the
+     * ones being enforced and tell the user which address passkeys work at.
+     *
+     * Returns null for requests that aren't expecting JSON so they fall through to the
+     * normal renderer, the way unauthenticated() does.
+     */
+    private function invalidPasskey(AuthenticatorResponseVerificationException $exception, Request $request): ?JsonResponse
+    {
+        $isOriginFailure = Str::startsWith($exception->getMessage(), self::PASSKEY_ORIGIN_FAILURES);
+
+        // Every failure, not just the origin ones. This exception also covers signature
+        // mismatches, failed user verification and clone detection, and it's in $dontReport
+        // so nothing else logs it.
+        logger()->warning($exception, [
+            'ceremony_origin' => $this->passkeyCeremonyOrigin($request),
+            'request_origin' => $request->headers->get('Origin'),
+            'relying_party_id' => Passkeys::relyingPartyId(),
+            // As enforced, so this includes whatever AllowPasskeyOrigin added this request.
+            'enforced_origins' => config('passkeys.allowed_origins'),
+        ]);
+
+        if (!$request->expectsJson()) {
+            return null;
+        }
+
+        $detail = $isOriginFailure
+            ? trans('passkeys.invalid_origin', ['domain' => Passkeys::relyingPartyId()])
+            : trans('passkeys.invalid');
+
+        return new JsonResponse(
+            $this->convertExceptionToArray($exception, ['detail' => $detail]),
+            JsonResponse::HTTP_UNPROCESSABLE_ENTITY,
+        );
+    }
+
+    /**
+     * The origin the ceremony actually ran on. This is the value the library compared and
+     * the only one worth debugging against, and it lives base64url encoded in the signed
+     * client data rather than in a header the browser may not have sent.
+     */
+    private function passkeyCeremonyOrigin(Request $request): ?string
+    {
+        $clientData = $request->input('credential.response.clientDataJSON');
+
+        if (!is_string($clientData)) {
+            return null;
+        }
+
+        $decoded = base64_decode(strtr($clientData, '-_', '+/'), true);
+
+        if ($decoded === false) {
+            return null;
+        }
+
+        $clientDataJson = json_decode($decoded, true);
+        $origin = is_array($clientDataJson) ? $clientDataJson['origin'] ?? null : null;
+
+        return is_string($origin) ? $origin : null;
     }
 
     private function generateCleanedExceptionStack(Throwable $exception): string

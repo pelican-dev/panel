@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\Client;
 
+use App\Data\Api\Client\ServerData;
 use App\Http\Requests\Api\Client\GetServersRequest;
 use App\Models\Filters\MultiFieldServerFilter;
 use App\Models\Server;
 use App\Models\Subuser;
-use App\Transformers\Api\Client\ServerTransformer;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -35,19 +35,21 @@ class ClientController extends ClientApiController
     public function index(GetServersRequest $request): array
     {
         $user = $request->user();
-        $transformer = $this->getTransformer(ServerTransformer::class);
+
+        // Only eager load the relationships that map to includes the resource honors.
+        $includes = array_values(array_intersect($this->parseIncludes(), ServerData::$availableIncludes));
 
         /** @var Builder<Model> $query */
-        $query = Server::query()->with($this->getIncludesForTransformer($transformer, ['node']));
+        $query = Server::query()->with(array_merge($includes, ['node']));
 
         // Start the query builder and ensure we eager load any requested relationships from the request.
-        $builder = QueryBuilder::for($query)->allowedFilters([
+        $builder = QueryBuilder::for($query)->allowedFilters(
             'uuid',
             'name',
             'description',
             'external_id',
             AllowedFilter::custom('*', new MultiFieldServerFilter()),
-        ]);
+        );
 
         $type = $request->input('type');
         // Either return all the servers the user has access to because they are an admin `?type=admin` or
@@ -72,7 +74,7 @@ class ClientController extends ClientApiController
 
         $servers = $builder->paginate(min($request->query('per_page', '50'), 100))->appends($request->query());
 
-        return $this->fractal->transformWith($transformer)->collection($servers)->toArray();
+        return $this->response->transformWith(ServerData::class)->collection($servers)->toArray();
     }
 
     /**

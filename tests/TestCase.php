@@ -7,6 +7,8 @@ use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Carbon;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidFactory;
 use Spatie\Permission\PermissionRegistrar;
 
 abstract class TestCase extends BaseTestCase
@@ -34,6 +36,14 @@ abstract class TestCase extends BaseTestCase
         config()->set('app.debug', false);
         config()->set('panel.auth.2fa_required', 0);
 
+        // Tests assert on the side effects of dispatched jobs, so the queue must run
+        // inline even when the shell exports a real queue connection.
+        config()->set('queue.default', 'sync');
+
+        // CI runs the test jobs without building the frontend, so rendered views
+        // must not require a Vite manifest.
+        $this->withoutVite();
+
         $this->setKnownUuidFactory();
 
         $this->app->make(PermissionRegistrar::class)->forgetCachedPermissions();
@@ -58,6 +68,11 @@ abstract class TestCase extends BaseTestCase
 
         Carbon::setTestNow();
         CarbonImmutable::setTestNow();
+
+        // MocksUuids pins the global Ramsey factory through setKnownUuidFactory and
+        // nothing restored it, so the pinned uuid leaked into every later test in the
+        // same process and collided on unique columns.
+        Uuid::setFactory(new UuidFactory());
     }
 
     /**

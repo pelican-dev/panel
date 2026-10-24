@@ -5,9 +5,12 @@ namespace App\Services\Helpers;
 use App\Enums\PluginStatus;
 use App\Exceptions\Service\InvalidFileUploadException;
 use App\Models\Plugin;
+use App\Models\Role;
+use App\Models\User;
 use Composer\Autoload\ClassLoader;
 use Exception;
 use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
 use Filament\Panel;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Console\Command;
@@ -16,13 +19,14 @@ use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use JsonException;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Symfony\Component\ErrorHandler\Error\FatalError;
+use Throwable;
 use ZipArchive;
 
 class PluginService
@@ -31,8 +35,8 @@ class PluginService
 
     public function loadPlugins(): void
     {
-        // Don't load any plugins during tests
-        if ($this->app->runningUnitTests()) {
+        // Don't load any plugins during tests, or in safe mode where a broken plugin can't be traced
+        if ($this->app->runningUnitTests() || $this->isSafeModeActive()) {
             return;
         }
 
@@ -41,10 +45,23 @@ class PluginService
 
         $plugins = Plugin::orderBy('load_order')->get();
         foreach ($plugins as $plugin) {
+            // A crashed plugin's files are what crashed, so don't touch them at all (not even its config)
+            if ($plugin->status === PluginStatus::Crashed) {
+                continue;
+            }
+
             try {
+                // Filter out plugins that require a newer plugin api than this panel supports
+                // (only in production, so plugin developers can work on fixing their plugin locally)
+                if ($this->app->isProduction() && !$plugin->isApiVersionSupported()) {
+                    $this->setStatus($plugin, PluginStatus::Incompatible, 'This Plugin requires plugin api version ' . $plugin->effectiveApiVersion() . ' but this Panel only supports up to version ' . Plugin::SUPPORTED_API_VERSION . '!');
+
+                    continue;
+                }
+
                 // Filter out plugins that are not compatible with the current panel version
                 if (!$plugin->isCompatible()) {
-                    $this->setStatus($plugin, PluginStatus::Incompatible, 'This Plugin is only compatible with Panel version ' . $plugin->panel_version . (!$plugin->isPanelVersionStrict() ? ' or newer' : '') . ' but you are using version ' . config('app.version') . '!');
+                    $this->setStatus($plugin, PluginStatus::Incompatible, 'This Plugin is only compatible with Panel version ' . $plugin->panel_version . (!$plugin->isPanelVersionStrict() ? ' or a compatible newer version' : '') . ' but you are using version ' . $this->app->make(SoftwareVersionService::class)->currentPanelVersion() . '!');
 
                     continue;
                 } else {
@@ -125,7 +142,7 @@ class PluginService
                         $view->addNamespace($plugin->id, $views);
                     });
                 }
-            } catch (Exception $exception) {
+            } catch (Throwable $exception) {
                 $this->handlePluginException($plugin, $exception);
             }
         }
@@ -133,8 +150,8 @@ class PluginService
 
     public function loadPanelPlugins(Panel $panel): void
     {
-        // Don't load any plugins during tests
-        if ($this->app->runningUnitTests()) {
+        // Don't load any plugins during tests, or in safe mode where a broken plugin can't be traced
+        if ($this->app->runningUnitTests() || $this->isSafeModeActive()) {
             return;
         }
 
@@ -154,7 +171,7 @@ class PluginService
                 if ($plugin->status === PluginStatus::Errored) {
                     $this->enablePlugin($plugin);
                 }
-            } catch (Exception $exception) {
+            } catch (Throwable $exception) {
                 $this->handlePluginException($plugin, $exception);
             }
         }
@@ -207,7 +224,7 @@ class PluginService
             ->toArray();
 
         if (count($newPackages) > 0) {
-            $result = Process::path(base_path())->timeout(600)->run(['composer', 'require', ...$newPackages]);
+            $result = Process::path(base_path())->timeout(600)->run(['composer', 'require', '--update-no-dev', ...$newPackages]);
             throw_if($result->failed(), new Exception('Could not require new composer packages: ' . $result->errorOutput()));
         }
     }
@@ -305,19 +322,31 @@ class PluginService
     }
 
     /** @throws Exception */
-    public function updatePlugin(Plugin $plugin): void
+    public function updatePlugin(Plugin $plugin): Plugin
     {
-        $downloadUrl = $plugin->getDownloadUrlForUpdate();
-        throw_unless($downloadUrl, new Exception('No download url found.'));
+        $download = $plugin->getUpdateDownload();
+        throw_unless($download, new Exception('No download url found.'));
 
-        $this->downloadPluginFromUrl($downloadUrl, true);
+        $this->downloadPluginFromUrl($download['url'], $plugin->id, $download['sha256']);
 
         Plugin::refreshRows();
-        $plugin = $plugin->refresh();
+        $plugin = Plugin::findOrFail($plugin->id);
 
-        $this->installPlugin($plugin, false);
+        // A plugin that was never installed only gets its files swapped.
+        if ($plugin->status !== PluginStatus::NotInstalled) {
+            $this->installPlugin($plugin, false);
+        }
 
         cache()->forget("plugins.$plugin->id.update");
+
+        return $plugin;
+    }
+
+    public function isInstalled(string $id): bool
+    {
+        Plugin::refreshRows();
+
+        return Plugin::findOrFail($id)->status !== PluginStatus::NotInstalled;
     }
 
     /** @throws Exception */
@@ -343,15 +372,22 @@ class PluginService
     }
 
     /** @throws Exception */
-    public function downloadPluginFromFile(UploadedFile $file, bool $cleanDownload = false): void
+    public function downloadPluginFromFile(UploadedFile $file, ?string $expectedId = null): string
     {
         // Validate file size to prevent zip bombs
         $maxSize = config('panel.plugin.max_import_size');
-        throw_if($file->getSize() > $maxSize, new Exception("Zip file too large. ($maxSize  MiB)"));
+        $maxSizeLabel = round($maxSize / 1024 / 1024, 2);
+        throw_if($file->getSize() > $maxSize, new Exception("Zip file too large. ($maxSizeLabel MiB)"));
 
         $zip = new ZipArchive();
 
         throw_unless($zip->open($file->getPathname()), new Exception('Could not open zip file.'));
+
+        // The check above only sees the compressed bytes, which say nothing about what the
+        // archive expands to — a small, highly compressible zip can still fill the plugins
+        // volume. Total the uncompressed entry sizes while walking the entries and bail as
+        // soon as they exceed the same limit, before anything is written to disk.
+        $uncompressedSize = 0;
 
         // Validate zip contents before extraction
         for ($i = 0; $i < $zip->numFiles; $i++) {
@@ -360,15 +396,27 @@ class PluginService
                 $zip->close();
                 throw new Exception('Zip file contains invalid path traversal sequences.');
             }
+
+            $stat = $zip->statIndex($i) ?: [];
+            $uncompressedSize += $stat['size'] ?? 0;
+
+            if ($uncompressedSize > $maxSize) {
+                $zip->close();
+                throw new Exception("Zip file contents too large. ($maxSizeLabel MiB)");
+            }
         }
 
-        $pluginName = str($file->getClientOriginalName())->basename()->before('.zip')->toString();
+        // Extract into a temporary directory that lives on the same filesystem as the plugins
+        // directory (named as a dotfile so plugin discovery ignores it). Deriving the id from
+        // the extracted plugin.json — rather than the upload filename — means a renamed zip
+        // still imports, and keeping temp + target on one volume makes every move below an
+        // atomic same-filesystem rename instead of a cross-device copy that can fail.
+        $tmpDir = (new TemporaryDirectory(base_path('plugins')))
+            ->name('.import-' . Str::random(16))
+            ->deleteWhenDestroyed()
+            ->create();
 
-        if ($cleanDownload) {
-            File::deleteDirectory(plugin_path($pluginName));
-        }
-
-        $extractPath = $zip->locateName($pluginName . '/plugin.json') !== false ? base_path('plugins') : plugin_path($pluginName);
+        $extractPath = $tmpDir->path('contents');
 
         if (!$zip->extractTo($extractPath)) {
             $zip->close();
@@ -376,24 +424,113 @@ class PluginService
         }
 
         $zip->close();
+
+        // Locate plugin.json, either at the archive root (flat zip) or one level deep
+        // (single top-level folder). Prefer the shallowest match.
+        $manifest = $this->locatePluginManifest($extractPath);
+        throw_if($manifest === null, new Exception(trans('admin/plugin.notifications.import_no_manifest')));
+
+        $data = File::json($manifest, JSON_THROW_ON_ERROR);
+        $id = $data['id'] ?? null;
+        throw_if(!is_string($id) || trim($id) === '', new Exception(trans('admin/plugin.notifications.import_no_manifest')));
+
+        // The id becomes the install directory name and must equal it once installed (see
+        // Plugin::getRows()), so guard against anything that isn't a safe slug — e.g. an id of
+        // "../../evil" that would escape the plugins directory when passed to plugin_path().
+        $pluginName = Str::lower(trim($id));
+        throw_unless(preg_match('/^[a-z0-9][a-z0-9._-]*$/', $pluginName), new Exception(trans('admin/plugin.notifications.import_invalid_id')));
+
+        // When updating a known plugin, the archive must be for that same plugin — reject a
+        // mismatched id before moving anything, so an update can't overwrite a different plugin.
+        throw_if($expectedId !== null && $pluginName !== $expectedId, new Exception(trans('admin/plugin.notifications.import_id_mismatch', ['expected' => $expectedId, 'actual' => $pluginName])));
+
+        $target = plugin_path($pluginName);
+        $source = dirname($manifest);
+
+        // Importing over an existing plugin replaces it. Set the current install aside as a
+        // rollback until the new copy is in place, so a failed move can't leave nothing behind.
+        // The backup is a dotfile so discovery ignores it during the swap; temp, target and
+        // backup all sit under plugins/, so each move is a same-filesystem rename.
+        $rollback = null;
+        if (File::isDirectory($target)) {
+            // The archive brings its own plugin.json, so keep the install state (status, load order)
+            // of the copy it replaces. Callers reinstall an installed plugin to apply its changes.
+            // A copy without meta was never installed, so drop whatever meta the archive claims.
+            // Written before the swap so a failed write leaves the existing plugin untouched.
+            $oldManifest = join_paths($target, 'plugin.json');
+            $meta = File::exists($oldManifest) ? (File::json($oldManifest)['meta'] ?? []) : [];
+            if ($meta === []) {
+                unset($data['meta']);
+            } else {
+                $data['meta'] = $meta;
+            }
+            throw_if(File::put($manifest, json_encode($data, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) === false, new Exception('Could not write the plugin manifest.'));
+
+            $rollback = plugin_path('.' . $pluginName . '.bak');
+            File::deleteDirectory($rollback);
+            throw_unless(File::moveDirectory($target, $rollback), new Exception('Could not set the existing plugin aside.'));
+        }
+
+        // Move the folder containing plugin.json to plugins/<id> so the layout is correct
+        // regardless of the archive's internal folder name.
+        if (!File::moveDirectory($source, $target)) {
+            if ($rollback !== null) {
+                File::moveDirectory($rollback, $target);
+            }
+
+            throw new Exception('Could not move plugin into place.');
+        }
+
+        if ($rollback !== null) {
+            File::deleteDirectory($rollback);
+        }
+
+        return $pluginName;
+    }
+
+    /**
+     * Find a plugin.json inside an extracted archive, either at its root or within a single
+     * top-level directory. Returns the absolute path to the manifest, or null if none exists.
+     */
+    private function locatePluginManifest(string $path): ?string
+    {
+        $rootManifest = join_paths($path, 'plugin.json');
+        if (File::exists($rootManifest)) {
+            return $rootManifest;
+        }
+
+        foreach (File::directories($path) as $directory) {
+            $manifest = join_paths($directory, 'plugin.json');
+            if (File::exists($manifest)) {
+                return $manifest;
+            }
+        }
+
+        return null;
     }
 
     /** @throws Exception */
-    public function downloadPluginFromUrl(string $url, bool $cleanDownload = false): void
+    public function downloadPluginFromUrl(string $url, ?string $expectedId = null, ?string $expectedSha256 = null): string
     {
         $basename = pathinfo($url, PATHINFO_BASENAME);
         $tmpDir = TemporaryDirectory::make()->deleteWhenDestroyed();
         $tmpPath = $tmpDir->path($basename);
 
-        $content = Http::timeout(60)->connectTimeout(5)->throw()->get($url)->body();
+        $content = HubCredentials::request($url)->timeout(60)->connectTimeout(5)->throw()->get($url)->body();
+
+        // Any advertised checksum must match, including an empty or malformed one.
+        if ($expectedSha256 !== null) {
+            throw_unless(hash_equals(strtolower($expectedSha256), hash('sha256', $content)), new InvalidFileUploadException(trans('admin/plugin.notifications.import_checksum_mismatch')));
+        }
 
         // Validate file size to prevent zip bombs
         $maxSize = config('panel.plugin.max_import_size');
-        throw_if(strlen($content) > $maxSize, new InvalidFileUploadException("Zip file too large. ($maxSize  MiB)"));
+        $maxSizeLabel = round($maxSize / 1024 / 1024, 2);
+        throw_if(strlen($content) > $maxSize, new InvalidFileUploadException("Zip file too large. ($maxSizeLabel MiB)"));
 
         throw_unless(file_put_contents($tmpPath, $content), new InvalidFileUploadException('Could not write temporary file.'));
 
-        $this->downloadPluginFromFile(new UploadedFile($tmpPath, $basename, 'application/zip'), $cleanDownload);
+        return $this->downloadPluginFromFile(new UploadedFile($tmpPath, $basename, 'application/zip'), $expectedId);
     }
 
     public function deletePlugin(Plugin $plugin): void
@@ -485,11 +622,72 @@ class PluginService
         return config('panel.plugin.dev_mode', false);
     }
 
-    private function handlePluginException(Plugin $plugin, Exception $exception): void
+    public function isSafeModeActive(): bool
+    {
+        return config('panel.plugin.safe_mode', false);
+    }
+
+    /**
+     * A fatal error, or any error while the app boots (e.g. in a plugin provider's boot()), takes
+     * every request down with it, so when one comes from a plugin's files that plugin is marked
+     * as crashed and skipped.
+     */
+    public function handlePluginCrash(Throwable $error): void
+    {
+        try {
+            $plugin = $this->crashedPluginFrom($error);
+            if (!$plugin || $plugin->status === PluginStatus::Crashed) {
+                return;
+            }
+
+            $this->setStatus($plugin, PluginStatus::Crashed, $error->getMessage());
+
+            Notification::make()
+                ->danger()
+                ->title(trans('admin/plugin.notifications.crashed'))
+                ->body($plugin->name . ': ' . $error->getMessage())
+                ->sendToDatabase(user()?->isRootAdmin() ? user() : User::role(Role::ROOT_ADMIN)->get());
+        } catch (Throwable) {
+            // Best effort, this runs while the original error is being reported.
+        }
+    }
+
+    public function crashedPluginFrom(Throwable $error): ?Plugin
+    {
+        // Once the app has booted, a plain error only breaks the request it happened in.
+        if (!$error instanceof FatalError && $this->app->isBooted()) {
+            return null;
+        }
+
+        // Resource limits can trip inside a healthy plugin on a heavy request.
+        if ($this->isDevModeActive() || Str::startsWith($error->getMessage(), ['Allowed memory size', 'Maximum execution time'])) {
+            return null;
+        }
+
+        $plugins = base_path('plugins') . DIRECTORY_SEPARATOR;
+        if (!str_starts_with($error->getFile(), $plugins)) {
+            return null;
+        }
+
+        // Dot directories are imports and backups in progress, not plugins.
+        $id = Str::before(Str::after($error->getFile(), $plugins), DIRECTORY_SEPARATOR);
+        if ($id === '' || str_starts_with($id, '.')) {
+            return null;
+        }
+
+        return Plugin::find($id);
+    }
+
+    private function handlePluginException(Plugin $plugin, Throwable $exception): void
     {
         throw_if($this->isDevModeActive(), ($exception));
 
         report($exception);
+
+        // Reporting may have already marked it as crashed, which must stick so it's skipped next time.
+        if (Plugin::find($plugin->id)?->status === PluginStatus::Crashed) {
+            return;
+        }
 
         $this->setStatus($plugin, PluginStatus::Errored, $exception->getMessage());
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Client\Servers;
 
+use App\Data\Api\Client\ScheduleData;
 use App\Exceptions\DisplayException;
 use App\Exceptions\Model\DataValidationException;
 use App\Facades\Activity;
@@ -15,7 +16,6 @@ use App\Http\Requests\Api\Client\Servers\Schedules\ViewScheduleRequest;
 use App\Models\Schedule;
 use App\Models\Server;
 use App\Services\Schedules\ProcessScheduleService;
-use App\Transformers\Api\Client\ScheduleTransformer;
 use Dedoc\Scramble\Attributes\Group;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -47,8 +47,8 @@ class ScheduleController extends ClientApiController
     {
         $schedules = $server->schedules->loadMissing('tasks');
 
-        return $this->fractal->collection($schedules)
-            ->transformWith($this->getTransformer(ScheduleTransformer::class))
+        return $this->response->collection($schedules)
+            ->transformWith(ScheduleData::class)
             ->toArray();
     }
 
@@ -83,8 +83,8 @@ class ScheduleController extends ClientApiController
             ->property('name', $model->name)
             ->log();
 
-        return $this->fractal->item($model)
-            ->transformWith($this->getTransformer(ScheduleTransformer::class))
+        return $this->response->item($model)
+            ->transformWith(ScheduleData::class)
             ->toArray();
     }
 
@@ -101,8 +101,8 @@ class ScheduleController extends ClientApiController
 
         $schedule->loadMissing('tasks');
 
-        return $this->fractal->item($schedule)
-            ->transformWith($this->getTransformer(ScheduleTransformer::class))
+        return $this->response->item($schedule)
+            ->transformWith(ScheduleData::class)
             ->toArray();
     }
 
@@ -129,7 +129,7 @@ class ScheduleController extends ClientApiController
             'cron_minute' => $request->input('minute'),
             'is_active' => $active,
             'only_when_online' => (bool) $request->input('only_when_online'),
-            'next_run_at' => $this->getNextRunAt($request),
+            'next_run_at' => $this->getNextRunAt($request, $schedule->timezone),
         ];
 
         // Toggle the processing state of the scheduled task when it is enabled or disabled so that an
@@ -145,8 +145,8 @@ class ScheduleController extends ClientApiController
             ->property(['name' => $schedule->name, 'active' => $active])
             ->log();
 
-        return $this->fractal->item($schedule->refresh())
-            ->transformWith($this->getTransformer(ScheduleTransformer::class))
+        return $this->response->item($schedule->refresh())
+            ->transformWith(ScheduleData::class)
             ->toArray();
     }
 
@@ -186,7 +186,7 @@ class ScheduleController extends ClientApiController
      *
      * @throws DisplayException
      */
-    protected function getNextRunAt(Request $request): Carbon
+    protected function getNextRunAt(Request $request, string $timezone = 'UTC'): Carbon
     {
         try {
             return Utilities::getScheduleNextRunDate(
@@ -194,7 +194,8 @@ class ScheduleController extends ClientApiController
                 $request->input('hour'),
                 $request->input('day_of_month'),
                 $request->input('month'),
-                $request->input('day_of_week')
+                $request->input('day_of_week'),
+                $timezone
             );
         } catch (Exception) {
             throw new DisplayException('The cron data provided does not evaluate to a valid expression.');

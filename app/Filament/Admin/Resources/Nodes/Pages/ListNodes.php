@@ -12,6 +12,7 @@ use App\Traits\Filament\CanCustomizeHeaderActions;
 use App\Traits\Filament\CanCustomizeHeaderWidgets;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -27,11 +28,10 @@ class ListNodes extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->searchable(false)
             ->checkIfRecordIsSelectableUsing(fn (Node $node) => $node->servers_count <= 0)
             ->columns([
                 TextColumn::make('uuid')
-                    ->label('UUID')
+                    ->label(trans('admin/node.table.uuid'))
                     ->searchable()
                     ->hidden(),
                 NodeHealthColumn::make('health'),
@@ -47,7 +47,7 @@ class ListNodes extends ListRecords
                     ->searchable(),
                 IconColumn::make('scheme')
                     ->visibleFrom('xl')
-                    ->label('SSL')
+                    ->label(trans('admin/node.table.ssl'))
                     ->trueIcon(TablerIcon::Lock)
                     ->falseIcon(TablerIcon::LockOpenOff)
                     ->state(fn (Node $node) => $node->scheme === 'https'),
@@ -63,6 +63,9 @@ class ListNodes extends ListRecords
                     ->sortable(),
             ])
             ->recordActions([
+                ViewAction::make()
+                    ->tooltip(trans('filament-actions::view.single.label'))
+                    ->hidden(fn (Node $record) => NodeResource::getEditAuthorizationResponse($record)->allowed()),
                 EditAction::make(),
             ])
             ->toolbarActions([

@@ -8,6 +8,7 @@ use App\Enums\SubuserPermission;
 use App\Enums\TablerIcon;
 use App\Exceptions\Repository\FileExistsException;
 use App\Facades\Activity;
+use App\Filament\Components\Actions\ConnectSftpAction;
 use App\Filament\Components\Forms\Fields\MonacoEditor;
 use App\Filament\Components\Tables\Columns\BytesColumn;
 use App\Filament\Components\Tables\Columns\DateTimeColumn;
@@ -43,11 +44,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 
 class ListFiles extends ListRecords
 {
@@ -120,14 +121,14 @@ class ListFiles extends ListRecords
             ])
             ->recordUrl(function (File $file) use ($server) {
                 if ($file->is_directory) {
-                    return self::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]);
+                    return self::getUrl(['path' => join_paths($this->path, $file->name)]);
                 }
 
                 if (!user()?->can(SubuserPermission::FileReadContent, $server)) {
                     return null;
                 }
 
-                return $file->canEdit() ? EditFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]) : null;
+                return $file->canEdit() ? EditFiles::getUrl(['path' => join_paths($this->path, $file->name)]) : null;
             })
             ->recordActions([
                 Action::make('view')
@@ -135,11 +136,11 @@ class ListFiles extends ListRecords
                     ->label(trans('server/file.actions.open'))
                     ->icon(TablerIcon::Eye)
                     ->visible(fn (File $file) => $file->is_directory)
-                    ->url(fn (File $file) => self::getUrl(['path' => encode_path(join_paths($this->path, $file->name))])),
+                    ->url(fn (File $file) => self::getUrl(['path' => join_paths($this->path, $file->name)])),
                 EditAction::make('edit')
                     ->authorize(fn () => user()?->can(SubuserPermission::FileReadContent, $server))
                     ->visible(fn (File $file) => $file->canEdit())
-                    ->url(fn (File $file) => EditFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))])),
+                    ->url(fn (File $file) => EditFiles::getUrl(['path' => join_paths($this->path, $file->name)])),
                 ActionGroup::make([
                     Action::make('fm_rename')
                         ->authorize(fn () => user()?->can(SubuserPermission::FileUpdate, $server))
@@ -195,7 +196,7 @@ class ListFiles extends ListRecords
                         ->label(trans('server/file.actions.download'))
                         ->icon(TablerIcon::Download)->iconSize(IconSize::Large)
                         ->visible(fn (File $file) => $file->is_file)
-                        ->url(fn (File $file) => DownloadFiles::getUrl(['path' => encode_path(join_paths($this->path, $file->name))]), true),
+                        ->url(fn (File $file) => DownloadFiles::getUrl(['path' => join_paths($this->path, $file->name)]), true),
                     Action::make('fm_move')
                         ->authorize(fn () => user()?->can(SubuserPermission::FileUpdate, $server))
                         ->label(trans('server/file.actions.move.title'))
@@ -519,7 +520,7 @@ class ListFiles extends ListRecords
                     ->color('primary')
                     ->action(function ($data) {
                         try {
-                            $this->createFolder($data['name']);
+                            $this->getDaemonFileRepository()->createDirectory($data['name'], $this->path);
 
                             Activity::event('server:file.create-directory')
                                 ->property(['directory' => $this->path, 'name' => $data['name']])
@@ -588,6 +589,10 @@ class ListFiles extends ListRecords
                         'searchTerm' => $data['searchTerm'],
                         'path' => $this->path,
                     ]))),
+                ConnectSftpAction::make()
+                    ->hiddenLabel()
+                    ->tooltip(trans('server/file.actions.connect_sftp'))
+                    ->directory($this->path),
             ]);
     }
 
@@ -614,55 +619,10 @@ class ListFiles extends ListRecords
         };
     }
 
-    public function getUploadSizeLimit(): int
+    #[On('server-files-uploaded')]
+    public function refreshAfterUpload(): void
     {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        return $server->node->upload_size * 1024 * 1024;
-    }
-
-    /**
-     * @throws ConnectionException
-     * @throws FileExistsException
-     * @throws \Throwable
-     */
-    public function createFolder(string $folderPath): void
-    {
-        /** @var Server $server */
-        $server = Filament::getTenant();
-
-        abort_unless(user()?->can(SubuserPermission::FileCreate, $server), 403, 'You do not have permission to create folders.');
-
-        try {
-            $this->getDaemonFileRepository()->createDirectory($folderPath, $this->path);
-
-            Activity::event('server:file.create-directory')
-                ->property(['directory' => $this->path, 'name' => $folderPath])
-                ->log();
-
-        } catch (FileExistsException) {
-            // Ignore if the folder already exists.
-        } catch (ConnectionException $e) {
-            Notification::make()
-                ->body($e->getMessage())
-                ->danger()
-                ->send();
-
-        }
-    }
-
-    /**
-     * @param  string[]  $files
-     */
-    public function logUploadedFiles(array $files): void
-    {
-        $filesCollection = collect($files);
-
-        Activity::event('server:files.uploaded')
-            ->property('directory', $this->path)
-            ->property('files', $filesCollection)
-            ->log();
+        // Re-renders the table once the upload manager finishes a batch.
     }
 
     private function getDaemonFileRepository(): DaemonFileRepository

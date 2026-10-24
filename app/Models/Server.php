@@ -7,7 +7,9 @@ use App\Enums\ContainerStatus;
 use App\Enums\ServerResourceType;
 use App\Enums\ServerState;
 use App\Enums\WebhookScope;
+use App\Exceptions\DisplayException;
 use App\Exceptions\Http\Server\ServerStateConflictException;
+use App\Facades\Activity;
 use App\Models\Traits\HasIcon;
 use App\Repositories\Daemon\DaemonServerRepository;
 use App\Services\Subusers\SubuserDeletionService;
@@ -31,6 +33,7 @@ use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Psr\Http\Message\ResponseInterface;
 
@@ -90,6 +93,8 @@ use Psr\Http\Message\ResponseInterface;
  * @property-read int|null $server_variables_count
  * @property-read Collection<int, Subuser> $subusers
  * @property-read int|null $subusers_count
+ * @property-read Collection<int, ServerUserSettings> $userSettings
+ * @property-read int|null $user_settings_count
  * @property-read ServerTransfer|null $transfer
  * @property-read User $user
  * @property-read Collection<int, EggVariable> $variables
@@ -229,13 +234,53 @@ class Server extends Model implements HasAvatar, Validatable
      */
     public function getAllocationMappings(): array
     {
-        if (!$this->allocation) {
+        $allocations = $this->allocations->where('node_id', $this->node_id);
+
+        // Daemon expects a map here, and an empty array would be encoded as a JSON list.
+        if (!$this->allocation || $allocations->isEmpty()) {
             return ['' => []];
         }
 
-        return $this->allocations->where('node_id', $this->node_id)->groupBy('ip')->map(function ($item) {
+        return $allocations->groupBy('ip')->map(function ($item) {
             return $item->pluck('port');
         })->toArray();
+    }
+
+    /**
+     * Releases the given allocations from this server, and moves the primary allocation
+     * to one of the remaining allocations if the primary was released.
+     *
+     * @param  array<int>  $ids
+     * @param  bool  $keepOne  refuse to release the server's last allocation
+     *
+     * @throws DisplayException
+     */
+    public function releaseAllocations(array $ids, bool $keepOne = false): void
+    {
+        DB::transaction(function () use ($ids, $keepOne) {
+            // Lock the server row so concurrent releases see each other's primary changes.
+            $this->allocation_id = static::query()->whereKey($this->id)->lockForUpdate()->value('allocation_id');
+
+            throw_if(
+                $keepOne && $this->allocations()->where('node_id', $this->node_id)->whereNotIn('id', $ids)->doesntExist(),
+                new DisplayException('You cannot delete the last allocation for this server.')
+            );
+
+            $this->allocations()->whereIn('id', $ids)->update(Allocation::RELEASE_ATTRIBUTES);
+            $this->unsetRelation('allocations');
+
+            if (!$this->allocation_id || in_array($this->allocation_id, $ids)) {
+                $this->allocation()->associate($primary = $this->allocations()->where('node_id', $this->node_id)->orderBy('id')->first());
+                $this->save();
+
+                if ($primary) {
+                    Activity::event('server:allocation.primary')
+                        ->subject($this, $primary)
+                        ->property('allocation', $primary->address)
+                        ->log();
+                }
+            }
+        });
     }
 
     public function isInstalled(): bool
@@ -269,6 +314,16 @@ class Server extends Model implements HasAvatar, Validatable
     public function subusers(): HasMany
     {
         return $this->hasMany(Subuser::class, 'server_id', 'id');
+    }
+
+    /**
+     * Gets the per-user settings associated with a server.
+     *
+     * @return HasMany<ServerUserSettings, $this>
+     */
+    public function userSettings(): HasMany
+    {
+        return $this->hasMany(ServerUserSettings::class);
     }
 
     /**
@@ -314,7 +369,8 @@ class Server extends Model implements HasAvatar, Validatable
             ->leftJoin('server_variables', function (JoinClause $join) {
                 // Don't forget to join against the server ID as well since the way we're using this relationship
                 // would actually return all the variables and their values for _all_ servers using that egg,
-                // rather than only the server for this model.
+                // rather than only the server for this model. This also means it can't be eager loaded,
+                // since $this->id is null on the model Laravel builds the eager query from.
                 $join->on('server_variables.variable_id', 'egg_variables.id')
                     ->where('server_variables.server_id', $this->id);
             });
@@ -530,5 +586,31 @@ class Server extends Model implements HasAvatar, Validatable
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->icon ?? $this->egg->icon;
+    }
+
+    public function getSftpUrl(?string $username = null, ?string $directory = null): string
+    {
+        $username ??= user()?->username;
+
+        if (!is_null($directory)) {
+            $directory = explode('/', trim($directory, '/'));
+            $directory = array_map(fn (string $part) => rawurlencode($part), $directory);
+            $directory = '/' . implode('/', $directory);
+
+            // SFTP clients only treat a URL path as a directory when it ends with a
+            // slash, otherwise they prompt to download the path as a file instead of
+            // opening it. See #2577.
+            if ($directory !== '/') {
+                $directory .= '/';
+            }
+        }
+
+        if ($directory === '/') {
+            $directory = null;
+        }
+
+        $fqdn = $this->node->daemon_sftp_alias ?? $this->node->fqdn;
+
+        return 'sftp://' . rawurlencode($username) . '.' . $this->uuid_short . '@' . $fqdn . ':' . $this->node->daemon_sftp . $directory;
     }
 }

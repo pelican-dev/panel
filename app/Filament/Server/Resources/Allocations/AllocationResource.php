@@ -54,7 +54,9 @@ class AllocationResource extends Resource
                 TextColumn::make('alias')
                     ->hidden(),
                 TextColumn::make('port')
-                    ->label(trans('server/network.port')),
+                    ->label(trans('server/network.port'))
+                    ->state(fn (Allocation $allocation) => $allocation->show_port ? $allocation->port : null)
+                    ->placeholder(trans('server/network.port_hidden')),
                 TextInputColumn::make('notes')
                     ->label(trans('server/network.notes'))
                     ->visibleFrom('sm')
@@ -81,32 +83,31 @@ class AllocationResource extends Resource
             ])
             ->recordActions([
                 DetachAction::make()
-                    ->visible(fn (Allocation $allocation) => !$allocation->is_locked || user()?->can('update', $allocation->node))
+                    ->visible(fn (Allocation $allocation) => (!$allocation->is_locked || user()?->can('update', $allocation->node)) && $server->allocations()->count() > 1)
                     ->authorize(fn () => user()?->can(SubuserPermission::AllocationDelete, $server))
                     ->label(trans('server/network.delete'))
-                    ->action(function (Allocation $allocation) {
-                        Allocation::where('id', $allocation->id)->update([
-                            'notes' => null,
-                            'is_locked' => false,
-                            'server_id' => null,
-                        ]);
+                    ->action(function (Allocation $allocation) use ($server) {
+                        $server->releaseAllocations([$allocation->id], keepOne: true);
 
                         Activity::event('server:allocation.delete')
                             ->subject($allocation)
                             ->property('allocation', $allocation->address)
                             ->log();
-                    })
-                    ->after(fn (Allocation $allocation) => $allocation->id === $server->allocation_id && $server->update(['allocation_id' => $server->allocations()->first()?->id])),
+                    }),
             ])
             ->toolbarActions([
                 Action::make('add_allocation')
                     ->hiddenLabel()
-                    ->icon(fn () => $server->allocations()->count() >= $server->allocation_limit ? TablerIcon::NetworkOff : TablerIcon::Network)
+                    ->icon(fn () => $server->allocation === null || $server->allocations()->count() >= $server->allocation_limit ? TablerIcon::NetworkOff : TablerIcon::Network)
                     ->authorize(fn () => user()?->can(SubuserPermission::AllocationCreate, $server))
-                    ->tooltip(fn () => $server->allocations()->count() >= $server->allocation_limit ? trans('server/network.limit') : trans('server/network.add'))
-                    ->hidden(fn () => !config('panel.client_features.allocations.enabled') || $server->allocation === null)
-                    ->disabled(fn () => $server->allocations()->count() >= $server->allocation_limit)
-                    ->color(fn () => $server->allocations()->count() >= $server->allocation_limit ? 'danger' : 'primary')
+                    ->tooltip(fn () => match (true) {
+                        $server->allocation === null => trans('server/network.no_primary'),
+                        $server->allocations()->count() >= $server->allocation_limit => trans('server/network.limit'),
+                        default => trans('server/network.add'),
+                    })
+                    ->hidden(fn () => !config('panel.client_features.allocations.enabled'))
+                    ->disabled(fn () => $server->allocation === null || $server->allocations()->count() >= $server->allocation_limit)
+                    ->color(fn () => $server->allocation === null || $server->allocations()->count() >= $server->allocation_limit ? 'danger' : 'primary')
                     ->action(function (FindAssignableAllocationService $service) use ($server) {
                         $allocation = $service->handle($server);
 

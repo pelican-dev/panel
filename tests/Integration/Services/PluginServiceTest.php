@@ -1,0 +1,824 @@
+<?php
+
+namespace App\Tests\Integration\Services;
+
+use App\Enums\PluginStatus;
+use App\Models\Plugin;
+use App\Models\Role;
+use App\Models\User;
+use App\Services\Helpers\HubCredentials;
+use App\Services\Helpers\PluginService;
+use App\Tests\Integration\IntegrationTestCase;
+use Error;
+use Exception;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Process;
+use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionProperty;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Symfony\Component\ErrorHandler\Error\FatalError;
+use ZipArchive;
+
+class PluginServiceTest extends IntegrationTestCase
+{
+    private PluginService $service;
+
+    /** @var string[] */
+    private array $importedPlugins = [];
+
+    /** @var TemporaryDirectory[] */
+    private array $uploadDirs = [];
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->service = $this->app->make(PluginService::class);
+    }
+
+    protected function tearDown(): void
+    {
+        // Clean up anything the service touched in the real plugins directory: installed
+        // plugins, their rollback backups, and any leftover extraction working directories.
+        foreach ($this->importedPlugins as $id) {
+            File::deleteDirectory(plugin_path($id));
+            File::deleteDirectory(plugin_path('.' . $id . '.bak'));
+        }
+
+        foreach (File::glob(plugin_path('.import-*')) as $leftover) {
+            File::deleteDirectory($leftover);
+        }
+
+        // Don't leak the in-memory Sushi rows of the plugins removed above into later tests.
+        Plugin::refreshRows();
+
+        // TemporaryDirectory::make() does not clean up on its own; remove the upload fixtures.
+        foreach ($this->uploadDirs as $dir) {
+            $dir->delete();
+        }
+
+        parent::tearDown();
+    }
+
+    public function test_import_uses_plugin_json_id_not_the_upload_filename(): void
+    {
+        // Zip contains a top-level folder "test-import-plugin", but the upload is renamed as
+        // a browser would on a duplicate download.
+        $file = $this->makeUpload('test-import-plugin(1).zip', [
+            'test-import-plugin/plugin.json' => $this->manifest('test-import-plugin'),
+        ]);
+
+        $this->importedPlugins[] = 'test-import-plugin';
+
+        $id = $this->service->downloadPluginFromFile($file);
+
+        $this->assertSame('test-import-plugin', $id);
+        $this->assertFileExists(plugin_path('test-import-plugin', 'plugin.json'));
+        // The (1) suffixed folder must never be created.
+        $this->assertDirectoryDoesNotExist(plugin_path('test-import-plugin(1)'));
+    }
+
+    public function test_import_handles_flat_zip_without_a_top_level_folder(): void
+    {
+        $file = $this->makeUpload('renamed(2).zip', [
+            'plugin.json' => $this->manifest('test-flat-plugin'),
+        ]);
+
+        $this->importedPlugins[] = 'test-flat-plugin';
+
+        $id = $this->service->downloadPluginFromFile($file);
+
+        $this->assertSame('test-flat-plugin', $id);
+        $this->assertFileExists(plugin_path('test-flat-plugin', 'plugin.json'));
+    }
+
+    public function test_import_lowercases_the_manifest_id(): void
+    {
+        $file = $this->makeUpload('Test-Upper.zip', [
+            'Test-Upper/plugin.json' => $this->manifest('Test-Upper'),
+        ]);
+
+        $this->importedPlugins[] = 'test-upper';
+
+        $id = $this->service->downloadPluginFromFile($file);
+
+        $this->assertSame('test-upper', $id);
+        $this->assertFileExists(plugin_path('test-upper', 'plugin.json'));
+    }
+
+    public function test_import_cleans_up_its_extraction_directory(): void
+    {
+        $this->importedPlugins[] = 'test-cleanup-plugin';
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-cleanup-plugin.zip', [
+            'test-cleanup-plugin/plugin.json' => $this->manifest('test-cleanup-plugin'),
+        ]));
+
+        // The temporary ".import-*" working directory must not linger under plugins/.
+        $this->assertSame([], File::glob(plugin_path('.import-*')));
+    }
+
+    public function test_import_without_a_manifest_fails_loudly(): void
+    {
+        $file = $this->makeUpload('not-a-plugin.zip', [
+            'readme.txt' => 'nothing to see here',
+        ]);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage(trans('admin/plugin.notifications.import_no_manifest'));
+
+        $this->service->downloadPluginFromFile($file);
+    }
+
+    public function test_import_with_a_non_string_id_fails_loudly(): void
+    {
+        $file = $this->makeUpload('bad-id.zip', [
+            'plugin.json' => json_encode(['id' => []]),
+        ]);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage(trans('admin/plugin.notifications.import_no_manifest'));
+
+        $this->service->downloadPluginFromFile($file);
+    }
+
+    public function test_import_with_a_missing_id_fails_loudly(): void
+    {
+        $file = $this->makeUpload('no-id.zip', [
+            'plugin.json' => json_encode(['name' => 'No Id']),
+        ]);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage(trans('admin/plugin.notifications.import_no_manifest'));
+
+        $this->service->downloadPluginFromFile($file);
+    }
+
+    public function test_import_with_an_empty_id_fails_loudly(): void
+    {
+        $file = $this->makeUpload('empty-id.zip', [
+            'plugin.json' => json_encode(['id' => '']),
+        ]);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage(trans('admin/plugin.notifications.import_no_manifest'));
+
+        $this->service->downloadPluginFromFile($file);
+    }
+
+    public function test_import_ignores_a_plugin_json_nested_too_deep(): void
+    {
+        // locatePluginManifest only looks at the root and one level deep; anything deeper is
+        // not treated as a plugin.
+        $file = $this->makeUpload('deep.zip', [
+            'a/b/plugin.json' => $this->manifest('too-deep'),
+        ]);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage(trans('admin/plugin.notifications.import_no_manifest'));
+
+        $this->service->downloadPluginFromFile($file);
+    }
+
+    public function test_import_rejects_a_zip_with_a_path_traversal_entry(): void
+    {
+        // A malicious archive entry that would write outside the extraction directory must be
+        // rejected before extraction, even if it also carries a valid plugin.json.
+        $file = $this->makeUpload('evil.zip', [
+            '../evil.txt' => 'pwned',
+            'evil/plugin.json' => $this->manifest('evil'),
+        ]);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Zip file contains invalid path traversal sequences.');
+
+        $this->service->downloadPluginFromFile($file);
+    }
+
+    public function test_import_rejects_a_zip_larger_than_the_configured_max(): void
+    {
+        config()->set('panel.plugin.max_import_size', 10);
+
+        $file = $this->makeUpload('too-big.zip', [
+            'too-big/plugin.json' => $this->manifest('too-big'),
+        ]);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Zip file too large');
+
+        $this->service->downloadPluginFromFile($file);
+    }
+
+    public function test_import_rejects_a_zip_that_expands_beyond_the_configured_max(): void
+    {
+        // Clean up in case a regression lets the archive through and it actually installs.
+        $this->importedPlugins[] = 'zip-bomb';
+
+        config()->set('panel.plugin.max_import_size', 4096);
+
+        $file = $this->makeUpload('zip-bomb.zip', [
+            'zip-bomb/plugin.json' => $this->manifest('zip-bomb'),
+            'zip-bomb/payload.txt' => str_repeat('a', 100_000),
+        ]);
+
+        // The archive compresses down small enough to clear the compressed-size check, so only
+        // the uncompressed total catches it.
+        $this->assertLessThan(4096, $file->getSize());
+
+        $thrown = null;
+
+        try {
+            $this->service->downloadPluginFromFile($file);
+        } catch (Exception $exception) {
+            $thrown = $exception;
+        }
+
+        $this->assertNotNull($thrown, 'Expected the oversized archive to be rejected.');
+        $this->assertStringContainsString('Zip file contents too large', $thrown->getMessage());
+
+        // Nothing should have been written: no install, and no leftover extraction directory.
+        $this->assertDirectoryDoesNotExist(plugin_path('zip-bomb'));
+        $this->assertSame([], File::glob(plugin_path('.import-*')));
+    }
+
+    public function test_import_from_url_downloads_and_installs_the_plugin(): void
+    {
+        $this->importedPlugins[] = 'test-url-plugin';
+
+        $bytes = file_get_contents($this->makeUpload('whatever.zip', [
+            'test-url-plugin/plugin.json' => $this->manifest('test-url-plugin'),
+        ])->getPathname());
+
+        Http::fake(['*' => Http::response($bytes)]);
+
+        $id = $this->service->downloadPluginFromUrl('https://example.test/download/test-url-plugin.zip');
+
+        $this->assertSame('test-url-plugin', $id);
+        $this->assertFileExists(plugin_path('test-url-plugin', 'plugin.json'));
+    }
+
+    /**
+     * @param  string  $id  an id that is a non-empty string but not a safe directory slug
+     */
+    #[DataProvider('unsafeIds')]
+    public function test_import_rejects_an_unsafe_plugin_id(string $id): void
+    {
+        // A clean entry name (so it passes the archive path-traversal check) whose manifest
+        // still carries a dangerous id must be rejected before anything is moved into place.
+        $file = $this->makeUpload('sneaky.zip', [
+            'plugin.json' => json_encode(['id' => $id]),
+        ]);
+
+        try {
+            $this->service->downloadPluginFromFile($file);
+            $this->fail('Expected the import to be rejected for id: ' . $id);
+        } catch (Exception $e) {
+            $this->assertSame(trans('admin/plugin.notifications.import_invalid_id'), $e->getMessage());
+        }
+
+        // Nothing should have escaped the plugins directory.
+        $this->assertDirectoryDoesNotExist(base_path('evil'));
+        $this->assertDirectoryDoesNotExist(base_path('plugins/../evil'));
+    }
+
+    /** @return array<string, array{string}> */
+    public static function unsafeIds(): array
+    {
+        return [
+            'parent traversal' => ['../../evil'],
+            'single parent' => ['../evil'],
+            'contains slash' => ['foo/bar'],
+            'leading dot' => ['.hidden'],
+            'just dots' => ['..'],
+            'contains space' => ['foo bar'],
+        ];
+    }
+
+    public function test_import_over_an_existing_plugin_replaces_it(): void
+    {
+        $this->importedPlugins[] = 'test-replace-plugin';
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-replace-plugin.zip', [
+            'test-replace-plugin/plugin.json' => $this->manifest('test-replace-plugin', '1.0.0'),
+        ]));
+
+        $this->assertSame('1.0.0', $this->installedVersion('test-replace-plugin'));
+
+        // Re-importing the same id is allowed and replaces the existing install.
+        $id = $this->service->downloadPluginFromFile($this->makeUpload('test-replace-plugin.zip', [
+            'test-replace-plugin/plugin.json' => $this->manifest('test-replace-plugin', '2.0.0'),
+        ]));
+
+        // The new copy is in place and no rollback backup is left behind.
+        $this->assertSame('test-replace-plugin', $id);
+        $this->assertSame('2.0.0', $this->installedVersion('test-replace-plugin'));
+        $this->assertDirectoryDoesNotExist(plugin_path('.test-replace-plugin.bak'));
+    }
+
+    public function test_import_succeeds_when_the_id_matches_the_expected_id(): void
+    {
+        $this->importedPlugins[] = 'test-expected-plugin';
+
+        $id = $this->service->downloadPluginFromFile($this->makeUpload('test-expected-plugin.zip', [
+            'test-expected-plugin/plugin.json' => $this->manifest('test-expected-plugin'),
+        ]), 'test-expected-plugin');
+
+        $this->assertSame('test-expected-plugin', $id);
+        $this->assertFileExists(plugin_path('test-expected-plugin', 'plugin.json'));
+    }
+
+    public function test_import_rejects_an_archive_for_a_different_plugin_than_expected(): void
+    {
+        // Stand in for an update whose archive actually claims to be a *different* plugin than
+        // the one being updated. It must be rejected before anything is written, so the update
+        // can neither reinstall the wrong plugin nor overwrite an unrelated one.
+        $this->importedPlugins[] = 'test-target-plugin';
+        $this->importedPlugins[] = 'test-other-plugin';
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-target-plugin.zip', [
+            'test-target-plugin/plugin.json' => $this->manifest('test-target-plugin', '1.0.0'),
+        ]));
+
+        $file = $this->makeUpload('update.zip', [
+            'test-other-plugin/plugin.json' => $this->manifest('test-other-plugin', '9.9.9'),
+        ]);
+
+        try {
+            $this->service->downloadPluginFromFile($file, 'test-target-plugin');
+            $this->fail('Expected a mismatched update to be rejected.');
+        } catch (Exception $e) {
+            $this->assertSame(
+                trans('admin/plugin.notifications.import_id_mismatch', ['expected' => 'test-target-plugin', 'actual' => 'test-other-plugin']),
+                $e->getMessage()
+            );
+        }
+
+        // The intended plugin is untouched and the archive's plugin was never written.
+        $this->assertSame('1.0.0', $this->installedVersion('test-target-plugin'));
+        $this->assertDirectoryDoesNotExist(plugin_path('test-other-plugin'));
+    }
+
+    public function test_import_keeps_the_install_state_of_the_plugin_it_replaces(): void
+    {
+        $this->importedPlugins[] = 'test-reimport-plugin';
+
+        $installed = json_decode($this->manifest('test-reimport-plugin', '1.0.0'), true);
+        $installed['meta'] = ['status' => PluginStatus::Disabled->value, 'load_order' => 2];
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-reimport-plugin.zip', [
+            'test-reimport-plugin/plugin.json' => json_encode($installed),
+        ]));
+
+        $this->assertTrue($this->service->isInstalled('test-reimport-plugin'));
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-reimport-plugin.zip', [
+            'test-reimport-plugin/plugin.json' => $this->manifest('test-reimport-plugin', '2.0.0'),
+        ]));
+
+        $manifest = File::json(plugin_path('test-reimport-plugin', 'plugin.json'));
+        $this->assertSame('2.0.0', $manifest['version']);
+        $this->assertSame(['status' => PluginStatus::Disabled->value, 'load_order' => 2], $manifest['meta']);
+    }
+
+    public function test_import_keeps_the_existing_plugin_when_the_move_fails(): void
+    {
+        $this->importedPlugins[] = 'test-clean-plugin';
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-clean-plugin.zip', [
+            'test-clean-plugin/plugin.json' => $this->manifest('test-clean-plugin', '1.0.0'),
+        ]));
+
+        // Force only the move into plugins/<id> to fail, standing in for a filesystem-level
+        // failure mid-replace. The set-aside and restore moves (to/from the .bak dir) run for
+        // real so we can prove the original install is restored intact.
+        $real = new Filesystem();
+        File::partialMock()
+            ->shouldReceive('moveDirectory')
+            ->andReturnUsing(function ($from, $to) use ($real) {
+                if (str_ends_with($to, '.bak') || str_ends_with($from, '.bak')) {
+                    return $real->moveDirectory($from, $to);
+                }
+
+                return false;
+            });
+
+        $file = $this->makeUpload('test-clean-plugin.zip', [
+            'test-clean-plugin/plugin.json' => $this->manifest('test-clean-plugin', '2.0.0'),
+        ]);
+
+        try {
+            $this->service->downloadPluginFromFile($file);
+            $this->fail('Expected the import to fail.');
+        } catch (Exception $e) {
+            $this->assertSame('Could not move plugin into place.', $e->getMessage());
+        }
+
+        // The original 1.0.0 install must survive — not the failed 2.0.0 replacement — and the
+        // backup directory must be gone.
+        $this->assertSame('1.0.0', $this->installedVersion('test-clean-plugin'));
+        $this->assertDirectoryDoesNotExist(plugin_path('.test-clean-plugin.bak'));
+    }
+
+    public function test_update_only_swaps_the_files_of_a_plugin_that_is_not_installed(): void
+    {
+        $this->importedPlugins[] = 'test-update-plugin';
+
+        // Updates are resolved against the panel version, which is null on canary.
+        config()->set('app.version', '1.0.0');
+        Process::fake();
+
+        $updateUrl = 'https://example.test/test-update-plugin/update.json';
+        $downloadUrl = 'https://example.test/test-update-plugin/2.0.0.zip';
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-update-plugin.zip', [
+            'test-update-plugin/plugin.json' => $this->updatableManifest('test-update-plugin', '1.0.0', $updateUrl),
+        ]));
+
+        // The archive claiming to be enabled must not get the plugin installed.
+        $archived = json_decode($this->updatableManifest('test-update-plugin', '2.0.0', $updateUrl), true);
+        $archived['meta'] = ['status' => PluginStatus::Enabled->value];
+
+        $update = file_get_contents($this->makeUpload('2.0.0.zip', [
+            'test-update-plugin/plugin.json' => json_encode($archived),
+        ])->getPathname());
+
+        Http::fake([
+            $updateUrl => Http::response(['*' => ['version' => '2.0.0', 'download_url' => $downloadUrl]]),
+            $downloadUrl => Http::response($update),
+        ]);
+
+        Plugin::refreshRows();
+        $plugin = Plugin::findOrFail('test-update-plugin');
+
+        $updated = $this->service->updatePlugin($plugin);
+
+        $this->assertSame('2.0.0', $updated->version);
+        $this->assertSame('2.0.0', $this->installedVersion('test-update-plugin'));
+
+        // A plugin that was never installed only has its files swapped, nothing gets installed.
+        $this->assertFalse($this->service->isInstalled('test-update-plugin'));
+        Process::assertNothingRan();
+
+        Plugin::refreshRows();
+        $this->assertSame('2.0.0', Plugin::findOrFail('test-update-plugin')->version);
+        $this->assertSame(PluginStatus::NotInstalled, Plugin::findOrFail('test-update-plugin')->status);
+    }
+
+    public function test_update_keeps_the_status_and_load_order_of_an_installed_plugin(): void
+    {
+        $this->importedPlugins[] = 'test-update-plugin';
+
+        config()->set('app.version', '1.0.0');
+        Process::fake();
+
+        $updateUrl = 'https://example.test/test-update-plugin/update.json';
+        $downloadUrl = 'https://example.test/test-update-plugin/2.0.0.zip';
+
+        $installed = json_decode($this->updatableManifest('test-update-plugin', '1.0.0', $updateUrl), true);
+        $installed['meta'] = ['status' => PluginStatus::Enabled->value, 'load_order' => 3];
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-update-plugin.zip', [
+            'test-update-plugin/plugin.json' => json_encode($installed),
+        ]));
+
+        Http::fake([
+            $updateUrl => Http::response(['*' => ['version' => '2.0.0', 'download_url' => $downloadUrl]]),
+            $downloadUrl => Http::response(file_get_contents($this->makeUpload('2.0.0.zip', [
+                'test-update-plugin/plugin.json' => $this->updatableManifest('test-update-plugin', '2.0.0', $updateUrl),
+            ])->getPathname())),
+        ]);
+
+        Plugin::refreshRows();
+        $this->service->updatePlugin(Plugin::findOrFail('test-update-plugin'));
+
+        $meta = File::json(plugin_path('test-update-plugin', 'plugin.json'))['meta'];
+        $this->assertSame(PluginStatus::Enabled->value, $meta['status']);
+        $this->assertSame(3, $meta['load_order']);
+        $this->assertSame('2.0.0', $this->installedVersion('test-update-plugin'));
+    }
+
+    public function test_update_verifies_the_checksum_from_the_update_feed(): void
+    {
+        $this->importedPlugins[] = 'test-update-plugin';
+
+        config()->set('app.version', '1.0.0');
+        Process::fake();
+
+        $updateUrl = 'https://example.test/test-update-plugin/update.json';
+        $downloadUrl = 'https://example.test/test-update-plugin/2.0.0.zip';
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-update-plugin.zip', [
+            'test-update-plugin/plugin.json' => $this->updatableManifest('test-update-plugin', '1.0.0', $updateUrl),
+        ]));
+
+        $update = file_get_contents($this->makeUpload('2.0.0.zip', [
+            'test-update-plugin/plugin.json' => $this->updatableManifest('test-update-plugin', '2.0.0', $updateUrl),
+        ])->getPathname());
+
+        $advertisedSha256 = str_repeat('0', 64);
+
+        Http::fake([
+            $updateUrl => function () use (&$advertisedSha256, $downloadUrl) {
+                return Http::response(['*' => ['version' => '2.0.0', 'download_url' => $downloadUrl, 'sha256' => $advertisedSha256]]);
+            },
+            $downloadUrl => Http::response($update),
+        ]);
+
+        Plugin::refreshRows();
+
+        try {
+            $this->service->updatePlugin(Plugin::findOrFail('test-update-plugin'));
+            $this->fail('Expected the update to be rejected for a checksum mismatch.');
+        } catch (Exception $e) {
+            $this->assertSame(trans('admin/plugin.notifications.import_checksum_mismatch'), $e->getMessage());
+        }
+
+        $this->assertSame('1.0.0', $this->installedVersion('test-update-plugin'));
+
+        cache()->forget('plugins.test-update-plugin.update');
+        $advertisedSha256 = hash('sha256', $update);
+
+        $this->assertSame('2.0.0', $this->service->updatePlugin(Plugin::findOrFail('test-update-plugin'))->version);
+    }
+
+    public function test_update_rejects_an_empty_advertised_checksum(): void
+    {
+        $this->importedPlugins[] = 'test-update-plugin';
+
+        config()->set('app.version', '1.0.0');
+        Process::fake();
+
+        $updateUrl = 'https://example.test/test-update-plugin/update.json';
+        $downloadUrl = 'https://example.test/test-update-plugin/2.0.0.zip';
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-update-plugin.zip', [
+            'test-update-plugin/plugin.json' => $this->updatableManifest('test-update-plugin', '1.0.0', $updateUrl),
+        ]));
+
+        Http::fake([
+            $updateUrl => Http::response(['*' => ['version' => '2.0.0', 'download_url' => $downloadUrl, 'sha256' => '']]),
+            $downloadUrl => Http::response(file_get_contents($this->makeUpload('2.0.0.zip', [
+                'test-update-plugin/plugin.json' => $this->updatableManifest('test-update-plugin', '2.0.0', $updateUrl),
+            ])->getPathname())),
+        ]);
+
+        Plugin::refreshRows();
+
+        try {
+            $this->service->updatePlugin(Plugin::findOrFail('test-update-plugin'));
+            $this->fail('Expected an empty checksum to be rejected.');
+        } catch (Exception $e) {
+            $this->assertSame(trans('admin/plugin.notifications.import_checksum_mismatch'), $e->getMessage());
+        }
+
+        $this->assertSame('1.0.0', $this->installedVersion('test-update-plugin'));
+    }
+
+    public function test_update_download_comes_from_a_single_feed_entry(): void
+    {
+        $this->importedPlugins[] = 'test-update-plugin';
+
+        config()->set('app.version', '1.0.0');
+
+        $updateUrl = 'https://example.test/test-update-plugin/update.json';
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-update-plugin.zip', [
+            'test-update-plugin/plugin.json' => $this->updatableManifest('test-update-plugin', '1.0.0', $updateUrl),
+        ]));
+
+        Http::fake([$updateUrl => Http::response(['*' => ['version' => '2.0.0', 'download_url' => 'https://example.test/a.zip']])]);
+        Plugin::refreshRows();
+
+        $this->assertSame(['url' => 'https://example.test/a.zip', 'sha256' => null], Plugin::findOrFail('test-update-plugin')->getUpdateDownload());
+        Http::assertSentCount(1);
+    }
+
+    public function test_hub_key_is_only_sent_to_the_hub_over_https(): void
+    {
+        config()->set('panel.plugin.hub_url', 'https://hub.pelican.dev');
+        config()->set('panel.plugin.hub_api_key', 'pnl_secret');
+
+        $zips = [];
+        foreach (['test-hub-a', 'test-hub-b', 'test-hub-c'] as $id) {
+            $this->importedPlugins[] = $id;
+            $zips[$id] = file_get_contents($this->makeUpload("$id.zip", ["$id/plugin.json" => $this->manifest($id)])->getPathname());
+        }
+
+        Http::fake([
+            'https://hub.pelican.dev/*' => Http::response($zips['test-hub-a']),
+            'https://example.test/*' => Http::response($zips['test-hub-b']),
+            'http://hub.pelican.dev/*' => Http::response($zips['test-hub-c']),
+        ]);
+
+        $this->service->downloadPluginFromUrl('https://hub.pelican.dev/plugins/test-hub-a/download/1/test-hub-a.zip');
+        $this->service->downloadPluginFromUrl('https://example.test/test-hub-b.zip');
+        $this->service->downloadPluginFromUrl('http://hub.pelican.dev/test-hub-c.zip');
+
+        Http::assertSent(fn ($request) => str_starts_with($request->url(), 'https://hub.pelican.dev/') && $request->header('X-Panel-Api-Key') === ['pnl_secret']);
+        Http::assertSent(fn ($request) => str_starts_with($request->url(), 'https://example.test/') && !$request->hasHeader('X-Panel-Api-Key'));
+        Http::assertSent(fn ($request) => str_starts_with($request->url(), 'http://hub.pelican.dev/') && !$request->hasHeader('X-Panel-Api-Key'));
+    }
+
+    public function test_hub_key_matches_scheme_case_insensitively_and_requires_the_hub_port(): void
+    {
+        config()->set('panel.plugin.hub_url', 'https://hub.example:8443');
+        config()->set('panel.plugin.hub_api_key', 'pnl_secret');
+
+        $this->assertSame(['X-Panel-Api-Key' => 'pnl_secret'], HubCredentials::headersFor('HTTPS://HUB.example:8443/plugins/x/update.json'));
+        $this->assertSame([], HubCredentials::headersFor('https://hub.example:9443/plugins/x/update.json'));
+        $this->assertSame([], HubCredentials::headersFor('https://hub.example/plugins/x/update.json'));
+
+        config()->set('panel.plugin.hub_url', 'https://hub.pelican.dev');
+
+        $this->assertSame(['X-Panel-Api-Key' => 'pnl_secret'], HubCredentials::headersFor('https://hub.pelican.dev:443/plugins/x/update.json'));
+        $this->assertSame([], HubCredentials::headersFor('https://hub.pelican.dev:8443/plugins/x/update.json'));
+    }
+
+    public function test_hub_key_is_never_carried_across_a_redirect(): void
+    {
+        config()->set('panel.plugin.hub_url', 'https://hub.pelican.dev');
+        config()->set('panel.plugin.hub_api_key', 'pnl_secret');
+
+        Http::fake([
+            'https://hub.pelican.dev/*' => Http::response('', 302, ['Location' => 'https://attacker.example/steal.zip']),
+            'https://attacker.example/*' => Http::response('stolen'),
+        ]);
+
+        try {
+            $this->service->downloadPluginFromUrl('https://hub.pelican.dev/plugins/x/download/1/x.zip');
+        } catch (Exception) {
+            // The redirect body is not a zip; all that matters is where the key went.
+        }
+
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), 'attacker.example'));
+    }
+
+    public function test_no_hub_key_is_sent_when_none_is_configured(): void
+    {
+        config()->set('panel.plugin.hub_api_key', null);
+
+        $this->importedPlugins[] = 'test-hub-plugin';
+
+        $bytes = file_get_contents($this->makeUpload('test-hub-plugin.zip', [
+            'test-hub-plugin/plugin.json' => $this->manifest('test-hub-plugin'),
+        ])->getPathname());
+
+        Http::fake(['*' => Http::response($bytes)]);
+
+        $this->service->downloadPluginFromUrl('https://hub.pelican.dev/plugins/test-hub-plugin/download/1/test-hub-plugin.zip');
+
+        Http::assertSent(fn ($request) => !$request->hasHeader('X-Panel-Api-Key'));
+    }
+
+    public function test_a_fatal_error_in_a_plugin_marks_it_crashed_and_notifies_root_admins(): void
+    {
+        $plugin = $this->installedPluginForFatal();
+
+        $admin = User::factory()->create();
+        $admin->syncRoles(Role::getRootAdmin());
+        $user = User::factory()->create();
+
+        // A regular user who hit the crash can't fix it, so it goes to the root admins instead.
+        $this->actingAs($user);
+        $this->service->handlePluginCrash($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
+
+        $meta = File::json(plugin_path($plugin, 'plugin.json'))['meta'];
+        $this->assertSame(PluginStatus::Crashed->value, $meta['status']);
+        $this->assertSame('Trait "Missing" not found', $meta['status_message']);
+
+        $this->assertSame(1, $admin->notifications()->count());
+        $this->assertSame(0, $user->notifications()->count());
+
+        // Requests still running when it crashed don't notify again.
+        Plugin::refreshRows();
+        $this->service->handlePluginCrash($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
+        $this->assertSame(1, $admin->notifications()->count());
+    }
+
+    public function test_a_root_admin_who_hits_a_plugin_crash_is_the_one_notified(): void
+    {
+        $plugin = $this->installedPluginForFatal();
+
+        $admin = User::factory()->create();
+        $admin->syncRoles(Role::getRootAdmin());
+        $other = User::factory()->create();
+        $other->syncRoles(Role::getRootAdmin());
+
+        $this->actingAs($admin);
+        $this->service->handlePluginCrash($this->fatal('Trait "Missing" not found', plugin_path($plugin, 'src', 'Plugin.php')));
+
+        $this->assertSame(1, $admin->notifications()->count());
+        $this->assertSame(0, $other->notifications()->count());
+    }
+
+    /** @return array<string, array{0: string, 1: ?string, 2: bool}> */
+    public static function ignoredFatalProvider(): array
+    {
+        return [
+            'memory limit' => ['Allowed memory size of 134217728 bytes exhausted', 'src/Plugin.php', false],
+            'execution time' => ['Maximum execution time of 30 seconds exceeded', 'src/Plugin.php', false],
+            'outside plugins' => ['Trait "Missing" not found', null, false],
+            'dev mode' => ['Trait "Missing" not found', 'src/Plugin.php', true],
+        ];
+    }
+
+    #[DataProvider('ignoredFatalProvider')]
+    public function test_a_fatal_error_is_ignored_when_it_is_not_the_plugins_fault(string $message, ?string $file, bool $devMode): void
+    {
+        $plugin = $this->installedPluginForFatal();
+        config()->set('panel.plugin.dev_mode', $devMode);
+
+        $this->service->handlePluginCrash($this->fatal($message, $file ? plugin_path($plugin, $file) : base_path('app/Models/User.php')));
+
+        $this->assertSame(PluginStatus::Enabled->value, File::json(plugin_path($plugin, 'plugin.json'))['meta']['status']);
+    }
+
+    public function test_an_error_from_a_plugin_only_crashes_it_while_the_app_boots(): void
+    {
+        $plugin = $this->installedPluginForFatal();
+        $error = new Error('Call to undefined function missing()');
+        (new ReflectionProperty($error, 'file'))->setValue($error, plugin_path($plugin, 'src', 'Providers', 'PluginProvider.php'));
+
+        // A runtime error only breaks the request it happened in.
+        $this->service->handlePluginCrash($error);
+        $this->assertSame(PluginStatus::Enabled->value, File::json(plugin_path($plugin, 'plugin.json'))['meta']['status']);
+
+        $booting = Mockery::mock(Application::class)->makePartial();
+        $booting->shouldReceive('isBooted')->andReturnFalse();
+
+        (new PluginService($booting))->handlePluginCrash($error);
+        $this->assertSame(PluginStatus::Crashed->value, File::json(plugin_path($plugin, 'plugin.json'))['meta']['status']);
+    }
+
+    private function installedPluginForFatal(): string
+    {
+        $this->importedPlugins[] = 'test-crash-plugin';
+
+        $manifest = json_decode($this->updatableManifest('test-crash-plugin', '1.0.0', 'https://example.test/update.json'), true);
+        $manifest['meta'] = ['status' => PluginStatus::Enabled->value];
+
+        $this->service->downloadPluginFromFile($this->makeUpload('test-crash-plugin.zip', [
+            'test-crash-plugin/plugin.json' => json_encode($manifest),
+        ]));
+
+        Plugin::refreshRows();
+
+        return 'test-crash-plugin';
+    }
+
+    private function fatal(string $message, string $file): FatalError
+    {
+        return new FatalError($message, 0, ['type' => E_ERROR, 'message' => $message, 'file' => $file, 'line' => 9]);
+    }
+
+    private function installedVersion(string $id): string
+    {
+        return File::json(plugin_path($id, 'plugin.json'))['version'];
+    }
+
+    private function manifest(string $id, string $version = '1.0.0'): string
+    {
+        return json_encode(['id' => $id, 'version' => $version]);
+    }
+
+    private function updatableManifest(string $id, string $version, string $updateUrl): string
+    {
+        return json_encode([
+            'id' => $id,
+            'name' => 'Test Update Plugin',
+            'author' => 'Pelican',
+            'version' => $version,
+            'category' => 'plugin',
+            'update_url' => $updateUrl,
+            'namespace' => 'TestUpdatePlugin',
+            'class' => 'TestUpdatePlugin',
+        ]);
+    }
+
+    /**
+     * Build a zip on disk from the given [path => contents] map and wrap it in an UploadedFile.
+     *
+     * @param  array<string, string>  $entries
+     */
+    private function makeUpload(string $clientName, array $entries): UploadedFile
+    {
+        $tmpDir = TemporaryDirectory::make();
+        $this->uploadDirs[] = $tmpDir;
+        $zipPath = $tmpDir->path('upload.zip');
+
+        $zip = new ZipArchive();
+        $zip->open($zipPath, ZipArchive::CREATE);
+        foreach ($entries as $path => $contents) {
+            $zip->addFromString($path, $contents);
+        }
+        $zip->close();
+
+        // test mode (last arg) bypasses the is_uploaded_file() check.
+        return new UploadedFile($zipPath, $clientName, 'application/zip', null, true);
+    }
+}

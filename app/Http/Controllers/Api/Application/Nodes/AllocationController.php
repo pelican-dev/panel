@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Application\Nodes;
 
+use App\Data\Api\Application\AllocationData;
 use App\Exceptions\DisplayException;
 use App\Exceptions\Service\Allocation\CidrOutOfRangeException;
 use App\Exceptions\Service\Allocation\InvalidPortMappingException;
@@ -14,7 +15,6 @@ use App\Http\Requests\Api\Application\Allocations\StoreAllocationRequest;
 use App\Models\Allocation;
 use App\Models\Node;
 use App\Services\Allocations\AssignmentService;
-use App\Transformers\Api\Application\AllocationTransformer;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -43,7 +43,7 @@ class AllocationController extends ApplicationApiController
     public function index(GetAllocationsRequest $request, Node $node): array
     {
         $allocations = QueryBuilder::for($node->allocations())
-            ->allowedFilters([
+            ->allowedFilters(
                 AllowedFilter::exact('ip'),
                 AllowedFilter::exact('port'),
                 'ip_alias',
@@ -54,11 +54,11 @@ class AllocationController extends ApplicationApiController
 
                     return $builder->where('server_id', $value);
                 }),
-            ])
+            )
             ->paginate($request->query('per_page') ?? 50);
 
-        return $this->fractal->collection($allocations)
-            ->transformWith($this->getTransformer(AllocationTransformer::class))
+        return $this->response->collection($allocations)
+            ->transformWith(AllocationData::class)
             ->toArray();
     }
 

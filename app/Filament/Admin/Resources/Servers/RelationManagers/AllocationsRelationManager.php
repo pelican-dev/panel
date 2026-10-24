@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\Servers\Pages\CreateServer;
 use App\Models\Allocation;
 use App\Models\Server;
 use App\Services\Allocations\AssignmentService;
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\CreateAction;
@@ -19,11 +20,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @method Server getOwnerRecord()
@@ -32,24 +34,37 @@ class AllocationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'allocations';
 
+    protected static string|BackedEnum|null $icon = TablerIcon::Network;
+
     public function table(Table $table): Table
     {
         return $table
-            ->heading('')
+            ->heading(null)
             ->selectCurrentPageOnly()
             ->recordTitleAttribute('address')
             ->recordTitle(fn (Allocation $allocation) => $allocation->address)
             ->inverseRelationship('server')
             ->columns([
                 TextColumn::make('ip')
-                    ->label(trans('admin/server.ip_address')),
+                    ->label(trans('admin/server.ip_address'))
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('port')
-                    ->label(trans('admin/server.port')),
+                    ->label(trans('admin/server.port'))
+                    ->searchable()
+                    ->sortable(),
+                ToggleColumn::make('show_port')
+                    ->label(trans('admin/server.show_port')),
                 TextInputColumn::make('ip_alias')
-                    ->label(trans('admin/server.alias')),
+                    ->label(trans('admin/server.alias'))
+                    ->placeholder(trans('admin/server.no_alias'))
+                    ->searchable()
+                    ->sortable()
+                    ->disabled(fn () => $this->isReadOnly()),
                 TextInputColumn::make('notes')
                     ->label(trans('admin/server.notes'))
-                    ->placeholder(trans('admin/server.no_notes')),
+                    ->placeholder(trans('admin/server.no_notes'))
+                    ->disabled(fn () => $this->isReadOnly()),
                 IconColumn::make('primary')
                     ->icon(fn ($state) => match ($state) {
                         true => TablerIcon::StarFilled,
@@ -60,7 +75,13 @@ class AllocationsRelationManager extends RelationManager
                         default => 'gray',
                     })
                     ->tooltip(fn (Allocation $allocation) => trans('admin/server.' . ($allocation->id === $this->getOwnerRecord()->allocation_id ? 'already' : 'make') . '_primary'))
-                    ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
+                    ->action(function (Allocation $allocation) {
+                        if ($this->isReadOnly()) {
+                            return;
+                        }
+
+                        $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords();
+                    })
                     ->default(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id)
                     ->label(trans('admin/server.primary')),
                 IconColumn::make('is_locked')
@@ -72,45 +93,44 @@ class AllocationsRelationManager extends RelationManager
             ->emptyStateHeading(trans('admin/server.no_allocations'))
             ->recordActions([
                 Action::make('make-primary')
-                    ->label(trans('admin/server.make_primary'))
+                    ->authorize(fn (Allocation $allocation) => user()?->can('update', $allocation))
+                    ->tooltip(trans('admin/server.make_primary'))
+                    ->icon(TablerIcon::Star)
                     ->action(fn (Allocation $allocation) => $this->getOwnerRecord()->update(['allocation_id' => $allocation->id]) && $this->deselectAllTableRecords())
-                    ->hidden(fn (Allocation $allocation) => $allocation->id === $this->getOwnerRecord()->allocation_id),
+                    ->hidden(fn (Allocation $allocation) => $this->isReadOnly() || $allocation->id === $this->getOwnerRecord()->allocation_id),
                 Action::make('lock')
-                    ->label(trans('admin/server.lock'))
+                    ->authorize(fn (Allocation $allocation) => user()?->can('update', $allocation))
+                    ->tooltip(trans('admin/server.lock'))
+                    ->icon(TablerIcon::Lock)
                     ->action(fn (Allocation $allocation) => $allocation->update(['is_locked' => true]) && $this->deselectAllTableRecords())
-                    ->hidden(fn (Allocation $allocation) => $allocation->is_locked),
+                    ->hidden(fn (Allocation $allocation) => $this->isReadOnly() || $allocation->is_locked),
                 Action::make('unlock')
-                    ->label(trans('admin/server.unlock'))
+                    ->authorize(fn (Allocation $allocation) => user()?->can('update', $allocation))
+                    ->tooltip(trans('admin/server.unlock'))
+                    ->icon(TablerIcon::LockOpen)
                     ->action(fn (Allocation $allocation) => $allocation->update(['is_locked' => false]) && $this->deselectAllTableRecords())
-                    ->visible(fn (Allocation $allocation) => $allocation->is_locked),
+                    ->visible(fn (Allocation $allocation) => !$this->isReadOnly() && $allocation->is_locked),
                 DissociateAction::make()
-                    ->after(function (Allocation $allocation) {
-                        $allocation->update([
-                            'notes' => null,
-                            'is_locked' => false,
-                        ]);
-
-                        if (!$this->getOwnerRecord()->allocation_id) {
-                            $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id]);
-                        }
+                    ->authorize(fn (Allocation $allocation) => user()?->can('update', $allocation))
+                    ->tooltip(trans('admin/server.remove_allocation'))
+                    ->hidden(fn () => $this->isReadOnly())
+                    ->action(function (Allocation $allocation, DissociateAction $action) {
+                        $this->getOwnerRecord()->releaseAllocations([$allocation->id]);
+                        $action->success();
                     }),
             ])
             ->toolbarActions([
                 DissociateBulkAction::make()
-                    ->after(function () {
-                        Allocation::whereNull('server_id')->update([
-                            'notes' => null,
-                            'is_locked' => false,
-                        ]);
-
-                        if (!$this->getOwnerRecord()->allocation_id) {
-                            $this->getOwnerRecord()->update(['allocation_id' => $this->getOwnerRecord()->allocations()->first()?->id]);
-                        }
+                    ->hidden(fn () => $this->isReadOnly())
+                    ->action(function (Collection $records, DissociateBulkAction $action) {
+                        $this->getOwnerRecord()->releaseAllocations($records->pluck('id')->all());
+                        $action->success();
                     }),
                 CreateAction::make()
+                    ->hidden(fn () => $this->isReadOnly())
                     ->hiddenLabel()
                     ->tooltip(trans('admin/server.create_allocation'))
-                    ->icon(TablerIcon::Network)
+                    ->icon(TablerIcon::WorldPlus)
                     ->createAnother(false)
                     ->schema(fn () => [
                         Select::make('allocation_ip')
@@ -163,8 +183,7 @@ class AllocationsRelationManager extends RelationManager
                     ])
                     ->action(fn (array $data, AssignmentService $service) => $service->handle($this->getOwnerRecord()->node, $data, $this->getOwnerRecord())),
                 AssociateAction::make()
-                    ->icon(TablerIcon::FilePlus)
-                    ->iconButton()->iconSize(IconSize::ExtraLarge)
+                    ->hidden(fn () => $this->isReadOnly())
                     ->multiple()
                     ->associateAnother(false)
                     ->preloadRecordSelect()

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api\Application\Eggs;
 
+use App\Data\Api\Application\EggData;
 use App\Enums\EggFormat;
 use App\Http\Controllers\Api\Application\ApplicationApiController;
+use App\Http\Requests\Api\Application\Eggs\DeleteEggRequest;
 use App\Http\Requests\Api\Application\Eggs\ExportEggRequest;
 use App\Http\Requests\Api\Application\Eggs\GetEggRequest;
 use App\Http\Requests\Api\Application\Eggs\GetEggsRequest;
@@ -11,7 +13,6 @@ use App\Http\Requests\Api\Application\Eggs\ImportEggRequest;
 use App\Models\Egg;
 use App\Services\Eggs\Sharing\EggExporterService;
 use App\Services\Eggs\Sharing\EggImporterService;
-use App\Transformers\Api\Application\EggTransformer;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -36,8 +37,8 @@ class EggController extends ApplicationApiController
      */
     public function index(GetEggsRequest $request): array
     {
-        return $this->fractal->collection(Egg::all())
-            ->transformWith($this->getTransformer(EggTransformer::class))
+        return $this->response->collection(Egg::all())
+            ->transformWith(EggData::class)
             ->toArray();
     }
 
@@ -50,8 +51,8 @@ class EggController extends ApplicationApiController
      */
     public function view(GetEggRequest $request, Egg $egg): array
     {
-        return $this->fractal->item($egg)
-            ->transformWith($this->getTransformer(EggTransformer::class))
+        return $this->response->item($egg)
+            ->transformWith(EggData::class)
             ->toArray();
     }
 
@@ -62,7 +63,7 @@ class EggController extends ApplicationApiController
      *
      * @throws Exception
      */
-    public function delete(GetEggRequest $request, Egg $egg): Response
+    public function delete(DeleteEggRequest $request, Egg $egg): Response
     {
         $egg->delete();
 
@@ -98,8 +99,8 @@ class EggController extends ApplicationApiController
     {
         $egg = $this->importService->fromContent($request->getContent());
 
-        return $this->fractal->item($egg)
-            ->transformWith($this->getTransformer(EggTransformer::class))
+        return $this->response->item($egg)
+            ->transformWith(EggData::class)
             ->respond(201);
     }
 }

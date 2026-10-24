@@ -18,6 +18,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
+use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\ImageColumn;
@@ -43,12 +44,8 @@ class ListEggs extends ListRecords
         $defaultEggIcon = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents(public_path($defaultEggIcon)));
 
         return $table
-            ->searchable(true)
             ->defaultPaginationPageOption(25)
             ->columns([
-                TextColumn::make('id')
-                    ->label('Id')
-                    ->hidden(),
                 ImageColumn::make('icon')
                     ->label('')
                     ->alignCenter()
@@ -56,7 +53,7 @@ class ListEggs extends ListRecords
                     ->getStateUsing(fn (Egg $record) => $record->icon ?: $defaultEggIcon),
                 TextColumn::make('name')
                     ->label(trans('admin/egg.name'))
-                    ->description(fn ($record): ?string => (strlen($record->description) > 120) ? substr($record->description, 0, 120).'...' : $record->description)
+                    ->description(fn ($record) => (strlen($record->description) > 120) ? substr($record->description, 0, 120).'...' : $record->description)
                     ->wrap()
                     ->searchable()
                     ->sortable(),
@@ -65,6 +62,9 @@ class ListEggs extends ListRecords
                     ->label(trans('admin/egg.servers')),
             ])
             ->recordActions([
+                ViewAction::make()
+                    ->tooltip(trans('filament-actions::view.single.label'))
+                    ->hidden(fn (Egg $record) => EggResource::getEditAuthorizationResponse($record)->allowed()),
                 EditAction::make()
                     ->tooltip(trans('filament-actions::edit.single.label')),
                 ExportEggAction::make()

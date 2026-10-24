@@ -91,7 +91,7 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        if (user()?->getCustomization(CustomizationKey::TopNavigation)) {
+        if (user()?->getCustomization(CustomizationKey::TopNavigation) === 'topbar') {
             return null;
         }
 
@@ -118,15 +118,17 @@ class UserResource extends Resource
                     ->defaultImageUrl(fn (User $user) => Filament::getUserAvatarUrl($user)),
                 TextColumn::make('username')
                     ->label(trans('admin/user.username'))
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('email')
                     ->label(trans('admin/user.email'))
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 IconColumn::make('mfa_email_enabled')
                     ->label(trans('profile.tabs.2fa'))
                     ->visibleFrom('lg')
                     ->icon(fn (User $user) => filled($user->mfa_app_secret) ? TablerIcon::Qrcode : ($user->mfa_email_enabled ? TablerIcon::Mail : TablerIcon::LockOpenOff))
-                    ->tooltip(fn (User $user) => filled($user->mfa_app_secret) ? 'App' : ($user->mfa_email_enabled ? 'E-Mail' : 'None')),
+                    ->tooltip(fn (User $user) => filled($user->mfa_app_secret) ? trans('profile.mfa.app') : ($user->mfa_email_enabled ? trans('profile.mfa.email') : trans('profile.mfa.none'))),
                 TextColumn::make('roles.name')
                     ->label(trans('admin/user.roles'))
                     ->badge()
@@ -294,13 +296,18 @@ class UserResource extends Resource
                                         return $path;
                                     }
                                 })
-                                ->deleteUploadedFileUsing(function (FileUpload $fileUpload, $file) {
+                                ->deleteUploadedFileUsing(function (FileUpload $fileUpload, $file, ?User $user) {
                                     if ($file instanceof TemporaryUploadedFile) {
                                         return $file->delete();
                                     }
 
-                                    if ($fileUpload->getDisk()->exists($file)) {
-                                        return $fileUpload->getDisk()->delete($file);
+                                    if (!$user) {
+                                        return null;
+                                    }
+
+                                    $path = $fileUpload->getDirectory() . '/' . $user->id . '.png';
+                                    if ($fileUpload->getDisk()->exists($path)) {
+                                        return $fileUpload->getDisk()->delete($path);
                                     }
                                 }),
                         ]),
@@ -398,8 +405,8 @@ class UserResource extends Resource
                                         $key = $items[$arguments['item']] ?? null;
 
                                         if ($key) {
-                                            $apiKey = ApiKey::find($key['id']);
-                                            if ($apiKey?->exists()) {
+                                            $apiKey = $user?->apiKeys()->find($key['id'] ?? null);
+                                            if ($apiKey) {
                                                 $apiKey->delete();
 
                                                 Activity::event('user:api-key.delete')
@@ -441,8 +448,8 @@ class UserResource extends Resource
                                         $items = $component->getState();
                                         $key = $items[$arguments['item']];
 
-                                        $sshKey = UserSSHKey::find($key['id'] ?? null);
-                                        if ($sshKey->exists()) {
+                                        $sshKey = $user->sshKeys()->find($key['id'] ?? null);
+                                        if ($sshKey) {
                                             $sshKey->delete();
 
                                             Activity::event('user:ssh-key.delete')
@@ -490,7 +497,7 @@ class UserResource extends Resource
                         ->schema([
                             TextEntry::make('log')
                                 ->hiddenLabel()
-                                ->state(fn (ActivityLog $log) => new HtmlString($log->htmlable())),
+                                ->state(fn (ActivityLog $record) => new HtmlString($record->htmlable())),
                         ]),
                 ]),
         ];
